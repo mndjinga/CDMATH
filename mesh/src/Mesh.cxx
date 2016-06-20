@@ -267,6 +267,20 @@ Mesh::getIndexFacePeriodic(int indexFace) const
     return ifaceOk;
 }
 
+bool
+Mesh::isBorderNode(int nodeid) const
+{
+	Node N=getNode(nodeid);
+	int nbFaces=N.getNumberOfFaces();
+	int i=0;
+	while(i< nbFaces && !getFace(N.getFaceId(i)).isBorder())
+		i++;
+         if (i<nbFaces)
+                 return true;
+         else
+                 return false;
+}
+
 void
 Mesh::setGroups( const MEDFileUMesh* medmesh)
 {

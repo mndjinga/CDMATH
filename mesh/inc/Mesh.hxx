@@ -229,6 +229,8 @@ class Mesh
 
     IntTab getIndexFacePeriodic( void ) const ;
 
+    bool isBorderNode(int nodeid) const ;
+
     private: //----------------------------------------------------------------
 
     void setMesh( void ) ;
