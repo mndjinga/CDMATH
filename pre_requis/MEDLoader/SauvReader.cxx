@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -86,7 +86,7 @@ std::size_t SauvReader::getHeapMemorySizeWithoutChildren() const
   return 0;
 }
 
-std::vector<const BigMemoryObject *> SauvReader::getDirectChildren() const
+std::vector<const BigMemoryObject *> SauvReader::getDirectChildrenWithNull() const
 {
   return std::vector<const BigMemoryObject *>();
 }
@@ -112,7 +112,7 @@ std::string SauvReader::lineNb() const
  */
 //================================================================================
 
-ParaMEDMEM::MEDFileData * SauvReader::loadInMEDFileDS(bool fix2DOri)
+ParaMEDMEM::MEDFileData * SauvReader::loadInMEDFileDS()
 {
   SauvUtilities::IntermediateMED iMed; // intermadiate DS
   _iMed = &iMed;
@@ -146,7 +146,7 @@ ParaMEDMEM::MEDFileData * SauvReader::loadInMEDFileDS(bool fix2DOri)
           THROW_IK_EXCEPTION("XDR : ENREGISTREMENT DE TYPE " << recordNumber << " not implemented!!!");
     }
 
-  ParaMEDMEM::MEDFileData* medFileData = iMed.convertInMEDFileDS( fix2DOri );
+  ParaMEDMEM::MEDFileData* medFileData = iMed.convertInMEDFileDS();
 
   return medFileData;
 }

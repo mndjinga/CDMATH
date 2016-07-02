@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -48,8 +48,9 @@ namespace ParaMEDMEM
     MEDCOUPLING_EXPORT void setPrecision(double val) { _precision=val; }
     MEDCOUPLING_EXPORT void updateTime() const;
     MEDCOUPLING_EXPORT std::size_t getHeapMemorySizeWithoutChildren() const;
-    MEDCOUPLING_EXPORT std::vector<const BigMemoryObject *> getDirectChildren() const;
+    MEDCOUPLING_EXPORT std::vector<const BigMemoryObject *> getDirectChildrenWithNull() const;
     MEDCOUPLING_EXPORT static TypeOfField GetTypeOfFieldFromStringRepr(const std::string& repr);
+    MEDCOUPLING_EXPORT static std::string GetTypeOfFieldRepr(TypeOfField type);
     MEDCOUPLING_EXPORT virtual TypeOfField getEnum() const = 0;
     MEDCOUPLING_EXPORT virtual bool isEqual(const MEDCouplingFieldDiscretization *other, double eps) const;
     MEDCOUPLING_EXPORT virtual bool isEqualIfNotWhy(const MEDCouplingFieldDiscretization *other, double eps, std::string& reason) const = 0;
@@ -91,6 +92,7 @@ namespace ParaMEDMEM
     MEDCOUPLING_EXPORT virtual void getTinySerializationDbleInformation(std::vector<double>& tinyInfo) const;
     MEDCOUPLING_EXPORT virtual void finishUnserialization(const std::vector<double>& tinyInfo);
     MEDCOUPLING_EXPORT virtual void resizeForUnserialization(const std::vector<int>& tinyInfo, DataArrayInt *& arr);
+    MEDCOUPLING_EXPORT virtual void checkForUnserialization(const std::vector<int>& tinyInfo, const DataArrayInt *arr);
     MEDCOUPLING_EXPORT virtual void setGaussLocalizationOnType(const MEDCouplingMesh *m, INTERP_KERNEL::NormalizedCellType type, const std::vector<double>& refCoo,
                                                                const std::vector<double>& gsCoo, const std::vector<double>& wg);
     MEDCOUPLING_EXPORT virtual void setGaussLocalizationOnCells(const MEDCouplingMesh *m, const int *begin, const int *end, const std::vector<double>& refCoo,
@@ -210,7 +212,7 @@ namespace ParaMEDMEM
     ~MEDCouplingFieldDiscretizationPerCell();
     void updateTime() const;
     std::size_t getHeapMemorySizeWithoutChildren() const;
-    std::vector<const BigMemoryObject *> getDirectChildren() const;
+    std::vector<const BigMemoryObject *> getDirectChildrenWithNull() const;
     void checkCoherencyBetween(const MEDCouplingMesh *mesh, const DataArray *da) const;
     bool isEqualIfNotWhy(const MEDCouplingFieldDiscretization *other, double eps, std::string& reason) const;
     bool isEqualWithoutConsideringStr(const MEDCouplingFieldDiscretization *other, double eps) const;
@@ -250,6 +252,7 @@ namespace ParaMEDMEM
     MEDCOUPLING_EXPORT void finishUnserialization(const std::vector<double>& tinyInfo);
     MEDCOUPLING_EXPORT void getSerializationIntArray(DataArrayInt *& arr) const;
     MEDCOUPLING_EXPORT void resizeForUnserialization(const std::vector<int>& tinyInfo, DataArrayInt *& arr);
+    MEDCOUPLING_EXPORT void checkForUnserialization(const std::vector<int>& tinyInfo, const DataArrayInt *arr);
     MEDCOUPLING_EXPORT double getIJK(const MEDCouplingMesh *mesh, const DataArrayDouble *da, int cellId, int nodeIdInCell, int compoId) const;
     MEDCOUPLING_EXPORT void checkCoherencyBetween(const MEDCouplingMesh *mesh, const DataArray *da) const;
     MEDCOUPLING_EXPORT MEDCouplingFieldDouble *getMeasureField(const MEDCouplingMesh *mesh, bool isAbs) const;
@@ -284,6 +287,7 @@ namespace ParaMEDMEM
     void zipGaussLocalizations();
     int getOffsetOfCell(int cellId) const;
     void checkLocalizationId(int locId) const;
+    void commonUnserialization(const std::vector<int>& tinyInfo);
   public:
     static const char REPR[];
     static const TypeOfField TYPE;

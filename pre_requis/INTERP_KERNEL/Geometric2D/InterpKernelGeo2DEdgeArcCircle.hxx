@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -83,6 +83,7 @@ namespace INTERP_KERNEL
     void getBarycenter(double *bary) const;
     void getBarycenterOfZone(double *bary) const;
     void getMiddleOfPoints(const double *p1, const double *p2, double *mid) const;
+    void getMiddleOfPointsOriented(const double *p1, const double *p2, double *mid) const;
     bool isIn(double characterVal) const;
     Node *buildRepresentantOfMySelf() const;
     bool isLower(double val1, double val2) const;

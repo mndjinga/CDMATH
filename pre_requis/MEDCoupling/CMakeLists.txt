@@ -1,4 +1,4 @@
-# Copyright (C) 2012-2014  CEA/DEN, EDF R&D
+# Copyright (C) 2012-2015  CEA/DEN, EDF R&D
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -17,6 +17,10 @@
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
 # Author : Anthony Geay (CEA/DEN)
+
+IF(SALOME_BUILD_TESTS)
+  ADD_SUBDIRECTORY(Test)
+ENDIF(SALOME_BUILD_TESTS)
 
 INCLUDE_DIRECTORIES(
   ${CMAKE_CURRENT_BINARY_DIR}/../..
@@ -54,6 +58,8 @@ SET(medcoupling_SOURCES
   MEDCouplingCartesianAMRMesh.cxx
   MEDCouplingAMRAttribute.cxx
   MEDCouplingMatrix.cxx
+  MEDCouplingPartDefinition.cxx
+  MEDCouplingSkyLineArray.cxx
   )
 
 SET(medcouplingremapper_SOURCES
@@ -62,12 +68,16 @@ SET(medcouplingremapper_SOURCES
 
 ADD_LIBRARY(medcoupling SHARED ${medcoupling_SOURCES})
 TARGET_LINK_LIBRARIES(medcoupling interpkernel)
-INSTALL(TARGETS medcoupling DESTINATION lib)
+INSTALL(TARGETS medcoupling EXPORT ${PROJECT_NAME}TargetGroup DESTINATION ${SALOME_INSTALL_LIBS})
 
 ADD_LIBRARY(medcouplingremapper SHARED ${medcouplingremapper_SOURCES})
 TARGET_LINK_LIBRARIES(medcouplingremapper medcoupling)
-INSTALL(TARGETS medcouplingremapper DESTINATION lib)
+INSTALL(TARGETS medcouplingremapper EXPORT ${PROJECT_NAME}TargetGroup DESTINATION ${SALOME_INSTALL_LIBS})
 
 FILE(GLOB medcoupling_HEADERS_HXX "${CMAKE_CURRENT_SOURCE_DIR}/*.hxx")
 FILE(GLOB medcoupling_HEADERS_TXX "${CMAKE_CURRENT_SOURCE_DIR}/*.txx")
-INSTALL(FILES ${medcoupling_HEADERS_HXX} ${medcoupling_HEADERS_TXX} MEDCouplingNatureOfFieldEnum DESTINATION include)
+INSTALL(FILES ${medcoupling_HEADERS_HXX} ${medcoupling_HEADERS_TXX} MEDCouplingNatureOfFieldEnum DESTINATION ${SALOME_INSTALL_HEADERS})
+
+# To allow usage as SWIG dependencies:
+SET(medcoupling_HEADERS_HXX PARENT_SCOPE)
+SET(medcoupling_HEADERS_TXX PARENT_SCOPE)

@@ -1,4 +1,4 @@
-# Copyright (C) 2012-2014  CEA/DEN, EDF R&D
+# Copyright (C) 2012-2015  CEA/DEN, EDF R&D
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -30,7 +30,7 @@ SET (MEDCoupling_SWIG_DPYS_FILES
     MEDCouplingMemArray.i
     MEDCouplingFieldDiscretization.i
     MEDCouplingFinalize.i
-    MEDCouplingTypemaps.i)   
+    MEDCouplingTypemaps.i)
 
 INCLUDE_DIRECTORIES(
   ${PYTHON_INCLUDE_DIRS}
@@ -43,12 +43,22 @@ INCLUDE_DIRECTORIES(
   ${CMAKE_CURRENT_SOURCE_DIR}/../INTERP_KERNEL/Geometric2D
   ${CMAKE_CURRENT_SOURCE_DIR}/../INTERP_KERNEL/ExprEval
   ${CMAKE_CURRENT_SOURCE_DIR}/../INTERP_KERNEL/GaussPoints
+  ${PROJECT_BINARY_DIR}/doc
   )
 
 # _ABR_ Ensure dependency mechanism on all SWIG files and headers
-SET (SWIG_MODULE_MEDCoupling_EXTRA_DEPS ${MEDCoupling_SWIG_DPYS_FILES} 
+SET (SWIG_MODULE_MEDCoupling_EXTRA_DEPS ${MEDCoupling_SWIG_DPYS_FILES}
     ${medcoupling_HEADERS_HXX} ${medcoupling_HEADERS_TXX}
     ${interpkernel_HEADERS_HXX} ${interpkernel_HEADERS_TXX})
+
+# SWIG must run after the doc if we want to have the docstrings extracted from Doxygen
+# into the Python module:
+IF(SALOME_BUILD_DOC)
+    LIST(APPEND SWIG_MODULE_MEDCoupling_EXTRA_FLAGS -DWITH_DOCSTRINGS)
+    LIST(APPEND SWIG_MODULE_MEDCoupling_EXTRA_DEPS 
+        ${PROJECT_BINARY_DIR}/doc/MEDCoupling_doc.i
+        swig_ready)
+ENDIF()
 
 SWIG_ADD_MODULE(MEDCoupling python MEDCoupling.i)
 SWIG_LINK_LIBRARIES(MEDCoupling ${PYTHON_LIBRARIES} ${PLATFORM_LIBS} medcoupling)
@@ -72,22 +82,33 @@ ENDIF(WIN32)
 INSTALL(TARGETS ${SWIG_MODULE_MEDCoupling_REAL_NAME} ${SWIG_MODULE_MEDCouplingRemapper_REAL_NAME} DESTINATION ${SALOME_INSTALL_PYTHON})
 
 SET(PYFILES_TO_INSTALL ${CMAKE_CURRENT_BINARY_DIR}/MEDCoupling.py ${CMAKE_CURRENT_BINARY_DIR}/MEDCouplingRemapper.py)
-INSTALL_AND_COMPILE_PYTHON_FILE("${PYFILES_TO_INSTALL}" ${SALOME_INSTALL_SCRIPT_PYTHON})
+SALOME_INSTALL_SCRIPTS("${PYFILES_TO_INSTALL}" ${SALOME_INSTALL_PYTHON})
 
 INSTALL(FILES MEDCoupling.i MEDCouplingCommon.i MEDCouplingRefCountObject.i MEDCouplingMemArray.i MEDCouplingFieldDiscretization.i MEDCouplingTimeDiscretization.i MEDCouplingFinalize.i MEDCouplingRemapper.i MEDCouplingTypemaps.i MEDCouplingDataArrayTypemaps.i DESTINATION ${SALOME_INSTALL_HEADERS})
-INSTALL(FILES MEDCouplingBasicsTest.py MEDCouplingRemapperTest.py MEDCouplingDataForTest.py MEDCouplingNumPyTest.py DESTINATION ${SALOME_INSTALL_SCRIPT_PYTHON})
+INSTALL(FILES MEDCouplingBasicsTest.py MEDCouplingRemapperTest.py MEDCouplingDataForTest.py MEDCouplingNumPyTest.py MEDCouplingPickleTest.py DESTINATION ${SALOME_INSTALL_SCRIPT_PYTHON})
 INSTALL(FILES MEDCouplingExamplesTest.py DESTINATION ${SALOME_INSTALL_SCRIPT_PYTHON})
 
-#SALOME_GENERATE_TESTS_ENVIRONMENT(tests_env)
+SALOME_GENERATE_TESTS_ENVIRONMENT(tests_env)
 
-#ADD_TEST(MEDCouplingBasicsTest ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/MEDCouplingBasicsTest.py)
-#SET_TESTS_PROPERTIES(MEDCouplingBasicsTest PROPERTIES ENVIRONMENT "${tests_env}")
-#ADD_TEST(MEDCouplingExamplesTest ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/MEDCouplingExamplesTest.py)
-#SET_TESTS_PROPERTIES(MEDCouplingExamplesTest PROPERTIES ENVIRONMENT "${tests_env}")
-#ADD_TEST(MEDCouplingRemapperTest ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/MEDCouplingRemapperTest.py)
-#SET_TESTS_PROPERTIES(MEDCouplingRemapperTest PROPERTIES ENVIRONMENT "${tests_env}")
+ADD_TEST(MEDCouplingBasicsTest ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/MEDCouplingBasicsTest.py)
+SET_TESTS_PROPERTIES(MEDCouplingBasicsTest PROPERTIES ENVIRONMENT "${tests_env}")
+ADD_TEST(MEDCouplingExamplesTest ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/MEDCouplingExamplesTest.py)
+SET_TESTS_PROPERTIES(MEDCouplingExamplesTest PROPERTIES ENVIRONMENT "${tests_env}")
+ADD_TEST(MEDCouplingRemapperTest ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/MEDCouplingRemapperTest.py)
+SET_TESTS_PROPERTIES(MEDCouplingRemapperTest PROPERTIES ENVIRONMENT "${tests_env}")
 
-#IF(NUMPY_FOUND)
-#  ADD_TEST(MEDCouplingNumPyTest ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/MEDCouplingNumPyTest.py)
-#  SET_TESTS_PROPERTIES(MEDCouplingNumPyTest PROPERTIES ENVIRONMENT "${tests_env}")
-#ENDIF(NUMPY_FOUND)
+IF(NUMPY_FOUND)
+  ADD_TEST(MEDCouplingNumPyTest ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/MEDCouplingNumPyTest.py)
+  SET_TESTS_PROPERTIES(MEDCouplingNumPyTest PROPERTIES ENVIRONMENT "${tests_env}")
+  ADD_TEST(MEDCouplingPickleTest ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/MEDCouplingPickleTest.py)
+  SET_TESTS_PROPERTIES(MEDCouplingPickleTest PROPERTIES ENVIRONMENT "${tests_env}")
+ENDIF(NUMPY_FOUND)
+
+# Application tests
+
+SET(TEST_INSTALL_DIRECTORY ${SALOME_INSTALL_SCRIPT_SCRIPTS}/test/MEDCoupling/MEDCoupling_Swig)
+INSTALL(FILES MEDCouplingBasicsTest.py MEDCouplingRemapperTest.py MEDCouplingDataForTest.py MEDCouplingNumPyTest.py MEDCouplingPickleTest.py MEDCouplingExamplesTest.py DESTINATION ${TEST_INSTALL_DIRECTORY})
+
+INSTALL(FILES CTestTestfileInstall.cmake
+        DESTINATION ${TEST_INSTALL_DIRECTORY}
+        RENAME CTestTestfile.cmake)

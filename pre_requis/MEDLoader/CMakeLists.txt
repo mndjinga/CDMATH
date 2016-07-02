@@ -1,4 +1,4 @@
-# Copyright (C) 2012-2014  CEA/DEN, EDF R&D
+# Copyright (C) 2012-2015  CEA/DEN, EDF R&D
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -42,7 +42,7 @@ ELSE(WIN32)
 ENDIF(WIN32)
 
 INCLUDE_DIRECTORIES(
-  ${MED3_INCLUDE_DIRS}
+  ${MEDFILE_INCLUDE_DIRS}
   ${HDF5_INCLUDE_DIRS}
   ${MEDLOADER_XDR_INCLUDE_DIRS}
   ${CMAKE_CURRENT_SOURCE_DIR}/../MEDCoupling
@@ -62,6 +62,7 @@ SET(medloader_SOURCES
   MEDFileBasis.cxx
   MEDFileMeshLL.cxx
   MEDFileField.cxx
+  MEDFileJoint.cxx
   MEDFileParameter.cxx
   MEDFileData.cxx
   MEDFileFieldOverView.cxx
@@ -73,7 +74,7 @@ SET(medloader_SOURCES
 
 ADD_LIBRARY(medloader SHARED ${medloader_SOURCES})
 SET_TARGET_PROPERTIES(medloader PROPERTIES COMPILE_FLAGS "")
-TARGET_LINK_LIBRARIES(medloader medcoupling medC ${HDF5_LIBRARIES} ${MEDLOADER_XDR_LIBRARIES})
+TARGET_LINK_LIBRARIES(medloader medcoupling ${MEDFILE_C_LIBRARIES} ${HDF5_LIBRARIES} ${MEDLOADER_XDR_LIBRARIES})
 INSTALL(TARGETS medloader EXPORT ${PROJECT_NAME}TargetGroup DESTINATION ${SALOME_INSTALL_LIBS})
 
 FILE(GLOB medloader_HEADERS_HXX "${CMAKE_CURRENT_SOURCE_DIR}/*.hxx")

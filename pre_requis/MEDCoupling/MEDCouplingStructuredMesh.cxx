@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -316,15 +316,15 @@ void MEDCouplingStructuredMesh::splitProfilePerType(const DataArrayInt *profile,
     throw INTERP_KERNEL::Exception("MEDCouplingStructuredMesh::splitProfilePerType : input profile is NULL or not allocated !");
   if(profile->getNumberOfComponents()!=1)
     throw INTERP_KERNEL::Exception("MEDCouplingStructuredMesh::splitProfilePerType : input profile should have exactly one component !");
-  int nbTuples=profile->getNumberOfTuples();
+  int nbTuples(profile->getNumberOfTuples());
   int nbOfCells=getNumberOfCells();
   code.resize(3); idsInPflPerType.resize(1);
   code[0]=(int)getTypeOfCell(0); code[1]=nbOfCells;
   idsInPflPerType.resize(1);
-  if(profile->isIdentity() && nbTuples==nbOfCells)
+  if(profile->isIdentity2(nbOfCells))
     {
       code[2]=-1;
-      idsInPflPerType[0]=0;
+      idsInPflPerType[0]=profile->deepCpy();
       idsPerType.clear();
       return ;
     }
@@ -1271,9 +1271,55 @@ int MEDCouplingStructuredMesh::getNumberOfNodes() const
   return ret;
 }
 
-void MEDCouplingStructuredMesh::GetPosFromId(int nodeId, int meshDim, const int *split, int *res)
+/*!
+ * This method returns for a cell which id is \a cellId the location (locX,locY,locZ) of this cell in \a this.
+ * 
+ * \param [in] cellId
+ * \return - A vector of size this->getMeshDimension()
+ * \throw if \a cellId not in [ 0, this->getNumberOfCells() )
+ */
+std::vector<int> MEDCouplingStructuredMesh::getLocationFromCellId(int cellId) const
 {
-  int work=nodeId;
+  int meshDim(getMeshDimension());
+  std::vector<int> ret(meshDim);
+  std::vector<int> struc(getCellGridStructure());
+  int nbCells(std::accumulate(struc.begin(),struc.end(),1,std::multiplies<int>()));
+  if(cellId<0 || cellId>=nbCells)
+    {
+      std::ostringstream oss; oss << "MEDCouplingStructuredMesh::getLocationFromCellId : Input cell id (" << cellId << ") is invalid ! Should be in [0," << nbCells << ") !";
+      throw INTERP_KERNEL::Exception(oss.str().c_str());
+    }
+  std::vector<int> spt(GetSplitVectFromStruct(struc));
+  GetPosFromId(cellId,meshDim,&spt[0],&ret[0]);
+  return ret;
+}
+
+/*!
+ * This method returns for a node which id is \a nodeId the location (locX,locY,locZ) of this node in \a this.
+ * 
+ * \param [in] nodeId
+ * \return - A vector of size this->getSpaceDimension()
+ * \throw if \a cellId not in [ 0, this->getNumberOfNodes() )
+ */
+std::vector<int> MEDCouplingStructuredMesh::getLocationFromNodeId(int nodeId) const
+{
+  int spaceDim(getSpaceDimension());
+  std::vector<int> ret(spaceDim);
+  std::vector<int> struc(getNodeGridStructure());
+  int nbNodes(std::accumulate(struc.begin(),struc.end(),1,std::multiplies<int>()));
+  if(nodeId<0 || nodeId>=nbNodes)
+    {
+      std::ostringstream oss; oss << "MEDCouplingStructuredMesh::getLocationFromNodeId : Input node id (" << nodeId << ") is invalid ! Should be in [0," << nbNodes << ") !";
+      throw INTERP_KERNEL::Exception(oss.str().c_str());
+    }
+  std::vector<int> spt(GetSplitVectFromStruct(struc));
+  GetPosFromId(nodeId,spaceDim,&spt[0],&ret[0]);
+  return ret;
+}
+
+void MEDCouplingStructuredMesh::GetPosFromId(int eltId, int meshDim, const int *split, int *res)
+{
+  int work(eltId);
   for(int i=meshDim-1;i>=0;i--)
     {
       int pos=work/split[i];

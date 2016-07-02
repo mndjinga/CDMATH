@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -96,7 +96,7 @@ namespace ParaMEDMEM
     // overload of TimeLabel and RefCountObject
     MEDCOUPLING_EXPORT void updateTime() const;
     MEDCOUPLING_EXPORT std::size_t getHeapMemorySizeWithoutChildren() const;
-    MEDCOUPLING_EXPORT std::vector<const BigMemoryObject *> getDirectChildren() const;
+    MEDCOUPLING_EXPORT std::vector<const BigMemoryObject *> getDirectChildrenWithNull() const;
     // overload of MEDCouplingMesh
     MEDCOUPLING_EXPORT MEDCouplingMeshType getType() const { return SINGLE_STATIC_GEO_TYPE_UNSTRUCTURED; }
     MEDCOUPLING_EXPORT MEDCouplingMesh *deepCpy() const;
@@ -128,11 +128,15 @@ namespace ParaMEDMEM
     MEDCOUPLING_EXPORT void getReverseNodalConnectivity(DataArrayInt *revNodal, DataArrayInt *revNodalIndx) const;
     MEDCOUPLING_EXPORT void checkFullyDefined() const;
     MEDCOUPLING_EXPORT bool isEmptyMesh(const std::vector<int>& tinyInfo) const;
+    MEDCOUPLING_EXPORT DataArrayInt *computeFetchedNodeIds() const;
     MEDCOUPLING_EXPORT DataArrayInt *getNodeIdsInUse(int& nbrOfNodesInUse) const;
+    MEDCOUPLING_EXPORT void renumberNodesWithOffsetInConn(int offset);
+    MEDCOUPLING_EXPORT void renumberNodesInConn(const INTERP_KERNEL::HashMap<int,int>& newNodeNumbersO2N);
     MEDCOUPLING_EXPORT void renumberNodesInConn(const int *newNodeNumbersO2N);
     MEDCOUPLING_EXPORT void fillCellIdsToKeepFromNodeIds(const int *begin, const int *end, bool fullyIn, DataArrayInt *&cellIdsKeptArr) const;
     MEDCOUPLING_EXPORT int getNumberOfNodesInCell(int cellId) const;
     MEDCOUPLING_EXPORT DataArrayDouble *getBoundingBoxForBBTree(double arcDetEps=1e-12) const;
+    MEDCOUPLING_EXPORT MEDCouplingFieldDouble *computeDiameterField() const;
     // overload of MEDCoupling1GTUMesh
     MEDCOUPLING_EXPORT void checkCoherencyOfConnectivity() const;
     MEDCOUPLING_EXPORT void allocateCells(int nbOfCells=0);
@@ -186,7 +190,7 @@ namespace ParaMEDMEM
     // overload of TimeLabel and RefCountObject
     MEDCOUPLING_EXPORT void updateTime() const;
     MEDCOUPLING_EXPORT std::size_t getHeapMemorySizeWithoutChildren() const;
-    MEDCOUPLING_EXPORT std::vector<const BigMemoryObject *> getDirectChildren() const;
+    MEDCOUPLING_EXPORT std::vector<const BigMemoryObject *> getDirectChildrenWithNull() const;
     // overload of MEDCouplingMesh
     MEDCOUPLING_EXPORT MEDCouplingMeshType getType() const { return SINGLE_DYNAMIC_GEO_TYPE_UNSTRUCTURED; }
     MEDCOUPLING_EXPORT MEDCouplingMesh *deepCpy() const;
@@ -218,11 +222,15 @@ namespace ParaMEDMEM
     MEDCOUPLING_EXPORT void getReverseNodalConnectivity(DataArrayInt *revNodal, DataArrayInt *revNodalIndx) const;
     MEDCOUPLING_EXPORT void checkFullyDefined() const;
     MEDCOUPLING_EXPORT bool isEmptyMesh(const std::vector<int>& tinyInfo) const;
+    MEDCOUPLING_EXPORT DataArrayInt *computeFetchedNodeIds() const;
     MEDCOUPLING_EXPORT DataArrayInt *getNodeIdsInUse(int& nbrOfNodesInUse) const;
+    MEDCOUPLING_EXPORT void renumberNodesWithOffsetInConn(int offset);
+    MEDCOUPLING_EXPORT void renumberNodesInConn(const INTERP_KERNEL::HashMap<int,int>& newNodeNumbersO2N);
     MEDCOUPLING_EXPORT void renumberNodesInConn(const int *newNodeNumbersO2N);
     MEDCOUPLING_EXPORT void fillCellIdsToKeepFromNodeIds(const int *begin, const int *end, bool fullyIn, DataArrayInt *&cellIdsKeptArr) const;
     MEDCOUPLING_EXPORT int getNumberOfNodesInCell(int cellId) const;
     MEDCOUPLING_EXPORT DataArrayDouble *getBoundingBoxForBBTree(double arcDetEps=1e-12) const;
+    MEDCOUPLING_EXPORT MEDCouplingFieldDouble *computeDiameterField() const;
     // overload of MEDCoupling1GTUMesh
     MEDCOUPLING_EXPORT void checkCoherencyOfConnectivity() const;
     MEDCOUPLING_EXPORT void allocateCells(int nbOfCells=0);

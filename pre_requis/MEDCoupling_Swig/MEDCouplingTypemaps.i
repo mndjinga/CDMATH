@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -82,6 +82,21 @@ static PyObject* convertMultiFields(ParaMEDMEM::MEDCouplingMultiFields *mfs, int
     ret=SWIG_NewPointerObj((void*)mfs,SWIGTYPE_p_ParaMEDMEM__MEDCouplingFieldOverTime,owner);
   else
     ret=SWIG_NewPointerObj((void*)mfs,SWIGTYPE_p_ParaMEDMEM__MEDCouplingMultiFields,owner);
+  return ret;
+}
+
+static PyObject *convertPartDefinition(ParaMEDMEM::PartDefinition *pd, int owner) throw(INTERP_KERNEL::Exception)
+{
+  PyObject *ret=0;
+  if(!pd)
+    {
+      Py_XINCREF(Py_None);
+      return Py_None;
+    }
+  if(dynamic_cast<ParaMEDMEM::DataArrayPartDefinition *>(pd))
+    ret=SWIG_NewPointerObj((void*)pd,SWIGTYPE_p_ParaMEDMEM__DataArrayPartDefinition,owner);
+  else
+    ret=SWIG_NewPointerObj((void*)pd,SWIGTYPE_p_ParaMEDMEM__SlicePartDefinition,owner);
   return ret;
 }
 
@@ -411,4 +426,32 @@ ParaMEDMEM::MEDCouplingFieldDouble *ParaMEDMEM_MEDCouplingFieldDouble___rdiv__Im
     default:
       { throw INTERP_KERNEL::Exception(msg); }
     }
+}
+
+static PyObject *NewMethWrapCallInitOnlyIfEmptyDictInInput(PyObject *cls, PyObject *args, const char *clsName)
+{
+  if(!PyTuple_Check(args))
+    {
+      std::ostringstream oss; oss << clsName << ".__new__ : the args in input is expected to be a tuple !";
+      throw INTERP_KERNEL::Exception(oss.str().c_str());
+    }
+  PyObject *builtinsd(PyEval_GetBuiltins());//borrowed
+  PyObject *obj(PyDict_GetItemString(builtinsd,"object"));//borrowed
+  PyObject *selfMeth(PyObject_GetAttrString(obj,"__new__"));
+  //
+  PyObject *tmp0(PyTuple_New(1));
+  PyTuple_SetItem(tmp0,0,cls); Py_XINCREF(cls);
+  PyObject *instance(PyObject_CallObject(selfMeth,tmp0));
+  Py_DECREF(tmp0);
+  Py_DECREF(selfMeth);
+  if(PyTuple_Size(args)==2 && PyDict_Check(PyTuple_GetItem(args,1)) && PyDict_Size(PyTuple_GetItem(args,1))==0 )
+    {// NOT general case. only true if in unpickeling context ! call __init__. Because for all other cases, __init__ is called right after __new__ !
+      PyObject *initMeth(PyObject_GetAttrString(instance,"__init__"));
+      PyObject *tmp3(PyTuple_New(0));
+      PyObject *tmp2(PyObject_CallObject(initMeth,tmp3));
+      Py_XDECREF(tmp2);
+      Py_DECREF(tmp3);
+      Py_DECREF(initMeth);
+    }
+  return instance;
 }

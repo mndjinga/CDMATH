@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2015  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -38,9 +38,12 @@ MEDC_EXPORT extern void  _MEDnFamilyGroup30(int dummy, ...);
 MEDC_EXPORT extern void  _MEDnFamilyGroup236(int dummy, ...);
 MEDC_EXPORT extern void  _MEDlinkRd30(int dummy, ...);
 MEDC_EXPORT extern void  _MEDlinkRd236(int dummy, ...);
+MEDC_EXPORT extern void  _MEDfieldCr30(int dummy, ...);
+MEDC_EXPORT extern void  _MEDfieldCr31(int dummy, ...);
 MEDC_EXPORT extern void  _MEDfieldInfoByName30(int dummy, ...);
 MEDC_EXPORT extern void  _MEDfieldInfoByName236(int dummy, ...);
 MEDC_EXPORT extern void  _MEDfieldComputingStepInfo30(int dummy, ...);
+MEDC_EXPORT extern void  _MEDfieldComputingStepInfo31(int dummy, ...);
 MEDC_EXPORT extern void  _MEDfieldComputingStepInfo236(int dummy, ...);
 MEDC_EXPORT extern void  _MEDfieldComputingStepMeshInfo30(int dummy, ...);
 MEDC_EXPORT extern void  _MEDfieldComputingStepMeshInfo236(int dummy, ...);
@@ -93,6 +96,7 @@ MEDC_EXPORT extern void  _MEDfileObjectsMount236(int dummy, ...);
 MEDC_EXPORT extern void  _MEDfileObjectsUnmount30(int dummy, ...);
 MEDC_EXPORT extern void  _MEDfileObjectsUnmount236(int dummy, ...);
 MEDC_EXPORT extern void  _MEDfield23ComputingStepMeshInfo30(int dummy, ...);
+MEDC_EXPORT extern void  _MEDfield23ComputingStepMeshInfo31(int dummy, ...);
 MEDC_EXPORT extern void  _MEDfield23ComputingStepMeshInfo236(int dummy, ...);
 MEDC_EXPORT extern void  _MEDfield23nProfile30(int dummy, ...);
 MEDC_EXPORT extern void  _MEDfield23nProfile236(int dummy, ...);

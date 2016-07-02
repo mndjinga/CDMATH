@@ -275,10 +275,10 @@ Mesh::isBorderNode(int nodeid) const
 	int i=0;
 	while(i< nbFaces && !getFace(N.getFaceId(i)).isBorder())
 		i++;
-         if (i<nbFaces)
-                 return true;
-         else
-                 return false;
+	if (i<nbFaces)
+		return true;
+	else
+		return false;
 }
 
 void

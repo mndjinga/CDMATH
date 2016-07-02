@@ -1,4 +1,4 @@
-# Copyright (C) 2012-2014  CEA/DEN, EDF R&D
+# Copyright (C) 2012-2015  CEA/DEN, EDF R&D
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -74,3 +74,12 @@ SET_TESTS_PROPERTIES(TestMEDCouplingExamples PROPERTIES ENVIRONMENT "${tests_env
 INSTALL(TARGETS TestMEDCoupling TestMEDCouplingRemapper TestMEDCouplingExamples DESTINATION ${SALOME_INSTALL_BINS})
 
 SET_DIRECTORY_PROPERTIES(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES UnitTestsResult)
+
+# Application tests
+
+SET(TEST_INSTALL_DIRECTORY ${SALOME_INSTALL_SCRIPT_SCRIPTS}/test/MEDCoupling/MEDCoupling)
+INSTALL(TARGETS TestMEDCoupling TestMEDCouplingRemapper TestMEDCouplingExamples DESTINATION ${TEST_INSTALL_DIRECTORY})
+
+INSTALL(FILES CTestTestfileInstall.cmake
+        DESTINATION ${TEST_INSTALL_DIRECTORY}
+        RENAME CTestTestfile.cmake)

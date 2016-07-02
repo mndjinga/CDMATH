@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -27,6 +27,7 @@
 #include "MEDCouplingUMesh.hxx"
 #include "MEDCouplingCMesh.hxx"
 #include "MEDCoupling1GTUMesh.hxx"
+#include "MEDCouplingPartDefinition.hxx"
 #include "MEDCouplingCurveLinearMesh.hxx"
 #include "MEDCouplingAutoRefCountObjectPtr.hxx"
 
@@ -43,14 +44,15 @@ namespace ParaMEDMEM
   public:
     MEDFileMeshL2();
     std::size_t getHeapMemorySizeWithoutChildren() const;
-    std::vector<const BigMemoryObject *> getDirectChildren() const;
+    std::vector<const BigMemoryObject *> getDirectChildrenWithNull() const;
     const char *getName() const { return _name.getReprForWrite(); }
     const char *getDescription() const { return _description.getReprForWrite(); }
     const char *getUnivName() const { return _univ_name.getReprForWrite(); }
     const char *getTimeUnit() const { return _dt_unit.getReprForWrite(); }
     int getIteration() const { return _iteration; }
     int getOrder() const { return _order; }
-    double getTime() { return _time; }
+    double getTime() const { return _time; }
+    MEDCouplingAutoRefCountObjectPtr<PartDefinition> getPartDefOfCoo() const { return _part_coords; }
     std::vector<std::string> getAxisInfoOnMesh(med_idt fid, int mId, const std::string& mName, ParaMEDMEM::MEDCouplingMeshType& meshType, int& nstep, int& Mdim);
     static int GetMeshIdFromName(med_idt fid, const std::string& mName, ParaMEDMEM::MEDCouplingMeshType& meshType, int& dt, int& it, std::string& dtunit1);
     static double CheckMeshTimeStep(med_idt fid, const std::string& mname, int nstep, int dt, int it);
@@ -64,15 +66,20 @@ namespace ParaMEDMEM
     int _iteration;
     int _order;
     double _time;
+    MEDCouplingAutoRefCountObjectPtr<PartDefinition> _part_coords;
   };
 
   class MEDFileUMeshL2 : public MEDFileMeshL2
   {
   public:
     MEDFileUMeshL2();
+    std::vector<std::string> loadCommonPart(med_idt fid, int mId, const std::string& mName, int dt, int it, int& Mdim);
     void loadAll(med_idt fid, int mId, const std::string& mName, int dt, int it, MEDFileMeshReadSelector *mrs);
+    void loadPart(med_idt fid, int mId, const std::string& mName, const std::vector<INTERP_KERNEL::NormalizedCellType>& types, const std::vector<int>& slicPerTyp, int dt, int it, MEDFileMeshReadSelector *mrs);
     void loadConnectivity(med_idt fid, int mdim, const std::string& mName, int dt, int it, MEDFileMeshReadSelector *mrs);
+    void loadPartOfConnectivity(med_idt fid, int mdim, const std::string& mName, const std::vector<INTERP_KERNEL::NormalizedCellType>& types, const std::vector<int>& slicPerTyp, int dt, int it, MEDFileMeshReadSelector *mrs);
     void loadCoords(med_idt fid, int mId, const std::vector<std::string>& infosOnComp, const std::string& mName, int dt, int it);
+    void loadPartCoords(med_idt fid, int mId, const std::vector<std::string>& infosOnComp, const std::string& mName, int dt, int it, int nMin, int nMax);
     int getNumberOfLevels() const { return _per_type_mesh.size(); }
     bool emptyLev(int levId) const { return _per_type_mesh[levId].empty(); }
     const std::vector< MEDCouplingAutoRefCountObjectPtr<MEDFileUMeshPerType> >& getLev(int levId) const { return _per_type_mesh[levId]; }
@@ -130,7 +137,7 @@ namespace ParaMEDMEM
     operator MEDCouplingUMesh *() const;
     void operator=(MEDCouplingUMesh *m);
     void updateTime() const;
-    std::vector<const BigMemoryObject *> getDirectChildren() const;
+    std::vector<const BigMemoryObject *> getDirectChildrenWithNull() const;
     std::size_t getHeapMemorySizeWithoutChildren() const;
   private:
     const MEDFileUMeshSplitL1 *_st;
@@ -145,16 +152,20 @@ namespace ParaMEDMEM
     MEDFileUMeshAggregateCompute();
     void setName(const std::string& name);
     void assignParts(const std::vector< const MEDCoupling1GTUMesh * >& mParts);
+    void assignDefParts(const std::vector<const PartDefinition *>& partDefs);
     void assignUMesh(MEDCouplingUMesh *m);
     MEDCouplingUMesh *getUmesh() const;
+    int getNumberOfCells() const;
     std::vector<MEDCoupling1GTUMesh *> getParts() const;
     std::vector<INTERP_KERNEL::NormalizedCellType> getGeoTypes() const;
-    std::vector<MEDCoupling1GTUMesh *> getPartsWithoutComputation() const;
-    MEDCoupling1GTUMesh *getPartWithoutComputation(INTERP_KERNEL::NormalizedCellType gt) const;
+    std::vector<MEDCoupling1GTUMesh *> retrievePartsWithoutComputation() const;
+    MEDCoupling1GTUMesh *retrievePartWithoutComputation(INTERP_KERNEL::NormalizedCellType gt) const;
     void getStartStopOfGeoTypeWithoutComputation(INTERP_KERNEL::NormalizedCellType gt, int& start, int& stop) const;
+    void renumberNodesInConnWithoutComputation(const int *newNodeNumbersO2N);
+    bool isStoredSplitByType() const;
     std::size_t getTimeOfThis() const;
     std::size_t getHeapMemorySizeWithoutChildren() const;
-    std::vector<const BigMemoryObject *> getDirectChildren() const;
+    std::vector<const BigMemoryObject *> getDirectChildrenWithNull() const;
     MEDFileUMeshAggregateCompute deepCpy(DataArrayDouble *coords) const;
     bool isEqual(const MEDFileUMeshAggregateCompute& other, double eps, std::string& what) const;
     void clearNonDiscrAttributes() const;
@@ -165,6 +176,9 @@ namespace ParaMEDMEM
     int getSize() const;
     void setCoords(DataArrayDouble *coords);
     void forceComputationOfPartsFromUMesh() const;
+    const PartDefinition *getPartDefOfWithoutComputation(INTERP_KERNEL::NormalizedCellType gt) const;
+    void serialize(std::vector<int>& tinyInt, std::vector< MEDCouplingAutoRefCountObjectPtr<DataArrayInt> >& bigArraysI) const;
+    void unserialize(const std::string& name, DataArrayDouble *coo, std::vector<int>& tinyInt, std::vector< MEDCouplingAutoRefCountObjectPtr<DataArrayInt> >& bigArraysI);
   private:
     std::size_t getTimeOfParts() const;
     std::size_t getTimeOfUMesh() const;
@@ -173,6 +187,7 @@ namespace ParaMEDMEM
     mutable std::size_t _mp_time;
     mutable std::size_t _m_time;
     mutable MEDCouplingAutoRefCountObjectPtr<MEDCouplingUMesh> _m;
+    mutable std::vector< MEDCouplingAutoRefCountObjectPtr<PartDefinition> > _part_def;
   };
 
   class MEDFileUMeshSplitL1 : public RefCountObject
@@ -186,7 +201,7 @@ namespace ParaMEDMEM
     MEDFileUMeshSplitL1(MEDCouplingUMesh *m, bool newOrOld);
     void setName(const std::string& name);
     std::size_t getHeapMemorySizeWithoutChildren() const;
-    std::vector<const BigMemoryObject *> getDirectChildren() const;
+    std::vector<const BigMemoryObject *> getDirectChildrenWithNull() const;
     MEDFileUMeshSplitL1 *deepCpy(DataArrayDouble *coords) const;
     void setCoords(DataArrayDouble *coords);
     bool isEqual(const MEDFileUMeshSplitL1 *other, double eps, std::string& what) const;
@@ -203,9 +218,11 @@ namespace ParaMEDMEM
     MEDCouplingUMesh *getFamilyPart(const int *idsBg, const int *idsEnd, bool renum) const;
     DataArrayInt *getFamilyPartArr(const int *idsBg, const int *idsEnd, bool renum) const;
     MEDCouplingUMesh *getWholeMesh(bool renum) const;
+    int getNumberOfCells() const;
+    bool isMeshStoredSplitByType() const { return _m_by_types.isStoredSplitByType(); }
     std::vector<INTERP_KERNEL::NormalizedCellType> getGeoTypes() const;
-    std::vector<MEDCoupling1GTUMesh *> getDirectUndergroundSingleGeoTypeMeshes() const { return _m_by_types.getPartsWithoutComputation(); }
-    MEDCoupling1GTUMesh *getDirectUndergroundSingleGeoTypeMesh(INTERP_KERNEL::NormalizedCellType gt) const { return _m_by_types.getPartWithoutComputation(gt); }
+    std::vector<MEDCoupling1GTUMesh *> getDirectUndergroundSingleGeoTypeMeshes() const { return _m_by_types.retrievePartsWithoutComputation(); }
+    MEDCoupling1GTUMesh *getDirectUndergroundSingleGeoTypeMesh(INTERP_KERNEL::NormalizedCellType gt) const { return _m_by_types.retrievePartWithoutComputation(gt); }
     DataArrayInt *extractFamilyFieldOnGeoType(INTERP_KERNEL::NormalizedCellType gt) const;
     DataArrayInt *extractNumberFieldOnGeoType(INTERP_KERNEL::NormalizedCellType gt) const;
     std::vector<int> getDistributionOfTypes() const { return _m_by_types.getDistributionOfTypes(); }
@@ -214,17 +231,22 @@ namespace ParaMEDMEM
     const DataArrayInt *getNumberField() const;
     const DataArrayAsciiChar *getNameField() const;
     const DataArrayInt *getRevNumberField() const;
+    const PartDefinition *getPartDef(INTERP_KERNEL::NormalizedCellType gt) const;
     void eraseFamilyField();
     void setGroupsFromScratch(const std::vector<const MEDCouplingUMesh *>& ms, std::map<std::string,int>& familyIds,
                               std::map<std::string, std::vector<std::string> >& groups);
     void write(med_idt fid, const std::string& mName, int mdim) const;
     //
     void setFamilyArr(DataArrayInt *famArr);
+    DataArrayInt *getFamilyField();
     void setRenumArr(DataArrayInt *renumArr);
     void setNameArr(DataArrayAsciiChar *nameArr);
     void changeFamilyIdArr(int oldId, int newId);
     //
     void renumberNodesInConn(const int *newNodeNumbersO2N);
+    //
+    void serialize(std::vector<int>& tinyInt, std::vector< MEDCouplingAutoRefCountObjectPtr<DataArrayInt> >& bigArraysI) const;
+    void unserialize(const std::string& name, DataArrayDouble *coo, std::vector<int>& tinyInt, std::vector< MEDCouplingAutoRefCountObjectPtr<DataArrayInt> >& bigArraysI);
     //
     static void ClearNonDiscrAttributes(const MEDCouplingMesh *tmp);
     static std::vector<int> GetNewFamiliesNumber(int nb, const std::map<std::string,int>& families);
@@ -232,7 +254,9 @@ namespace ParaMEDMEM
                                     std::map<int,int>& famIdTrad, std::map<int,std::string>& newfams);
     static DataArrayInt *Renumber(const DataArrayInt *renum, const DataArrayInt *da);
     static MEDCouplingUMesh *Renumber2(const DataArrayInt *renum, MEDCouplingUMesh *m, const int *cellIds);
+    static MEDFileUMeshSplitL1 *Unserialize(const std::string& name, DataArrayDouble *coo, std::vector<int>& tinyInt, std::vector< MEDCouplingAutoRefCountObjectPtr<DataArrayInt> >& bigArraysI);
   private:
+    MEDFileUMeshSplitL1();
     void assignCommonPart();
     MEDCouplingUMesh *renumIfNeeded(MEDCouplingUMesh *m, const int *cellIds) const;
     DataArrayInt *renumIfNeededArr(const DataArrayInt *da) const;

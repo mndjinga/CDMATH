@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -36,7 +36,7 @@
 #include "PointLocator3DIntersectorP1P1.txx"
 #include "Barycentric3DIntersectorP1P1.txx"
 #include "Log.hxx"
-/// If defined, use recursion to traverse the binary search tree, else use the BBTree class
+// If defined, use recursion to traverse the binary search tree, else use the BBTree class
 //#define USE_RECURSIVE_BBOX_FILTER
 
 #ifdef USE_RECURSIVE_BBOX_FILTER

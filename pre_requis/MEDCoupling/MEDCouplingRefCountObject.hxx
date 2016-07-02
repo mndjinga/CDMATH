@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -67,11 +67,12 @@ namespace ParaMEDMEM
   public:
     MEDCOUPLING_EXPORT std::size_t getHeapMemorySize() const;
     MEDCOUPLING_EXPORT std::string getHeapMemorySizeStr() const;
+    MEDCOUPLING_EXPORT std::vector<const BigMemoryObject *> getDirectChildren() const;
     MEDCOUPLING_EXPORT std::vector<const BigMemoryObject *> getAllTheProgeny() const;
     MEDCOUPLING_EXPORT bool isObjectInTheProgeny(const BigMemoryObject *obj) const;
     MEDCOUPLING_EXPORT static std::size_t GetHeapMemorySizeOfObjs(const std::vector<const BigMemoryObject *>& objs);
     MEDCOUPLING_EXPORT virtual std::size_t getHeapMemorySizeWithoutChildren() const = 0;
-    MEDCOUPLING_EXPORT virtual std::vector<const BigMemoryObject *> getDirectChildren() const = 0;
+    MEDCOUPLING_EXPORT virtual std::vector<const BigMemoryObject *> getDirectChildrenWithNull() const = 0;
     MEDCOUPLING_EXPORT virtual ~BigMemoryObject();
   private:
     static std::size_t GetHeapMemoryOfSet(std::set<const BigMemoryObject *>& s1, std::set<const BigMemoryObject *>& s2);

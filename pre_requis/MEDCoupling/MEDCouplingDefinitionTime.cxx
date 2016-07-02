@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -114,7 +114,7 @@ std::size_t MEDCouplingDefinitionTimeSlice::getHeapMemorySizeWithoutChildren() c
   return 0;
 }
 
-std::vector<const BigMemoryObject *> MEDCouplingDefinitionTimeSlice::getDirectChildren() const
+std::vector<const BigMemoryObject *> MEDCouplingDefinitionTimeSlice::getDirectChildrenWithNull() const
 {
   return std::vector<const BigMemoryObject *>();
 }
@@ -474,7 +474,7 @@ std::size_t MEDCouplingDefinitionTime::getHeapMemorySizeWithoutChildren() const
   return _slices.capacity()*(sizeof(MEDCouplingDefinitionTimeSlice)+sizeof(int));
 }
 
-std::vector<const BigMemoryObject *> MEDCouplingDefinitionTime::getDirectChildren() const
+std::vector<const BigMemoryObject *> MEDCouplingDefinitionTime::getDirectChildrenWithNull() const
 {
   return std::vector<const BigMemoryObject *>();
 }

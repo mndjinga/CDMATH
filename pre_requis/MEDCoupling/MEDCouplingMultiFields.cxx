@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -195,15 +195,11 @@ std::size_t MEDCouplingMultiFields::getHeapMemorySizeWithoutChildren() const
   return 0;
 }
 
-std::vector<const BigMemoryObject *> MEDCouplingMultiFields::getDirectChildren() const
+std::vector<const BigMemoryObject *> MEDCouplingMultiFields::getDirectChildrenWithNull() const
 {
   std::vector<const BigMemoryObject *> ret;
   for(std::vector< MEDCouplingAutoRefCountObjectPtr<MEDCouplingFieldDouble> >::const_iterator it=_fs.begin();it!=_fs.end();it++)
-    {
-      const MEDCouplingFieldDouble *curF(*it);
-      if(curF)
-        ret.push_back(curF);
-    }
+    ret.push_back((const MEDCouplingFieldDouble *)*it);
   return ret;
 }
 

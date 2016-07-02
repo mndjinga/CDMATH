@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -189,8 +189,8 @@ void CppExample_MEDCouplingFieldDouble_applyFunc_same_nb_comp()
   MEDCouplingAutoRefCountObjectPtr<MEDCouplingFieldDouble> field =
     MEDCouplingFieldDouble::New( ParaMEDMEM::ON_CELLS );
   field->setArray( array );
-  const char func[] = "IVec * v + JVec * v*v + 10";
-  field->applyFunc( func );
+  const char func[] = "IVec * v + JVec * w*w + 10";
+  field->applyFunc( 2, func );
   CPPUNIT_ASSERT( field->getNumberOfComponents() == 2 ); // 2 components remains
   //! [CppSnippet_MEDCouplingFieldDouble_applyFunc_same_nb_comp_1]
   //! [CppSnippet_MEDCouplingFieldDouble_applyFunc_same_nb_comp_2]

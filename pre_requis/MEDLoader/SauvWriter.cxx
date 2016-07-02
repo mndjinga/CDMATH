@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -226,7 +226,7 @@ std::size_t SauvWriter::getHeapMemorySizeWithoutChildren() const
   return 0;
 }
 
-std::vector<const BigMemoryObject *> SauvWriter::getDirectChildren() const
+std::vector<const BigMemoryObject *> SauvWriter::getDirectChildrenWithNull() const
 {
   return std::vector<const BigMemoryObject *>();
 }

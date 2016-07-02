@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -24,6 +24,8 @@
 #include "MEDCouplingCMesh.hxx"
 
 #include "SplitterTetra.hxx"
+#include "DiameterCalculator.hxx"
+#include "InterpKernelAutoPtr.hxx"
 
 using namespace ParaMEDMEM;
 
@@ -583,12 +585,10 @@ std::size_t MEDCoupling1SGTUMesh::getHeapMemorySizeWithoutChildren() const
   return MEDCoupling1GTUMesh::getHeapMemorySizeWithoutChildren();
 }
 
-std::vector<const BigMemoryObject *> MEDCoupling1SGTUMesh::getDirectChildren() const
+std::vector<const BigMemoryObject *> MEDCoupling1SGTUMesh::getDirectChildrenWithNull() const
 {
-  std::vector<const BigMemoryObject *> ret(MEDCoupling1GTUMesh::getDirectChildren());
-  const DataArrayInt *c(_conn);
-  if(c)
-    ret.push_back(c);
+  std::vector<const BigMemoryObject *> ret(MEDCoupling1GTUMesh::getDirectChildrenWithNull());
+  ret.push_back((const DataArrayInt *)_conn);
   return ret;
 }
 
@@ -1008,6 +1008,29 @@ struct MEDCouplingAccVisit
 /// @endcond
 
 /*!
+ * This method returns all node ids used in \b this. The data array returned has to be dealt by the caller.
+ * The returned node ids are sortes ascendingly. This method is closed to MEDCoupling1SGTUMesh::getNodeIdsInUse except
+ * the format of returned DataArrayInt instance.
+ *
+ * \return a newly allocated DataArrayInt sorted ascendingly of fetched node ids.
+ * \sa MEDCoupling1SGTUMesh::getNodeIdsInUse, areAllNodesFetched
+ */
+DataArrayInt *MEDCoupling1SGTUMesh::computeFetchedNodeIds() const
+{
+  checkCoherencyOfConnectivity();
+  int nbNodes(getNumberOfNodes());
+  std::vector<bool> fetchedNodes(nbNodes,false);
+  computeNodeIdsAlg(fetchedNodes);
+  int sz((int)std::count(fetchedNodes.begin(),fetchedNodes.end(),true));
+  MEDCouplingAutoRefCountObjectPtr<DataArrayInt> ret(DataArrayInt::New()); ret->alloc(sz,1);
+  int *retPtr(ret->getPointer());
+  for(int i=0;i<nbNodes;i++)
+    if(fetchedNodes[i])
+      *retPtr++=i;
+  return ret.retn();
+}
+
+/*!
  * Finds nodes not used in any cell and returns an array giving a new id to every node
  * by excluding the unused nodes, for which the array holds -1. The result array is
  * a mapping in "Old to New" mode. 
@@ -1019,13 +1042,14 @@ struct MEDCouplingAccVisit
  *  \throw If the coordinates array is not set.
  *  \throw If the nodal connectivity of cells is not defined.
  *  \throw If the nodal connectivity includes an invalid id.
+ *  \sa MEDCoupling1SGTUMesh::computeFetchedNodeIds, areAllNodesFetched
  */
 DataArrayInt *MEDCoupling1SGTUMesh::getNodeIdsInUse(int& nbrOfNodesInUse) const
 {
   nbrOfNodesInUse=-1;
   int nbOfNodes=getNumberOfNodes();
   int nbOfCells=getNumberOfCells();
-  MEDCouplingAutoRefCountObjectPtr<DataArrayInt> ret=DataArrayInt::New();
+  MEDCouplingAutoRefCountObjectPtr<DataArrayInt> ret(DataArrayInt::New());
   ret->alloc(nbOfNodes,1);
   int *traducer=ret->getPointer();
   std::fill(traducer,traducer+nbOfNodes,-1);
@@ -1046,13 +1070,55 @@ DataArrayInt *MEDCoupling1SGTUMesh::getNodeIdsInUse(int& nbrOfNodesInUse) const
 }
 
 /*!
+ * This method renumbers only nodal connectivity in \a this. The renumbering is only an offset applied. So this method is a specialization of
+ * \a renumberNodesInConn. \b WARNING, this method does not check that the resulting node ids in the nodal connectivity is in a valid range !
+ *
+ * \param [in] offset - specifies the offset to be applied on each element of connectivity.
+ *
+ * \sa renumberNodesInConn
+ */
+void MEDCoupling1SGTUMesh::renumberNodesWithOffsetInConn(int offset)
+{
+  getNumberOfCells();//only to check that all is well defined.
+  _conn->applyLin(1,offset);
+  updateTime();
+}
+
+/*!
+ *  Same than renumberNodesInConn(const int *) except that here the format of old-to-new traducer is using map instead
+ *  of array. This method is dedicated for renumbering from a big set of nodes the a tiny set of nodes which is the case during extraction
+ *  of a big mesh.
+ */
+void MEDCoupling1SGTUMesh::renumberNodesInConn(const INTERP_KERNEL::HashMap<int,int>& newNodeNumbersO2N)
+{
+  getNumberOfCells();//only to check that all is well defined.
+  int *begPtr(_conn->getPointer());
+  int nbElt(_conn->getNumberOfTuples());
+  int *endPtr(begPtr+nbElt);
+  for(int *it=begPtr;it!=endPtr;it++)
+    {
+      INTERP_KERNEL::HashMap<int,int>::const_iterator it2(newNodeNumbersO2N.find(*it));
+      if(it2!=newNodeNumbersO2N.end())
+        {
+          *it=(*it2).second;
+        }
+      else
+        {
+          std::ostringstream oss; oss << "MEDCoupling1SGTUMesh::renumberNodesInConn : At pos #" << std::distance(begPtr,it) << " of nodal connectivity value is " << *it << ". Not in map !";
+          throw INTERP_KERNEL::Exception(oss.str().c_str());
+        }
+    }
+  updateTime();
+}
+
+/*!
  * Changes ids of nodes within the nodal connectivity arrays according to a permutation
  * array in "Old to New" mode. The node coordinates array is \b not changed by this method.
  * This method is a generalization of shiftNodeNumbersInConn().
  *  \warning This method performs no check of validity of new ids. **Use it with care !**
  *  \param [in] newNodeNumbersO2N - a permutation array, of length \a
  *         this->getNumberOfNodes(), in "Old to New" mode. 
- *         See \ref MEDCouplingArrayRenumbering for more info on renumbering modes.
+ *         See \ref numbering for more info on renumbering modes.
  *  \throw If the nodal connectivity of cells is not defined.
  */
 void MEDCoupling1SGTUMesh::renumberNodesInConn(const int *newNodeNumbersO2N)
@@ -1231,20 +1297,16 @@ MEDCouplingPointSet *MEDCoupling1SGTUMesh::buildPartOfMySelfKeepCoords2(int star
 void MEDCoupling1SGTUMesh::computeNodeIdsAlg(std::vector<bool>& nodeIdsInUse) const
 {
   int sz((int)nodeIdsInUse.size());
-  int nbCells(getNumberOfCells());
-  int nbOfNodesPerCell(getNumberOfNodesPerCell());
-  const int *w(_conn->begin());
-  for(int i=0;i<nbCells;i++)
-    for(int j=0;j<nbOfNodesPerCell;j++,w++)
-      {
-        if(*w>=0 && *w<sz)
-          nodeIdsInUse[*w]=true;
-        else
-          {
-            std::ostringstream oss; oss << "MEDCoupling1SGTUMesh::computeNodeIdsAlg : At cell #" << i << " presence of node id #" << *w << " should be in [0," << sz << ") !";
-            throw INTERP_KERNEL::Exception(oss.str().c_str());
-          }
-      }
+  for(const int *conn=_conn->begin();conn!=_conn->end();conn++)
+    {
+      if(*conn>=0 && *conn<sz)
+       nodeIdsInUse[*conn]=true;
+      else
+        {
+          std::ostringstream oss; oss << "MEDCoupling1SGTUMesh::computeFetchedNodeIds : At pos #" << std::distance(_conn->begin(),conn) << " value is " << *conn << " must be in [0," << sz << ") !";
+          throw INTERP_KERNEL::Exception(oss.str().c_str());
+        }
+    }
 }
 
 MEDCoupling1SGTUMesh *MEDCoupling1SGTUMesh::buildSetInstanceFromThis(int spaceDim) const
@@ -2053,6 +2115,26 @@ DataArrayDouble *MEDCoupling1SGTUMesh::getBoundingBoxForBBTree(double arcDetEps)
   return ret.retn();
 }
 
+/*!
+ * Returns the cell field giving for each cell in \a this its diameter. Diameter means the max length of all possible SEG2 in the cell.
+ *
+ * \return a new instance of field containing the result. The returned instance has to be deallocated by the caller.
+ */
+MEDCouplingFieldDouble *MEDCoupling1SGTUMesh::computeDiameterField() const
+{
+  checkFullyDefined();
+  MEDCouplingAutoRefCountObjectPtr<MEDCouplingFieldDouble> ret(MEDCouplingFieldDouble::New(ON_CELLS,ONE_TIME));
+  int nbCells(getNumberOfCells());
+  MEDCouplingAutoRefCountObjectPtr<DataArrayDouble> arr(DataArrayDouble::New());
+  arr->alloc(nbCells,1);
+  INTERP_KERNEL::AutoCppPtr<INTERP_KERNEL::DiameterCalculator> dc(_cm->buildInstanceOfDiameterCalulator(getSpaceDimension()));
+  dc->computeFor1SGTUMeshFrmt(nbCells,_conn->begin(),getCoords()->begin(),arr->getPointer());
+  ret->setMesh(this);
+  ret->setArray(arr);
+  ret->setName("Diameter");
+  return ret.retn();
+}
+
 //== 
 
 MEDCoupling1DGTUMesh *MEDCoupling1DGTUMesh::New()
@@ -2131,15 +2213,11 @@ std::size_t MEDCoupling1DGTUMesh::getHeapMemorySizeWithoutChildren() const
   return MEDCoupling1GTUMesh::getHeapMemorySizeWithoutChildren();
 }
 
-std::vector<const BigMemoryObject *> MEDCoupling1DGTUMesh::getDirectChildren() const
+std::vector<const BigMemoryObject *> MEDCoupling1DGTUMesh::getDirectChildrenWithNull() const
 {
-  std::vector<const BigMemoryObject *> ret(MEDCoupling1GTUMesh::getDirectChildren());
-  const DataArrayInt *c(_conn);
-  if(c)
-    ret.push_back(c);
-  c=_conn_indx;
-  if(c)
-    ret.push_back(c);
+  std::vector<const BigMemoryObject *> ret(MEDCoupling1GTUMesh::getDirectChildrenWithNull());
+  ret.push_back((const DataArrayInt *)_conn);
+  ret.push_back((const DataArrayInt *)_conn_indx);
   return ret;
 }
 
@@ -2785,21 +2863,21 @@ MEDCouplingPointSet *MEDCoupling1DGTUMesh::buildPartOfMySelfKeepCoords2(int star
 
 void MEDCoupling1DGTUMesh::computeNodeIdsAlg(std::vector<bool>& nodeIdsInUse) const
 {
+  checkCoherency2();
   int sz((int)nodeIdsInUse.size());
-  int nbCells(getNumberOfCells());
-  const int *w(_conn->begin()),*wi(_conn_indx->begin());
-  for(int i=0;i<nbCells;i++,wi++)
-    for(const int *pt=w+wi[0];pt!=w+wi[1];pt++)
-      if(*pt!=-1)
+  for(const int *conn=_conn->begin();conn!=_conn->end();conn++)
+    {
+      if(*conn>=0 && *conn<sz)
+        nodeIdsInUse[*conn]=true;
+      else
         {
-          if(*pt>=0 && *pt<sz)
-            nodeIdsInUse[*pt]=true;
-          else
+          if(*conn!=-1)
             {
-              std::ostringstream oss; oss << "MEDCoupling1DGTUMesh::computeNodeIdsAlg : At cell #" << i << " presence of node id #" << *pt << " should be in [0," << sz << ") !";
+              std::ostringstream oss; oss << "MEDCoupling1DGTUMesh::computeNodeIdsAlg : At pos #" << std::distance(_conn->begin(),conn) << " value is " << *conn << " must be in [0," << sz << ") !";
               throw INTERP_KERNEL::Exception(oss.str().c_str());
             }
         }
+    }
 }
 
 void MEDCoupling1DGTUMesh::getReverseNodalConnectivity(DataArrayInt *revNodal, DataArrayInt *revNodalIndx) const
@@ -2981,6 +3059,35 @@ void MEDCoupling1DGTUMesh::unserialization(const std::vector<double>& tinyInfoD,
 /*!
  * Finds nodes not used in any cell and returns an array giving a new id to every node
  * by excluding the unused nodes, for which the array holds -1. The result array is
+ * a mapping in "Old to New" mode.
+ *  \param [out] nbrOfNodesInUse - number of node ids present in the nodal connectivity.
+ *  \return DataArrayInt * - a new instance of DataArrayInt. Its length is \a
+ *          this->getNumberOfNodes(). It holds for each node of \a this mesh either -1
+ *          if the node is unused or a new id else. The caller is to delete this
+ *          array using decrRef() as it is no more needed.
+ *  \throw If the coordinates array is not set.
+ *  \throw If the nodal connectivity of cells is not defined.
+ *  \throw If the nodal connectivity includes an invalid id.
+ *  \sa MEDCoupling1DGTUMesh::getNodeIdsInUse, areAllNodesFetched
+ */
+DataArrayInt *MEDCoupling1DGTUMesh::computeFetchedNodeIds() const
+{
+  checkCoherency2();
+  int nbNodes(getNumberOfNodes());
+  std::vector<bool> fetchedNodes(nbNodes,false);
+  computeNodeIdsAlg(fetchedNodes);
+  int sz((int)std::count(fetchedNodes.begin(),fetchedNodes.end(),true));
+  MEDCouplingAutoRefCountObjectPtr<DataArrayInt> ret(DataArrayInt::New()); ret->alloc(sz,1);
+  int *retPtr(ret->getPointer());
+  for(int i=0;i<nbNodes;i++)
+    if(fetchedNodes[i])
+      *retPtr++=i;
+  return ret.retn();
+}
+
+/*!
+ * Finds nodes not used in any cell and returns an array giving a new id to every node
+ * by excluding the unused nodes, for which the array holds -1. The result array is
  * a mapping in "Old to New" mode. 
  *  \param [out] nbrOfNodesInUse - number of node ids present in the nodal connectivity.
  *  \return DataArrayInt * - a new instance of DataArrayInt. Its length is \a
@@ -2990,6 +3097,7 @@ void MEDCoupling1DGTUMesh::unserialization(const std::vector<double>& tinyInfoD,
  *  \throw If the coordinates array is not set.
  *  \throw If the nodal connectivity of cells is not defined.
  *  \throw If the nodal connectivity includes an invalid id.
+ *  \sa MEDCoupling1DGTUMesh::computeFetchedNodeIds, areAllNodesFetched
  */
 DataArrayInt *MEDCoupling1DGTUMesh::getNodeIdsInUse(int& nbrOfNodesInUse) const
 {
@@ -3023,22 +3131,79 @@ DataArrayInt *MEDCoupling1DGTUMesh::getNodeIdsInUse(int& nbrOfNodesInUse) const
 }
 
 /*!
+ * This method renumbers only nodal connectivity in \a this. The renumbering is only an offset applied. So this method is a specialization of
+ * \a renumberNodesInConn. \b WARNING, this method does not check that the resulting node ids in the nodal connectivity is in a valid range !
+ *
+ * \param [in] offset - specifies the offset to be applied on each element of connectivity.
+ *
+ * \sa renumberNodesInConn
+ */
+void MEDCoupling1DGTUMesh::renumberNodesWithOffsetInConn(int offset)
+{
+  getNumberOfCells();//only to check that all is well defined.
+  //
+  int nbOfTuples(_conn->getNumberOfTuples());
+  int *pt(_conn->getPointer());
+  for(int i=0;i<nbOfTuples;i++,pt++)
+    {
+      if(*pt==-1) continue;
+      *pt+=offset;
+    }
+  //
+  updateTime();
+}
+
+/*!
+ *  Same than renumberNodesInConn(const int *) except that here the format of old-to-new traducer is using map instead
+ *  of array. This method is dedicated for renumbering from a big set of nodes the a tiny set of nodes which is the case during extraction
+ *  of a big mesh.
+ */
+void MEDCoupling1DGTUMesh::renumberNodesInConn(const INTERP_KERNEL::HashMap<int,int>& newNodeNumbersO2N)
+{
+  getNumberOfCells();//only to check that all is well defined.
+  //
+  int nbElemsIn(getNumberOfNodes()),nbOfTuples(_conn->getNumberOfTuples());
+  int *pt(_conn->getPointer());
+  for(int i=0;i<nbOfTuples;i++,pt++)
+    {
+      if(*pt==-1) continue;
+      if(*pt>=0 && *pt<nbElemsIn)
+        {
+          INTERP_KERNEL::HashMap<int,int>::const_iterator it(newNodeNumbersO2N.find(*pt));
+          if(it!=newNodeNumbersO2N.end())
+            *pt=(*it).second;
+          else
+            {
+              std::ostringstream oss; oss << "MEDCoupling1DGTUMesh::renumberNodesInConn : At pos #" << i << " of connectivity, node id is " << *pt << ". Not in keys of input map !";
+              throw INTERP_KERNEL::Exception(oss.str().c_str());
+            }
+        }
+      else
+        {
+          std::ostringstream oss; oss << "MEDCoupling1DGTUMesh::renumberNodesInConn : error on tuple #" << i << " value is " << *pt << " and indirectionnal array as a size equal to " << nbElemsIn;
+          throw INTERP_KERNEL::Exception(oss.str().c_str());
+        }
+    }
+  //
+  updateTime();
+}
+
+/*!
  * Changes ids of nodes within the nodal connectivity arrays according to a permutation
  * array in "Old to New" mode. The node coordinates array is \b not changed by this method.
  * This method is a generalization of shiftNodeNumbersInConn().
  *  \warning This method performs no check of validity of new ids. **Use it with care !**
  *  \param [in] newNodeNumbersO2N - a permutation array, of length \a
  *         this->getNumberOfNodes(), in "Old to New" mode. 
- *         See \ref MEDCouplingArrayRenumbering for more info on renumbering modes.
+ *         See \ref numbering for more info on renumbering modes.
  *  \throw If the nodal connectivity of cells is not defined.
  */
 void MEDCoupling1DGTUMesh::renumberNodesInConn(const int *newNodeNumbersO2N)
 {
   getNumberOfCells();//only to check that all is well defined.
   //
-  int nbElemsIn=getNumberOfNodes();
-  int nbOfTuples=_conn->getNumberOfTuples();
-  int *pt=_conn->getPointer();
+  int nbElemsIn(getNumberOfNodes()),nbOfTuples(_conn->getNumberOfTuples());
+  int *pt(_conn->getPointer());
   for(int i=0;i<nbOfTuples;i++,pt++)
     {
       if(*pt==-1) continue;
@@ -3050,7 +3215,6 @@ void MEDCoupling1DGTUMesh::renumberNodesInConn(const int *newNodeNumbersO2N)
           throw INTERP_KERNEL::Exception(oss.str().c_str());
         }
     }
-  _conn->declareAsNew();
   //
   updateTime();
 }
@@ -3450,6 +3614,16 @@ DataArrayDouble *MEDCoupling1DGTUMesh::getBoundingBoxForBBTree(double arcDetEps)
         }
     }
   return ret.retn();
+}
+
+/*!
+ * Returns the cell field giving for each cell in \a this its diameter. Diameter means the max length of all possible SEG2 in the cell.
+ *
+ * \return a new instance of field containing the result. The returned instance has to be deallocated by the caller.
+ */
+MEDCouplingFieldDouble *MEDCoupling1DGTUMesh::computeDiameterField() const
+{
+  throw INTERP_KERNEL::Exception("MEDCoupling1DGTUMesh::computeDiameterField : not implemented yet for dynamic types !");
 }
 
 std::vector<int> MEDCoupling1DGTUMesh::BuildAPolygonFromParts(const std::vector< std::vector<int> >& parts)

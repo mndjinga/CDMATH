@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -29,9 +29,9 @@ namespace INTERP_KERNEL
     %extend
     {
       std::string __str__() const
-        {
-          return std::string(self->what());
-        }
+      {
+        return std::string(self->what());
+      }
     }
   };
 }
@@ -157,3 +157,12 @@ namespace ParaMEDMEM
     return std::string(script);
   }
 }
+
+%pythoncode %{
+def INTERPKERNELExceptionReduceFunct(a,b):
+    ret=InterpKernelException.__new__(a)
+    ret.__init__(*b)
+    return ret
+def INTERPKERNELExceptionReduce(self):
+    return INTERPKERNELExceptionReduceFunct,(InterpKernelException,(self.what(),))
+%}

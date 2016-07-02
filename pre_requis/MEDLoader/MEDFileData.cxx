@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -43,6 +43,7 @@ MEDFileData *MEDFileData::deepCpy() const
   MEDCouplingAutoRefCountObjectPtr<MEDFileParameters> params;
   if((const MEDFileParameters *)_params)
     params=_params->deepCpy();
+  MEDCouplingAutoRefCountObjectPtr<MEDFileJoints> joints;
   MEDCouplingAutoRefCountObjectPtr<MEDFileData> ret=MEDFileData::New();
   ret->_fields=fields; ret->_meshes=meshes; ret->_params=params;
   return ret.retn();
@@ -53,15 +54,12 @@ std::size_t MEDFileData::getHeapMemorySizeWithoutChildren() const
   return 0;
 }
 
-std::vector<const BigMemoryObject *> MEDFileData::getDirectChildren() const
+std::vector<const BigMemoryObject *> MEDFileData::getDirectChildrenWithNull() const
 {
   std::vector<const BigMemoryObject *> ret;
-  if((const MEDFileFields *)_fields)
-    ret.push_back((const MEDFileFields *)_fields);
-  if((const MEDFileMeshes *)_meshes)
-    ret.push_back((const MEDFileMeshes *)_meshes);
-  if((const MEDFileParameters *)_params)
-    ret.push_back((const MEDFileParameters *)_params);
+  ret.push_back((const MEDFileFields *)_fields);
+  ret.push_back((const MEDFileMeshes *)_meshes);
+  ret.push_back((const MEDFileParameters *)_params);
   return ret;
 
 }

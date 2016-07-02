@@ -1,5 +1,5 @@
 #  -*- coding: iso-8859-1 -*-
-# Copyright (C) 2007-2014  CEA/DEN, EDF R&D
+# Copyright (C) 2007-2015  CEA/DEN, EDF R&D
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -337,4 +337,5 @@ class MEDLoaderTest(unittest.TestCase):
         pass
     pass
 
-unittest.main()
+if __name__ == "__main__":
+  unittest.main()

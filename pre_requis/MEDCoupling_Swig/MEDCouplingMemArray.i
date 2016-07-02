@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -73,6 +73,7 @@
 %newobject ParaMEDMEM::DataArrayInt::computeAbs;
 %newobject ParaMEDMEM::DataArrayInt::getIdsInRange;
 %newobject ParaMEDMEM::DataArrayInt::getIdsNotInRange;
+%newobject ParaMEDMEM::DataArrayInt::getIdsStrictlyNegative;
 %newobject ParaMEDMEM::DataArrayInt::Aggregate;
 %newobject ParaMEDMEM::DataArrayInt::AggregateIndexes;
 %newobject ParaMEDMEM::DataArrayInt::Meld;
@@ -92,6 +93,7 @@
 %newobject ParaMEDMEM::DataArrayInt::buildSubstractionOptimized;
 %newobject ParaMEDMEM::DataArrayInt::buildIntersection;
 %newobject ParaMEDMEM::DataArrayInt::buildUnique;
+%newobject ParaMEDMEM::DataArrayInt::buildUniqueNotSorted;
 %newobject ParaMEDMEM::DataArrayInt::deltaShiftIndex;
 %newobject ParaMEDMEM::DataArrayInt::buildExplicitArrByRanges;
 %newobject ParaMEDMEM::DataArrayInt::buildExplicitArrOfSliceOnScaledArr;
@@ -474,6 +476,41 @@ namespace ParaMEDMEM
         GetIndicesOfSlice(sly,self->getNumberOfTuples(),&strt,&stp,&step,"DataArray::getNumberOfItemGivenBESRelative (wrap) : the input slice is invalid !");
         return DataArray::GetNumberOfItemGivenBESRelative(strt,stp,step,"");
       }
+
+      PyObject *__getstate__() const throw(INTERP_KERNEL::Exception)
+      {
+        PyObject *ret(PyTuple_New(2));
+        std::string a0(self->getName());
+        const std::vector<std::string> &a1(self->getInfoOnComponents());
+        PyTuple_SetItem(ret,0,PyString_FromString(a0.c_str()));
+        //
+        int sz(a1.size());
+        PyObject *ret1(PyList_New(sz));
+        for(int i=0;i<sz;i++)
+          PyList_SetItem(ret1,i,PyString_FromString(a1[i].c_str()));
+        PyTuple_SetItem(ret,1,ret1);
+        //
+        return ret;
+      }
+
+      void __setstate__(PyObject *inp) throw(INTERP_KERNEL::Exception)
+      {
+        static const char MSG[]="DataArrayDouble.__setstate__ : expected input is a tuple of size 2 with string as 1st arg and list of string as 2nd arg !";
+        if(!PyTuple_Check(inp))
+          throw INTERP_KERNEL::Exception("DataArrayDouble.__setstate__ : invalid input ! Invalid overwrite of __getstate__ ?");
+        int sz(PyTuple_Size(inp));
+        if(sz!=2)
+          throw INTERP_KERNEL::Exception("DataArrayDouble.__setstate__ : invalid tuple in input ! Should be of size 2 ! Invalid overwrite of __getstate__ ?");
+        PyObject *a0(PyTuple_GetItem(inp,0));
+        if(!PyString_Check(a0))
+          throw INTERP_KERNEL::Exception(MSG);
+        PyObject *a1(PyTuple_GetItem(inp,1));
+        std::vector<std::string> a1cpp;
+        if(!fillStringVector(a1,a1cpp))
+          throw INTERP_KERNEL::Exception(MSG);
+        self->setName(PyString_AsString(a0));
+        self->setInfoOnComponents(a1cpp);
+      }
     }
   };
   
@@ -503,6 +540,7 @@ namespace ParaMEDMEM
     bool isMonotonic(bool increasing, double eps) const throw(INTERP_KERNEL::Exception);
     std::string repr() const throw(INTERP_KERNEL::Exception);
     std::string reprZip() const throw(INTERP_KERNEL::Exception);
+    std::string reprNotTooLong() const throw(INTERP_KERNEL::Exception);
     bool isEqual(const DataArrayDouble& other, double prec) const throw(INTERP_KERNEL::Exception);
     bool isEqualWithoutConsideringStr(const DataArrayDouble& other, double prec) const throw(INTERP_KERNEL::Exception);
     DataArrayInt *convertToIntArr() const throw(INTERP_KERNEL::Exception);
@@ -564,10 +602,11 @@ namespace ParaMEDMEM
     void applyRPow(double val) throw(INTERP_KERNEL::Exception);
     DataArrayDouble *negate() const throw(INTERP_KERNEL::Exception);
     DataArrayDouble *applyFunc(int nbOfComp, FunctionToEvaluate func) const throw(INTERP_KERNEL::Exception);
-    DataArrayDouble *applyFunc(int nbOfComp, const std::string& func) const throw(INTERP_KERNEL::Exception);
-    DataArrayDouble *applyFunc(const std::string& func) const throw(INTERP_KERNEL::Exception);
-    DataArrayDouble *applyFunc2(int nbOfComp, const std::string& func) const throw(INTERP_KERNEL::Exception);
-    DataArrayDouble *applyFunc3(int nbOfComp, const std::vector<std::string>& varsOrder, const std::string& func) const throw(INTERP_KERNEL::Exception);
+    DataArrayDouble *applyFunc(int nbOfComp, const std::string& func, bool isSafe=true) const throw(INTERP_KERNEL::Exception);
+    DataArrayDouble *applyFunc(const std::string& func, bool isSafe=true) const throw(INTERP_KERNEL::Exception);
+    void applyFuncOnThis(const std::string& func, bool isSafe=true) throw(INTERP_KERNEL::Exception);
+    DataArrayDouble *applyFunc2(int nbOfComp, const std::string& func, bool isSafe=true) const throw(INTERP_KERNEL::Exception);
+    DataArrayDouble *applyFunc3(int nbOfComp, const std::vector<std::string>& varsOrder, const std::string& func, bool isSafe=true) const throw(INTERP_KERNEL::Exception);
     void applyFuncFast32(const std::string& func) throw(INTERP_KERNEL::Exception);
     void applyFuncFast64(const std::string& func) throw(INTERP_KERNEL::Exception);
     DataArrayInt *getIdsInRange(double vmin, double vmax) const throw(INTERP_KERNEL::Exception);
@@ -714,7 +753,7 @@ namespace ParaMEDMEM
 
       std::string __str__() const throw(INTERP_KERNEL::Exception)
       {
-        return self->repr();
+        return self->reprNotTooLong();
       }
 
       double __float__() const throw(INTERP_KERNEL::Exception)
@@ -2171,6 +2210,59 @@ namespace ParaMEDMEM
         PyTuple_SetItem(ret,1,SWIG_NewPointerObj(SWIG_as_voidptr(ret1),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 ));
         return ret;
       }
+
+      // serialization
+      static PyObject *___new___(PyObject *cls, PyObject *args) throw(INTERP_KERNEL::Exception)
+      {
+        static const char MSG[]="DataArrayDouble.__new__ : the args in input is expected to be a tuple !";
+        if(!PyTuple_Check(args))
+          throw INTERP_KERNEL::Exception(MSG);
+        PyObject *builtinsd(PyEval_GetBuiltins());//borrowed
+        PyObject *obj(PyDict_GetItemString(builtinsd,"object"));//borrowed
+        PyObject *selfMeth(PyObject_GetAttrString(obj,"__new__"));
+        //
+        PyObject *tmp0(PyTuple_New(1));
+        PyTuple_SetItem(tmp0,0,cls); Py_XINCREF(cls);
+        PyObject *instance(PyObject_CallObject(selfMeth,tmp0));
+        Py_DECREF(tmp0);
+        Py_DECREF(selfMeth);
+        PyObject *initMeth(PyObject_GetAttrString(instance,"__init__"));
+        int sz(PyTuple_Size(args));
+        
+        if(PyTuple_Size(args)==2 && PyDict_Check(PyTuple_GetItem(args,1)) && PyDict_Size(PyTuple_GetItem(args,1))==1 )
+          {// NOT general case. only true if in unpickeling context ! call __init__. Because for all other cases, __init__ is called right after __new__ !
+            PyObject *zeNumpyRepr(0);
+            PyObject *tmp1(PyInt_FromLong(0));
+            zeNumpyRepr=PyDict_GetItem(PyTuple_GetItem(args,1),tmp1);//borrowed
+            Py_DECREF(tmp1);
+            PyObject *tmp3(PyTuple_New(1));
+            PyTuple_SetItem(tmp3,0,zeNumpyRepr); Py_XINCREF(zeNumpyRepr);
+            PyObject *tmp2(PyObject_CallObject(initMeth,tmp3));
+            Py_XDECREF(tmp2);
+            Py_DECREF(tmp3);
+          }
+        Py_DECREF(initMeth);
+        return instance;
+      }
+
+      PyObject *__getnewargs__() throw(INTERP_KERNEL::Exception)
+      {
+#ifdef WITH_NUMPY
+        if(!self->isAllocated())
+          throw INTERP_KERNEL::Exception("PyWrap of DataArrayDouble.__getnewargs__ : self is not allocated !");
+        PyObject *ret(PyTuple_New(1));
+        PyObject *ret0(PyDict_New());
+        PyObject *numpyArryObj(ParaMEDMEM_DataArrayDouble_toNumPyArray(self));
+        {// create a dict to discriminite in __new__ if __init__ should be called. Not beautiful but not idea ...
+          PyObject *tmp1(PyInt_FromLong(0));
+          PyDict_SetItem(ret0,tmp1,numpyArryObj); Py_DECREF(tmp1); Py_DECREF(numpyArryObj);
+          PyTuple_SetItem(ret,0,ret0);
+        }
+        return ret;
+#else
+        throw INTERP_KERNEL::Exception("PyWrap of DataArrayDouble.__getnewargs__ : not implemented because numpy is not active in your configuration ! No serialization/unserialization available without numpy !");
+#endif
+      }
     }
   };
 
@@ -2506,8 +2598,10 @@ namespace ParaMEDMEM
     void fillWithZero() throw(INTERP_KERNEL::Exception);
     void fillWithValue(int val) throw(INTERP_KERNEL::Exception);
     void iota(int init=0) throw(INTERP_KERNEL::Exception);
+    void replaceOneValByInThis(int valToBeReplaced, int replacedBy) throw(INTERP_KERNEL::Exception);
     std::string repr() const throw(INTERP_KERNEL::Exception);
     std::string reprZip() const throw(INTERP_KERNEL::Exception);
+    std::string reprNotTooLong() const throw(INTERP_KERNEL::Exception);
     DataArrayInt *invertArrayO2N2N2O(int newNbOfElem) const throw(INTERP_KERNEL::Exception);
     DataArrayInt *invertArrayN2O2O2N(int oldNbOfElem) const throw(INTERP_KERNEL::Exception);
     DataArrayInt *invertArrayO2N2N2OBis(int newNbOfElem) const throw(INTERP_KERNEL::Exception);
@@ -2518,6 +2612,7 @@ namespace ParaMEDMEM
     DataArrayInt *checkAndPreparePermutation() const throw(INTERP_KERNEL::Exception);
     DataArrayInt *buildPermArrPerLevel() const throw(INTERP_KERNEL::Exception);
     bool isIdentity() const throw(INTERP_KERNEL::Exception);
+    bool isIdentity2(int sizeExpected) const throw(INTERP_KERNEL::Exception);
     bool isUniform(int val) const throw(INTERP_KERNEL::Exception);
     DataArrayInt *substr(int tupleIdBg, int tupleIdEnd=-1) const throw(INTERP_KERNEL::Exception);
     void transpose() throw(INTERP_KERNEL::Exception);
@@ -2567,6 +2662,7 @@ namespace ParaMEDMEM
     void applyRPow(int val) throw(INTERP_KERNEL::Exception);
     DataArrayInt *getIdsInRange(int vmin, int vmax) const throw(INTERP_KERNEL::Exception);
     DataArrayInt *getIdsNotInRange(int vmin, int vmax) const throw(INTERP_KERNEL::Exception);
+    DataArrayInt *getIdsStrictlyNegative() const throw(INTERP_KERNEL::Exception);
     bool checkAllIdsInRange(int vmin, int vmax) const throw(INTERP_KERNEL::Exception);
     static DataArrayInt *Aggregate(const DataArrayInt *a1, const DataArrayInt *a2, int offsetA2) throw(INTERP_KERNEL::Exception);
     static DataArrayInt *Meld(const DataArrayInt *a1, const DataArrayInt *a2) throw(INTERP_KERNEL::Exception);
@@ -2580,12 +2676,14 @@ namespace ParaMEDMEM
     DataArrayInt *buildUnion(const DataArrayInt *other) const throw(INTERP_KERNEL::Exception);
     DataArrayInt *buildIntersection(const DataArrayInt *other) const throw(INTERP_KERNEL::Exception);
     DataArrayInt *buildUnique() const throw(INTERP_KERNEL::Exception);
+    DataArrayInt *buildUniqueNotSorted() const throw(INTERP_KERNEL::Exception);
     DataArrayInt *deltaShiftIndex() const throw(INTERP_KERNEL::Exception);
     void computeOffsets() throw(INTERP_KERNEL::Exception);
     void computeOffsets2() throw(INTERP_KERNEL::Exception);
     DataArrayInt *buildExplicitArrByRanges(const DataArrayInt *offsets) const throw(INTERP_KERNEL::Exception);
     DataArrayInt *findRangeIdForEachTuple(const DataArrayInt *ranges) const throw(INTERP_KERNEL::Exception);
     DataArrayInt *findIdInRangeForEachTuple(const DataArrayInt *ranges) const throw(INTERP_KERNEL::Exception);
+    void sortEachPairToMakeALinkedList() throw(INTERP_KERNEL::Exception);
     DataArrayInt *duplicateEachTupleNTimes(int nbTimes) const throw(INTERP_KERNEL::Exception);
     DataArrayInt *getDifferentValues() const throw(INTERP_KERNEL::Exception);
     static DataArrayInt *Add(const DataArrayInt *a1, const DataArrayInt *a2) throw(INTERP_KERNEL::Exception);
@@ -2711,7 +2809,7 @@ namespace ParaMEDMEM
 
       std::string __str__() const throw(INTERP_KERNEL::Exception)
       {
-        return self->repr();
+        return self->reprNotTooLong();
       }
 
       int __len__() const throw(INTERP_KERNEL::Exception)
@@ -2779,6 +2877,16 @@ namespace ParaMEDMEM
         if(strt==std::numeric_limits<int>::max() || stp==std::numeric_limits<int>::max())
           throw INTERP_KERNEL::Exception("DataArrayInt::buildExplicitArrOfSliceOnScaledArr (wrap) : the input slice contains some unknowns that can't be determined in static method ! Call DataArray::getSlice (non static) instead !");
         return self->buildExplicitArrOfSliceOnScaledArr(strt,stp,step);
+      }
+
+      PyObject *getMinMaxValues() const throw(INTERP_KERNEL::Exception)
+      {
+        int a,b;
+        self->getMinMaxValues(a,b);
+        PyObject *ret=PyTuple_New(2);
+        PyTuple_SetItem(ret,0,PyInt_FromLong(a));
+        PyTuple_SetItem(ret,1,PyInt_FromLong(b));
+        return ret;
       }
    
       static PyObject *BuildOld2NewArrayFromSurjectiveFormat2(int nbOfOldTuples, PyObject *arr, PyObject *arrI) throw(INTERP_KERNEL::Exception)
@@ -4441,6 +4549,78 @@ namespace ParaMEDMEM
         PyTuple_SetItem(pyRet,0,SWIG_NewPointerObj(SWIG_as_voidptr(ret0),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 ));
         PyTuple_SetItem(pyRet,1,SWIG_NewPointerObj(SWIG_as_voidptr(ret1),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 ));
         return pyRet;
+      }
+
+      PyObject *isRange() const throw(INTERP_KERNEL::Exception)
+      {
+        int a(0),b(0),c(0);
+        bool ret(self->isRange(a,b,c));
+        PyObject *pyRet=PyTuple_New(2);
+        PyObject *ret0Py=ret?Py_True:Py_False,*ret1Py(0);
+        Py_XINCREF(ret0Py);
+        PyTuple_SetItem(pyRet,0,ret0Py);
+        if(ret)
+          ret1Py=PySlice_New(PyInt_FromLong(a),PyInt_FromLong(b),PyInt_FromLong(c));
+        else
+          {
+            ret1Py=Py_None;
+            Py_XINCREF(ret1Py);
+          }
+        PyTuple_SetItem(pyRet,1,ret1Py);
+        return pyRet;
+      }
+      
+      // serialization
+      static PyObject *___new___(PyObject *cls, PyObject *args) throw(INTERP_KERNEL::Exception)
+      {
+        static const char MSG[]="DataArrayInt.__new__ : the args in input is expected to be a tuple !";
+        if(!PyTuple_Check(args))
+          throw INTERP_KERNEL::Exception(MSG);
+        PyObject *builtinsd(PyEval_GetBuiltins());//borrowed
+        PyObject *obj(PyDict_GetItemString(builtinsd,"object"));//borrowed
+        PyObject *selfMeth(PyObject_GetAttrString(obj,"__new__"));
+        //
+        PyObject *tmp0(PyTuple_New(1));
+        PyTuple_SetItem(tmp0,0,cls); Py_XINCREF(cls);
+        PyObject *instance(PyObject_CallObject(selfMeth,tmp0));
+        Py_DECREF(tmp0);
+        Py_DECREF(selfMeth);
+        PyObject *initMeth(PyObject_GetAttrString(instance,"__init__"));
+        int sz(PyTuple_Size(args));
+        
+        if(PyTuple_Size(args)==2 && PyDict_Check(PyTuple_GetItem(args,1)) && PyDict_Size(PyTuple_GetItem(args,1))==1 )
+          {// NOT general case. only true if in unpickeling context ! call __init__. Because for all other cases, __init__ is called right after __new__ !
+            PyObject *zeNumpyRepr(0);
+            PyObject *tmp1(PyInt_FromLong(0));
+            zeNumpyRepr=PyDict_GetItem(PyTuple_GetItem(args,1),tmp1);//borrowed
+            Py_DECREF(tmp1);
+            PyObject *tmp3(PyTuple_New(1));
+            PyTuple_SetItem(tmp3,0,zeNumpyRepr); Py_XINCREF(zeNumpyRepr);
+            PyObject *tmp2(PyObject_CallObject(initMeth,tmp3));
+            Py_XDECREF(tmp2);
+            Py_DECREF(tmp3);
+          }
+        Py_DECREF(initMeth);
+        return instance;
+      }
+      
+      PyObject *__getnewargs__() throw(INTERP_KERNEL::Exception)
+      {
+#ifdef WITH_NUMPY
+        if(!self->isAllocated())
+          throw INTERP_KERNEL::Exception("PyWrap of DataArrayInt.__getnewargs__ : self is not allocated !");
+        PyObject *ret(PyTuple_New(1));
+        PyObject *ret0(PyDict_New());
+        PyObject *numpyArryObj(ParaMEDMEM_DataArrayInt_toNumPyArray(self));
+        {// create a dict to discriminite in __new__ if __init__ should be called. Not beautiful but not idea ...
+          PyObject *tmp1(PyInt_FromLong(0));
+          PyDict_SetItem(ret0,tmp1,numpyArryObj); Py_DECREF(tmp1); Py_DECREF(numpyArryObj);
+          PyTuple_SetItem(ret,0,ret0);
+        }
+        return ret;
+#else
+        throw INTERP_KERNEL::Exception("PyWrap of DataArrayInt.__getnewargs__ : not implemented because numpy is not active in your configuration ! No serialization/unserialization available without numpy !");
+#endif
       }
     }
   };

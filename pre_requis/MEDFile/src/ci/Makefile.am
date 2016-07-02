@@ -27,6 +27,8 @@ MEDlibraryHdfNumVersion.c\
 MEDlibraryHdfStrVersion.c\
 MEDlibraryClose.c\
 MEDfileOpen.c\
+MEDfileName.c\
+MEDmemFileOpen.c\
 MEDfileClose.c \
 MEDfileCommentWr.c \
 MEDfileCommentRd.c \
@@ -197,6 +199,8 @@ MEDparameterComputationStepInfo.c \
 MEDmeshEntityInfo.c
 
 libci_la_SOURCES   += \
+_MEDfieldCr31.c \
+_MEDfieldCr30.c \
 _MEDmeshInfoByName30.c \
 _MEDmeshnAxisByName30.c \
 _MEDmeshUniversalNameRd30.c \
@@ -216,6 +220,7 @@ _MEDnFamilyGroup236.c \
 _MEDlinkRd30.c \
 _MEDlinkRd236.c \
 _MEDfieldComputingStepInfo30.c \
+_MEDfieldComputingStepInfo31.c \
 _MEDfieldComputingStepInfo236.c \
 _MEDfieldComputingStepMeshInfo30.c \
 _MEDfieldComputingStepMeshInfo236.c \
@@ -271,6 +276,7 @@ _MEDfileObjectsMount236.c \
 _MEDfileObjectsUnmount30.c \
 _MEDfileObjectsUnmount236.c \
 _MEDfield23ComputingStepMeshInfo30.c \
+_MEDfield23ComputingStepMeshInfo31.c \
 _MEDfield23ComputingStepMeshInfo236.c \
 _MEDfield23nProfile30.c \
 _MEDfield23nProfile236.c \

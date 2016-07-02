@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -120,7 +120,7 @@ std::size_t DataArray::getHeapMemorySizeWithoutChildren() const
   return sz1+sz2+sz3;
 }
 
-std::vector<const BigMemoryObject *> DataArray::getDirectChildren() const
+std::vector<const BigMemoryObject *> DataArray::getDirectChildrenWithNull() const
 {
   return std::vector<const BigMemoryObject *>();
 }
@@ -903,7 +903,7 @@ void DataArrayDouble::pushBackSilent(double val)
  * This method adds at the end of \a this a serie of values [\c valsBg,\c valsEnd). This method do \b not update its time label to avoid useless incrementation
  * of counter. So the caller is expected to call TimeLabel::declareAsNew on \a this at the end of the push session.
  *
- *  \param [in] valsBg - an array of values to push at the end of \this.
+ *  \param [in] valsBg - an array of values to push at the end of \c this.
  *  \param [in] valsEnd - specifies the end of the array \a valsBg, so that
  *              the last value of \a valsBg is \a valsEnd[ -1 ].
  * \throw If \a this has already been allocated with number of components different from one.
@@ -1146,7 +1146,9 @@ bool DataArrayDouble::isMonotonic(bool increasing, double eps) const
 /*!
  * Returns a textual and human readable representation of \a this instance of
  * DataArrayDouble. This text is shown when a DataArrayDouble is printed in Python.
- *  \return std::string - text describing \a this DataArrayDouble.
+ * \return std::string - text describing \a this DataArrayDouble.
+ *
+ * \sa reprNotTooLong, reprZip
  */
 std::string DataArrayDouble::repr() const
 {
@@ -1159,6 +1161,18 @@ std::string DataArrayDouble::reprZip() const
 {
   std::ostringstream ret;
   reprZipStream(ret);
+  return ret.str();
+}
+
+/*!
+ * This method is close to repr method except that when \a this has more than 1000 tuples, all tuples are not
+ * printed out to avoid to consume too much space in interpretor.
+ * \sa repr
+ */
+std::string DataArrayDouble::reprNotTooLong() const
+{
+  std::ostringstream ret;
+  reprNotTooLongStream(ret);
   return ret.str();
 }
 
@@ -1211,6 +1225,12 @@ void DataArrayDouble::reprZipStream(std::ostream& stream) const
   reprZipWithoutNameStream(stream);
 }
 
+void DataArrayDouble::reprNotTooLongStream(std::ostream& stream) const
+{
+  stream << "Name of double array : \"" << _name << "\"\n";
+  reprNotTooLongWithoutNameStream(stream);
+}
+
 void DataArrayDouble::reprWithoutNameStream(std::ostream& stream) const
 {
   DataArray::reprWithoutNameStream(stream);
@@ -1223,6 +1243,13 @@ void DataArrayDouble::reprZipWithoutNameStream(std::ostream& stream) const
   DataArray::reprWithoutNameStream(stream);
   stream.precision(17);
   _mem.reprZip(getNumberOfComponents(),stream);
+}
+
+void DataArrayDouble::reprNotTooLongWithoutNameStream(std::ostream& stream) const
+{
+  DataArray::reprWithoutNameStream(stream);
+  stream.precision(17);
+  _mem.reprNotTooLong(getNumberOfComponents(),stream);
 }
 
 void DataArrayDouble::reprCppStream(const std::string& varName, std::ostream& stream) const
@@ -1420,9 +1447,9 @@ DataArrayDouble *DataArrayDouble::toNoInterlace() const
 /*!
  * Permutes values of \a this array as required by \a old2New array. The values are
  * permuted so that \c new[ \a old2New[ i ]] = \c old[ i ]. Number of tuples remains
- * the same as in \this one.
+ * the same as in \c this one.
  * If a permutation reduction is needed, substr() or selectByTupleId() should be used.
- * For more info on renumbering see \ref MEDCouplingArrayRenumbering.
+ * For more info on renumbering see \ref numbering.
  *  \param [in] old2New - C array of length equal to \a this->getNumberOfTuples()
  *     giving a new position for i-th old value.
  */
@@ -1452,8 +1479,8 @@ void DataArrayDouble::renumberInPlace(const int *old2New)
 /*!
  * Permutes values of \a this array as required by \a new2Old array. The values are
  * permuted so that \c new[ i ] = \c old[ \a new2Old[ i ]]. Number of tuples remains
- * the same as in \this one.
- * For more info on renumbering see \ref MEDCouplingArrayRenumbering.
+ * the same as in \c this one.
+ * For more info on renumbering see \ref numbering.
  *  \param [in] new2Old - C array of length equal to \a this->getNumberOfTuples()
  *     giving a previous position of i-th new value.
  *  \return DataArrayDouble * - the new instance of DataArrayDouble that the caller
@@ -1485,9 +1512,9 @@ void DataArrayDouble::renumberInPlaceR(const int *new2Old)
 /*!
  * Returns a copy of \a this array with values permuted as required by \a old2New array.
  * The values are permuted so that  \c new[ \a old2New[ i ]] = \c old[ i ].
- * Number of tuples in the result array remains the same as in \this one.
+ * Number of tuples in the result array remains the same as in \c this one.
  * If a permutation reduction is needed, renumberAndReduce() should be used.
- * For more info on renumbering see \ref MEDCouplingArrayRenumbering.
+ * For more info on renumbering see \ref numbering.
  *  \param [in] old2New - C array of length equal to \a this->getNumberOfTuples()
  *          giving a new position for i-th old value.
  *  \return DataArrayDouble * - the new instance of DataArrayDouble that the caller
@@ -1513,9 +1540,9 @@ DataArrayDouble *DataArrayDouble::renumber(const int *old2New) const
 /*!
  * Returns a copy of \a this array with values permuted as required by \a new2Old array.
  * The values are permuted so that  \c new[ i ] = \c old[ \a new2Old[ i ]]. Number of
- * tuples in the result array remains the same as in \this one.
+ * tuples in the result array remains the same as in \c this one.
  * If a permutation reduction is needed, substr() or selectByTupleId() should be used.
- * For more info on renumbering see \ref MEDCouplingArrayRenumbering.
+ * For more info on renumbering see \ref numbering.
  *  \param [in] new2Old - C array of length equal to \a this->getNumberOfTuples()
  *     giving a previous position of i-th new value.
  *  \return DataArrayDouble * - the new instance of DataArrayDouble that the caller
@@ -1543,7 +1570,7 @@ DataArrayDouble *DataArrayDouble::renumberR(const int *new2Old) const
  * The values are permuted so that  \c new[ \a old2New[ i ]] = \c old[ i ] for all
  * \a old2New[ i ] >= 0. In other words every i-th tuple in \a this array, for which 
  * \a old2New[ i ] is negative, is missing from the result array.
- * For more info on renumbering see \ref MEDCouplingArrayRenumbering.
+ * For more info on renumbering see \ref numbering.
  *  \param [in] old2New - C array of length equal to \a this->getNumberOfTuples()
  *     giving a new position for i-th old tuple and giving negative position for
  *     for i-th old tuple that should be omitted.
@@ -1576,7 +1603,7 @@ DataArrayDouble *DataArrayDouble::renumberAndReduce(const int *old2New, int newN
  * The values are permuted so that  \c new[ i ] = \c old[ \a new2OldBg[ i ]].
  * This method is equivalent to renumberAndReduce() except that convention in input is
  * \c new2old and \b not \c old2new.
- * For more info on renumbering see \ref MEDCouplingArrayRenumbering.
+ * For more info on renumbering see \ref numbering.
  *  \param [in] new2OldBg - pointer to the beginning of a permutation array that gives a
  *              tuple index in \a this array to fill the i-th tuple in the new array.
  *  \param [in] new2OldEnd - specifies the end of the permutation array that starts at
@@ -1610,7 +1637,7 @@ DataArrayDouble *DataArrayDouble::selectByTupleId(const int *new2OldBg, const in
  * \c new2old and \b not \c old2new.
  * This method is equivalent to selectByTupleId() except that it prevents coping data
  * from behind the end of \a this array.
- * For more info on renumbering see \ref MEDCouplingArrayRenumbering.
+ * For more info on renumbering see \ref numbering.
  *  \param [in] new2OldBg - pointer to the beginning of a permutation array that gives a
  *              tuple index in \a this array to fill the i-th tuple in the new array.
  *  \param [in] new2OldEnd - specifies the end of the permutation array that starts at
@@ -1647,7 +1674,7 @@ DataArrayDouble *DataArrayDouble::selectByTupleIdSafe(const int *new2OldBg, cons
  * command \c range( \a bg, \a end2, \a step ).
  * This method is equivalent to selectByTupleIdSafe() except that the input array is
  * not constructed explicitly.
- * For more info on renumbering see \ref MEDCouplingArrayRenumbering.
+ * For more info on renumbering see \ref numbering.
  *  \param [in] bg - index of the first tuple to copy from \a this array.
  *  \param [in] end2 - index of the tuple before which the tuples to copy are located.
  *  \param [in] step - index increment to get index of the next tuple to copy.
@@ -1673,7 +1700,7 @@ DataArrayDouble *DataArrayDouble::selectByTupleId2(int bg, int end2, int step) c
 /*!
  * Returns a shorten copy of \a this array. The new DataArrayDouble contains ranges
  * of tuples specified by \a ranges parameter.
- * For more info on renumbering see \ref MEDCouplingArrayRenumbering.
+ * For more info on renumbering see \ref numbering.
  *  \param [in] ranges - std::vector of std::pair's each of which defines a range
  *              of tuples in [\c begin,\c end) format.
  *  \return DataArrayDouble * - the new instance of DataArrayDouble that the caller
@@ -1871,7 +1898,7 @@ void DataArrayDouble::transpose()
  *  \ref py_mcdataarraydouble_KeepSelectedComponents "Here is a Python example".
  *  \endif
  */
-DataArray *DataArrayDouble::keepSelectedComponents(const std::vector<int>& compoIds) const
+DataArrayDouble *DataArrayDouble::keepSelectedComponents(const std::vector<int>& compoIds) const
 {
   checkAllocated();
   MEDCouplingAutoRefCountObjectPtr<DataArrayDouble> ret(DataArrayDouble::New());
@@ -2358,7 +2385,7 @@ void DataArrayDouble::setPartOfValues1(const DataArrayDouble *a, int bgTuples, i
  *  \throw If \a this is not allocated.
  *  \throw If parameters specifying tuples and components to assign to, do not give a
  *            non-empty range of increasing indices or indices are out of a valid range
- *            for \this array.
+ *            for \c this array.
  *
  *  \if ENABLE_EXAMPLES
  *  \ref py_mcdataarraydouble_setpartofvaluessimple1 "Here is a Python example".
@@ -2549,7 +2576,7 @@ void DataArrayDouble::setPartOfValuesSimple2(double a, const int *bgTuples, cons
  *         defined by <em>(bgComp,endComp,stepComp)</em>.
  *  \throw If parameters specifying components to assign to, do not give a
  *            non-empty range of increasing indices or indices are out of a valid range
- *            for \this array.
+ *            for \c this array.
  *
  *  \if ENABLE_EXAMPLES
  *  \ref py_mcdataarraydouble_setpartofvalues3 "Here is a Python example".
@@ -2623,7 +2650,7 @@ void DataArrayDouble::setPartOfValues3(const DataArrayDouble *a, const int *bgTu
  *         \a this array.
  *  \throw If parameters specifying components to assign to, do not give a
  *            non-empty range of increasing indices or indices are out of a valid range
- *            for \this array.
+ *            for \c this array.
  *
  *  \if ENABLE_EXAMPLES
  *  \ref py_mcdataarraydouble_setpartofvaluessimple3 "Here is a Python example".
@@ -4316,6 +4343,8 @@ DataArrayDouble *DataArrayDouble::applyFunc(int nbOfComp, FunctionToEvaluate fun
  *  \param [in] nbOfComp - number of components in the result array.
  *  \param [in] func - the expression defining how to transform a tuple of \a this array.
  *              Supported expressions are described \ref MEDCouplingArrayApplyFuncExpr "here".
+ *  \param [in] isSafe - By default true. If true invalid operation (division by 0. acos of value > 1. ...) leads to a throw of an exception.
+ *              If false the computation is carried on without any notification. When false the evaluation is a little faster.
  *  \return DataArrayDouble * - the new instance of DataArrayDouble containing the
  *          same number of tuples as \a this array and \a nbOfComp components.
  *          The caller is to delete this result array using decrRef() as it is no more
@@ -4323,89 +4352,188 @@ DataArrayDouble *DataArrayDouble::applyFunc(int nbOfComp, FunctionToEvaluate fun
  *  \throw If \a this is not allocated.
  *  \throw If computing \a func fails.
  */
-DataArrayDouble *DataArrayDouble::applyFunc(int nbOfComp, const std::string& func) const
+DataArrayDouble *DataArrayDouble::applyFunc(int nbOfComp, const std::string& func, bool isSafe) const
 {
-  checkAllocated();
   INTERP_KERNEL::ExprParser expr(func);
   expr.parse();
   std::set<std::string> vars;
   expr.getTrueSetOfVars(vars);
-  int oldNbOfComp=getNumberOfComponents();
-  if((int)vars.size()>oldNbOfComp)
-    {
-      std::ostringstream oss; oss << "The field has " << oldNbOfComp << " components and there are ";
-      oss << vars.size() << " variables : ";
-      std::copy(vars.begin(),vars.end(),std::ostream_iterator<std::string>(oss," "));
-      throw INTERP_KERNEL::Exception(oss.str().c_str());
-    }
   std::vector<std::string> varsV(vars.begin(),vars.end());
-  expr.prepareExprEvaluation(varsV,oldNbOfComp,nbOfComp);
-  //
-  DataArrayDouble *newArr=DataArrayDouble::New();
-  int nbOfTuples=getNumberOfTuples();
-  newArr->alloc(nbOfTuples,nbOfComp);
-  const double *ptr=getConstPointer();
-  double *ptrToFill=newArr->getPointer();
-  for(int i=0;i<nbOfTuples;i++)
-    {
-      try
-      {
-          expr.evaluateExpr(nbOfComp,ptr+i*oldNbOfComp,ptrToFill+i*nbOfComp);
-      }
-      catch(INTERP_KERNEL::Exception& e)
-      {
-          std::ostringstream oss; oss << "For tuple # " << i << " with value (";
-          std::copy(ptr+oldNbOfComp*i,ptr+oldNbOfComp*(i+1),std::ostream_iterator<double>(oss,", "));
-          oss << ") : Evaluation of function failed !" << e.what();
-          newArr->decrRef();
-          throw INTERP_KERNEL::Exception(oss.str().c_str());
-      }
-    }
-  return newArr;
+  return applyFunc3(nbOfComp,varsV,func,isSafe);
 }
 
 /*!
  * Returns a new DataArrayDouble created from \a this one by applying a function to every
- * tuple of \a this array. Textual data is not copied.
+ * tuple of \a this array. Textual data is not copied. This method works by tuples (whatever its size).
+ * If \a this is a one component array, call applyFuncOnThis instead that performs the same work faster.
+ *
  * For more info see \ref MEDCouplingArrayApplyFunc0.
  *  \param [in] func - the expression defining how to transform a tuple of \a this array.
  *              Supported expressions are described \ref MEDCouplingArrayApplyFuncExpr "here".
+ *  \param [in] isSafe - By default true. If true invalid operation (division by 0. acos of value > 1. ...) leads to a throw of an exception.
+ *                       If false the computation is carried on without any notification. When false the evaluation is a little faster.
  *  \return DataArrayDouble * - the new instance of DataArrayDouble containing the
  *          same number of tuples and components as \a this array.
  *          The caller is to delete this result array using decrRef() as it is no more
  *          needed.
+ *  \sa applyFuncOnThis
  *  \throw If \a this is not allocated.
  *  \throw If computing \a func fails.
  */
-DataArrayDouble *DataArrayDouble::applyFunc(const std::string& func) const
+DataArrayDouble *DataArrayDouble::applyFunc(const std::string& func, bool isSafe) const
 {
+  int nbOfComp(getNumberOfComponents());
+  if(nbOfComp<=0)
+    throw INTERP_KERNEL::Exception("DataArrayDouble::applyFunc : output number of component must be > 0 !");
   checkAllocated();
+  int nbOfTuples(getNumberOfTuples());
+  MEDCouplingAutoRefCountObjectPtr<DataArrayDouble> newArr(DataArrayDouble::New());
+  newArr->alloc(nbOfTuples,nbOfComp);
   INTERP_KERNEL::ExprParser expr(func);
   expr.parse();
-  expr.prepareExprEvaluationVec();
-  //
-  DataArrayDouble *newArr=DataArrayDouble::New();
-  int nbOfTuples=getNumberOfTuples();
-  int nbOfComp=getNumberOfComponents();
-  newArr->alloc(nbOfTuples,nbOfComp);
-  const double *ptr=getConstPointer();
-  double *ptrToFill=newArr->getPointer();
-  for(int i=0;i<nbOfTuples;i++)
+  std::set<std::string> vars;
+  expr.getTrueSetOfVars(vars);
+  if((int)vars.size()>1)
     {
-      try
-      {
-          expr.evaluateExpr(nbOfComp,ptr+i*nbOfComp,ptrToFill+i*nbOfComp);
-      }
-      catch(INTERP_KERNEL::Exception& e)
-      {
-          std::ostringstream oss; oss << "For tuple # " << i << " with value (";
-          std::copy(ptr+nbOfComp*i,ptr+nbOfComp*(i+1),std::ostream_iterator<double>(oss,", "));
-          oss << ") : Evaluation of function failed ! " << e.what();
-          newArr->decrRef();
-          throw INTERP_KERNEL::Exception(oss.str().c_str());
-      }
+      std::ostringstream oss; oss << "DataArrayDouble::applyFunc : this method works only with at most one var func expression ! If you need to map comps on variables please use applyFunc2 or applyFunc3 instead ! Vars in expr are : ";
+      std::copy(vars.begin(),vars.end(),std::ostream_iterator<std::string>(oss," "));
+      throw INTERP_KERNEL::Exception(oss.str().c_str());
     }
-  return newArr;
+  if(vars.empty())
+    {
+      expr.prepareFastEvaluator();
+      newArr->rearrange(1);
+      newArr->fillWithValue(expr.evaluateDouble());
+      newArr->rearrange(nbOfComp);
+      return newArr.retn();
+    }
+  std::vector<std::string> vars2(vars.begin(),vars.end());
+  double buff,*ptrToFill(newArr->getPointer());
+  const double *ptr(begin());
+  std::vector<double> stck;
+  expr.prepareExprEvaluationDouble(vars2,1,1,0,&buff,&buff+1);
+  expr.prepareFastEvaluator();
+  if(!isSafe)
+    {
+      for(int i=0;i<nbOfTuples;i++)
+        {
+          for(int iComp=0;iComp<nbOfComp;iComp++,ptr++,ptrToFill++)
+            {
+              buff=*ptr;
+              expr.evaluateDoubleInternal(stck);
+              *ptrToFill=stck.back();
+              stck.pop_back();
+            }
+        }
+    }
+  else
+    {
+      for(int i=0;i<nbOfTuples;i++)
+        {
+          for(int iComp=0;iComp<nbOfComp;iComp++,ptr++,ptrToFill++)
+            {
+              buff=*ptr;
+              try
+              {
+                  expr.evaluateDoubleInternalSafe(stck);
+              }
+              catch(INTERP_KERNEL::Exception& e)
+              {
+                  std::ostringstream oss; oss << "For tuple # " << i << " component # " << iComp << " with value (";
+                  oss << buff;
+                  oss << ") : Evaluation of function failed !" << e.what();
+                  throw INTERP_KERNEL::Exception(oss.str().c_str());
+              }
+              *ptrToFill=stck.back();
+              stck.pop_back();
+            }
+        }
+    }
+  return newArr.retn();
+}
+
+/*!
+ * This method is a non const method that modify the array in \a this.
+ * This method only works on one component array. It means that function \a func must
+ * contain at most one variable.
+ * This method is a specialization of applyFunc method with one parameter on one component array.
+ *
+ *  \param [in] func - the expression defining how to transform a tuple of \a this array.
+ *              Supported expressions are described \ref MEDCouplingArrayApplyFuncExpr "here".
+ *  \param [in] isSafe - By default true. If true invalid operation (division by 0. acos of value > 1. ...) leads to a throw of an exception.
+ *              If false the computation is carried on without any notification. When false the evaluation is a little faster.
+ *
+ * \sa applyFunc
+ */
+void DataArrayDouble::applyFuncOnThis(const std::string& func, bool isSafe)
+{
+  int nbOfComp(getNumberOfComponents());
+  if(nbOfComp<=0)
+    throw INTERP_KERNEL::Exception("DataArrayDouble::applyFuncOnThis : output number of component must be > 0 !");
+  checkAllocated();
+  int nbOfTuples(getNumberOfTuples());
+  INTERP_KERNEL::ExprParser expr(func);
+  expr.parse();
+  std::set<std::string> vars;
+  expr.getTrueSetOfVars(vars);
+  if((int)vars.size()>1)
+    {
+      std::ostringstream oss; oss << "DataArrayDouble::applyFuncOnThis : this method works only with at most one var func expression ! If you need to map comps on variables please use applyFunc2 or applyFunc3 instead ! Vars in expr are : ";
+      std::copy(vars.begin(),vars.end(),std::ostream_iterator<std::string>(oss," "));
+      throw INTERP_KERNEL::Exception(oss.str().c_str());
+    }
+  if(vars.empty())
+    {
+      expr.prepareFastEvaluator();
+      std::vector<std::string> compInfo(getInfoOnComponents());
+      rearrange(1);
+      fillWithValue(expr.evaluateDouble());
+      rearrange(nbOfComp);
+      setInfoOnComponents(compInfo);
+      return ;
+    }
+  std::vector<std::string> vars2(vars.begin(),vars.end());
+  double buff,*ptrToFill(getPointer());
+  const double *ptr(begin());
+  std::vector<double> stck;
+  expr.prepareExprEvaluationDouble(vars2,1,1,0,&buff,&buff+1);
+  expr.prepareFastEvaluator();
+  if(!isSafe)
+    {
+      for(int i=0;i<nbOfTuples;i++)
+        {
+          for(int iComp=0;iComp<nbOfComp;iComp++,ptr++,ptrToFill++)
+            {
+              buff=*ptr;
+              expr.evaluateDoubleInternal(stck);
+              *ptrToFill=stck.back();
+              stck.pop_back();
+            }
+        }
+    }
+  else
+    {
+      for(int i=0;i<nbOfTuples;i++)
+        {
+          for(int iComp=0;iComp<nbOfComp;iComp++,ptr++,ptrToFill++)
+            {
+              buff=*ptr;
+              try
+              {
+                  expr.evaluateDoubleInternalSafe(stck);
+              }
+              catch(INTERP_KERNEL::Exception& e)
+              {
+                  std::ostringstream oss; oss << "For tuple # " << i << " component # " << iComp << " with value (";
+                  oss << buff;
+                  oss << ") : Evaluation of function failed !" << e.what();
+                  throw INTERP_KERNEL::Exception(oss.str().c_str());
+              }
+              *ptrToFill=stck.back();
+              stck.pop_back();
+            }
+        }
+    }
 }
 
 /*!
@@ -4415,6 +4543,8 @@ DataArrayDouble *DataArrayDouble::applyFunc(const std::string& func) const
  *  \param [in] nbOfComp - number of components in the result array.
  *  \param [in] func - the expression defining how to transform a tuple of \a this array.
  *              Supported expressions are described \ref MEDCouplingArrayApplyFuncExpr "here".
+ *  \param [in] isSafe - By default true. If true invalid operation (division by 0. acos of value > 1. ...) leads to a throw of an exception.
+ *              If false the computation is carried on without any notification. When false the evaluation is a little faster.
  *  \return DataArrayDouble * - the new instance of DataArrayDouble containing the
  *          same number of tuples as \a this array.
  *          The caller is to delete this result array using decrRef() as it is no more
@@ -4423,44 +4553,9 @@ DataArrayDouble *DataArrayDouble::applyFunc(const std::string& func) const
  *  \throw If \a func contains vars that are not in \a this->getInfoOnComponent().
  *  \throw If computing \a func fails.
  */
-DataArrayDouble *DataArrayDouble::applyFunc2(int nbOfComp, const std::string& func) const
+DataArrayDouble *DataArrayDouble::applyFunc2(int nbOfComp, const std::string& func, bool isSafe) const
 {
-  checkAllocated();
-  INTERP_KERNEL::ExprParser expr(func);
-  expr.parse();
-  std::set<std::string> vars;
-  expr.getTrueSetOfVars(vars);
-  int oldNbOfComp=getNumberOfComponents();
-  if((int)vars.size()>oldNbOfComp)
-    {
-      std::ostringstream oss; oss << "The field has " << oldNbOfComp << " components and there are ";
-      oss << vars.size() << " variables : ";
-      std::copy(vars.begin(),vars.end(),std::ostream_iterator<std::string>(oss," "));
-      throw INTERP_KERNEL::Exception(oss.str().c_str());
-    }
-  expr.prepareExprEvaluation(getVarsOnComponent(),oldNbOfComp,nbOfComp);
-  //
-  DataArrayDouble *newArr=DataArrayDouble::New();
-  int nbOfTuples=getNumberOfTuples();
-  newArr->alloc(nbOfTuples,nbOfComp);
-  const double *ptr=getConstPointer();
-  double *ptrToFill=newArr->getPointer();
-  for(int i=0;i<nbOfTuples;i++)
-    {
-      try
-      {
-          expr.evaluateExpr(nbOfComp,ptr+i*oldNbOfComp,ptrToFill+i*nbOfComp);
-      }
-      catch(INTERP_KERNEL::Exception& e)
-      {
-          std::ostringstream oss; oss << "For tuple # " << i << " with value (";
-          std::copy(ptr+oldNbOfComp*i,ptr+oldNbOfComp*(i+1),std::ostream_iterator<double>(oss,", "));
-          oss << ") : Evaluation of function failed !" << e.what();
-          newArr->decrRef();
-          throw INTERP_KERNEL::Exception(oss.str().c_str());
-      }
-    }
-  return newArr;
+  return applyFunc3(nbOfComp,getVarsOnComponent(),func,isSafe);
 }
 
 /*!
@@ -4471,6 +4566,8 @@ DataArrayDouble *DataArrayDouble::applyFunc2(int nbOfComp, const std::string& fu
  *  \param [in] varsOrder - sequence of vars defining their order.
  *  \param [in] func - the expression defining how to transform a tuple of \a this array.
  *              Supported expressions are described \ref MEDCouplingArrayApplyFuncExpr "here".
+ *  \param [in] isSafe - By default true. If true invalid operation (division by 0. acos of value > 1. ...) leads to a throw of an exception.
+ *              If false the computation is carried on without any notification. When false the evaluation is a little faster.
  *  \return DataArrayDouble * - the new instance of DataArrayDouble containing the
  *          same number of tuples as \a this array.
  *          The caller is to delete this result array using decrRef() as it is no more
@@ -4479,14 +4576,20 @@ DataArrayDouble *DataArrayDouble::applyFunc2(int nbOfComp, const std::string& fu
  *  \throw If \a func contains vars not in \a varsOrder.
  *  \throw If computing \a func fails.
  */
-DataArrayDouble *DataArrayDouble::applyFunc3(int nbOfComp, const std::vector<std::string>& varsOrder, const std::string& func) const
+DataArrayDouble *DataArrayDouble::applyFunc3(int nbOfComp, const std::vector<std::string>& varsOrder, const std::string& func, bool isSafe) const
 {
+  if(nbOfComp<=0)
+    throw INTERP_KERNEL::Exception("DataArrayDouble::applyFunc3 : output number of component must be > 0 !");
+  std::vector<std::string> varsOrder2(varsOrder);
+  int oldNbOfComp(getNumberOfComponents());
+  for(int i=(int)varsOrder.size();i<oldNbOfComp;i++)
+    varsOrder2.push_back(std::string());
   checkAllocated();
+  int nbOfTuples(getNumberOfTuples());
   INTERP_KERNEL::ExprParser expr(func);
   expr.parse();
   std::set<std::string> vars;
   expr.getTrueSetOfVars(vars);
-  int oldNbOfComp=getNumberOfComponents();
   if((int)vars.size()>oldNbOfComp)
     {
       std::ostringstream oss; oss << "The field has " << oldNbOfComp << " components and there are ";
@@ -4494,29 +4597,49 @@ DataArrayDouble *DataArrayDouble::applyFunc3(int nbOfComp, const std::vector<std
       std::copy(vars.begin(),vars.end(),std::ostream_iterator<std::string>(oss," "));
       throw INTERP_KERNEL::Exception(oss.str().c_str());
     }
-  expr.prepareExprEvaluation(varsOrder,oldNbOfComp,nbOfComp);
-  //
-  DataArrayDouble *newArr=DataArrayDouble::New();
-  int nbOfTuples=getNumberOfTuples();
+  MEDCouplingAutoRefCountObjectPtr<DataArrayDouble> newArr(DataArrayDouble::New());
   newArr->alloc(nbOfTuples,nbOfComp);
-  const double *ptr=getConstPointer();
-  double *ptrToFill=newArr->getPointer();
-  for(int i=0;i<nbOfTuples;i++)
+  INTERP_KERNEL::AutoPtr<double> buff(new double[oldNbOfComp]);
+  double *buffPtr(buff),*ptrToFill;
+  std::vector<double> stck;
+  for(int iComp=0;iComp<nbOfComp;iComp++)
     {
-      try
-      {
-          expr.evaluateExpr(nbOfComp,ptr+i*oldNbOfComp,ptrToFill+i*nbOfComp);
-      }
-      catch(INTERP_KERNEL::Exception& e)
-      {
-          std::ostringstream oss; oss << "For tuple # " << i << " with value (";
-          std::copy(ptr+oldNbOfComp*i,ptr+oldNbOfComp*(i+1),std::ostream_iterator<double>(oss,", "));
-          oss << ") : Evaluation of function failed !" << e.what();
-          newArr->decrRef();
-          throw INTERP_KERNEL::Exception(oss.str().c_str());
-      }
+      expr.prepareExprEvaluationDouble(varsOrder2,oldNbOfComp,nbOfComp,iComp,buffPtr,buffPtr+oldNbOfComp);
+      expr.prepareFastEvaluator();
+      const double *ptr(getConstPointer());
+      ptrToFill=newArr->getPointer()+iComp;
+      if(!isSafe)
+        {
+          for(int i=0;i<nbOfTuples;i++,ptrToFill+=nbOfComp,ptr+=oldNbOfComp)
+            {
+              std::copy(ptr,ptr+oldNbOfComp,buffPtr);
+              expr.evaluateDoubleInternal(stck);
+              *ptrToFill=stck.back();
+              stck.pop_back();
+            }
+        }
+      else
+        {
+          for(int i=0;i<nbOfTuples;i++,ptrToFill+=nbOfComp,ptr+=oldNbOfComp)
+            {
+              std::copy(ptr,ptr+oldNbOfComp,buffPtr);
+              try
+              {
+                  expr.evaluateDoubleInternalSafe(stck);
+                  *ptrToFill=stck.back();
+                  stck.pop_back();
+              }
+              catch(INTERP_KERNEL::Exception& e)
+              {
+                  std::ostringstream oss; oss << "For tuple # " << i << " with value (";
+                  std::copy(ptr+oldNbOfComp*i,ptr+oldNbOfComp*(i+1),std::ostream_iterator<double>(oss,", "));
+                  oss << ") : Evaluation of function failed !" << e.what();
+                  throw INTERP_KERNEL::Exception(oss.str().c_str());
+              }
+            }
+        }
     }
-  return newArr;
+  return newArr.retn();
 }
 
 void DataArrayDouble::applyFuncFast32(const std::string& func)
@@ -5967,7 +6090,7 @@ void DataArrayInt::pushBackSilent(int val)
  * This method adds at the end of \a this a serie of values [\c valsBg,\c valsEnd). This method do \b not update its time label to avoid useless incrementation
  * of counter. So the caller is expected to call TimeLabel::declareAsNew on \a this at the end of the push session.
  *
- *  \param [in] valsBg - an array of values to push at the end of \this.
+ *  \param [in] valsBg - an array of values to push at the end of \c this.
  *  \param [in] valsEnd - specifies the end of the array \a valsBg, so that
  *              the last value of \a valsBg is \a valsEnd[ -1 ].
  * \throw If \a this has already been allocated with number of components different from one.
@@ -6092,7 +6215,9 @@ void DataArrayInt::iota(int init)
 /*!
  * Returns a textual and human readable representation of \a this instance of
  * DataArrayInt. This text is shown when a DataArrayInt is printed in Python.
- *  \return std::string - text describing \a this DataArrayInt.
+ * \return std::string - text describing \a this DataArrayInt.
+ * 
+ * \sa reprNotTooLong, reprZip
  */
 std::string DataArrayInt::repr() const
 {
@@ -6105,6 +6230,18 @@ std::string DataArrayInt::reprZip() const
 {
   std::ostringstream ret;
   reprZipStream(ret);
+  return ret.str();
+}
+
+/*!
+ * This method is close to repr method except that when \a this has more than 1000 tuples, all tuples are not
+ * printed out to avoid to consume too much space in interpretor.
+ * \sa repr
+ */
+std::string DataArrayInt::reprNotTooLong() const
+{
+  std::ostringstream ret;
+  reprNotTooLongStream(ret);
   return ret.str();
 }
 
@@ -6161,6 +6298,12 @@ void DataArrayInt::reprZipStream(std::ostream& stream) const
   reprZipWithoutNameStream(stream);
 }
 
+void DataArrayInt::reprNotTooLongStream(std::ostream& stream) const
+{
+  stream << "Name of int array : \"" << _name << "\"\n";
+  reprNotTooLongWithoutNameStream(stream);
+}
+
 void DataArrayInt::reprWithoutNameStream(std::ostream& stream) const
 {
   DataArray::reprWithoutNameStream(stream);
@@ -6171,6 +6314,13 @@ void DataArrayInt::reprZipWithoutNameStream(std::ostream& stream) const
 {
   DataArray::reprWithoutNameStream(stream);
   _mem.reprZip(getNumberOfComponents(),stream);
+}
+
+void DataArrayInt::reprNotTooLongWithoutNameStream(std::ostream& stream) const
+{
+  DataArray::reprWithoutNameStream(stream);
+  stream.precision(17);
+  _mem.reprNotTooLong(getNumberOfComponents(),stream);
 }
 
 void DataArrayInt::reprCppStream(const std::string& varName, std::ostream& stream) const
@@ -6249,7 +6399,7 @@ void DataArrayInt::reprQuickOverviewData(std::ostream& stream, std::size_t maxNb
 }
 
 /*!
- * Modifies \a this one-dimensional array so that each value \a v = \a indArrBg[ \a v ],
+ * Modifies in place \a this one-dimensional array so that each value \a v = \a indArrBg[ \a v ],
  * i.e. a current value is used as in index to get a new value from \a indArrBg.
  *  \param [in] indArrBg - pointer to the first element of array of new values to assign
  *         to \a this array.
@@ -6258,15 +6408,15 @@ void DataArrayInt::reprQuickOverviewData(std::ostream& stream, std::size_t maxNb
  *  \throw If \a this->getNumberOfComponents() != 1
  *  \throw If any value of \a this can't be used as a valid index for 
  *         [\a indArrBg, \a indArrEnd).
+ *
+ *  \sa replaceOneValByInThis
  */
 void DataArrayInt::transformWithIndArr(const int *indArrBg, const int *indArrEnd)
 {
   checkAllocated();
   if(getNumberOfComponents()!=1)
     throw INTERP_KERNEL::Exception("Call transformWithIndArr method on DataArrayInt with only one component, you can call 'rearrange' method before !");
-  int nbElemsIn=(int)std::distance(indArrBg,indArrEnd);
-  int nbOfTuples=getNumberOfTuples();
-  int *pt=getPointer();
+  int nbElemsIn((int)std::distance(indArrBg,indArrEnd)),nbOfTuples(getNumberOfTuples()),*pt(getPointer());
   for(int i=0;i<nbOfTuples;i++,pt++)
     {
       if(*pt>=0 && *pt<nbElemsIn)
@@ -6278,6 +6428,29 @@ void DataArrayInt::transformWithIndArr(const int *indArrBg, const int *indArrEnd
         }
     }
   declareAsNew();
+}
+
+/*!
+ * Modifies in place \a this one-dimensional array like this : each id in \a this so that this[id] equal to \a valToBeReplaced will be replaced at the same place by \a replacedBy.
+ *
+ * \param [in] valToBeReplaced - the value in \a this to be replaced.
+ * \param [in] replacedBy - the value taken by each tuple previously equal to \a valToBeReplaced.
+ *
+ * \sa DataArrayInt::transformWithIndArr
+ */
+void DataArrayInt::replaceOneValByInThis(int valToBeReplaced, int replacedBy)
+{
+  checkAllocated();
+  if(getNumberOfComponents()!=1)
+    throw INTERP_KERNEL::Exception("Call replaceOneValByInThis method on DataArrayInt with only one component, you can call 'rearrange' method before !");
+  if(valToBeReplaced==replacedBy)
+    return ;
+  int nbOfTuples(getNumberOfTuples()),*pt(getPointer());
+  for(int i=0;i<nbOfTuples;i++,pt++)
+    {
+      if(*pt==valToBeReplaced)
+        *pt=replacedBy;
+    }
 }
 
 /*!
@@ -6328,7 +6501,7 @@ void DataArrayInt::transformWithIndArr(const int *indArrBg, const int *indArrEnd
  */
 void DataArrayInt::splitByValueRange(const int *arrBg, const int *arrEnd,
                                      DataArrayInt *& castArr, DataArrayInt *& rankInsideCast, DataArrayInt *& castsPresent) const
-    {
+{
   checkAllocated();
   if(getNumberOfComponents()!=1)
     throw INTERP_KERNEL::Exception("Call splitByValueRange  method on DataArrayInt with only one component, you can call 'rearrange' method before !");
@@ -6371,7 +6544,60 @@ void DataArrayInt::splitByValueRange(const int *arrBg, const int *arrEnd,
   castArr=ret1.retn();
   rankInsideCast=ret2.retn();
   castsPresent=ret3.retn();
+}
+
+/*!
+ * This method look at \a this if it can be considered as a range defined by the 3-tuple ( \a strt , \a sttoopp , \a stteepp ).
+ * If false is returned the tuple must be ignored. If true is returned \a this can be considered by a range( \a strt , \a sttoopp , \a stteepp ).
+ * This method works only if \a this is allocated and single component. If not an exception will be thrown.
+ *
+ * \param [out] strt - the start of the range (included) if true is returned.
+ * \param [out] sttoopp - the end of the range (not included) if true is returned.
+ * \param [out] stteepp - the step of the range if true is returned.
+ * \return the verdict of the check.
+ *
+ * \sa DataArray::GetNumberOfItemGivenBES
+ */
+bool DataArrayInt::isRange(int& strt, int& sttoopp, int& stteepp) const
+{
+  checkAllocated();
+  if(getNumberOfComponents()!=1)
+    throw INTERP_KERNEL::Exception("DataArrayInt::isRange : this must be single component array !");
+  int nbTuples(getNumberOfTuples());
+  if(nbTuples==0)
+    { strt=0; sttoopp=0; stteepp=1; return true; }
+  const int *pt(begin());
+  strt=*pt; 
+  if(nbTuples==1)
+    { sttoopp=strt+1; stteepp=1; return true; }
+  strt=*pt; sttoopp=pt[nbTuples-1];
+  if(strt==sttoopp)
+    return false;
+  if(sttoopp>strt)
+    {
+      sttoopp++;
+      int a(sttoopp-1-strt),tmp(strt);
+      if(a%(nbTuples-1)!=0)
+        return false;
+      stteepp=a/(nbTuples-1);
+      for(int i=0;i<nbTuples;i++,tmp+=stteepp)
+        if(pt[i]!=tmp)
+          return false;
+      return true;
     }
+  else
+    {
+      sttoopp--;
+      int a(strt-sttoopp-1),tmp(strt);
+      if(a%(nbTuples-1)!=0)
+        return false;
+      stteepp=-(a/(nbTuples-1));
+      for(int i=0;i<nbTuples;i++,tmp+=stteepp)
+        if(pt[i]!=tmp)
+          return false;
+      return true;
+    }
+}
 
 /*!
  * Creates a one-dimensional DataArrayInt (\a res) whose contents are computed from 
@@ -6427,7 +6653,7 @@ DataArrayInt *DataArrayInt::transformWithIndArrR(const int *indArrBg, const int 
  * Creates a one-dimensional DataArrayInt of given length, whose contents are computed
  * from values of \a this array, which is supposed to contain a renumbering map in 
  * "Old to New" mode. The result array contains a renumbering map in "New to Old" mode.
- * To know how to use the renumbering maps see \ref MEDCouplingArrayRenumbering.
+ * To know how to use the renumbering maps see \ref numbering.
  *  \param [in] newNbOfElem - the number of tuples in the result array.
  *  \return DataArrayInt * - the new instance of DataArrayInt.
  *          The caller is to delete this result array using decrRef() as it is no more
@@ -6494,7 +6720,7 @@ DataArrayInt *DataArrayInt::invertArrayO2N2N2OBis(int newNbOfElem) const
  * Creates a one-dimensional DataArrayInt of given length, whose contents are computed
  * from values of \a this array, which is supposed to contain a renumbering map in 
  * "New to Old" mode. The result array contains a renumbering map in "Old to New" mode.
- * To know how to use the renumbering maps see \ref MEDCouplingArrayRenumbering.
+ * To know how to use the renumbering maps see \ref numbering.
  *  \param [in] newNbOfElem - the number of tuples in the result array.
  *  \return DataArrayInt * - the new instance of DataArrayInt.
  *          The caller is to delete this result array using decrRef() as it is no more
@@ -6628,6 +6854,25 @@ bool DataArrayInt::isFittingWith(const std::vector<bool>& v) const
         }
     }
   return w==end2;
+}
+
+/*!
+ * This method assumes that \a this has one component and is allocated. This method scans all tuples in \a this and for all tuple equal to \a val
+ * put True to the corresponding entry in \a vec.
+ * \a vec is expected to be with the same size than the number of tuples of \a this.
+ */
+void DataArrayInt::switchOnTupleEqualTo(int val, std::vector<bool>& vec) const
+{
+  checkAllocated();
+  if(getNumberOfComponents()!=1)
+    throw INTERP_KERNEL::Exception("DataArrayInt::switchOnTupleEqualTo : number of components of this should be equal to one !");
+  int nbOfTuples(getNumberOfTuples());
+  if(nbOfTuples!=(int)vec.size())
+    throw INTERP_KERNEL::Exception("DataArrayInt::switchOnTupleEqualTo : number of tuples of this should be equal to size of input vector of bool !");
+  const int *pt(begin());
+  for(int i=0;i<nbOfTuples;i++)
+    if(pt[i]==val)
+      vec[i]=true;
 }
 
 /*!
@@ -6912,9 +7157,9 @@ DataArrayInt *DataArrayInt::toNoInterlace() const
 /*!
  * Permutes values of \a this array as required by \a old2New array. The values are
  * permuted so that \c new[ \a old2New[ i ]] = \c old[ i ]. Number of tuples remains
- * the same as in \this one.
+ * the same as in \c this one.
  * If a permutation reduction is needed, substr() or selectByTupleId() should be used.
- * For more info on renumbering see \ref MEDCouplingArrayRenumbering.
+ * For more info on renumbering see \ref numbering.
  *  \param [in] old2New - C array of length equal to \a this->getNumberOfTuples()
  *     giving a new position for i-th old value.
  */
@@ -6944,8 +7189,8 @@ void DataArrayInt::renumberInPlace(const int *old2New)
 /*!
  * Permutes values of \a this array as required by \a new2Old array. The values are
  * permuted so that \c new[ i ] = \c old[ \a new2Old[ i ]]. Number of tuples remains
- * the same as in \this one.
- * For more info on renumbering see \ref MEDCouplingArrayRenumbering.
+ * the same as in \c this one.
+ * For more info on renumbering see \ref numbering.
  *  \param [in] new2Old - C array of length equal to \a this->getNumberOfTuples()
  *     giving a previous position of i-th new value.
  *  \return DataArrayInt * - the new instance of DataArrayInt that the caller
@@ -6977,9 +7222,9 @@ void DataArrayInt::renumberInPlaceR(const int *new2Old)
 /*!
  * Returns a copy of \a this array with values permuted as required by \a old2New array.
  * The values are permuted so that  \c new[ \a old2New[ i ]] = \c old[ i ].
- * Number of tuples in the result array remains the same as in \this one.
+ * Number of tuples in the result array remains the same as in \c this one.
  * If a permutation reduction is needed, renumberAndReduce() should be used.
- * For more info on renumbering see \ref MEDCouplingArrayRenumbering.
+ * For more info on renumbering see \ref numbering.
  *  \param [in] old2New - C array of length equal to \a this->getNumberOfTuples()
  *          giving a new position for i-th old value.
  *  \return DataArrayInt * - the new instance of DataArrayInt that the caller
@@ -7005,9 +7250,9 @@ DataArrayInt *DataArrayInt::renumber(const int *old2New) const
 /*!
  * Returns a copy of \a this array with values permuted as required by \a new2Old array.
  * The values are permuted so that  \c new[ i ] = \c old[ \a new2Old[ i ]]. Number of
- * tuples in the result array remains the same as in \this one.
+ * tuples in the result array remains the same as in \c this one.
  * If a permutation reduction is needed, substr() or selectByTupleId() should be used.
- * For more info on renumbering see \ref MEDCouplingArrayRenumbering.
+ * For more info on renumbering see \ref numbering.
  *  \param [in] new2Old - C array of length equal to \a this->getNumberOfTuples()
  *     giving a previous position of i-th new value.
  *  \return DataArrayInt * - the new instance of DataArrayInt that the caller
@@ -7035,7 +7280,7 @@ DataArrayInt *DataArrayInt::renumberR(const int *new2Old) const
  * The values are permuted so that  \c new[ \a old2New[ i ]] = \c old[ i ] for all
  * \a old2New[ i ] >= 0. In other words every i-th tuple in \a this array, for which 
  * \a old2New[ i ] is negative, is missing from the result array.
- * For more info on renumbering see \ref MEDCouplingArrayRenumbering.
+ * For more info on renumbering see \ref numbering.
  *  \param [in] old2New - C array of length equal to \a this->getNumberOfTuples()
  *     giving a new position for i-th old tuple and giving negative position for
  *     for i-th old tuple that should be omitted.
@@ -7068,7 +7313,7 @@ DataArrayInt *DataArrayInt::renumberAndReduce(const int *old2New, int newNbOfTup
  * The values are permuted so that  \c new[ i ] = \c old[ \a new2OldBg[ i ]].
  * This method is equivalent to renumberAndReduce() except that convention in input is
  * \c new2old and \b not \c old2new.
- * For more info on renumbering see \ref MEDCouplingArrayRenumbering.
+ * For more info on renumbering see \ref numbering.
  *  \param [in] new2OldBg - pointer to the beginning of a permutation array that gives a
  *              tuple index in \a this array to fill the i-th tuple in the new array.
  *  \param [in] new2OldEnd - specifies the end of the permutation array that starts at
@@ -7102,7 +7347,7 @@ DataArrayInt *DataArrayInt::selectByTupleId(const int *new2OldBg, const int *new
  * \c new2old and \b not \c old2new.
  * This method is equivalent to selectByTupleId() except that it prevents coping data
  * from behind the end of \a this array.
- * For more info on renumbering see \ref MEDCouplingArrayRenumbering.
+ * For more info on renumbering see \ref numbering.
  *  \param [in] new2OldBg - pointer to the beginning of a permutation array that gives a
  *              tuple index in \a this array to fill the i-th tuple in the new array.
  *  \param [in] new2OldEnd - specifies the end of the permutation array that starts at
@@ -7139,7 +7384,7 @@ DataArrayInt *DataArrayInt::selectByTupleIdSafe(const int *new2OldBg, const int 
  * command \c range( \a bg, \a end2, \a step ).
  * This method is equivalent to selectByTupleIdSafe() except that the input array is
  * not constructed explicitly.
- * For more info on renumbering see \ref MEDCouplingArrayRenumbering.
+ * For more info on renumbering see \ref numbering.
  *  \param [in] bg - index of the first tuple to copy from \a this array.
  *  \param [in] end2 - index of the tuple before which the tuples to copy are located.
  *  \param [in] step - index increment to get index of the next tuple to copy.
@@ -7165,7 +7410,7 @@ DataArrayInt *DataArrayInt::selectByTupleId2(int bg, int end2, int step) const
 /*!
  * Returns a shorten copy of \a this array. The new DataArrayInt contains ranges
  * of tuples specified by \a ranges parameter.
- * For more info on renumbering see \ref MEDCouplingArrayRenumbering.
+ * For more info on renumbering see \ref numbering.
  *  \param [in] ranges - std::vector of std::pair's each of which defines a range
  *              of tuples in [\c begin,\c end) format.
  *  \return DataArrayInt * - the new instance of DataArrayInt that the caller
@@ -7233,7 +7478,7 @@ DataArray *DataArrayInt::selectByTupleRanges(const std::vector<std::pair<int,int
  * are [5,6,0,3,2,7,1,4]; if this result array (\a res) is used as an argument in call
  * \a this->renumber(\a res) then the returned array contains [0,3,4,6,7,9,10,11].
  * This method is useful for renumbering (in MED file for example). For more info
- * on renumbering see \ref MEDCouplingArrayRenumbering.
+ * on renumbering see \ref numbering.
  *  \return DataArrayInt * - a new instance of DataArrayInt. The caller is to delete this
  *          array using decrRef() as it is no more needed.
  *  \throw If \a this is not allocated.
@@ -7301,7 +7546,7 @@ DataArrayInt *DataArrayInt::FindPermutationFromFirstToSecond(const DataArrayInt 
  * place in the set \a B. The second out array is the index of the first one; it shows how
  * many elements of \a A are mapped into each element of \a B. <br>
  * For more info on
- * mapping and its usage in renumbering see \ref MEDCouplingArrayRenumbering. <br>
+ * mapping and its usage in renumbering see \ref numbering. <br>
  * \b Example:
  * - \a this: [0,3,2,3,2,2,1,2]
  * - \a targetNb: 4
@@ -7368,7 +7613,7 @@ void DataArrayInt::changeSurjectiveFormat(int targetNb, DataArrayInt *&arr, Data
  * from a zip representation of a surjective format (returned e.g. by
  * \ref ParaMEDMEM::DataArrayDouble::findCommonTuples() "DataArrayDouble::findCommonTuples()"
  * for example). The result array minimizes the permutation. <br>
- * For more info on renumbering see \ref MEDCouplingArrayRenumbering. <br>
+ * For more info on renumbering see \ref numbering. <br>
  * \b Example: <br>
  * - \a nbOfOldTuples: 10 
  * - \a arr          : [0,3, 5,7,9]
@@ -7429,7 +7674,7 @@ DataArrayInt *DataArrayInt::BuildOld2NewArrayFromSurjectiveFormat2(int nbOfOldTu
 /*!
  * Returns a new DataArrayInt containing a renumbering map in "New to Old" mode,
  * which if applied to \a this array would make it sorted ascendingly.
- * For more info on renumbering see \ref MEDCouplingArrayRenumbering. <br>
+ * For more info on renumbering see \ref numbering. <br>
  * \b Example: <br>
  * - \a this: [2,0,1,1,0,1,2,0,1,1,0,0]
  * - result: [10,0,5,6,1,7,11,2,8,9,3,4]
@@ -7484,22 +7729,44 @@ DataArrayInt *DataArrayInt::buildPermArrPerLevel() const
 /*!
  * Checks if contents of \a this array are equal to that of an array filled with
  * iota(). This method is particularly useful for DataArrayInt instances that represent
- * a renumbering array to check the real need in renumbering. 
+ * a renumbering array to check the real need in renumbering. In this case it is better to use isIdentity2
+ * method of isIdentity method.
+ *
  *  \return bool - \a true if \a this array contents == \a range( \a this->getNumberOfTuples())
  *  \throw If \a this is not allocated.
  *  \throw If \a this->getNumberOfComponents() != 1.
+ *  \sa isIdentity2
  */
 bool DataArrayInt::isIdentity() const
 {
   checkAllocated();
   if(getNumberOfComponents()!=1)
     return false;
-  int nbOfTuples=getNumberOfTuples();
+  int nbOfTuples(getNumberOfTuples());
   const int *pt=getConstPointer();
   for(int i=0;i<nbOfTuples;i++,pt++)
     if(*pt!=i)
       return false;
   return true;
+}
+
+/*!
+ * This method is stronger than isIdentity method. This method checks than \a this can be considered as an identity function
+ * of a set having \a sizeExpected elements into itself.
+ *
+ * \param [in] sizeExpected - The number of elements
+ * \return bool - \a true if \a this array contents == \a range( \a this->getNumberOfTuples()) and if \a this has \a sizeExpected tuples in it.
+ *
+ *  \throw If \a this is not allocated.
+ *  \throw If \a this->getNumberOfComponents() != 1.
+ * \sa isIdentity
+ */
+bool DataArrayInt::isIdentity2(int sizeExpected) const
+{
+  bool ret0(isIdentity());
+  if(!ret0)
+    return false;
+  return getNumberOfTuples()==sizeExpected;
 }
 
 /*!
@@ -7695,7 +7962,7 @@ void DataArrayInt::reAlloc(int nbOfTuples)
  *  \ref py_mcdataarrayint_keepselectedcomponents "Here is a Python example".
  *  \endif
  */
-DataArray *DataArrayInt::keepSelectedComponents(const std::vector<int>& compoIds) const
+DataArrayInt *DataArrayInt::keepSelectedComponents(const std::vector<int>& compoIds) const
 {
   checkAllocated();
   MEDCouplingAutoRefCountObjectPtr<DataArrayInt> ret(DataArrayInt::New());
@@ -7883,7 +8150,7 @@ void DataArrayInt::setPartOfValues1(const DataArrayInt *a, int bgTuples, int end
  *  \throw If \a this is not allocated.
  *  \throw If parameters specifying tuples and components to assign to, do not give a
  *            non-empty range of increasing indices or indices are out of a valid range
- *            for \this array.
+ *            for \c this array.
  *
  *  \if ENABLE_EXAMPLES
  *  \ref py_mcdataarrayint_setpartofvaluessimple1 "Here is a Python example".
@@ -8075,7 +8342,7 @@ void DataArrayInt::setPartOfValuesSimple2(int a, const int *bgTuples, const int 
  *         defined by <em>(bgComp,endComp,stepComp)</em>.
  *  \throw If parameters specifying components to assign to, do not give a
  *            non-empty range of increasing indices or indices are out of a valid range
- *            for \this array.
+ *            for \c this array.
  *
  *  \if ENABLE_EXAMPLES
  *  \ref py_mcdataarrayint_setpartofvalues3 "Here is a Python example".
@@ -8149,7 +8416,7 @@ void DataArrayInt::setPartOfValues3(const DataArrayInt *a, const int *bgTuples, 
  *         \a this array.
  *  \throw If parameters specifying components to assign to, do not give a
  *            non-empty range of increasing indices or indices are out of a valid range
- *            for \this array.
+ *            for \c this array.
  *
  *  \if ENABLE_EXAMPLES
  *  \ref py_mcdataarrayint_setpartofvaluessimple3 "Here is a Python example".
@@ -9101,6 +9368,32 @@ int DataArrayInt::getMinValueInArray() const
 }
 
 /*!
+ * Returns in a single walk in \a this the min value and the max value in \a this.
+ * \a this is expected to be single component array.
+ *
+ * \param [out] minValue - the min value in \a this.
+ * \param [out] maxValue - the max value in \a this.
+ *
+ * \sa getMinValueInArray, getMinValue, getMaxValueInArray, getMaxValue
+ */
+void DataArrayInt::getMinMaxValues(int& minValue, int& maxValue) const
+{
+  checkAllocated();
+  if(getNumberOfComponents()!=1)
+    throw INTERP_KERNEL::Exception("DataArrayInt::getMinMaxValues : must be applied on DataArrayInt with only one component !");
+  int nbTuples(getNumberOfTuples());
+  const int *pt(begin());
+  minValue=std::numeric_limits<int>::max(); maxValue=-std::numeric_limits<int>::max();
+  for(int i=0;i<nbTuples;i++,pt++)
+    {
+      if(*pt<minValue)
+        minValue=*pt;
+      if(*pt>maxValue)
+        maxValue=*pt;
+    }
+}
+
+/*!
  * Converts every value of \a this array to its absolute value.
  * \b WARNING this method is non const. If a new DataArrayInt instance should be built containing the result of abs DataArrayInt::computeAbs
  * should be called instead.
@@ -9273,7 +9566,7 @@ void DataArrayInt::applyModulus(int val)
  * \param [in] vmax end of range. This value is \b not included in range (excluded).
  * \return a newly allocated data array that the caller should deal with.
  *
- * \sa DataArrayInt::getIdsNotInRange
+ * \sa DataArrayInt::getIdsNotInRange , DataArrayInt::getIdsStrictlyNegative
  */
 DataArrayInt *DataArrayInt::getIdsInRange(int vmin, int vmax) const
 {
@@ -9298,7 +9591,7 @@ DataArrayInt *DataArrayInt::getIdsInRange(int vmin, int vmax) const
  * \param [in] vmax end of range. This value is included in range (included).
  * \return a newly allocated data array that the caller should deal with.
  * 
- * \sa DataArrayInt::getIdsInRange
+ * \sa DataArrayInt::getIdsInRange , DataArrayInt::getIdsStrictlyNegative
  */
 DataArrayInt *DataArrayInt::getIdsNotInRange(int vmin, int vmax) const
 {
@@ -9310,6 +9603,26 @@ DataArrayInt *DataArrayInt::getIdsNotInRange(int vmin, int vmax) const
   int nbOfTuples(getNumberOfTuples());
   for(int i=0;i<nbOfTuples;i++,cptr++)
     if(*cptr<vmin || *cptr>=vmax)
+      ret->pushBackSilent(i);
+  return ret.retn();
+}
+
+/*!
+ * This method works only on data array with one component. This method returns a newly allocated array storing stored ascendantly of tuple ids in \a this so that this[id]<0.
+ *
+ * \return a newly allocated data array that the caller should deal with.
+ * \sa DataArrayInt::getIdsInRange
+ */
+DataArrayInt *DataArrayInt::getIdsStrictlyNegative() const
+{
+  checkAllocated();
+  if(getNumberOfComponents()!=1)
+    throw INTERP_KERNEL::Exception("DataArrayInt::getIdsStrictlyNegative : this must have exactly one component !");
+  const int *cptr(getConstPointer());
+  MEDCouplingAutoRefCountObjectPtr<DataArrayInt> ret(DataArrayInt::New()); ret->alloc(0,1);
+  int nbOfTuples(getNumberOfTuples());
+  for(int i=0;i<nbOfTuples;i++,cptr++)
+    if(*cptr<0)
       ret->pushBackSilent(i);
   return ret.retn();
 }
@@ -9832,7 +10145,8 @@ DataArrayInt *DataArrayInt::buildSubstractionOptimized(const DataArrayInt *other
   checkAllocated(); other->checkAllocated();
   if(getNumberOfComponents()!=1) throw INTERP_KERNEL::Exception(MSG);
   if(other->getNumberOfComponents()!=1) throw INTERP_KERNEL::Exception(MSG);
-  const int *pt1Bg(begin()),*pt1End(end()),*pt2Bg(other->begin()),*pt2End(other->end()),*work1(pt1Bg),*work2(pt2Bg);
+  const int *pt1Bg(begin()),*pt1End(end()),*pt2Bg(other->begin()),*pt2End(other->end());
+  const int *work1(pt1Bg),*work2(pt2Bg);
   MEDCouplingAutoRefCountObjectPtr<DataArrayInt> ret(DataArrayInt::New()); ret->alloc(0,1);
   for(;work1!=pt1End;work1++)
     {
@@ -9889,6 +10203,7 @@ DataArrayInt *DataArrayInt::buildIntersection(const DataArrayInt *other) const
  * 
  * \return a newly allocated array that contain the result of the unique operation applied on \a this.
  * \throw if \a this is not allocated or if \a this has not exactly one component.
+ * \sa DataArrayInt::buildUniqueNotSorted
  */
 DataArrayInt *DataArrayInt::buildUnique() const
 {
@@ -9902,6 +10217,38 @@ DataArrayInt *DataArrayInt::buildUnique() const
   MEDCouplingAutoRefCountObjectPtr<DataArrayInt> ret=DataArrayInt::New();
   ret->alloc(std::distance(data,last),1);
   std::copy(data,last,ret->getPointer());
+  return ret.retn();
+}
+
+/*!
+ * This method can be applied on allocated with one component DataArrayInt instance.
+ * This method keep elements only once by keeping the same order in \a this that is not expected to be sorted.
+ *
+ * \return a newly allocated array that contain the result of the unique operation applied on \a this.
+ *
+ * \throw if \a this is not allocated or if \a this has not exactly one component.
+ *
+ * \sa DataArrayInt::buildUnique
+ */
+DataArrayInt *DataArrayInt::buildUniqueNotSorted() const
+{
+  checkAllocated();
+    if(getNumberOfComponents()!=1)
+      throw INTERP_KERNEL::Exception("DataArrayInt::buildUniqueNotSorted : only single component allowed !");
+  int minVal,maxVal;
+  getMinMaxValues(minVal,maxVal);
+  std::vector<bool> b(maxVal-minVal+1,false);
+  const int *ptBg(begin()),*endBg(end());
+  MEDCouplingAutoRefCountObjectPtr<DataArrayInt> ret(DataArrayInt::New()); ret->alloc(0,1);
+  for(const int *pt=ptBg;pt!=endBg;pt++)
+    {
+      if(!b[*pt-minVal])
+        {
+          ret->pushBackSilent(*pt);
+          b[*pt-minVal]=true;
+        }
+    }
+  ret->copyStringInfoFrom(*this);
   return ret.retn();
 }
 
@@ -10299,6 +10646,68 @@ DataArrayInt *DataArrayInt::findIdInRangeForEachTuple(const DataArrayInt *ranges
         }
     }
   return ret.retn();
+}
+
+/*!
+ * \b WARNING this method is a \b non \a const \b method. This method works tuple by tuple. Each tuple is expected to be pairs (number of components must be equal to 2).
+ * This method rearrange each pair in \a this so that, tuple with id \b tid will be after the call \c this->getIJ(tid,0)==this->getIJ(tid-1,1) and \c this->getIJ(tid,1)==this->getIJ(tid+1,0).
+ * If it is impossible to reach such condition an exception will be thrown ! \b WARNING In case of throw \a this can be partially modified !
+ * If this method has correctly worked, \a this will be able to be considered as a linked list.
+ * This method does nothing if number of tuples is lower of equal to 1.
+ *
+ * This method is useful for users having an unstructured mesh having only SEG2 to rearrange internaly the connectibity without any coordinates consideration.
+ *
+ * \sa MEDCouplingUMesh::orderConsecutiveCells1D
+ */
+void DataArrayInt::sortEachPairToMakeALinkedList()
+{
+  checkAllocated();
+  if(getNumberOfComponents()!=2)
+    throw INTERP_KERNEL::Exception("DataArrayInt::sortEachPairToMakeALinkedList : Only works on DataArrayInt instance with nb of components equal to 2 !");
+  int nbOfTuples(getNumberOfTuples());
+  if(nbOfTuples<=1)
+    return ;
+  int *conn(getPointer());
+  for(int i=1;i<nbOfTuples;i++,conn+=2)
+    {
+      if(i>1)
+        {
+          if(conn[2]==conn[3])
+            {
+              std::ostringstream oss; oss << "DataArrayInt::sortEachPairToMakeALinkedList : In the tuple #" << i << " presence of a pair filled with same ids !";
+              throw INTERP_KERNEL::Exception(oss.str().c_str());
+            }
+          if(conn[2]!=conn[1] && conn[3]==conn[1] && conn[2]!=conn[0])
+            std::swap(conn[2],conn[3]);
+          //not(conn[2]==conn[1] && conn[3]!=conn[1] && conn[3]!=conn[0])
+          if(conn[2]!=conn[1] || conn[3]==conn[1] || conn[3]==conn[0])
+            {
+              std::ostringstream oss; oss << "DataArrayInt::sortEachPairToMakeALinkedList : In the tuple #" << i << " something is invalid !";
+              throw INTERP_KERNEL::Exception(oss.str().c_str());
+            }
+        }
+      else
+        {
+          if(conn[0]==conn[1] || conn[2]==conn[3])
+            throw INTERP_KERNEL::Exception("DataArrayInt::sortEachPairToMakeALinkedList : In the 2 first tuples presence of a pair filled with same ids !");
+          int tmp[4];
+          std::set<int> s;
+          s.insert(conn,conn+4);
+          if(s.size()!=3)
+            throw INTERP_KERNEL::Exception("DataArrayInt::sortEachPairToMakeALinkedList : This can't be considered as a linked list regarding 2 first tuples !");
+          if(std::count(conn,conn+4,conn[0])==2)
+            {
+              tmp[0]=conn[1];
+              tmp[1]=conn[0];
+              tmp[2]=conn[0];
+              if(conn[2]==conn[0])
+                { tmp[3]=conn[3]; }
+              else
+                { tmp[3]=conn[2];}
+              std::copy(tmp,tmp+4,conn);
+            }
+        }
+    }
 }
 
 /*!

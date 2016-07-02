@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -35,6 +35,7 @@ namespace ParaMEDMEM
   class MEDCouplingUMeshCellIterator;
   class MEDCoupling1SGTUMesh;
   class MEDCoupling1GTUMesh;
+  class MEDCouplingSkyLineArray;
 
   class MEDCouplingUMesh : public MEDCouplingPointSet
   {
@@ -47,7 +48,7 @@ namespace ParaMEDMEM
     MEDCOUPLING_EXPORT void shallowCopyConnectivityFrom(const MEDCouplingPointSet *other);
     MEDCOUPLING_EXPORT void updateTime() const;
     MEDCOUPLING_EXPORT std::size_t getHeapMemorySizeWithoutChildren() const;
-    MEDCOUPLING_EXPORT std::vector<const BigMemoryObject *> getDirectChildren() const;
+    MEDCOUPLING_EXPORT std::vector<const BigMemoryObject *> getDirectChildrenWithNull() const;
     MEDCOUPLING_EXPORT MEDCouplingMeshType getType() const { return UNSTRUCTURED; }
     MEDCOUPLING_EXPORT bool isEqualIfNotWhy(const MEDCouplingMesh *other, double prec, std::string& reason) const;
     MEDCOUPLING_EXPORT bool isEqualWithoutConsideringStr(const MEDCouplingMesh *other, double prec) const;
@@ -140,6 +141,8 @@ namespace ParaMEDMEM
     MEDCOUPLING_EXPORT void findNodesToDuplicate(const MEDCouplingUMesh& otherDimM1OnSameCoords, DataArrayInt *& nodeIdsToDuplicate,
                                                  DataArrayInt *& cellIdsNeededToBeRenum, DataArrayInt *& cellIdsNotModified) const;
     MEDCOUPLING_EXPORT void duplicateNodes(const int *nodeIdsToDuplicateBg, const int *nodeIdsToDuplicateEnd);
+    MEDCOUPLING_EXPORT void renumberNodesWithOffsetInConn(int offset);
+    MEDCOUPLING_EXPORT void renumberNodesInConn(const INTERP_KERNEL::HashMap<int,int>& newNodeNumbersO2N);
     MEDCOUPLING_EXPORT void renumberNodesInConn(const int *newNodeNumbersO2N);
     MEDCOUPLING_EXPORT void shiftNodeNumbersInConn(int delta);
     MEDCOUPLING_EXPORT void duplicateNodesInConn(const int *nodeIdsToDuplicateBg, const int *nodeIdsToDuplicateEnd, int offset);
@@ -183,6 +186,7 @@ namespace ParaMEDMEM
     MEDCOUPLING_EXPORT void convertDegeneratedCells();
     MEDCOUPLING_EXPORT void are2DCellsNotCorrectlyOriented(const double *vec, bool polyOnly, std::vector<int>& cells) const;
     MEDCOUPLING_EXPORT void orientCorrectly2DCells(const double *vec, bool polyOnly);
+    MEDCOUPLING_EXPORT void changeOrientationOfCells();
     MEDCOUPLING_EXPORT void arePolyhedronsNotCorrectlyOriented(std::vector<int>& cells) const;
     MEDCOUPLING_EXPORT void orientCorrectlyPolyhedrons();
     MEDCOUPLING_EXPORT void getFastAveragePlaneOfThis(double *vec, double *pos) const;
@@ -191,6 +195,7 @@ namespace ParaMEDMEM
     MEDCOUPLING_EXPORT MEDCouplingFieldDouble *getAspectRatioField() const;
     MEDCOUPLING_EXPORT MEDCouplingFieldDouble *getWarpField() const;
     MEDCOUPLING_EXPORT MEDCouplingFieldDouble *getSkewField() const;
+    MEDCOUPLING_EXPORT MEDCouplingFieldDouble *computeDiameterField() const;
     //utilities for MED File RW
     MEDCOUPLING_EXPORT std::vector<int> getDistributionOfTypes() const;
     MEDCOUPLING_EXPORT DataArrayInt *checkTypeConsistencyAndContig(const std::vector<int>& code, const std::vector<const DataArrayInt *>& idsPerType) const;
@@ -267,6 +272,7 @@ namespace ParaMEDMEM
     MEDCOUPLING_EXPORT DataArrayInt *buildUnionOf2DMesh() const;
     MEDCOUPLING_EXPORT DataArrayInt *buildUnionOf3DMesh() const;
     MEDCOUPLING_EXPORT DataArrayInt *orderConsecutiveCells1D() const;
+    MEDCOUPLING_EXPORT MEDCouplingSkyLineArray *generateGraph() const;
   private:
     MEDCouplingUMesh();
     MEDCouplingUMesh(const MEDCouplingUMesh& other, bool deepCopy);
@@ -330,6 +336,7 @@ namespace ParaMEDMEM
     void split2DCellsLinear(const DataArrayInt *desc, const DataArrayInt *descI, const DataArrayInt *subNodesInSeg, const DataArrayInt *subNodesInSegI);
     int split2DCellsQuadratic(const DataArrayInt *desc, const DataArrayInt *descI, const DataArrayInt *subNodesInSeg, const DataArrayInt *subNodesInSegI, const DataArrayInt *mid, const DataArrayInt *midI);
     static bool Colinearize2DCell(const double *coords, const int *connBg, const int *connEnd, int offset, DataArrayInt *newConnOfCell, DataArrayDouble *appendedCoords);
+    static void ComputeAllTypesInternal(std::set<INTERP_KERNEL::NormalizedCellType>& types, const DataArrayInt *nodalConnec, const DataArrayInt *nodalConnecIndex);
   public:
     MEDCOUPLING_EXPORT static DataArrayInt *ComputeRangesFromTypeDistribution(const std::vector<int>& code);
     MEDCOUPLING_EXPORT static const int N_MEDMEM_ORDER=24;

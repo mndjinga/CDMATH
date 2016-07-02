@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -69,15 +69,12 @@ std::size_t MEDCouplingExtrudedMesh::getHeapMemorySizeWithoutChildren() const
   return MEDCouplingMesh::getHeapMemorySizeWithoutChildren();
 }
 
-std::vector<const BigMemoryObject *> MEDCouplingExtrudedMesh::getDirectChildren() const
+std::vector<const BigMemoryObject *> MEDCouplingExtrudedMesh::getDirectChildrenWithNull() const
 {
   std::vector<const BigMemoryObject *> ret;
-  if(_mesh2D)
-    ret.push_back(_mesh2D);
-  if(_mesh1D)
-    ret.push_back(_mesh1D);
-  if(_mesh3D_ids)
-    ret.push_back(_mesh3D_ids);
+  ret.push_back(_mesh2D);
+  ret.push_back(_mesh1D);
+  ret.push_back(_mesh3D_ids);
   return ret;
 }
 

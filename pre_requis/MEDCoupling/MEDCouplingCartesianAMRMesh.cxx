@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -78,11 +78,10 @@ MEDCouplingCartesianAMRMeshGen *MEDCouplingCartesianAMRPatchGen::getMeshSafe()
     return mesh;
 }
 
-std::vector<const BigMemoryObject *> MEDCouplingCartesianAMRPatchGen::getDirectChildren() const
+std::vector<const BigMemoryObject *> MEDCouplingCartesianAMRPatchGen::getDirectChildrenWithNull() const
 {
   std::vector<const BigMemoryObject *> ret;
-  if((const MEDCouplingCartesianAMRMeshGen *)_mesh)
-    ret.push_back((const MEDCouplingCartesianAMRMeshGen *)_mesh);
+  ret.push_back((const MEDCouplingCartesianAMRMeshGen *)_mesh);
   return ret;
 }
 
@@ -823,13 +822,14 @@ MEDCouplingAutoRefCountObjectPtr<InternalPatch> InternalPatch::deepCpy() const
   return ret;
 }
 
-bool DissectBigPatch(const INTERP_KERNEL::BoxSplittingOptions& bso, const InternalPatch *patchToBeSplit, int axisId, int largestLength, int& cutPlace)
+void DissectBigPatch(const INTERP_KERNEL::BoxSplittingOptions& bso, const InternalPatch *patchToBeSplit, int axisId, int largestLength, int& cutPlace)
 {
   int minimumPatchLength(bso.getMinimumPatchLength());
   std::vector<double> ratio(largestLength-minimumPatchLength,std::numeric_limits<double>::max());
   int index_min = -1;
   double minSemiEfficiencyRatio(std::numeric_limits<double>::max());
   double efficiencyPerAxis[2];
+
   for(int i=minimumPatchLength-1;i<largestLength-minimumPatchLength;i++)
     {
       for(int h=0;h<2;h++)
@@ -851,11 +851,10 @@ bool DissectBigPatch(const INTERP_KERNEL::BoxSplittingOptions& bso, const Intern
         }
     }
 
+  if(index_min==-1)
+    throw INTERP_KERNEL::Exception("DissectBigPatch : just call to Arthur !");
+
   cutPlace=index_min+patchToBeSplit->getConstPart()[axisId].first;
-  if(index_min!=-1)
-	  return true;
-  else
-	  return false;
 }
 
 bool FindHole(const INTERP_KERNEL::BoxSplittingOptions& bso, const InternalPatch *patchToBeSplit, int axisId, int& cutPlace)
@@ -999,7 +998,7 @@ bool TryAction4(const INTERP_KERNEL::BoxSplittingOptions& bso, const InternalPat
     {
       if(patchToBeSplit->getNumberOfCells()>bso.getMaximumNbOfCellsInPatch() || rangeOfAxisId>bso.getMaximumPatchLength())
         {
-          return DissectBigPatch(bso,patchToBeSplit,axisId,rangeOfAxisId,cutPlace);
+          DissectBigPatch(bso,patchToBeSplit,axisId,rangeOfAxisId,cutPlace);
         }
       else
         return false;
@@ -1014,10 +1013,6 @@ MEDCouplingAutoRefCountObjectPtr<InternalPatch> DealWithNoCut(const InternalPatc
   return ret;
 }
 
-/*!
- * Example: the cutPlace between the cell i and i+1 should be numbered i.
- *
- */
 void DealWithCut(double minPatchLgth, const InternalPatch *patchToBeSplit, int axisId, int cutPlace, std::vector<MEDCouplingAutoRefCountObjectPtr<InternalPatch> >& listOfPatches)
 {
   MEDCouplingAutoRefCountObjectPtr<InternalPatch> leftPart,rightPart;
@@ -1096,8 +1091,12 @@ void MEDCouplingCartesianAMRMeshGen::createPatchesFromCriterion(const INTERP_KER
           //
           int axisId,largestLength,cutPlace;
           MEDCouplingStructuredMesh::FindTheWidestAxisOfGivenRangeInCompactFrmt((*it)->getConstPart(),axisId,largestLength);
-          if((*it)->getEfficiency()>=bso.getEfficiencyThreshold() && ((*it)->getNumberOfCells()>bso.getMaximumNbOfCellsInPatch() || largestLength>bso.getMaximumPatchLength()) && (DissectBigPatch(bso,*it,axisId,largestLength,cutPlace)))
-		    { DealWithCut(bso.getMinimumPatchLength(),*it,axisId,cutPlace,listOfPatchesTmp); continue; }//action 1
+          if((*it)->getEfficiency()>=bso.getEfficiencyThreshold() && ((*it)->getNumberOfCells()>bso.getMaximumNbOfCellsInPatch() || largestLength>bso.getMaximumPatchLength()))
+            {
+              DissectBigPatch(bso,*it,axisId,largestLength,cutPlace);
+              DealWithCut(bso.getMinimumPatchLength(),*it,axisId,cutPlace,listOfPatchesTmp);
+              continue;
+            }//action 1
           if(FindHole(bso,*it,axisId,cutPlace))//axisId overwritten here if FindHole equal to true !
             { DealWithCut(bso.getMinimumPatchLength(),*it,axisId,cutPlace,listOfPatchesTmp); continue; }//action 2
           if(FindInflection(bso,*it,cutPlace,axisId))//axisId overwritten here if cutFound equal to true !
@@ -1706,16 +1705,12 @@ std::size_t MEDCouplingCartesianAMRMeshGen::getHeapMemorySizeWithoutChildren() c
   return sizeof(MEDCouplingCartesianAMRMeshGen);
 }
 
-std::vector<const BigMemoryObject *> MEDCouplingCartesianAMRMeshGen::getDirectChildren() const
+std::vector<const BigMemoryObject *> MEDCouplingCartesianAMRMeshGen::getDirectChildrenWithNull() const
 {
   std::vector<const BigMemoryObject *> ret;
-  if((const MEDCouplingIMesh *)_mesh)
-    ret.push_back((const MEDCouplingIMesh *)_mesh);
+  ret.push_back((const MEDCouplingIMesh *)_mesh);
   for(std::vector< MEDCouplingAutoRefCountObjectPtr<MEDCouplingCartesianAMRPatch> >::const_iterator it=_patches.begin();it!=_patches.end();it++)
-    {
-      if((const MEDCouplingCartesianAMRPatch*)*it)
-        ret.push_back((const MEDCouplingCartesianAMRPatch*)*it);
-    }
+    ret.push_back((const MEDCouplingCartesianAMRPatch*)*it);
   return ret;
 }
 
@@ -1972,9 +1967,9 @@ MEDCouplingCartesianAMRMesh::MEDCouplingCartesianAMRMesh(MEDCouplingIMesh *mesh)
 {
 }
 
-std::vector<const BigMemoryObject *> MEDCouplingCartesianAMRMesh::getDirectChildren() const
+std::vector<const BigMemoryObject *> MEDCouplingCartesianAMRMesh::getDirectChildrenWithNull() const
 {
-  std::vector<const BigMemoryObject *> ret(MEDCouplingCartesianAMRMeshGen::getDirectChildren());
+  std::vector<const BigMemoryObject *> ret(MEDCouplingCartesianAMRMeshGen::getDirectChildrenWithNull());
   return ret;
 }
 

@@ -1,4 +1,4 @@
-# Copyright (C) 2012-2014  CEA/DEN, EDF R&D
+# Copyright (C) 2012-2015  CEA/DEN, EDF R&D
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -53,3 +53,12 @@ ADD_TEST(TestSauvLoader TestSauvLoader)
 SET_TESTS_PROPERTIES(TestSauvLoader PROPERTIES ENVIRONMENT "${tests_env}")
 
 INSTALL(TARGETS TestMEDLoader TestSauvLoader DESTINATION ${SALOME_INSTALL_BINS})
+
+# Application tests
+
+SET(TEST_INSTALL_DIRECTORY ${SALOME_INSTALL_SCRIPT_SCRIPTS}/test/MEDCoupling/MEDLoader)
+INSTALL(TARGETS TestMEDLoader TestSauvLoader DESTINATION ${TEST_INSTALL_DIRECTORY})
+
+INSTALL(FILES CTestTestfileInstall.cmake
+        DESTINATION ${TEST_INSTALL_DIRECTORY}
+        RENAME CTestTestfile.cmake)

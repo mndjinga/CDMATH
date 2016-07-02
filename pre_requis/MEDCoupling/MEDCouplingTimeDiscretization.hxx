@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -42,7 +42,7 @@ namespace ParaMEDMEM
   public:
     MEDCOUPLING_EXPORT void updateTime() const;
     MEDCOUPLING_EXPORT virtual std::size_t getHeapMemorySizeWithoutChildren() const;
-    MEDCOUPLING_EXPORT virtual std::vector<const BigMemoryObject *> getDirectChildren() const;
+    MEDCOUPLING_EXPORT virtual std::vector<const BigMemoryObject *> getDirectChildrenWithNull() const;
     MEDCOUPLING_EXPORT static MEDCouplingTimeDiscretization *New(TypeOfTimeDiscretization type);
     MEDCOUPLING_EXPORT void setTimeUnit(const std::string& unit) { _time_unit=unit; }
     MEDCOUPLING_EXPORT std::string getTimeUnit() const { return _time_unit; }
@@ -82,6 +82,7 @@ namespace ParaMEDMEM
     MEDCOUPLING_EXPORT virtual void getTinySerializationDbleInformation(std::vector<double>& tinyInfo) const;
     MEDCOUPLING_EXPORT virtual void getTinySerializationStrInformation(std::vector<std::string>& tinyInfo) const;
     MEDCOUPLING_EXPORT virtual void resizeForUnserialization(const std::vector<int>& tinyInfoI, std::vector<DataArrayDouble *>& arrays);
+    MEDCOUPLING_EXPORT virtual void checkForUnserialization(const std::vector<int>& tinyInfoI, const std::vector<DataArrayDouble *>& arrays);
     MEDCOUPLING_EXPORT virtual void finishUnserialization(const std::vector<int>& tinyInfoI, const std::vector<double>& tinyInfoD, const std::vector<std::string>& tinyInfoS);
     MEDCOUPLING_EXPORT virtual void getTinySerializationIntInformation2(std::vector<int>& tinyInfo) const = 0;
     MEDCOUPLING_EXPORT virtual void getTinySerializationDbleInformation2(std::vector<double>& tinyInfo) const = 0;
@@ -370,7 +371,7 @@ namespace ParaMEDMEM
     MEDCOUPLING_EXPORT void updateTime() const;
     MEDCOUPLING_EXPORT void synchronizeTimeWith(const MEDCouplingMesh *mesh);
     MEDCOUPLING_EXPORT std::size_t getHeapMemorySizeWithoutChildren() const;
-    MEDCOUPLING_EXPORT std::vector<const BigMemoryObject *> getDirectChildren() const;
+    MEDCOUPLING_EXPORT std::vector<const BigMemoryObject *> getDirectChildrenWithNull() const;
     MEDCOUPLING_EXPORT void copyTinyAttrFrom(const MEDCouplingTimeDiscretization& other);
     MEDCOUPLING_EXPORT void copyTinyStringsFrom(const MEDCouplingTimeDiscretization& other);
     MEDCOUPLING_EXPORT const DataArrayDouble *getEndArray() const;
@@ -396,6 +397,7 @@ namespace ParaMEDMEM
     MEDCOUPLING_EXPORT void getTinySerializationDbleInformation(std::vector<double>& tinyInfo) const;
     MEDCOUPLING_EXPORT void getTinySerializationStrInformation(std::vector<std::string>& tinyInfo) const;
     MEDCOUPLING_EXPORT void resizeForUnserialization(const std::vector<int>& tinyInfoI, std::vector<DataArrayDouble *>& arrays);
+    MEDCOUPLING_EXPORT void checkForUnserialization(const std::vector<int>& tinyInfoI, const std::vector<DataArrayDouble *>& arrays);
     MEDCOUPLING_EXPORT void finishUnserialization(const std::vector<int>& tinyInfoI, const std::vector<double>& tinyInfoD, const std::vector<std::string>& tinyInfoS);
     MEDCOUPLING_EXPORT void getTinySerializationIntInformation2(std::vector<int>& tinyInfo) const;
     MEDCOUPLING_EXPORT void getTinySerializationDbleInformation2(std::vector<double>& tinyInfo) const;

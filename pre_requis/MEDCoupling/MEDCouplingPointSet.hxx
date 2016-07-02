@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -23,6 +23,8 @@
 
 #include "MEDCoupling.hxx"
 #include "MEDCouplingMesh.hxx"
+
+#include "InterpKernelHashMap.hxx"
 
 #include <vector>
 
@@ -53,7 +55,7 @@ namespace ParaMEDMEM
   public:
     MEDCOUPLING_EXPORT void updateTime() const;
     MEDCOUPLING_EXPORT std::size_t getHeapMemorySizeWithoutChildren() const;
-    MEDCOUPLING_EXPORT std::vector<const BigMemoryObject *> getDirectChildren() const;
+    MEDCOUPLING_EXPORT std::vector<const BigMemoryObject *> getDirectChildrenWithNull() const;
     MEDCOUPLING_EXPORT int getNumberOfNodes() const;
     MEDCOUPLING_EXPORT int getSpaceDimension() const;
     MEDCOUPLING_EXPORT void setCoords(const DataArrayDouble *coords);
@@ -119,9 +121,12 @@ namespace ParaMEDMEM
     MEDCOUPLING_EXPORT virtual DataArrayInt *findBoundaryNodes() const = 0;
     MEDCOUPLING_EXPORT virtual MEDCouplingPointSet *buildBoundaryMesh(bool keepCoords) const = 0;
     MEDCOUPLING_EXPORT virtual int getNumberOfNodesInCell(int cellId) const = 0;
+    MEDCOUPLING_EXPORT virtual DataArrayInt *computeFetchedNodeIds() const = 0;
     MEDCOUPLING_EXPORT virtual DataArrayInt *getNodeIdsInUse(int& nbrOfNodesInUse) const = 0;
     MEDCOUPLING_EXPORT virtual void fillCellIdsToKeepFromNodeIds(const int *begin, const int *end, bool fullyIn, DataArrayInt *&cellIdsKeptArr) const = 0;
     MEDCOUPLING_EXPORT virtual void renumberNodesInConn(const int *newNodeNumbersO2N) = 0;
+    MEDCOUPLING_EXPORT virtual void renumberNodesInConn(const INTERP_KERNEL::HashMap<int,int>& newNodeNumbersO2N) = 0;
+    MEDCOUPLING_EXPORT virtual void renumberNodesWithOffsetInConn(int offset) = 0;
     MEDCOUPLING_EXPORT virtual void renumberNodes(const int *newNodeNumbers, int newNbOfNodes);
     MEDCOUPLING_EXPORT virtual void renumberNodes2(const int *newNodeNumbers, int newNbOfNodes);
     MEDCOUPLING_EXPORT virtual bool isEmptyMesh(const std::vector<int>& tinyInfo) const = 0;
@@ -134,8 +139,10 @@ namespace ParaMEDMEM
     MEDCOUPLING_EXPORT virtual DataArrayDouble *getBoundingBoxForBBTree(double arcDetEps=1e-12) const = 0;
     MEDCOUPLING_EXPORT virtual DataArrayInt *getCellsInBoundingBox(const double *bbox, double eps) const = 0;
     MEDCOUPLING_EXPORT virtual DataArrayInt *getCellsInBoundingBox(const INTERP_KERNEL::DirectedBoundingBox& bbox, double eps) = 0;
+    MEDCOUPLING_EXPORT virtual MEDCouplingFieldDouble *computeDiameterField() const = 0;
     MEDCOUPLING_EXPORT virtual DataArrayInt *zipCoordsTraducer();
     MEDCOUPLING_EXPORT virtual DataArrayInt *zipConnectivityTraducer(int compType, int startCellId=0);
+    MEDCOUPLING_EXPORT virtual bool areAllNodesFetched() const;
     //tools
   public:
     MEDCOUPLING_EXPORT bool areCellsFrom2MeshEqual(const MEDCouplingPointSet *other, int cellId, double prec) const;

@@ -1,6 +1,6 @@
 # -*- coding: iso-8859-1 -*-
 # --
-# Copyright (C) 2009-2014  CEA/DEN, EDF R&D
+# Copyright (C) 2009-2015  CEA/DEN, EDF R&D
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -49,7 +49,7 @@ def convert(file_in, driver_in, driver_out, format=1, file_out=None):
     #
     if driver_in == "GIBI":
         sr = SauvReader.New(file_in)
-        mfd= sr.loadInMEDFileDS( format )
+        mfd= sr.loadInMEDFileDS()
         pass
     elif driver_in == "MED":
         mfd = MEDFileData(file_in)
@@ -110,10 +110,9 @@ def convert(file_in, driver_in, driver_out, format=1, file_out=None):
         raise NotImplementedError("Driver in %s is unknown"%(driver_in))
 
 def sauv2med(*argv):
-    fix2DOri = ( "--fix2DOri" in argv )
+    argv = list(argv)
     for arg in argv:
-        if not arg.startswith("--fix"):
-            convert(arg, "GIBI", "MED", format = fix2DOri)
+        convert(arg, "GIBI", "MED")
         pass
     return
 

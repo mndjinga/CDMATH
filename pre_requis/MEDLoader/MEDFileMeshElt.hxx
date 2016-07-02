@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -23,6 +23,7 @@
 
 #include "MEDCouplingMemArray.hxx"
 #include "MEDCoupling1GTUMesh.hxx"
+#include "MEDCouplingPartDefinition.hxx"
 #include "MEDCouplingAutoRefCountObjectPtr.hxx"
 
 #include "NormalizedUnstructuredMesh.hxx"
@@ -38,30 +39,39 @@ namespace ParaMEDMEM
   {
   public:
     static MEDFileUMeshPerType *New(med_idt fid, const char *mName, int dt, int it, int mdim, med_geometry_type geoElt, INTERP_KERNEL::NormalizedCellType geoElt2, MEDFileMeshReadSelector *mrs);
+    static MEDFileUMeshPerType *NewPart(med_idt fid, const char *mName, int dt, int it, int mdim, INTERP_KERNEL::NormalizedCellType geoElt2, int strt, int stp, int step, MEDFileMeshReadSelector *mrs);
     static bool isExisting(med_idt fid, const char *mName, int dt, int it, med_geometry_type geoElt, med_entity_type& whichEntity);
     std::size_t getHeapMemorySizeWithoutChildren() const;
-    std::vector<const BigMemoryObject *> getDirectChildren() const;
+    std::vector<const BigMemoryObject *> getDirectChildrenWithNull() const;
     int getDim() const;
     MEDCoupling1GTUMesh *getMesh() const { return const_cast<MEDCoupling1GTUMesh *>((const MEDCoupling1GTUMesh *)_m); }
     const DataArrayInt *getFam() const { return _fam; }
     const DataArrayInt *getNum() const { return _num; }
     const DataArrayAsciiChar *getNames() const { return _names; }
+    const PartDefinition *getPartDef() const { return _pd; }
     static void Write(med_idt fid, const std::string& mname, int mdim, const MEDCoupling1GTUMesh *m, const DataArrayInt *fam, const DataArrayInt *num, const DataArrayAsciiChar *names);
   private:
+    MEDFileUMeshPerType();
     MEDFileUMeshPerType(med_idt fid, const char *mName, int dt, int it, int mdim, med_geometry_type geoElt, INTERP_KERNEL::NormalizedCellType type,
                         med_entity_type entity, MEDFileMeshReadSelector *mrs);
+    void loadPart(med_idt fid, const char *mName, int dt, int it, int mdim, med_geometry_type geoElt, INTERP_KERNEL::NormalizedCellType type,
+                  med_entity_type entity, int strt, int end, int step, MEDFileMeshReadSelector *mrs);
     void loadFromStaticType(med_idt fid, const char *mName, int dt, int it, int mdim, int curNbOfElem, med_geometry_type geoElt, INTERP_KERNEL::NormalizedCellType type,
                             med_entity_type entity, MEDFileMeshReadSelector *mrs);
+    void loadPartStaticType(med_idt fid, const char *mName, int dt, int it, int mdim, int curNbOfElem, med_geometry_type geoElt, INTERP_KERNEL::NormalizedCellType type,
+                            med_entity_type entity, int strt, int end, int step, MEDFileMeshReadSelector *mrs);
     void loadPolyg(med_idt fid, const char *mName, int dt, int it, int mdim, int arraySize, med_geometry_type geoElt,
                    med_entity_type entity, MEDFileMeshReadSelector *mrs);
     void loadPolyh(med_idt fid, const char *mName, int dt, int it, int mdim, int connFaceLgth, med_geometry_type geoElt,
                    med_entity_type entity, MEDFileMeshReadSelector *mrs);
     void loadCommonPart(med_idt fid, const char *mName, int dt, int it, int mdim, int curNbOfElem, med_geometry_type geoElt, med_entity_type entity, MEDFileMeshReadSelector *mrs);
+    void loadPartOfCellCommonPart(med_idt fid, const char *mName, int strt, int stp, int step, int dt, int it, int mdim, int curNbOfElem, med_geometry_type geoElt, med_entity_type entity, MEDFileMeshReadSelector *mrs);
   private:
     MEDCouplingAutoRefCountObjectPtr<MEDCoupling1GTUMesh> _m;
     MEDCouplingAutoRefCountObjectPtr<DataArrayInt> _num;
     MEDCouplingAutoRefCountObjectPtr<DataArrayInt> _fam;
     MEDCouplingAutoRefCountObjectPtr<DataArrayAsciiChar> _names;
+    MEDCouplingAutoRefCountObjectPtr<PartDefinition> _pd;
     med_entity_type _entity;
   };
 }

@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -21,6 +21,7 @@
 #include "CellModel.hxx"
 
 #include "InterpKernelException.hxx"
+#include "DiameterCalculator.hxx"
 
 #include <algorithm>
 #include <sstream>
@@ -591,6 +592,52 @@ namespace INTERP_KERNEL
       throw INTERP_KERNEL::Exception("CellModel::fillSonEdgesNodalConnectivity3D : not implemented yet for NORM_POLYHED !");   
   }
 
+  void CellModel::changeOrientationOf2D(int *nodalConn, unsigned int sz) const
+  {
+    if(sz<1)
+      return ;
+    if(!isQuadratic())
+      {
+        std::vector<int> tmp(sz-1);
+        std::copy(nodalConn+1,nodalConn+sz,tmp.rbegin());
+        std::copy(tmp.begin(),tmp.end(),nodalConn+1);
+      }
+    else
+      {
+        unsigned int sz2(sz/2);
+        std::vector<int> tmp0(sz2-1),tmp1(sz2);
+        std::copy(nodalConn+1,nodalConn+sz2,tmp0.rbegin());
+        std::copy(nodalConn+sz2,nodalConn+sz,tmp1.rbegin());
+        std::copy(tmp0.begin(),tmp0.end(),nodalConn+1);
+        std::copy(tmp1.begin(),tmp1.end(),nodalConn+sz2);
+      }
+  }
+
+  void CellModel::changeOrientationOf1D(int *nodalConn, unsigned int sz) const
+  {
+    if(!isDynamic())
+      {
+        if(sz==2 || sz==3)
+          {
+            std::swap(nodalConn[0],nodalConn[1]);
+            return ;
+          }
+        else if(sz==4)
+          {
+            std::swap(nodalConn[0],nodalConn[1]);
+            std::swap(nodalConn[2],nodalConn[3]);
+          }
+        else
+          throw Exception("CellModel::changeOrientationOf1D : unrecognized 1D cell type !");
+      }
+    else
+      {
+        std::vector<int> tmp(sz-1);
+        std::copy(nodalConn+1,nodalConn+sz,tmp.rbegin());
+        std::copy(tmp.begin(),tmp.end(),nodalConn+1);
+      }
+  }
+
   //================================================================================
   /*!
    * \brief Return number of nodes in sonId-th son of a Dynamic() cell
@@ -689,5 +736,154 @@ namespace INTERP_KERNEL
           }
       }
   }
-
+  
+  DiameterCalculator *CellModel::buildInstanceOfDiameterCalulator(int spaceDim) const
+  {
+    switch(_type)
+      {
+      case NORM_TRI3:
+        {
+          switch(spaceDim)
+            {
+            case 2:
+              return new DiameterCalulatorTRI3S2;
+            case 3:
+              return new DiameterCalulatorTRI3S3;
+            default:
+              throw Exception("CellModel::buildInstanceOfDiameterCalulator : For TRI3 only space dimension 2 and 3 implemented !");
+            }
+          break;
+        }
+      case NORM_QUAD4:
+        {
+          switch(spaceDim)
+            {
+            case 2:
+              return new DiameterCalulatorQUAD4S2;
+            case 3:
+              return new DiameterCalulatorQUAD4S3;
+            default:
+              throw Exception("CellModel::buildInstanceOfDiameterCalulator : For QUAD4 only space dimension 2 and 3 implemented !");
+            }
+          break;
+        }
+      case NORM_TRI6:
+        {
+          switch(spaceDim)
+          {
+            case 2:
+              return new DiameterCalulatorTRI6S2;
+            case 3:
+              return new DiameterCalulatorTRI6S3;
+            default:
+              throw Exception("CellModel::buildInstanceOfDiameterCalulator : For TRI6 only space dimension 2 and 3 implemented !");
+          }
+          break;
+        }
+      case NORM_TRI7:
+        {
+          switch(spaceDim)
+          {
+            case 2:
+              return new DiameterCalulatorTRI7S2;
+            case 3:
+              return new DiameterCalulatorTRI7S3;
+            default:
+              throw Exception("CellModel::buildInstanceOfDiameterCalulator : For TRI7 only space dimension 2 and 3 implemented !");
+          }
+          break;
+        }
+      case NORM_QUAD8:
+        {
+          switch(spaceDim)
+          {
+            case 2:
+              return new DiameterCalulatorQUAD8S2;
+            case 3:
+              return new DiameterCalulatorQUAD8S3;
+            default:
+              throw Exception("CellModel::buildInstanceOfDiameterCalulator : For QUAD8 only space dimension 2 and 3 implemented !");
+          }
+          break;
+        }
+      case NORM_QUAD9:
+        {
+          switch(spaceDim)
+          {
+            case 2:
+              return new DiameterCalulatorQUAD9S2;
+            case 3:
+              return new DiameterCalulatorQUAD9S3;
+            default:
+              throw Exception("CellModel::buildInstanceOfDiameterCalulator : For QUAD9 only space dimension 2 and 3 implemented !");
+          }
+          break;
+        }
+      case NORM_TETRA4:
+        {
+          if(spaceDim==3)
+            return new DiameterCalulatorTETRA4;
+          else
+            throw Exception("CellModel::buildInstanceOfDiameterCalulator : For TETRA4 space dimension 3 expected !");
+        }
+      case NORM_TETRA10:
+        {
+          if(spaceDim==3)
+            return new DiameterCalulatorTETRA10;
+          else
+            throw Exception("CellModel::buildInstanceOfDiameterCalulator : For TETRA10 space dimension 3 expected !");
+        }
+      case NORM_HEXA8:
+        {
+          if(spaceDim==3)
+            return new DiameterCalulatorHEXA8;
+          else
+            throw Exception("CellModel::buildInstanceOfDiameterCalulator : For HEXA8 space dimension 3 expected !");
+        }
+      case NORM_HEXA20:
+        {
+          if(spaceDim==3)
+            return new DiameterCalulatorHEXA20;
+          else
+            throw Exception("CellModel::buildInstanceOfDiameterCalulator : For HEXA20 space dimension 3 expected !");
+        }
+      case NORM_HEXA27:
+        {
+          if(spaceDim==3)
+            return new DiameterCalulatorHEXA27;
+          else
+            throw Exception("CellModel::buildInstanceOfDiameterCalulator : For HEXA27 space dimension 3 expected !");
+        }
+      case NORM_PENTA6:
+        {
+          if(spaceDim==3)
+            return new DiameterCalulatorPENTA6;
+          else
+            throw Exception("CellModel::buildInstanceOfDiameterCalulator : For PENTA6 space dimension 3 expected !");
+        }
+      case NORM_PENTA15:
+        {
+          if(spaceDim==3)
+            return new DiameterCalulatorPENTA15;
+          else
+            throw Exception("CellModel::buildInstanceOfDiameterCalulator : For PENTA15 space dimension 3 expected !");
+        }
+      case NORM_PYRA5:
+        {
+          if(spaceDim==3)
+            return new DiameterCalulatorPYRA5;
+          else
+            throw Exception("CellModel::buildInstanceOfDiameterCalulator : For PYRA5 space dimension 3 expected !");
+        }
+      case NORM_PYRA13:
+        {
+          if(spaceDim==3)
+            return new DiameterCalulatorPYRA13;
+          else
+            throw Exception("CellModel::buildInstanceOfDiameterCalulator : For PYRA13 space dimension 3 expected !");
+        }
+      default:
+        throw Exception("CellModel::buildInstanceOfDiameterCalulator : implemented only for TRI3, QUAD4, TETRA4, HEXA8, PENTA6, PYRA5 !");
+      }
+  }
 }

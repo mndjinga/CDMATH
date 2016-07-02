@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -304,7 +304,7 @@ DataArrayDoubleCollection::DataArrayDoubleCollection(const std::vector< std::pai
       _arrs[i].first=DataArrayDouble::New();
       _arrs[i].first->alloc(0,info.second);
       _arrs[i].first->setName(info.first);
-      names[i]=info.first;
+      names[i]=info.second;
       _arrs[i].second=ConservativeVolumic;
     }
   CheckDiscriminantNames(names);
@@ -329,15 +329,11 @@ std::size_t DataArrayDoubleCollection::getHeapMemorySizeWithoutChildren() const
   return ret;
 }
 
-std::vector<const BigMemoryObject *> DataArrayDoubleCollection::getDirectChildren() const
+std::vector<const BigMemoryObject *> DataArrayDoubleCollection::getDirectChildrenWithNull() const
 {
   std::vector<const BigMemoryObject *> ret;
   for(std::vector< std::pair< MEDCouplingAutoRefCountObjectPtr<DataArrayDouble>, NatureOfField > >::const_iterator it=_arrs.begin();it!=_arrs.end();it++)
-    {
-      const DataArrayDouble *pt((*it).first);
-      if(pt)
-        ret.push_back(pt);
-    }
+    ret.push_back((const DataArrayDouble *)(*it).first);
   return ret;
 }
 
@@ -710,15 +706,11 @@ std::size_t MEDCouplingGridCollection::getHeapMemorySizeWithoutChildren() const
   return ret;
 }
 
-std::vector<const BigMemoryObject *> MEDCouplingGridCollection::getDirectChildren() const
+std::vector<const BigMemoryObject *> MEDCouplingGridCollection::getDirectChildrenWithNull() const
 {
   std::vector<const BigMemoryObject *> ret;
   for(std::vector< std::pair<const MEDCouplingCartesianAMRMeshGen *,MEDCouplingAutoRefCountObjectPtr<DataArrayDoubleCollection> > >::const_iterator it=_map_of_dadc.begin();it!=_map_of_dadc.end();it++)
-    {
-      const DataArrayDoubleCollection *col((*it).second);
-      if(col)
-        ret.push_back(col);
-    }
+    ret.push_back((const DataArrayDoubleCollection *)(*it).second);
   return ret;
 }
 
@@ -1397,15 +1389,11 @@ std::size_t MEDCouplingAMRAttribute::getHeapMemorySizeWithoutChildren() const
   return ret;
 }
 
-std::vector<const BigMemoryObject *> MEDCouplingAMRAttribute::getDirectChildren() const
+std::vector<const BigMemoryObject *> MEDCouplingAMRAttribute::getDirectChildrenWithNull() const
 {
   std::vector<const BigMemoryObject *> ret;
   for(std::vector< MEDCouplingAutoRefCountObjectPtr<MEDCouplingGridCollection> >::const_iterator it=_levs.begin();it!=_levs.end();it++)
-    {
-      const MEDCouplingGridCollection *elt(*it);
-      if(elt)
-        ret.push_back(elt);
-    }
+    ret.push_back((const MEDCouplingGridCollection *)*it);
   return ret;
 }
 

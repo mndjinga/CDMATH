@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2015  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -62,6 +62,7 @@ MEDmeshGridIndexCoordinateWr(const med_idt               fid,
   char            _geotypename[MED_TAILLE_NOM_ENTITE+1]="";
   med_int         _0=0;
   med_int         _medintgeotype = MED_NO_GEOTYPE;
+  char            _profilename      [MED_NAME_SIZE+1]=MED_SAME_PROFILE_INTERNAL;
   
 
   /*
@@ -180,6 +181,12 @@ MEDmeshGridIndexCoordinateWr(const med_idt               fid,
       goto ERROR;
     }
 
+    if (_MEDattributeIntWr(_datagroup3,MED_NOM_GEO,&_medintgeotype) < 0) {
+      MED_ERR_(_ret,MED_ERR_WRITE,MED_ERR_ATTRIBUTE,MED_NOM_GEO);
+      ISCRUTE(_medintgeotype);
+      goto ERROR;
+    }
+
     if ( _MEDattributeIntWr(_datagroup3,MED_NOM_CGT,&_0) < 0) {
       MED_ERR_(_ret,MED_ERR_WRITE,MED_ERR_ATTRIBUTE,MED_ERR_MESH_MSG);
       SSCRUTE(meshname);ISCRUTE(numit);ISCRUTE(numdt);SSCRUTE(MED_NOM_CGT);
@@ -192,12 +199,6 @@ MEDmeshGridIndexCoordinateWr(const med_idt               fid,
       goto ERROR;
     }
 
-    if (_MEDattributeIntWr(_datagroup3,MED_NOM_GEO,&_medintgeotype) < 0) {
-      MED_ERR_(_ret,MED_ERR_WRITE,MED_ERR_ATTRIBUTE,MED_NOM_GEO);
-      ISCRUTE(_medintgeotype);
-      goto ERROR;
-    }
-
   }
 
 
@@ -207,7 +208,8 @@ MEDmeshGridIndexCoordinateWr(const med_idt               fid,
   switch(axis)
     {
     case 1 :
-      _datatype = MED_COORDINATE_AXIS1;
+      _datatype    = MED_COORDINATE_AXIS1;
+      _profilename[0] = '\0';
       break;
     case 2 :
       _datatype = MED_COORDINATE_AXIS2;
@@ -232,7 +234,7 @@ MEDmeshGridIndexCoordinateWr(const med_idt               fid,
 			 MED_NONE,
 			 MED_NO_CMODE,
 			 MED_UNDEF_PFLMODE,
-			 MED_NO_PROFILE,
+			 _profilename,
 			 MED_FULL_INTERLACE,
 			 MED_ALL_CONSTITUENT,
 			 NULL,

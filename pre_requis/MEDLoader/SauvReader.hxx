@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -47,12 +47,12 @@ class SauvReader : public ParaMEDMEM::RefCountObject
 {
  public:
   MEDLOADER_EXPORT static SauvReader* New(const std::string& fileName);
-  MEDLOADER_EXPORT ParaMEDMEM::MEDFileData * loadInMEDFileDS(bool fix2DOri=false);
+  MEDLOADER_EXPORT ParaMEDMEM::MEDFileData * loadInMEDFileDS();
   MEDLOADER_EXPORT ~SauvReader();
 
  private:
   std::size_t getHeapMemorySizeWithoutChildren() const;
-  std::vector<const BigMemoryObject *> getDirectChildren() const;
+  std::vector<const BigMemoryObject *> getDirectChildrenWithNull() const;
   void readRecord2();
   void readRecord4();
   void readRecord7();

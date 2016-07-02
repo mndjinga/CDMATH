@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -255,12 +255,11 @@ namespace SauvUtilities
     int getNbCellsOfType( TCellType type ) const { return _cellsByType[type].size(); }
     const Cell* insert(TCellType type, const Cell& ma) { return &( *_cellsByType[type].insert( ma ).first ); }
     Group* addNewGroup(std::vector<SauvUtilities::Group*>* groupsToFix=0);
-
-    ParaMEDMEM::MEDFileData* convertInMEDFileDS(bool fix2DOri);
+    ParaMEDMEM::MEDFileData* convertInMEDFileDS();
 
   private:
 
-    ParaMEDMEM::MEDFileUMesh* makeMEDFileMesh(bool fix2DOri);
+    ParaMEDMEM::MEDFileUMesh* makeMEDFileMesh();
     ParaMEDMEM::DataArrayDouble * getCoords();
     void setConnectivity( ParaMEDMEM::MEDFileUMesh* mesh, ParaMEDMEM::DataArrayDouble* coords );
     void setGroups( ParaMEDMEM::MEDFileUMesh* mesh );
@@ -284,7 +283,7 @@ namespace SauvUtilities
     void eraseUselessGroups();
     void detectMixDimGroups();
     void orientElements2D();
-    void orientElements3D(bool fix2DOri);
+    void orientElements3D();
     void orientFaces3D();
     void orientVolumes();
     void numberElements();

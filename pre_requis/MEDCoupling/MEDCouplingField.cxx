@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2014  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2015  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -145,6 +145,21 @@ bool MEDCouplingField::areStrictlyCompatible(const MEDCouplingField *other) cons
   return _mesh==other->_mesh;
 }
 
+/*!
+ * This method is less strict than MEDCouplingField::areStrictlyCompatible method.
+ * The difference is that the nature is not checked.
+ * This method is used for multiplication and division on fields to operate a first check before attempting operation.
+ */
+bool MEDCouplingField::areStrictlyCompatibleForMulDiv(const MEDCouplingField *other) const
+{
+  if(!other)
+    throw INTERP_KERNEL::Exception("MEDCouplingField::areStrictlyCompatible : input field is NULL !");
+  if(!_type->isEqual(other->_type,1.e-12))
+    return false;
+  return _mesh==other->_mesh;
+}
+
+
 void MEDCouplingField::updateTime() const
 {
   if(_mesh)
@@ -161,13 +176,11 @@ std::size_t MEDCouplingField::getHeapMemorySizeWithoutChildren() const
   return ret;
 }
 
-std::vector<const BigMemoryObject *> MEDCouplingField::getDirectChildren() const
+std::vector<const BigMemoryObject *> MEDCouplingField::getDirectChildrenWithNull() const
 {
   std::vector<const BigMemoryObject *> ret;
-  if(_mesh)
-    ret.push_back(_mesh);
-  if((const MEDCouplingFieldDiscretization *)_type)
-    ret.push_back((const MEDCouplingFieldDiscretization *)_type);
+  ret.push_back(_mesh);
+  ret.push_back((const MEDCouplingFieldDiscretization *)_type);
   return ret;
 }
 
@@ -353,7 +366,8 @@ void MEDCouplingField::clearGaussLocalizations()
  *          problem.
  *  \param [in] locId - the id of the Gauss localization object of interest.
  *         It must be in range <em> 0 <= locId < getNbOfGaussLocalization() </em>.
- *  \return \ref MEDCouplingGaussLocalization & - the Gauss localization object.
+ *  \return \ref ParaMEDMEM::MEDCouplingGaussLocalization "MEDCouplingGaussLocalization" & - the
+ *  Gauss localization object.
  *  \throw If \a this field is not on Gauss points.
  *  \throw If \a locId is not within the valid range.
  *  \throw If the spatial discretization of \a this field is NULL.
@@ -447,7 +461,7 @@ void MEDCouplingField::getCellIdsHavingGaussLocalization(int locId, std::vector<
  * \warning This method is const, so the returned object is not apt for modification.
  *  \param [in] locId - the id of the Gauss localization object of interest.
  *         It must be in range <em> 0 <= locId < getNbOfGaussLocalization() </em>.
- *  \return \ref const MEDCouplingGaussLocalization & - the Gauss localization object.
+ *  \return const \ref MEDCouplingGaussLocalization & - the Gauss localization object.
  *  \throw If \a this field is not on Gauss points.
  *  \throw If \a locId is not within the valid range.
  *  \throw If the spatial discretization of \a this field is NULL.
