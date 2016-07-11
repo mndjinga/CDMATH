@@ -30,7 +30,7 @@ Dependencies. The following packages list is sufficient on Ubuntu 14.04, Ubuntu 
  - `g++` or another C++ compiler
  - `libhdf5-dev`
  - `libopenmpi-dev`, in particular if you need to use the compilation option `-DMEDFILE_USE_MPI=ON`.
- - `petsc-dev`, if you want to compile a CDMATH-based linear solver. PETSc should use version 3.4. or more recent (3.5, 3.6 or 3.7 currently available). The version 3.4 of PETSc (released on 13 May 2013), as is easily installable from Ubuntu 14.04  repositories whereas the version 3.6 of PETSc (released on 13 May 2016), is easily installable from Ubuntu 16.04  repositories. Use the compilation option `-DCDMATH_WITH_PETSC=ON`.
+ - `petsc-dev`, if you want to compile a CDMATH-based linear solver. The version of PETSc should be 3.4 or more recent (3.5, 3.6 or 3.7 currently available). The version 3.4.2 of PETSc (released on 02 July 2013) is easily installable from Ubuntu 14.04 repositories (package libpetsc3.4.2-dev) whereas the version 3.6.2 of PETSc (released on 02 October 2015), is easily installable from Ubuntu 16.04 repositories (package libpetsc3.6.2-dev). Use the compilation option `-DCDMATH_WITH_PETSC=ON`.
  - `python-dev`, `python-numpy` and `swig`, if you want to generate Python executables and libraries of CDMATH. Use the compilation option `-DCDMATH_WITH_PYTHON=ON`.
  - `libcppunit-dev`, if you want to generate unit tests. Use the compilation option `-DCDMATH_WITH_TESTS=ON`.
  - `doxygen`, `graphviz` and `mscgen`, if you want to generate a nice documentation in `~/workspace/cdmath/cdmath_install/doc/`. Use the compilation option `-DCDMATH_WITH_DOCUMENTATION=ON`.
