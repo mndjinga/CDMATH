@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2015  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2016  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -21,6 +21,9 @@
 #include "MEDCouplingCMesh.hxx"
 #include "MEDCouplingMemArray.hxx"
 #include "MEDCouplingFieldDouble.hxx"
+#include "MEDCouplingCurveLinearMesh.hxx"
+
+#include "InterpKernelAutoPtr.hxx"
 
 #include <functional>
 #include <algorithm>
@@ -81,12 +84,12 @@ MEDCouplingCMesh *MEDCouplingCMesh::New()
 
 MEDCouplingCMesh *MEDCouplingCMesh::New(const std::string& meshName)
 {
-  MEDCouplingCMesh *ret=new MEDCouplingCMesh;
+  MEDCouplingCMesh *ret(new MEDCouplingCMesh);
   ret->setName(meshName);
   return ret;
 }
 
-MEDCouplingMesh *MEDCouplingCMesh::deepCpy() const
+MEDCouplingCMesh *MEDCouplingCMesh::deepCpy() const
 {
   return clone(true);
 }
@@ -94,6 +97,20 @@ MEDCouplingMesh *MEDCouplingCMesh::deepCpy() const
 MEDCouplingCMesh *MEDCouplingCMesh::clone(bool recDeepCpy) const
 {
   return new MEDCouplingCMesh(*this,recDeepCpy);
+}
+
+MEDCouplingCurveLinearMesh *MEDCouplingCMesh::buildCurveLinear() const
+{
+  checkCoherency();
+  int dim(getSpaceDimension());
+  MEDCouplingAutoRefCountObjectPtr<MEDCouplingCurveLinearMesh> ret(MEDCouplingCurveLinearMesh::New());
+  ret->MEDCouplingStructuredMesh::operator=(*this);
+  INTERP_KERNEL::AutoPtr<int> ngs(new int[dim]);
+  getNodeGridStructure(ngs);
+  ret->setNodeGridStructure(ngs,ngs+dim);
+  MEDCouplingAutoRefCountObjectPtr<DataArrayDouble> coo(getCoordinatesAndOwner());
+  ret->setCoords(coo);
+  return ret.retn();
 }
 
 void MEDCouplingCMesh::updateTime() const
@@ -264,11 +281,6 @@ void MEDCouplingCMesh::checkCoherency1(double eps) const
     _y_array->checkMonotonic(true, eps);
   if(_z_array)
     _z_array->checkMonotonic(true, eps);
-}
-
-void MEDCouplingCMesh::checkCoherency2(double eps) const
-{
-  checkCoherency1(eps);
 }
 
 void MEDCouplingCMesh::getNodeGridStructure(int *res) const
@@ -679,11 +691,10 @@ MEDCouplingMesh *MEDCouplingCMesh::mergeMyselfWith(const MEDCouplingMesh *other)
  */
 DataArrayDouble *MEDCouplingCMesh::getCoordinatesAndOwner() const
 {
-  DataArrayDouble *ret=DataArrayDouble::New();
-  int spaceDim=getSpaceDimension();
-  int nbNodes=getNumberOfNodes();
+  MEDCouplingAutoRefCountObjectPtr<DataArrayDouble> ret(DataArrayDouble::New());
+  int spaceDim(getSpaceDimension()),nbNodes(getNumberOfNodes());
   ret->alloc(nbNodes,spaceDim);
-  double *pt=ret->getPointer();
+  double *pt(ret->getPointer());
   int tmp[3];
   getSplitNodeValues(tmp);
   const DataArrayDouble *tabs[3]={getCoordsAt(0),getCoordsAt(1),getCoordsAt(2)};
@@ -700,7 +711,7 @@ DataArrayDouble *MEDCouplingCMesh::getCoordinatesAndOwner() const
       for(int j=0;j<spaceDim;j++)
         pt[i*spaceDim+j]=tabsPtr[j][tmp2[j]];
     }
-  return ret;
+  return ret.retn();
 }
 
 /*!

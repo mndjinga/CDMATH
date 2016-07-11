@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2015  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2016  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -27,11 +27,14 @@ namespace ParaMEDMEM
 {
   class MEDCouplingFieldDouble;
   /*!
-   * \brief A field template can be seen as a field without array of values.
+   * \brief A field template can be seen as a field without the array of values.
    *
-   * A field template instance aggregates a MEDCouplingMesh instance and a spatial discretization object (instance of MEDCouplingFieldDiscretization).
+   * A field template aggregates a MEDCouplingMesh and a spatial discretization object (instance of
+   * MEDCouplingFieldDiscretization).
    * 
-   * Instances of type MEDCouplingFieldTemplate are the most appropriate for preparation of matrix using MEDCouplingRemapper::prepareEx.
+   * MEDCouplingFieldTemplate is the most appropriate type for the preparation of matrix using
+   * MEDCouplingRemapper::prepareEx, since it contains the minimal information requireds to prepare
+   * the interpolation matrix.
    */
   class MEDCouplingFieldTemplate : public MEDCouplingField
   {

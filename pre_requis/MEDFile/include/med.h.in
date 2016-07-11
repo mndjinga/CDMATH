@@ -1,7 +1,7 @@
 /* -*- mode:C; coding:utf-8 -*- */
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2015  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2016  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -79,8 +79,10 @@ extern "C" {
     \details Indique le mode d'entrelacement utilisé en mémoire par l'application.
 */
 /* 2.3v3.0 ok*/
-typedef enum {MED_FULL_INTERLACE, /**<Exemple avec 3 composantes X,Y,Z : X1Y1Z1X2Y2Z2X3Y3Z3...*/
-	      MED_NO_INTERLACE,    /**<Exemple avec 3 composantes X,Y,Z : X1X2X3Y1Y2Y3Z1Z2Z3...*/
+typedef enum {MED_FULL_INTERLACE, /**<Exemple avec 3 composantes X,Y,Z : X1Y1Z1X2Y2Z2X3Y3Z3...
+				      Exemple avec 3 MED_TRIA3 T1,T2,T3 : N11N12N13 N21N22N23 N31N32N33 */
+	      MED_NO_INTERLACE,    /**<Exemple avec 3 composantes X,Y,Z : X1X2X3Y1Y2Y3Z1Z2Z3...
+				       Exemple avec 3 MED_TRIA3 T1,T2,T3 : N11N21N31 N12N22N32 N13N23N33 */
               MED_UNDEF_INTERLACE=-1/**<Mode d'entelacement non défini */
 	}  med_switch_mode;
 

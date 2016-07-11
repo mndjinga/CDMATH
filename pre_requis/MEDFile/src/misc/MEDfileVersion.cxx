@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2015  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2016  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -26,6 +26,8 @@ MED_FILE_VERSION& MED_FILE_VERSION::Instance() {
   static MED_FILE_VERSION obj;
   return obj;
 }
+
+MED_FILE_VERSION::~MED_FILE_VERSION() {};
 
 extern "C" valueType  _MEDfileVersion(const med_idt oid) {
 

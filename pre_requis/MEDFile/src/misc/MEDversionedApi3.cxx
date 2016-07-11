@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2015  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2016  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -27,6 +27,8 @@ extern "C" {
 using namespace std;
 
 static MED_VERSIONED_API3 & MedVersionedApi3=MED_VERSIONED_API3::Instance();
+
+MED_VERSIONED_API3::~MED_VERSIONED_API3() {};
 
 MED_VERSIONED_API3& MED_VERSIONED_API3::Instance() {
   static MED_VERSIONED_API3 obj;
@@ -187,10 +189,15 @@ MED_VERSIONED_API3::MED_VERSIONED_API3() : map<keyType,
    table[ "_MEDnFamily23Attribute300"   ]   = _MEDnFamily23Attribute30 ;
    table[ "_MEDnFamily300"              ]   = _MEDnFamily30 ;
    table[ "_MEDnFamily236"              ]   = _MEDnFamily236 ;
+   table[ "_MEDnFamilyGroup320"         ]   = _MEDnFamilyGroup32 ;
    table[ "_MEDnFamilyGroup300"         ]   = _MEDnFamilyGroup30 ;
    table[ "_MEDnFamilyGroup236"         ]   = _MEDnFamilyGroup236 ;
    table[ "_MEDfamily23Info236"         ]   = _MEDfamily23Info236 ;
    table[ "_MEDfamily23Info300"         ]   = _MEDfamily23Info30 ;
+   table[ "_MEDfamilyCr320"         ]   = _MEDfamilyCr32 ;
+   table[ "_MEDfamilyCr300"         ]   = _MEDfamilyCr30 ;
+   table[ "_MEDfamilyInfo320"       ]   = _MEDfamilyInfo32 ;
+   table[ "_MEDfamilyInfo300"       ]   = _MEDfamilyInfo30 ;
 
 
    table[ "_MEDlinkRd300"         ] = _MEDlinkRd30 ;
@@ -243,6 +250,7 @@ MED_VERSIONED_API3::MED_VERSIONED_API3() : map<keyType,
 
 
 }
+
 
 
 MedFuncType MED_VERSIONED_API3::operator[]( const keyType & c ) const

@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2015  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2016  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -53,6 +53,12 @@ namespace ParaMEDMEM
     CPPUNIT_TEST( testWriteUMeshesRW1 );
     CPPUNIT_TEST( testMixCellAndNodesFieldRW1 );
     CPPUNIT_TEST( testGetAllFieldNamesRW1 );
+
+    // Previously in ParaMEDMEM:
+    CPPUNIT_TEST(testMEDLoaderRead1);
+    CPPUNIT_TEST(testMEDLoaderPolygonRead);
+    CPPUNIT_TEST(testMEDLoaderPolyhedronRead);
+
     CPPUNIT_TEST_SUITE_END();
   public:
     void testMesh1DRW();
@@ -77,6 +83,10 @@ namespace ParaMEDMEM
     void testWriteUMeshesRW1();
     void testMixCellAndNodesFieldRW1();
     void testGetAllFieldNamesRW1();
+
+    void testMEDLoaderRead1();
+    void testMEDLoaderPolygonRead();
+    void testMEDLoaderPolyhedronRead();
   private:
     MEDCouplingUMesh *build1DMesh_1();
     MEDCouplingUMesh *build2DCurveMesh_1();
@@ -89,6 +99,7 @@ namespace ParaMEDMEM
     MEDCouplingFieldDouble *buildVecFieldOnNodes_1();
     MEDCouplingFieldDouble *buildVecFieldOnGauss_1();
     MEDCouplingFieldDouble *buildVecFieldOnGaussNE_1();
+
   };
 }
 

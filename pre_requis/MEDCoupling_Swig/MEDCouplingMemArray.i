@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2015  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2016  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -181,6 +181,7 @@
 %newobject ParaMEDMEM::DataArrayDouble::fromPolarToCart;
 %newobject ParaMEDMEM::DataArrayDouble::fromCylToCart;
 %newobject ParaMEDMEM::DataArrayDouble::fromSpherToCart;
+%newobject ParaMEDMEM::DataArrayDouble::cartesianize;
 %newobject ParaMEDMEM::DataArrayDouble::getDifferentValues;
 %newobject ParaMEDMEM::DataArrayDouble::findClosestTupleId;
 %newobject ParaMEDMEM::DataArrayDouble::computeNbOfInteractionsWith;
@@ -203,6 +204,13 @@
 
 namespace ParaMEDMEM
 {
+  typedef enum
+    {
+      AX_CART = 3,
+      AX_CYL = 4,
+      AX_SPHER = 5
+    } MEDCouplingAxisType;
+
   class DataArray : public RefCountObject, public TimeLabel
   {
   public:
@@ -245,6 +253,7 @@ namespace ParaMEDMEM
     static std::string GetVarNameFromInfo(const std::string& info) throw(INTERP_KERNEL::Exception);
     static std::string GetUnitFromInfo(const std::string& info) throw(INTERP_KERNEL::Exception);
     static std::string BuildInfoFromVarAndUnit(const std::string& var, const std::string& unit) throw(INTERP_KERNEL::Exception);
+    static std::string GetAxTypeRepr(MEDCouplingAxisType at) throw(INTERP_KERNEL::Exception);
     void updateTime() const;
     %extend
     {
@@ -580,6 +589,7 @@ namespace ParaMEDMEM
     DataArrayDouble *fromPolarToCart() const throw(INTERP_KERNEL::Exception);
     DataArrayDouble *fromCylToCart() const throw(INTERP_KERNEL::Exception);
     DataArrayDouble *fromSpherToCart() const throw(INTERP_KERNEL::Exception);
+    DataArrayDouble *cartesianize(MEDCouplingAxisType atOfThis) const throw(INTERP_KERNEL::Exception);
     DataArrayDouble *doublyContractedProduct() const throw(INTERP_KERNEL::Exception);
     DataArrayDouble *determinant() const throw(INTERP_KERNEL::Exception);
     DataArrayDouble *eigenValues() const throw(INTERP_KERNEL::Exception);
@@ -2598,7 +2608,6 @@ namespace ParaMEDMEM
     void fillWithZero() throw(INTERP_KERNEL::Exception);
     void fillWithValue(int val) throw(INTERP_KERNEL::Exception);
     void iota(int init=0) throw(INTERP_KERNEL::Exception);
-    void replaceOneValByInThis(int valToBeReplaced, int replacedBy) throw(INTERP_KERNEL::Exception);
     std::string repr() const throw(INTERP_KERNEL::Exception);
     std::string reprZip() const throw(INTERP_KERNEL::Exception);
     std::string reprNotTooLong() const throw(INTERP_KERNEL::Exception);
@@ -2611,9 +2620,9 @@ namespace ParaMEDMEM
     DataArrayInt *selectByTupleId2(int bg, int end, int step) const throw(INTERP_KERNEL::Exception);
     DataArrayInt *checkAndPreparePermutation() const throw(INTERP_KERNEL::Exception);
     DataArrayInt *buildPermArrPerLevel() const throw(INTERP_KERNEL::Exception);
-    bool isIdentity() const throw(INTERP_KERNEL::Exception);
     bool isIdentity2(int sizeExpected) const throw(INTERP_KERNEL::Exception);
     bool isUniform(int val) const throw(INTERP_KERNEL::Exception);
+    bool hasUniqueValues() const throw(INTERP_KERNEL::Exception);
     DataArrayInt *substr(int tupleIdBg, int tupleIdEnd=-1) const throw(INTERP_KERNEL::Exception);
     void transpose() throw(INTERP_KERNEL::Exception);
     DataArrayInt *changeNbOfComponents(int newNbOfComp, int dftValue) const throw(INTERP_KERNEL::Exception);

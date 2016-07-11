@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2015  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2016  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -53,11 +53,25 @@ namespace ParaMEDMEM
     int getOrder() const { return _order; }
     double getTime() const { return _time; }
     MEDCouplingAutoRefCountObjectPtr<PartDefinition> getPartDefOfCoo() const { return _part_coords; }
-    std::vector<std::string> getAxisInfoOnMesh(med_idt fid, int mId, const std::string& mName, ParaMEDMEM::MEDCouplingMeshType& meshType, int& nstep, int& Mdim);
-    static int GetMeshIdFromName(med_idt fid, const std::string& mName, ParaMEDMEM::MEDCouplingMeshType& meshType, int& dt, int& it, std::string& dtunit1);
+    std::vector<std::string> getAxisInfoOnMesh(med_idt fid, int mId, const std::string& mName, ParaMEDMEM::MEDCouplingMeshType& meshType, ParaMEDMEM::MEDCouplingAxisType& axType, int& nstep, int& Mdim);
+    static int GetMeshIdFromName(med_idt fid, const std::string& mName, ParaMEDMEM::MEDCouplingMeshType& meshType, ParaMEDMEM::MEDCouplingAxisType& axType, int& dt, int& it, std::string& dtunit1);
     static double CheckMeshTimeStep(med_idt fid, const std::string& mname, int nstep, int dt, int it);
     static void ReadFamiliesAndGrps(med_idt fid, const std::string& mname, std::map<std::string,int>& fams, std::map<std::string, std::vector<std::string> >& grps, MEDFileMeshReadSelector *mrs);
     static void WriteFamiliesAndGrps(med_idt fid, const std::string& mname, const std::map<std::string,int>& fams, const std::map<std::string, std::vector<std::string> >& grps, int tooLongStrPol);
+    static bool RenameFamiliesFromFileToMem(std::vector< std::string >& famNames);
+    static bool RenameFamiliesFromMemToFile(std::vector< std::string >& famNames);
+    static ParaMEDMEM::MEDCouplingAxisType TraduceAxisType(med_axis_type at);
+    static ParaMEDMEM::MEDCouplingAxisType TraduceAxisTypeStruct(med_grid_type gt);
+    static med_axis_type TraduceAxisTypeRev(ParaMEDMEM::MEDCouplingAxisType at);
+    static med_grid_type TraduceAxisTypeRevStruct(ParaMEDMEM::MEDCouplingAxisType at);
+  private:
+    typedef bool (*RenameFamiliesPatternFunc)(std::vector< std::string >&);
+    static void RenameFamiliesPatternInternal(std::vector< std::pair<std::string,std::pair<int,std::vector<std::string> > > >& crudeFams, RenameFamiliesPatternFunc func);
+    static void RenameFamiliesFromFileToMemInternal(std::vector< std::pair<std::string,std::pair<int,std::vector<std::string> > > >& crudeFams);
+    static void RenameFamiliesFromMemToFileInternal(std::vector< std::pair<std::string,std::pair<int,std::vector<std::string> > > >& crudeFams);
+  public:
+    static const char ZE_SEP_FOR_FAMILY_KILLERS[];
+    static int ZE_SEP2_FOR_FAMILY_KILLERS;
   protected:
     MEDFileString _name;
     MEDFileString _description;
@@ -111,10 +125,12 @@ namespace ParaMEDMEM
     MEDFileCMeshL2();
     void loadAll(med_idt fid, int mId, const std::string& mName, int dt, int it);
     MEDCouplingCMesh *getMesh() { return _cmesh; }
+    ParaMEDMEM::MEDCouplingAxisType getAxType() const { return _ax_type; }
   private:
     static med_data_type GetDataTypeCorrespondingToSpaceId(int id);
   private:
     MEDCouplingAutoRefCountObjectPtr<MEDCouplingCMesh> _cmesh;
+    ParaMEDMEM::MEDCouplingAxisType _ax_type;
   };
 
   class MEDFileCLMeshL2 : public MEDFileStrMeshL2
@@ -158,6 +174,7 @@ namespace ParaMEDMEM
     int getNumberOfCells() const;
     std::vector<MEDCoupling1GTUMesh *> getParts() const;
     std::vector<INTERP_KERNEL::NormalizedCellType> getGeoTypes() const;
+    int getNumberOfCellsWithType(INTERP_KERNEL::NormalizedCellType ct) const;
     std::vector<MEDCoupling1GTUMesh *> retrievePartsWithoutComputation() const;
     MEDCoupling1GTUMesh *retrievePartWithoutComputation(INTERP_KERNEL::NormalizedCellType gt) const;
     void getStartStopOfGeoTypeWithoutComputation(INTERP_KERNEL::NormalizedCellType gt, int& start, int& stop) const;
@@ -167,7 +184,9 @@ namespace ParaMEDMEM
     std::size_t getHeapMemorySizeWithoutChildren() const;
     std::vector<const BigMemoryObject *> getDirectChildrenWithNull() const;
     MEDFileUMeshAggregateCompute deepCpy(DataArrayDouble *coords) const;
+    void shallowCpyMeshes();
     bool isEqual(const MEDFileUMeshAggregateCompute& other, double eps, std::string& what) const;
+    void checkCoherency() const;
     void clearNonDiscrAttributes() const;
     void synchronizeTinyInfo(const MEDFileMesh& master) const;
     bool empty() const;
@@ -193,6 +212,7 @@ namespace ParaMEDMEM
   class MEDFileUMeshSplitL1 : public RefCountObject
   {
     friend class MEDFileUMeshPermCompute;
+    friend class MEDFileUMesh;
   public:
     MEDFileUMeshSplitL1(const MEDFileUMeshSplitL1& other);
     MEDFileUMeshSplitL1(const MEDFileUMeshL2& l2, const std::string& mName, int id);
@@ -202,7 +222,9 @@ namespace ParaMEDMEM
     void setName(const std::string& name);
     std::size_t getHeapMemorySizeWithoutChildren() const;
     std::vector<const BigMemoryObject *> getDirectChildrenWithNull() const;
+    MEDFileUMeshSplitL1 *shallowCpyUsingCoords(DataArrayDouble *coords) const;
     MEDFileUMeshSplitL1 *deepCpy(DataArrayDouble *coords) const;
+    void checkCoherency() const;
     void setCoords(DataArrayDouble *coords);
     bool isEqual(const MEDFileUMeshSplitL1 *other, double eps, std::string& what) const;
     void clearNonDiscrAttributes() const;
@@ -221,6 +243,7 @@ namespace ParaMEDMEM
     int getNumberOfCells() const;
     bool isMeshStoredSplitByType() const { return _m_by_types.isStoredSplitByType(); }
     std::vector<INTERP_KERNEL::NormalizedCellType> getGeoTypes() const;
+    int getNumberOfCellsWithType(INTERP_KERNEL::NormalizedCellType ct) const;
     std::vector<MEDCoupling1GTUMesh *> getDirectUndergroundSingleGeoTypeMeshes() const { return _m_by_types.retrievePartsWithoutComputation(); }
     MEDCoupling1GTUMesh *getDirectUndergroundSingleGeoTypeMesh(INTERP_KERNEL::NormalizedCellType gt) const { return _m_by_types.retrievePartWithoutComputation(gt); }
     DataArrayInt *extractFamilyFieldOnGeoType(INTERP_KERNEL::NormalizedCellType gt) const;

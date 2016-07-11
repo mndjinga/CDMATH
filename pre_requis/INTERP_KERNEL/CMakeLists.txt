@@ -1,4 +1,4 @@
-# Copyright (C) 2012-2015  CEA/DEN, EDF R&D
+# Copyright (C) 2012-2016  CEA/DEN, EDF R&D
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -34,7 +34,7 @@ SET(interpkernel_SOURCES
   Interpolation2DCurve.cxx
   Interpolation3DSurf.cxx
   Interpolation3D.cxx
-  Interpolation3D2D.cxx
+  Interpolation2D3D.cxx
   MeshElement.cxx
   InterpKernelMeshQuality.cxx
   InterpKernelCellSimplify.cxx
@@ -77,11 +77,11 @@ ENDIF(NOT WIN32)
 ADD_LIBRARY(interpkernel SHARED ${interpkernel_SOURCES})
 SET_TARGET_PROPERTIES(interpkernel PROPERTIES COMPILE_FLAGS "${PLATFORM_MMAP}")
 TARGET_LINK_LIBRARIES(interpkernel ${PLATFORM_LIBS})
-INSTALL(TARGETS interpkernel EXPORT ${PROJECT_NAME}TargetGroup DESTINATION ${SALOME_INSTALL_LIBS})
+INSTALL(TARGETS interpkernel EXPORT ${PROJECT_NAME}TargetGroup DESTINATION ${MEDCOUPLING_INSTALL_LIBS})
 
 FILE(GLOB_RECURSE interpkernel_HEADERS_HXX "${CMAKE_CURRENT_SOURCE_DIR}/*.hxx")
 FILE(GLOB_RECURSE interpkernel_HEADERS_TXX "${CMAKE_CURRENT_SOURCE_DIR}/*.txx")
-INSTALL(FILES ${interpkernel_HEADERS_HXX} ${interpkernel_HEADERS_TXX} Bases/NormalizedGeometricTypes DESTINATION ${SALOME_INSTALL_HEADERS})
+INSTALL(FILES ${interpkernel_HEADERS_HXX} ${interpkernel_HEADERS_TXX} Bases/NormalizedGeometricTypes DESTINATION ${MEDCOUPLING_INSTALL_HEADERS})
 
 # Will be used for SWIG dependencies:
 SET (interpkernel_HEADERS_HXX PARENT_SCOPE)

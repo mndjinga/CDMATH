@@ -1,5 +1,5 @@
 #  -*- coding: iso-8859-1 -*-
-# Copyright (C) 2007-2015  CEA/DEN, EDF R&D
+# Copyright (C) 2007-2016  CEA/DEN, EDF R&D
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -22,6 +22,7 @@
 from MEDLoader import *
 import unittest
 from math import pi,e,sqrt
+from distutils.version import StrictVersion
 
 class MEDLoaderTest4(unittest.TestCase):
     """
@@ -149,7 +150,7 @@ class MEDLoaderTest4(unittest.TestCase):
         a0Exp=mm.getCoords().deepCpy()
         del m,m1,mm,fs,f,fCell0,fCell1
         ########## GO for reading in MEDReader, by not loading all. Mesh is fully loaded but not fields values
-        ms=MEDFileMeshes(fname)
+        ms=MEDFileMeshes(fname) ; ms.cartesianizeMe()
         fields=MEDFileFields(fname,False) # False is important to not read the values
         fields.removeFieldsWithoutAnyTimeStep()
         refMem=fields.getHeapMemorySize()
@@ -365,7 +366,7 @@ class MEDLoaderTest4(unittest.TestCase):
         a0Exp=mm.getCoords().deepCpy()
         del m,m1,mm,fs,f,fCell0,fCell1
         ########## GO for reading in MEDReader, by not loading all. Mesh is fully loaded but not fields values
-        ms=MEDFileMeshes(fname)
+        ms=MEDFileMeshes(fname) ; ms.cartesianizeMe()
         fields=MEDFileFields(fname,False)
         fields.removeFieldsWithoutAnyTimeStep()
         fields_per_mesh=[fields.partOfThisLyingOnSpecifiedMeshName(meshName) for meshName in ms.getMeshesNames()]
@@ -531,7 +532,7 @@ class MEDLoaderTest4(unittest.TestCase):
         a0Exp=mm.getCoords().deepCpy()
         del m,m1,mm,fs,f,fCell0,fCell1
         ########## GO for reading in MEDReader, by not loading all. Mesh is fully loaded but not fields values
-        ms=MEDFileMeshes(fname)
+        ms=MEDFileMeshes(fname) ; ms.cartesianizeMe()
         fields=MEDFileFields(fname,False)
         fields.removeFieldsWithoutAnyTimeStep()
         fields_per_mesh=[fields.partOfThisLyingOnSpecifiedMeshName(meshName) for meshName in ms.getMeshesNames()]
@@ -786,7 +787,7 @@ class MEDLoaderTest4(unittest.TestCase):
         a0Exp=mm.getCoords().deepCpy()
         del m,mm,fs1,fs2,fs3,f,fNode
         ########## GO for reading in MEDReader, by not loading all. Mesh is fully loaded but not fields values
-        ms=MEDFileMeshes(fname)
+        ms=MEDFileMeshes(fname) ; ms.cartesianizeMe()
         fields=MEDFileFields(fname,False)
         fields.removeFieldsWithoutAnyTimeStep()
         fields_per_mesh=[fields.partOfThisLyingOnSpecifiedMeshName(meshName) for meshName in ms.getMeshesNames()]
@@ -918,7 +919,7 @@ class MEDLoaderTest4(unittest.TestCase):
         a0Exp=mm.getCoords().deepCpy()
         del m,mm,fs1,fs2,fs3,f,fNode
         ########## GO for reading in MEDReader,by not loading all. Mesh is fully loaded but not fields values
-        ms=MEDFileMeshes(fname)
+        ms=MEDFileMeshes(fname) ; ms.cartesianizeMe()
         fields=MEDFileFields(fname,False)
         fields.removeFieldsWithoutAnyTimeStep()
         fields_per_mesh=[fields.partOfThisLyingOnSpecifiedMeshName(meshName) for meshName in ms.getMeshesNames()]
@@ -1084,7 +1085,7 @@ class MEDLoaderTest4(unittest.TestCase):
         fs0.write(fname,0) ; fs1.write(fname,0) ; fs2.write(fname,0) ; fs3.write(fname,0) ; fs4.write(fname,0)
         del m,mm,fs1,fs2,fs3,f,fNode
         ########## GO for reading in MEDReader,by not loading all. Mesh is fully loaded but not fields values
-        ms=MEDFileMeshes(fname)
+        ms=MEDFileMeshes(fname) ; ms.cartesianizeMe()
         fields=MEDFileFields(fname,False)
         fields.removeFieldsWithoutAnyTimeStep()
         fields_per_mesh=[fields.partOfThisLyingOnSpecifiedMeshName(meshName) for meshName in ms.getMeshesNames()]
@@ -1293,7 +1294,7 @@ class MEDLoaderTest4(unittest.TestCase):
         fs0.write(fname,0) ; fs1.write(fname,0) ; fs2.write(fname,0) ; fs3.write(fname,0) ; fs4.write(fname,0)
         del m,mm,fs1,fs2,fs3,f,fNode
         ########## GO for reading in MEDReader,by not loading all. Mesh is fully loaded but not fields values
-        ms=MEDFileMeshes(fname)
+        ms=MEDFileMeshes(fname) ; ms.cartesianizeMe()
         fields=MEDFileFields(fname,False)
         fields.removeFieldsWithoutAnyTimeStep()
         fields_per_mesh=[fields.partOfThisLyingOnSpecifiedMeshName(meshName) for meshName in ms.getMeshesNames()]
@@ -1492,7 +1493,7 @@ class MEDLoaderTest4(unittest.TestCase):
         a0Exp=mm.getCoords().deepCpy()
         del m,mm,fs1,fs2,fs3,f,fNode
         ########## GO for reading in MEDReader,by not loading all. Mesh is fully loaded but not fields values
-        ms=MEDFileMeshes(fname)
+        ms=MEDFileMeshes(fname) ; ms.cartesianizeMe()
         fields=MEDFileFields(fname,False)
         fields.removeFieldsWithoutAnyTimeStep()
         fields_per_mesh=[fields.partOfThisLyingOnSpecifiedMeshName(meshName) for meshName in ms.getMeshesNames()]
@@ -1640,7 +1641,7 @@ class MEDLoaderTest4(unittest.TestCase):
         a0Exp=mm.getCoords().deepCpy()
         del m,mm,fs1,fs2,fs3,f,fNode
         ########## GO for reading in MEDReader,by not loading all. Mesh is fully loaded but not fields values
-        ms=MEDFileMeshes(fname)
+        ms=MEDFileMeshes(fname) ; ms.cartesianizeMe()
         fields=MEDFileFields(fname,False)
         fields.removeFieldsWithoutAnyTimeStep()
         fields_per_mesh=[fields.partOfThisLyingOnSpecifiedMeshName(meshName) for meshName in ms.getMeshesNames()]
@@ -1773,7 +1774,7 @@ class MEDLoaderTest4(unittest.TestCase):
         a0Exp=mm.getCoords().deepCpy()
         del m,mm,fs1,fs2,f,fNode
         ########## GO for reading in MEDReader,by not loading all. Mesh is fully loaded but not fields values
-        ms=MEDFileMeshes(fname)
+        ms=MEDFileMeshes(fname) ; ms.cartesianizeMe()
         fields=MEDFileFields(fname,False)
         fields.removeFieldsWithoutAnyTimeStep()
         fields_per_mesh=[fields.partOfThisLyingOnSpecifiedMeshName(meshName) for meshName in ms.getMeshesNames()]
@@ -1876,7 +1877,7 @@ class MEDLoaderTest4(unittest.TestCase):
         a0Exp=mm.getCoords().deepCpy()
         del m,mm,fs0,f,fNode
         ########## GO for reading in MEDReader,by not loading all. Mesh is fully loaded but not fields values
-        ms=MEDFileMeshes(fname)
+        ms=MEDFileMeshes(fname) ; ms.cartesianizeMe()
         fields=MEDFileFields(fname,False)
         fields.removeFieldsWithoutAnyTimeStep()
         fields_per_mesh=[fields.partOfThisLyingOnSpecifiedMeshName(meshName) for meshName in ms.getMeshesNames()]
@@ -1971,7 +1972,7 @@ class MEDLoaderTest4(unittest.TestCase):
         a0Exp=mm.getCoords().deepCpy()
         del m,mm,fs0,fs1,f,fNode
         ########## GO for reading in MEDReader,by not loading all. Mesh is fully loaded but not fields values
-        ms=MEDFileMeshes(fname)
+        ms=MEDFileMeshes(fname) ; ms.cartesianizeMe()
         fields=MEDFileFields(fname,False)
         fields.removeFieldsWithoutAnyTimeStep()
         fields_per_mesh=[fields.partOfThisLyingOnSpecifiedMeshName(meshName) for meshName in ms.getMeshesNames()]
@@ -2088,7 +2089,7 @@ class MEDLoaderTest4(unittest.TestCase):
             a0Exp=mm.getCoords().deepCpy()
             del m,mm,fs0
             ########## GO for reading in MEDReader,by not loading all. Mesh is fully loaded but not fields values
-            ms=MEDFileMeshes(fname)
+            ms=MEDFileMeshes(fname) ; ms.cartesianizeMe()
             fields=MEDFileFields(fname,False)
             fields.removeFieldsWithoutAnyTimeStep()
             fields_per_mesh=[fields.partOfThisLyingOnSpecifiedMeshName(meshName) for meshName in ms.getMeshesNames()]
@@ -2244,7 +2245,7 @@ class MEDLoaderTest4(unittest.TestCase):
             a0Exp=mm.getCoords().deepCpy()
             del m,mm,fs0
             ########## GO for reading in MEDReader,by not loading all. Mesh is fully loaded but not fields values
-            ms=MEDFileMeshes(fname)
+            ms=MEDFileMeshes(fname) ; ms.cartesianizeMe()
             fields=MEDFileFields(fname,False)
             fields.removeFieldsWithoutAnyTimeStep()
             fields_per_mesh=[fields.partOfThisLyingOnSpecifiedMeshName(meshName) for meshName in ms.getMeshesNames()]
@@ -2406,7 +2407,7 @@ class MEDLoaderTest4(unittest.TestCase):
         mm.write(fname,2)
         ffs.write(fname,0)
         ########## GO for reading in MEDReader,by not loading all. Mesh is fully loaded but not fields values
-        ms=MEDFileMeshes(fname)
+        ms=MEDFileMeshes(fname) ; ms.cartesianizeMe()
         fields=MEDFileFields(fname,False)
         fields.removeFieldsWithoutAnyTimeStep()
         fields_per_mesh=[fields.partOfThisLyingOnSpecifiedMeshName(meshName) for meshName in ms.getMeshesNames()]
@@ -2598,7 +2599,7 @@ class MEDLoaderTest4(unittest.TestCase):
         #
         mms.write(fname,2) ; mts.write(fname,0)
         ########## GO for reading in MEDReader,by not loading all. Mesh is fully loaded but not fields values
-        ms=MEDFileMeshes(fname)
+        ms=MEDFileMeshes(fname) ; ms.cartesianizeMe()
         fields=MEDFileFields(fname,False)
         fields.removeFieldsWithoutAnyTimeStep()
         fields_per_mesh=[fields.partOfThisLyingOnSpecifiedMeshName(meshName) for meshName in ms.getMeshesNames()]
@@ -2642,7 +2643,7 @@ class MEDLoaderTest4(unittest.TestCase):
         m.allocateCells()
         m.insertNextCell(NORM_QUAD4,[0,3,4,1])
         m.insertNextCell(NORM_QUAD4,[1,4,5,2])
-        m.checkCoherency2()
+        m.checkCoherency1()
         #
         t=(1.1,0,-1)
         f=MEDCouplingFieldDouble(ON_GAUSS_NE) ; f.setTime(*t) ; f.setMesh(m)
@@ -2674,7 +2675,7 @@ class MEDLoaderTest4(unittest.TestCase):
         f3.setName(fieldName3)
         MEDLoader.WriteFieldUsingAlreadyWrittenMesh(fname,f3)
         ########## GO for reading in MEDReader,by not loading all. Mesh is fully loaded but not fields values
-        ms=MEDFileMeshes(fname)
+        ms=MEDFileMeshes(fname) ; ms.cartesianizeMe()
         fields=MEDFileFields(fname,False)
         fields.removeFieldsWithoutAnyTimeStep()
         fields_per_mesh=[fields.partOfThisLyingOnSpecifiedMeshName(meshName) for meshName in ms.getMeshesNames()]
@@ -2756,7 +2757,7 @@ class MEDLoaderTest4(unittest.TestCase):
         m.allocateCells()
         m.insertNextCell(NORM_QUAD4,[0,3,4,1])
         m.insertNextCell(NORM_QUAD4,[1,4,5,2])
-        m.checkCoherency2()
+        m.checkCoherency1()
         #
         t=(1.1,0,-1)
         f=MEDCouplingFieldDouble(ON_GAUSS_PT) ; f.setTime(*t) ; f.setMesh(m)
@@ -2790,7 +2791,7 @@ class MEDLoaderTest4(unittest.TestCase):
         f3.setName(fieldName3)
         MEDLoader.WriteFieldUsingAlreadyWrittenMesh(fname,f3)
         ########## GO for reading in MEDReader,by not loading all. Mesh is fully loaded but not fields values
-        ms=MEDFileMeshes(fname)
+        ms=MEDFileMeshes(fname) ; ms.cartesianizeMe()
         fields=MEDFileFields(fname,False)
         fields.removeFieldsWithoutAnyTimeStep()
         fields_per_mesh=[fields.partOfThisLyingOnSpecifiedMeshName(meshName) for meshName in ms.getMeshesNames()]
@@ -2860,7 +2861,7 @@ class MEDLoaderTest4(unittest.TestCase):
             self.assertTrue(v.isEqual(vExp1[i],1e-12))
             pass
         ## Now same exercise but with a different load strategy. All is load directly.
-        ms=MEDFileMeshes(fname)
+        ms=MEDFileMeshes(fname) ; ms.cartesianizeMe()
         fields=MEDFileFields(fname) # here all is read, the SauvReader (or other Reader) is emulated
         fields_per_mesh=[fields.partOfThisLyingOnSpecifiedMeshName(meshName) for meshName in ms.getMeshesNames()]
         allFMTSLeavesToDisplay=[]
@@ -2964,7 +2965,7 @@ class MEDLoaderTest4(unittest.TestCase):
         mm.write(fname,2)
         ff.write(fname,0)
         ########## GO for reading in MEDReader,by not loading all. Mesh is fully loaded but not fields values
-        ms=MEDFileMeshes(fname)
+        ms=MEDFileMeshes(fname) ; ms.cartesianizeMe()
         fields=MEDFileFields(fname,False)
         fields.removeFieldsWithoutAnyTimeStep()
         fields_per_mesh=[fields.partOfThisLyingOnSpecifiedMeshName(meshName) for meshName in ms.getMeshesNames()]
@@ -3148,7 +3149,7 @@ class MEDLoaderTest4(unittest.TestCase):
         fs.appendGlobs(fmts3,1e-12)
         fs.write(fname,0)
         ########## GO for reading in MEDReader,by not loading all. Mesh is fully loaded but not fields values
-        ms=MEDFileMeshes(fname)
+        ms=MEDFileMeshes(fname) ; ms.cartesianizeMe()
         fields=MEDFileFields(fname,False)
         fields.removeFieldsWithoutAnyTimeStep()
         fields_per_mesh=[fields.partOfThisLyingOnSpecifiedMeshName(meshName) for meshName in ms.getMeshesNames()]
@@ -3349,7 +3350,7 @@ class MEDLoaderTest4(unittest.TestCase):
         mm.write(fname,2)
         fs.write(fname,0)
         ########## GO for reading in MEDReader,by not loading all. Mesh is fully loaded but not fields values
-        ms=MEDFileMeshes(fname)
+        ms=MEDFileMeshes(fname) ; ms.cartesianizeMe()
         fields=MEDFileFields(fname,False)
         fields.removeFieldsWithoutAnyTimeStep()
         fields_per_mesh=[fields.partOfThisLyingOnSpecifiedMeshName(meshName) for meshName in ms.getMeshesNames()]
@@ -3461,7 +3462,7 @@ class MEDLoaderTest4(unittest.TestCase):
         mm.write(fname,2)
         fmts0.write(fname,0)
         ########## GO for reading in MEDReader,by not loading all. Mesh is fully loaded but not fields values
-        ms=MEDFileMeshes(fname)
+        ms=MEDFileMeshes(fname) ; ms.cartesianizeMe()
         fields=MEDFileFields(fname,False)
         fields.removeFieldsWithoutAnyTimeStep()
         fields_per_mesh=[fields.partOfThisLyingOnSpecifiedMeshName(meshName) for meshName in ms.getMeshesNames()]
@@ -3566,7 +3567,7 @@ class MEDLoaderTest4(unittest.TestCase):
         mm.write(fname,2)
         fmts0.write(fname,0)
         ########## GO for reading in MEDReader,by not loading all. Mesh is fully loaded but not fields values
-        ms=MEDFileMeshes(fname)
+        ms=MEDFileMeshes(fname) ; ms.cartesianizeMe()
         fields=MEDFileFields(fname,False)
         fields.removeFieldsWithoutAnyTimeStep()
         fields_per_mesh=[fields.partOfThisLyingOnSpecifiedMeshName(meshName) for meshName in ms.getMeshesNames()]
@@ -3674,7 +3675,7 @@ class MEDLoaderTest4(unittest.TestCase):
         m.write(fname,2)
         fmts.write(fname,0)
         ########## GO for reading in MEDReader,by not loading all. Mesh is fully loaded but not fields values
-        ms=MEDFileMeshes(fname)
+        ms=MEDFileMeshes(fname) ; ms.cartesianizeMe()
         fields=MEDFileFields(fname,False) # false is absolutely necessary for the test
         fields.removeFieldsWithoutAnyTimeStep()
         fields_per_mesh=[fields.partOfThisLyingOnSpecifiedMeshName(meshName) for meshName in ms.getMeshesNames()]
@@ -3888,7 +3889,7 @@ class MEDLoaderTest4(unittest.TestCase):
         mm.write(fname,2)
         fs.write(fname,0)
         ########## GO for reading in MEDReader,by not loading all. Mesh is fully loaded but not fields values
-        ms=MEDFileMeshes(fname)
+        ms=MEDFileMeshes(fname) ; ms.cartesianizeMe()
         fields=MEDFileFields(fname,False)
         fields.removeFieldsWithoutAnyTimeStep()
         fields_per_mesh=[fields.partOfThisLyingOnSpecifiedMeshName(meshName) for meshName in ms.getMeshesNames()]
@@ -4003,7 +4004,7 @@ class MEDLoaderTest4(unittest.TestCase):
         mm.write(fname,2)
         fs.write(fname,0)
         ########## GO for reading in MEDReader,by not loading all. Mesh is fully loaded but not fields values
-        ms=MEDFileMeshes(fname)
+        ms=MEDFileMeshes(fname) ; ms.cartesianizeMe()
         fields=MEDFileFields(fname,False)
         fields.removeFieldsWithoutAnyTimeStep()
         self.assertEqual(fields[0].getMeshName(),"mesh")
@@ -4149,7 +4150,7 @@ class MEDLoaderTest4(unittest.TestCase):
         mm.write(fname,2)
         fs.write(fname,0)
         ########## GO for reading in MEDReader,by not loading all. Mesh is fully loaded but not fields values
-        ms=MEDFileMeshes(fname)
+        ms=MEDFileMeshes(fname) ; ms.cartesianizeMe()
         fields=MEDFileFields(fname,False)
         fields.removeFieldsWithoutAnyTimeStep()
         fields_per_mesh=[fields.partOfThisLyingOnSpecifiedMeshName(meshName) for meshName in ms.getMeshesNames()]
@@ -4287,7 +4288,7 @@ class MEDLoaderTest4(unittest.TestCase):
         fGauss.setArray(arrGauss)
         MEDLoader.WriteFieldUsingAlreadyWrittenMesh(fname,fGauss)
         ########## GO for reading in MEDReader,by not loading all. Mesh is fully loaded but not fields values
-        ms=MEDFileMeshes(fname)
+        ms=MEDFileMeshes(fname) ; ms.cartesianizeMe()
         fields=MEDFileFields(fname,False)
         fields.removeFieldsWithoutAnyTimeStep()
         fields_per_mesh=[fields.partOfThisLyingOnSpecifiedMeshName(meshName) for meshName in ms.getMeshesNames()]
@@ -4395,7 +4396,7 @@ class MEDLoaderTest4(unittest.TestCase):
         cc.write(fname,2)
         fs.write(fname,0)
         ########## GO for reading in MEDReader,by not loading all. Mesh is fully loaded but not fields values
-        ms=MEDFileMeshes(fname)
+        ms=MEDFileMeshes(fname) ; ms.cartesianizeMe()
         fields=MEDFileFields(fname,False)
         fields.removeFieldsWithoutAnyTimeStep()
         fields_per_mesh=[fields.partOfThisLyingOnSpecifiedMeshName(meshName) for meshName in ms.getMeshesNames()]
@@ -4505,7 +4506,7 @@ class MEDLoaderTest4(unittest.TestCase):
         cc.write(fname,2)
         fs.write(fname,0)
         ########## GO for reading in MEDReader,by not loading all. Mesh is fully loaded but not fields values
-        ms=MEDFileMeshes(fname)
+        ms=MEDFileMeshes(fname) ; ms.cartesianizeMe()
         fields=MEDFileFields(fname,False)
         fields.removeFieldsWithoutAnyTimeStep()
         fields_per_mesh=[fields.partOfThisLyingOnSpecifiedMeshName(meshName) for meshName in ms.getMeshesNames()]
@@ -4605,7 +4606,7 @@ class MEDLoaderTest4(unittest.TestCase):
         cc.write(fname,2)
         fs.write(fname,0)
         ########## GO for reading in MEDReader,by not loading all. Mesh is fully loaded but not fields values
-        ms=MEDFileMeshes(fname)
+        ms=MEDFileMeshes(fname) ; ms.cartesianizeMe()
         fields=MEDFileFields(fname,False)
         fields.removeFieldsWithoutAnyTimeStep()
         fields_per_mesh=[fields.partOfThisLyingOnSpecifiedMeshName(meshName) for meshName in ms.getMeshesNames()]
@@ -4709,7 +4710,7 @@ class MEDLoaderTest4(unittest.TestCase):
             MEDLoader.WriteFieldUsingAlreadyWrittenMesh(fname,fCell0)
             pass
         ########## GO for reading in MEDReader,by not loading all. Mesh is fully loaded but not fields values
-        ms=MEDFileMeshes(fname)
+        ms=MEDFileMeshes(fname) ; ms.cartesianizeMe()
         fields=MEDFileFields(fname,False)
         fields.removeFieldsWithoutAnyTimeStep()
         fields_per_mesh=[fields.partOfThisLyingOnSpecifiedMeshName(meshName) for meshName in ms.getMeshesNames()]
@@ -4801,7 +4802,7 @@ class MEDLoaderTest4(unittest.TestCase):
         a0Exp=mm.getCoords().deepCpy()
         del m,mm,fs0,fs1,f,fNode
         ########## GO for reading in MEDReader,by not loading all. Mesh is fully loaded but not fields values
-        ms=MEDFileMeshes(fname)
+        ms=MEDFileMeshes(fname) ; ms.cartesianizeMe()
         fields=MEDFileFields(fname,False)
         fields.removeFieldsWithoutAnyTimeStep()
         fields_per_mesh=[fields.partOfThisLyingOnSpecifiedMeshName(meshName) for meshName in ms.getMeshesNames()]
@@ -4917,7 +4918,8 @@ class MEDLoaderTest4(unittest.TestCase):
         ########## GO for reading in MEDReader,by not loading all. Mesh is fully loaded but not fields values
         ms=MEDFileMeshes() # here we reproduce what is done by ParaMEDFileMeshes.ParaNew
         ms.pushMesh(MEDFileUMesh.LoadPartOf(fname,"Mesh",[NORM_QUAD4],[0,2,1],-1,-1));
-        ms[0].zipCoords() 
+        ms[0].zipCoords()
+        ms.cartesianizeMe()
         #
         fields=MEDFileFields.LoadPartOf(fname,False,ms);
         fields.removeFieldsWithoutAnyTimeStep()
@@ -5038,7 +5040,7 @@ class MEDLoaderTest4(unittest.TestCase):
         ff1.write(fname,0)
         ff4.write(fname,0)
         ###
-        ms=MEDFileMeshes(fname)
+        ms=MEDFileMeshes(fname) ; ms.cartesianizeMe()
         fields=MEDFileFields(fname,False)
         fields.removeFieldsWithoutAnyTimeStep()
         fields_per_mesh=[fields.partOfThisLyingOnSpecifiedMeshName(meshName) for meshName in ms.getMeshesNames()]
@@ -5112,6 +5114,279 @@ class MEDLoaderTest4(unittest.TestCase):
             self.assertEqual(v.getHiddenCppPointer(),ffCell.getUndergroundDataArray().getHiddenCppPointer())
             v.isEqual(DataArrayDouble([2000,2001,2002,2003,2004,2005,2006]),1e-12)
             pass
+        pass
+
+    @unittest.skipUnless(StrictVersion(MEDLoader.MEDFileVersionStr())>=StrictVersion("3.2.0"),"requires at least 3.2.0 MED file version")
+    def test37(self):
+        """ Introduction of non cartesian meshes management. Here cylindrical."""
+        fname="ForMEDReader37.med"
+        meshName="mesh"
+        description="Cylindrical grid"
+        comps=["X [cm]","Y [cm]","Z [cm]"]
+        arrX=DataArrayDouble(3) ; arrX.iota() ; arrX*=0.8 ; arrX.setInfoOnComponent(0,comps[0])
+        arrY=DataArrayDouble(4) ; arrY.iota() ; arrY*=pi/(len(arrY)-1) ; arrY.setInfoOnComponent(0,comps[1])
+        arrZ=DataArrayDouble(5) ; arrZ.iota() ; arrZ*=1.6 ; arrZ-=8. ; arrZ.setInfoOnComponent(0,comps[2])
+        m=MEDCouplingCMesh() ; m.setCoords(arrX,arrY,arrZ) ; m.setName(meshName)
+        mm=MEDFileCMesh() ; mm.setMesh(m) ; mm.setDescription(description)
+        mm.setAxType(AX_CYL) # the test is here !
+        f=MEDCouplingFieldDouble(ON_CELLS) ; f.setMesh(m) ; f.setName("Field")
+        arr=DataArrayDouble(m.getNumberOfCells()) ; arr.iota() ; arr*=0.1 ; f.setArray(arr) ; f.checkCoherency()
+        ff=MEDFileField1TS() ; ff.setFieldNoProfileSBT(f)
+        fmts=MEDFileFieldMultiTS() ; fmts.pushBackTimeStep(ff)
+        #
+        ms=MEDFileMeshes() ; ms.pushMesh(mm)
+        fields=MEDFileFields() ; fields.pushField(fmts)
+        ms.write(fname,2) ; fields.write(fname,0)
+        #
+        del mm,fmts,fields,ms
+        ms=MEDFileMeshes(fname)
+        fields=MEDFileFields(fname,False)
+        ms.cartesianizeMe()
+        #
+        fields.removeFieldsWithoutAnyTimeStep()
+        fields_per_mesh=[fields.partOfThisLyingOnSpecifiedMeshName(meshName) for meshName in ms.getMeshesNames()]
+        allFMTSLeavesToDisplay=[]
+        for fields in fields_per_mesh:
+            allFMTSLeavesToDisplay2=[]
+            for fmts in fields:
+                tmp=fmts.splitDiscretizations()
+                for itmp in tmp:
+                    self.assertTrue(not itmp.presenceOfMultiDiscPerGeoType())
+                    pass
+                allFMTSLeavesToDisplay2+=tmp
+                pass
+            allFMTSLeavesToDisplay.append(allFMTSLeavesToDisplay2)
+            pass
+        #
+        self.assertEqual(len(allFMTSLeavesToDisplay),1)
+        self.assertEqual(len(allFMTSLeavesToDisplay[0]),1)
+        allFMTSLeavesPerTimeSeries=MEDFileAnyTypeFieldMultiTS.SplitIntoCommonTimeSeries(sum(allFMTSLeavesToDisplay,[]))
+        self.assertEqual(len(allFMTSLeavesPerTimeSeries),1)
+        allFMTSLeavesPerCommonSupport1=MEDFileAnyTypeFieldMultiTS.SplitPerCommonSupport(allFMTSLeavesToDisplay[0],ms[ms.getMeshesNames()[0]])
+        self.assertEqual(len(allFMTSLeavesPerCommonSupport1),1)
+        #
+        mst=MEDFileMeshStruct.New(ms[0])
+        fcscp=allFMTSLeavesPerCommonSupport1[0][1]
+        mml=fcscp.buildFromScratchDataSetSupport(0,fields)
+        mml2=mml.prepare()
+        self.assertTrue(isinstance(mml2,MEDCurveLinearMeshMultiLev))# <- hehe it is a CurveLinear no more a CMesh !
+        a,b,c=mml2.buildVTUArrays()
+        self.assertTrue(c)# the array is thoose in structure
+        ref_a=DataArrayDouble([0.,0.,-8.,0.8,0.,-8.,1.6,0.,-8.,0.,0.,-8.,0.4,0.6928203230275509,-8.,0.8,1.3856406460551018,-8.,-0.,0.,-8.,-0.4,0.692820323027551,-8.,-0.8,1.385640646055102,-8.,-0.,0.,-8.,-0.8,0.,-8.,-1.6,0.,-8.,0.,0.,-6.4,0.8,0.,-6.4,1.6,0.,-6.4,0.,0.,-6.4,0.4,0.6928203230275509,-6.4,0.8,1.3856406460551018,-6.4,-0.,0.,-6.4,-0.4,0.692820323027551,-6.4,-0.8,1.385640646055102,-6.4,-0.,0.,-6.4,-0.8,0.,-6.4,-1.6,0.,-6.4,0.,0.,-4.8,0.8,0.,-4.8,1.6,0.,-4.8,0.,0.,-4.8,0.4,0.6928203230275509,-4.8,0.8,1.3856406460551018,-4.8,-0.,0.,-4.8,-0.4,0.692820323027551,-4.8,-0.8,1.385640646055102,-4.8,-0.,0.,-4.8,-0.8,0.,-4.8,-1.6,0.,-4.8,0.,0.,-3.2,0.8,0.,-3.2,1.6,0.,-3.2,0.,0.,-3.2,0.4,0.6928203230275509,-3.2,0.8,1.3856406460551018,-3.2,-0.,0.,-3.2,-0.4,0.692820323027551,-3.2,-0.8,1.385640646055102,-3.2,-0.,0.,-3.2,-0.8,0.,-3.2,-1.6,0.,-3.2,0.,0.,-1.6,0.8,0.,-1.6,1.6,0.,-1.6,0.,0.,-1.6,0.4,0.6928203230275509,-1.6,0.8,1.3856406460551018,-1.6,-0.,0.,-1.6,-0.4,0.692820323027551,-1.6,-0.8,1.385640646055102,-1.6,-0.,0.,-1.6,-0.8,0.,-1.6,-1.6,0.,-1.6],60,3)
+        ref_a.setInfoOnComponents(comps)
+        self.assertTrue(a.isEqual(ref_a,1e-14))
+        self.assertEqual(b,[3,4,5])
+        for i in xrange(1):
+            ffCell=allFMTSLeavesPerCommonSupport1[0][0][0][i]
+            fsst=MEDFileField1TSStructItem.BuildItemFrom(ffCell,mst)
+            ffCell.loadArraysIfNecessary()
+            v=mml2.buildDataArray(fsst,fields,ffCell.getUndergroundDataArray())
+            self.assertEqual(v.getHiddenCppPointer(),ffCell.getUndergroundDataArray().getHiddenCppPointer())
+            self.assertTrue(v.isEqual(DataArrayDouble([0.0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0,1.1,1.2,1.3,1.4,1.5,1.6,1.7,1.8,1.9,2.0,2.1,2.2,2.3]),1e-14))
+            pass
+        pass
+    
+    @unittest.skipUnless(StrictVersion(MEDLoader.MEDFileVersionStr())>=StrictVersion("3.2.0"),"requires at least 3.2.0 MED file version")
+    def test38(self):
+        """ Introduction of non cartesian meshes management. Here spherical."""
+        fname="ForMEDReader38.med"
+        meshName="mesh"
+        description="Spherical grid"
+        comps=["X [cm]","Y [cm]","Z [cm]"]
+        arrX=DataArrayDouble(3) ; arrX.iota() ; arrX*=0.8 ; arrX.setInfoOnComponent(0,comps[0])
+        arrY=DataArrayDouble(4) ; arrY.iota() ; arrY*=pi/(len(arrY)-1) ; arrY.setInfoOnComponent(0,comps[1])
+        arrZ=DataArrayDouble(5) ; arrZ.iota() ; arrZ*=2*pi/(len(arrZ)-1) ; arrZ.setInfoOnComponent(0,comps[2])
+        m=MEDCouplingCMesh() ; m.setCoords(arrX,arrY,arrZ) ; m.setName(meshName)
+        mm=MEDFileCMesh() ; mm.setMesh(m) ; mm.setDescription(description)
+        mm.setAxType(AX_SPHER) # the test is here !
+        f=MEDCouplingFieldDouble(ON_CELLS) ; f.setMesh(m) ; f.setName("Field")
+        arr=DataArrayDouble(m.getNumberOfCells()) ; arr.iota() ; arr*=0.1 ; f.setArray(arr) ; f.checkCoherency()
+        ff=MEDFileField1TS() ; ff.setFieldNoProfileSBT(f)
+        fmts=MEDFileFieldMultiTS() ; fmts.pushBackTimeStep(ff)
+        #
+        ms=MEDFileMeshes() ; ms.pushMesh(mm)
+        fields=MEDFileFields() ; fields.pushField(fmts)
+        ms.write(fname,2) ; fields.write(fname,0)
+        #
+        del mm,fmts,fields,ms
+        ms=MEDFileMeshes(fname)
+        fields=MEDFileFields(fname,False)
+        ms.cartesianizeMe()
+        #
+        fields.removeFieldsWithoutAnyTimeStep()
+        fields_per_mesh=[fields.partOfThisLyingOnSpecifiedMeshName(meshName) for meshName in ms.getMeshesNames()]
+        allFMTSLeavesToDisplay=[]
+        for fields in fields_per_mesh:
+            allFMTSLeavesToDisplay2=[]
+            for fmts in fields:
+                tmp=fmts.splitDiscretizations()
+                for itmp in tmp:
+                    self.assertTrue(not itmp.presenceOfMultiDiscPerGeoType())
+                    pass
+                allFMTSLeavesToDisplay2+=tmp
+                pass
+            allFMTSLeavesToDisplay.append(allFMTSLeavesToDisplay2)
+            pass
+        #
+        self.assertEqual(len(allFMTSLeavesToDisplay),1)
+        self.assertEqual(len(allFMTSLeavesToDisplay[0]),1)
+        allFMTSLeavesPerTimeSeries=MEDFileAnyTypeFieldMultiTS.SplitIntoCommonTimeSeries(sum(allFMTSLeavesToDisplay,[]))
+        self.assertEqual(len(allFMTSLeavesPerTimeSeries),1)
+        allFMTSLeavesPerCommonSupport1=MEDFileAnyTypeFieldMultiTS.SplitPerCommonSupport(allFMTSLeavesToDisplay[0],ms[ms.getMeshesNames()[0]])
+        self.assertEqual(len(allFMTSLeavesPerCommonSupport1),1)
+        #
+        mst=MEDFileMeshStruct.New(ms[0])
+        fcscp=allFMTSLeavesPerCommonSupport1[0][1]
+        mml=fcscp.buildFromScratchDataSetSupport(0,fields)
+        mml2=mml.prepare()
+        self.assertTrue(isinstance(mml2,MEDCurveLinearMeshMultiLev))
+        a,b,c=mml2.buildVTUArrays()
+        self.assertTrue(c)# the array is thoose in structure
+        ref_a=DataArrayDouble([0.,0.,0.,0.,0.,0.8,0.,0.,1.6,0.,0.,0.,0.6928203230275509,0.,0.4,1.3856406460551018,0.,0.8,0.,0.,-0.,0.692820323027551,0.,-0.4,1.385640646055102,0.,-0.8,0.,0.,-0.,0.,0.,-0.8,0.,0.,-1.6,0.,0.,0.,0.,0.,0.8,0.,0.,1.6,0.,0.,0.,0.,0.6928203230275509,0.4,0.,1.3856406460551018,0.8,0.,0.,-0.,0.,0.692820323027551,-0.4,0.,1.385640646055102,-0.8,0.,0.,-0.,0.,0.,-0.8,0.,0.,-1.6,-0.,0.,0.,-0.,0.,0.8,-0.,0.,1.6,-0.,0.,0.,-0.6928203230275509,0.,0.4,-1.3856406460551018,0.,0.8,-0.,0.,-0.,-0.692820323027551,0.,-0.4,-1.385640646055102,0.,-0.8,-0.,0.,-0.,0.,0.,-0.8,0.,0.,-1.6,-0.,-0.,0.,-0.,-0.,0.8,-0.,-0.,1.6,-0.,-0.,0.,0.,-0.6928203230275509,0.4,0.,-1.3856406460551018,0.8,-0.,-0.,-0.,0.,-0.692820323027551,-0.4,0.,-1.385640646055102,-0.8,-0.,-0.,-0.,0.,0.,-0.8,0.,0.,-1.6,0.,-0.,0.,0.,-0.,0.8,0.,-0.,1.6,0.,-0.,0.,0.6928203230275509,0.,0.4,1.3856406460551018,0.,0.8,0.,-0.,-0.,0.692820323027551,0.,-0.4,1.385640646055102,0.,-0.8,0.,-0.,-0.,0.,0.,-0.8,0.,0.,-1.6],60,3)
+        ref_a.setInfoOnComponents(comps)
+        self.assertTrue(a.isEqual(ref_a,1e-14))
+        self.assertEqual(b,[3,4,5])
+        for i in xrange(1):
+            ffCell=allFMTSLeavesPerCommonSupport1[0][0][0][i]
+            fsst=MEDFileField1TSStructItem.BuildItemFrom(ffCell,mst)
+            ffCell.loadArraysIfNecessary()
+            v=mml2.buildDataArray(fsst,fields,ffCell.getUndergroundDataArray())
+            self.assertEqual(v.getHiddenCppPointer(),ffCell.getUndergroundDataArray().getHiddenCppPointer())
+            self.assertTrue(v.isEqual(DataArrayDouble([0.0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0,1.1,1.2,1.3,1.4,1.5,1.6,1.7,1.8,1.9,2.0,2.1,2.2,2.3]),1e-14))
+            pass
+        pass
+
+    def test39(self):
+        """Idem test37, test38, test39, test40 except that here it is an unstructured mesh."""
+        fname="ForMEDReader39.med"
+        meshName="mesh"
+        description="Spherical grid"
+        comps=["X [cm]","Y [cm]","Z [cm]"]
+        arrX=DataArrayDouble(3) ; arrX.iota() ; arrX*=0.8 ; arrX.setInfoOnComponent(0,comps[0])
+        arrY=DataArrayDouble(4) ; arrY.iota() ; arrY*=pi/(len(arrY)-1) ; arrY.setInfoOnComponent(0,comps[1])
+        arrZ=DataArrayDouble(5) ; arrZ.iota() ; arrZ*=2*pi/(len(arrZ)-1) ; arrZ.setInfoOnComponent(0,comps[2])
+        m=MEDCouplingCMesh() ; m.setCoords(arrX,arrY,arrZ) ; m.setName(meshName) ; m=m.buildUnstructured()
+        mm=MEDFileUMesh() ; mm[0]=m ; mm.setDescription(description) # the test is here : UMesh !
+        mm.setAxType(AX_SPHER) # the test is here !
+        f=MEDCouplingFieldDouble(ON_CELLS) ; f.setMesh(m) ; f.setName("Field")
+        arr=DataArrayDouble(m.getNumberOfCells()) ; arr.iota() ; arr*=0.1 ; f.setArray(arr) ; f.checkCoherency()
+        ff=MEDFileField1TS() ; ff.setFieldNoProfileSBT(f)
+        fmts=MEDFileFieldMultiTS() ; fmts.pushBackTimeStep(ff)
+        #
+        ms=MEDFileMeshes() ; ms.pushMesh(mm)
+        fields=MEDFileFields() ; fields.pushField(fmts)
+        ms.write(fname,2) ; fields.write(fname,0)
+        #
+        del mm,fmts,fields,ms
+        ms=MEDFileMeshes(fname)
+        fields=MEDFileFields(fname,False)
+        #
+        ms=MEDFileMeshes(fname) ; ms.cartesianizeMe()
+        fields=MEDFileFields(fname,False)
+        fields.removeFieldsWithoutAnyTimeStep()
+        fields_per_mesh=[fields.partOfThisLyingOnSpecifiedMeshName(meshName) for meshName in ms.getMeshesNames()]
+        allFMTSLeavesToDisplay=[]
+        for fields in fields_per_mesh:
+            allFMTSLeavesToDisplay2=[]
+            for fmts in fields:
+                tmp=fmts.splitDiscretizations()
+                for itmp in tmp:
+                    self.assertTrue(not itmp.presenceOfMultiDiscPerGeoType())
+                    pass
+                allFMTSLeavesToDisplay2+=tmp
+                pass
+            allFMTSLeavesToDisplay.append(allFMTSLeavesToDisplay2)
+            pass
+        #
+        self.assertEqual(len(allFMTSLeavesToDisplay),1)
+        self.assertEqual(len(allFMTSLeavesToDisplay[0]),1)
+        allFMTSLeavesPerTimeSeries=MEDFileAnyTypeFieldMultiTS.SplitIntoCommonTimeSeries(sum(allFMTSLeavesToDisplay,[]))
+        self.assertEqual(len(allFMTSLeavesPerTimeSeries),1)
+        allFMTSLeavesPerCommonSupport1=MEDFileAnyTypeFieldMultiTS.SplitPerCommonSupport(allFMTSLeavesToDisplay[0],ms[ms.getMeshesNames()[0]])
+        self.assertEqual(len(allFMTSLeavesPerCommonSupport1),1)
+        #
+        mst=MEDFileMeshStruct.New(ms[0])
+        fcscp=allFMTSLeavesPerCommonSupport1[0][1]
+        mml=fcscp.buildFromScratchDataSetSupport(0,fields)
+        mml2=mml.prepare()
+        self.assertTrue(isinstance(mml2,MEDUMeshMultiLev))
+        ncc,a0,a1,a2,a3,a4,a5=mml2.buildVTUArrays()
+        self.assertTrue(ncc)
+        ref_a=DataArrayDouble([0.,0.,0.,0.,0.,0.8,0.,0.,1.6,0.,0.,0.,0.6928203230275509,0.,0.4,1.3856406460551018,0.,0.8,0.,0.,-0.,0.692820323027551,0.,-0.4,1.385640646055102,0.,-0.8,0.,0.,-0.,0.,0.,-0.8,0.,0.,-1.6,0.,0.,0.,0.,0.,0.8,0.,0.,1.6,0.,0.,0.,0.,0.6928203230275509,0.4,0.,1.3856406460551018,0.8,0.,0.,-0.,0.,0.692820323027551,-0.4,0.,1.385640646055102,-0.8,0.,0.,-0.,0.,0.,-0.8,0.,0.,-1.6,-0.,0.,0.,-0.,0.,0.8,-0.,0.,1.6,-0.,0.,0.,-0.6928203230275509,0.,0.4,-1.3856406460551018,0.,0.8,-0.,0.,-0.,-0.692820323027551,0.,-0.4,-1.385640646055102,0.,-0.8,-0.,0.,-0.,0.,0.,-0.8,0.,0.,-1.6,-0.,-0.,0.,-0.,-0.,0.8,-0.,-0.,1.6,-0.,-0.,0.,0.,-0.6928203230275509,0.4,0.,-1.3856406460551018,0.8,-0.,-0.,-0.,0.,-0.692820323027551,-0.4,0.,-1.385640646055102,-0.8,-0.,-0.,-0.,0.,0.,-0.8,0.,0.,-1.6,0.,-0.,0.,0.,-0.,0.8,0.,-0.,1.6,0.,-0.,0.,0.6928203230275509,0.,0.4,1.3856406460551018,0.,0.8,0.,-0.,-0.,0.692820323027551,0.,-0.4,1.385640646055102,0.,-0.8,0.,-0.,-0.,0.,0.,-0.8,0.,0.,-1.6],60,3)
+        ref_a.setInfoOnComponents(comps)
+        self.assertTrue(a0.isEqual(ref_a,1e-14))#<- Test is here
+        for i in xrange(1):
+            ffCell=allFMTSLeavesPerCommonSupport1[0][0][0][i]
+            fsst=MEDFileField1TSStructItem.BuildItemFrom(ffCell,mst)
+            ffCell.loadArraysIfNecessary()
+            v=mml2.buildDataArray(fsst,fields,ffCell.getUndergroundDataArray())
+            self.assertEqual(v.getHiddenCppPointer(),ffCell.getUndergroundDataArray().getHiddenCppPointer())
+            self.assertTrue(v.isEqual(DataArrayDouble([0.0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0,1.1,1.2,1.3,1.4,1.5,1.6,1.7,1.8,1.9,2.0,2.1,2.2,2.3]),1e-14))
+        pass
+
+    def test40(self):
+        """Idem test37, test38, test39, test40 except that here it is a CL mesh."""
+        fname="ForMEDReader40.med"
+        meshName="mesh"
+        description="Spherical grid"
+        comps=["X [cm]","Y [cm]","Z [cm]"]
+        arrX=DataArrayDouble(3) ; arrX.iota() ; arrX*=0.8 ; arrX.setInfoOnComponent(0,comps[0])
+        arrY=DataArrayDouble(4) ; arrY.iota() ; arrY*=pi/(len(arrY)-1) ; arrY.setInfoOnComponent(0,comps[1])
+        arrZ=DataArrayDouble(5) ; arrZ.iota() ; arrZ*=2*pi/(len(arrZ)-1) ; arrZ.setInfoOnComponent(0,comps[2])
+        m=MEDCouplingCMesh() ; m.setCoords(arrX,arrY,arrZ) ; m.setName(meshName) ; m=m.buildCurveLinear()
+        mm=MEDFileCurveLinearMesh() ; mm.setMesh(m) ; mm.setDescription(description) # the test is here CLMesh!
+        mm.setAxType(AX_SPHER) # the test is here !
+        f=MEDCouplingFieldDouble(ON_CELLS) ; f.setMesh(m) ; f.setName("Field")
+        arr=DataArrayDouble(m.getNumberOfCells()) ; arr.iota() ; arr*=0.1 ; f.setArray(arr) ; f.checkCoherency()
+        ff=MEDFileField1TS() ; ff.setFieldNoProfileSBT(f)
+        fmts=MEDFileFieldMultiTS() ; fmts.pushBackTimeStep(ff)
+        #
+        ms=MEDFileMeshes() ; ms.pushMesh(mm)
+        fields=MEDFileFields() ; fields.pushField(fmts)
+        ms.write(fname,2) ; fields.write(fname,0)
+        #
+        ms=MEDFileMeshes(fname) ; ms.cartesianizeMe()
+        fields=MEDFileFields(fname,False)
+        fields.removeFieldsWithoutAnyTimeStep()
+        fields_per_mesh=[fields.partOfThisLyingOnSpecifiedMeshName(meshName) for meshName in ms.getMeshesNames()]
+        allFMTSLeavesToDisplay=[]
+        for fields in fields_per_mesh:
+            allFMTSLeavesToDisplay2=[]
+            for fmts in fields:
+                tmp=fmts.splitDiscretizations()
+                for itmp in tmp:
+                    self.assertTrue(not itmp.presenceOfMultiDiscPerGeoType())
+                    pass
+                allFMTSLeavesToDisplay2+=tmp
+                pass
+            allFMTSLeavesToDisplay.append(allFMTSLeavesToDisplay2)
+            pass
+        #
+        self.assertEqual(len(allFMTSLeavesToDisplay),1)
+        self.assertEqual(len(allFMTSLeavesToDisplay[0]),1)
+        allFMTSLeavesPerTimeSeries=MEDFileAnyTypeFieldMultiTS.SplitIntoCommonTimeSeries(sum(allFMTSLeavesToDisplay,[]))
+        self.assertEqual(len(allFMTSLeavesPerTimeSeries),1)
+        allFMTSLeavesPerCommonSupport1=MEDFileAnyTypeFieldMultiTS.SplitPerCommonSupport(allFMTSLeavesToDisplay[0],ms[ms.getMeshesNames()[0]])
+        self.assertEqual(len(allFMTSLeavesPerCommonSupport1),1)
+        #
+        mst=MEDFileMeshStruct.New(ms[0])
+        fcscp=allFMTSLeavesPerCommonSupport1[0][1]
+        mml=fcscp.buildFromScratchDataSetSupport(0,fields)
+        mml2=mml.prepare()
+        self.assertTrue(isinstance(mml2,MEDCurveLinearMeshMultiLev))
+        a,b,c=mml2.buildVTUArrays()
+        self.assertTrue(c)
+        ref_a=DataArrayDouble([0.,0.,0.,0.,0.,0.8,0.,0.,1.6,0.,0.,0.,0.6928203230275509,0.,0.4,1.3856406460551018,0.,0.8,0.,0.,-0.,0.692820323027551,0.,-0.4,1.385640646055102,0.,-0.8,0.,0.,-0.,0.,0.,-0.8,0.,0.,-1.6,0.,0.,0.,0.,0.,0.8,0.,0.,1.6,0.,0.,0.,0.,0.6928203230275509,0.4,0.,1.3856406460551018,0.8,0.,0.,-0.,0.,0.692820323027551,-0.4,0.,1.385640646055102,-0.8,0.,0.,-0.,0.,0.,-0.8,0.,0.,-1.6,-0.,0.,0.,-0.,0.,0.8,-0.,0.,1.6,-0.,0.,0.,-0.6928203230275509,0.,0.4,-1.3856406460551018,0.,0.8,-0.,0.,-0.,-0.692820323027551,0.,-0.4,-1.385640646055102,0.,-0.8,-0.,0.,-0.,0.,0.,-0.8,0.,0.,-1.6,-0.,-0.,0.,-0.,-0.,0.8,-0.,-0.,1.6,-0.,-0.,0.,0.,-0.6928203230275509,0.4,0.,-1.3856406460551018,0.8,-0.,-0.,-0.,0.,-0.692820323027551,-0.4,0.,-1.385640646055102,-0.8,-0.,-0.,-0.,0.,0.,-0.8,0.,0.,-1.6,0.,-0.,0.,0.,-0.,0.8,0.,-0.,1.6,0.,-0.,0.,0.6928203230275509,0.,0.4,1.3856406460551018,0.,0.8,0.,-0.,-0.,0.692820323027551,0.,-0.4,1.385640646055102,0.,-0.8,0.,-0.,-0.,0.,0.,-0.8,0.,0.,-1.6],60,3)
+        ref_a.setInfoOnComponents(comps)
+        self.assertTrue(a.isEqual(ref_a,1e-14))#<- Test is here
+        self.assertEqual(b,[3,4,5])
+        for i in xrange(1):
+            ffCell=allFMTSLeavesPerCommonSupport1[0][0][0][i]
+            fsst=MEDFileField1TSStructItem.BuildItemFrom(ffCell,mst)
+            ffCell.loadArraysIfNecessary()
+            v=mml2.buildDataArray(fsst,fields,ffCell.getUndergroundDataArray())
+            self.assertEqual(v.getHiddenCppPointer(),ffCell.getUndergroundDataArray().getHiddenCppPointer())
+            self.assertTrue(v.isEqual(DataArrayDouble([0.0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0,1.1,1.2,1.3,1.4,1.5,1.6,1.7,1.8,1.9,2.0,2.1,2.2,2.3]),1e-14))
         pass
 
     pass

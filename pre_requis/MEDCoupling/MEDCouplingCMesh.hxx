@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2015  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2016  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -26,13 +26,16 @@
 
 namespace ParaMEDMEM
 {
+  class MEDCouplingCurveLinearMesh;
+  
   class MEDCouplingCMesh : public MEDCouplingStructuredMesh
   {
   public:
     MEDCOUPLING_EXPORT static MEDCouplingCMesh *New();
     MEDCOUPLING_EXPORT static MEDCouplingCMesh *New(const std::string& meshName);
-    MEDCOUPLING_EXPORT MEDCouplingMesh *deepCpy() const;
+    MEDCOUPLING_EXPORT MEDCouplingCMesh *deepCpy() const;
     MEDCOUPLING_EXPORT MEDCouplingCMesh *clone(bool recDeepCpy) const;
+    MEDCOUPLING_EXPORT MEDCouplingCurveLinearMesh *buildCurveLinear() const;
     MEDCOUPLING_EXPORT void updateTime() const;
     MEDCOUPLING_EXPORT std::size_t getHeapMemorySizeWithoutChildren() const;
     MEDCOUPLING_EXPORT std::vector<const BigMemoryObject *> getDirectChildrenWithNull() const;
@@ -46,7 +49,6 @@ namespace ParaMEDMEM
                                                             DataArrayInt *&cellCor) const;
     MEDCOUPLING_EXPORT void checkCoherency() const;
     MEDCOUPLING_EXPORT void checkCoherency1(double eps=1e-12) const;
-    MEDCOUPLING_EXPORT void checkCoherency2(double eps=1e-12) const;
     MEDCOUPLING_EXPORT int getSpaceDimension() const;
     MEDCOUPLING_EXPORT void getCoordinatesOfNode(int nodeId, std::vector<double>& coo) const;
     MEDCOUPLING_EXPORT std::string simpleRepr() const;

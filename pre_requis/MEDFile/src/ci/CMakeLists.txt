@@ -280,8 +280,12 @@ _MEDfield23nValue.c
 _MEDfield23nValue30.c 
 _MEDfield23nValue236.c 
 _MEDmeshEntityInfo30.c 
-_MEDmeshEntityInfo236.c 
-)
+  _MEDmeshEntityInfo236.c
+  _MEDfamilyInfo32.c
+  _MEDnFamilyGroup32.c
+  _MEDfamilyCr30.c
+  _MEDfamilyCr32.c
+  _MEDfamilyInfo30.c)
 
 IF(MEDFILE_USE_MPI)
   LIST(APPEND ci_SOURCES MEDparFileOpen.c)

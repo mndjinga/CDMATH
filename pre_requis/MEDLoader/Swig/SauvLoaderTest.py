@@ -1,5 +1,5 @@
 #  -*- coding: iso-8859-1 -*-
-# Copyright (C) 2007-2015  CEA/DEN, EDF R&D
+# Copyright (C) 2007-2016  CEA/DEN, EDF R&D
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -25,11 +25,22 @@ from MEDLoaderDataForTest import MEDLoaderDataForTest
 
 class SauvLoaderTest(unittest.TestCase):
 
+    def __getResourcesDirectory(self):
+        med_root_dir = os.getenv("MEDCOUPLING_ROOT_DIR")
+        if med_root_dir:
+            pth = os.path.join( os.getenv("MEDCOUPLING_ROOT_DIR"), "share","resources","med")
+            if os.path.exists(pth):
+              return pth
+        current_dir = os.path.dirname(os.path.realpath(__file__))
+        pth = os.path.join(current_dir, "..", "..", "..", "resources")
+        if not os.path.exists(pth):
+          raise Exception("SauvLoaderTest: Unable to get resource directory")
+        return pth
+        pass
+
     def testSauv2Med(self):
         # get a file containing all types of readable piles
-        self.assertTrue( os.getenv("MED_ROOT_DIR") )
-        sauvFile = os.path.join( os.getenv("MED_ROOT_DIR"), "share","salome",
-                                 "resources","med","allPillesTest.sauv")
+        sauvFile = os.path.join( self.__getResourcesDirectory(),"allPillesTest.sauv")
         self.assertTrue( os.access( sauvFile, os.F_OK))
 
         # read SAUV and write MED
@@ -38,7 +49,7 @@ class SauvLoaderTest(unittest.TestCase):
         d2=sr.loadInMEDFileDS();
         d2.write(medFile,0);
 
-        # check 
+        # check
         self.assertEqual(1,d2.getNumberOfMeshes())
         self.assertEqual(8+97,d2.getNumberOfFields())
         mm = d2.getMeshes()
@@ -50,9 +61,7 @@ class SauvLoaderTest(unittest.TestCase):
 
     def testMed2Sauv(self):
         # read pointe.med
-        self.assertTrue( os.getenv("MED_ROOT_DIR") )
-        medFile = os.path.join( os.getenv("MED_ROOT_DIR"), "share","salome",
-                                "resources","med","pointe.med")
+        medFile = os.path.join(self.__getResourcesDirectory(),"pointe.med")
         self.assertTrue( os.access( medFile, os.F_OK))
         pointeMed = MEDFileData.New( medFile )
 
@@ -116,13 +125,13 @@ class SauvLoaderTest(unittest.TestCase):
         self.assertTrue( "groupe5" in groups )
         self.assertTrue( "maa1" in groups )
         self.assertEqual(16,m.getSizeAtLevel(0))
-        um0 = m.getGenMeshAtLevel(0)
+        um0 = m.getMeshAtLevel(0)
         self.assertEqual(12, um0.getNumberOfCellsWithType( NORM_TETRA4 ))
         self.assertEqual(2, um0.getNumberOfCellsWithType( NORM_PYRA5 ))
         self.assertEqual(2, um0.getNumberOfCellsWithType( NORM_HEXA8 ))
-        um1 = m.getGenMeshAtLevel(-1)
+        um1 = m.getMeshAtLevel(-1)
         self.assertEqual(2, um1.getNumberOfCellsWithType( NORM_TRI3 ))
-        pointeUM0 = pointeMedMesh.getGenMeshAtLevel(0)
+        pointeUM0 = pointeMedMesh.getMeshAtLevel(0)
         self.assertTrue(m.getCoords().isEqualWithoutConsideringStr(pointeMedMesh.getCoords(),1e-12))
         self.assertEqual( um0.getMeasureField(0).accumulate(0),
                           pointeUM0.getMeasureField(0).accumulate(0),1e-12)
@@ -241,9 +250,7 @@ class SauvLoaderTest(unittest.TestCase):
     @unittest.skipUnless(MEDLoader.HasXDR(),"requires XDR")
     def testMissingGroups(self):
         """test for issue 0021749: [CEA 601] Some missing groups in mesh after reading a SAUV file with SauvReader."""
-        self.assertTrue( os.getenv("MED_ROOT_DIR") )
-        sauvFile = os.path.join( os.getenv("MED_ROOT_DIR"), "share","salome",
-                                 "resources","med","BDC-714.sauv")
+        sauvFile = os.path.join(self.__getResourcesDirectory(),"BDC-714.sauv")
         self.assertTrue( os.access( sauvFile, os.F_OK))
         name_of_group_on_cells='Slice10:ABSORBER'
         name_of_group_on_cells2='Slice10:00LR'
@@ -336,13 +343,13 @@ class SauvLoaderTest(unittest.TestCase):
         sw.setCpyGrpIfOnASingleFamilyStatus(True)
         self.assertTrue(sw.getCpyGrpIfOnASingleFamilyStatus())
         sw.write(sauvFile)
-        
+
         f = open(sauvFile)
         # String pattern for the header of the sub meshes record ("PILE" number, number of named objects, number of objects)
         pattern_pile= re.compile(r'\sPILE\sNUMERO\s+(?P<number>[0-9]+)NBRE\sOBJETS\sNOMMES\s+(?P<nbnamed>[0-9]+)NBRE\sOBJETS\s+(?P<nbobjects>[0-9]+)')
         # String pattern for a sub mesh header (cell type, number of components and three numbers)
         pattern_header=re.compile(r'\s+(?P<type>[0-9]+)\s+(?P<nbsubs>[0-9]+)\s+[0-9]+\s+[0-9]+\s+[0-9]+')
-        
+
         nbobjects=0
         line = f.readline()
         while(line):
@@ -356,13 +363,13 @@ class SauvLoaderTest(unittest.TestCase):
                 pass
             line=f.readline()
             pass
-        
+
         # Skipping the objects names
         f.readline()
         # Skipping the objects ids
         f.readline()
 
-        # Looking for each sub-mesh header 
+        # Looking for each sub-mesh header
         line = f.readline()
         cur_object=0
         while(line and cur_object < nbobjects):

@@ -32,11 +32,12 @@ nodist_EXTRA_libmed_la_SOURCES = dummy.cxx
 # A la mise à jour du mineur de la bibliothèque med, on a x+1:0:z+1 pour la version libtool 
 # ce qui permet aux programmes liés à l'ancienne bibliothèque de mineur-1
 # d'utiliser la nouvelle bibliothèque pour lire/modifier les anciens fichiers
-# et créer de nouveaux en version mineur courante.
+# et en créer de nouveaux en version mineur courante.
 # Les anciennes bibliotèques refuseront de lire un fichier dont le mineur est supérieur à celui 
 # de la bibliothèque 
+#
 #TODO : Changer le versionement libtool
-libmed_la_LDFLAGS = -no-undefined -version-info 7:0:6 @HDF5_LDFLAGS@ @HDF5_LIBS@
+libmed_la_LDFLAGS = -no-undefined -version-info 8:0:7 @HDF5_LDFLAGS@ @HDF5_LIBS@
 if ENABLE_FORTRAN
 libmed_la_SOURCES += MEDiteratorsF.f
 #Regénère les objets fortran si le compilateur Fortran a changé dans le Makefile
@@ -51,7 +52,7 @@ libmedC_la_SOURCES = MEDiterators.c
 MEDiterators.lo: Makefile
 nodist_EXTRA_libmedC_la_SOURCES = dummy.cxx
 #TODO : Changer le versionement libtool
-libmedC_la_LDFLAGS = -no-undefined -version-info 7:0:6 @HDF5_LDFLAGS@ @HDF5_LIBS@
+libmedC_la_LDFLAGS = -no-undefined -version-info 8:0:7 @HDF5_LDFLAGS@ @HDF5_LIBS@
 libmedC_la_LIBADD  = 2.3.6/libmedC23.la 2.3.6/libmedVV.la ci/libci.la misc/libmisc.la hdfi/libhdfi.la
 
 settingsdir = $(libdir)

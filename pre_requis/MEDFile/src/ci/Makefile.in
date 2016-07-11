@@ -152,10 +152,10 @@ am__libci_la_SOURCES_DIST = MEDmeshEntityAttributeAdvancedWr.c \
 	MEDmeshnAxis.c MEDmeshnAxisByName.c MEDmeshPolygonWr.c \
 	MEDmeshPolygon2Wr.c MEDmeshPolygonRd.c MEDmeshPolygon2Rd.c \
 	MEDmeshPolyhedronWr.c MEDmeshPolyhedronRd.c MEDfamilyCr.c \
-	MEDnFamily.c MEDnFamilyGroup.c MEDfamilyInfo.c \
-	MEDnFamily23Attribute.c _MEDnFamily23Attribute236.c \
-	_MEDnFamily23Attribute30.c MEDfamily23Info.c \
-	_MEDfamily23Info236.c _MEDfamily23Info30.c \
+	_MEDfamilyCr32.c _MEDfamilyCr30.c MEDnFamily.c MEDfamilyInfo.c \
+	_MEDfamilyInfo32.c _MEDfamilyInfo30.c MEDnFamily23Attribute.c \
+	_MEDnFamily23Attribute236.c _MEDnFamily23Attribute30.c \
+	MEDfamily23Info.c _MEDfamily23Info236.c _MEDfamily23Info30.c \
 	_MEDmeshAssociatedGroupCr.c MEDmeshSortingTypeRd.c \
 	MEDnEquivalence.c MEDequivalenceCr.c MEDequivalenceInfo.c \
 	MEDequivalenceComputingStepInfo.c \
@@ -182,15 +182,16 @@ am__libci_la_SOURCES_DIST = MEDmeshEntityAttributeAdvancedWr.c \
 	MEDparameterCr.c MEDnParameter.c MEDparameterInfo.c \
 	MEDparameterInfoByName.c MEDparameterValueWr.c \
 	MEDparameterValueRd.c MEDparameterComputationStepInfo.c \
-	MEDmeshEntityInfo.c _MEDfieldCr31.c _MEDfieldCr30.c \
-	_MEDmeshInfoByName30.c _MEDmeshnAxisByName30.c \
-	_MEDmeshUniversalNameRd30.c _MEDmeshnEntity30.c \
-	_MEDmeshInfoByName236.c _MEDmeshnAxisByName236.c \
-	_MEDmeshUniversalNameRd236.c _MEDmeshnEntity236.c \
-	_MEDmeshAdvancedRd30.c _MEDmeshAdvancedRd236.c \
-	_MEDfilterEntityCr30.c _MEDfilterEntityCr236.c _MEDnFamily30.c \
-	_MEDnFamily236.c _MEDnFamilyGroup30.c _MEDnFamilyGroup236.c \
-	_MEDlinkRd30.c _MEDlinkRd236.c _MEDfieldComputingStepInfo30.c \
+	MEDmeshEntityInfo.c _MEDmeshInfoByName30.c \
+	_MEDmeshnAxisByName30.c _MEDmeshUniversalNameRd30.c \
+	_MEDmeshnEntity30.c _MEDmeshInfoByName236.c \
+	_MEDmeshnAxisByName236.c _MEDmeshUniversalNameRd236.c \
+	_MEDmeshnEntity236.c _MEDmeshAdvancedRd30.c \
+	_MEDmeshAdvancedRd236.c _MEDfilterEntityCr30.c \
+	_MEDfilterEntityCr236.c _MEDnFamily30.c _MEDnFamily236.c \
+	MEDnFamilyGroup.c _MEDnFamilyGroup32.c _MEDnFamilyGroup30.c \
+	_MEDnFamilyGroup236.c _MEDlinkRd30.c _MEDlinkRd236.c \
+	_MEDfieldCr31.c _MEDfieldCr30.c _MEDfieldComputingStepInfo30.c \
 	_MEDfieldComputingStepInfo31.c _MEDfieldComputingStepInfo236.c \
 	_MEDfieldComputingStepMeshInfo30.c \
 	_MEDfieldComputingStepMeshInfo236.c \
@@ -305,7 +306,8 @@ am_libci_la_OBJECTS = MEDmeshEntityAttributeAdvancedWr.lo \
 	MEDmeshnAxisByName.lo MEDmeshPolygonWr.lo MEDmeshPolygon2Wr.lo \
 	MEDmeshPolygonRd.lo MEDmeshPolygon2Rd.lo \
 	MEDmeshPolyhedronWr.lo MEDmeshPolyhedronRd.lo MEDfamilyCr.lo \
-	MEDnFamily.lo MEDnFamilyGroup.lo MEDfamilyInfo.lo \
+	_MEDfamilyCr32.lo _MEDfamilyCr30.lo MEDnFamily.lo \
+	MEDfamilyInfo.lo _MEDfamilyInfo32.lo _MEDfamilyInfo30.lo \
 	MEDnFamily23Attribute.lo _MEDnFamily23Attribute236.lo \
 	_MEDnFamily23Attribute30.lo MEDfamily23Info.lo \
 	_MEDfamily23Info236.lo _MEDfamily23Info30.lo \
@@ -336,15 +338,16 @@ am_libci_la_OBJECTS = MEDmeshEntityAttributeAdvancedWr.lo \
 	MEDparameterCr.lo MEDnParameter.lo MEDparameterInfo.lo \
 	MEDparameterInfoByName.lo MEDparameterValueWr.lo \
 	MEDparameterValueRd.lo MEDparameterComputationStepInfo.lo \
-	MEDmeshEntityInfo.lo _MEDfieldCr31.lo _MEDfieldCr30.lo \
-	_MEDmeshInfoByName30.lo _MEDmeshnAxisByName30.lo \
-	_MEDmeshUniversalNameRd30.lo _MEDmeshnEntity30.lo \
-	_MEDmeshInfoByName236.lo _MEDmeshnAxisByName236.lo \
-	_MEDmeshUniversalNameRd236.lo _MEDmeshnEntity236.lo \
-	_MEDmeshAdvancedRd30.lo _MEDmeshAdvancedRd236.lo \
-	_MEDfilterEntityCr30.lo _MEDfilterEntityCr236.lo \
-	_MEDnFamily30.lo _MEDnFamily236.lo _MEDnFamilyGroup30.lo \
+	MEDmeshEntityInfo.lo _MEDmeshInfoByName30.lo \
+	_MEDmeshnAxisByName30.lo _MEDmeshUniversalNameRd30.lo \
+	_MEDmeshnEntity30.lo _MEDmeshInfoByName236.lo \
+	_MEDmeshnAxisByName236.lo _MEDmeshUniversalNameRd236.lo \
+	_MEDmeshnEntity236.lo _MEDmeshAdvancedRd30.lo \
+	_MEDmeshAdvancedRd236.lo _MEDfilterEntityCr30.lo \
+	_MEDfilterEntityCr236.lo _MEDnFamily30.lo _MEDnFamily236.lo \
+	MEDnFamilyGroup.lo _MEDnFamilyGroup32.lo _MEDnFamilyGroup30.lo \
 	_MEDnFamilyGroup236.lo _MEDlinkRd30.lo _MEDlinkRd236.lo \
+	_MEDfieldCr31.lo _MEDfieldCr30.lo \
 	_MEDfieldComputingStepInfo30.lo \
 	_MEDfieldComputingStepInfo31.lo \
 	_MEDfieldComputingStepInfo236.lo \
@@ -723,10 +726,10 @@ libci_la_SOURCES = MEDmeshEntityAttributeAdvancedWr.c \
 	MEDmeshnAxis.c MEDmeshnAxisByName.c MEDmeshPolygonWr.c \
 	MEDmeshPolygon2Wr.c MEDmeshPolygonRd.c MEDmeshPolygon2Rd.c \
 	MEDmeshPolyhedronWr.c MEDmeshPolyhedronRd.c MEDfamilyCr.c \
-	MEDnFamily.c MEDnFamilyGroup.c MEDfamilyInfo.c \
-	MEDnFamily23Attribute.c _MEDnFamily23Attribute236.c \
-	_MEDnFamily23Attribute30.c MEDfamily23Info.c \
-	_MEDfamily23Info236.c _MEDfamily23Info30.c \
+	_MEDfamilyCr32.c _MEDfamilyCr30.c MEDnFamily.c MEDfamilyInfo.c \
+	_MEDfamilyInfo32.c _MEDfamilyInfo30.c MEDnFamily23Attribute.c \
+	_MEDnFamily23Attribute236.c _MEDnFamily23Attribute30.c \
+	MEDfamily23Info.c _MEDfamily23Info236.c _MEDfamily23Info30.c \
 	_MEDmeshAssociatedGroupCr.c MEDmeshSortingTypeRd.c \
 	MEDnEquivalence.c MEDequivalenceCr.c MEDequivalenceInfo.c \
 	MEDequivalenceComputingStepInfo.c \
@@ -753,15 +756,16 @@ libci_la_SOURCES = MEDmeshEntityAttributeAdvancedWr.c \
 	MEDparameterCr.c MEDnParameter.c MEDparameterInfo.c \
 	MEDparameterInfoByName.c MEDparameterValueWr.c \
 	MEDparameterValueRd.c MEDparameterComputationStepInfo.c \
-	MEDmeshEntityInfo.c _MEDfieldCr31.c _MEDfieldCr30.c \
-	_MEDmeshInfoByName30.c _MEDmeshnAxisByName30.c \
-	_MEDmeshUniversalNameRd30.c _MEDmeshnEntity30.c \
-	_MEDmeshInfoByName236.c _MEDmeshnAxisByName236.c \
-	_MEDmeshUniversalNameRd236.c _MEDmeshnEntity236.c \
-	_MEDmeshAdvancedRd30.c _MEDmeshAdvancedRd236.c \
-	_MEDfilterEntityCr30.c _MEDfilterEntityCr236.c _MEDnFamily30.c \
-	_MEDnFamily236.c _MEDnFamilyGroup30.c _MEDnFamilyGroup236.c \
-	_MEDlinkRd30.c _MEDlinkRd236.c _MEDfieldComputingStepInfo30.c \
+	MEDmeshEntityInfo.c _MEDmeshInfoByName30.c \
+	_MEDmeshnAxisByName30.c _MEDmeshUniversalNameRd30.c \
+	_MEDmeshnEntity30.c _MEDmeshInfoByName236.c \
+	_MEDmeshnAxisByName236.c _MEDmeshUniversalNameRd236.c \
+	_MEDmeshnEntity236.c _MEDmeshAdvancedRd30.c \
+	_MEDmeshAdvancedRd236.c _MEDfilterEntityCr30.c \
+	_MEDfilterEntityCr236.c _MEDnFamily30.c _MEDnFamily236.c \
+	MEDnFamilyGroup.c _MEDnFamilyGroup32.c _MEDnFamilyGroup30.c \
+	_MEDnFamilyGroup236.c _MEDlinkRd30.c _MEDlinkRd236.c \
+	_MEDfieldCr31.c _MEDfieldCr30.c _MEDfieldComputingStepInfo30.c \
 	_MEDfieldComputingStepInfo31.c _MEDfieldComputingStepInfo236.c \
 	_MEDfieldComputingStepMeshInfo30.c \
 	_MEDfieldComputingStepMeshInfo236.c \
@@ -1058,6 +1062,10 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/_MEDequivalenceInfo30.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/_MEDfamily23Info236.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/_MEDfamily23Info30.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/_MEDfamilyCr30.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/_MEDfamilyCr32.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/_MEDfamilyInfo30.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/_MEDfamilyInfo32.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/_MEDfield23ComputingStepMeshInfo236.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/_MEDfield23ComputingStepMeshInfo30.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/_MEDfield23ComputingStepMeshInfo31.Plo@am__quote@
@@ -1129,6 +1137,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/_MEDnFamily30.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/_MEDnFamilyGroup236.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/_MEDnFamilyGroup30.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/_MEDnFamilyGroup32.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/_MEDnSubdomainJoint236.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/_MEDnSubdomainJoint30.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/_MEDparameterInfoByName236.Plo@am__quote@

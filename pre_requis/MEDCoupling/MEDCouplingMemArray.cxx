@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2015  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2016  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -432,6 +432,21 @@ std::string DataArray::BuildInfoFromVarAndUnit(const std::string& var, const std
   std::ostringstream oss;
   oss << var << " [" << unit << "]";
   return oss.str();
+}
+
+std::string DataArray::GetAxTypeRepr(MEDCouplingAxisType at)
+{
+  switch(at)
+    {
+    case AX_CART:
+      return std::string("AX_CART");
+    case AX_CYL:
+      return std::string("AX_CYL");
+    case AX_SPHER:
+      return std::string("AX_SPHER");
+    default:
+      throw INTERP_KERNEL::Exception("DataArray::GetAxTypeRepr : unrecognized axis type enum !");
+    }
 }
 
 /*!
@@ -1626,6 +1641,11 @@ DataArrayDouble *DataArrayDouble::selectByTupleId(const int *new2OldBg, const in
     std::copy(srcPt+(*w)*nbComp,srcPt+((*w)+1)*nbComp,pt+i*nbComp);
   ret->copyStringInfoFrom(*this);
   return ret.retn();
+}
+
+DataArrayDouble *DataArrayDouble::selectByTupleId(const DataArrayInt & di) const
+{
+  return selectByTupleId(di.getConstPointer(), di.getConstPointer()+di.getNumberOfTuples());
 }
 
 /*!
@@ -3562,14 +3582,14 @@ DataArrayDouble *DataArrayDouble::accumulatePerChunck(const int *bgOfIndex, cons
 DataArrayDouble *DataArrayDouble::fromPolarToCart() const
 {
   checkAllocated();
-  int nbOfComp=getNumberOfComponents();
+  int nbOfComp(getNumberOfComponents());
   if(nbOfComp!=2)
     throw INTERP_KERNEL::Exception("DataArrayDouble::fromPolarToCart : must be an array with exactly 2 components !");
-  int nbOfTuple=getNumberOfTuples();
-  DataArrayDouble *ret=DataArrayDouble::New();
+  int nbOfTuple(getNumberOfTuples());
+  DataArrayDouble *ret(DataArrayDouble::New());
   ret->alloc(nbOfTuple,2);
-  double *w=ret->getPointer();
-  const double *wIn=getConstPointer();
+  double *w(ret->getPointer());
+  const double *wIn(getConstPointer());
   for(int i=0;i<nbOfTuple;i++,w+=2,wIn+=2)
     {
       w[0]=wIn[0]*cos(wIn[1]);
@@ -3592,14 +3612,14 @@ DataArrayDouble *DataArrayDouble::fromPolarToCart() const
 DataArrayDouble *DataArrayDouble::fromCylToCart() const
 {
   checkAllocated();
-  int nbOfComp=getNumberOfComponents();
+  int nbOfComp(getNumberOfComponents());
   if(nbOfComp!=3)
     throw INTERP_KERNEL::Exception("DataArrayDouble::fromCylToCart : must be an array with exactly 3 components !");
-  int nbOfTuple=getNumberOfTuples();
-  DataArrayDouble *ret=DataArrayDouble::New();
+  int nbOfTuple(getNumberOfTuples());
+  DataArrayDouble *ret(DataArrayDouble::New());
   ret->alloc(getNumberOfTuples(),3);
-  double *w=ret->getPointer();
-  const double *wIn=getConstPointer();
+  double *w(ret->getPointer());
+  const double *wIn(getConstPointer());
   for(int i=0;i<nbOfTuple;i++,w+=3,wIn+=3)
     {
       w[0]=wIn[0]*cos(wIn[1]);
@@ -3624,14 +3644,14 @@ DataArrayDouble *DataArrayDouble::fromCylToCart() const
 DataArrayDouble *DataArrayDouble::fromSpherToCart() const
 {
   checkAllocated();
-  int nbOfComp=getNumberOfComponents();
+  int nbOfComp(getNumberOfComponents());
   if(nbOfComp!=3)
     throw INTERP_KERNEL::Exception("DataArrayDouble::fromSpherToCart : must be an array with exactly 3 components !");
-  int nbOfTuple=getNumberOfTuples();
-  DataArrayDouble *ret=DataArrayDouble::New();
+  int nbOfTuple(getNumberOfTuples());
+  DataArrayDouble *ret(DataArrayDouble::New());
   ret->alloc(getNumberOfTuples(),3);
-  double *w=ret->getPointer();
-  const double *wIn=getConstPointer();
+  double *w(ret->getPointer());
+  const double *wIn(getConstPointer());
   for(int i=0;i<nbOfTuple;i++,w+=3,wIn+=3)
     {
       w[0]=wIn[0]*cos(wIn[2])*sin(wIn[1]);
@@ -3639,6 +3659,56 @@ DataArrayDouble *DataArrayDouble::fromSpherToCart() const
       w[2]=wIn[0]*cos(wIn[1]);
     }
   return ret;
+}
+
+/*!
+ * This method returns a new array containing the same number of tuples than \a this. To do this, this method needs \a at parameter to specify the convention of \a this.
+ * All the tuples of the returned array will be in cartesian sense. So if \a at equals to AX_CART the returned array is basically a deep copy of \a this.
+ * If \a at equals to AX_CYL the returned array will be the result of operation cylindric to cartesian of \a this...
+ *
+ * \param [in] atOfThis - The axis type of \a this.
+ * \return DataArrayDouble * - the new instance of DataArrayDouble (that must be dealed by caller) containing the result of the cartesianizification of \a this.
+ */
+DataArrayDouble *DataArrayDouble::cartesianize(MEDCouplingAxisType atOfThis) const
+{
+  checkAllocated();
+  int nbOfComp(getNumberOfComponents());
+  MEDCouplingAutoRefCountObjectPtr<DataArrayDouble> ret;
+  switch(atOfThis)
+    {
+    case AX_CART:
+      ret=deepCpy();
+    case AX_CYL:
+      if(nbOfComp==3)
+        {
+          ret=fromCylToCart();
+          break;
+        }
+      if(nbOfComp==2)
+        {
+          ret=fromPolarToCart();
+          break;
+        }
+      else
+        throw INTERP_KERNEL::Exception("DataArrayDouble::cartesianize : For AX_CYL, number of components must be in [2,3] !");
+    case AX_SPHER:
+      if(nbOfComp==3)
+        {
+          ret=fromSpherToCart();
+          break;
+        }
+      if(nbOfComp==2)
+        {
+          ret=fromPolarToCart();
+          break;
+        }
+      else
+        throw INTERP_KERNEL::Exception("DataArrayDouble::cartesianize : For AX_CYL, number of components must be in [2,3] !");
+    default:
+      throw INTERP_KERNEL::Exception("DataArrayDouble::cartesianize : not recognized axis type ! Only AX_CART, AX_CYL and AX_SPHER supported !");
+    }
+  ret->copyStringInfoFrom(*this);
+  return ret.retn();
 }
 
 /*!
@@ -3653,7 +3723,7 @@ DataArrayDouble *DataArrayDouble::fromSpherToCart() const
 DataArrayDouble *DataArrayDouble::doublyContractedProduct() const
 {
   checkAllocated();
-  int nbOfComp=getNumberOfComponents();
+  int nbOfComp(getNumberOfComponents());
   if(nbOfComp!=6)
     throw INTERP_KERNEL::Exception("DataArrayDouble::doublyContractedProduct : must be an array with exactly 6 components !");
   DataArrayDouble *ret=DataArrayDouble::New();
@@ -6409,7 +6479,7 @@ void DataArrayInt::reprQuickOverviewData(std::ostream& stream, std::size_t maxNb
  *  \throw If any value of \a this can't be used as a valid index for 
  *         [\a indArrBg, \a indArrEnd).
  *
- *  \sa replaceOneValByInThis
+ *  \sa changeValue
  */
 void DataArrayInt::transformWithIndArr(const int *indArrBg, const int *indArrEnd)
 {
@@ -6428,29 +6498,6 @@ void DataArrayInt::transformWithIndArr(const int *indArrBg, const int *indArrEnd
         }
     }
   declareAsNew();
-}
-
-/*!
- * Modifies in place \a this one-dimensional array like this : each id in \a this so that this[id] equal to \a valToBeReplaced will be replaced at the same place by \a replacedBy.
- *
- * \param [in] valToBeReplaced - the value in \a this to be replaced.
- * \param [in] replacedBy - the value taken by each tuple previously equal to \a valToBeReplaced.
- *
- * \sa DataArrayInt::transformWithIndArr
- */
-void DataArrayInt::replaceOneValByInThis(int valToBeReplaced, int replacedBy)
-{
-  checkAllocated();
-  if(getNumberOfComponents()!=1)
-    throw INTERP_KERNEL::Exception("Call replaceOneValByInThis method on DataArrayInt with only one component, you can call 'rearrange' method before !");
-  if(valToBeReplaced==replacedBy)
-    return ;
-  int nbOfTuples(getNumberOfTuples()),*pt(getPointer());
-  for(int i=0;i<nbOfTuples;i++,pt++)
-    {
-      if(*pt==valToBeReplaced)
-        *pt=replacedBy;
-    }
 }
 
 /*!
@@ -7729,44 +7776,27 @@ DataArrayInt *DataArrayInt::buildPermArrPerLevel() const
 /*!
  * Checks if contents of \a this array are equal to that of an array filled with
  * iota(). This method is particularly useful for DataArrayInt instances that represent
- * a renumbering array to check the real need in renumbering. In this case it is better to use isIdentity2
- * method of isIdentity method.
+ * a renumbering array to check the real need in renumbering. This method checks than \a this can be considered as an identity function
+ * of a set having \a sizeExpected elements into itself.
  *
+ *  \param [in] sizeExpected - The number of elements expected.
  *  \return bool - \a true if \a this array contents == \a range( \a this->getNumberOfTuples())
  *  \throw If \a this is not allocated.
  *  \throw If \a this->getNumberOfComponents() != 1.
- *  \sa isIdentity2
  */
-bool DataArrayInt::isIdentity() const
+bool DataArrayInt::isIdentity2(int sizeExpected) const
 {
   checkAllocated();
   if(getNumberOfComponents()!=1)
     return false;
   int nbOfTuples(getNumberOfTuples());
+  if(nbOfTuples!=sizeExpected)
+    return false;
   const int *pt=getConstPointer();
   for(int i=0;i<nbOfTuples;i++,pt++)
     if(*pt!=i)
       return false;
   return true;
-}
-
-/*!
- * This method is stronger than isIdentity method. This method checks than \a this can be considered as an identity function
- * of a set having \a sizeExpected elements into itself.
- *
- * \param [in] sizeExpected - The number of elements
- * \return bool - \a true if \a this array contents == \a range( \a this->getNumberOfTuples()) and if \a this has \a sizeExpected tuples in it.
- *
- *  \throw If \a this is not allocated.
- *  \throw If \a this->getNumberOfComponents() != 1.
- * \sa isIdentity
- */
-bool DataArrayInt::isIdentity2(int sizeExpected) const
-{
-  bool ret0(isIdentity());
-  if(!ret0)
-    return false;
-  return getNumberOfTuples()==sizeExpected;
 }
 
 /*!
@@ -7787,6 +7817,24 @@ bool DataArrayInt::isUniform(int val) const
   for(;w!=end2;w++)
     if(*w!=val)
       return false;
+  return true;
+}
+
+/*!
+ * Checks if all values in \a this array are unique.
+ *  \return bool - \a true if condition above is true
+ *  \throw If \a this is not allocated.
+ *  \throw If \a this->getNumberOfComponents() != 1
+ */
+bool DataArrayInt::hasUniqueValues() const
+{
+  checkAllocated();
+  if(getNumberOfComponents()!=1)
+    throw INTERP_KERNEL::Exception("DataArrayInt::hasOnlyUniqueValues: must be applied on DataArrayInt with only one component, you can call 'rearrange' method before !");
+  int nbOfTuples(getNumberOfTuples());
+  std::set<int> s(begin(),end());  // in C++11, should use unordered_set (O(1) complexity)
+  if (s.size() != nbOfTuples)
+    return false;
   return true;
 }
 
@@ -8859,9 +8907,10 @@ int DataArrayInt::changeValue(int oldValue, int newValue)
   checkAllocated();
   if(getNumberOfComponents()!=1)
     throw INTERP_KERNEL::Exception("DataArrayInt::changeValue : the array must have only one component, you can call 'rearrange' method before !");
-  int *start=getPointer();
-  int *end2=start+getNbOfElems();
-  int ret=0;
+  if(oldValue==newValue)
+    return 0;
+  int *start(getPointer()),*end2(start+getNbOfElems());
+  int ret(0);
   for(int *val=start;val!=end2;val++)
     {
       if(*val==oldValue)
@@ -8870,6 +8919,8 @@ int DataArrayInt::changeValue(int oldValue, int newValue)
           ret++;
         }
     }
+  if(ret>0)
+    declareAsNew();
   return ret;
 }
 
@@ -8888,9 +8939,9 @@ DataArrayInt *DataArrayInt::getIdsEqualList(const int *valsBg, const int *valsEn
   if(getNumberOfComponents()!=1)
     throw INTERP_KERNEL::Exception("DataArrayInt::getIdsEqualList : the array must have only one component, you can call 'rearrange' method before !");
   std::set<int> vals2(valsBg,valsEnd);
-  const int *cptr=getConstPointer();
+  const int *cptr(getConstPointer());
   std::vector<int> res;
-  int nbOfTuples=getNumberOfTuples();
+  int nbOfTuples(getNumberOfTuples());
   MEDCouplingAutoRefCountObjectPtr<DataArrayInt> ret(DataArrayInt::New()); ret->alloc(0,1);
   for(int i=0;i<nbOfTuples;i++,cptr++)
     if(vals2.find(*cptr)!=vals2.end())
@@ -9004,7 +9055,7 @@ int DataArrayInt::locateValue(int value) const
 /*!
  * This method expects to be called when number of components of this is equal to one.
  * This method returns the tuple id, if it exists, of the first tuple so that the value is contained in \b vals.
- * If not any tuple contains one of the values contained in 'vals' false is returned.
+ * If not any tuple contains one of the values contained in 'vals' -1 is returned.
  * \sa DataArrayInt::presenceOfValue
  */
 int DataArrayInt::locateValue(const std::vector<int>& vals) const
@@ -10351,8 +10402,6 @@ void DataArrayInt::computeOffsets2()
     throw INTERP_KERNEL::Exception("DataArrayInt::computeOffsets2 : only single component allowed !");
   int nbOfTuples=getNumberOfTuples();
   int *ret=(int *)malloc((nbOfTuples+1)*sizeof(int));
-  if(nbOfTuples==0)
-    return ;
   const int *work=getConstPointer();
   ret[0]=0;
   for(int i=0;i<nbOfTuples;i++)

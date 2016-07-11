@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2015  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2016  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -30,7 +30,7 @@ namespace INTERP_KERNEL
   class VertexLess
   {
   public:
-    bool operator()(const double * P_1, const double * P_2) 
+    bool operator()(const double * P_1, const double * P_2) const
     {
       for(int idim=0; idim<DIM; idim++)
         {        

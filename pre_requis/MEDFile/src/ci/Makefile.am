@@ -142,9 +142,12 @@ MEDmeshPolygon2Rd.c \
 MEDmeshPolyhedronWr.c \
 MEDmeshPolyhedronRd.c \
 MEDfamilyCr.c \
+_MEDfamilyCr32.c \
+_MEDfamilyCr30.c \
 MEDnFamily.c \
-MEDnFamilyGroup.c \
 MEDfamilyInfo.c \
+_MEDfamilyInfo32.c \
+_MEDfamilyInfo30.c \
 MEDnFamily23Attribute.c \
 _MEDnFamily23Attribute236.c \
 _MEDnFamily23Attribute30.c \
@@ -199,8 +202,6 @@ MEDparameterComputationStepInfo.c \
 MEDmeshEntityInfo.c
 
 libci_la_SOURCES   += \
-_MEDfieldCr31.c \
-_MEDfieldCr30.c \
 _MEDmeshInfoByName30.c \
 _MEDmeshnAxisByName30.c \
 _MEDmeshUniversalNameRd30.c \
@@ -215,10 +216,14 @@ _MEDfilterEntityCr30.c \
 _MEDfilterEntityCr236.c \
 _MEDnFamily30.c \
 _MEDnFamily236.c \
+MEDnFamilyGroup.c \
+_MEDnFamilyGroup32.c \
 _MEDnFamilyGroup30.c \
 _MEDnFamilyGroup236.c \
 _MEDlinkRd30.c \
 _MEDlinkRd236.c \
+_MEDfieldCr31.c \
+_MEDfieldCr30.c \
 _MEDfieldComputingStepInfo30.c \
 _MEDfieldComputingStepInfo31.c \
 _MEDfieldComputingStepInfo236.c \

@@ -1,5 +1,5 @@
 #  -*- coding: iso-8859-1 -*-
-# Copyright (C) 2007-2015  CEA/DEN, EDF R&D
+# Copyright (C) 2007-2016  CEA/DEN, EDF R&D
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -61,7 +61,7 @@ class CaseReader(CaseIO):
             pass
         c=DataArrayInt(len(cells),nbNodesPerCell+1) ; c[:,0]=ct ; c[:,1:]=c2-1 ; c.rearrange(1)
         m.setConnectivity(c,cI,True)
-        m.checkCoherency2()
+        m.checkCoherency1()
         return m
 
     def __traduceMeshForPolyhed(self,name,coords,arr0,arr1,arr2):
@@ -88,7 +88,7 @@ class CaseReader(CaseIO):
         c[a]=DataArrayInt(arr2)
         #
         m.setConnectivity(c,arr1mc1,True)
-        m.checkCoherency2()
+        m.checkCoherency1()
         return m
 
     def __traduceMeshForPolygon(self,name,coords,arr0,arr1):
@@ -105,7 +105,7 @@ class CaseReader(CaseIO):
         c[arr0_2]=DataArrayInt(arr1-1)
         #
         m.setConnectivity(c,arr0_0,True)
-        m.checkCoherency2()
+        m.checkCoherency1()
         return m
 
     def __convertGeo2MED(self,geoFileName):

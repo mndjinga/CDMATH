@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2015  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2016  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -33,6 +33,14 @@
 
 namespace ParaMEDMEM
 {
+  typedef enum
+    {
+      AX_CART = 3,
+      AX_CYL = 4,
+      AX_SPHER = 5
+    } MEDCouplingAxisType;
+  // -- WARNING this enum must be synchronized with MEDCouplingCommon.i file ! --
+
   template<class T>
   class MEDCouplingPointer
   {
@@ -169,6 +177,7 @@ namespace ParaMEDMEM
     MEDCOUPLING_EXPORT static std::string GetVarNameFromInfo(const std::string& info);
     MEDCOUPLING_EXPORT static std::string GetUnitFromInfo(const std::string& info);
     MEDCOUPLING_EXPORT static std::string BuildInfoFromVarAndUnit(const std::string& var, const std::string& unit);
+    MEDCOUPLING_EXPORT static std::string GetAxTypeRepr(MEDCouplingAxisType at);
     MEDCOUPLING_EXPORT static DataArray *Aggregate(const std::vector<const DataArray *>& arrs);
     MEDCOUPLING_EXPORT virtual void reprStream(std::ostream& stream) const = 0;
     MEDCOUPLING_EXPORT virtual void reprZipStream(std::ostream& stream) const = 0;
@@ -253,6 +262,7 @@ namespace ParaMEDMEM
     MEDCOUPLING_EXPORT DataArrayDouble *renumberR(const int *new2Old) const;
     MEDCOUPLING_EXPORT DataArrayDouble *renumberAndReduce(const int *old2New, int newNbOfTuple) const;
     MEDCOUPLING_EXPORT DataArrayDouble *selectByTupleId(const int *new2OldBg, const int *new2OldEnd) const;
+    MEDCOUPLING_EXPORT DataArrayDouble *selectByTupleId(const DataArrayInt & di) const;
     MEDCOUPLING_EXPORT DataArrayDouble *selectByTupleIdSafe(const int *new2OldBg, const int *new2OldEnd) const;
     MEDCOUPLING_EXPORT DataArrayDouble *selectByTupleId2(int bg, int end2, int step) const;
     MEDCOUPLING_EXPORT DataArray *selectByTupleRanges(const std::vector<std::pair<int,int> >& ranges) const;
@@ -322,6 +332,7 @@ namespace ParaMEDMEM
     MEDCOUPLING_EXPORT DataArrayDouble *fromPolarToCart() const;
     MEDCOUPLING_EXPORT DataArrayDouble *fromCylToCart() const;
     MEDCOUPLING_EXPORT DataArrayDouble *fromSpherToCart() const;
+    MEDCOUPLING_EXPORT DataArrayDouble *cartesianize(MEDCouplingAxisType atOfThis) const;
     MEDCOUPLING_EXPORT DataArrayDouble *doublyContractedProduct() const;
     MEDCOUPLING_EXPORT DataArrayDouble *determinant() const;
     MEDCOUPLING_EXPORT DataArrayDouble *eigenValues() const;
@@ -484,7 +495,6 @@ namespace ParaMEDMEM
     MEDCOUPLING_EXPORT void reprQuickOverview(std::ostream& stream) const;
     MEDCOUPLING_EXPORT void reprQuickOverviewData(std::ostream& stream, std::size_t maxNbOfByteInRepr) const;
     MEDCOUPLING_EXPORT void transformWithIndArr(const int *indArrBg, const int *indArrEnd);
-    MEDCOUPLING_EXPORT void replaceOneValByInThis(int valToBeReplaced, int replacedBy);
     MEDCOUPLING_EXPORT DataArrayInt *transformWithIndArrR(const int *indArrBg, const int *indArrEnd) const;
     MEDCOUPLING_EXPORT void splitByValueRange(const int *arrBg, const int *arrEnd,
                                               DataArrayInt *& castArr, DataArrayInt *& rankInsideCast, DataArrayInt *& castsPresent) const;
@@ -510,9 +520,9 @@ namespace ParaMEDMEM
     MEDCOUPLING_EXPORT void changeSurjectiveFormat(int targetNb, DataArrayInt *&arr, DataArrayInt *&arrI) const;
     MEDCOUPLING_EXPORT static DataArrayInt *BuildOld2NewArrayFromSurjectiveFormat2(int nbOfOldTuples, const int *arr, const int *arrIBg, const int *arrIEnd, int &newNbOfTuples);
     MEDCOUPLING_EXPORT DataArrayInt *buildPermArrPerLevel() const;
-    MEDCOUPLING_EXPORT bool isIdentity() const;
     MEDCOUPLING_EXPORT bool isIdentity2(int sizeExpected) const;
     MEDCOUPLING_EXPORT bool isUniform(int val) const;
+    MEDCOUPLING_EXPORT bool hasUniqueValues() const;
     MEDCOUPLING_EXPORT DataArrayInt *substr(int tupleIdBg, int tupleIdEnd=-1) const;
     MEDCOUPLING_EXPORT void rearrange(int newNbOfCompo);
     MEDCOUPLING_EXPORT void transpose();

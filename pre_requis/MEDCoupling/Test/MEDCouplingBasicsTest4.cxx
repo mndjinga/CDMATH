@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2015  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2016  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -178,9 +178,8 @@ void MEDCouplingBasicsTest4::testDAICheckAndPreparePermutation1()
   da->alloc(8,1);
   da->iota(0);
   da2=da->checkAndPreparePermutation();
-  CPPUNIT_ASSERT_EQUAL(8,da2->getNumberOfTuples());
   CPPUNIT_ASSERT_EQUAL(1,da2->getNumberOfComponents());
-  CPPUNIT_ASSERT(da2->isIdentity());
+  CPPUNIT_ASSERT(da2->isIdentity2(8));
   da2->decrRef();
   da->decrRef();
   //
@@ -238,8 +237,7 @@ void MEDCouplingBasicsTest4::testUMeshFindCellIdsOnBoundary1()
 {
   MEDCouplingUMesh *m=build3DSurfTargetMesh_1();
   DataArrayInt *da5=m->findCellIdsOnBoundary();
-  CPPUNIT_ASSERT_EQUAL(5,da5->getNumberOfTuples());
-  CPPUNIT_ASSERT(da5->isIdentity());
+  CPPUNIT_ASSERT(da5->isIdentity2(5));
   //
   da5->decrRef();
   m->decrRef();
@@ -1647,7 +1645,7 @@ void MEDCouplingBasicsTest4::testConvertExtrudedPolyhedra1()
   const int expected2[10]={0,5,14,19,42,49,86,95,108,159};
   CPPUNIT_ASSERT(std::equal(expected1,expected1+159,da->getConstPointer()));
   CPPUNIT_ASSERT(std::equal(expected2,expected2+10,dai->getConstPointer()));
-  m->checkCoherency2();
+  m->checkCoherency1();
   //
   m->decrRef();
 }

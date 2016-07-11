@@ -1,4 +1,4 @@
-# Copyright (C) 2015  CEA/DEN, EDF R&D
+# Copyright (C) 2015-2016  CEA/DEN, EDF R&D
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -17,18 +17,24 @@
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
 
-ADD_TEST(MEDCouplingBasicsTest python MEDCouplingBasicsTest.py)
-SET_TESTS_PROPERTIES(MEDCouplingBasicsTest PROPERTIES LABELS "${COMPONENT_NAME}")
+SET(TEST_NAMES
+  MEDCouplingBasicsTest1
+  MEDCouplingBasicsTest2
+  MEDCouplingBasicsTest3
+  MEDCouplingBasicsTest4
+  MEDCouplingBasicsTest5
+  MEDCouplingExamplesTest
+  MEDCouplingRemapperTest
+  # if numpy is used
+  MEDCouplingNumPyTest
+  MEDCouplingPickleTest
+)
 
-ADD_TEST(MEDCouplingExamplesTest python MEDCouplingExamplesTest.py)
-SET_TESTS_PROPERTIES(MEDCouplingExamplesTest PROPERTIES LABELS "${COMPONENT_NAME}")
-
-ADD_TEST(MEDCouplingRemapperTest python MEDCouplingRemapperTest.py)
-SET_TESTS_PROPERTIES(MEDCouplingRemapperTest PROPERTIES LABELS "${COMPONENT_NAME}")
-
-# if numpy is used
-ADD_TEST(MEDCouplingNumPyTest python MEDCouplingNumPyTest.py)
-SET_TESTS_PROPERTIES(MEDCouplingNumPyTest PROPERTIES LABELS "${COMPONENT_NAME}")
-
-ADD_TEST(MEDCouplingPickleTest python MEDCouplingPickleTest.py)
-SET_TESTS_PROPERTIES(MEDCouplingPickleTest PROPERTIES LABELS "${COMPONENT_NAME}")
+FOREACH(tfile ${TEST_NAMES})
+  SET(TEST_NAME ${COMPONENT_NAME}_${tfile})
+  ADD_TEST(${TEST_NAME} python ${tfile}.py)
+  SET_TESTS_PROPERTIES(${TEST_NAME} PROPERTIES
+    LABELS "${COMPONENT_NAME}"
+    TIMEOUT ${TIMEOUT}
+    )
+ENDFOREACH()

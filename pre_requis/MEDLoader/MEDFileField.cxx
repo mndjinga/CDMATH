@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2015  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2016  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -372,7 +372,7 @@ void MEDFileFieldPerMeshPerTypePerDisc::assignFieldProfile(bool isPflAlone, int&
           }
         else
           {
-            if(da3->getNumberOfTuples()!=nbOfEltsInWholeMesh || !da3->isIdentity())
+            if(!da3->isIdentity2(nbOfEltsInWholeMesh))
               {
                 da3->setName(oss.str().c_str());
                 glob.appendProfile(da3);
@@ -500,6 +500,7 @@ void MEDFileFieldPerMeshPerTypePerDisc::goReadZeValuesInFile(med_idt fid, const 
           dpd->checkCoherency();
           MEDCouplingAutoRefCountObjectPtr<DataArrayInt> myIds(dpd->toDAI());
           int a(myIds->getMinValueInArray()),b(myIds->getMaxValueInArray());
+          myIds=myIds->deepCpy();// WARNING deep copy here because _pd is modified by applyLin !!!
           myIds->applyLin(1,-a);
           int nbOfEltsToLoad(b-a+1);
           med_filter filter=MED_FILTER_INIT;
@@ -959,7 +960,7 @@ bool MEDFileFieldPerMeshPerTypePerDisc::RenumberChunks(int offset, const std::ve
       int nbEntityElts=subIds->getNumberOfTuples();
       bool ret2;
       MEDCouplingAutoRefCountObjectPtr<MEDFileFieldPerMeshPerTypePerDisc> eltToAdd=MEDFileFieldPerMeshPerTypePerDisc::
-          NewObjectOnSameDiscThanPool(type,(INTERP_KERNEL::NormalizedCellType)newCode[3*(*idIt)],subIds,!subIds->isIdentity() || nbEntityElts!=newCode[3*(*idIt)+1],nbi,
+          NewObjectOnSameDiscThanPool(type,(INTERP_KERNEL::NormalizedCellType)newCode[3*(*idIt)],subIds,!subIds->isIdentity2(newCode[3*(*idIt)+1]),nbi,
                                       offset+offset2,
                                       li,glob,ret2);
       ret=ret || ret2;
@@ -2385,12 +2386,8 @@ MEDCouplingFieldDouble *MEDFileFieldPerMesh::finishField2(TypeOfField type, cons
                                                           const std::vector<INTERP_KERNEL::NormalizedCellType>& geoTypes,
                                                           const MEDCouplingMesh *mesh, const DataArrayInt *da, bool& isPfl, MEDCouplingAutoRefCountObjectPtr<DataArray>& arrOut, const MEDFileFieldNameScope& nasc) const
 {
-  if(da->isIdentity())
-    {
-      int nbOfTuples=da->getNumberOfTuples();
-      if(nbOfTuples==mesh->getNumberOfCells())
-        return finishField(type,glob,dads,locs,mesh,isPfl,arrOut,nasc);
-    }
+  if(da->isIdentity2(mesh->getNumberOfCells()))
+    return finishField(type,glob,dads,locs,mesh,isPfl,arrOut,nasc);
   MEDCouplingAutoRefCountObjectPtr<MEDCouplingMesh> m2=mesh->buildPart(da->getConstPointer(),da->getConstPointer()+da->getNbOfElems());
   m2->setName(mesh->getName().c_str());
   MEDCouplingAutoRefCountObjectPtr<MEDCouplingFieldDouble> ret=finishField(type,glob,dads,locs,m2,isPfl,arrOut,nasc);
@@ -2405,12 +2402,8 @@ MEDCouplingFieldDouble *MEDFileFieldPerMesh::finishFieldNode2(const MEDFileField
                                                               const std::vector<std::pair<int,int> >& dads, const std::vector<int>& locs,
                                                               const MEDCouplingMesh *mesh, const DataArrayInt *da, bool& isPfl, MEDCouplingAutoRefCountObjectPtr<DataArray>& arrOut, const MEDFileFieldNameScope& nasc) const
 {
-  if(da->isIdentity())
-    {
-      int nbOfTuples=da->getNumberOfTuples();
-      if(nbOfTuples==mesh->getNumberOfNodes())//No problem for NORM_ERROR because it is in context of node
-        return finishField(ON_NODES,glob,dads,locs,mesh,isPfl,arrOut,nasc);
-    }
+  if(da->isIdentity2(mesh->getNumberOfNodes()))
+    return finishField(ON_NODES,glob,dads,locs,mesh,isPfl,arrOut,nasc);
   // Treatment of particular case where nodal field on pfl is requested with a meshDimRelToMax=1.
   const MEDCouplingUMesh *meshu=dynamic_cast<const MEDCouplingUMesh *>(mesh);
   if(meshu)
@@ -4595,7 +4588,7 @@ void MEDFileAnyTypeField1TSWithoutSDA::setFieldProfile(const MEDCouplingFieldDou
   std::vector<DataArrayInt *> idsInPflPerType;
   std::vector<DataArrayInt *> idsPerType;
   std::vector<int> code,code2;
-  MEDCouplingAutoRefCountObjectPtr<MEDCouplingMesh> m=mesh->getGenMeshAtLevel(meshDimRelToMax);
+  MEDCouplingAutoRefCountObjectPtr<MEDCouplingMesh> m(mesh->getMeshAtLevel(meshDimRelToMax));
   if(type!=ON_NODES)
     {
       m->splitProfilePerType(profile,code,idsInPflPerType,idsPerType);
@@ -4796,7 +4789,7 @@ MEDCouplingFieldDouble *MEDFileAnyTypeField1TSWithoutSDA::getFieldAtLevel(TypeOf
  */
 MEDCouplingFieldDouble *MEDFileAnyTypeField1TSWithoutSDA::getFieldOnMeshAtLevel(TypeOfField type, int meshDimRelToMax, int renumPol, const MEDFileFieldGlobsReal *glob, const MEDFileMesh *mesh, MEDCouplingAutoRefCountObjectPtr<DataArray>& arrOut, const MEDFileFieldNameScope& nasc) const
 {
-  MEDCouplingAutoRefCountObjectPtr<MEDCouplingMesh> m=mesh->getGenMeshAtLevel(meshDimRelToMax,false);
+  MEDCouplingAutoRefCountObjectPtr<MEDCouplingMesh> m(mesh->getMeshAtLevel(meshDimRelToMax,false));
   const DataArrayInt *d=mesh->getNumberFieldAtLevel(meshDimRelToMax);
   const DataArrayInt *e=mesh->getNumberFieldAtLevel(1);
   if(meshDimRelToMax==1)
@@ -4938,7 +4931,7 @@ MEDCouplingFieldDouble *MEDFileAnyTypeField1TSWithoutSDA::getFieldOnMeshAtLevel(
  */
 DataArray *MEDFileAnyTypeField1TSWithoutSDA::getFieldWithProfile(TypeOfField type, int meshDimRelToMax, const MEDFileMesh *mesh, DataArrayInt *&pfl, const MEDFileFieldGlobsReal *glob, const MEDFileFieldNameScope& nasc) const
 {
-  MEDCouplingAutoRefCountObjectPtr<MEDCouplingMesh> m=mesh->getGenMeshAtLevel(meshDimRelToMax);
+  MEDCouplingAutoRefCountObjectPtr<MEDCouplingMesh> m(mesh->getMeshAtLevel(meshDimRelToMax));
   int meshId=getMeshIdFromMeshName(mesh->getName().c_str());
   MEDCouplingAutoRefCountObjectPtr<DataArray> ret=_field_per_mesh[meshId]->getFieldOnMeshAtLevelWithPfl(type,m,pfl,glob,nasc);
   ret->setName(nasc.getName().c_str());

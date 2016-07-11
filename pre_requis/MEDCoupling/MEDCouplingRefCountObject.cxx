@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2015  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2016  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -19,26 +19,30 @@
 // Author : Anthony Geay (CEA/DEN)
 
 #include "MEDCouplingRefCountObject.hxx"
-#include "MED_version.h"
+#include "MEDCoupling_version.h"
+
+#include "InterpKernelException.hxx"
 
 #include <sstream>
 #include <algorithm>
 
 using namespace ParaMEDMEM;
 
+GlobalDict *GlobalDict::UNIQUE_INSTANCE=0;
+
 const char *ParaMEDMEM::MEDCouplingVersionStr()
 {
-  return SALOMEMED_VERSION_STR;
+  return MEDCOUPLING_VERSION_STR;
 }
 
 int ParaMEDMEM::MEDCouplingVersion()
 {
-  return SALOMEMED_VERSION;
+  return MEDCOUPLING_VERSION;
 }
 
 void ParaMEDMEM::MEDCouplingVersionMajMinRel(int& maj, int& minor, int& releas)
 {
-  int ver=SALOMEMED_VERSION;
+  int ver=MEDCOUPLING_VERSION;
   maj=(ver & 0xFF0000) >> 16;
   minor=(ver & 0xFF00) >> 8;
   releas=(ver & 0xFF);
@@ -272,4 +276,83 @@ RefCountObject::RefCountObject(const RefCountObject& other):RefCountObjectOnly(o
 
 RefCountObject::~RefCountObject()
 {
+}
+
+//=
+
+GlobalDict *GlobalDict::GetInstance()
+{
+  if(!UNIQUE_INSTANCE)
+    UNIQUE_INSTANCE=new GlobalDict;
+  return UNIQUE_INSTANCE;
+}
+
+bool GlobalDict::hasKey(const std::string& key) const
+{
+  std::map<std::string, std::string>::const_iterator it(_my_map.find(key));
+  return it!=_my_map.end();
+}
+
+std::string GlobalDict::value(const std::string& key) const
+{
+  std::map<std::string, std::string>::const_iterator it(_my_map.find(key));
+  if(it==_my_map.end())
+    {
+      std::ostringstream oss;
+      oss << "GlobalDict::value : key \"" << key << "\" is not in map !";
+      throw INTERP_KERNEL::Exception(oss.str().c_str());
+    }
+  return (*it).second;
+}
+
+std::vector<std::string> GlobalDict::keys() const
+{
+  std::vector<std::string> ret;
+  for(std::map<std::string, std::string>::const_iterator it=_my_map.begin();it!=_my_map.end();it++)
+    ret.push_back((*it).first);
+  return ret;
+}
+
+void GlobalDict::erase(const std::string& key)
+{
+  std::map<std::string, std::string>::iterator it(_my_map.find(key));
+  if(it==_my_map.end())
+    {
+      std::ostringstream oss;
+      oss << "GlobalDict::erase : key \"" << key << "\" is not in map !";
+      throw INTERP_KERNEL::Exception(oss.str().c_str());
+    }
+  _my_map.erase(it);
+}
+
+void GlobalDict::clear()
+{
+  _my_map.clear();
+}
+
+void GlobalDict::setKeyValue(const std::string& key, const std::string& value)
+{
+  std::map<std::string, std::string>::const_iterator it(_my_map.find(key));
+  if(it!=_my_map.end())
+    {
+      std::ostringstream oss;
+      oss << "GlobalDict::setKeyValue : key \"" << key << "\" already exists !";
+      throw INTERP_KERNEL::Exception(oss.str().c_str());
+    }
+  _my_map[key]=value;
+}
+
+void GlobalDict::setKeyValueForce(const std::string& key, const std::string& value)
+{
+  _my_map[key]=value;
+}
+
+std::string GlobalDict::printSelf() const
+{
+  std::ostringstream oss;
+  for(std::map<std::string, std::string>::const_iterator it=_my_map.begin();it!=_my_map.end();it++)
+    {
+      oss << "(" << (*it).first << "," << (*it).second << ")" << std::endl;
+    }
+  return oss.str();
 }

@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2015  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2016  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -30,12 +30,17 @@
 #include "CellModel.hxx"
 
 #include <set>
+#include <iomanip>
 
 extern med_geometry_type typmai[MED_N_CELL_FIXED_GEO];
 extern INTERP_KERNEL::NormalizedCellType typmai2[MED_N_CELL_FIXED_GEO];
 extern med_geometry_type typmainoeud[1];
 
 using namespace ParaMEDMEM;
+
+const char MEDFileMeshL2::ZE_SEP_FOR_FAMILY_KILLERS[]="!/__\\!";//important start by - because ord('!')==33 the smallest (!=' ') to preserve orders at most.
+
+int MEDFileMeshL2::ZE_SEP2_FOR_FAMILY_KILLERS=4;
 
 MEDFileMeshL2::MEDFileMeshL2():_name(MED_NAME_SIZE),_description(MED_COMMENT_SIZE),_univ_name(MED_LNAME_SIZE),_dt_unit(MED_LNAME_SIZE)
 {
@@ -51,7 +56,7 @@ std::vector<const BigMemoryObject *> MEDFileMeshL2::getDirectChildrenWithNull() 
   return std::vector<const BigMemoryObject *>();
 }
 
-int MEDFileMeshL2::GetMeshIdFromName(med_idt fid, const std::string& mname, ParaMEDMEM::MEDCouplingMeshType& meshType, int& dt, int& it, std::string& dtunit1)
+int MEDFileMeshL2::GetMeshIdFromName(med_idt fid, const std::string& mname, ParaMEDMEM::MEDCouplingMeshType& meshType, ParaMEDMEM::MEDCouplingAxisType& axType, int& dt, int& it, std::string& dtunit1)
 {
   med_mesh_type type_maillage;
   char maillage_description[MED_COMMENT_SIZE+1];
@@ -70,7 +75,7 @@ int MEDFileMeshL2::GetMeshIdFromName(med_idt fid, const std::string& mname, Para
       int naxis(MEDmeshnAxis(fid,i+1));
       INTERP_KERNEL::AutoPtr<char> axisname=MEDLoaderBase::buildEmptyString(naxis*MED_SNAME_SIZE);
       INTERP_KERNEL::AutoPtr<char> axisunit=MEDLoaderBase::buildEmptyString(naxis*MED_SNAME_SIZE);
-      MEDFILESAFECALLERRD0(MEDmeshInfo,(fid,i+1,nommaa,&spaceDim,&dim,&type_maillage,maillage_description,dtunit,&stype,&nstep,&axistype,axisname,axisunit));
+      MEDFILESAFECALLERRD0(MEDmeshInfo,(fid,i+1,nommaa,&spaceDim,&dim,&type_maillage,maillage_description,dtunit,&stype,&nstep,&axistype,axisname,axisunit));      
       dtunit1=MEDLoaderBase::buildStringFromFortran(dtunit,sizeof(dtunit));
       std::string cur=MEDLoaderBase::buildStringFromFortran(nommaa,sizeof(nommaa));
       ms.push_back(cur);
@@ -87,6 +92,7 @@ int MEDFileMeshL2::GetMeshIdFromName(med_idt fid, const std::string& mname, Para
       std::copy(ms.begin(),ms.end(),std::ostream_iterator<std::string>(oss,", "));
       throw INTERP_KERNEL::Exception(oss.str().c_str());
     }
+  axType=TraduceAxisType(axistype);
   switch(type_maillage)
   {
     case MED_UNSTRUCTURED_MESH:
@@ -104,13 +110,16 @@ int MEDFileMeshL2::GetMeshIdFromName(med_idt fid, const std::string& mname, Para
           case MED_CURVILINEAR_GRID:
             meshType=CURVE_LINEAR;
             break;
+          case MED_POLAR_GRID:// this is not a bug. A MED file POLAR_GRID is deal by CARTESIAN MEDLoader
+            meshType=CARTESIAN;
+            break;
           default:
-            throw INTERP_KERNEL::Exception("MEDFileUMeshL2::getMeshIdFromName : unrecognized structured mesh type ! Supported are :\n - cartesian\n - curve linear\n");
+            throw INTERP_KERNEL::Exception("MEDFileMeshL2::getMeshIdFromName : unrecognized structured mesh type ! Supported are :\n - cartesian\n - curve linear\n");
         }
         break;
       }
     default:
-      throw INTERP_KERNEL::Exception("MEDFileUMeshL2::getMeshIdFromName : unrecognized mesh type !");
+      throw INTERP_KERNEL::Exception("MEDFileMeshL2::getMeshIdFromName : unrecognized mesh type !");
   }
   med_int numdt,numit;
   med_float dtt;
@@ -128,7 +137,7 @@ double MEDFileMeshL2::CheckMeshTimeStep(med_idt fid, const std::string& mName, i
   for(int i=0;i<nstep;i++)
     {
       MEDFILESAFECALLERRD0(MEDmeshComputationStepInfo,(fid,mName.c_str(),i+1,&numdt,&numit,&dtt));
-      p[i]=std::make_pair<int,int>((int) numdt, (int) numit);
+      p[i]=std::make_pair(numdt,numit);
       found=(numdt==dt) && (numit==numit);
     }
   if(!found)
@@ -142,7 +151,10 @@ double MEDFileMeshL2::CheckMeshTimeStep(med_idt fid, const std::string& mName, i
   return dtt;
 }
 
-std::vector<std::string> MEDFileMeshL2::getAxisInfoOnMesh(med_idt fid, int mId, const std::string& mName, ParaMEDMEM::MEDCouplingMeshType& meshType, int& nstep, int& Mdim)
+/*!
+ * non static and non const method because _description, _dt_unit... are set in this method.
+ */
+std::vector<std::string> MEDFileMeshL2::getAxisInfoOnMesh(med_idt fid, int mId, const std::string& mName, ParaMEDMEM::MEDCouplingMeshType& meshType, ParaMEDMEM::MEDCouplingAxisType& axType, int& nstep, int& Mdim)
 {
   med_mesh_type type_maillage;
   med_int spaceDim;
@@ -157,6 +169,7 @@ std::vector<std::string> MEDFileMeshL2::getAxisInfoOnMesh(med_idt fid, int mId, 
       &stype,&nstep,&axistype,axisname,axisunit)!=0)
     throw INTERP_KERNEL::Exception("A problem has been detected when trying to get info on mesh !");
   MEDmeshUniversalNameRd(fid,nameTmp,_univ_name.getPointer());// do not protect  MEDFILESAFECALLERRD0 call : Thanks to fra.med.
+  axType=TraduceAxisType(axistype);
   switch(type_maillage)
   {
     case MED_UNSTRUCTURED_MESH:
@@ -174,13 +187,16 @@ std::vector<std::string> MEDFileMeshL2::getAxisInfoOnMesh(med_idt fid, int mId, 
           case MED_CURVILINEAR_GRID:
             meshType=CURVE_LINEAR;
             break;
+        case MED_POLAR_GRID:// this is not a bug. A MED file POLAR_GRID is deal by CARTESIAN MEDLoader
+            meshType=CARTESIAN;
+            break;
           default:
-            throw INTERP_KERNEL::Exception("MEDFileUMeshL2::getAxisInfoOnMesh : unrecognized structured mesh type ! Supported are :\n - cartesian\n - curve linear\n");
+            throw INTERP_KERNEL::Exception("MEDFileMeshL2::getAxisInfoOnMesh : unrecognized structured mesh type ! Supported are :\n - cartesian\n - curve linear\n");
         }
         break;
       }
     default:
-      throw INTERP_KERNEL::Exception("MEDFileUMeshL2::getMeshIdFromName : unrecognized mesh type !");
+      throw INTERP_KERNEL::Exception("MEDFileMeshL2::getMeshIdFromName : unrecognized mesh type !");
   }
   //
   std::vector<std::string> infosOnComp(naxis);
@@ -199,6 +215,7 @@ void MEDFileMeshL2::ReadFamiliesAndGrps(med_idt fid, const std::string& meshName
   char nomfam[MED_NAME_SIZE+1];
   med_int numfam;
   int nfam=MEDnFamily(fid,meshName.c_str());
+  std::vector< std::pair<std::string,std::pair<int,std::vector<std::string> > > > crudeFams(nfam);
   for(int i=0;i<nfam;i++)
     {
       int ngro=MEDnFamilyGroup(fid,meshName.c_str(),i+1);
@@ -208,19 +225,26 @@ void MEDFileMeshL2::ReadFamiliesAndGrps(med_idt fid, const std::string& meshName
       INTERP_KERNEL::AutoPtr<char> attdes=new char[MED_COMMENT_SIZE*natt+1];
       INTERP_KERNEL::AutoPtr<char> gro=new char[MED_LNAME_SIZE*ngro+1];
       MEDfamily23Info(fid,meshName.c_str(),i+1,nomfam,attide,attval,attdes,&numfam,gro);
-      std::string famName=MEDLoaderBase::buildStringFromFortran(nomfam,MED_NAME_SIZE);
-      fams[famName]=numfam;
+      std::string famName(MEDLoaderBase::buildStringFromFortran(nomfam,MED_NAME_SIZE));
+      std::vector<std::string> grps(ngro);
       for(int j=0;j<ngro;j++)
-        {
-          std::string groupname=MEDLoaderBase::buildStringFromFortran(gro+j*MED_LNAME_SIZE,MED_LNAME_SIZE);
-          grps[groupname].push_back(famName);
-        }
+        grps[j]=MEDLoaderBase::buildStringFromFortran(gro+j*MED_LNAME_SIZE,MED_LNAME_SIZE);
+      crudeFams[i]=std::pair<std::string,std::pair<int,std::vector<std::string> > >(famName,std::pair<int,std::vector<std::string> >(numfam,grps));
+    }
+  RenameFamiliesFromFileToMemInternal(crudeFams);
+  for(std::vector< std::pair<std::string,std::pair<int,std::vector<std::string> > > >::const_iterator it0=crudeFams.begin();it0!=crudeFams.end();it0++)
+    {
+      fams[(*it0).first]=(*it0).second.first;
+      for(std::vector<std::string>::const_iterator it1=(*it0).second.second.begin();it1!=(*it0).second.second.end();it1++)
+        grps[*it1].push_back((*it0).first);
     }
 }
 
 void MEDFileMeshL2::WriteFamiliesAndGrps(med_idt fid, const std::string& mname, const std::map<std::string,int>& fams, const std::map<std::string, std::vector<std::string> >& grps, int tooLongStrPol)
 {
-  for(std::map<std::string,int>::const_iterator it=fams.begin();it!=fams.end();it++)
+  std::vector< std::pair<std::string,std::pair<int,std::vector<std::string> > > > crudeFams(fams.size());
+  std::size_t ii(0);
+  for(std::map<std::string,int>::const_iterator it=fams.begin();it!=fams.end();it++,ii++)
     {
       std::vector<std::string> grpsOfFam;
       for(std::map<std::string, std::vector<std::string> >::const_iterator it1=grps.begin();it1!=grps.end();it1++)
@@ -228,15 +252,190 @@ void MEDFileMeshL2::WriteFamiliesAndGrps(med_idt fid, const std::string& mname, 
           if(std::find((*it1).second.begin(),(*it1).second.end(),(*it).first)!=(*it1).second.end())
             grpsOfFam.push_back((*it1).first);
         }
-      int ngro=grpsOfFam.size();
+      crudeFams[ii]=std::pair<std::string,std::pair<int,std::vector<std::string> > >((*it).first,std::pair<int,std::vector<std::string> >((*it).second,grpsOfFam));
+    }
+  RenameFamiliesFromMemToFileInternal(crudeFams);
+  for(std::vector< std::pair<std::string,std::pair<int,std::vector<std::string> > > >::const_iterator it=crudeFams.begin();it!=crudeFams.end();it++)
+    {
+      int ngro((*it).second.second.size());
       INTERP_KERNEL::AutoPtr<char> groName=MEDLoaderBase::buildEmptyString(MED_LNAME_SIZE*ngro);
       int i=0;
-      for(std::vector<std::string>::const_iterator it2=grpsOfFam.begin();it2!=grpsOfFam.end();it2++,i++)
+      for(std::vector<std::string>::const_iterator it2=(*it).second.second.begin();it2!=(*it).second.second.end();it2++,i++)
         MEDLoaderBase::safeStrCpy2((*it2).c_str(),MED_LNAME_SIZE-1,groName+i*MED_LNAME_SIZE,tooLongStrPol);
       INTERP_KERNEL::AutoPtr<char> famName=MEDLoaderBase::buildEmptyString(MED_NAME_SIZE);
       MEDLoaderBase::safeStrCpy((*it).first.c_str(),MED_NAME_SIZE,famName,tooLongStrPol);
-      int ret=MEDfamilyCr(fid,mname.c_str(),famName,(*it).second,ngro,groName);
+      int ret=MEDfamilyCr(fid,mname.c_str(),famName,(*it).second.first,ngro,groName);
       ret++;
+    }
+}
+
+void MEDFileMeshL2::RenameFamiliesPatternInternal(std::vector< std::pair<std::string,std::pair<int,std::vector<std::string> > > >& crudeFams, RenameFamiliesPatternFunc func)
+{
+  std::size_t ii(0);
+  std::vector<std::string> fams(crudeFams.size());
+  for(std::vector< std::pair<std::string,std::pair<int,std::vector<std::string> > > >::const_iterator it=crudeFams.begin();it!=crudeFams.end();it++,ii++)
+    fams[ii]=(*it).first;
+  if(!func(fams))
+    return ;
+  ii=0;
+  for(std::vector< std::pair<std::string,std::pair<int,std::vector<std::string> > > >::iterator it=crudeFams.begin();it!=crudeFams.end();it++,ii++)
+    (*it).first=fams[ii];
+}
+
+/*!
+ * This method is dedicated to the killers that use a same family name to store different family ids. MED file API authorizes it.
+ * So this method renames families (if needed generaly not !) in order to have a discriminant name for families.
+ */
+void MEDFileMeshL2::RenameFamiliesFromFileToMemInternal(std::vector< std::pair<std::string,std::pair<int,std::vector<std::string> > > >& crudeFams)
+{
+  RenameFamiliesPatternInternal(crudeFams,RenameFamiliesFromFileToMem);
+}
+
+bool MEDFileMeshL2::RenameFamiliesFromFileToMem(std::vector< std::string >& famNames)
+{
+  std::map<std::string,int> m;
+  std::set<std::string> s;
+  for(std::vector< std::string >::const_iterator it=famNames.begin();it!=famNames.end();it++)
+    {
+      if(s.find(*it)!=s.end())
+        m[*it]=0;
+      s.insert(*it);
+    }
+  if(m.empty())
+    return false;// the general case !
+  for(std::vector< std::string >::iterator it=famNames.begin();it!=famNames.end();it++)
+    {
+      std::map<std::string,int>::iterator it2(m.find(*it));
+      if(it2!=m.end())
+        {
+          std::ostringstream oss; oss << *it << ZE_SEP_FOR_FAMILY_KILLERS << std::setfill('0') << std::setw(ZE_SEP2_FOR_FAMILY_KILLERS) << (*it2).second++;
+          *it=oss.str();
+        }
+    }
+  return true;
+}
+
+/*!
+ * This method is dedicated to the killers that use a same family name to store different family ids. MED file API authorizes it.
+ * So this method renames families (if needed generaly not !) in order to have a discriminant name for families.
+ */
+void MEDFileMeshL2::RenameFamiliesFromMemToFileInternal(std::vector< std::pair<std::string,std::pair<int,std::vector<std::string> > > >& crudeFams)
+{
+  RenameFamiliesPatternInternal(crudeFams,RenameFamiliesFromMemToFile);
+}
+
+bool MEDFileMeshL2::RenameFamiliesFromMemToFile(std::vector< std::string >& famNames)
+{
+  bool isSmthingStrange(false);
+  for(std::vector< std::string >::const_iterator it=famNames.begin();it!=famNames.end();it++)
+    {
+      std::size_t found((*it).find(ZE_SEP_FOR_FAMILY_KILLERS));
+      if(found!=std::string::npos)
+        isSmthingStrange=true;
+    }
+  if(!isSmthingStrange)
+    return false;
+  // pattern matching
+  std::map< std::string, std::vector<std::string> > m;
+  for(std::vector< std::string >::const_iterator it=famNames.begin();it!=famNames.end();it++)
+    {
+      std::size_t found((*it).find(ZE_SEP_FOR_FAMILY_KILLERS));
+      if(found!=std::string::npos && found>=1)
+        {
+          std::string s1((*it).substr(found+sizeof(ZE_SEP_FOR_FAMILY_KILLERS)-1));
+          if(s1.size()!=ZE_SEP2_FOR_FAMILY_KILLERS)
+            continue;
+          int k(-1);
+          std::istringstream iss(s1);
+          iss >> k;
+          bool isOK((iss.rdstate() & ( std::istream::failbit | std::istream::eofbit)) == std::istream::eofbit);
+          if(isOK && k>=0)
+            {
+              std::string s0((*it).substr(0,found));
+              m[s0].push_back(*it);
+            }
+        }
+    }
+  if(m.empty())
+    return false;
+  // filtering
+  std::map<std::string,std::string> zeMap;
+  for(std::map< std::string, std::vector<std::string> >::const_iterator it=m.begin();it!=m.end();it++)
+    {
+      if((*it).second.size()==1)
+        continue;
+      for(std::vector<std::string>::const_iterator it1=(*it).second.begin();it1!=(*it).second.end();it1++)
+        zeMap[*it1]=(*it).first;
+    }
+  if(zeMap.empty())
+    return false;
+  // traduce
+  for(std::vector< std::string >::iterator it=famNames.begin();it!=famNames.end();it++)
+    {
+      std::map<std::string,std::string>::iterator it1(zeMap.find(*it));
+      if(it1!=zeMap.end())
+        *it=(*it1).second;
+    }    
+  return true;
+}
+
+ParaMEDMEM::MEDCouplingAxisType MEDFileMeshL2::TraduceAxisType(med_axis_type at)
+{
+  switch(at)
+    {
+    case MED_CARTESIAN:
+      return AX_CART;
+    case MED_CYLINDRICAL:
+      return AX_CYL;
+    case MED_SPHERICAL:
+      return AX_SPHER;
+    case MED_UNDEF_AXIS_TYPE:
+      return AX_CART;
+    default:
+      throw INTERP_KERNEL::Exception("MEDFileMeshL2::TraduceAxisType : unrecognized axis type !");
+    }
+}
+
+ParaMEDMEM::MEDCouplingAxisType MEDFileMeshL2::TraduceAxisTypeStruct(med_grid_type gt)
+{
+  switch(gt)
+    {
+    case MED_CARTESIAN_GRID:
+      return AX_CART;
+    case MED_POLAR_GRID:
+      return AX_CYL;
+    default:
+      throw INTERP_KERNEL::Exception("MEDFileMeshL2::TraduceAxisTypeStruct : only Cartesian and Cylindrical supported by MED file !");
+    }
+}
+
+med_axis_type MEDFileMeshL2::TraduceAxisTypeRev(ParaMEDMEM::MEDCouplingAxisType at)
+{
+  switch(at)
+    {
+    case AX_CART:
+      return MED_CARTESIAN;
+    case AX_CYL:
+      return MED_CYLINDRICAL;
+    case AX_SPHER:
+      return MED_SPHERICAL;
+    default:
+      throw INTERP_KERNEL::Exception("MEDFileMeshL2::TraduceAxisTypeRev : unrecognized axis type !");
+    }
+}
+
+med_grid_type MEDFileMeshL2::TraduceAxisTypeRevStruct(ParaMEDMEM::MEDCouplingAxisType at)
+{
+  switch(at)
+    {
+    case AX_CART:
+      return MED_CARTESIAN_GRID;
+    case AX_CYL:
+      return MED_POLAR_GRID;
+    case AX_SPHER:
+      return MED_POLAR_GRID;
+    default:
+      throw INTERP_KERNEL::Exception("MEDFileMeshL2::TraduceAxisTypeRevStruct : unrecognized axis type !");
     }
 }
 
@@ -250,7 +449,8 @@ std::vector<std::string> MEDFileUMeshL2::loadCommonPart(med_idt fid, int mId, co
   _name.set(mName.c_str());
   int nstep;
   ParaMEDMEM::MEDCouplingMeshType meshType;
-  std::vector<std::string> ret(getAxisInfoOnMesh(fid,mId,mName.c_str(),meshType,nstep,Mdim));
+  ParaMEDMEM::MEDCouplingAxisType dummy3;
+  std::vector<std::string> ret(getAxisInfoOnMesh(fid,mId,mName.c_str(),meshType,dummy3,nstep,Mdim));
   if(nstep==0)
     {
       Mdim=-4;
@@ -491,7 +691,7 @@ bool MEDFileUMeshL2::isNamesDefinedOnLev(int levId) const
   return true;
 }
 
-MEDFileCMeshL2::MEDFileCMeshL2()
+MEDFileCMeshL2::MEDFileCMeshL2():_ax_type(AX_CART)
 {
 }
 
@@ -501,7 +701,8 @@ void MEDFileCMeshL2::loadAll(med_idt fid, int mId, const std::string& mName, int
   int nstep;
   int Mdim;
   ParaMEDMEM::MEDCouplingMeshType meshType;
-  std::vector<std::string> infosOnComp=getAxisInfoOnMesh(fid,mId,mName.c_str(),meshType,nstep,Mdim);
+  ParaMEDMEM::MEDCouplingAxisType dummy3;
+  std::vector<std::string> infosOnComp=getAxisInfoOnMesh(fid,mId,mName.c_str(),meshType,dummy3,nstep,Mdim);
   if(meshType!=CARTESIAN)
     throw INTERP_KERNEL::Exception("Invalid mesh type ! You are expected a structured one whereas in file it is not a structured !");
   _time=CheckMeshTimeStep(fid,mName,nstep,dt,it);
@@ -510,8 +711,9 @@ void MEDFileCMeshL2::loadAll(med_idt fid, int mId, const std::string& mName, int
   //
   med_grid_type gridtype;
   MEDFILESAFECALLERRD0(MEDmeshGridTypeRd,(fid,mName.c_str(),&gridtype));
-  if(gridtype!=MED_CARTESIAN_GRID)
-    throw INTERP_KERNEL::Exception("Invalid structured mesh ! Expected cartesian mesh type !");
+  if(gridtype!=MED_CARTESIAN_GRID && gridtype!=MED_POLAR_GRID)
+    throw INTERP_KERNEL::Exception("Invalid rectilinear mesh ! Only cartesian and polar are supported !");
+  _ax_type=TraduceAxisTypeStruct(gridtype);
   _cmesh=MEDCouplingCMesh::New();
   for(int i=0;i<Mdim;i++)
     {
@@ -551,7 +753,8 @@ void MEDFileCLMeshL2::loadAll(med_idt fid, int mId, const std::string& mName, in
   int nstep;
   int Mdim;
   ParaMEDMEM::MEDCouplingMeshType meshType;
-  std::vector<std::string> infosOnComp=getAxisInfoOnMesh(fid,mId,mName,meshType,nstep,Mdim);
+  ParaMEDMEM::MEDCouplingAxisType dummy3;
+  std::vector<std::string> infosOnComp=getAxisInfoOnMesh(fid,mId,mName,meshType,dummy3,nstep,Mdim);
   if(meshType!=CURVE_LINEAR)
     throw INTERP_KERNEL::Exception("Invalid mesh type ! You are expected a structured one whereas in file it is not a structured !");
   _time=CheckMeshTimeStep(fid,mName,nstep,dt,it);
@@ -721,9 +924,17 @@ std::vector<const BigMemoryObject *> MEDFileUMeshSplitL1::getDirectChildrenWithN
   return ret;
 }
 
+MEDFileUMeshSplitL1 *MEDFileUMeshSplitL1::shallowCpyUsingCoords(DataArrayDouble *coords) const
+{
+  MEDCouplingAutoRefCountObjectPtr<MEDFileUMeshSplitL1> ret(new MEDFileUMeshSplitL1(*this));
+  ret->_m_by_types.shallowCpyMeshes();
+  ret->_m_by_types.setCoords(coords);
+  return ret.retn();
+}
+
 MEDFileUMeshSplitL1 *MEDFileUMeshSplitL1::deepCpy(DataArrayDouble *coords) const
 {
-  MEDCouplingAutoRefCountObjectPtr<MEDFileUMeshSplitL1> ret=new MEDFileUMeshSplitL1(*this);
+  MEDCouplingAutoRefCountObjectPtr<MEDFileUMeshSplitL1> ret(new MEDFileUMeshSplitL1(*this));
   ret->_m_by_types=_m_by_types.deepCpy(coords);
   if((const DataArrayInt *)_fam)
     ret->_fam=_fam->deepCpy();
@@ -734,6 +945,29 @@ MEDFileUMeshSplitL1 *MEDFileUMeshSplitL1::deepCpy(DataArrayDouble *coords) const
   if((const DataArrayAsciiChar *)_names)
     ret->_names=_names->deepCpy();
   return ret.retn();
+}
+
+void MEDFileUMeshSplitL1::checkCoherency() const
+{
+  if (!_fam || _fam->getNumberOfTuples() != getSize())
+    throw INTERP_KERNEL::Exception("MEDFileUMeshSplitL1::checkCoherency(): internal family array has an invalid size!");
+  int nbCells = getSize();
+  if (_num)
+    {
+      _num->checkNbOfTuplesAndComp(nbCells,1,"MEDFileUMeshSplitL1::checkCoherency(): inconsistent internal node numbering array!");
+      int pos;
+      int maxValue=_num->getMaxValue(pos);
+      if (!_rev_num || _rev_num->getNumberOfTuples() != (maxValue+1))
+        throw INTERP_KERNEL::Exception("MEDFileUMeshSplitL1::checkCoherency(): inconsistent internal revert node numbering array!");
+    }
+  if ((_num && !_rev_num) || (!_num && _rev_num))
+    throw INTERP_KERNEL::Exception("MEDFileUMeshSplitL1::checkCoherency(): inconsistent internal numbering arrays (one is null)!");
+  if (_num && !_num->hasUniqueValues())
+    throw INTERP_KERNEL::Exception("MEDFileUMeshSplitL1::checkCoherency(): inconsistent internal node numbering array: duplicates found!");
+  if (_names)
+    _names->checkNbOfTuplesAndComp(nbCells,1,"MEDFileUMeshSplitL1::checkCoherency(): internal cell naming array has an invalid size!");
+
+  _m_by_types.checkCoherency();
 }
 
 bool MEDFileUMeshSplitL1::isEqual(const MEDFileUMeshSplitL1 *other, double eps, std::string& what) const
@@ -815,7 +1049,7 @@ void MEDFileUMeshSplitL1::assignMesh(MEDCouplingUMesh *m, bool newOrOld)
       _m=m;
       _m_by_types.assignUMesh(dynamic_cast<MEDCouplingUMesh *>(m->deepCpy()));
       MEDCouplingAutoRefCountObjectPtr<DataArrayInt> da=_m_by_types.getUmesh()->getRenumArrForConsecutiveCellTypesSpec(typmai2,typmai2+MED_N_CELL_FIXED_GEO);
-      if(!da->isIdentity())
+      if(!da->isIdentity2(m->getNumberOfCells()))
         {
           _num=da->invertArrayO2N2N2O(m->getNumberOfCells());
           _m.updateTime();
@@ -826,7 +1060,7 @@ void MEDFileUMeshSplitL1::assignMesh(MEDCouplingUMesh *m, bool newOrOld)
   else
     {
       if(!m->checkConsecutiveCellTypesAndOrder(typmai2,typmai2+MED_N_CELL_FIXED_GEO))
-        throw INTERP_KERNEL::Exception("MEDFileUMeshSplitL1::assignMesh : the mode of mesh setting expects to follow the MED file numbering convention ! it is not the case !");
+        throw INTERP_KERNEL::Exception("MEDFileUMeshSplitL1::assignMesh(): the mesh does not follow the MED file numbering convention! Invoke sortCellsInMEDFileFrmt() first!");
       m->incrRef();
       _m_by_types.assignUMesh(m);
     }
@@ -909,6 +1143,11 @@ DataArrayInt *MEDFileUMeshSplitL1::getFamilyPartArr(const int *idsBg, const int 
 std::vector<INTERP_KERNEL::NormalizedCellType> MEDFileUMeshSplitL1::getGeoTypes() const
 {
   return _m_by_types.getGeoTypes();
+}
+
+int MEDFileUMeshSplitL1::getNumberOfCellsWithType(INTERP_KERNEL::NormalizedCellType ct) const
+{
+  return _m_by_types.getNumberOfCellsWithType(ct);
 }
 
 MEDCouplingUMesh *MEDFileUMeshSplitL1::getWholeMesh(bool renum) const
@@ -1268,6 +1507,22 @@ std::vector<INTERP_KERNEL::NormalizedCellType> MEDFileUMeshAggregateCompute::get
     return _m->getAllGeoTypesSorted();
 }
 
+int MEDFileUMeshAggregateCompute::getNumberOfCellsWithType(INTERP_KERNEL::NormalizedCellType ct) const
+{
+  if(_mp_time>=_m_time)
+    {
+      for(std::vector< MEDCouplingAutoRefCountObjectPtr<MEDCoupling1GTUMesh> >::const_iterator it=_m_parts.begin();it!=_m_parts.end();it++)
+        {
+          const MEDCoupling1GTUMesh *elt(*it);
+          if(elt && elt->getCellModelEnum()==ct)
+            return elt->getNumberOfCells();
+        }
+      return 0;
+    }
+  else
+    return _m->getNumberOfCellsWithType(ct);
+}
+
 std::vector<MEDCoupling1GTUMesh *> MEDFileUMeshAggregateCompute::retrievePartsWithoutComputation() const
 {
   if(_mp_time<_m_time)
@@ -1348,7 +1603,12 @@ void MEDFileUMeshAggregateCompute::forceComputationOfPartsFromUMesh() const
 {
   const MEDCouplingUMesh *m(_m);
   if(!m)
-    throw INTERP_KERNEL::Exception("MEDFileUMeshAggregateCompute::forceComputationOfPartsFromUMesh : null UMesh !");
+    {
+      if(_m_parts.empty())
+        throw INTERP_KERNEL::Exception("MEDFileUMeshAggregateCompute::forceComputationOfPartsFromUMesh : null UMesh !");
+      else
+        return ;// no needs to compte parts they are already here !
+    }
   std::vector<MEDCouplingUMesh *> ms(m->splitByType());
   std::vector< MEDCouplingAutoRefCountObjectPtr<MEDCouplingUMesh> > msMSafe(ms.begin(),ms.end());
   std::size_t sz(msMSafe.size());
@@ -1542,6 +1802,22 @@ MEDFileUMeshAggregateCompute MEDFileUMeshAggregateCompute::deepCpy(DataArrayDoub
   return ret;
 }
 
+void MEDFileUMeshAggregateCompute::shallowCpyMeshes()
+{
+  for(std::vector< MEDCouplingAutoRefCountObjectPtr<MEDCoupling1GTUMesh> >::iterator it=_m_parts.begin();it!=_m_parts.end();it++)
+    {
+      const MEDCoupling1GTUMesh *elt(*it);
+      if(elt)
+        {
+          MEDCouplingAutoRefCountObjectPtr<MEDCouplingMesh> elt2(elt->clone(false));
+          *it=DynamicCastSafe<MEDCouplingMesh,MEDCoupling1GTUMesh>(elt2);
+        }
+    }
+  const MEDCouplingUMesh *m(_m);
+  if(m)
+    _m=m->clone(false);
+}
+
 bool MEDFileUMeshAggregateCompute::isEqual(const MEDFileUMeshAggregateCompute& other, double eps, std::string& what) const
 {
   const MEDCouplingUMesh *m1(getUmesh());
@@ -1581,6 +1857,16 @@ bool MEDFileUMeshAggregateCompute::isEqual(const MEDFileUMeshAggregateCompute& o
         return false;
     }
   return true;
+}
+
+void MEDFileUMeshAggregateCompute::checkCoherency() const
+{
+  if(_mp_time >= _m_time)
+    for(std::vector< MEDCouplingAutoRefCountObjectPtr<MEDCoupling1GTUMesh> >::const_iterator it=_m_parts.begin();
+        it!=_m_parts.end(); it++)
+      (*it)->checkCoherency1();
+  else
+    _m->checkCoherency1();
 }
 
 void MEDFileUMeshAggregateCompute::clearNonDiscrAttributes() const

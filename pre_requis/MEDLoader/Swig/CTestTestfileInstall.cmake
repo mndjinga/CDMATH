@@ -1,4 +1,4 @@
-# Copyright (C) 2015  CEA/DEN, EDF R&D
+# Copyright (C) 2015-2016  CEA/DEN, EDF R&D
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -17,24 +17,20 @@
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
 
-ADD_TEST(MEDLoaderTest python MEDLoaderTest.py)
-SET_TESTS_PROPERTIES(MEDLoaderTest PROPERTIES LABELS "${COMPONENT_NAME}")
+SET(TEST_NAMES
+  MEDLoaderTest123
+  MEDLoaderTest4
+  MEDLoaderExamplesTest
+  SauvLoaderTest
+  # if numpy is used
+  MEDLoaderCouplingTrainingSession
+)
 
-ADD_TEST(MEDLoaderTest2 python MEDLoaderTest2.py)
-SET_TESTS_PROPERTIES(MEDLoaderTest2 PROPERTIES LABELS "${COMPONENT_NAME}")
-
-ADD_TEST(MEDLoaderTest3 python MEDLoaderTest3.py)
-SET_TESTS_PROPERTIES(MEDLoaderTest3 PROPERTIES LABELS "${COMPONENT_NAME}")
-
-ADD_TEST(MEDLoaderTest4 python MEDLoaderTest4.py)
-SET_TESTS_PROPERTIES(MEDLoaderTest4 PROPERTIES LABELS "${COMPONENT_NAME}")
-
-ADD_TEST(MEDLoaderExamplesTest python MEDLoaderExamplesTest.py)
-SET_TESTS_PROPERTIES(MEDLoaderExamplesTest PROPERTIES LABELS "${COMPONENT_NAME}")
-
-ADD_TEST(SauvLoaderTest python SauvLoaderTest.py)
-SET_TESTS_PROPERTIES(SauvLoaderTest PROPERTIES LABELS "${COMPONENT_NAME}")
-
-# if numpy is used
-ADD_TEST(MEDLoaderCouplingTrainingSession python MEDLoaderCouplingTrainingSession.py)
-SET_TESTS_PROPERTIES(MEDLoaderCouplingTrainingSession PROPERTIES LABELS "${COMPONENT_NAME}")
+FOREACH(tfile ${TEST_NAMES})
+  SET(TEST_NAME ${COMPONENT_NAME}_${tfile})
+  ADD_TEST(${TEST_NAME} python ${tfile}.py)
+  SET_TESTS_PROPERTIES(${TEST_NAME} PROPERTIES
+    LABELS "${COMPONENT_NAME}"
+    TIMEOUT ${TIMEOUT}
+    )
+ENDFOREACH()

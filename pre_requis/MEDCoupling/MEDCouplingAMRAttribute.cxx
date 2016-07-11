@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2015  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2016  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -28,6 +28,7 @@
 
 using namespace ParaMEDMEM;
 
+/// @cond INTERNAL
 DataArrayDoubleCollection *DataArrayDoubleCollection::New(const std::vector< std::pair<std::string,int> >& fieldNames)
 {
   return new DataArrayDoubleCollection(fieldNames);
@@ -726,6 +727,8 @@ void MEDCouplingGridCollection::updateTime() const
         updateTimeWith(*b);
     }
 }
+
+/// @endcond
 
 MEDCouplingCartesianAMRMesh *MEDCouplingDataForGodFather::getMyGodFather()
 {

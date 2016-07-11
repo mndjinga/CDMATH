@@ -1,6 +1,17 @@
+Modifications dans la version 3.2.0 :
+
+- Gestion rapide d'un grand nombre de famille/groupes (chgt modèle interne).
+- Mise en conformité de l'outil medimport (3.1 -> 3.2)
+- Diverses corrections liées à l'utilisation des grilles polaires
+- Mises à jour des usecases grilles
+- Réecriture des usescases polyèdres avec un cas plus réaliste
+- Mises à jour de la documentation polyedres + polygones
+- Réecriture en .svg du schema explicatif de la connectivité des polyèdres
+- Modification des destructeurs cxx pour éviter la défintion de symboles Weak dans la bibliothèque
+
 Modifications dans la version 3.1.0 :
 
-- Ajout de la fonctionalité de gestion des fichiers en mémoire.  Transferts possibles entre processus. 
+- Ajout de la fonctionalité de gestion des fichiers en mémoire.  Transferts possibles entre processus.
 - Correction d'une lenteur d'execution de MEDfieldComputingStepInfo pour des champs ayant de nombreuses étapes de calcul (>1000)
 - Correction d'une erreur de comptage des Py_None en sortie des appels MED en python.
 - Correction d'une impossibilité d'écriture de MEDmeshGridIndexCoorinateWr en mode MED_ACC_RDEXT à partir d'un n°axe >1

@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2015  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2016  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -31,8 +31,8 @@ namespace INTERP_KERNEL
   typedef enum { Triangulation, Convex, Geometric2D, PointLocator, Barycentric, BarycentricGeo2D } IntersectionType;
   
   /*!
-   * \class InterpolationOptions
-   * Class defining the options for all interpolation algorithms.
+   * Class defining the options for all interpolation algorithms used in the \ref remapper "remapper" and
+   * in some of the \ref para-dec "DECs".
    * 
    * List of options, possible values and default values can be found on this page:
    * \ref InterpKerIntersectors

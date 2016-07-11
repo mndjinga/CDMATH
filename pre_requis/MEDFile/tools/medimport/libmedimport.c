@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2015  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2016  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -80,6 +80,7 @@ int HAVE_MEDimport=1;
 #include "MAJ_231_232.h"
 #include "MAJ_236_300.h"
 #include "MAJ_300_310.h"
+#include "MAJ_310_320.h"
 
 
 #ifdef __cplusplus
@@ -103,7 +104,7 @@ int MEDimport(char * filein, char *  fileout) {
   char chemin_profils[MED_TAILLE_PROFILS+1];
   char chemin_liens[MED_TAILLE_LIENS+1];
   char version[9];
-  int MAJ_21_22 = 0, MAJ_231_232 = 0, MAJ_236_300 = 0, MAJ_300_310 = 0 ;
+  int MAJ_21_22 = 0, MAJ_231_232 = 0, MAJ_236_300 = 0, MAJ_300_310 = 0, MAJ_310_320 = 0 ;
 #ifdef PPRO_NT
   char *drive, *dir, *ext;
 #endif
@@ -195,9 +196,11 @@ int MEDimport(char * filein, char *  fileout) {
     MAJ_236_300 = 1;
   if (strcmp(version, "3_1_0") < 0)
     MAJ_300_310 = 1;
+  if (strcmp(version, "3_2_0") < 0)
+    MAJ_310_320 = 1;
 
   /* Ne pas oublier que la version cible du fichier à convertir est celui de la bibliothèque. */
-  if (MAJ_300_310 == 0) {
+  if (MAJ_310_320 == 0) {
     fprintf(stdout,"Le fichier %s est déjà au bon format !!! \n",_fileout);
     ret = MEDfileClose(fid);
     EXIT_IF(ret < 0,"Fermeture du fichier",filein);
@@ -287,7 +290,7 @@ int MEDimport(char * filein, char *  fileout) {
   if (MAJ_300_310) {
     /* Le système de cache de version a été developpé à partir de la 3.0*/
     /* Initialise le cache sur une 3.0.8 (cas d'absence d'INFO)*/
-    /* s'il n'a pas été instanciée ds MAJ_236_300 */
+    /* s'il n'a pas déjà été instanciée ds les MAJ précédentes */
     MAJ_write_version_num(fid,3,0,8);
     _MEDfileVersion(fid);
     /* Si le cache était dèjà instancié, met à jour le cache */
@@ -299,6 +302,21 @@ int MEDimport(char * filein, char *  fileout) {
     fprintf(stdout,"  Champs(s) : ... OK ...\n");
 
 
+  }
+
+  if (MAJ_310_320) {
+    /* Le système de cache de version a été developpé à partir de la 3.0*/
+    /* Initialise le cache sur une 3.0.8 (cas d'absence d'INFO)*/
+    /* s'il n'a pas été déjà été instanciée ds les MAJ_ précédentes */
+    MAJ_write_version_num(fid,3,1,0);
+    _MEDfileVersion(fid);
+    /* Si le cache était dèjà instancié, met à jour le cache */
+    MAJ_version_num(fid,3,1,0);
+
+    /* Mise a jour des familles/groupes */
+    fprintf(stdout,"- Lancement de la mise à jour des familles/groupes (310_320) ... \n");
+    MAJ_310_320_familles(fid);
+    fprintf(stdout,"  Famille(s)/Groupe(s) : ... OK ...\n");
   }
 
   /* A l'écriture d'une nouvelle version de MAJ ex 310_320,

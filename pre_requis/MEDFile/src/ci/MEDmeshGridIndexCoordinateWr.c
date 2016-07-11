@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2015  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2016  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -34,7 +34,7 @@
   \param gridindex \gridindex
   \retval med_err \error
   \details \MEDmeshGridIndexCoordinateWrDetails
-  \remarks \li
+  \remarks
   \MEDmeshGridIndexCoordinateWrRem
   \see MEDmeshNodeCoordinateWr
  */
@@ -98,6 +98,11 @@ MEDmeshGridIndexCoordinateWr(const med_idt               fid,
   }
   _gridtype=(med_grid_type) _intgridtype;
 
+  /*
+   * Les grilles MED_CURVILINEAR ne sont pas définies en utilisant 
+   * cette fonction, elles doivent définir leurs coordonnées des noeuds
+   * comme pour les maillages non structurés.
+   */
   if ((_gridtype != MED_CARTESIAN_GRID) && (_gridtype != MED_POLAR_GRID)) {
     MED_ERR_(_ret,MED_ERR_RANGE,MED_ERR_GRIDTYPE,MED_ERR_MESH_MSG);
     SSCRUTE(meshname);ISCRUTE_int(_gridtype);goto ERROR;
@@ -110,10 +115,6 @@ MEDmeshGridIndexCoordinateWr(const med_idt               fid,
     ISCRUTE(_intaxistype);goto ERROR;
   }
 
-  if ((med_mesh_type)( _intaxistype) != MED_CARTESIAN ) {
-    MED_ERR_(_ret,MED_ERR_RANGE,MED_ERR_AXISTYPE,MED_ERR_MESH_MSG);
-    SSCRUTE(meshname);ISCRUTE(_intaxistype);goto ERROR;
-  }
 
   /* Lecture de l'attribut MED_NOM_DIM  */
   if (_MEDattrEntierLire(_meshid,MED_NOM_DIM,&_meshdim) < 0) {
@@ -147,6 +148,10 @@ MEDmeshGridIndexCoordinateWr(const med_idt               fid,
       goto ERROR;
     }
 
+    /* 
+       Le type géométrique de maille utilisé pour les grilles est fonction
+       de la dimension de la grille == nombre d'axes 
+    */
     switch ( _meshdim )  {
     case 1 : 
       strcpy(_geotypename,MED_NOM_SE2);

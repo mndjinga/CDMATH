@@ -1,5 +1,5 @@
 #  -*- coding: iso-8859-1 -*-
-# Copyright (C) 2007-2015  CEA/DEN, EDF R&D
+# Copyright (C) 2007-2016  CEA/DEN, EDF R&D
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -2159,6 +2159,8 @@ class MEDCouplingBasicsTest(unittest.TestCase):
         self.assertEqual(9*7,mesh.getNumberOfNodes())
         self.assertEqual(2,mesh.getSpaceDimension())
         self.assertEqual(2,mesh.getMeshDimension())
+# ! [PySnippetCMeshStdBuild1_4]
+# ! [PySnippetCMeshStdBuild1_4]
         return
 
     def testExampleUMeshAdvBuild1(self):

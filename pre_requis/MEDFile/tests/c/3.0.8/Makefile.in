@@ -415,20 +415,20 @@ EXTRA_DIST = test.med.ref
 CLEANFILES = \
 ./test1.med\
 ./test2.med\
+./test2-med.hdf\
 ./test4.med\
 ./test6.med\
 ./test8.med\
 ./test10.med\
+./test10-med.hdf\
 ./test12.med\
 ./test14.med\
 ./test16.med\
 ./test18.med\
 ./test19.med\
 ./test20.med\
-./test20b.med\
-./test2-med.hdf\
-./test10-med.hdf\
 ./test20-0.med\
+./test20b.med\
 ./test21.med\
 ./test23.med\
 ./test25.med\

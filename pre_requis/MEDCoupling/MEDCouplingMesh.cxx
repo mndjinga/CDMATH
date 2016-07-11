@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2015  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2016  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -726,6 +726,7 @@ std::string MEDCouplingMesh::getVTKFileNameOf(const std::string& fileName) const
   return ret;
 }
 
+/// @cond INTERNAL
 void MEDCouplingMesh::writeVTKAdvanced(const std::string& fileName, const std::string& cda, const std::string& pda, DataArrayByte *byteData) const
 {
   std::ofstream ofs(fileName.c_str());
@@ -758,3 +759,4 @@ void MEDCouplingMesh::SplitExtension(const std::string& fileName, std::string& b
   baseName=fileName.substr(0,pos);
   extension=fileName.substr(pos);
 }
+/// @endcond

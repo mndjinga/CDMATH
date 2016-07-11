@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2015  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2016  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -24,9 +24,10 @@
 #include "MEDFileData.hxx"
 #include "MEDCouplingFieldDouble.hxx"
 #include "MEDCouplingMemArray.hxx"
+#include "TestInterpKernelUtils.hxx"  // getResourceFile()
 
 #ifdef WIN32
-# include <windows.h>
+#include <windows.h>
 #else
 # include <unistd.h>
 #endif
@@ -39,12 +40,12 @@ using namespace ParaMEDMEM;
 void SauvLoaderTest::testSauv2Med()
 {
   // read a file containing all types of readable piles
-  std::string file = getResourceFile("allPillesTest.sauv");
+  std::string file = INTERP_TEST::getResourceFile("allPillesTest.sauv", 3);
   MEDCouplingAutoRefCountObjectPtr<SauvReader> sr=SauvReader::New(file.c_str());
   MEDCouplingAutoRefCountObjectPtr<MEDFileData> d2=sr->loadInMEDFileDS();
   // write MED
   d2->write("allPillesTest.med",0);
-  // check 
+  // check
   CPPUNIT_ASSERT_EQUAL(1,d2->getNumberOfMeshes());
   CPPUNIT_ASSERT_EQUAL(8+97,d2->getNumberOfFields());
   MEDFileMesh * m = d2->getMeshes()->getMeshAtPos(0);
@@ -124,7 +125,7 @@ void SauvLoaderTest::testMed2SauvOnAMeshWithVoidFamily()
 void SauvLoaderTest::testSauv2MedOnA3SubsField()
 {
   // read SAUV
-  std::string sauvFile = getResourceFile("portico_3subs.sauv");
+  std::string sauvFile = INTERP_TEST::getResourceFile("portico_3subs.sauv", 3);
   MEDCouplingAutoRefCountObjectPtr<SauvReader> sr=SauvReader::New(sauvFile.c_str());
   MEDCouplingAutoRefCountObjectPtr<MEDFileData> d2=sr->loadInMEDFileDS();
   // check mesh
@@ -168,7 +169,7 @@ void SauvLoaderTest::testSauv2MedOnA3SubsField()
 void SauvLoaderTest::testMed2Sauv()
 {
   // read pointe.med
-  std::string file = getResourceFile("pointe.med");
+  std::string file = INTERP_TEST::getResourceFile("pointe.med", 3);
   MEDCouplingAutoRefCountObjectPtr<MEDFileData> pointeMed=MEDFileData::New(file.c_str());
 
   // add 3 faces to pointeMed
@@ -249,14 +250,14 @@ void SauvLoaderTest::testMed2Sauv()
   CPPUNIT_ASSERT( std::find(groups.begin(),groups.end(),"groupe5") != groups.end() );
   CPPUNIT_ASSERT( std::find(groups.begin(),groups.end(),"maa1") != groups.end() );
   CPPUNIT_ASSERT_EQUAL(16,m->getSizeAtLevel(0));
-  MEDCouplingAutoRefCountObjectPtr<MEDCouplingMesh> um0 = m->getGenMeshAtLevel(0);
+  MEDCouplingAutoRefCountObjectPtr<MEDCouplingMesh> um0 = m->getMeshAtLevel(0);
   CPPUNIT_ASSERT_EQUAL(12, um0->getNumberOfCellsWithType( INTERP_KERNEL::NORM_TETRA4 ));
   CPPUNIT_ASSERT_EQUAL(2,  um0->getNumberOfCellsWithType( INTERP_KERNEL::NORM_PYRA5 ));
   CPPUNIT_ASSERT_EQUAL(2,  um0->getNumberOfCellsWithType( INTERP_KERNEL::NORM_HEXA8 ));
-  MEDCouplingAutoRefCountObjectPtr<MEDCouplingMesh> um1 = m->getGenMeshAtLevel(-1);
+  MEDCouplingAutoRefCountObjectPtr<MEDCouplingMesh> um1 = m->getMeshAtLevel(-1);
   CPPUNIT_ASSERT_EQUAL(2, um1->getNumberOfCellsWithType( INTERP_KERNEL::NORM_TRI3 ));
   MEDCouplingAutoRefCountObjectPtr<MEDCouplingUMesh> pointeUM0 =
-    static_cast<MEDCouplingUMesh*>( pointeMedMesh->getGenMeshAtLevel(0));
+    static_cast<MEDCouplingUMesh*>( pointeMedMesh->getMeshAtLevel(0));
   DataArrayDouble *coo = m->getCoords();
   DataArrayDouble *pointeCoo = pointeMedMesh->getCoords();
   CPPUNIT_ASSERT(coo->isEqualWithoutConsideringStr(*pointeCoo,1e-12));
@@ -326,29 +327,4 @@ void SauvLoaderTest::tearDown()
 #endif
       remove(fileToRemove[i]);
   }
-}
-
-std::string SauvLoaderTest::getResourceFile( const std::string& filename )
-{
-  std::string resourceFile = "";
-
-  if ( getenv("top_srcdir") ) {
-    // we are in 'make test' step
-    resourceFile = getenv("top_srcdir");
-    resourceFile += "/resources/";
-  }
-  else if ( getenv("MED_ROOT_DIR") ) {
-    // use MED_ROOT_DIR env.var
-    resourceFile = getenv("MED_ROOT_DIR");
-    resourceFile += "/share/salome/resources/med/";
-  }
-  resourceFile += filename;
-#ifdef WIN32
-  std::string fixedpath = resourceFile;
-  for ( int i=0; i < fixedpath.length(); ++i )
-    if (fixedpath[i] == '/')
-      fixedpath[i] = '\\';
-  return fixedpath;
-#endif
-  return resourceFile;
 }

@@ -1,7 +1,7 @@
 ![logo](logo/cdmath_logo.png) CDMATH
 ====================================
 
-CDMATH is a CFD toolbox designed for numerical analysts who work on the representation of thermal-hydraulics and who would prefer to focus on high-level computation. The software is maintained and used by [CDMATH](http://cdmath.jimdo.com), a collaborative workgroup with the same name. The software is easiest to install on Ubuntu 14.04 LTS, on Debian Jessie, as well as on Fedora 20, 21 and 22.
+CDMATH is a CFD toolbox designed for numerical analysts who work on the representation of thermal-hydraulics and who would prefer to focus on high-level computation. The software is maintained and used by [CDMATH](http://cdmath.jimdo.com), a collaborative workgroup with the same name. The software is easiest to install on Ubuntu 14.04 LTS, 16.04 LTS, on Debian Jessie, as well as on Fedora 20, 21, 22, 23 and 24.
 
 
 Download binary CDMATH from repositories
@@ -30,7 +30,7 @@ Dependencies. The following packages list is sufficient on Ubuntu 14.04, Ubuntu 
  - `g++` or another C++ compiler
  - `libhdf5-dev`
  - `libopenmpi-dev`, in particular if you need to use the compilation option `-DMEDFILE_USE_MPI=ON`.
- - `petsc-dev`, if you want to compile a CDMATH-based linear solver. PETSc should mandatorily be at a minor subversion of version 3.4. * , that is to say *not* more recent. We have chosen the version 3.4 of PETSc (released on 13 May 2013), as it is easily installable from the main distributions repositories. Use the compilation option `-DCDMATH_WITH_PETSC=ON`.
+ - `petsc-dev`, if you want to compile a CDMATH-based linear solver. PETSc should use version 3.4. or more recent (3.5, 3.6 or 3.7 currently available). The version 3.4 of PETSc (released on 13 May 2013), as is easily installable from Ubuntu 14.04  repositories whereas the version 3.6 of PETSc (released on 13 May 2016), is easily installable from Ubuntu 16.04  repositories. Use the compilation option `-DCDMATH_WITH_PETSC=ON`.
  - `python-dev`, `python-numpy` and `swig`, if you want to generate Python executables and libraries of CDMATH. Use the compilation option `-DCDMATH_WITH_PYTHON=ON`.
  - `libcppunit-dev`, if you want to generate unit tests. Use the compilation option `-DCDMATH_WITH_TESTS=ON`.
  - `doxygen`, `graphviz` and `mscgen`, if you want to generate a nice documentation in `~/workspace/cdmath/cdmath_install/doc/`. Use the compilation option `-DCDMATH_WITH_DOCUMENTATION=ON`.

@@ -1,5 +1,5 @@
 #  -*- coding: iso-8859-1 -*-
-# Copyright (C) 2007-2015  CEA/DEN, EDF R&D
+# Copyright (C) 2007-2016  CEA/DEN, EDF R&D
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -173,7 +173,7 @@ class MEDCouplingBasicsTest(unittest.TestCase):
         src.allocateCells(2) ; src.insertNextCell(NORM_TETRA4,[0,1,2,5]) ; src.insertNextCell(NORM_TETRA4,[3,4,0,6]) ; src.finishInsertingCells()
         trg=MEDCouplingCMesh() ; arr=DataArrayDouble([-0.7,-0.1,0.2,0.7,2.,2.3]) ; arr2=DataArrayDouble([-0.7,0.2,0.6,1.2,2.])
         trg.setCoordsAt(0,arr) ; trg.setCoordsAt(1,arr) ; trg.setCoordsAt(2,arr2)
-        src.checkCoherency2(1e-10)
+        src.checkCoherency1(1e-10)
         trg.checkCoherency()
         fieldSrc=MEDCouplingFieldDouble(ON_CELLS,NO_TIME) ; fieldSrc.setMesh(src) ; arrSrc=DataArrayDouble([10.,30.])
         fieldSrc.setNature(Integral) ;  fieldSrc.setArray(arrSrc)
@@ -229,7 +229,7 @@ class MEDCouplingBasicsTest(unittest.TestCase):
         trg.allocateCells(2) ; trg.insertNextCell(NORM_TETRA4,[0,1,2,5]) ; trg.insertNextCell(NORM_TETRA4,[3,4,0,6]) ; trg.finishInsertingCells()
         src=MEDCouplingCMesh() ; arr=DataArrayDouble([-0.7,-0.1,0.2,0.7,2.,2.3]) ; arr2=DataArrayDouble([-0.7,0.2,0.6,1.2,2.])
         src.setCoordsAt(0,arr) ; src.setCoordsAt(1,arr) ; src.setCoordsAt(2,arr2)
-        trg.checkCoherency2(1e-10)
+        trg.checkCoherency1(1e-10)
         src.checkCoherency()
         fieldSrc=MEDCouplingFieldDouble(ON_CELLS,NO_TIME) ; fieldSrc.setMesh(src) ; arrSrc=DataArrayDouble(100) ; arrSrc.iota(7.7)
         fieldSrc.setNature(Integral) ;  fieldSrc.setArray(arrSrc)
@@ -809,7 +809,7 @@ class MEDCouplingBasicsTest(unittest.TestCase):
         mExp0=csr_matrix((data,(row,col)),shape=(4,11))
         # compute diff and check
         diff=abs(m-mExp0)
-        self.assertAlmostEqual(diff.max(),0.,14)
+        self.assertAlmostEqual(diff.sum(),0.,14)
         ## full specific case 1D where target=source
         rem=MEDCouplingRemapper()
         rem.setIntersectionType(PointLocator)
@@ -820,7 +820,7 @@ class MEDCouplingBasicsTest(unittest.TestCase):
         # expected matrix
         mExp1=identity(11)
         diff=abs(m-mExp1)
-        self.assertAlmostEqual(diff.max(),0.,14)
+        self.assertAlmostEqual(diff.sum(),0.,14)
         ## case where some points in target are not in source
         arrT=DataArrayDouble([-0.2,0.1,1.7,5.5,10.3])
         mT=MEDCouplingCMesh() ; mT.setCoords(arrT)
@@ -834,7 +834,7 @@ class MEDCouplingBasicsTest(unittest.TestCase):
         data=array([0.9,0.1,0.3,0.7,0.5,0.5])
         mExp2=csr_matrix((data,(row,col)),shape=(5,11))
         diff=abs(m-mExp2)
-        self.assertAlmostEqual(diff.max(),0.,14)
+        self.assertAlmostEqual(diff.sum(),0.,14)
         ## basic case 2D Curve
         arrS=DataArrayInt.Range(0,11,1).convertToDblArr()
         arrT=DataArrayDouble([0.1,1.7,5.5,9.6])
@@ -851,7 +851,48 @@ class MEDCouplingBasicsTest(unittest.TestCase):
         rowSum=m.sum(axis=1)
         m=diags(array(1/rowSum.transpose()),[0])*m
         diff=abs(m-mExp0)
-        self.assertAlmostEqual(diff.max(),0.,14)
+        self.assertAlmostEqual(diff.sum(),0.,14)
+        pass
+    
+    def test3D2Dand2D3DPointLocator1(self):
+        """ Non regression test solving SIGSEGV when using 3D<->3Dsurf pointlocator."""
+        arrX=DataArrayDouble([0,1,2])
+        arrY=DataArrayDouble([0,1])
+        arrZ=DataArrayDouble([0,1])
+        ms=MEDCouplingCMesh() ; ms.setCoords(arrX,arrY,arrZ)
+        ms=ms.buildUnstructured() ; ms.setName("source")
+        #
+        mt=MEDCouplingUMesh("target",2) ; mt.allocateCells()
+        mt.insertNextCell(NORM_TRI3,[0,4,6])
+        mt.insertNextCell(NORM_TRI3,[1,5,7])
+        mt.setCoords(ms.getCoords()[:])
+        mt.zipCoords()
+        #
+        rem=MEDCouplingRemapper()
+        rem.setIntersectionType(PointLocator)
+        rem.prepare(ms,mt,"P0P0")
+        self.assertEqual(rem.getCrudeMatrix(),[{0: 1.0}, {1: 1.0}])
+        rem2=MEDCouplingRemapper()
+        rem2.setIntersectionType(PointLocator)
+        rem2.prepare(mt,ms,"P0P0") # reverse mt<->ms
+        self.assertEqual(rem2.getCrudeMatrix(),[{0: 1.0}, {1: 1.0}])
+        pass
+
+    def test2D1Dand1D2DPointLocator1(self):
+        arrX=DataArrayDouble([0,1,2])
+        arrY=DataArrayDouble([0,1])
+        ms=MEDCouplingCMesh() ; ms.setCoords(arrX,arrY) ; ms=ms.buildUnstructured()
+        mt=MEDCouplingUMesh("target",1) ; mt.setCoords(ms.getCoords()[:])
+        mt.allocateCells()
+        mt.insertNextCell(NORM_SEG2,[0,4]) ; mt.insertNextCell(NORM_SEG2,[1,5])
+        rem=MEDCouplingRemapper()
+        rem.setIntersectionType(PointLocator)
+        rem.prepare(ms,mt,"P0P0")
+        self.assertEqual(rem.getCrudeMatrix(),[{0:1.},{1:1.}])
+        rem=MEDCouplingRemapper()
+        rem.setIntersectionType(PointLocator)
+        rem.prepare(mt,ms,"P0P0")
+        self.assertEqual(rem.getCrudeMatrix(),[{0:1.},{1:1.}])
         pass
     
     def build2DSourceMesh_1(self):

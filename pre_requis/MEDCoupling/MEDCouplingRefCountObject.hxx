@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2015  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2016  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -24,6 +24,7 @@
 #include "MEDCoupling.hxx"
 
 #include <set>
+#include <map>
 #include <vector>
 #include <string>
 #include <cstddef>
@@ -36,6 +37,7 @@ namespace ParaMEDMEM
     CPP_DEALLOC = 3
   } DeallocType;
 
+  //! The various spatial discretization of a field
   typedef enum
   {
     ON_CELLS = 0,
@@ -45,6 +47,7 @@ namespace ParaMEDMEM
     ON_NODES_KR = 4
   } TypeOfField;
 
+  //! The various temporal discretization of a field
   typedef enum
   {
     NO_TIME = 4,
@@ -100,6 +103,26 @@ namespace ParaMEDMEM
     MEDCOUPLING_EXPORT RefCountObject();
     MEDCOUPLING_EXPORT RefCountObject(const RefCountObject& other);
     MEDCOUPLING_EXPORT virtual ~RefCountObject();
+  };
+
+  class GlobalDict
+  {
+  public:
+    MEDCOUPLING_EXPORT static GlobalDict *GetInstance();
+    MEDCOUPLING_EXPORT bool hasKey(const std::string& key) const;
+    MEDCOUPLING_EXPORT std::string value(const std::string& key) const;
+    MEDCOUPLING_EXPORT std::vector<std::string> keys() const;
+    MEDCOUPLING_EXPORT void erase(const std::string& key);
+    MEDCOUPLING_EXPORT void clear();
+    MEDCOUPLING_EXPORT void setKeyValue(const std::string& key, const std::string& value);
+    MEDCOUPLING_EXPORT void setKeyValueForce(const std::string& key, const std::string& value);
+    MEDCOUPLING_EXPORT std::string printSelf() const;
+  private:
+    GlobalDict() { }
+  private:
+    static GlobalDict *UNIQUE_INSTANCE;
+  private:
+    std::map<std::string, std::string> _my_map;
   };
 }
 
