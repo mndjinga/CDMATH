@@ -35,10 +35,12 @@ class LinearSolver
 
 	LinearSolver ( const LinearSolver& LS ) ;
 
-        void setMethod(std::string nameOfMethod) ;
+    void setMethod(std::string nameOfMethod) ;
 
-        void setPreconditioner(std::string pc) ;
+    void setPreconditioner(std::string pc) ;
 
+	void setDisplayConditionNumber(bool display=true);
+	
 	int getNumberOfIter( void ) const ;
 
 	bool getStatus( void ) const ;
@@ -73,7 +75,7 @@ class LinearSolver
 
 	bool isSingular( void ) const;
 
-        bool isSparseMatrix( void ) const ;
+    bool isSparseMatrix( void ) const ;
 
 	Mat getPetscMatrix() const ;
 	Vec getPetscVector() const ;
@@ -96,6 +98,7 @@ class LinearSolver
 	int _numberOfIter;
 	bool _isSingular;
 	bool _isSparseMatrix;
+	bool _displayConditionNumber;
 	std::string _nameOfPc;
 	std::string _nameOfMethod;
 	Vector _secondMember;

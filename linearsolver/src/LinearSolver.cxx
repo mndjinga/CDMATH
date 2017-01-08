@@ -34,6 +34,7 @@ LinearSolver::LinearSolver ( void )
     _ksp=NULL;
     _prec=NULL;
     _isSparseMatrix=false;
+    _displayConditionNumber=false;
 }
 
 void
@@ -87,6 +88,12 @@ LinearSolver::setNumberMaxOfIter(int numberMaxOfIter)
     KSPSetTolerances(_ksp,getTolerance(),PETSC_DEFAULT,PETSC_DEFAULT,numberMaxOfIter);
 }
 
+void
+LinearSolver::setDisplayConditionNumber(bool display)
+{
+    _displayConditionNumber=display;
+}
+
 LinearSolver::LinearSolver( const GenericMatrix& matrix,
 		const Vector& secondMember,
 		int numberMaxOfIter,
@@ -131,7 +138,7 @@ LinearSolver::setPreconditioner(string pc)
         throw CdmathException(msg);
     }
 
-    if (pc.compare("ILU")==0 && _nameOfMethod.compare("CHOLESKY")==0 )
+    if (pc.compare("ILU")==0 && (_nameOfMethod.compare("LU")==0 || _nameOfMethod.compare("CHOLESKY")==0 ))
     {
         string msg="LinearSolver::LinearSolver: preconditioner "+pc+" is not compatible with "+_nameOfMethod+".\n";
         throw CdmathException(msg);
@@ -144,12 +151,6 @@ void
 LinearSolver::setMethod(string nameOfMethod)
 {
     _nameOfMethod = nameOfMethod;
-
-    if (_nameOfPc.compare("ILU")==0 && _isSparseMatrix==false)
-    {
-        string msg="LinearSolver::LinearSolver: preconditioner "+_nameOfPc+" is not compatible with dense matrix.\n";
-        throw CdmathException(msg);
-    }
 
     if (_nameOfPc.compare("ILU")==0 && (_nameOfMethod.compare("LU")==0 || _nameOfMethod.compare("CHOLESKY")==0) )
     {
@@ -390,12 +391,18 @@ LinearSolver::solve( void )
     {
         string msg="Vector LinearSolver::solve( void ) : The method "+_nameOfMethod+" is not yet implemented.\n";
         msg+="The methods implemented are : GMRES, BICG, CG, CHOLESKY, LU, BCG, LGMRES, LSQR, CR, CGS and GCR.\n";
-        msg+="The preconditioners implemented are : LU for GMRES and BICG methods.";
+        msg+="The preconditioners implemented are : ILU for GMRES and BICG methods.";
         throw CdmathException(msg);
     }
 
-   if (_nameOfPc.compare("ILU")==0) PCSetType(_prec,PCILU);
-
+   if (_nameOfPc.compare("ILU")==0) 
+		PCSetType(_prec,PCILU);
+	//else
+		//PCSetType(_prec,PCNONE);
+	    
+    //KSPSetPC(_ksp,_prec);
+    KSPSetTolerances(_ksp,_tol,_tol,PETSC_DEFAULT,_numberMaxOfIter);
+    	
     PetscInt its;
     PetscReal rtol,abstol,dtol;
     PetscInt maxits;
@@ -410,18 +417,38 @@ LinearSolver::solve( void )
         MatSetNullSpace(_mat, nullsp);
         MatNullSpaceDestroy(&nullsp);
     }
+
+    if(_displayConditionNumber)
+        KSPSetComputeEigenvalues(_ksp,PETSC_TRUE);
+
     KSPSolve(_ksp,_smb,X);
 
-
     KSPGetResidualNorm(_ksp,&rtol);
+    _residu=(double)rtol;
 
     KSPGetIterationNumber(_ksp,&its);
     _numberOfIter=(int)its;
-    _residu=(double)rtol;
+
     KSPConvergedReason reason;
     KSPGetConvergedReason(_ksp,&reason);
+
     if (reason>=0 )
           _convergence=true;
+	else{
+          _convergence=false;
+        cout<<"Linear system algorithm did not converge"<<endl;
+        cout<<"Final number of iterationx= "<<_numberOfIter<<". Maximum allowed was " << _numberMaxOfIter<<endl;
+        cout<<"Final residual "<< _residu<< ". Objective was "<< _tol<<endl;
+        string msg="Linear system algorithm did not converge";
+        throw CdmathException(msg);
+		}
+	
+	if(_displayConditionNumber)
+	    {
+		PetscReal sv_max, sv_min;
+		KSPComputeExtremeSingularValues(_ksp, &sv_max, &sv_min);
+		cout<<" singular value max = " << sv_max <<" singular value min = " << sv_min <<" condition number = " << sv_max/sv_min <<endl;
+		}
 
     Vector X1=vecToVector(X);
 
