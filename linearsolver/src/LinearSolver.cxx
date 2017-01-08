@@ -127,7 +127,7 @@ LinearSolver::LinearSolver( const GenericMatrix& matrix,
 void
 LinearSolver::setPreconditioner(string pc)
 {
-    if ((pc.compare("ILU") != 0) && (pc.compare("") != 0))
+    if ((pc.compare("ILU") != 0) && (pc.compare("LU") != 0) && (pc.compare("") != 0))
     {
         string msg="LinearSolver::LinearSolver: preconditioner "+pc+" does not exist.\n";
         throw CdmathException(msg);
@@ -391,16 +391,22 @@ LinearSolver::solve( void )
     {
         string msg="Vector LinearSolver::solve( void ) : The method "+_nameOfMethod+" is not yet implemented.\n";
         msg+="The methods implemented are : GMRES, BICG, CG, CHOLESKY, LU, BCG, LGMRES, LSQR, CR, CGS and GCR.\n";
-        msg+="The preconditioners implemented are : ILU for GMRES and BICG methods.";
         throw CdmathException(msg);
     }
 
    if (_nameOfPc.compare("ILU")==0) 
 		PCSetType(_prec,PCILU);
-	//else
-		//PCSetType(_prec,PCNONE);
+   else if (_nameOfPc.compare("LU")==0) 
+		PCSetType(_prec,PCLU);
+   else if (_nameOfPc.compare("")==0) 
+		PCSetType(_prec,PCNONE);
+    else
+    {
+        string msg="Vector LinearSolver::solve( void ) : The preconditioner "+_nameOfPc+" is not yet available.\n";
+        msg+="The preconditioners available are : ILU and LU.\n";
+        throw CdmathException(msg);
+    }
 	    
-    //KSPSetPC(_ksp,_prec);
     KSPSetTolerances(_ksp,_tol,_tol,PETSC_DEFAULT,_numberMaxOfIter);
     	
     PetscInt its;
