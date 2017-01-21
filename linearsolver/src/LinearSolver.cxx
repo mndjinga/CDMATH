@@ -127,18 +127,18 @@ LinearSolver::LinearSolver( const GenericMatrix& matrix,
 void
 LinearSolver::setPreconditioner(string pc)
 {
-    if ((pc.compare("ILU") != 0) && (pc.compare("LU") != 0) && (pc.compare("") != 0))
+    if((pc.compare("ICC") != 0) && (pc.compare("ILU") != 0) && (pc.compare("LU") != 0) && (pc.compare("") != 0))
     {
         string msg="LinearSolver::LinearSolver: preconditioner "+pc+" does not exist.\n";
         throw CdmathException(msg);
     }
-    if (pc.compare("ILU")==0 && _isSparseMatrix==false)
+    if ((pc.compare("ICC")==0 || pc.compare("ILU")==0) && _isSparseMatrix==false)
     {
         string msg="LinearSolver::LinearSolver: preconditioner "+pc+" is not compatible with dense matrix.\n";
         throw CdmathException(msg);
     }
 
-    if (pc.compare("ILU")==0 && (_nameOfMethod.compare("LU")==0 || _nameOfMethod.compare("CHOLESKY")==0 ))
+    if ((pc.compare("ICC")==0 || pc.compare("ILU")==0) && (_nameOfMethod.compare("LU")==0 || _nameOfMethod.compare("CHOLESKY")==0 ))
     {
         string msg="LinearSolver::LinearSolver: preconditioner "+pc+" is not compatible with "+_nameOfMethod+".\n";
         throw CdmathException(msg);
@@ -152,7 +152,7 @@ LinearSolver::setMethod(string nameOfMethod)
 {
     _nameOfMethod = nameOfMethod;
 
-    if (_nameOfPc.compare("ILU")==0 && (_nameOfMethod.compare("LU")==0 || _nameOfMethod.compare("CHOLESKY")==0) )
+    if ((_nameOfPc.compare("ICC")==0 || _nameOfPc.compare("ILU")==0) && (_nameOfMethod.compare("LU")==0 || _nameOfMethod.compare("CHOLESKY")==0) )
     {
         string msg="LinearSolver::LinearSolver: preconditioner "+_nameOfPc+" is not compatible with "+_nameOfMethod+".\n";
         throw CdmathException(msg);
@@ -164,7 +164,7 @@ LinearSolver::setMethod(string nameOfMethod)
 void
 LinearSolver::setLinearSolver(const GenericMatrix& matrix, const Vector& secondMember)
 {
-    if (_nameOfPc.compare("ILU")==0 && _isSparseMatrix==false)
+    if ((_nameOfPc.compare("ICC")==0 || _nameOfPc.compare("ILU")==0) && _isSparseMatrix==false)
     {
         string msg="LinearSolver::LinearSolver: preconditioner "+_nameOfPc+" is not compatible with dense matrix.\n";
         throw CdmathException(msg);
@@ -384,9 +384,15 @@ LinearSolver::solve( void )
     else if (_nameOfMethod.compare("LSQR")==0)
         KSPSetType(_ksp,KSPLSQR);
     else if (_nameOfMethod.compare("CHOLESKY")==0)
+		{
+        KSPSetType(_ksp,KSPPREONLY);			
         PCSetType(_prec,PCCHOLESKY);
+		}
     else if (_nameOfMethod.compare("LU")==0)
+		{
+        KSPSetType(_ksp,KSPPREONLY);			
         PCSetType(_prec,PCLU);
+		}
     else
     {
         string msg="Vector LinearSolver::solve( void ) : The method "+_nameOfMethod+" is not yet implemented.\n";
@@ -398,17 +404,21 @@ LinearSolver::solve( void )
 		PCSetType(_prec,PCILU);
    else if (_nameOfPc.compare("LU")==0) 
 		PCSetType(_prec,PCLU);
+   else if (_nameOfPc.compare("ICC")==0) 
+		PCSetType(_prec,PCICC);
+   else if (_nameOfPc.compare("CHOLESKY")==0) 
+		PCSetType(_prec,PCCHOLESKY);
    else if (_nameOfPc.compare("")==0) 
 		PCSetType(_prec,PCNONE);
     else
     {
         string msg="Vector LinearSolver::solve( void ) : The preconditioner "+_nameOfPc+" is not yet available.\n";
-        msg+="The preconditioners available are : ILU and LU.\n";
+        msg+="The preconditioners available are : ICC, ILU, CHOLESKY and LU.\n";
         throw CdmathException(msg);
     }
 	    
     KSPSetTolerances(_ksp,_tol,_tol,PETSC_DEFAULT,_numberMaxOfIter);
-    	
+    
     PetscInt its;
     PetscReal rtol,abstol,dtol;
     PetscInt maxits;
@@ -453,7 +463,7 @@ LinearSolver::solve( void )
 	    {
 		PetscReal sv_max, sv_min;
 		KSPComputeExtremeSingularValues(_ksp, &sv_max, &sv_min);
-		cout<<" singular value max = " << sv_max <<" singular value min = " << sv_min <<" condition number = " << sv_max/sv_min <<endl;
+		cout<<" Maximal ingular value = " << sv_max <<", Minimal singular value = " << sv_min <<", Condition number = " << sv_max/sv_min <<endl;
 		}
 
     Vector X1=vecToVector(X);

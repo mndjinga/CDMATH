@@ -39,7 +39,7 @@ class LinearSolver
 
     void setPreconditioner(std::string pc) ;
 
-	void setDisplayConditionNumber(bool display=true);
+	void setDisplayConditionNumber(bool display=false);
 	
 	int getNumberOfIter( void ) const ;
 
