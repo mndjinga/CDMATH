@@ -90,6 +90,8 @@ class Field
            const std::string & fieldName = "",
            int iteration = -1, int order = -1);
   
+    ParaMEDMEM::DataArrayDouble * getArray();
+
     void readFieldMed( const std::string & fileNameRadical,
                        TypeField type,
                        const std::string & fieldName = "",
@@ -121,8 +123,8 @@ class Field
     TypeField getTypeOfField ( void ) const ;
 
     /**
-     * return the mesh MEDCoupling
-     * return _mesh
+     * return the MEDCouplingField pointer
+     * return _field
      */
     ParaMEDMEM::MEDCouplingAutoRefCountObjectPtr<ParaMEDMEM::MEDCouplingFieldDouble> getField ( void )  const ;
 

@@ -174,6 +174,9 @@ Field::Field( const std::string filename, TypeField type,
     readFieldMed(filename, type, fieldName, iteration, order);
 }
 
+ParaMEDMEM::DataArrayDouble * Field::getArray(){
+	return _field->getArray();
+}
 
 void
 Field::readFieldMed( const std::string & fileNameRadical,
