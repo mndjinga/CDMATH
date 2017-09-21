@@ -156,6 +156,7 @@ Mesh::readMeshMed( const std::string filename)
     MEDFileUMesh *m=MEDFileUMesh::New(filename.c_str());
     _mesh=m->getMeshAtLevel(0);
     _mesh->setName(m->getName());
+    cout<< "mesh name= "<<m->getName()<<endl;
     _meshDim=_mesh->getMeshDimension();
     _spaceDim=_mesh->getSpaceDimension();
     setMesh();

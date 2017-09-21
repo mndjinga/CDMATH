@@ -2,7 +2,7 @@
  * LinearSolver.hxx
  *
  *  Created on: 13 April. 2013
- *      Authors: CDMAT
+ *      Authors: CDMATH
  */
 
 #ifndef LINEARSOLVER_HXX_

@@ -108,6 +108,7 @@ LinearSolver::LinearSolver( const GenericMatrix& matrix,
     _numberOfIter = 0;
     _isSingular = false;
     _isSparseMatrix = matrix.isSparseMatrix();
+    _displayConditionNumber=false;    
     _nameOfPc = nameOfPc;
     _nameOfMethod = nameOfMethod;
     _secondMember = secondMember;
@@ -385,12 +386,12 @@ LinearSolver::solve( void )
         KSPSetType(_ksp,KSPLSQR);
     else if (_nameOfMethod.compare("CHOLESKY")==0)
 		{
-        KSPSetType(_ksp,KSPPREONLY);			
+        KSPSetType(_ksp,KSPGMRES);			
         PCSetType(_prec,PCCHOLESKY);
 		}
     else if (_nameOfMethod.compare("LU")==0)
 		{
-        KSPSetType(_ksp,KSPPREONLY);			
+        KSPSetType(_ksp,KSPGMRES);			
         PCSetType(_prec,PCLU);
 		}
     else
@@ -463,7 +464,7 @@ LinearSolver::solve( void )
 	    {
 		PetscReal sv_max, sv_min;
 		KSPComputeExtremeSingularValues(_ksp, &sv_max, &sv_min);
-		cout<<" Maximal ingular value = " << sv_max <<", Minimal singular value = " << sv_min <<", Condition number = " << sv_max/sv_min <<endl;
+		cout<<" Maximal singular value = " << sv_max <<", Minimal singular value = " << sv_min <<", Condition number = " << sv_max/sv_min <<endl;
 		}
 
     Vector X1=vecToVector(X);
