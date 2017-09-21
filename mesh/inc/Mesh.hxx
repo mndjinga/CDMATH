@@ -102,9 +102,15 @@ class Mesh
 
     /**
      * return Space dimension
-     * @return _dim
+     * @return _spaceDim
      */
     int getSpaceDimension( void ) const ;
+
+    /**
+     * return Mesh dimension
+     * @return _meshDim
+     */
+    int getMeshDimension( void ) const ;
 
     std::vector<double> getDXYZ() const ;
 
@@ -240,7 +246,12 @@ class Mesh
     /**
      * Space dimension
      */
-    int _dim ;
+    int _spaceDim ;
+
+     /**
+     * Mesh dimension
+     */
+    int _meshDim ;
 
     double _xMin;
 

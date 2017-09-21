@@ -33,7 +33,8 @@ Mesh::Mesh( void )
     _cells=NULL;
     _nodes=NULL;
     _faces=NULL;
-    _dim = 0 ;
+    _spaceDim = 0 ;
+    _meshDim  = 0 ;
     _numberOfNodes = 0;
     _numberOfFaces = 0;
     _numberOfCells = 0;
@@ -57,44 +58,45 @@ Mesh::~Mesh( void )
 
 Mesh::Mesh( const MEDCoupling::MEDCouplingIMesh* mesh )
 {
-    _dim=mesh->getSpaceDimension();
+    _spaceDim=mesh->getSpaceDimension();
+    _meshDim=mesh->getMeshDimension();
     vector<double> dxyz=mesh->getDXYZ();
     _nxyz=mesh->getCellGridStructure();
-    double* Box0=new double[2*_dim];
+    double* Box0=new double[2*_spaceDim];
     mesh->getBoundingBox(Box0);
 
     _xMin=Box0[0];
     _xSup=Box0[1];
-    if (_dim>=2)
+    if (_spaceDim>=2)
     {
         _yMin=Box0[2];
         _ySup=Box0[3];
     }
-    if (_dim>=3)
+    if (_spaceDim>=3)
     {
         _zMin=Box0[4];
         _zSup=Box0[5];
     }
     _dxyz=mesh->getDXYZ();
 
-    double *originPtr = new double[_dim];
-    double *dxyzPtr = new double[_dim];
-    int *nodeStrctPtr = new int[_dim];
+    double *originPtr = new double[_spaceDim];
+    double *dxyzPtr = new double[_spaceDim];
+    int *nodeStrctPtr = new int[_spaceDim];
 
-    for(int i=0;i<_dim;i++)
+    for(int i=0;i<_spaceDim;i++)
     {
         originPtr[i]=Box0[2*i];
         nodeStrctPtr[i]=_nxyz[i]+1;
         dxyzPtr[i]=dxyz[i];
     }
-    _mesh=MEDCouplingIMesh::New("MESH2D",
-                                _dim,
+    _mesh=MEDCouplingIMesh::New("MESH",
+                                _spaceDim,
                                 nodeStrctPtr,
-                                nodeStrctPtr+_dim,
+                                nodeStrctPtr+_spaceDim,
                                 originPtr,
-                                originPtr+_dim,
+                                originPtr+_spaceDim,
                                 dxyzPtr,
-                                dxyzPtr+_dim);
+                                dxyzPtr+_spaceDim);
     delete [] originPtr;
     delete [] dxyzPtr;
     delete [] nodeStrctPtr;
@@ -106,7 +108,8 @@ Mesh::Mesh( const MEDCoupling::MEDCouplingIMesh* mesh )
 Mesh::Mesh( const Mesh& m )
 //----------------------------------------------------------------------
 {
-    _dim = m.getSpaceDimension() ;
+    _spaceDim = m.getSpaceDimension() ;
+    _meshDim = m.getMeshDimension() ;
     _nxyz = m.getCellGridStructure() ;
     _xMin=m.getXMin();
     _xSup=m.getXSup();
@@ -153,7 +156,8 @@ Mesh::readMeshMed( const std::string filename)
     MEDFileUMesh *m=MEDFileUMesh::New(filename.c_str());
     _mesh=m->getMeshAtLevel(0);
     _mesh->setName(m->getName());
-    _dim=_mesh->getMeshDimension();
+    _meshDim=_mesh->getMeshDimension();
+    _spaceDim=_mesh->getSpaceDimension();
     setMesh();
     setGroups(m);
     m->decrRef();
@@ -380,7 +384,7 @@ Mesh::setMesh( void )
 	_faces    = new Face[_numberOfFaces] ;
 
 	// _cells, _nodes and _faces initialization:
-	if (_dim == 1)
+	if (_spaceDim == 1)
 	{
 		for( int id=0;id<_numberOfCells;id++ )
 		{
@@ -406,7 +410,7 @@ Mesh::setMesh( void )
 			_cells[id] = ci ;
 		}
 
-		for( int id(0), k(0); id<_numberOfNodes; id++, k+=_dim)
+		for( int id(0), k(0); id<_numberOfNodes; id++, k+=_spaceDim)
 		{
 			Point p(cood[k], 0.0, 0.0) ;
 			const int *workc=tmpN+tmpNI[id];
@@ -422,7 +426,7 @@ Mesh::setMesh( void )
 			_nodes[id] = vi ;
 		}
 
-		for(int id(0), k(0); id<_numberOfFaces; id++, k+=_dim)
+		for(int id(0), k(0); id<_numberOfFaces; id++, k+=_spaceDim)
 		{
 			Point p(cood[k], 0.0, 0.0) ;
 			const int *workc=tmpA+tmpAI[id];
@@ -456,7 +460,7 @@ Mesh::setMesh( void )
 		DataArrayDouble *normal = fieldn->getArray();
 		const double *tmpNormal = normal->getConstPointer();
 
-		for(int id(0), k(0); id<_numberOfCells; id++, k+=_dim)
+		for(int id(0), k(0); id<_numberOfCells; id++, k+=_spaceDim)
 		{
 			const int *work=tmp+tmpI[id];
 			const int *work2=tmp2+tmpI2[id];
@@ -467,7 +471,7 @@ Mesh::setMesh( void )
 			vector<double> coorBaryXyz(3);
 			for (int d=0; d<3; d++)
 				coorBaryXyz[d] = 0.;
-			for (int d=0; d<_dim; d++)
+			for (int d=0; d<_spaceDim; d++)
 				coorBaryXyz[d] = coorBary[k+d];
 
 			Point p(coorBaryXyz[0],coorBaryXyz[1],coorBaryXyz[2]) ;
@@ -478,11 +482,11 @@ Mesh::setMesh( void )
 				for (int d=0; d<3; d++)
 					xyzn[d] = 0.;
 				if (work2[el]<0)
-					for (int d=0; d<_dim; d++)
-						xyzn[d] = -tmpNormal[_dim*work[el]+d];
+					for (int d=0; d<_spaceDim; d++)
+						xyzn[d] = -tmpNormal[_spaceDim*work[el]+d];
 				else
-					for (int d=0; d<_dim; d++)
-						xyzn[d] = +tmpNormal[_dim*work[el]+d];
+					for (int d=0; d<_spaceDim; d++)
+						xyzn[d] = +tmpNormal[_spaceDim*work[el]+d];
 				ci.addNormalVector(el,xyzn[0],xyzn[1],xyzn[2]) ;
 				ci.addFaceId(el,work[el]) ;
 			}
@@ -493,12 +497,12 @@ Mesh::setMesh( void )
 			_cells[id] = ci ;
 		}
 
-		for(int id(0), k(0); id<_numberOfNodes; id++, k+=_dim)
+		for(int id(0), k(0); id<_numberOfNodes; id++, k+=_spaceDim)
 		{
 			vector<double> coorP(3);
 			for (int d=0; d<3; d++)
 				coorP[d] = 0.;
-			for (int d=0; d<_dim; d++)
+			for (int d=0; d<_spaceDim; d++)
 				coorP[d] = cood[k+d];
 			Point p(coorP[0],coorP[1],coorP[2]) ;
 
@@ -526,12 +530,12 @@ Mesh::setMesh( void )
 		const DataArrayDouble *normalFaces1 = orthoField->getArray() ;
 		const double *normalFaces2=normalFaces1->getConstPointer();
 
-		for(int id(0), k(0); id<_numberOfFaces; id++, k+=_dim)
+		for(int id(0), k(0); id<_numberOfFaces; id++, k+=_spaceDim)
 		{
 			vector<double> coorBarySegXyz(3);
 			for (int d=0; d<3; d++)
 				coorBarySegXyz[d] = 0.;
-			for (int d=0; d<_dim; d++)
+			for (int d=0; d<_spaceDim; d++)
 				coorBarySegXyz[d] = coorBarySeg[k+d];
 			Point p(coorBarySegXyz[0],coorBarySegXyz[1],coorBarySegXyz[2]) ;
 			const int *workc=tmpA+tmpAI[id];
@@ -584,7 +588,7 @@ Mesh::Mesh( double xinf, double xsup, int nx )
 
     double dx = (xsup - xinf)/nx ;
 
-    _dim = 1 ;
+    _spaceDim = 1 ;
     _xMin=xinf;
     _xSup=xsup;
     _yMin=0.;
@@ -592,14 +596,14 @@ Mesh::Mesh( double xinf, double xsup, int nx )
     _zMin=0.;
     _zSup=0.;
 
-    _dxyz.resize(_dim);
+    _dxyz.resize(_spaceDim);
     _dxyz[0]=dx;
-    _nxyz.resize(_dim);
+    _nxyz.resize(_spaceDim);
     _nxyz[0]=nx;
 
-    double *originPtr = new double[_dim];
-    double *dxyzPtr = new double[_dim];
-    int *nodeStrctPtr = new int[_dim];
+    double *originPtr = new double[_spaceDim];
+    double *dxyzPtr = new double[_spaceDim];
+    int *nodeStrctPtr = new int[_spaceDim];
 
     originPtr[0]=xinf;
     nodeStrctPtr[0]=nx+1;
@@ -607,13 +611,13 @@ Mesh::Mesh( double xinf, double xsup, int nx )
 
 
     _mesh=MEDCouplingIMesh::New("MESH1D",
-                                _dim,
+                                _spaceDim,
                                 nodeStrctPtr,
-                                nodeStrctPtr+_dim,
+                                nodeStrctPtr+_spaceDim,
                                 originPtr,
-                                originPtr+_dim,
+                                originPtr+_spaceDim,
                                 dxyzPtr,
-                                dxyzPtr+_dim);
+                                dxyzPtr+_spaceDim);
     delete [] originPtr;
     delete [] dxyzPtr;
     delete [] nodeStrctPtr;
@@ -726,18 +730,18 @@ Mesh::Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny)
     double dx = (xsup - xinf)/nx ;
     double dy = (ysup - yinf)/ny ;
 
-    _dim = 2 ;
-    _nxyz.resize(_dim);
+    _spaceDim = 2 ;
+    _nxyz.resize(_spaceDim);
     _nxyz[0]=nx;
     _nxyz[1]=ny;
 
-    _dxyz.resize(_dim);
+    _dxyz.resize(_spaceDim);
     _dxyz[0]=dx;
     _dxyz[1]=dy;
 
-    double *originPtr = new double[_dim];
-    double *dxyzPtr = new double[_dim];
-    int *nodeStrctPtr = new int[_dim];
+    double *originPtr = new double[_spaceDim];
+    double *dxyzPtr = new double[_spaceDim];
+    int *nodeStrctPtr = new int[_spaceDim];
 
     originPtr[0]=xinf;
     originPtr[1]=yinf;
@@ -748,13 +752,13 @@ Mesh::Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny)
 
 
     _mesh=MEDCouplingIMesh::New("MESH2D",
-                                _dim,
+                                _spaceDim,
                                 nodeStrctPtr,
-                                nodeStrctPtr+_dim,
+                                nodeStrctPtr+_spaceDim,
                                 originPtr,
-                                originPtr+_dim,
+                                originPtr+_spaceDim,
                                 dxyzPtr,
-                                dxyzPtr+_dim);
+                                dxyzPtr+_spaceDim);
     delete [] originPtr;
     delete [] dxyzPtr;
     delete [] nodeStrctPtr;
@@ -773,7 +777,7 @@ Mesh::Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny, 
 		throw CdmathException("Mesh::Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny, double zinf, double zsup, int nz) : yinf >= ysup");
     if(zinf>=zsup)
 		throw CdmathException("Mesh::Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny, double zinf, double zsup, int nz) : zinf >= zsup");
-    _dim=3;
+    _spaceDim=3;
     _xMin=xinf;
     _xSup=xsup;
     _yMin=yinf;
@@ -785,19 +789,19 @@ Mesh::Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny, 
     double dy = (ysup - yinf)/ny ;
     double dz = (zsup - zinf)/nz ;
 
-    _dxyz.resize(_dim);
+    _dxyz.resize(_spaceDim);
     _dxyz[0]=dx;
     _dxyz[1]=dy;
     _dxyz[2]=dz;
 
-    _nxyz.resize(_dim);
+    _nxyz.resize(_spaceDim);
     _nxyz[0]=nx;
     _nxyz[1]=ny;
     _nxyz[2]=nz;
 
-    double *originPtr = new double[_dim];
-    double *dxyzPtr = new double[_dim];
-    int *nodeStrctPtr = new int[_dim];
+    double *originPtr = new double[_spaceDim];
+    double *dxyzPtr = new double[_spaceDim];
+    int *nodeStrctPtr = new int[_spaceDim];
 
     originPtr[0]=xinf;
     originPtr[1]=yinf;
@@ -811,13 +815,13 @@ Mesh::Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny, 
 
 
     _mesh=MEDCouplingIMesh::New("MESH3D",
-                                _dim,
+                                _spaceDim,
                                 nodeStrctPtr,
-                                nodeStrctPtr+_dim,
+                                nodeStrctPtr+_spaceDim,
                                 originPtr,
-                                originPtr+_dim,
+                                originPtr+_spaceDim,
                                 dxyzPtr,
-                                dxyzPtr+_dim);
+                                dxyzPtr+_spaceDim);
     delete [] originPtr;
     delete [] dxyzPtr;
     delete [] nodeStrctPtr;
@@ -829,7 +833,15 @@ int
 Mesh::getSpaceDimension( void )  const
 //----------------------------------------------------------------------
 {
-    return _dim ;
+    return _spaceDim ;
+}
+
+//----------------------------------------------------------------------
+int
+Mesh::getMeshDimension( void )  const
+//----------------------------------------------------------------------
+{
+    return _meshDim ;
 }
 
 std::vector<double>
@@ -857,7 +869,7 @@ int
 Mesh::getNy( void )  const
 //----------------------------------------------------------------------
 {
-    if(_dim < 2)
+    if(_spaceDim < 2)
         throw CdmathException("int double& Field::operator[ielem] : Ny is not defined in dimension < 2!");
     return _nxyz[1];
 }
@@ -867,7 +879,7 @@ int
 Mesh::getNz( void )  const
 //----------------------------------------------------------------------
 {
-    if(_dim < 3)
+    if(_spaceDim < 3)
         throw CdmathException("int double& Field::operator[ielem] : Nz is not defined in dimension < 3!");
     return _nxyz[2];
 }
@@ -1011,7 +1023,8 @@ const Mesh&
 Mesh::operator= ( const Mesh& mesh )
 //----------------------------------------------------------------------
 {
-    _dim = mesh.getSpaceDimension() ;
+    _spaceDim = mesh.getSpaceDimension() ;
+    _meshDim  = mesh.getMeshDimension() ;
     _numberOfNodes = mesh.getNumberOfNodes();
     _numberOfFaces = mesh.getNumberOfFaces();
     _numberOfCells = mesh.getNumberOfCells();
