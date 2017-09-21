@@ -46,11 +46,11 @@ med_err _MEDmeshAdvancedWr(const med_idt               fid,
   med_idt               _meshid=0, _elemid=0;
   med_idt               _datagroup=0,_fdatagroup=0,_dataset=0;
   med_idt               _datagroup1=0,_datagroup2=0,_datagroup3=0,_datagroup4=0;
-/*   char                  __meshpath        [MED_TAILLE_MAA+MED_NAME_SIZE+1]=MED_MAA; */
-/*   char                  __supmeshpath     [MED_TAILLE_SUP_MAA+MED_NAME_SIZE+1]=MED_SUP_MAA; */
+/*   char                  __meshpath        [MED_MESH_GRP_SIZE+MED_NAME_SIZE+1]=MED_MESH_GRP; */
+/*   char                  __supmeshpath     [MED_MESH_SUPPORT_GRP_SIZE+MED_NAME_SIZE+1]=MED_MESH_SUPPORT_GRP; */
 /*   char*                 _meshpath         =__meshpath; */
-  char                  _meshpath        [MED_TAILLE_SUP_MAA+MED_NAME_SIZE+1]="";
-  char                  _strpath          [MED_TAILLE_STRCT+MED_NAME_SIZE+1]=MED_STRCT;
+  char                  _meshpath        [MED_MESH_SUPPORT_GRP_SIZE+MED_NAME_SIZE+1]="";
+  char                  _strpath          [MED_ELSTRUCT_GRP_SIZE+MED_NAME_SIZE+1]=MED_ELSTRUCT_GRP;
   char                  _datagroupname1   [2*MED_MAX_PARA+1]="";
   char                  _datagroupname2   [MED_TAILLE_NOM_ENTITE+1]="";
   char                  _datagroupname3   [MED_TAILLE_NOM_ENTITE+1]="";
@@ -117,7 +117,7 @@ if (_MEDcheckVersion30(fid) < 0) goto ERROR;
   }
 
   /*
-   * Si le DataGroup MED_MAA n'existe pas => erreur
+   * Si le DataGroup MED_MESH_GRP n'existe pas => erreur
    */
 /*   NOFINALBLANK(meshname,ERROR); */
 

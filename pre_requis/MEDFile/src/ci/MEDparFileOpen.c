@@ -37,10 +37,9 @@ med_access_mode MED_ACCESS_MODE;
   \param accessmode \accessmode
   \param comm \comm
   \param info \info
-  \return med_idt  \fid
+  \retval med_idt  \fidDes
   \details \MEDparfileOpenDetails
   \par Remarques
-  \fidDes
   \MEDparfileOpenNote
 */
 

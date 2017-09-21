@@ -3,7 +3,7 @@
 ## Initialize Autoconf & defined package name...
 ##Lors de la sortie d'une nouvelle release mettre à jour les champs suivants
 ##Mettre à jour le numéro de package
-AC_INIT([MED Fichier],3.2.0,[eric.fayolle@edf.fr],med)
+AC_INIT([MED Fichier],3.2.1,[eric.fayolle@edf.fr],med)
 
 ##Lors de la sortie d'une nouvelle release mettre à jour les champs suivants
 ##Ne pas oubliez de modifier  -version-info x:y:z dans src/Makefile.am tools/medimport/Makefile.am
@@ -14,13 +14,23 @@ AC_INIT([MED Fichier],3.2.0,[eric.fayolle@edf.fr],med)
 ##Mettre à jour les tests de compatibilité dans MEDfileCompatibility (chgt de majeur/mineur)
 MED_NUM_MAJEUR=3
 MED_NUM_MINEUR=2
-MED_NUM_RELEASE=0
+MED_NUM_RELEASE=1
+
 AC_SUBST(MED_NUM_MAJEUR)
 AC_SUBST(MED_NUM_MINEUR)
 AC_SUBST(MED_NUM_RELEASE)
 
-HDF_VERSION_REF=5-1.8.10
+#Une modification de HDF_VERSION_NUM
+#demande une modification du test de version ds
+#med_check_hdf5.m4
+HDF_VERSION_REF=5-1.8.11
+HDF_VERSION_MAJOR_REF=1
+HDF_VERSION_MINOR_REF=8
+HDF_VERSION_RELEASE_REF=11
 AC_SUBST(HDF_VERSION_REF)
+AC_SUBST(HDF_VERSION_MAJOR_REF)
+AC_SUBST(HDF_VERSION_MINOR_REF)
+AC_SUBST(HDF_VERSION_RELEASE_REF)
 
 ## Require Automake 1.7.9 or better.
 ## AM_INIT_AUTOMAKE(1.7.9) 
@@ -68,6 +78,9 @@ MED_CHECK_MESGERR
 ## Check For MED2.x Objects Not Readable By New3.x API
 MED_ENABLE_CHECK23
 
+## Check For installing test programs
+MED_ENABLE_INSTALLTEST
+
 # Checks for programs.
 test "x$ac_cv_prog_cc_c99" = "no" || AC_DEFINE(HAVE_CC_C99,[1],[The C99 capabilities of C compiler.])
 
@@ -75,7 +88,10 @@ MED_CHECK_F77
 if test x"$enable_fortran" = xyes; then
  AC_F77_WRAPPERS
  AC_F77_LIBRARY_LDFLAGS
+ MED_CHECK_TYPEOF_HIDT
 fi
+
+
 
 ## Choose med_int type between {int,long}
 MED_CHECK_TYPEOF_MEDINT
@@ -227,6 +243,7 @@ AC_CONFIG_FILES([Makefile
 	   include/Makefile
 	   include/H5public_extract.h
 	   include/med.h
+           include/med_parameter.hf
 	   include/med_utils.h
            src/libmed3.settings
            src/Makefile

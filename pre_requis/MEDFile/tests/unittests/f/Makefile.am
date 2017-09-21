@@ -46,7 +46,10 @@ Unittest_MEDfilter_1.sh Unittest_MEDfilter_2.sh
 
 LDADD = $(top_builddir)/src/libmed.la
 
-testf_PROGRAMS = Unittest_MEDlibrary_1 Unittest_MEDfile_1 Unittest_MEDsupportMesh_1 Unittest_MEDsupportMesh_2 \
+# Les tests unitaires n'ont pas besoin d'être installés 
+#testf_PROGRAMS = 
+check_PROGRAMS = \
+Unittest_MEDlibrary_1 Unittest_MEDfile_1 Unittest_MEDsupportMesh_1 Unittest_MEDsupportMesh_2 \
 Unittest_MEDsupportMesh_3 Unittest_MEDstructElement_1  Unittest_MEDstructElement_2 Unittest_MEDstructElement_3 \
 Unittest_MEDstructElement_4  Unittest_MEDstructElement_5  Unittest_MEDstructElement_6 Unittest_MEDstructElement_7 \
 Unittest_MEDstructElement_8 Unittest_MEDstructElement_9 Unittest_MEDstructElement_10 \

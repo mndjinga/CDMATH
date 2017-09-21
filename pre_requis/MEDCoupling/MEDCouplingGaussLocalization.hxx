@@ -23,13 +23,15 @@
 
 #include "MEDCoupling.hxx"
 #include "NormalizedUnstructuredMesh.hxx"
+#include "MEDCouplingMemArray.hxx"
 #include "InterpKernelException.hxx"
 
 #include <vector>
 
-namespace ParaMEDMEM
+namespace MEDCoupling
 {
   class MEDCouplingMesh;
+  class MEDCouplingUMesh;
 
   class MEDCouplingGaussLocalization
   {
@@ -44,11 +46,14 @@ namespace ParaMEDMEM
     MEDCOUPLING_EXPORT int getNumberOfPtsInRefCell() const;
     MEDCOUPLING_EXPORT std::string getStringRepr() const;
     MEDCOUPLING_EXPORT std::size_t getMemorySize() const;
-    MEDCOUPLING_EXPORT void checkCoherency() const;
+    MEDCOUPLING_EXPORT void checkConsistencyLight() const;
     MEDCOUPLING_EXPORT bool isEqual(const MEDCouplingGaussLocalization& other, double eps) const;
     MEDCOUPLING_EXPORT void pushTinySerializationIntInfo(std::vector<int>& tinyInfo) const;
     MEDCOUPLING_EXPORT void pushTinySerializationDblInfo(std::vector<double>& tinyInfo) const;
     MEDCOUPLING_EXPORT const double *fillWithValues(const double *vals);
+    //
+    MEDCOUPLING_EXPORT MCAuto<DataArrayDouble> localizePtsInRefCooForEachCell(const DataArrayDouble *ptsInRefCoo, const MEDCouplingUMesh *mesh) const;
+    MEDCOUPLING_EXPORT MCAuto<MEDCouplingUMesh> buildRefCell() const;
     //
     MEDCOUPLING_EXPORT const std::vector<double>& getRefCoords() const { return _ref_coord; }
     MEDCOUPLING_EXPORT double getRefCoord(int ptIdInCell, int comp) const;

@@ -63,11 +63,11 @@ MEDparameterCr(const med_idt fid,
  }
 
   /*
-   * Si le DataGroup MED_NUM_DATA n'existe pas, on le cree
+   * Si le DataGroup MED_NUMERICAL_DATA_GRP n'existe pas, on le cree
    */
-  if ((_root = _MEDdatagroupOuvrir(fid,MED_NUM_DATA)) < 0)
-    if ((_root = _MEDdatagroupCreer(fid,MED_NUM_DATA)) < 0) {
-     MED_ERR_(_ret,MED_ERR_CREATE,MED_ERR_DATAGROUP,MED_NUM_DATA);
+  if ((_root = _MEDdatagroupOuvrir(fid,MED_NUMERICAL_DATA_GRP)) < 0)
+    if ((_root = _MEDdatagroupCreer(fid,MED_NUMERICAL_DATA_GRP)) < 0) {
+     MED_ERR_(_ret,MED_ERR_CREATE,MED_ERR_DATAGROUP,MED_NUMERICAL_DATA_GRP);
      goto ERROR;
     }
   NOFINALBLANK(paramname,ERROR); 
@@ -77,7 +77,7 @@ MEDparameterCr(const med_idt fid,
    */
   if ((_datagroup1 = _MEDdatagroupOuvrir(_root,paramname)) < 0)
     if ((_datagroup1 = _MEDdatagroupCreer(_root,paramname)) < 0 ) {
-      MED_ERR_(_ret,MED_ERR_CREATE,MED_ERR_DATAGROUP,MED_NUM_DATA);
+      MED_ERR_(_ret,MED_ERR_CREATE,MED_ERR_DATAGROUP,MED_NUMERICAL_DATA_GRP);
       SSCRUTE(paramname);goto ERROR;
     }
  
@@ -109,7 +109,7 @@ MEDparameterCr(const med_idt fid,
   }
 
   if (_root>0)            if (_MEDdatagroupFermer(_root) < 0) {
-    MED_ERR_(_ret,MED_ERR_CLOSE,MED_ERR_DATAGROUP,MED_NUM_DATA);
+    MED_ERR_(_ret,MED_ERR_CLOSE,MED_ERR_DATAGROUP,MED_NUMERICAL_DATA_GRP);
     ISCRUTE_id(_root);
   }
 

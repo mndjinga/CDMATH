@@ -44,7 +44,7 @@ MEDparameterComputationStepInfo(const med_idt      fid,
 {
   med_err _ret = -1, _err = -1;
   med_idt _cpstidt = 0;
-  char    _path[(MED_TAILLE_NUM_DATA+MED_NAME_SIZE+1)+2*MED_MAX_PARA+1]=MED_NUM_DATA;
+  char    _path[(MED_NUMERICAL_DATA_GRP_SIZE+MED_NAME_SIZE+1)+2*MED_MAX_PARA+1]=MED_NUMERICAL_DATA_GRP;
   int     _num=csit-1;
   char    _cstpname[2*MED_MAX_PARA+1]="";
 

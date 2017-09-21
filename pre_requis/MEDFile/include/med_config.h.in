@@ -29,6 +29,9 @@
 /* Define to 1 if you have the <dlfcn.h> header file. */
 #undef HAVE_DLFCN_H
 
+/* The size of a Fortran integer for hid_t C type, as computed by sizeof. */
+#undef HAVE_F77HIDT64
+
 /* The size of a Fortran integer, as computed by sizeof. */
 #undef HAVE_F77INT64
 
@@ -46,6 +49,9 @@
 
 /* Define to 1 if you have the <H5Ipublic.h> header file. */
 #undef HAVE_H5IPUBLIC_H
+
+/* Define to 1 if you have the `H5Pset_fapl_mpio' function. */
+#undef HAVE_H5PSET_FAPL_MPIO
 
 /* Define to 1 if you have the <H5public.h> header file. */
 #undef HAVE_H5PUBLIC_H
@@ -104,8 +110,7 @@
 /* Define to 1 if the system has the type `_Bool'. */
 #undef HAVE__BOOL
 
-/* Define to the sub-directory in which libtool stores uninstalled libraries.
-   */
+/* Define to the sub-directory where libtool stores uninstalled libraries. */
 #undef LT_OBJDIR
 
 /* Define to 1 if the complete 2.3.6 API is provided. */
@@ -147,6 +152,15 @@
 
 /* The size of a Fortran `integer', as computed by sizeof. */
 #undef SIZEOF_FORTRAN_INTEGER
+
+/* The size of a Fortran `integer*4', as computed by sizeof. */
+#undef SIZEOF_FORTRAN_INTEGERp4
+
+/* The size of a Fortran `integer*8', as computed by sizeof. */
+#undef SIZEOF_FORTRAN_INTEGERp8
+
+/* The size of `hid_t', as computed by sizeof. */
+#undef SIZEOF_HID_T
 
 /* The size of `int', as computed by sizeof. */
 #undef SIZEOF_INT

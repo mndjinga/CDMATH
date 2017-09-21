@@ -17,7 +17,7 @@ ENDIF()
 ## Version number 
 SET(MED_NUM_MAJEUR  3)
 SET(MED_NUM_MINEUR  2)
-SET(MED_NUM_RELEASE 0)
+SET(MED_NUM_RELEASE 1)
 
 SET(MED_STR_VERSION "${MED_NUM_MAJEUR}.${MED_NUM_MINEUR}.${MED_NUM_RELEASE}")
 
@@ -30,7 +30,7 @@ IF (MEDFILE_BUILD_TESTS)
 ENDIF()
 OPTION (MEDFILE_BUILD_SHARED_LIBS "Build MED-file shared libraries" ON)
 OPTION (MEDFILE_BUILD_STATIC_LIBS "Build MED-file static libraries" OFF)
-OPTION (MEDFILE_INSTALL_DOC "Install pre-built documentation" OFF)
+OPTION (MEDFILE_INSTALL_DOC "Install pre-built documentation" ON)
 OPTION (MEDFILE_BUILD_PYTHON "Build Python bindings (needs SWIG)" OFF)
 
 # Option checking.

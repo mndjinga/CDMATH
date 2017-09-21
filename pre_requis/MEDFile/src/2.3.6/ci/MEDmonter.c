@@ -76,8 +76,7 @@ if (MEDcheckVersion(fid) < 0) return -1;
    */
   strncpy(acces_montage,MED_MNT,strlen(MED_MNT)-1);
   acces_montage[strlen(MED_MNT)-1] = '\0';
-  if ((ret = _MEDfichierMonter(fid,acces_montage,id)) < 0)
-    return -1;
+  if ((ret = _MEDfichierMonter(fid,acces_montage,id)) < 0) return -1;
 
   /*
    * On cree un lien vers le point de montage

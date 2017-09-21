@@ -237,7 +237,7 @@ A l'étape du configure MED repère si l'hdf utilisé à été configuré avec u
 Si une version parallèle d'HDF5 est utilisée, les compilateurs CC, CXX, F77 seront positionnés par défaut à mpicc (ou commande équivalente), mpiCC (ou commande équivalente) et mpif77 (ou commande équivalente).
 Il est possible de surcharger ces variables.
 
-En version dynamique (exemple avec lam MPI) :
+- En version dynamique (exemple avec lam MPI) :
 
 export LAMMPIF77=gfortran
 ../Dev_V3.0b_fayolle/configure --with-hdf5=/local/hdf5-1.8.4p1_par.bin  FC=mpif77 --with-f90=mpif77 FTLIBS=-llammpi++ --prefix=/local/med-3.0.0.bin
@@ -248,30 +248,38 @@ Le positionnement FTLIBS=--lampi++ est necessaire pour l'édition des liens des 
 Ex:
 ../Dev_V3.0b_fayolle/configure --with-hdf5=/local/hdf5-1.8.4p1_par.bin FC=mpif77 FCFLAGS="-fdefault-integer-8" --with-f90=mpif77 FFLAGS="-fdefault-integer-8" FTLIBS="-llammpi++" --prefix=/local/med-3.0.0a2.bin
 
-En version statique (sans les tests f90) : 
+- En version statique (sans les tests f90) : 
 
 export LAMMPIF77=gfortran
 ../Dev_V3.0b_fayolle/configure --prefix=/local/med-3.0.0.bin --with-hdf5=/local/hdf5-1.8.4p1_par.bin/  --disable-shared FTLDFLAGS=-L/usr/lib/gcc/x86_64-linux-gnu/4.1.2/  FTLIBS="-lstdc++ -llammpi++"
 
 
-En version statique (autres commandes utiles) :
+- En version statique (autres commandes utiles) :
 
 ./configure --disable-shared --prefix=/local/med-3.0.0.bin --with-hdf5=/local/hdf5-1.8.2_par.bin/ CC=mpicc LDFLAGS="-lm -lz" CXX=mpiCC \
 FTLDFLAGS="-L/usr/lib/gcc/x86_64-linux-gnu/4.1.2/ -L/usr/lib/lam/lib" FTLIBS="-lstdc++ -llammpio -llammpi++ -llamf77mpi -lmpi -llam -lutil -ldl"
 pas de wrapper 	mpif90
 
+- Dans des répertoires distincts 
+
+L'exemple suivant permet d'installer les executables, bibilothèques, modules python, tests et documentation dans des répertoires spécifés par l'utilisateur :
+
+../Dev_V3.0b_fayolle/configure --prefix=/tmp/MED1_unused_here --exec-prefix=/tmp/MED1_exec_prefix_for_python --with-f90  --with-hdf5=/local/hdf5-1.8.14.bin  --with-swig=/local/swig-2.0.9 --bindir=/tmp/MED1/bin --libdir=/tmp/MED1/lib --includedir=/tmp/MED1/include  --docdir=/tmp/MED1/doc --disable-static --enable-installtest
+
+Notez l'option --enable-installtest qui demande explicitement d'installer les tests.
+
 3.	Utilitaires
 
 Trois utilitaires sont compiles et installes dans <repertoire cible>/bin.
 Ce sont :
-- mdump (xmdump) : outil de dump d'un fichier MED aux formats V2.3 à V3.1.
-- medimport : traducteur de fichier à partir des versions V2.x vers V3.1.
+- mdump (xmdump) : outil de dump d'un fichier MED aux formats V2.3 à V3.2.
+- medimport : traducteur de fichier à partir des versions V2.x vers V3.2.
 - mdeconforme : vérificateur de conformité de fichier.
 
 4.	Documentation
 
 Toute la documentation est presente dans le répertoire d'installation
-<repertoire cible>/share/doc/html. Il s'agit d'une documentation au format HTML.
+<repertoire cible>/share/doc/. Il s'agit d'une documentation au format HTML.
 
 
 5. 	Joindre les correspondants MED

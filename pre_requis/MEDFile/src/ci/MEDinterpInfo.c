@@ -52,7 +52,7 @@ MEDinterpInfo(const med_idt                 fid,
 	      )
 {
   med_err  _ret=-1;
-  char     _interppath[MED_TAILLE_INTERP+MED_NAME_SIZE+1]=MED_INTERP;
+  char     _interppath[MED_INTERPOLATION_GRP_SIZE+MED_NAME_SIZE+1]=MED_INTERPOLATION_GRP;
   int      _num = interpit -1;
 
   /*

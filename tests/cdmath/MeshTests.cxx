@@ -14,7 +14,7 @@
 #include <string>
 #include <cmath>
 
-using namespace ParaMEDMEM;
+using namespace MEDCoupling;
 using namespace std;
 
 //----------------------------------------------------------------------

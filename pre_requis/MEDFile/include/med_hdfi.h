@@ -59,7 +59,7 @@ med_err _MEDattributeNumWrByName(med_idt pid,
 				 const unsigned char * const  val);
 
 extern MEDC_EXPORT
-med_err _MEDattrNumLire(med_idt pere,med_field_type type,char *nom,unsigned char *val);
+med_err _MEDattrNumLire(med_idt pere,med_field_type type,const char * const nom,unsigned char *val);
 
 #define _MEDattrEntierLire(x,y,z) _MEDattrNumLire(x,MED_INT ,y,(unsigned char*)z)
 #define _MEDattrFloatLire(x,y,z)  _MEDattrNumLire(x,MED_FLOAT64,y,(unsigned char*)z)
@@ -156,11 +156,12 @@ med_idt _MEDparFileCreate(const char * const filename, const med_access_mode acc
 extern MEDC_EXPORT
 med_idt _MEDfileOpen(const char * const filename,const med_access_mode accessmode);
 
+
 extern MEDC_EXPORT
 med_int _MEDfileName(med_idt id, char * const filename, const med_int filenamesize);
 
 extern MEDC_EXPORT
-med_idt _MEDfileCreate(const char * const filename, const med_access_mode accessmode);
+med_idt _MEDfileCreate(const char * const filename, const med_access_mode accessmode, const med_int major, const med_int minor, const med_int release);
 
 extern MEDC_EXPORT
 med_idt _MEDmemFileOpen(const char * const filename, med_memfile * const memfile, const med_bool filesync, const med_access_mode accessmode);

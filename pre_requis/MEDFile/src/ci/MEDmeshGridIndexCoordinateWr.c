@@ -58,7 +58,7 @@ MEDmeshGridIndexCoordinateWr(const med_idt               fid,
   med_int         _intgridtype = 0;
   med_int         _intaxistype = 0;
   med_int         _meshdim     = 0;
-  char            _meshpath[MED_TAILLE_MAA+MED_NAME_SIZE+1]=MED_MAA;
+  char            _meshpath[MED_MESH_GRP_SIZE+MED_NAME_SIZE+1]=MED_MESH_GRP;
   char            _geotypename[MED_TAILLE_NOM_ENTITE+1]="";
   med_int         _0=0;
   med_int         _medintgeotype = MED_NO_GEOTYPE;
@@ -127,7 +127,7 @@ MEDmeshGridIndexCoordinateWr(const med_idt               fid,
     SSCRUTE(meshname);ISCRUTE(_meshdim);ISCRUTE(axis);goto ERROR;
   }
 
-  if ( (_datagroup1 =_MEDmeshAssociatedGroupCr(fid, MED_MAA,
+  if ( (_datagroup1 =_MEDmeshAssociatedGroupCr(fid, MED_MESH_GRP,
 					       meshname, numdt, numit, dt, MED_FALSE,
 					       "." ) ) < 0 ) {
     MED_ERR_(_ret,MED_ERR_CALL,MED_ERR_API,"_MEDmeshAssociatedGroupCr");
@@ -238,7 +238,7 @@ MEDmeshGridIndexCoordinateWr(const med_idt               fid,
 			 MED_NODE,
 			 MED_NONE,
 			 MED_NO_CMODE,
-			 MED_UNDEF_PFLMODE,
+			 MED_UNDEF_STMODE,
 			 _profilename,
 			 MED_FULL_INTERLACE,
 			 MED_ALL_CONSTITUENT,

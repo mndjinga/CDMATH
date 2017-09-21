@@ -24,28 +24,30 @@
 #include "MEDLoaderDefines.hxx"
 #include "MEDCouplingRefCountObject.hxx"
 #include "MEDCouplingMemArray.hxx"
-#include "MEDFileUtilities.hxx"
-#include "MEDCouplingAutoRefCountObjectPtr.hxx"
+#include "MEDFileUtilities.txx"
+#include "MCAuto.hxx"
+
+#include "NormalizedGeometricTypes"
 
 #include <vector>
 
-namespace ParaMEDMEM
+namespace MEDCoupling
 {
   class MEDFileEquivalenceCell;
   class MEDFileEquivalenceNode;
   class MEDFileEquivalences;
   class MEDFileMesh;
 
-  class MEDFileEquivalencePair : public RefCountObject
+  class MEDFileEquivalencePair : public RefCountObject, public MEDFileWritableStandAlone
   {
   public:
     static MEDFileEquivalencePair *Load(MEDFileEquivalences *father, med_idt fid, const std::string& name, const std::string &desc);
-    void write(med_idt fid) const;
+    void writeLL(med_idt fid) const;
     const MEDFileEquivalences *getFather() const { return _father; }
     MEDFileEquivalences *getFather() { return _father; }
     const MEDFileMesh *getMesh() const;
     MEDFileMesh *getMesh();
-    MEDFileEquivalencePair *deepCpy(MEDFileEquivalences *father) const;
+    MEDFileEquivalencePair *deepCopy(MEDFileEquivalences *father) const;
     bool isEqual(const MEDFileEquivalencePair *other, std::string& what) const;
     void getRepr(std::ostream& oss) const;
     static MEDFileEquivalencePair *New(MEDFileEquivalences *father, const std::string& name);
@@ -68,11 +70,11 @@ namespace ParaMEDMEM
     MEDFileEquivalences *_father;
     std::string _name;
     std::string _description;
-    MEDCouplingAutoRefCountObjectPtr<MEDFileEquivalenceCell> _cell;
-    MEDCouplingAutoRefCountObjectPtr<MEDFileEquivalenceNode> _node;
+    MCAuto<MEDFileEquivalenceCell> _cell;
+    MCAuto<MEDFileEquivalenceNode> _node;
   };
 
-  class MEDFileEquivalences : public RefCountObject
+  class MEDFileEquivalences : public RefCountObject, public MEDFileWritableStandAlone
   {
   public:
     MEDLOADER_EXPORT std::vector<const BigMemoryObject *> getDirectChildrenWithNull() const;
@@ -83,7 +85,7 @@ namespace ParaMEDMEM
     std::string getMeshName() const;
     void pushEquivalence(MEDFileEquivalencePair *elt);
     static MEDFileEquivalences *New(MEDFileMesh *owner) { return new MEDFileEquivalences(owner); }
-    MEDFileEquivalences *deepCpy(MEDFileMesh *owner) const;
+    MEDFileEquivalences *deepCopy(MEDFileMesh *owner) const;
     bool isEqual(const MEDFileEquivalences *other, std::string& what) const;
     void getRepr(std::ostream& oss) const;
   public:
@@ -96,7 +98,7 @@ namespace ParaMEDMEM
     MEDLOADER_EXPORT void killEquivalenceAt(int i);
     MEDLOADER_EXPORT void clear();
   public:
-    void write(med_idt fid) const;
+    MEDLOADER_EXPORT void writeLL(med_idt fid) const;
     static int PresenceOfEquivalences(med_idt fid, const std::string& meshName);
     static MEDFileEquivalences *Load(med_idt fid, int nbOfEq, MEDFileMesh *owner);
     static void CheckDataArray(const DataArrayInt *data);
@@ -105,10 +107,10 @@ namespace ParaMEDMEM
     void deepCpyFrom(const MEDFileEquivalences& other);
   private:
     MEDFileMesh *_owner;
-    std::vector< MEDCouplingAutoRefCountObjectPtr<MEDFileEquivalencePair> > _equ;
+    std::vector< MCAuto<MEDFileEquivalencePair> > _equ;
   };
 
-  class MEDFileEquivalenceBase : public RefCountObject
+  class MEDFileEquivalenceBase : public RefCountObject, public MEDFileWritableStandAlone
   {
   protected:
     MEDFileEquivalenceBase(MEDFileEquivalencePair *father);
@@ -132,11 +134,11 @@ namespace ParaMEDMEM
     MEDLOADER_EXPORT std::vector<const BigMemoryObject *> getDirectChildrenWithNull() const;
     bool isEqual(const MEDFileEquivalenceData *other, std::string& what) const;
   protected:
-    void writeLL(med_idt fid, med_entity_type medtype, med_geometry_type medgt) const;
+    void writeAdvanced(med_idt fid, med_entity_type medtype, med_geometry_type medgt) const;
   protected:
     ~MEDFileEquivalenceData() { }
   protected:
-    MEDCouplingAutoRefCountObjectPtr<DataArrayInt> _data;
+    MCAuto<DataArrayInt> _data;
   };
 
   class MEDFileEquivalenceCellType : public MEDFileEquivalenceData
@@ -145,12 +147,12 @@ namespace ParaMEDMEM
     MEDFileEquivalenceCellType(MEDFileEquivalencePair *owner, INTERP_KERNEL::NormalizedCellType type, DataArrayInt *data):MEDFileEquivalenceData(owner,data),_type(type) { }
     MEDLOADER_EXPORT std::size_t getHeapMemorySizeWithoutChildren() const;
     INTERP_KERNEL::NormalizedCellType getType() const { return _type; }
-    MEDFileEquivalenceCellType *deepCpy(MEDFileEquivalencePair *owner) const;
+    MEDFileEquivalenceCellType *deepCopy(MEDFileEquivalencePair *owner) const;
     bool isEqual(const MEDFileEquivalenceCellType *other, std::string& what) const;
     void getRepr(std::ostream& oss) const;
   public:
-    void write(med_idt fid) const;
-  private:
+    void writeLL(med_idt fid) const;
+  protected:
     ~MEDFileEquivalenceCellType() { }
   private:
     INTERP_KERNEL::NormalizedCellType _type;
@@ -162,8 +164,8 @@ namespace ParaMEDMEM
     MEDLOADER_EXPORT std::vector<const BigMemoryObject *> getDirectChildrenWithNull() const;
     MEDLOADER_EXPORT std::size_t getHeapMemorySizeWithoutChildren() const;
     static MEDFileEquivalenceCell *Load(med_idt fid, MEDFileEquivalencePair *owner);
-    void write(med_idt fid) const;
-    MEDFileEquivalenceCell *deepCpy(MEDFileEquivalencePair *owner) const;
+    void writeLL(med_idt fid) const;
+    MEDFileEquivalenceCell *deepCopy(MEDFileEquivalencePair *owner) const;
     bool isEqual(const MEDFileEquivalenceCell *other, std::string& what) const;
     void getRepr(std::ostream& oss) const;
   public:
@@ -181,7 +183,7 @@ namespace ParaMEDMEM
     void load(med_idt fid);
     std::string getName() const { return getFather()->getName(); }
   private:
-    std::vector< MEDCouplingAutoRefCountObjectPtr<MEDFileEquivalenceCellType> > _types;
+    std::vector< MCAuto<MEDFileEquivalenceCellType> > _types;
   };
 
   class MEDFileEquivalenceNode : public MEDFileEquivalenceData
@@ -189,11 +191,11 @@ namespace ParaMEDMEM
   public:
     MEDFileEquivalenceNode(MEDFileEquivalencePair *owner, DataArrayInt *data):MEDFileEquivalenceData(owner,data) { }
     MEDLOADER_EXPORT std::size_t getHeapMemorySizeWithoutChildren() const;
-    void write(med_idt fid) const;
-    MEDFileEquivalenceNode *deepCpy(MEDFileEquivalencePair *owner) const;
+    void writeLL(med_idt fid) const;
+    MEDFileEquivalenceNode *deepCopy(MEDFileEquivalencePair *owner) const;
     bool isEqual(const MEDFileEquivalenceNode *other, std::string& what) const;
     void getRepr(std::ostream& oss) const;
-  private:
+  protected:
     ~MEDFileEquivalenceNode() { }
   };
 }

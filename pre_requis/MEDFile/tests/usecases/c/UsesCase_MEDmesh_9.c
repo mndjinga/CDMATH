@@ -75,7 +75,7 @@ int main (int argc, char **argv) {
      (X1,Y1, X2,Y2, X3,Y3, ...) with no iteration and computation step 
   */
   if (MEDmeshNodeCoordinateWithProfileWr(fid, meshname, MED_NO_DT, MED_NO_IT, 0.0,
-					 MED_COMPACT_PFLMODE, MED_NO_PROFILE,
+					 MED_COMPACT_STMODE, MED_NO_PROFILE,
 					 MED_FULL_INTERLACE, MED_ALL_CONSTITUENT,
 					 nnodes, initial_coordinates) < 0) {
     MESSAGE("ERROR : nodes coordinates ...");
@@ -85,7 +85,7 @@ int main (int argc, char **argv) {
   /* cells connectiviy is defined in nodal mode */
   if (MEDmeshElementConnectivityWithProfileWr(fid, meshname, MED_NO_DT, MED_NO_IT, 0.0,
 					      MED_CELL, MED_TRIA3, MED_NODAL, 
-					      MED_COMPACT_PFLMODE, MED_NO_PROFILE,
+					      MED_COMPACT_STMODE, MED_NO_PROFILE,
 					      MED_FULL_INTERLACE, MED_ALL_CONSTITUENT, 
 					      ntria3, triaconnectivity) < 0) {
     MESSAGE("ERROR : triangular cells connectivity ...");
@@ -94,7 +94,7 @@ int main (int argc, char **argv) {
 
   if (MEDmeshElementConnectivityWithProfileWr(fid, meshname, MED_NO_DT, MED_NO_IT, 0.0,
 					      MED_CELL, MED_QUAD4, MED_NODAL, 
-					      MED_COMPACT_PFLMODE, MED_NO_PROFILE,
+					      MED_COMPACT_STMODE, MED_NO_PROFILE,
 					      MED_FULL_INTERLACE, MED_ALL_CONSTITUENT,  
 					      nquad4, quadconnectivity) < 0) {
     MESSAGE("ERROR : quadrangular cells connectivity ..."); 

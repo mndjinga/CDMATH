@@ -1,4 +1,6 @@
 %MedException(MEDfileOpen)
+%MedException(MEDfileVersionOpen)
+%MedException(MEDfileExist)
 %MedException(MEDmemFileOpen)
 %MedException(MEDparFileOpen)
 %MedException(MEDfileName)
@@ -11,3 +13,4 @@
 %MedException(MEDfileObjectsMount)
 %MedException(MEDfileObjectsMountById)
 %MedException(MEDfileObjectsUnmount)
+%MedException(MEDfileObjectExist)

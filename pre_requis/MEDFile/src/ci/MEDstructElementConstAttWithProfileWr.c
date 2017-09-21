@@ -54,7 +54,7 @@ MEDstructElementConstAttWithProfileWr(const med_idt                  fid,
   med_access_mode   _MED_ACCESS_MODE;
   med_err           _ret=-1;
   med_idt           _attid=0, _elemid=0, _cstid=0;
-  char              _path[MED_TAILLE_STRCT+MED_NAME_SIZE+1+MED_TAILLE_CSTATR+MED_NAME_SIZE+1]=MED_STRCT;
+  char              _path[MED_ELSTRUCT_GRP_SIZE+MED_NAME_SIZE+1+MED_TAILLE_CSTATR+MED_NAME_SIZE+1]=MED_ELSTRUCT_GRP;
   char              _supportmeshname[MED_NAME_SIZE+1]="";
   med_int           _intentitytype                   = sentitytype;
   med_int           _nentity                         = 0;
@@ -201,7 +201,7 @@ if (_MEDcheckVersion30(fid) < 0) goto ERROR;
   }
 
   if ( MEDfilterEntityCr(fid, _nentity, 1, ncomponent, MED_ALL_CONSTITUENT,
-			 MED_FULL_INTERLACE,MED_COMPACT_PFLMODE,
+			 MED_FULL_INTERLACE,MED_COMPACT_STMODE,
 			 profilename, MED_UNDEF_SIZE, NULL, &_filter) < 0 ) {
     MED_ERR_(_ret,MED_ERR_CREATE,MED_ERR_FILTER,MED_ERR_INTERNAL_MSG);
     goto ERROR;

@@ -65,7 +65,7 @@ if (_MEDcheckVersion30(fid) < 0) goto ERROR;
 
   /*
    * Récupère l'ordre de tri des séquences de calcul
-   * Si le DataGroup MED_MAA/<meshname> n'existe pas => erreur
+   * Si le DataGroup MED_MESH_GRP/<meshname> n'existe pas => erreur
    * il doit être crée par MEDmeshCr
    */
   NOFINALBLANK(meshname,ERROR);

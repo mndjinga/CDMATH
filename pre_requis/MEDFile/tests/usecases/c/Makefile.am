@@ -15,6 +15,7 @@ AM_CFLAGS = -DDEF_LECT_ECR
 #-DUSER_INTERLACE=MED_FULL_INTERLACE
 #-DDEF_LECT_AJOUT
 
+if INSTALLTEST
 
 usescases_PROGRAMS = UsesCase_MEDfile_1 \
 UsesCase_MEDmesh_1 \
@@ -59,6 +60,52 @@ UsesCase_MEDinterp_1 \
 UsesCase_MEDinterp_2 \
 UsesCase_MEDinterp_3
 
+else
+
+check_PROGRAMS = UsesCase_MEDfile_1 \
+UsesCase_MEDmesh_1 \
+UsesCase_MEDmesh_2 \
+UsesCase_MEDmesh_3 \
+UsesCase_MEDmesh_4 \
+UsesCase_MEDmesh_5 \
+UsesCase_MEDmesh_6 \
+UsesCase_MEDmesh_7 \
+UsesCase_MEDmesh_8 \
+UsesCase_MEDmesh_9 \
+UsesCase_MEDmesh_10 \
+UsesCase_MEDmesh_11 \
+UsesCase_MEDmesh_12 \
+UsesCase_MEDmesh_13 \
+UsesCase_MEDmesh_14 \
+UsesCase_MEDmesh_15 \
+UsesCase_MEDmesh_16 \
+UsesCase_MEDstructElement_1 \
+UsesCase_MEDstructElement_2 \
+UsesCase_MEDstructElement_3 \
+UsesCase_MEDfield_1 \
+UsesCase_MEDfield_2 \
+UsesCase_MEDfield_3 \
+UsesCase_MEDfield_4 \
+UsesCase_MEDfield_5 \
+UsesCase_MEDfield_6 \
+UsesCase_MEDfield_7 \
+UsesCase_MEDfield_8 \
+UsesCase_MEDfield_9 \
+UsesCase_MEDfield_10 \
+UsesCase_MEDfield_11 \
+UsesCase_MEDfield_12 \
+UsesCase_MEDfield_13 \
+UsesCase_MEDfield_14 \
+UsesCase_MEDfield_15 \
+UsesCase_MEDfield_15b \
+UsesCase_MEDfield_16 \
+UsesCase_MEDfield_17 \
+UsesCase_MEDfield_18 \
+UsesCase_MEDinterp_1 \
+UsesCase_MEDinterp_2 \
+UsesCase_MEDinterp_3
+
+endif
 
 LDADD = $(top_builddir)/src/libmedC.la
 

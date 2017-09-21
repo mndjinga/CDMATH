@@ -52,7 +52,7 @@ MEDinterpCr(const med_idt                 fid,
   med_access_mode   _MED_ACCESS_MODE;
   med_idt           _root=0,_interpid=0;
   med_int           _ret=-1;
-  char              _path[MED_TAILLE_INTERP+MED_NAME_SIZE+1]=MED_INTERP;
+  char              _path[MED_INTERPOLATION_GRP_SIZE+MED_NAME_SIZE+1]=MED_INTERPOLATION_GRP;
   med_int           _cellnodes = cellnode;
   med_int           _geotype = geotype;
   /*
@@ -158,7 +158,7 @@ MEDinterpCr(const med_idt                 fid,
   }
 
   if (_root>0)            if (_MEDdatagroupFermer(_root) < 0) {
-    MED_ERR_(_ret,MED_ERR_CLOSE,MED_ERR_DATAGROUP,MED_INTERP);
+    MED_ERR_(_ret,MED_ERR_CLOSE,MED_ERR_DATAGROUP,MED_INTERPOLATION_GRP);
     ISCRUTE_id(_root);
   }
 

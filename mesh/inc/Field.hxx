@@ -8,7 +8,7 @@
 #ifndef FIELD_HXX_
 #define FIELD_HXX_
 
-namespace ParaMEDMEM
+namespace MEDCoupling
 {
   class MEDCouplingFieldDouble;
   class DataArrayDouble;
@@ -25,7 +25,7 @@ typedef enum
 #include "Vector.hxx"
 #include "Mesh.hxx"
 
-#include <MEDCouplingAutoRefCountObjectPtr.hxx>
+#include <MCAuto.hxx>
 
 /**
  * Field class is defined by
@@ -90,7 +90,7 @@ class Field
            const std::string & fieldName = "",
            int iteration = -1, int order = -1);
   
-    ParaMEDMEM::DataArrayDouble * getArray();
+    MEDCoupling::DataArrayDouble * getArray();
 
     void readFieldMed( const std::string & fileNameRadical,
                        TypeField type,
@@ -126,11 +126,11 @@ class Field
      * return the MEDCouplingField pointer
      * return _field
      */
-    ParaMEDMEM::MEDCouplingAutoRefCountObjectPtr<ParaMEDMEM::MEDCouplingFieldDouble> getField ( void )  const ;
+    MEDCoupling::MCAuto<MEDCoupling::MEDCouplingFieldDouble> getField ( void )  const ;
 
-    void setFieldByMEDCouplingFieldDouble ( const ParaMEDMEM::MEDCouplingFieldDouble* field );
+    void setFieldByMEDCouplingFieldDouble ( const MEDCoupling::MEDCouplingFieldDouble* field );
 
-    void setFieldByDataArrayDouble ( const ParaMEDMEM::DataArrayDouble* array );
+    void setFieldByDataArrayDouble ( const MEDCoupling::DataArrayDouble* array );
 
     DoubleTab getNormEuclidean( void ) const ;
 
@@ -184,7 +184,7 @@ class Field
 
     protected: //----------------------------------------------------------------
 
-    ParaMEDMEM::MEDCouplingAutoRefCountObjectPtr<ParaMEDMEM::MEDCouplingFieldDouble> _field;
+    MEDCoupling::MCAuto<MEDCoupling::MEDCouplingFieldDouble> _field;
     Mesh _mesh ;
     TypeField _typeField;
 

@@ -51,12 +51,12 @@ INCLUDE_DIRECTORIES(
   ${CMAKE_CURRENT_SOURCE_DIR}/../INTERP_KERNEL/Geometric2D
   ${CMAKE_CURRENT_SOURCE_DIR}/../INTERP_KERNEL/ExprEval
   ${CMAKE_CURRENT_SOURCE_DIR}/../INTERP_KERNEL/GaussPoints
-  ${CMAKE_CURRENT_SOURCE_DIR}/../MEDFile/include
- )
+  )
 
 SET(medloader_SOURCES
   MEDLoader.cxx
   MEDLoaderBase.cxx
+  MEDLoaderTraits.cxx
   MEDFileUtilities.cxx
   MEDFileMesh.cxx
   MEDFileMeshElt.cxx
@@ -69,18 +69,23 @@ SET(medloader_SOURCES
   MEDFileData.cxx
   MEDFileFieldOverView.cxx
   MEDFileMeshReadSelector.cxx
+  MEDFileMeshSupport.cxx
+  MEDFileStructureElement.cxx
+  MEDFileEntities.cxx
+  MEDFileBlowStrEltUp.cxx
   SauvMedConvertor.cxx
   SauvReader.cxx
   SauvWriter.cxx
   )
 
-ADD_LIBRARY(medloader SHARED ${medloader_SOURCES})
+ADD_LIBRARY(medloader ${medloader_SOURCES})
 SET_TARGET_PROPERTIES(medloader PROPERTIES COMPILE_FLAGS "")
 TARGET_LINK_LIBRARIES(medloader medcoupling ${MEDFILE_C_LIBRARIES} ${HDF5_LIBRARIES} ${MEDLOADER_XDR_LIBRARIES})
 INSTALL(TARGETS medloader EXPORT ${PROJECT_NAME}TargetGroup DESTINATION ${MEDCOUPLING_INSTALL_LIBS})
 
 FILE(GLOB medloader_HEADERS_HXX "${CMAKE_CURRENT_SOURCE_DIR}/*.hxx")
-INSTALL(FILES ${medloader_HEADERS_HXX} DESTINATION ${MEDCOUPLING_INSTALL_HEADERS})
+FILE(GLOB medloader_HEADERS_TXX "${CMAKE_CURRENT_SOURCE_DIR}/*.txx")
+INSTALL(FILES ${medloader_HEADERS_HXX} ${medloader_HEADERS_TXX} DESTINATION ${MEDCOUPLING_INSTALL_HEADERS})
 
 # To allow usage as SWIG dependencies:
 SET(medloader_HEADERS_HXX PARENT_SCOPE)

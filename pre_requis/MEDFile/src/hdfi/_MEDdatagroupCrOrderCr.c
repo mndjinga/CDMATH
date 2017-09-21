@@ -58,6 +58,17 @@ _MEDdatagroupCrOrderCr(const med_idt pid, const char * const name)
     goto ERROR;
   }
 
+  /* HDF-5 : UG
+    Groups will be initially created in the compact‐or‐indexed format only when one or more of the following 
+    conditions is met:
+   •    The low version bound value of the library version bounds property has been set to Release 1.8.0 
+        or later in the file access property list (see H5Pset_libver_bounds). Currently, that would 
+        require an H5Pset_libver_bounds call with the low parameter set to H5F_LIBVER_LATEST.
+        When this property is set for an HDF5 file, all objects in the file will be created using the latest 
+        available format; no effort will be made to create a file that can be read by older libraries.
+	
+   •   The creation order tracking property, H5P_CRT_ORDER_TRACKED, has been set in the group creation property list (see H5Pset_link_creation_order).
+  */
   if ( H5Pset_link_creation_order( _gcpl_id, (H5P_CRT_ORDER_TRACKED | H5P_CRT_ORDER_INDEXED)) <0 ) {
     MED_ERR_(_ret,MED_ERR_CREATE,MED_ERR_PROPERTY,MED_ERR_DATAGROUP_MSG);
     SSCRUTE(name);

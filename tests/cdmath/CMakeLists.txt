@@ -57,11 +57,11 @@ file(COPY ${MESH_MED} DESTINATION ${CMAKE_BINARY_DIR}/tests)
 if (CDMATH_WITH_PETSC)
     FILE(GLOB TestMesh_SOURCES . *.cxx)
     ADD_LIBRARY(TestMesh SHARED ${TestMesh_SOURCES})
-    TARGET_LINK_LIBRARIES(TestMesh base mesh linearsolver medcoupling ${HDF5_LIBRARIES} ${MED3_LIBS} medloader ${PETSC_LIBRARIES})
+    TARGET_LINK_LIBRARIES(TestMesh base mesh linearsolver medcoupling ${HDF5_LIBRARIES} medloader ${PETSC_LIBRARIES})
 else (CDMATH_WITH_PETSC)  
     FILE(GLOB TestMesh_SOURCES . CellTests.cxx DoubleTabTests.cxx FaceTests.cxx FieldTests.cxx IntTabTests.cxx MatrixTests.cxx MeshTests.cxx NodeTests.cxx PointTests.cxx SparseMatrixTests.cxx VectorTests.cxx)
     ADD_LIBRARY(TestMesh SHARED ${TestMesh_SOURCES})
-    TARGET_LINK_LIBRARIES(TestMesh base mesh medcoupling ${HDF5_LIBRARIES} ${MED3_LIBS} medloader)
+    TARGET_LINK_LIBRARIES(TestMesh base mesh medcoupling ${HDF5_LIBRARIES} medloader)
 endif (CDMATH_WITH_PETSC) 
   
 

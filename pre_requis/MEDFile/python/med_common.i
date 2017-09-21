@@ -3,9 +3,9 @@
 %include "exception.i"
 %include "cstring.i"
 
-//TODO: Cf MEDerreur.hxx (Mettre en conformité ?)
-//TODO: Est-il utile d'avoir une class d'exception MED
-//      dérivée d'exception spécifique à chq méthode ?
+//TODO: Cf MEDerreur.hxx
+//TODO: Est-il utile d'avoir une classe d'exception mère MED
+//      à toutes les exceptions spécifiques des fonctions ?
 %define %MedException(funcname)
 %exception funcname {
   $action

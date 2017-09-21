@@ -132,6 +132,12 @@ IF (HDF5_FOUND)
   
   SET(HDF5_ROOT_DIR ${_tmp_ROOT_DIR})
   
+  # Parse HDF5_VERSION to extract major, minor and release number
+  STRING (REGEX MATCHALL "[0-9]+" _versionComponents "${HDF5_VERSION}")
+  LIST(GET _versionComponents 0 HDF_VERSION_MAJOR_REF)
+  LIST(GET _versionComponents 1 HDF_VERSION_MINOR_REF)
+  LIST(GET _versionComponents 2 HDF_VERSION_RELEASE_REF)
+  SET(HDF_VERSION_REF "${HDF5_VERSION}")  
 ELSE(HDF5_FOUND)
   MESSAGE(STATUS "HDF5 was not found.")  
 ENDIF(HDF5_FOUND)

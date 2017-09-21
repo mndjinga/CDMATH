@@ -89,6 +89,8 @@ UsesCase_MEDfield_4.sh $(myTESTS_LEC)
 
 LDADD = $(top_builddir)/src/libmed.la
 
+if INSTALLTEST
+
 testf_PROGRAMS = \
 UsesCase_MEDmesh_1 \
 UsesCase_MEDmesh_4 \
@@ -99,6 +101,22 @@ UsesCase_MEDmesh_13 \
 UsesCase_MEDfield_1 \
 UsesCase_MEDfield_4 $(mycheckPROGRAMS)
 #UsesCase_MEDmesh_15 
+
+else
+
+
+check_PROGRAMS = \
+UsesCase_MEDmesh_1 \
+UsesCase_MEDmesh_4 \
+UsesCase_MEDmesh_6 \
+UsesCase_MEDmesh_9 \
+UsesCase_MEDmesh_10 \
+UsesCase_MEDmesh_13 \
+UsesCase_MEDfield_1 \
+UsesCase_MEDfield_4 $(mycheckPROGRAMS)
+#UsesCase_MEDmesh_15 
+
+endif
 
 UsesCase_MEDmesh_1_SOURCES  = UsesCase_MEDmesh_1.f 
 UsesCase_MEDmesh_4_SOURCES  = UsesCase_MEDmesh_4.f

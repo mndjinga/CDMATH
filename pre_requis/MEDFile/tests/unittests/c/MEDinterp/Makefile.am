@@ -14,8 +14,7 @@ AM_CFLAGS = -DDEF_LECT_ECR
 #-DUSER_INTERLACE=MED_FULL_INTERLACE
 #-DDEF_LECT_AJOUT
 
-
-unittests_PROGRAMS = \
+check_PROGRAMS = \
 Test_MEDinterpCr \
 Test_MEDinterpBaseFunctionWr \
 Test_MEDinterpInfo \
@@ -23,6 +22,15 @@ Test_MEDinterpBaseFunctionRd \
 Test_MEDinterpBaseFunctionCoeffSize \
 Test_MEDfieldInterpWr \
 Test_MEDfieldInterpInfo
+
+# Les tests unitaires n'ont pas besoin d'être installés 
+# unittests_PROGRAMS = \
+# Test_MEDinterpBaseFunctionWr \
+# Test_MEDinterpInfo \
+# Test_MEDinterpBaseFunctionRd \
+# Test_MEDinterpBaseFunctionCoeffSize \
+# Test_MEDfieldInterpWr \
+# Test_MEDfieldInterpInfo
 
 LDADD = $(top_builddir)/src/libmedC.la
 

@@ -70,7 +70,7 @@ MEDmeshUniversalNameWr(const med_idt fid,
   med_access_mode _MED_ACCESS_MODE;
   med_err _ret=-1;
   med_idt _meshid=0;
-  char    _path [MED_TAILLE_MAA+MED_NAME_SIZE+1]=MED_MAA;
+  char    _path [MED_MESH_GRP_SIZE+MED_NAME_SIZE+1]=MED_MESH_GRP;
   char    _unvname [MED_LNAME_SIZE+1]="";
   time_t  _time;
 #ifdef PPRO_NT

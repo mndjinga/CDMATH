@@ -73,7 +73,7 @@ C	PROFILS UTILISES
         integer      profil1(2) , profil2(3)
 
 	parameter (USER_INTERLACE = MED_FULL_INTERLACE)
-	parameter (USER_MODE = MED_COMPACT_PFLMODE )
+	parameter (USER_MODE = MED_COMPACT_STMODE )
         parameter ( a=0.446948490915965D0, b=0.091576213509771D0    )
 	parameter ( p1=0.11169079483905D0, p2=0.0549758718227661D0  )
 C       MAILLAGES
@@ -183,7 +183,8 @@ C       PROFILS
 	wg1_2(3) =  2.0D0/3 
 		   
 C     ** ouverture du fichier                            **
- 	call mfiope(fid,'test10.med',MED_ACC_RDWR, ret)
+ 	call mfivop(fid,'test10.med', MED_ACC_RDWR,
+     &      MED_MAJOR_NUM, MED_MINOR_NUM, MED_RELEASE_NUM, ret)
 	print *,ret
         if (ret .ne. 0 ) then
 	   print *,'Erreur à l''ouverture du fichier  : ','test10.med'

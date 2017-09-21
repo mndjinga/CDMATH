@@ -29,7 +29,7 @@ void _MEDprofileRd30(int dummy, ...) {
 
   med_idt        _pfid=0;
   med_err        _ret=-1;
-  char           _path[MED_TAILLE_PROFILS+MED_NAME_SIZE+1]=MED_PROFILS;
+  char           _path[MED_PROFILE_GRP_SIZE+MED_NAME_SIZE+1]=MED_PROFILE_GRP;
   med_filter     _filter        = MED_FILTER_INIT;
   med_int        _nentity=0;
 
@@ -58,7 +58,7 @@ void _MEDprofileRd30(int dummy, ...) {
   strcat(_path,profilename);
 
   if ((_pfid = _MEDdatagroupOuvrir(fid,_path)) < 0) {
-    MED_ERR_(_ret,MED_ERR_OPEN,MED_ERR_DATAGROUP,MED_PROFILS);
+    MED_ERR_(_ret,MED_ERR_OPEN,MED_ERR_DATAGROUP,MED_PROFILE_GRP);
     SSCRUTE(_path); goto ERROR;
   }
 
@@ -76,7 +76,7 @@ void _MEDprofileRd30(int dummy, ...) {
    * Lecture du profil
    */
   if ( MEDfilterEntityCr(fid, _nentity, 1, 1, MED_ALL_CONSTITUENT,
-			 MED_NO_INTERLACE,MED_UNDEF_PFLMODE,
+			 MED_NO_INTERLACE,MED_UNDEF_STMODE,
 			 MED_NO_PROFILE, MED_UNDEF_SIZE, NULL, &_filter) < 0 ) {
     MED_ERR_(_ret,MED_ERR_CREATE,MED_ERR_FILTER,MED_ERR_INTERNAL_MSG);
     goto ERROR;
@@ -96,7 +96,7 @@ void _MEDprofileRd30(int dummy, ...) {
  ERROR:
 
   if ( _pfid > 0 ) if ( _MEDdatagroupFermer(_pfid) < 0) {
-    MED_ERR_(_ret,MED_ERR_CLOSE,MED_ERR_DATAGROUP,MED_PROFILS);
+    MED_ERR_(_ret,MED_ERR_CLOSE,MED_ERR_DATAGROUP,MED_PROFILE_GRP);
     ISCRUTE_id(_pfid);
   }
 

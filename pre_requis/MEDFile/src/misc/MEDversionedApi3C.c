@@ -25,7 +25,7 @@ extern MedFuncType getVersionedApi3(const char * const keycharpart,
 				    const char * const keynumpart);
 
 
-/*  La gestion suivante suppose de ne pas utiliser des versions > 9.9.9 */
+/*  La gestion suivante suppose d'utiliser un digit par numéro intervenant dans la verion X.Y.Z  */
 /*  ex 9.10.9 ne peut pas être géré. */
 MedFuncType _MEDversionedApi3( const char * const key,
 			       const med_int majeur,const  med_int mineur,const  med_int release) {
@@ -63,7 +63,7 @@ MedFuncType _MEDversionedApi3( const char * const key,
   /*  - Recherche du dernier numéro mineur disponible pour la routine versionné
       dans la bibliothèque MED actuelle  versionMMR 100*MED_NUM_MAJEUR+10*MED_NUM_MINEUR
       -A partir de la 2.4.0, on oblige le developpeur à versionner
-      uniquement des routines en x.y.0 ;  x.y+1.* et x.y.* étant incompatible
+      uniquement des routines en x.y.0 ;  x.y+1.* et x.y.* étant  incompatibles (en terme de modèle)
       et  x.y.0 et x.y.a étant compatible, x.y.a n'apparait pas dans la table
       de versionement
   */
@@ -83,8 +83,8 @@ MedFuncType _MEDversionedApi3( const char * const key,
    */
 
 
-  /*Rem (_fversionMMR > 290) car cette version est une version de developpement  et aucun fichier
-    de ce numéro ne devrait être en circulation.*/
+  /*Rem (_fversionMMR > 290) car cette version est une version de developpement et aucun fichier
+    issu de bibliotèques 2.y.z  ne devrait être en circulation.*/
   if ( (_fversionMMR > 290) ||
        (_fversionMM <= (100*MED_NUM_MAJEUR+10*MED_NUM_MINEUR) )
        ) {
@@ -117,7 +117,7 @@ MedFuncType _MEDversionedApi3( const char * const key,
     SSCRUTE(key);
     MESSAGE("en version :");
     ISCRUTE_int(_fversionMMR);
-    MESSAGE("Vérifiez votre fichier .med");
+    MESSAGE("Vérifiez votre fichier .med et votre version de bibliothèque.");
   }
 
   return func;

@@ -26,13 +26,14 @@
 #include <string>
 #include <vector>
 
-namespace ParaMEDMEM
+namespace MEDCoupling
 {
   class MEDFileString
   {
   public:
     MEDFileString(int maxLgth);
     ~MEDFileString();
+    void clear();
     void set(const char *s);
     char *getPointer() { return _content; }
     const char *getReprForWrite() const { return _content; }

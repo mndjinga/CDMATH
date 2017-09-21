@@ -151,30 +151,31 @@
 /* #define MED_NOM_NAV "NAV" */
 /* #define MED_NOM_NAC "NAC" */
 
-
 /* Nom du DATA GROUP CONTENANT TOUS LES MAILLAGES DU FICHIER HDF */
-#define MED_MAA "/ENS_MAA/"
-#define MED_TAILLE_MAA 9
+#define MED_MESH_NAME "ENS_MAA"
+#define MED_MESH_GRP "/" MED_MESH_NAME "/"
+#define MED_MESH_GRP_SIZE  9
 
 /* Nom du DATA GROUP CONTENANT TOUS LES MAILLAGES SUPPORTS DU FICHIER HDF */
-#define MED_SUP_MAA "/ENS_SUP_MAA/"
-#define MED_TAILLE_SUP_MAA 13
+#define MED_MESH_SUPPORT_GRP "/ENS_SUP_MAA/"
+#define MED_MESH_SUPPORT_GRP_SIZE 13
 
-/* Nom du data group ou ranger les champs solution */
-#define MED_CHA "/CHA/"
-#define MED_TAILLE_CHA 5
+/* Nom du DATA GROUP CONTENANT TOUS LES CHAMPS RESULTATS */
+#define MED_FIELD_NAME "CHA"
+#define MED_FIELD_GRP "/" MED_FIELD_NAME "/"
+#define MED_FIELD_GRP_SIZE 5
 
-/* Nom du DATA GROUP CONTENANT TOUS LES MODELES D'ELEMENTS DE STRUCTURE  */
-#define MED_STRCT "/STRUCT/"
-#define MED_STRCT_NOM "STRUCT"
-#define MED_TAILLE_STRCT 8
+/* Nom du DATA GROUP CONTENANT TOUS LES MODELES D'ELEMENTS DE STRUCTURE */
+#define MED_ELSTRUCT_NAME "STRUCT"
+#define MED_ELSTRUCT_GRP "/" MED_ELSTRUCT_NAME "/"
+#define MED_ELSTRUCT_GRP_SIZE 8
 
-/* Nom du DATA GROUP CONTENANT TOUTES LES FONCTIONS D'INTERPOLATIONS   */
-#define MED_INTERP "/INTERP/"
-#define MED_INTERP_NOM "INTERP"
-#define MED_TAILLE_INTERP 8
+/* Nom du DATA GROUP CONTENANT TOUTES LES FONCTIONS D'INTERPOLATIONS */
+#define MED_INTERPOLATION_NAME "INTERP"
+#define MED_INTERPOLATION_GRP "/" MED_INTERPOLATION_NAME "/"
+#define MED_INTERPOLATION_GRP_SIZE 8
 
-/* Nom du DATA GROUP CONTENANT LES FONCTIONS D'INTERPOLATIONS UTILISEES PAR LES CHAMPS  */
+/* Nom du DATA GROUP CONTENANT LES FONCTIONS D'INTERPOLATIONS UTILISEES PAR LES CHAMPS */
 #define MED_CHA_INTERP "/CHA_INTERP/"
 #define MED_TAILLE_CHA_INTERP 12
 
@@ -198,9 +199,10 @@
 #define MED_TAILLE_MNT 5
 
 /* Nom du data group ou ranger les familles */
-#define MED_FAS "/FAS/"
-#define MED_FAS_NOM "FAS"
-#define MED_TAILLE_FAS 5
+#define MED_FAMILY_NAME "FAS"
+#define MED_FAMILY_GRP "/" MED_FAMILY_NAME "/"
+#define MED_FAMILY_GRP_SIZE 5
+
 #define FAMILLE_ZERO "FAMILLE_ZERO"
 #define MED_FAS_ZERO "/FAMILLE_ZERO/"
 #define MED_FAS_ZERO_NOM "FAMILLE_ZERO"
@@ -211,34 +213,34 @@
 #define MED_FAS_ELEME_NOM "ELEME"
 #define MED_TAILLE_FAS_ENTITE 7
 
-
 /* Nom du data group ou ranger les equivalences */
-#define MED_EQS "/EQS/"
-#define MED_EQS_NOM "EQS"
-#define MED_TAILLE_EQS 5
+#define MED_EQUIVALENCE_NAME "EQS"
+#define MED_EQUIVALENCE_GRP "/" MED_EQUIVALENCE_NAME "/"
+#define MED_EQUIVALENCE_GRP_SIZE 5
 
 /* Nom du data group contenant les profils */
-#define MED_PROFILS "/PROFILS/"
-#define MED_TAILLE_PROFILS 9
+#define MED_PROFILE_NAME "PROFILS"
+#define MED_PROFILE_GRP "/" MED_PROFILE_NAME "/"
+#define MED_PROFILE_GRP_SIZE 9
 
 /* Nom du data group contenant la localisation des points de GAUSS */
-#define MED_GAUSS "/GAUSS/"
-#define MED_TAILLE_GAUSS 7
+#define MED_LOCALIZATION_NAME "GAUSS"
+#define MED_LOCALIZATION_GRP "/" MED_LOCALIZATION_NAME "/"
+#define MED_LOCALIZATION_GRP_SIZE 7
 
-/* Nom du groupe HDF ou sont rangees les valeurs numeriques scalaires
-   non liees au modele de donnees
-*/
-#define MED_NUM_DATA  "/NUM_DATA/"
-#define MED_TAILLE_NUM_DATA 10
+/*  Nom du data group contenant  les valeurs numeriques scalaires */
+#define MED_NUMERICAL_DATA_NAME  "NUM_DATA"
+#define MED_NUMERICAL_DATA_GRP "/" MED_NUMERICAL_DATA_NAME "/"
+#define MED_NUMERICAL_DATA_GRP_SIZE 10
 
 /* Nom du data group contenant les liens */
 #define MED_LIENS "/LIENS/"
 #define MED_TAILLE_LIENS 7
 
 /* Nom du data group contenant les joints */
-#define MED_JNT "/JNT/"
-#define MED_JNT_NOM JNT
-#define MED_TAILLE_JNT 5
+#define MED_JOINT_NAME "JNT"
+#define MED_JOINT_GRP "/" MED_JOINT_NAME "/"
+#define MED_JOINT_GRP_SIZE 5
 
 /* Nom du data group contenant la version du fichier */
 #define MED_INFOS "/INFOS_GENERALES/"

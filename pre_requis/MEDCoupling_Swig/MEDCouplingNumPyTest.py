@@ -102,7 +102,7 @@ class MEDCouplingNumPyTest(unittest.TestCase):
         d=DataArrayInt(a)
         self.assertEqual(weakref.getweakrefcount(a),1)
         self.assertTrue(not a.flags["OWNDATA"])
-        self.assertTrue(d.isIdentity2(20))
+        self.assertTrue(d.isIota(20))
         a[:]=2 # modifying a and d because a and d share the same chunk of data
         self.assertTrue(d.isUniform(2))
         del d # d is destroyed, a retrieves its ownership of its initial chunk of data
@@ -119,8 +119,8 @@ class MEDCouplingNumPyTest(unittest.TestCase):
         a=arange(20,dtype=int32)
         d=DataArrayInt(a) # d owns data of a
         e=DataArrayInt(a) # a not owned -> e only an access to chunk of a 
-        self.assertTrue(d.isIdentity2(d.getNumberOfTuples()))
-        self.assertTrue(e.isIdentity2(e.getNumberOfTuples()))
+        self.assertTrue(d.isIota(d.getNumberOfTuples()))
+        self.assertTrue(e.isIota(e.getNumberOfTuples()))
         a[:]=6
         self.assertTrue(d.isUniform(6))
         self.assertTrue(e.isUniform(6))
@@ -154,13 +154,13 @@ class MEDCouplingNumPyTest(unittest.TestCase):
         del b # no impact on e and f because a is the base of a.
         ##@@ Ensure a pass of the garbage collector so that the de-allocator of d is called
         gc.collect()
-        self.assertTrue(f.isIdentity2(f.getNumberOfTuples()))
-        self.assertTrue(e.isIdentity2(e.getNumberOfTuples()))
+        self.assertTrue(f.isIota(f.getNumberOfTuples()))
+        self.assertTrue(e.isIota(e.getNumberOfTuples()))
         del a # a destroyed, but as c has its base set to a, a exists -> e and f not allocated
         ##@@ Ensure a pass of the garbage collector so that the de-allocator of d is called
         gc.collect()
-        self.assertTrue(f.isIdentity2(f.getNumberOfTuples()))
-        self.assertTrue(e.isIdentity2(e.getNumberOfTuples()))
+        self.assertTrue(f.isIota(f.getNumberOfTuples()))
+        self.assertTrue(e.isIota(e.getNumberOfTuples()))
         del c # c killed -> a killed -> e and d are put into not allocated state
         ##@@ Ensure a pass of the garbage collector so that the de-allocator of d is called
         gc.collect()        
@@ -562,33 +562,33 @@ class MEDCouplingNumPyTest(unittest.TestCase):
         b=DataArrayInt(a)
         c=DataArrayInt(a)
         d=DataArrayInt(a)
-        self.assertTrue(b.isIdentity2(10))
-        self.assertTrue(c.isIdentity2(10))
-        self.assertTrue(d.isIdentity2(10))
+        self.assertTrue(b.isIota(10))
+        self.assertTrue(c.isIota(10))
+        self.assertTrue(d.isIota(10))
         c.pushBackSilent(10) # c and a,b are dissociated
-        self.assertTrue(b.isIdentity2(10))
-        self.assertTrue(c.isIdentity2(11))
-        self.assertTrue(d.isIdentity2(10))
+        self.assertTrue(b.isIota(10))
+        self.assertTrue(c.isIota(11))
+        self.assertTrue(d.isIota(10))
         del a
         gc.collect()
-        self.assertTrue(b.isIdentity2(10))
-        self.assertTrue(c.isIdentity2(11))
+        self.assertTrue(b.isIota(10))
+        self.assertTrue(c.isIota(11))
         self.assertTrue(not d.isAllocated())
         del b
         gc.collect()
-        self.assertTrue(c.isIdentity2(11))
+        self.assertTrue(c.isIota(11))
         #
         a=arange(10,dtype=int32)
         b=DataArrayInt(a)
         c=DataArrayInt(a)
-        self.assertTrue(b.isIdentity2(10))
-        self.assertTrue(c.isIdentity2(10))
+        self.assertTrue(b.isIota(10))
+        self.assertTrue(c.isIota(10))
         b.pushBackSilent(10) # c and a,b are dissociated
-        self.assertTrue(b.isIdentity2(11))
-        self.assertTrue(c.isIdentity2(10))
+        self.assertTrue(b.isIota(11))
+        self.assertTrue(c.isIota(10))
         del a
         gc.collect()
-        self.assertTrue(b.isIdentity2(11))
+        self.assertTrue(b.isIota(11))
         self.assertTrue(not c.isAllocated())
         del b
         gc.collect()
@@ -661,6 +661,99 @@ class MEDCouplingNumPyTest(unittest.TestCase):
         m0np=m0.toNumPyMatrix()
         self.assertEqual(m0np.shape,(2,3))
         self.assertEqual(m0np.tolist(),[[2.0,3.0,4.0],[5.0,1.0,6.0]])
+        pass
+
+    @unittest.skipUnless(MEDCouplingHasNumPyBindings(),"requires numpy")
+    def test28(self):
+        """Test on DataArrayBytes"""
+        # use case 1
+        d=DataArrayByte(256)
+        for i in xrange(len(d)):
+            d[i]=-128+i
+            pass
+        arr=d.toNumPyArray()
+        for i in xrange(len(d)):
+            self.assertEqual(int(arr[i]),-128+i)
+            pass
+        d[0]=7
+        self.assertEqual(int(arr[0]),7)
+        arr[0]=8
+        self.assertEqual(int(d.getIJ(0,0)),8)
+        del arr
+        gc.collect()
+        del d
+        gc.collect()
+        # use case 2
+        d=DataArrayByte(256)
+        for i in xrange(len(d)):
+            d[i]=-128+i
+            pass
+        arr=d.toNumPyArray()
+        for i in xrange(len(d)):
+            self.assertEqual(int(arr[i]),-128+i)
+            pass
+        del d
+        gc.collect()
+        del arr
+        gc.collect()
+        # use case 3
+        d=DataArrayByte(256)
+        for i in xrange(len(d)):
+            d[i]=-128+i
+            pass
+        arr1=d.toNumPyArray()
+        arr2=d.toNumPyArray()
+        arr3=d.toNumPyArray()
+        d[0]=10
+        self.assertEqual(int(arr1[0]),10) ; self.assertEqual(int(arr2[0]),10) ; self.assertEqual(int(arr3[0]),10)
+        arr2[0]=15 ; self.assertEqual(int(d.getIJ(0,0)),15) ; self.assertEqual(int(arr1[0]),15) ; self.assertEqual(int(arr3[0]),15)
+        arr1[0]=-128
+        for i in xrange(len(d)):
+            self.assertEqual(int(arr1[i]),-128+i)
+            self.assertEqual(int(arr2[i]),-128+i)
+            self.assertEqual(int(arr3[i]),-128+i)
+            pass
+        del arr2
+        gc.collect()
+        for i in xrange(len(d)):
+            self.assertEqual(int(arr1[i]),-128+i)
+            self.assertEqual(int(arr3[i]),-128+i)
+            pass
+        del arr1
+        gc.collect()
+        for i in xrange(len(d)):
+            self.assertEqual(int(arr3[i]),-128+i)
+            pass
+        del arr3
+        gc.collect()
+        # use case 4
+        arr=array(0,dtype=int8)
+        arr.resize(256)
+        for i in xrange(256):
+            arr[i]=-128+i
+            pass
+        d=DataArrayByte(arr)
+        for i in xrange(256):
+            self.assertEqual(int(d.getIJ(i,0)),-128+i)
+            pass
+        del arr
+        gc.collect()
+        del d
+        gc.collect()
+        # use case 5
+        arr=array(0,dtype=int8)
+        arr.resize(256)
+        for i in xrange(256):
+            arr[i]=-128+i
+            pass
+        d=DataArrayByte(arr)
+        for i in xrange(256):
+            self.assertEqual(int(d.getIJ(i,0)),-128+i)
+            pass
+        del d
+        gc.collect()
+        del arr
+        gc.collect()
         pass
 
     def setUp(self):

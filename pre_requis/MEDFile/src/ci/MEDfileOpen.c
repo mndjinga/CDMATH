@@ -31,88 +31,17 @@
   \brief \MEDfileOpenBrief
   \param filename \filename
   \param accessmode \accessmode
-  \retval med_idt  \fid
+  \retval med_idt  \fidDes
   \details \MEDfileOpenDetails
   \par Remarques
-  \fidDes
+  \MEDfileOpenNote
 */
 
 med_idt
 MEDfileOpen(const char* const filename,
 	    const med_access_mode accessmode)
 {
-  med_idt _fid = 0;
-  med_err _ret = -1;
-
-  /*
-   * On inhibe le gestionnaire d'erreur HDF
-   */
-  _MEDmodeErreurVerrouiller();
-
-  /*
-   * On ouvre le fichier MED sous HDF
-   */
-  switch(accessmode)
-    {
-    case MED_ACC_RDONLY :
-      if (access(filename,F_OK)) {
-	MED_ERR_(_ret,MED_ERR_EXIST,MED_ERR_FILE,filename);
-	goto ERROR;
-
-      } else {
-	if ((_fid = _MEDfileOpen((char*) filename,accessmode)) < 0) {
-	  MED_ERR_(_ret,MED_ERR_OPEN,MED_ERR_FILE,filename);
-	  goto ERROR;
-	}
-      };
-      break;
-
-    case MED_ACC_RDWR :
-      if (access(filename,F_OK)) {
-	if ((_fid = _MEDfileCreate((char*) filename,accessmode)) < 0) {
-	  MED_ERR_(_ret,MED_ERR_CREATE,MED_ERR_FILE,filename);
-	  goto ERROR;
-	}
-      } else
-	if ((_fid = _MEDfileOpen((char*) filename,accessmode)) < 0) {
-	  MED_ERR_(_ret,MED_ERR_OPEN,MED_ERR_FILE,filename);
-	  goto ERROR;
-	}
-      break;
-
-    case MED_ACC_RDEXT :
-      if (access(filename,F_OK))
-	{
-	  if ((_fid = _MEDfileCreate((char*) filename,accessmode)) < 0) {
-	    MED_ERR_(_ret,MED_ERR_CREATE,MED_ERR_FILE,filename);
-	    goto ERROR;
-	  }
-	}
-      else
-	if ((_fid = _MEDfileOpen((char *) filename,accessmode)) < 0) {
-	  MED_ERR_(_ret,MED_ERR_OPEN,MED_ERR_FILE,filename);
-	  goto ERROR;
-	}
-      break;
-
-    case MED_ACC_CREAT :
-      if ((_fid = _MEDfileCreate((char *) filename,MED_ACC_RDWR)) < 0) {
-	MED_ERR_(_ret,MED_ERR_CREATE,MED_ERR_FILE,filename);
-	goto ERROR;
-      }
-      break;
-
-    default :
-      MED_ERR_(_ret,MED_ERR_INIT,MED_ERR_FILE,filename);
-      goto ERROR;
-    }
-
-  _ret=0;
- ERROR:
-
-  if (_ret < 0)
-    _fid = (med_idt) _ret;
-
-  return _fid;
+  return MEDfileVersionOpen( filename, accessmode,
+			     MED_NUM_MAJEUR, MED_NUM_MINEUR, MED_NUM_RELEASE );
 }
 

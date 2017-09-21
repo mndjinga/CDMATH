@@ -29,7 +29,7 @@ void _MEDsubdomainCorrespondenceRd30(int dummy, ...) {
   med_idt            _root=0,_eqid=0,_meshid=0,_cstpid=0,_datagroup2=0;
   med_idt            _dataset=0;
   med_err            _ret=-1;
-  char               _path[MED_TAILLE_JNT+2*MED_NAME_SIZE+2]=MED_JNT;
+  char               _path[MED_JOINT_GRP_SIZE+2*MED_NAME_SIZE+2]=MED_JOINT_GRP;
   char               _computationstepname[2*MED_MAX_PARA+1]="";
   char               _datagroupname2[4*MED_TAILLE_NOM_ENTITE+4]="";
   char               _localgeotypename   [MED_TAILLE_NOM_ENTITE+1]="";
@@ -170,7 +170,7 @@ void _MEDsubdomainCorrespondenceRd30(int dummy, ...) {
   }
 
   if ( MEDfilterEntityCr(fid, _nentity, 1, 2, MED_ALL_CONSTITUENT,
-			 MED_NO_INTERLACE,MED_UNDEF_PFLMODE,
+			 MED_NO_INTERLACE,MED_UNDEF_STMODE,
 			 MED_NO_PROFILE, MED_UNDEF_SIZE, NULL, &_filter) < 0 ) {
     MED_ERR_(_ret,MED_ERR_CREATE,MED_ERR_FILTER,MED_ERR_INTERNAL_MSG);
     goto ERROR;
@@ -217,7 +217,7 @@ void _MEDsubdomainCorrespondenceRd30(int dummy, ...) {
   }
 
   if (_root>0)            if (_MEDdatagroupFermer(_root) < 0) {
-    MED_ERR_(_ret,MED_ERR_CLOSE,MED_ERR_DATAGROUP,MED_JNT);
+    MED_ERR_(_ret,MED_ERR_CLOSE,MED_ERR_DATAGROUP,MED_JOINT_GRP);
     ISCRUTE_id(_eqid);
   }
 

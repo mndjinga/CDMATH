@@ -35,6 +35,7 @@ SET(interpkernel_SOURCES
   Interpolation3DSurf.cxx
   Interpolation3D.cxx
   Interpolation2D3D.cxx
+  Interpolation3D1D.cxx
   MeshElement.cxx
   InterpKernelMeshQuality.cxx
   InterpKernelCellSimplify.cxx
@@ -74,7 +75,7 @@ IF(NOT WIN32)
   SET(PLATFORM_MMAP "-D_POSIX_MAPPED_FILES")
 ENDIF(NOT WIN32)
 
-ADD_LIBRARY(interpkernel SHARED ${interpkernel_SOURCES})
+ADD_LIBRARY(interpkernel ${interpkernel_SOURCES})
 SET_TARGET_PROPERTIES(interpkernel PROPERTIES COMPILE_FLAGS "${PLATFORM_MMAP}")
 TARGET_LINK_LIBRARIES(interpkernel ${PLATFORM_LIBS})
 INSTALL(TARGETS interpkernel EXPORT ${PROJECT_NAME}TargetGroup DESTINATION ${MEDCOUPLING_INSTALL_LIBS})

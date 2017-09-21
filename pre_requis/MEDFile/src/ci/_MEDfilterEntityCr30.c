@@ -80,7 +80,7 @@ void _MEDfilterEntityCr30(int dummy, ...)
     }
   } else {
     /*Faux si un filterarray est présent !*/
-/*     _storagemode = MED_GLOBAL_PFLMODE; */
+/*     _storagemode = MED_GLOBAL_STMODE; */
   }
 
   /* Verify constituentselect is between [0, nconstituentpervalue] ( 0 is MED_ALL_CONSTITUENT ) */
@@ -112,26 +112,26 @@ void _MEDfilterEntityCr30(int dummy, ...)
     } else {
 
       switch(_storagemode) {
-      case MED_GLOBAL_PFLMODE :
+      case MED_GLOBAL_STMODE :
 
 	if ( _MEDfilterEntityFullIGlobalCr(fid,nentity,nvaluesperentity,nconstituentpervalue,constituentselect,
 					   _storagemode,profilename,filterarraysize,filterarray,filter) < 0 ) {
 	  MED_ERR_(_ret,MED_ERR_SELECT,MED_ERR_FILTER,MED_ERR_MODE_MSG);
-	  MESSAGE("MED_FULL_INTERLACE, MED_GLOBAL_PFLMODE");
+	  MESSAGE("MED_FULL_INTERLACE, MED_GLOBAL_STMODE");
 	  goto ERROR;
 	}
 	break;
-      case MED_COMPACT_PFLMODE :
+      case MED_COMPACT_STMODE :
 	if ( _MEDfilterEntityFullICompactCr(fid,nentity,nvaluesperentity,nconstituentpervalue,constituentselect,
 					    _storagemode,profilename,filterarraysize,filterarray,filter) < 0 ) {
 	  MED_ERR_(_ret,MED_ERR_SELECT,MED_ERR_FILTER,MED_ERR_MODE_MSG);
-	  MESSAGE("MED_FULL_INTERLACE, MED_COMPACT_PFLMODE");
+	  MESSAGE("MED_FULL_INTERLACE, MED_COMPACT_STMODE");
 	  goto ERROR;
 	}
 	break;
       default:
 	MED_ERR_(_ret,MED_ERR_INIT,MED_ERR_FILTER,MED_ERR_MODE_MSG);
-	MESSAGE("MED_UNDEF_PFLMODE");
+	MESSAGE("MED_UNDEF_STMODE");
 	MESSAGE("MED_FULL_INTERLACE");
 	SSCRUTE(profilename);
 	ISCRUTE_int(_storagemode);
@@ -156,28 +156,28 @@ void _MEDfilterEntityCr30(int dummy, ...)
 
       switch(_storagemode) {
 
-      case MED_GLOBAL_PFLMODE :
+      case MED_GLOBAL_STMODE :
 
 	if ( _MEDfilterEntityNoIGlobalCr(fid,nentity,nvaluesperentity,nconstituentpervalue,constituentselect,
 					   _storagemode,profilename,filterarraysize,filterarray,filter) < 0 ) {
 	  MED_ERR_(_ret,MED_ERR_SELECT,MED_ERR_FILTER,MED_ERR_MODE_MSG);
-	  MESSAGE("MED_NO_INTERLACE, MED_GLOBAL_PFLMODE");
+	  MESSAGE("MED_NO_INTERLACE, MED_GLOBAL_STMODE");
 	  goto ERROR;
 	}
 	break;
 
-      case MED_COMPACT_PFLMODE :
+      case MED_COMPACT_STMODE :
 	if ( _MEDfilterEntityNoICompactCr(fid,nentity,nvaluesperentity,nconstituentpervalue,constituentselect,
 					    _storagemode,profilename,filterarraysize,filterarray,filter) < 0 ) {
 	  MED_ERR_(_ret,MED_ERR_SELECT,MED_ERR_FILTER,MED_ERR_MODE_MSG);
-	  MESSAGE("MED_NO_INTERLACE, MED_COMPACT_PFLMODE");
+	  MESSAGE("MED_NO_INTERLACE, MED_COMPACT_STMODE");
 	  goto ERROR;
 	}
 	break;
 
       default:
 	MED_ERR_(_ret,MED_ERR_INIT,MED_ERR_FILTER,MED_ERR_MODE_MSG);
-	MESSAGE("MED_UNDEF_PFLMODE");
+	MESSAGE("MED_UNDEF_STMODE");
 	MESSAGE("MED_NO_INTERLACE");
 	SSCRUTE(profilename);
 	ISCRUTE_int(_storagemode);

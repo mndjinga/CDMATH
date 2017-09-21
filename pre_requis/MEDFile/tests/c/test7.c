@@ -129,7 +129,7 @@ int main (int argc, char **argv)
   nufatr3 = (med_int*) malloc(sizeof(med_int)*ntr3);
 
   if ( MEDfilterEntityCr( fid, nse2, 1, sdim, 2,
-			  MED_FULL_INTERLACE, MED_GLOBAL_PFLMODE,
+			  MED_FULL_INTERLACE, MED_GLOBAL_STMODE,
 			  MED_NO_PROFILE, fltsize,
 			  flt, &filter) < 0 ) {
     MESSAGE("Erreur à la crétion du filtre 1.");

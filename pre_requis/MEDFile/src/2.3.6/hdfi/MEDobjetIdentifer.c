@@ -41,7 +41,8 @@ _MEDobjetIdentifier(med_idt fid,char *chemin,int indice,void *nom)
   if ((idx = H5Giterate(fid,chemin,&indice,_MEDindiceInfo,
 			nom)) < 0)
     return -1;
-
+    /* {  H5Eprint1(stderr);return -1;} */
+  ;
   return 0;
 }
 

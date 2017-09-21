@@ -41,7 +41,7 @@ int MAJ_236_300_string_datasets(med_idt fid,
   char *      _ftmpbuff  = NULL;
   med_idt     _datagroup = 0;
   med_filter  _filter    = MED_FILTER_INIT;
-  char        _pathi[MED_TAILLE_MAA+MED_NAME_SIZE+1+2*MED_TAILLE_NOM_ENTITE+1+3+1]="";
+  char        _pathi[MED_MESH_GRP_SIZE+MED_NAME_SIZE+1+2*MED_TAILLE_NOM_ENTITE+1+3+1]="";
   int         _itmplen   = 0;
   med_internal_type _medinternaltype=MED_INTERNAL_UNDEF;
 

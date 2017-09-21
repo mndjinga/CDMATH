@@ -25,6 +25,13 @@
 extern "C" {
 #endif
 
+/* This is the minimum hdf version med must have  */
+#define HDF_VERSION_REF 1.8.14
+#define HDF_VERSION_MAJOR_REF 1
+#define HDF_VERSION_MINOR_REF 8
+#define HDF_VERSION_RELEASE_REF 14
+#define HDF_VERSION_NUM_REF (HDF_VERSION_MAJOR_REF * 10000 + HDF_VERSION_MINOR_REF * 100  + HDF_VERSION_RELEASE_REF )
+
 #define HDF5_VERSION (H5_VERS_MAJOR * 10000 + H5_VERS_MINOR * 100  + H5_VERS_RELEASE )
 
 #if HDF5_VERSION < 10607
@@ -36,20 +43,21 @@ extern "C" {
 
 /*Le symbole H5F_LIBVER_18 n'existe pas dans hdf5-1.8.4 (uniquement à partir de la version 1.8.6)
   Pour rester dans le modèle interne hdf introduit en 1.8 quelque soit les futurs modèles internes hdf
-  on impose le modèle 1.8 et non le LATEST.
+  on impose le modèle 1.8 et non le LATEST (cf _MEDfileCreate).
   La valeur utilisée est celle définie dans les  version >= 1.8.6 (cf H5Fpublic.h) */
 #ifndef H5F_LIBVER_18
 /** \internal*/
 #define H5F_LIBVER_18 1
 #endif
 
+/*En anglais*/
 #define MED_MAJOR_NUM 3
 #define MED_MINOR_NUM 2
-#define MED_RELEASE_NUM 0
-
+#define MED_RELEASE_NUM 1
+/*En franglais*/
 #define MED_NUM_MAJEUR 3
 #define MED_NUM_MINEUR 2
-#define MED_NUM_RELEASE 0
+#define MED_NUM_RELEASE 1
 
 #define STR(x) #x
 #define _MED_VERSION(x,y,z) STR(x) "." STR(y) "." STR(z)
@@ -60,8 +68,7 @@ extern "C" {
 #define MED_NULL       (void *) NULL
 #define MED_MAX_PARA        20
 
-/** Longueurs des chaînes de caractères stockées dans
-    les fichier */
+/** Longueurs des chaînes de caractères stockées dans les fichiers */
 #define MED_COMMENT_SIZE 200
 #define MED_IDENT_SIZE 8
 #define MED_NAME_SIZE 64
@@ -104,8 +111,8 @@ typedef enum { MED_UNDEF_STMODE,  /**< Mode de stockage en mémoire non initiali
    \details Permet de choisir le mode d'ouverture d'un fichier MED.
 */
 typedef enum {MED_ACC_RDONLY, /**<Ouverture en lecture seule*/
-              MED_ACC_RDWR,   /**<Ouverture en lecture/ecriture, si un élément existe il est écrasé*/
-              MED_ACC_RDEXT,  /**<Ouverture en lecture/ecriture, si un élément existe une erreur est générée*/
+              MED_ACC_RDWR,   /**<Ouverture en lecture/ecriture. L'écriture d'un élément existant écrase l'élément.*/
+              MED_ACC_RDEXT,  /**<Ouverture en lecture/ecriture. L'écriture d'un élément existant génère une erreur.*/
               MED_ACC_CREAT,  /**<Créer le fichier s'il n'existe pas, l'écrase sinon*/
               MED_ACC_UNDEF   /**<Variable globale interne initialisée au mode d'ouverture*/ 
              } med_access_mode;
@@ -362,6 +369,19 @@ typedef struct {
 } med_memfile ;
 
 #define MED_MEMFILE_INIT {NULL, 0, 1, NULL, 0, 0, NULL, 0, 0, MED_ACC_RDONLY}
+
+/** \internal */
+#define AFF_MEMFILE \
+XSCRUTE(memfile->app_image_ptr);\
+ISCRUTE_long(memfile->app_image_size);\
+ISCRUTE_int(memfile->ref_count);\
+XSCRUTE(memfile->fapl_image_ptr);\
+ISCRUTE_long(memfile->fapl_image_size);\
+ISCRUTE_int(memfile->fapl_ref_count);\
+XSCRUTE(memfile->vfd_image_ptr);\
+ISCRUTE_long(memfile->vfd_image_size);\
+ISCRUTE_int(memfile->vfd_ref_count);\
+ISCRUTE_int(memfile->flags);
 
 
 #include "med_proto.h"

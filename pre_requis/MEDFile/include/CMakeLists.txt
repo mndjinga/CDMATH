@@ -2,6 +2,7 @@ ADD_SUBDIRECTORY(2.3.6)
 
 CONFIGURE_FILE(med.h.in ${CMAKE_CURRENT_BINARY_DIR}/med.h @ONLY)
 CONFIGURE_FILE(med_utils.h.in ${CMAKE_CURRENT_BINARY_DIR}/med_utils.h @ONLY)
+CONFIGURE_FILE(med_parameter.hf.in ${CMAKE_CURRENT_BINARY_DIR}/med_parameter.hf @ONLY)
 
 CONFIGURE_FILE(H5public_extract.h.in ${CMAKE_CURRENT_BINARY_DIR}/H5public_extract.h @ONLY)
 
@@ -32,7 +33,7 @@ SET(medF_HEADERS_H
   med.hf    
   med.hf77
   med.hf90
-  med_parameter.hf
+  ${CMAKE_CURRENT_BINARY_DIR}/med_parameter.hf
 )
 
 INSTALL(FILES ${medC_HEADERS_H} DESTINATION ${INSTALL_INCLUDE_DIR})

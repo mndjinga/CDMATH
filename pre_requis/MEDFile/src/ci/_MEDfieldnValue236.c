@@ -45,7 +45,7 @@ _MEDfieldnValue236(int dummy, ...)
   int                   _dummy                     =0;
   char     _localizationname  [MED_TAILLE_NOM+1]                 = "";
   char     _tmpprofilename    [MED_NAME_SIZE+1]                  = "", *_profilename=0;
-  char     _path              [MED_TAILLE_GAUSS+MED_TAILLE_NOM+1]= MED_GAUSS;
+  char     _path              [MED_LOCALIZATION_GRP_SIZE+MED_TAILLE_NOM+1]= MED_LOCALIZATION_GRP;
   char     _geotype           [MED_TAILLE_NOM_ENTITE+1]          = "";
 
 

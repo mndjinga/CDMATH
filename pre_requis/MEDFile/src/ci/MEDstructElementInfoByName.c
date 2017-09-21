@@ -63,7 +63,7 @@ MEDstructElementInfoByName(const med_idt             fid,
 
   med_err           _ret=-1;
   med_idt            _elemid=0, _cstid=0;
-  char              _path[MED_TAILLE_STRCT+MED_NAME_SIZE+1]=MED_STRCT;
+  char              _path[MED_ELSTRUCT_GRP_SIZE+MED_NAME_SIZE+1]=MED_ELSTRUCT_GRP;
   char              __profilename   [MED_NAME_SIZE+1]=MED_NO_PROFILE_INTERNAL;
   const char*       _profilename   = __profilename;
   med_int           _intentitytype = MED_UNDEF_ENTITY_TYPE;

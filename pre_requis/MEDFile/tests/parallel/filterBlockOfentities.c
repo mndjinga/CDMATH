@@ -76,31 +76,21 @@
 
 /* #define USER_MODE MED_COMPACT */
 
-
-int main (int argc, char **argv)
-
-
-{
-  med_err _ret=0;
-  med_idt _fid;
-
-  int mpi_size, mpi_rank;
-  MPI_Comm comm = MPI_COMM_WORLD;
-  MPI_Info info = MPI_INFO_NULL;
-
-  med_int    _nentitiesfiltered=0;
-  med_int    *_filterarray=NULL;
+typedef struct {
+  MPI_Info info;
+  MPI_Comm comm;
+  int      mpi_size;
+  int      mpi_rank;
+  med_int  nentitiesfiltered;
+  med_int *filterarray;
+} COM_info;
 
 
-  MPI_Init(&argc, &argv);
-  MPI_Comm_size(MPI_COMM_WORLD, &mpi_size);
-  MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
 
-
-  med_err generateFieldFile( const med_size nentities, const med_size nvaluesperentity, const med_size nconstituentpervalue,
-			     const med_switch_mode constituentmode,GetBlocksOfEntitiesType getBlockOfEntities, const med_int nbblocksperproc,
-			     GenerateDataType generateDatas,
-			     const med_storage_mode storagemode, const med_size profilearraysize,  const char * const fieldnameprefix ) {
+med_err generateFieldFile( const med_size nentities, const med_size nvaluesperentity, const med_size nconstituentpervalue,
+			   const med_switch_mode constituentmode,GetBlocksOfEntitiesType getBlockOfEntities, const med_int nbblocksperproc,
+			   GenerateDataType generateDatas,
+			   const med_storage_mode storagemode, const med_size profilearraysize,  const char * const fieldnameprefix,  COM_info * const cominfo ) {
 
 /*     static int   _fileno=0; */
     med_err      _ret=-1;
@@ -119,11 +109,15 @@ int main (int argc, char **argv)
     med_filter   filter = MED_FILTER_INIT;
     med_size     _nusedentities        = nentities;
     med_size     _io_count                = nbblocksperproc;
-    med_idt      _fidseq;
+    med_idt      _fidseq,_fid;
 
-    /*TODO : EXTERNALISER CES DEFINITIONS ET GENERALISER LE PRINCIPE */
+    MPI_Info info     = cominfo->info;     
+    MPI_Comm comm     = cominfo->comm;
+    int      mpi_size = cominfo->mpi_size;
+    int      mpi_rank = cominfo->mpi_rank;
+
     char         *_MED_MODE_SWITCH_MSG[3]={"MED_FULL_INTERLACE", "MED_NO_INTERLACE","MED_UNDEF_INTERLACE",};
-    char         *_MED_STORAGE_MODE_MSG[3]={"MED_NO_PFLMODE","MED_GLOBAL_PFLMODE", "MED_COMPACT_PFLMODE"};
+    char         *_MED_STORAGE_MODE_MSG[3]={"MED_NO_STMODE","MED_GLOBAL_STMODE", "MED_COMPACT_STMODE"};
 
     med_geometry_type     _geotype       = MED_TRIA6;
     med_int               _geodim        = _geotype/100;
@@ -263,23 +257,23 @@ int main (int argc, char **argv)
 
       /*Génère un filtre de selection simple s'il n'a pas déjà été généré lors d'un précédent appel */
       /*TODO : Déplacer cette appel dans le main après avoir externaliser la génération du profile */
-      if (!_filterarray)
+      if (!(cominfo->filterarray))
 	if ( generateFilterArray(  nentities,  nvaluesperentity, nconstituentpervalue,
 				   profilearraysize, _profilearray,
-				   &_nentitiesfiltered, &_filterarray ) < 0 ) {
+				   &(cominfo->nentitiesfiltered), &(cominfo->filterarray) ) < 0 ) {
 	  goto ERROR;
 	}
 
-      ISCRUTE(_nentitiesfiltered);
+      ISCRUTE(cominfo->nentitiesfiltered);
       /*Stocke le filtre utilisé dans le fichier .ascii*/
-      for (_i=0; _i < _nentitiesfiltered; ++_i ) {
-/* 	ISCRUTE(_filterarray[_i]); */
-	fprintf(_asciifile,"%d ",_filterarray[_i]) ;
+      for (_i=0; _i < cominfo->nentitiesfiltered; ++_i ) {
+/* 	ISCRUTE(cominfo->filterarray[_i]); */
+	fprintf(_asciifile,"%d ",cominfo->filterarray[_i]) ;
       }
       fprintf(_asciifile,"\n") ;
 
 
-      /*Pas de profile possible (profilearraysize == 0) en MED_GLOBAL_PFLMODE sur un fichier géré en parallel */
+      /*Pas de profile possible (profilearraysize == 0) en MED_GLOBAL_STMODE sur un fichier géré en parallel */
       if ( profilearraysize ) {
 	_nentitiesarrayvalues = profilearraysize;
       } else {
@@ -302,7 +296,7 @@ int main (int argc, char **argv)
       /*Création d'un filtre de sélection simple, pour une lecture séquentielle par le processys 0*/
       if ( MEDfilterEntityCr(_fidseq, nentities, nvaluesperentity, nconstituentpervalue,
 			     MED_ALL_CONSTITUENT, constituentmode, storagemode, _profilename,
-			     _nentitiesfiltered,_filterarray, &filter2) < 0 ) {
+			     cominfo->nentitiesfiltered,cominfo->filterarray, &filter2) < 0 ) {
 	MED_ERR_(_ret,MED_ERR_CREATE,MED_ERR_FILTER,"");
 	goto ERROR;
       }
@@ -316,22 +310,22 @@ int main (int argc, char **argv)
 
       /*AFFICHAGE TOUJOURS EN FULL INTERLACE QUELQUES SOIENT LES COMBINAISONS*/
       /*TODO : Externaliser l'affichage*/
-      if ( storagemode == MED_GLOBAL_PFLMODE ) {
+      if ( storagemode == MED_GLOBAL_STMODE ) {
 	switch (constituentmode) {
 	case MED_FULL_INTERLACE:
-	  for (_i=0; _i < _nentitiesfiltered; ++_i)
+	  for (_i=0; _i < cominfo->nentitiesfiltered; ++_i)
 	    for (_j=0; _j < nvaluesperentity; ++_j)
 	      for (_k=0; _k < nconstituentpervalue; ++_k) {
-		_ind = (_filterarray[_i]-1)*nvaluesperentity*nconstituentpervalue+ _j*nconstituentpervalue+_k;
+		_ind = (cominfo->filterarray[_i]-1)*nvaluesperentity*nconstituentpervalue+ _j*nconstituentpervalue+_k;
 /* 		fprintf(stdout,"%s%3d%s = %f\n","_filteredarrayvaluesFULLGLB[",_ind,"]",_filteredarrayvalues[_ind]) ; */
 		fprintf(_asciifile,"%f\n",_filteredarrayvalues[_ind]) ;
 	      }
 	  break;
 	case MED_NO_INTERLACE:
-	  for (_j=0; _j < _nentitiesfiltered; ++_j)
+	  for (_j=0; _j < cominfo->nentitiesfiltered; ++_j)
 	    for (_k=0; _k < nvaluesperentity; ++_k)
 	      for (_i=0; _i < nconstituentpervalue; ++_i) {
-		_ind =_i*nentities*nvaluesperentity+ (_filterarray[_j]-1)*nvaluesperentity +_k;
+		_ind =_i*nentities*nvaluesperentity+ (cominfo->filterarray[_j]-1)*nvaluesperentity +_k;
 /* 		fprintf(stdout,"%s%3d%s = %f\n","_filteredarrayvaluesNOGLB[",_ind,"]",_filteredarrayvalues[_ind]); */
 		fprintf(_asciifile,"%f\n",_filteredarrayvalues[_ind]);
 	      }
@@ -340,7 +334,7 @@ int main (int argc, char **argv)
       }  else
 	switch (constituentmode) {
 	case MED_FULL_INTERLACE:
-	  for (_i=0; _i < _nentitiesfiltered; ++_i )
+	  for (_i=0; _i < cominfo->nentitiesfiltered; ++_i )
 	    for (_j=0; _j < nvaluesperentity; ++_j)
 	      for (_k=0; _k < nconstituentpervalue; ++_k) {
 		_ind = _i*nvaluesperentity*nconstituentpervalue+_j*nconstituentpervalue+_k;
@@ -349,10 +343,10 @@ int main (int argc, char **argv)
 	  }
 	  break;
 	case MED_NO_INTERLACE:
-	  for (_j=0; _j < _nentitiesfiltered; ++_j)
+	  for (_j=0; _j < cominfo->nentitiesfiltered; ++_j)
 	    for (_k=0; _k < nvaluesperentity; ++_k)
 	      for (_i=0; _i < nconstituentpervalue; ++_i) {
-		_ind =_i*_nentitiesfiltered*nvaluesperentity+ _j*nvaluesperentity +_k;
+		_ind =_i*cominfo->nentitiesfiltered*nvaluesperentity+ _j*nvaluesperentity +_k;
 		/* _ind =_i*_nentitiesarrayvalues*nvaluesperentity+ (_filterarray[_j]-1)*nvaluesperentity +_k; */
 /* 		fprintf(stdout,"%s%3d%s = %f\n","_filteredarrayvaluesNOCP[",_ind,"]",_filteredarrayvalues[_ind]); */
 		fprintf(_asciifile,"%f\n",_filteredarrayvalues[_ind]);
@@ -394,25 +388,40 @@ int main (int argc, char **argv)
     }
 
     return _ret;
-  }
+}
 
 
 
+int main (int argc, char **argv)
 
-  /* MAIN */
-  med_size            _nbblocksperproc    = 0;
+
+{
+  med_err _ret=0;
+  COM_info _cominfo;
+  _cominfo.comm = MPI_COMM_WORLD;
+  _cominfo.info = MPI_INFO_NULL;
+  _cominfo.nentitiesfiltered=0;
+  _cominfo.filterarray      =NULL;
+
+
+
+  MPI_Init(&argc, &argv);
+  MPI_Comm_size(MPI_COMM_WORLD, &(_cominfo.mpi_size));
+  MPI_Comm_rank(MPI_COMM_WORLD, &(_cominfo.mpi_rank));
+
+  med_size      _nbblocksperproc       = 0;
   int           _nentities             = 0;
   int           _nvaluesperentity      = 0;
   int           _nconstituentpervalue  = 0;
 
-  if (mpi_rank == 0 ) {
+  if (_cominfo.mpi_rank == 0 ) {
 
     struct tm *_tm ;
     time_t _tt=time(0);
     _tm = localtime(&_tt);
 
     srandom((*_tm).tm_sec * (*_tm).tm_min );
-    _nbblocksperproc         = 1 + (int) (mpi_size * (random() / (RAND_MAX + 1.0)));
+    _nbblocksperproc      = 1 + (int) (_cominfo.mpi_size * (random() / (RAND_MAX + 1.0)));
     _nentities            = 1 + (int) (1000.0 * (random() / (RAND_MAX + 1.0)));
     _nvaluesperentity     = 1 + (int) (11.0 * (random() / (RAND_MAX + 1.0)));
     _nconstituentpervalue = 1 + (int) (7.0 * (random() / (RAND_MAX + 1.0)));
@@ -429,7 +438,7 @@ int main (int argc, char **argv)
 
   if ( (sizeof(med_size)%(sizeof(MPI_LONG)))==0 ) {
 
-    MPI_Bcast(&_nbblocksperproc         , sizeof(med_size)/sizeof(MPI_LONG), MPI_LONG, 0, MPI_COMM_WORLD);
+    MPI_Bcast(&_nbblocksperproc      , sizeof(med_size)/sizeof(MPI_LONG), MPI_LONG, 0, MPI_COMM_WORLD);
     MPI_Bcast(&_nentities            , sizeof(med_size)/sizeof(MPI_LONG), MPI_LONG, 0, MPI_COMM_WORLD);
     MPI_Bcast(&_nvaluesperentity     , sizeof(med_size)/sizeof(MPI_LONG), MPI_LONG, 0, MPI_COMM_WORLD);
     MPI_Bcast(&_nconstituentpervalue , sizeof(med_size)/sizeof(MPI_LONG), MPI_LONG, 0, MPI_COMM_WORLD);
@@ -444,26 +453,26 @@ int main (int argc, char **argv)
 
   GenerateDataType generateDatas = 0;
   med_switch_mode  _switchmode  = MED_UNDEF_INTERLACE;
-  med_storage_mode _storagemode = MED_UNDEF_PFLMODE;
+  med_storage_mode _storagemode = MED_UNDEF_STMODE;
   /*Pour que les 4 fichiers générés soient identiques, on désactive l'utilisation des profils
-    qui n'est pas utilisable en mode GLOBAL et // */
+    qui n'est pas utilisable en mode GLOBAL+// */
   med_int          _profilearraysize=0;
-  /*   med_int       _profilearraysize=_nentities/2; */
+  /* med_int       _profilearraysize=_nentities/2; */
 
   for (_switchmode = MED_FULL_INTERLACE ; _switchmode <= MED_NO_INTERLACE; ++_switchmode) {
 
     if ( _switchmode == MED_FULL_INTERLACE ) generateDatas = generateFullIDatas;
     else generateDatas = generateNoIDatas;
 
-    for (_storagemode = MED_GLOBAL_PFLMODE ; _storagemode <= MED_COMPACT_PFLMODE; ++_storagemode) {
+    for (_storagemode = MED_GLOBAL_STMODE ; _storagemode <= MED_COMPACT_STMODE; ++_storagemode) {
 
-      if ( (_storagemode == MED_GLOBAL_PFLMODE ) && (_profilearraysize) ) _profilearraysize=0;
+      if ( (_storagemode == MED_GLOBAL_STMODE ) && (_profilearraysize) ) _profilearraysize=0;
 
       if ( generateFieldFile( _nentities,  _nvaluesperentity, _nconstituentpervalue,
 			      _switchmode, getCyclicBlocksOfEntities, _nbblocksperproc, generateDatas,
-			      _storagemode, _profilearraysize,  _fieldnameprefix ) < 0 ) {
+			      _storagemode, _profilearraysize,  _fieldnameprefix, & _cominfo) < 0 ) {
 	MED_ERR_(_ret,MED_ERR_WRITE,MED_ERR_FIELD,_fieldnameprefix);
-	ISCRUTE(mpi_rank);
+	ISCRUTE(_cominfo.mpi_rank);
 	goto ERROR;
       }
 
@@ -474,7 +483,7 @@ int main (int argc, char **argv)
   _ret = 0;
  ERROR:
 
-  if (_filterarray) free(_filterarray);
+  if ( _cominfo.filterarray = NULL ) free( _cominfo.filterarray );
 
   /*pour arch. BLueGene : Sync entre GPFS et LSF : sleep(360) */
 

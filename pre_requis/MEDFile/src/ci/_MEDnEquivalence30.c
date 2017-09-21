@@ -26,7 +26,7 @@
 void _MEDnEquivalence30(int dummy, ...) {
 
 
-  char             _path[MED_TAILLE_EQS+MED_NAME_SIZE+1]=MED_EQS;
+  char             _path[MED_EQUIVALENCE_GRP_SIZE+MED_NAME_SIZE+1]=MED_EQUIVALENCE_GRP;
   med_int          _ret=-1,_err=-1;
   med_size         _tmpn=0;
 

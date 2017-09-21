@@ -20,7 +20,7 @@
 
 #include <vector>
 
-static PyObject *convertMEDFileMesh(ParaMEDMEM::MEDFileMesh* mesh, int owner) throw(INTERP_KERNEL::Exception)
+static PyObject *convertMEDFileMesh(MEDCoupling::MEDFileMesh* mesh, int owner) throw(INTERP_KERNEL::Exception)
 {
   PyObject *ret=0;
   if(!mesh)
@@ -28,18 +28,18 @@ static PyObject *convertMEDFileMesh(ParaMEDMEM::MEDFileMesh* mesh, int owner) th
       Py_XINCREF(Py_None);
       return Py_None;
     }
-  if(dynamic_cast<ParaMEDMEM::MEDFileUMesh *>(mesh))
-    ret=SWIG_NewPointerObj((void*)mesh,SWIGTYPE_p_ParaMEDMEM__MEDFileUMesh,owner);
-  if(dynamic_cast<ParaMEDMEM::MEDFileCMesh *>(mesh))
-    ret=SWIG_NewPointerObj((void*)mesh,SWIGTYPE_p_ParaMEDMEM__MEDFileCMesh,owner);
-  if(dynamic_cast<ParaMEDMEM::MEDFileCurveLinearMesh *>(mesh))
-    ret=SWIG_NewPointerObj((void*)mesh,SWIGTYPE_p_ParaMEDMEM__MEDFileCurveLinearMesh,owner);
+  if(dynamic_cast<MEDCoupling::MEDFileUMesh *>(mesh))
+    ret=SWIG_NewPointerObj((void*)mesh,SWIGTYPE_p_MEDCoupling__MEDFileUMesh,owner);
+  if(dynamic_cast<MEDCoupling::MEDFileCMesh *>(mesh))
+    ret=SWIG_NewPointerObj((void*)mesh,SWIGTYPE_p_MEDCoupling__MEDFileCMesh,owner);
+  if(dynamic_cast<MEDCoupling::MEDFileCurveLinearMesh *>(mesh))
+    ret=SWIG_NewPointerObj((void*)mesh,SWIGTYPE_p_MEDCoupling__MEDFileCurveLinearMesh,owner);
   if(!ret)
     throw INTERP_KERNEL::Exception("Not recognized type of MEDFileMesh on downcast !");
   return ret;
 }
 
-static PyObject *convertMEDFileParameter1TS(ParaMEDMEM::MEDFileParameter1TS* p1ts, int owner) throw(INTERP_KERNEL::Exception)
+static PyObject *convertMEDFileParameter1TS(MEDCoupling::MEDFileParameter1TS* p1ts, int owner) throw(INTERP_KERNEL::Exception)
 {
   PyObject *ret=0;
   if(!p1ts)
@@ -48,15 +48,15 @@ static PyObject *convertMEDFileParameter1TS(ParaMEDMEM::MEDFileParameter1TS* p1t
       return Py_None;
     }
   if(dynamic_cast<MEDFileParameterDouble1TS *>(p1ts))
-    ret=SWIG_NewPointerObj((void*)p1ts,SWIGTYPE_p_ParaMEDMEM__MEDFileParameterDouble1TS,owner);
+    ret=SWIG_NewPointerObj((void*)p1ts,SWIGTYPE_p_MEDCoupling__MEDFileParameterDouble1TS,owner);
   if(dynamic_cast<MEDFileParameterDouble1TSWTI *>(p1ts))
-    ret=SWIG_NewPointerObj((void*)p1ts,SWIGTYPE_p_ParaMEDMEM__MEDFileParameterDouble1TSWTI,owner);
+    ret=SWIG_NewPointerObj((void*)p1ts,SWIGTYPE_p_MEDCoupling__MEDFileParameterDouble1TSWTI,owner);
   if(!ret)
     throw INTERP_KERNEL::Exception("Not recognized type of MEDFileParameter1TS on downcast !");
   return ret;
 }
 
-static PyObject *convertMEDFileField1TS(ParaMEDMEM::MEDFileAnyTypeField1TS *p, int owner) throw(INTERP_KERNEL::Exception)
+static PyObject *convertMEDFileField1TS(MEDCoupling::MEDFileAnyTypeField1TS *p, int owner) throw(INTERP_KERNEL::Exception)
 {
   PyObject *ret=0;
   if(!p)
@@ -65,15 +65,15 @@ static PyObject *convertMEDFileField1TS(ParaMEDMEM::MEDFileAnyTypeField1TS *p, i
       return Py_None;
     }
   if(dynamic_cast<MEDFileField1TS *>(p))
-    ret=SWIG_NewPointerObj((void*)p,SWIGTYPE_p_ParaMEDMEM__MEDFileField1TS,owner);
+    ret=SWIG_NewPointerObj((void*)p,SWIGTYPE_p_MEDCoupling__MEDFileField1TS,owner);
   if(dynamic_cast<MEDFileIntField1TS *>(p))
-    ret=SWIG_NewPointerObj((void*)p,SWIGTYPE_p_ParaMEDMEM__MEDFileIntField1TS,owner);
+    ret=SWIG_NewPointerObj((void*)p,SWIGTYPE_p_MEDCoupling__MEDFileIntField1TS,owner);
   if(!ret)
     throw INTERP_KERNEL::Exception("Not recognized type of MEDFileAnyTypeField1TS on downcast !");
   return ret;
 }
 
-static PyObject *convertMEDFileFieldMultiTS(ParaMEDMEM::MEDFileAnyTypeFieldMultiTS *p, int owner) throw(INTERP_KERNEL::Exception)
+static PyObject *convertMEDFileFieldMultiTS(MEDCoupling::MEDFileAnyTypeFieldMultiTS *p, int owner) throw(INTERP_KERNEL::Exception)
 {
   PyObject *ret=0;
   if(!p)
@@ -82,15 +82,15 @@ static PyObject *convertMEDFileFieldMultiTS(ParaMEDMEM::MEDFileAnyTypeFieldMulti
       return Py_None;
     }
   if(dynamic_cast<MEDFileFieldMultiTS *>(p))
-    ret=SWIG_NewPointerObj((void*)p,SWIGTYPE_p_ParaMEDMEM__MEDFileFieldMultiTS,owner);
+    ret=SWIG_NewPointerObj((void*)p,SWIGTYPE_p_MEDCoupling__MEDFileFieldMultiTS,owner);
   if(dynamic_cast<MEDFileIntFieldMultiTS *>(p))
-    ret=SWIG_NewPointerObj((void*)p,SWIGTYPE_p_ParaMEDMEM__MEDFileIntFieldMultiTS,owner);
+    ret=SWIG_NewPointerObj((void*)p,SWIGTYPE_p_MEDCoupling__MEDFileIntFieldMultiTS,owner);
   if(!ret)
     throw INTERP_KERNEL::Exception("Not recognized type of MEDFileAnyTypeFieldMultiTS on downcast !");
   return ret;
 }
 
-static PyObject *convertMEDMeshMultiLev(ParaMEDMEM::MEDMeshMultiLev *p, int owner) throw(INTERP_KERNEL::Exception)
+static PyObject *convertMEDMeshMultiLev(MEDCoupling::MEDMeshMultiLev *p, int owner) throw(INTERP_KERNEL::Exception)
 {
   PyObject *ret=0;
   if(!p)
@@ -99,11 +99,11 @@ static PyObject *convertMEDMeshMultiLev(ParaMEDMEM::MEDMeshMultiLev *p, int owne
       return Py_None;
     }
   if(dynamic_cast<MEDUMeshMultiLev *>(p))
-    ret=SWIG_NewPointerObj((void*)p,SWIGTYPE_p_ParaMEDMEM__MEDUMeshMultiLev,owner);
+    ret=SWIG_NewPointerObj((void*)p,SWIGTYPE_p_MEDCoupling__MEDUMeshMultiLev,owner);
   if(dynamic_cast<MEDCMeshMultiLev *>(p))
-    ret=SWIG_NewPointerObj((void*)p,SWIGTYPE_p_ParaMEDMEM__MEDCMeshMultiLev,owner);
+    ret=SWIG_NewPointerObj((void*)p,SWIGTYPE_p_MEDCoupling__MEDCMeshMultiLev,owner);
   if(dynamic_cast<MEDCurveLinearMeshMultiLev *>(p))
-    ret=SWIG_NewPointerObj((void*)p,SWIGTYPE_p_ParaMEDMEM__MEDCurveLinearMeshMultiLev,owner);
+    ret=SWIG_NewPointerObj((void*)p,SWIGTYPE_p_MEDCoupling__MEDCurveLinearMeshMultiLev,owner);
   if(!ret)
     throw INTERP_KERNEL::Exception("Not recognized type of MEDMeshMultiLev on downcast !");
   return ret;
@@ -185,14 +185,28 @@ static void converPyListToVecString(PyObject *pyLi, std::vector<std::string>& v)
     }
 }
 
-static PyObject *convertFieldDoubleVecToPy(const std::vector<ParaMEDMEM::MEDCouplingFieldDouble *>& li)
+static PyObject *convertFieldDoubleVecToPy(const std::vector<MEDCoupling::MEDCouplingFieldDouble *>& li)
 {
   int sz=li.size();
   PyObject *ret=PyList_New(sz);
   for(int i=0;i<sz;i++)
     {
-      PyObject *o=SWIG_NewPointerObj((void*)li[i],SWIGTYPE_p_ParaMEDMEM__MEDCouplingFieldDouble,SWIG_POINTER_OWN | 0);
+      PyObject *o=SWIG_NewPointerObj((void*)li[i],SWIGTYPE_p_MEDCoupling__MEDCouplingFieldDouble,SWIG_POINTER_OWN | 0);
       PyList_SetItem(ret,i,o);
+    }
+  return ret;
+}
+
+PyObject *convertVecPairIntToPy(const std::vector< std::pair<int,int> >& vec)
+{
+  PyObject *ret(PyList_New(vec.size()));
+  int rk=0;
+  for(std::vector< std::pair<int,int> >::const_iterator iter=vec.begin();iter!=vec.end();iter++,rk++)
+    {
+      PyObject *elt=PyTuple_New(2);
+      PyTuple_SetItem(elt,0,SWIG_From_int((*iter).first));
+      PyTuple_SetItem(elt,1,SWIG_From_int((*iter).second));
+      PyList_SetItem(ret,rk,elt);
     }
   return ret;
 }
@@ -209,6 +223,20 @@ PyObject *convertVecPairVecStToPy(const std::vector< std::pair<std::vector<std::
       for(int j=0;j<sz2;j++)
         PyList_SetItem(ll,j,PyString_FromString(vec[i].first[j].c_str()));
       PyTuple_SetItem(t,0,ll);
+      PyTuple_SetItem(t,1,PyString_FromString(vec[i].second.c_str()));
+      PyList_SetItem(ret,i,t);
+    }
+  return ret;
+}
+
+PyObject *convertVectPairStToPy(const std::vector< std::pair<std::string, std::string > >& vec)
+{
+  int sz=(int)vec.size();
+  PyObject *ret=PyList_New(sz);
+  for(int i=0;i<sz;i++)
+    {
+      PyObject *t=PyTuple_New(2);
+      PyTuple_SetItem(t,0,PyString_FromString(vec[i].first.c_str()));
       PyTuple_SetItem(t,1,PyString_FromString(vec[i].second.c_str()));
       PyList_SetItem(ret,i,t);
     }
@@ -356,3 +384,31 @@ int MEDFileFieldsgetitemSingleTS__(const MEDFileFields *self, PyObject *obj) thr
   else
     throw INTERP_KERNEL::Exception("MEDFileFields::__getitem__ : only integer or string with fieldname supported !");
 }
+
+void convertToMapIntDataArrayInt(PyObject *pyMap, std::map<int, MCAuto<DataArrayInt> >& cppMap)
+{
+  if(!PyDict_Check(pyMap))
+    throw INTERP_KERNEL::Exception("convertToMapIntDataArrayInt : input is not a python map !");
+  PyObject *key, *value;
+  Py_ssize_t pos(0);
+  cppMap.clear();
+  while (PyDict_Next(pyMap,&pos,&key,&value))
+    {
+      if(!PyInt_Check(key))
+        throw INTERP_KERNEL::Exception("convertToMapIntDataArrayInt : keys in map must be PyInt !");
+      long k(PyInt_AS_LONG(key));
+      void *argp(0);
+      int status(SWIG_ConvertPtr(value,&argp,SWIGTYPE_p_MEDCoupling__DataArrayInt,0|0));
+      if(!SWIG_IsOK(status))
+        {
+          std::ostringstream oss; oss << "convertToMapIntDataArrayInt : values in map must be DataArrayInt !";
+          throw INTERP_KERNEL::Exception(oss.str().c_str());
+        }
+      DataArrayInt *arg(reinterpret_cast<DataArrayInt*>(argp));
+      MCAuto<DataArrayInt> arg2(arg);
+      if(arg)
+        arg->incrRef();
+      cppMap[k]=arg2;
+    }
+}
+

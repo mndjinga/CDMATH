@@ -1706,7 +1706,7 @@ void lecture_maillage_non_structure(med_idt fid,
 
   /* Combien de types d'éléments de structure utilisés dans le maillage */
   _nmodels = MEDmeshnEntity(fid,nommaa,numdt,numit,
-			      MED_STRUCT_ELEMENT,MED_GEO_ALL,MED_CONNECTIVITY,MED_GLOBAL_PFLMODE,
+			      MED_STRUCT_ELEMENT,MED_GEO_ALL,MED_CONNECTIVITY,MED_GLOBAL_STMODE,
 			      &chgt,&trsf);
   EXIT_IF(_nmodels<0,
 	  "Erreur à la lecture du nombre de type géométrique pour le type d'entités MED_STRUCT_ELEMENT",NULL);

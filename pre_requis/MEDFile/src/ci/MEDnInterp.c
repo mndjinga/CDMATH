@@ -34,7 +34,7 @@ med_int
 MEDnInterp(const med_idt fid) {
 
   med_int        _ret=-1,_err=-1;
-  char           _path[MED_TAILLE_INTERP+1]=MED_INTERP;
+  char           _path[MED_INTERPOLATION_GRP_SIZE+1]=MED_INTERPOLATION_GRP;
   med_size       _tmpn=0;
 
   /*

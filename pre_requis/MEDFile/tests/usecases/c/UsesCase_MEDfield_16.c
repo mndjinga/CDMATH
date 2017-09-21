@@ -174,7 +174,7 @@ int main (int argc, char **argv) {
 	for (pit=0; pit<nprofile; pit++) {
 	  
 	  if ((nvalues = MEDfieldnValueWithProfile(fid, fieldname, numdt, numit, MED_STRUCT_ELEMENT, geotype,
-						   pit+1, MED_COMPACT_PFLMODE, profilename, &profilesize,
+						   pit+1, MED_COMPACT_STMODE, profilename, &profilesize,
 						   localizationname, &nintegrationpoint)) < 0) {
 	    MESSAGE("ERROR : read number of values with a profile ...");
 	    goto ERROR;
@@ -186,7 +186,7 @@ int main (int argc, char **argv) {
 	      goto ERROR;
 	    }
 	    if (MEDfieldValueWithProfileRd(fid, fieldname, numdt, numit, MED_STRUCT_ELEMENT, geotype,
-					   MED_COMPACT_PFLMODE, profilename,
+					   MED_COMPACT_STMODE, profilename,
 					   MED_FULL_INTERLACE, MED_ALL_CONSTITUENT, 
 					   (unsigned char*) values) < 0) {
 	      MESSAGE("ERROR : read fields values for cells ..."); 

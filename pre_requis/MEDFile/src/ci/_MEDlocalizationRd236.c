@@ -35,7 +35,7 @@ _MEDlocalizationRd236(int dummy, ...) {
   med_idt _lzid=0, _root=0;
   med_int _nentity=0,_nipoint=0,_spacedimension=0;
   med_int _intgeotype = -1;
-  char    _path[MED_TAILLE_GAUSS+MED_NAME_SIZE+1]=MED_GAUSS;
+  char    _path[MED_LOCALIZATION_GRP_SIZE+MED_NAME_SIZE+1]=MED_LOCALIZATION_GRP;
   med_filter     _filter        = MED_FILTER_INIT;
 
 

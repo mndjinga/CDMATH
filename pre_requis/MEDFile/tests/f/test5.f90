@@ -110,7 +110,7 @@
      endif
 
      if (cret .eq. 0) then
-        call mfrcre(fid,nnoe,1,sdim,2,MED_FULL_INTERLACE,MED_GLOBAL_PFLMODE, &
+        call mfrcre(fid,nnoe,1,sdim,2,MED_FULL_INTERLACE,MED_GLOBAL_STMODE, &
                     MED_NO_PROFILE,MED_UNDEF_SIZE,flta,flt(1),cret)
      endif
      if (cret.ne.0) then

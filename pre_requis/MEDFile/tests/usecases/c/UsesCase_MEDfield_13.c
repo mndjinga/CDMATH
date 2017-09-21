@@ -77,7 +77,7 @@ int main (int argc, char **argv) {
   /* STEP 1 : dt1 = 5.5, it = 1*/
   /* MED_QUAD4  : with no profile */ 
   if (MEDfieldValueWithProfileWr(fid, fieldname, 1, 1, 5.5, MED_NODE_ELEMENT, MED_QUAD4, 
-				 MED_COMPACT_PFLMODE, MED_NO_PROFILE, MED_NO_LOCALIZATION,
+				 MED_COMPACT_STMODE, MED_NO_PROFILE, MED_NO_LOCALIZATION,
 				 MED_FULL_INTERLACE, MED_ALL_CONSTITUENT, 
 				 nquad4, (unsigned char*) quad4values_step1) < 0) {
     MESSAGE("ERROR : write field values on MED_QUAD4 ");
@@ -87,7 +87,7 @@ int main (int argc, char **argv) {
   /* STEP 2 : dt2 = 8.9, it = 1*/
   /* MED_QUAD4 : with no profile */
   if (MEDfieldValueWithProfileWr(fid, fieldname, 2, 1, 8.9, MED_NODE_ELEMENT, MED_QUAD4, 
-				 MED_COMPACT_PFLMODE, MED_NO_PROFILE, MED_NO_LOCALIZATION,
+				 MED_COMPACT_STMODE, MED_NO_PROFILE, MED_NO_LOCALIZATION,
 				 MED_FULL_INTERLACE, MED_ALL_CONSTITUENT,  
 				 nquad4, (unsigned char*) quad4values_step2) < 0) {
     MESSAGE("ERROR : write field values on MED_QUAD4 ... ");

@@ -18,9 +18,18 @@ AM_CFLAGS = -DDEF_LECT_ECR
 if WITHPMED
 
 noinst_HEADERS = generateDatas.h  getBlocksOfEntitiesPartition.h generateFilterArray.h
- 
+
+if INSTALLTEST
+
 testc_PROGRAMS = \
 filterBlockOfentities 
+
+else
+
+check_PROGRAMS = \
+filterBlockOfentities 
+
+endif
 
 filterBlockOfentities_SOURCES = \
 filterBlockOfentities.c \
@@ -29,7 +38,7 @@ generateFilterArray.c \
 getBlocksOfEntitiesPartition.c
 
 
-LDADD = $(top_builddir)/src/libmedC.la
+LDADD = $(top_builddir)/src/libmedC.la @HDF5_LDFLAGS@ @HDF5_LIBS@
 
 nodist_EXTRA_filterBlockOfentities_SOURCES = dummy.cxx
 

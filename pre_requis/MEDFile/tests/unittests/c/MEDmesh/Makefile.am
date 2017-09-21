@@ -14,8 +14,9 @@ AM_CFLAGS = -DDEF_LECT_ECR
 #-DUSER_INTERLACE=MED_FULL_INTERLACE
 #-DDEF_LECT_AJOUT
 
-
-unittests_PROGRAMS = \
+# Les tests unitaires n'ont pas besoin d'être installés 
+#unittests_PROGRAMS = 
+check_PROGRAMS = \
 Test_MEDmeshNodeCoordinateTrsfWr \
 Test_MEDmeshNodeCoordinateTrsfRd
 

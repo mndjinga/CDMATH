@@ -50,7 +50,7 @@ MEDsubdomainJointCr(const med_idt      fid,
   med_access_mode _MED_ACCESS_MODE;
   med_idt        _root=0,_jntid=0,_meshid=0;
   med_err        _ret=-1;
-  char           _path[MED_TAILLE_JNT+MED_NAME_SIZE+1]=MED_JNT;
+  char           _path[MED_JOINT_GRP_SIZE+MED_NAME_SIZE+1]=MED_JOINT_GRP;
 
   /*
    * On inhibe le gestionnaire d'erreur
@@ -102,7 +102,7 @@ MEDsubdomainJointCr(const med_idt      fid,
     }
 
  /*  if ( (_jntid = _MEDmeshAssociatedGroupCr(fid, */
-/* 					  MED_JNT_NOM, */
+/* 					  MED_JOINT_NAME, */
 /* 					  localmeshname, */
 /* 					  numdt, */
 /* 					  numit, */
@@ -110,7 +110,7 @@ MEDsubdomainJointCr(const med_idt      fid,
 /* 					  MED_FALSE, */
 /* 					  subdomainJointname ) ) < 0)  { */
 /*     MED_ERR_(_ret,MED_ERR_CALL,MED_ERR_API,"_MEDmeshAssociatedGroupCr"); */
-/*     SSCRUTE(MED_JNT_NOM);SSCRUTE(localmeshname);ISCRUTE(numit);ISCRUTE(numdt); */
+/*     SSCRUTE(MED_JOINT_NAME);SSCRUTE(localmeshname);ISCRUTE(numit);ISCRUTE(numdt); */
 /*     SSCRUTE(subdomainJointname); */
 /*     goto ERROR; */
 /*   } */
@@ -159,7 +159,7 @@ MEDsubdomainJointCr(const med_idt      fid,
   }
 
   if (_root>0)            if (_MEDdatagroupFermer(_root) < 0) {
-    MED_ERR_(_ret,MED_ERR_CLOSE,MED_ERR_DATAGROUP,MED_JNT);
+    MED_ERR_(_ret,MED_ERR_CLOSE,MED_ERR_DATAGROUP,MED_JOINT_GRP);
     ISCRUTE_id(_jntid);
   }
 

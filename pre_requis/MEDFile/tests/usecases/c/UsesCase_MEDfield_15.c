@@ -84,7 +84,7 @@ int main (int argc, char **argv) {
   }
 
   if (MEDfieldValueWithProfileWr(fid, fieldname, MED_NO_DT, MED_NO_IT, MED_UNDEF_DT, MED_STRUCT_ELEMENT, geotype, 
-				 MED_COMPACT_PFLMODE, MED_NO_PROFILE, MED_NO_LOCALIZATION,
+				 MED_COMPACT_STMODE, MED_NO_PROFILE, MED_NO_LOCALIZATION,
 				 MED_FULL_INTERLACE, MED_ALL_CONSTITUENT,
 				 npart, (unsigned char*) part_speed1) < 0) {
     MESSAGE("ERROR : write field values on MED_PARTICLE ");

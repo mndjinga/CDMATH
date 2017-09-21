@@ -32,7 +32,7 @@ _MEDmeshnEntity30(int dummy, ...)
   med_int               _ret=-1,_err=-1;
   med_idt               _meshid=0, _datagroup=0,_datagroupf=0,_datagroup1=0;
   med_idt               _datagroup2=0,_datagroup3=0,_datagroup4=0,_dataset=0;
-  char                  _meshpath         [MED_TAILLE_SUP_MAA+MED_NAME_SIZE+1]="";
+  char                  _meshpath         [MED_MESH_SUPPORT_GRP_SIZE+MED_NAME_SIZE+1]="";
   char                  _datagroupname1   [2*MED_MAX_PARA+1]       ="";
   char                  _datagroupname2   [MED_TAILLE_NOM_ENTITE+1]="";
   char                  _datagroupname3   [MED_TAILLE_NOM_ENTITE+1]="";
@@ -511,10 +511,10 @@ _MEDmeshnEntity30(int dummy, ...)
   if (_profilearraysize)
     switch(storagemode) {
 
-    case MED_GLOBAL_PFLMODE :
+    case MED_GLOBAL_STMODE :
       break;
 
-    case MED_COMPACT_PFLMODE :
+    case MED_COMPACT_STMODE :
       if ( meddatatype!=MED_COORDINATE_TRSF )
 	_n=_profilearraysize;
 

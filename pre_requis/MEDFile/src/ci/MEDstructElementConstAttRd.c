@@ -48,7 +48,7 @@ MEDstructElementConstAttRd(
 {
   med_err            _ret=-1;
   med_idt            _attid=0, _elemid=0 ;
-  char               _path[MED_TAILLE_STRCT+MED_NAME_SIZE+1+MED_TAILLE_CSTATR+MED_NAME_SIZE+1]=MED_STRCT;
+  char               _path[MED_ELSTRUCT_GRP_SIZE+MED_NAME_SIZE+1+MED_TAILLE_CSTATR+MED_NAME_SIZE+1]=MED_ELSTRUCT_GRP;
   med_int            _intentitytype = 0;
   med_int            _nentity       = 0;
   med_attribute_type _constatttype  = MED_ATT_UNDEF;
@@ -145,7 +145,7 @@ MEDstructElementConstAttRd(
     _nentity = 1;
 
   if ( MEDfilterEntityCr(fid, _nentity, 1, _ncomponent, MED_ALL_CONSTITUENT,
-			 MED_FULL_INTERLACE,MED_COMPACT_PFLMODE,
+			 MED_FULL_INTERLACE,MED_COMPACT_STMODE,
 			 _profilename, MED_UNDEF_SIZE, NULL, &_filter) < 0 ) {
     MED_ERR_(_ret,MED_ERR_CREATE,MED_ERR_FILTER,MED_ERR_INTERNAL_MSG);
     goto ERROR;

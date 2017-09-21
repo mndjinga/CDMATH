@@ -43,7 +43,7 @@ MEDfieldComputingStepMeshWr(const med_idt fid,
   med_access_mode  _MED_ACCESS_MODE;
   med_err          _ret=-1;
   med_idt          _gid=0;
-  char    _path          [(MED_TAILLE_CHA+MED_NAME_SIZE+1)+2*MED_MAX_PARA+1]=MED_CHA;
+  char    _path          [(MED_FIELD_GRP_SIZE+MED_NAME_SIZE+1)+2*MED_MAX_PARA+1]=MED_FIELD_GRP;
 
   /*   char    _datagroupname1[2*MED_MAX_PARA+1]=""; */
   /*   char    _cstpname[2*MED_MAX_PARA+1]=""; */

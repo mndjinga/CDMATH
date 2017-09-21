@@ -101,7 +101,7 @@ int MEDimport(char * filein, char *  fileout) {
   bool  hasfileout=false;
   char *commande;
   med_int nprofil;
-  char chemin_profils[MED_TAILLE_PROFILS+1];
+  char chemin_profils[MED_PROFILE_GRP_SIZE+1];
   char chemin_liens[MED_TAILLE_LIENS+1];
   char version[9];
   int MAJ_21_22 = 0, MAJ_231_232 = 0, MAJ_236_300 = 0, MAJ_300_310 = 0, MAJ_310_320 = 0 ;
@@ -240,8 +240,8 @@ int MEDimport(char * filein, char *  fileout) {
       MAJ_21_22_profils(fid,nprofil);
       fprintf(stdout,"  Profils(s) : ... OK ...\n");
     } else {
-      strncpy(chemin_profils,MED_PROFILS,MED_TAILLE_PROFILS-1);
-      chemin_profils[MED_TAILLE_PROFILS-1] = '\0';
+      strncpy(chemin_profils,MED_PROFILE_GRP,MED_PROFILE_GRP_SIZE-1);
+      chemin_profils[MED_PROFILE_GRP_SIZE-1] = '\0';
       gid = _MEDdatagroupCreer(fid,chemin_profils);
       EXIT_IF(gid < 0,"Creation du groupe HDF sur les profils",chemin_profils);
       ret = _MEDdatagroupFermer(gid);

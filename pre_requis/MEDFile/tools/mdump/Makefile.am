@@ -19,6 +19,6 @@ mdump3_LDADD  = $(top_builddir)/src/libmed.la
 EXTRA_DIST += xmdump3.in
 bin_SCRIPTS += xmdump3
 
-install-exec-local:
+install-exec-hook:
 	${LN_S} -f $(DESTDIR)$(bindir)/mdump3 $(DESTDIR)$(bindir)/mdump && ${LN_S} -f $(DESTDIR)$(bindir)/xmdump3 $(DESTDIR)$(bindir)/xmdump 
 

@@ -42,6 +42,8 @@ ENDIF (CMAKE_CDMATH_SWIG)
 SET(MEDCOUPLING_INSTALL_RES share/resources CACHE PATH "Install path: MEDCoupling resources")
 SET(MEDCOUPLING_INSTALL_DOC share/doc CACHE PATH "Install path: MEDCoupling documentation")
 
+SET ( BUILD_SHARED_LIBS ON )
+
 # Med specific:
 
 SET(MEDCOUPLING_INSTALL_RES_DATA "${MEDCOUPLING_INSTALL_RES}/med" CACHE PATH "Install path: MEDCoupling specific data")

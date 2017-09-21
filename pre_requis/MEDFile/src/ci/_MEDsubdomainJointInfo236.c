@@ -32,7 +32,7 @@ void _MEDsubdomainJointInfo236(int dummy, ...) {
 
   med_idt  _jntid=0;
   med_err  _ret=-1,_err=-1;
-  char     _path[MED_TAILLE_MAA+MED_TAILLE_JNT+MED_TAILLE_NOM+1]=MED_MAA;
+  char     _path[MED_MESH_GRP_SIZE+MED_JOINT_GRP_SIZE+MED_TAILLE_NOM+1]=MED_MESH_GRP;
   int      _num;
   med_size _nstep=0,_nocstpncorrespondence=0;
 
@@ -74,7 +74,7 @@ void _MEDsubdomainJointInfo236(int dummy, ...) {
    * On recupere le nom du joint
    */
   strcat(_path,localmeshname);
-  strcat(_path,MED_JNT);
+  strcat(_path,MED_JOINT_GRP);
   if ( _MEDobjectGetName(fid, _path ,_num, jointname) < 0 ) {
     MED_ERR_(_ret,MED_ERR_ACCESS,MED_ERR_DATAGROUP,_path);ISCRUTE_int(jointit);
     SSCRUTE(_path);

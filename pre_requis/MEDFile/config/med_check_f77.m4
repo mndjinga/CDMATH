@@ -35,7 +35,8 @@ enable_fortran=$enableval
 AC_DEFUN([_MED_CALLING_F77], [
   AC_REQUIRE([_MED_DEFINE_F77_ENABLE])
 
-
+#la macro de détection du compilateur f77 cherchera le compilateur séquentiel
+#si mpi_wanted_test == no
   AX_PROG_F77_MPI(test "x$mpi_wanted_test" = "xyes",[],[
     if test x"$mpi_wanted_test" = xyes && test x"$enable_fortran" = xyes ; then
       AC_MSG_FAILURE([MPI F77 compiler requested, but couldn't use MPI.])
@@ -47,6 +48,8 @@ AC_DEFUN([_MED_CALLING_F77], [
 
 AC_DEFUN_ONCE([MED_CHECK_F77],dnl
 [
+#The macro for detecting Fortran compilers must not be called before
+# testing mpi fortran compiler frontend
 AC_BEFORE([$0],[AC_PROG_F77])
 AC_REQUIRE([_MED_CALLING_F77])
 

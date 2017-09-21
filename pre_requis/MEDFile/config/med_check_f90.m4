@@ -20,7 +20,7 @@ AC_DEFUN([_MED_DEFINE_F90_ARGS],[
 ## or by the --with-f90 option
  AC_ARG_WITH([f90],
              AC_HELP_STRING([--with-f90=<compiler>],
- 	                   [Use <compiler> for F90 compiler]),
+ 	                   [Use <compiler> for F90 compiler (default:no)]),
  	    [
 #echo "---------1------ withval : ${withval} -----------------"
 dnl AC_MSG_WARN([-- MACRO APPELEE 1 ----])
@@ -35,33 +35,29 @@ dnl AC_MSG_WARN([-- MACRO APPELEE 2 ----])
  
 AC_DEFUN([_MED_BEFORE_FC], [
   AC_REQUIRE([_MED_DEFINE_F90_ARGS])
+#We must check if the user want the Fortran interface
+#before testing a mpi fortran frontend
+ AC_REQUIRE([_MED_DEFINE_F77_ENABLE])
 #echo "---------1------ enable_fortran : $enable_fortran -----------------"
 #echo "---------1------ med_check_f90 : ${med_check_f90} -----------------"
-
 test x"$withval" = xyes && f90prog=${F90} 
-
 #echo "---------2------ enable_fortran : $enable_fortran -----------------"
 #echo "---------2------ med_check_f90 : ${med_check_f90} -----------------"
-
 test ! x"$withval" = xyes && test ! x"$withval" = xno && f90prog=$withval
-
 #echo "---------3------ enable_fortran : $enable_fortran -----------------"
 #echo "---------3------ med_check_f90 : ${med_check_f90} -----------------"
-
 med_check_f90="no"
-
 #echo "---------4------ enable_fortran : $enable_fortran -----------------"
 #echo "---------4------ med_check_f90 : ${med_check_f90} -----------------"
-
 (test ! x"$withval" = xno||(test x"$withval" = xno &&(test ! x"$FC" = x||test ! x"$MPIFC" = x )))&&med_check_f90="yes"
-
 test x"$enable_fortran" = xno && med_check_f90="no"
 #echo "---------5------ enable_fortran : $enable_fortran -----------------"
 #echo "---------5------ med_check_f90 : ${med_check_f90} -----------------"
 ])
 
 AC_DEFUN([_MED_CALLING_FC], [
-
+#la macro de détection du compilateur f90 cherchera le compilateur séquentiel
+#si mpi_wanted_test == no
   AX_PROG_FC_MPI(test "x$mpi_wanted_test" = "xyes",[],[
   if test x"$mpi_wanted_test" = xyes && test x"$med_check_f90" = xyes ; then
     AC_MSG_ERROR([MPI F90 compiler requested, but couldn't use MPI.])
@@ -72,8 +68,11 @@ AC_DEFUN([_MED_CALLING_FC], [
   test x"$FC" = x && test x"$med_check_f90" = xyes && AC_MSG_ERROR([Can't find a valid FC compiler, check your configure switches or the FC var...])
 ])
 
+
 AC_DEFUN_ONCE([MED_CHECK_F90],dnl
 [
+#The macro for detecting Fortran compilers must not be called before
+# testing mpi fortran compiler frontend
 AC_BEFORE([$0],[AC_PROG_FC])
 AC_BEFORE([$0],[AC_PROG_F77])
 AC_REQUIRE([_MED_BEFORE_FC])

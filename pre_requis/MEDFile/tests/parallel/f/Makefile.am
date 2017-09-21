@@ -27,8 +27,15 @@ mycheckPROGRAMS = Parallel_test1
 
 myTESTS_LEC = Parallel_test1.sh
 
+if INSTALLTEST
+
 testf_PROGRAMS = $(mycheckPROGRAMS)
 
+else
+
+check_PROGRAMS = $(mycheckPROGRAMS)
+
+endif
 Parallel_test1_SOURCES = Parallel_test1.f90
 ##test30_LINK = $(LIBTOOL)  --mode=link $(F90) $(AM_FFLAGS) \
 ##        $(FFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@

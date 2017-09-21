@@ -10,7 +10,7 @@ LIBS += $(FTLIBS)
 AM_LIBTOOLFLAGS = --tag=F77
 
 test2_SOURCES= test2.f
-noinst_PROGRAMS = test2
+check_PROGRAMS = test2
 
 if WITHF90
 
@@ -19,7 +19,7 @@ mycheckPROGRAMS = test5 test7 test9 test11 test11b test13 test15 test17 test30
 myTESTS_LEC = ../test5.sh ../test7.sh ../test9.sh ./test11.sh ../test11b.sh ../test13.sh ../test15.sh ../test17.sh ../test30.sh
 
 test11_SOURCES= test11.f90
-noinst_PROGRAMS += test11
+check_PROGRAMS += test11
 
 endif
 

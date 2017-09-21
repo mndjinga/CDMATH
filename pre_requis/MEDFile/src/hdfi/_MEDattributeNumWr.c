@@ -32,7 +32,7 @@ med_err _MEDattributeNumWr(med_idt pid,
 {
   med_idt _attid=0,aid=0;
   med_err _ret=-1;
-  int     type_hdf;
+  med_idt  type_hdf;
   med_access_mode MED_ACCESS_MODE;
   H5O_info_t      _oinfo;
 
@@ -90,13 +90,15 @@ med_err _MEDattributeNumWr(med_idt pid,
   } else {
     if ( (_attid=H5Acreate( pid, attname, type_hdf, aid, H5P_DEFAULT )) < 0 ) {
       MED_ERR_(_ret,MED_ERR_CREATE,MED_ERR_ATTRIBUTE, attname );
+      /* H5Eprint1(stderr); */
       goto ERROR;
     }
   }
 
   if ( H5Awrite(_attid, type_hdf,val) < 0) {
     MED_ERR_(_ret,MED_ERR_WRITE,MED_ERR_ATTRIBUTE, attname );
-    H5Eprint1(stderr);goto ERROR;
+    /* H5Eprint1(stderr); */
+    goto ERROR;
   }
 
   _ret=0;
@@ -112,7 +114,7 @@ med_err _MEDattributeNumWr(med_idt pid,
     MED_ERR_(_ret,MED_ERR_CLOSE,MED_ERR_ATTRIBUTE, MED_ERR_ID_MSG );
     ISCRUTE_id(_attid);
   }
-
+  
   return _ret;
 
 }

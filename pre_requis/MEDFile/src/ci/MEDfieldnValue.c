@@ -49,7 +49,7 @@ MEDfieldnValue(const med_idt fid,
   if ( (_ret = _MEDfieldnValue(fid,  fieldname, numdt, numit,
 			       entitype,  geotype,
 			       "",-1,
-			       MED_GLOBAL_PFLMODE,
+			       MED_GLOBAL_STMODE,
 			       &_profilesize, _localizationname, &_nintegrationpoint)) < 0) {
     MED_ERR_(_ret,MED_ERR_CALL,MED_ERR_API,MED_ERR_FIELD_MSG);
     SSCRUTE(fieldname);ISCRUTE(numdt);ISCRUTE(numit);

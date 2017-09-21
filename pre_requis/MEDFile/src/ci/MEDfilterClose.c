@@ -72,7 +72,7 @@ med_err MEDfilterClose(  med_filter * const filter ) {
   if ( _MEDsetFilter(MED_MAX_FILTER_SPACES,_memspace, _diskspace,
 		     0, 0, 0, 0, MED_UNDEF_INTERLACE,
 		     MED_NO_FILTER_SIZE, MED_NO_PROFILE_SIZE,
-		     MED_UNDEF_PFLMODE, MED_NO_PROFILE, filter ) <0) {
+		     MED_UNDEF_STMODE, MED_NO_PROFILE, filter ) <0) {
     MED_ERR_(_ret,MED_ERR_INIT,MED_ERR_FILTER,"");
     goto ERROR;
   }

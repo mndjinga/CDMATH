@@ -126,7 +126,8 @@ unicoo = "cm              cm              cm              "
 
 
 # /* ouverture du fichier */
-fid=MEDfileOpen("test10.med",MED_ACC_CREAT)
+#fid=MEDfileOpen("test10.med",MED_ACC_CREAT)
+fid=MEDfileVersionOpen("test10.med",MED_ACC_CREAT,MED_NUM_MAJEUR,MED_NUM_MINEUR,MED_NUM_RELEASE)
 
 # /* creation de maa1 de dimension 3*/
 MEDmeshCr( fid, maa1, 3, 3, MED_UNSTRUCTURED_MESH,

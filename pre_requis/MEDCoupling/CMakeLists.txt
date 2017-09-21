@@ -24,6 +24,7 @@ ENDIF(MEDCOUPLING_BUILD_TESTS)
 
 INCLUDE_DIRECTORIES(
   ${CMAKE_CURRENT_BINARY_DIR}/../..
+  ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}/../INTERP_KERNEL
   ${CMAKE_CURRENT_SOURCE_DIR}/../INTERP_KERNEL/Bases
   ${CMAKE_CURRENT_SOURCE_DIR}/../INTERP_KERNEL/Geometric2D
@@ -34,10 +35,14 @@ INCLUDE_DIRECTORIES(
 SET(medcoupling_SOURCES
   MEDCouplingField.cxx
   MEDCouplingFieldDouble.cxx
+  MEDCouplingFieldInt.cxx
   MEDCouplingUMesh.cxx
+  MEDCouplingUMesh_internal.cxx
+  MEDCouplingUMesh_intersection.cxx
   MEDCoupling1GTUMesh.cxx
   MEDCouplingMemArray.cxx
   MEDCouplingMemArrayChar.cxx
+  MEDCouplingTraits.cxx
   MEDCouplingTimeLabel.cxx
   MEDCouplingCMesh.cxx
   MEDCouplingIMesh.cxx
@@ -48,7 +53,7 @@ SET(medcoupling_SOURCES
   MEDCouplingRefCountObject.cxx
   MEDCouplingPointSet.cxx
   MEDCouplingFieldTemplate.cxx
-  MEDCouplingExtrudedMesh.cxx
+  MEDCouplingMappedExtrudedMesh.cxx
   MEDCouplingMesh.cxx
   MEDCouplingGaussLocalization.cxx
   MEDCouplingNatureOfField.cxx
@@ -60,23 +65,27 @@ SET(medcoupling_SOURCES
   MEDCouplingMatrix.cxx
   MEDCouplingPartDefinition.cxx
   MEDCouplingSkyLineArray.cxx
+  MEDCouplingVoronoi.cxx
+  ../ICoCo/ICoCoField.cxx
+  ../ICoCo/ICoCoMEDField.cxx
   )
 
 SET(medcouplingremapper_SOURCES
   MEDCouplingRemapper.cxx
   )
 
-ADD_LIBRARY(medcoupling SHARED ${medcoupling_SOURCES})
+ADD_LIBRARY(medcoupling ${medcoupling_SOURCES})
 TARGET_LINK_LIBRARIES(medcoupling interpkernel)
 INSTALL(TARGETS medcoupling EXPORT ${PROJECT_NAME}TargetGroup DESTINATION ${MEDCOUPLING_INSTALL_LIBS})
 
-ADD_LIBRARY(medcouplingremapper SHARED ${medcouplingremapper_SOURCES})
+ADD_LIBRARY(medcouplingremapper ${medcouplingremapper_SOURCES})
 TARGET_LINK_LIBRARIES(medcouplingremapper medcoupling)
 INSTALL(TARGETS medcouplingremapper EXPORT ${PROJECT_NAME}TargetGroup DESTINATION ${MEDCOUPLING_INSTALL_LIBS})
 
 FILE(GLOB medcoupling_HEADERS_HXX "${CMAKE_CURRENT_SOURCE_DIR}/*.hxx")
 FILE(GLOB medcoupling_HEADERS_TXX "${CMAKE_CURRENT_SOURCE_DIR}/*.txx")
-INSTALL(FILES ${medcoupling_HEADERS_HXX} ${medcoupling_HEADERS_TXX} MEDCouplingNatureOfFieldEnum DESTINATION ${MEDCOUPLING_INSTALL_HEADERS})
+FILE(GLOB icoco_HEADERS_HXX "${CMAKE_CURRENT_SOURCE_DIR}/../ICoCo/*.hxx")
+INSTALL(FILES ${medcoupling_HEADERS_HXX} ${medcoupling_HEADERS_TXX} ${icoco_HEADERS_HXX} MEDCouplingNatureOfFieldEnum DESTINATION ${MEDCOUPLING_INSTALL_HEADERS})
 
 # To allow usage as SWIG dependencies:
 SET(medcoupling_HEADERS_HXX PARENT_SCOPE)

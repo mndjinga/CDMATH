@@ -35,7 +35,7 @@ med_int
 MEDnStructElement(const med_idt      fid)
 {
 
-  char             _path[MED_TAILLE_STRCT+1]=MED_STRCT;
+  char             _path[MED_ELSTRUCT_GRP_SIZE+1]=MED_ELSTRUCT_GRP;
   med_int          _ret=-1,_err=-1;
   med_size         _tmpn=0;
 

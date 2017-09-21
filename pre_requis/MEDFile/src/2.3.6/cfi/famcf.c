@@ -33,7 +33,7 @@
 
 #ifdef PPRO_NT
 med_int
- EDFFAMC(med_int *fid, char *maa, unsigned int bidon1, med_int *lon1,
+ EDFFAMC(med_idt *fid, char *maa, unsigned int bidon1, med_int *lon1,
                   char *fam, unsigned int bidon2, med_int *lon2, 
 	          med_int *num, med_int *attr_ident, med_int *attr_val,
                   char *attr_desc, unsigned int bidon3, 
@@ -41,7 +41,7 @@ med_int
                   unsigned int bidon4, med_int *lon4, med_int *n_groupe)
 #else
 med_int
-nedffamc(med_int *fid,char *maa,med_int *lon1,char *fam,med_int *lon2, 
+nedffamc(med_idt *fid,char *maa,med_int *lon1,char *fam,med_int *lon2, 
 	 med_int *num,med_int *attr_ident,med_int *attr_val,char *attr_desc, 
 	 med_int *lon3,med_int *n_attr,char *groupe ,med_int *lon4, 
 	 med_int *n_groupe)
@@ -55,7 +55,7 @@ nedffamc(med_int *fid,char *maa,med_int *lon1,char *fam,med_int *lon2,
   med_int majeur, mineur, release;
   MedFuncType func;
 
-  MEDversionLire( (med_idt) *fid, &majeur, &mineur, &release );
+  MEDversionLire( *fid, &majeur, &mineur, &release );
   
   func = _MEDversionedApi(name,majeur,mineur,release);
   if ( func != (MedFuncType) NULL )
@@ -69,12 +69,12 @@ nedffamc(med_int *fid,char *maa,med_int *lon1,char *fam,med_int *lon2,
 
 #ifdef PPRO_NT
 med_int
- EDFFAME (med_int *fid, char *maa, unsigned int bidon, med_int *lon1,
+ EDFFAME (med_idt *fid, char *maa, unsigned int bidon, med_int *lon1,
                    med_int *fam, med_int *n, med_int *type_ent,
                    med_int *type_geo)
 #else
 med_int
-nedffame(med_int *fid,char *maa,med_int *lon1,med_int *fam, 
+nedffame(med_idt *fid,char *maa,med_int *lon1,med_int *fam, 
 	 med_int *n, med_int *type_ent,med_int *type_geo)
 #endif
 {
@@ -85,7 +85,7 @@ nedffame(med_int *fid,char *maa,med_int *lon1,med_int *fam,
   if (!fn1 )
     return(-1);
 
-  ret = (med_int) MEDfamEcr((med_idt) *fid,fn1,(med_int *)fam,
+  ret = (med_int) MEDfamEcr(*fid,fn1,(med_int *)fam,
 			   (med_int) *n,
 			   (med_entite_maillage) *type_ent,
 			   (med_geometrie_element) *type_geo); 
@@ -98,12 +98,12 @@ nedffame(med_int *fid,char *maa,med_int *lon1,med_int *fam,
 
 #ifdef PPRO_NT
 med_int
- EDFFAML(med_int *fid, char *maa, unsigned int bidon, med_int *lon1,
+ EDFFAML(med_idt *fid, char *maa, unsigned int bidon, med_int *lon1,
                   med_int *fam, med_int *n, med_int *type_ent,
                   med_int *type_geo)
 #else
 med_int
-nedffaml(med_int *fid, char *maa, med_int *lon1, med_int *fam, 
+nedffaml(med_idt *fid, char *maa, med_int *lon1, med_int *fam, 
 	 med_int *n,med_int *type_ent,med_int *type_geo)
 #endif
 {
@@ -114,7 +114,7 @@ nedffaml(med_int *fid, char *maa, med_int *lon1, med_int *fam,
   if (!fn1 )
     return(-1);
 
-  ret = (med_int) MEDfamLire((med_idt) *fid,fn1,(med_int*) fam,(med_int) *n, 
+  ret = (med_int) MEDfamLire(*fid,fn1,(med_int*) fam,(med_int) *n, 
 			     (med_entite_maillage) *type_ent,
 			     (med_geometrie_element) *type_geo); 
 
@@ -126,14 +126,14 @@ nedffaml(med_int *fid, char *maa, med_int *lon1, med_int *fam,
 
 #ifdef  PPRO_NT
 int
- EDFFAMI(med_int *fid, char *maa, unsigned int bidon1, med_int *lon1,
+ EDFFAMI(med_idt *fid, char *maa, unsigned int bidon1, med_int *lon1,
                   med_int *ind, char *fam, unsigned int bidon2, med_int *num,
                   med_int *attr_ident, med_int *attr_val, 
 	          char *attr_desc, int unsigned bidon3, med_int *n_attr,
 	          char *groupe , int unsigned bidon4, med_int *n_groupe)
 #else
 med_int
-nedffami(med_int *fid, char *maa,med_int *lon1,med_int *ind, 
+nedffami(med_idt *fid, char *maa,med_int *lon1,med_int *ind, 
 	 char *fam,med_int *num,med_int *attr_ident,med_int *attr_val, 
 	 char *attr_desc,med_int *n_attr,
 	 char *groupe ,med_int *n_groupe)
@@ -149,13 +149,13 @@ nedffami(med_int *fid, char *maa,med_int *lon1,med_int *ind,
   if (!fn1)
     return(-1);
 
-  if ((ngro = MEDnGroupe  ((med_idt) *fid,fn1,*ind)) < 0) return -1; 
-  if ((natt = MEDnAttribut((med_idt) *fid,fn1,*ind)) < 0) return -1; 
+  if ((ngro = MEDnGroupe  (*fid,fn1,*ind)) < 0) return -1; 
+  if ((natt = MEDnAttribut(*fid,fn1,*ind)) < 0) return -1; 
 
   fs1 = (char *) malloc(MED_TAILLE_DESC*natt+1);
   fs2 = (char *) malloc(MED_TAILLE_LNOM*ngro+1);
 
-  ret = (med_int) MEDfamInfo((med_idt) *fid,fn1,(int) *ind, (char *)fs3 , 
+  ret = (med_int) MEDfamInfo(*fid,fn1,(int) *ind, (char *)fs3 , 
 			     (med_int *)num, 
 			     (med_int *) attr_ident,(med_int *) attr_val,
 			     (char *) fs1,
@@ -187,10 +187,10 @@ nedffami(med_int *fid, char *maa,med_int *lon1,med_int *ind,
 
 #ifdef PPRO_NT
 int
- EDFNFAM(med_int *fid, char *maa, unsigned int bidon, med_int *lon1)
+ EDFNFAM(med_idt *fid, char *maa, unsigned int bidon, med_int *lon1)
 #else
 med_int
-nedfnfam(med_int *fid,char *maa,med_int *lon1)
+nedfnfam(med_idt *fid,char *maa,med_int *lon1)
 #endif
 {
   med_int ret;
@@ -209,10 +209,10 @@ nedfnfam(med_int *fid,char *maa,med_int *lon1)
 
 #ifdef PPRO_NT
 int
- EDFNGRO(med_int *fid, char *maa, unsigned int bidon, med_int *lon1, med_int *indice)
+ EDFNGRO(med_idt *fid, char *maa, unsigned int bidon, med_int *lon1, med_int *indice)
 #else
 med_int
-nedfngro(med_int *fid,char *maa,med_int *lon1,med_int *indice)
+nedfngro(med_idt *fid,char *maa,med_int *lon1,med_int *indice)
 #endif
 {
   med_int ret;
@@ -232,10 +232,10 @@ nedfngro(med_int *fid,char *maa,med_int *lon1,med_int *indice)
 
 #ifdef PPRO_NT
 int
- EDFNATT(med_int *fid, char *maa, unsigned int bidon, med_int *lon1, med_int *indice)
+ EDFNATT(med_idt *fid, char *maa, unsigned int bidon, med_int *lon1, med_int *indice)
 #else
 med_int
-nedfnatt(med_int *fid,char *maa,med_int *lon1,med_int *indice)
+nedfnatt(med_idt *fid,char *maa,med_int *lon1,med_int *indice)
 #endif
 {
   med_int ret;

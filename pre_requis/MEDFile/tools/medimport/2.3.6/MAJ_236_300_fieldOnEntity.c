@@ -38,8 +38,8 @@ med_err MAJ_236_300_fieldOnEntity(med_idt fid, const char * const nomcha, const 
   char locname [MED_NAME_SIZE+1]="";
   char _meshname [MED_NAME_SIZE+1]="";
   char _fieldname [MED_NAME_SIZE+1]="";
-  char _pathtmp[MED_TAILLE_CHA+3]="/CHA__/";
-  char _pathfb[MED_TAILLE_CHA+2+MED_NAME_SIZE+1]="/CHA_/";
+  char _pathtmp[MED_FIELD_GRP_SIZE+3]="/CHA__/";
+  char _pathfb[MED_FIELD_GRP_SIZE+2+MED_NAME_SIZE+1]="/CHA_/";
   char * lien = NULL;
   char dt_unit [MED_SNAME_SIZE+1]="unknown";
   med_bool localmesh;

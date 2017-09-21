@@ -54,8 +54,8 @@ med_err _MEDfieldComputingStepCheck236(med_idt fid, const char * const fieldname
   med_err   _ret=-1,_err=0;
   med_idt   _cstpid=0;
   char      _ent_geo       [2*MED_TAILLE_NOM_ENTITE+2]="";
-  char      _path          [(MED_TAILLE_CHA+MED_TAILLE_NOM+1)+
-			    (2*MED_TAILLE_NOM_ENTITE+1)+1+(2*MED_MAX_PARA)+1]=MED_CHA;
+  char      _path          [(MED_FIELD_GRP_SIZE+MED_TAILLE_NOM+1)+
+			    (2*MED_TAILLE_NOM_ENTITE+1)+1+(2*MED_MAX_PARA)+1]=MED_FIELD_GRP;
   int       _pathlen=0;
   med_size  _i=0,_n=0;
   med_size  _prevnseq=0,_nseq =0;

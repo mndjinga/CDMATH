@@ -55,7 +55,7 @@ C     filter creation
       endif
 c
       call mfrcre(fid,nent,nvale,scent,MED_ALL_CONSTITUENT,
-     &            MED_FULL_INTERLACE,MED_GLOBAL_PFLMODE, 
+     &            MED_FULL_INTERLACE,MED_GLOBAL_STMODE, 
      &            MED_NO_PROFILE,MED_UNDEF_SIZE,flta,flt(1),
      &            cret)
       print *,'Filter creation',cret

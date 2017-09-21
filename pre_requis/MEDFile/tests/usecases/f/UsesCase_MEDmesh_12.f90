@@ -202,7 +202,7 @@ program UsesCase_MEDmesh_12
 
      ! test for nodes coordinates change
      call mmhnep(fid, mname, numdt, numit, MED_NODE, MED_NO_GEOTYPE, &
-                 MED_COORDINATE, MED_NO_CMODE, MED_GLOBAL_PFLMODE, &
+                 MED_COORDINATE, MED_NO_CMODE, MED_GLOBAL_STMODE, &
                  profna, profsz, coocha, geotra, nnodes, cret)
      if (cret .ne. 0 ) then
         print *,"ERROR : nodes coordinates"
@@ -222,7 +222,7 @@ program UsesCase_MEDmesh_12
            call efexit(-1)
         endif
 
-        call mmhcpr(fid, mname, numdt, numit,MED_GLOBAL_PFLMODE,profna,  &
+        call mmhcpr(fid, mname, numdt, numit,MED_GLOBAL_STMODE,profna,  &
                     MED_FULL_INTERLACE,MED_ALL_CONSTITUENT, coords, cret)
         if (cret .ne. 0 ) then
            print *,"ERROR : nodes coordinates"

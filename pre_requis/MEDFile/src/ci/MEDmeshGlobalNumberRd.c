@@ -60,7 +60,7 @@ med_err MEDmeshGlobalNumberRd(const med_idt               fid,
 			   _entitytype,
 			   geotype,
 			   MED_NODAL,
-			   MED_UNDEF_PFLMODE,
+			   MED_UNDEF_STMODE,
 			   MED_NO_PROFILE,
 			   MED_FULL_INTERLACE,  /*Pas d'utilit� ici, car nconstituent==1*/
 			   MED_ALL_CONSTITUENT,

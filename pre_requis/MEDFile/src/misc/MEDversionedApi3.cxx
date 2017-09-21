@@ -90,7 +90,7 @@ void MED_VERSIONED_API3::f77ApiIsSet() {
 // Si une nouvelle version majeure d'hdf est utilisée et qu'elle est incompatible avec l'ancienne le numéro majeur devrait
 // être également augmenté.
 //
-// Si le numéro de version mineur de la bibliothèque avec laquelle le fichier a été crée est supèrieur à celui de la
+// Si le numéro de version mineur de la bibliothèque avec laquelle le fichier a été crée est supérieur à celui de la
 // version de bibliothèque utilisée la bibliothèque doit renvoyer une erreur.
 //
 // Ceci implique qu'un ajout dans la table de versionement suppose l'incrément du numéro mineur de
@@ -107,9 +107,9 @@ void MED_VERSIONED_API3::f77ApiIsSet() {
 // En résumé le versionement dans MED doit fonctionner de la manière suivante à partir de la 2.3.4 :
 //
 // -  x.y.z+1 indique qu'il s'agit d'une correction de BUG qui n'engendre pas d'évolution du modèle
-// ni d'incompatibilité de lecture de fichier avec x.y.z. Aucune nouvelle routine ne doit apparaître
+// ni d'incompatibilité de lecture de fichier avec une bibiothèque x.y.z. Aucune nouvelle routine ne doit apparaître
 // dans la table de versionement. Les programmes compilés avec medx.y.z peuvent utiliser medx.y.z+1 sans
-// recompilation. Il y a donc compatibilité ascendante et descendante entre x.y.z  et x.y.z+1
+// recompilation. Il y a donc compatibilité ascendante et descendante entre x.y.z et x.y.z+1
 //
 // - x.y+1.z indique qu'il s'agit d'une correction de BUG et/ou évolution qui engendre soit une évolution
 // du modèle interne ou une incohérence avec l'utilisation de l'implémentation medx.y.z pour un fichier x.y+1.z.

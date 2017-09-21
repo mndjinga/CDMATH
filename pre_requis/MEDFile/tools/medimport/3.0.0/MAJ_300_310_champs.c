@@ -37,9 +37,9 @@ void MAJ_300_310_champs(med_idt fid)
   med_int  _ncstp=0;
   med_bool _local=MED_FALSE;
   htri_t   _datasetexist;
-  char _pathi[(MED_TAILLE_CHA+MED_NAME_SIZE+1)+2*MED_MAX_PARA+1  ] = MED_CHA;
-  char _pathf[(MED_TAILLE_CHA+1+MED_NAME_SIZE+1)+2*MED_MAX_PARA+1] = "/CHA_/";
-  char _pathtmp[MED_TAILLE_CHA+3]="/CHA__/";
+  char _pathi[(MED_FIELD_GRP_SIZE+MED_NAME_SIZE+1)+2*MED_MAX_PARA+1  ] = MED_FIELD_GRP;
+  char _pathf[(MED_FIELD_GRP_SIZE+1+MED_NAME_SIZE+1)+2*MED_MAX_PARA+1] = "/CHA_/";
+  char _pathtmp[MED_FIELD_GRP_SIZE+3]="/CHA__/";
   int i=0,_num=0;
   med_size _sizei=0,_sizef=0;
   char    _cstpname[2*MED_MAX_PARA+1]="";
@@ -88,9 +88,9 @@ void MAJ_300_310_champs(med_idt fid)
     EXIT_IF( H5Gmove(fid, _pathi  , _pathf  ) < 0,"Switch to ",_pathf);
     EXIT_IF( H5Gmove(fid, _pathtmp, _pathi  ) < 0,"Switch to ",_pathi);
 
-    strncpy(&_pathi[MED_TAILLE_CHA]  ,nomcha,MED_NAME_SIZE+1);
-    strncpy(&_pathf[MED_TAILLE_CHA+1],nomcha,MED_NAME_SIZE+1);
-    _sizei = MED_TAILLE_CHA+strlen(nomcha);
+    strncpy(&_pathi[MED_FIELD_GRP_SIZE]  ,nomcha,MED_NAME_SIZE+1);
+    strncpy(&_pathf[MED_FIELD_GRP_SIZE+1],nomcha,MED_NAME_SIZE+1);
+    _sizei = MED_FIELD_GRP_SIZE+strlen(nomcha);
     _sizef = _sizei+1;
     _pathi[_sizei]='/';++_sizei; 
     _pathf[_sizef]='/';++_sizef; 
@@ -121,8 +121,8 @@ void MAJ_300_310_champs(med_idt fid)
       EXIT_IF(  H5Lmove( fid, _pathi, fid, _pathf, H5P_DEFAULT, H5P_DEFAULT ) < 0, "Failed to move field ",_pathi); 
     }
 
-    _pathi[MED_TAILLE_CHA]='\0';
-    _pathf[MED_TAILLE_CHA+1]='\0';
+    _pathi[MED_FIELD_GRP_SIZE]='\0';
+    _pathf[MED_FIELD_GRP_SIZE+1]='\0';
 
     
     MAJ_version_num(fid,3,0,8);

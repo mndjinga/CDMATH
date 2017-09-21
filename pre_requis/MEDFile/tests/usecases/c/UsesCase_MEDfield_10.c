@@ -148,7 +148,7 @@ int main (int argc, char **argv) {
   /* MED_TRIA3 : with a profile of 3 values in compact memory storage mode 
      and a family of 3 integration points */
   if (MEDfieldValueWithProfileWr(fid, fieldname, 1, 1, 5.5, MED_CELL,MED_TRIA3, 
-				 MED_COMPACT_PFLMODE, profile1name, localization1name,    
+				 MED_COMPACT_STMODE, profile1name, localization1name,    
 				 MED_FULL_INTERLACE, MED_ALL_CONSTITUENT, 
 				 ntria3, (unsigned char*) tria3values_step1_profile1) < 0) {
     MESSAGE("ERROR : write field values on MED_TRIA3");
@@ -156,7 +156,7 @@ int main (int argc, char **argv) {
   }
    /* MED_QUAD4  : with no profile */ 
   if (MEDfieldValueWithProfileWr(fid, fieldname, 1, 1, 5.5, MED_CELL, MED_QUAD4, 
-				 MED_COMPACT_PFLMODE, MED_NO_PROFILE, MED_NO_LOCALIZATION,
+				 MED_COMPACT_STMODE, MED_NO_PROFILE, MED_NO_LOCALIZATION,
 				 MED_FULL_INTERLACE, MED_ALL_CONSTITUENT, 
 				 nquad4, (unsigned char*) quad4values_step1) < 0) {
     MESSAGE("ERROR : write field values on MED_QUAD4 ");
@@ -167,14 +167,14 @@ int main (int argc, char **argv) {
   /* MED_TRIA3 : with a profile of 3 values then a profile of 5 values in global memory storage mode 
    * For each profile, a family of 3 and then 4 integration points */
   if (MEDfieldValueWithProfileWr(fid, fieldname, 2 , 1 , 8.9 , MED_CELL, MED_TRIA3, 
-				 MED_GLOBAL_PFLMODE, profile1name, localization1name,    
+				 MED_GLOBAL_STMODE, profile1name, localization1name,    
 				 MED_FULL_INTERLACE, MED_ALL_CONSTITUENT,  
 				 ntria3, (unsigned char*) tria3values_step2_profile1) < 0) {
     MESSAGE("ERROR : write field values on MED_TRIA3 ...");
     goto ERROR;
   }
   if (MEDfieldValueWithProfileWr(fid, fieldname, 2 , 1 , 8.9 , MED_CELL, MED_TRIA3, 
-				 MED_GLOBAL_PFLMODE, profile2name, localization2name,    
+				 MED_GLOBAL_STMODE, profile2name, localization2name,    
 				 MED_FULL_INTERLACE, MED_ALL_CONSTITUENT,  
 				 ntria3, (unsigned char*) tria3values_step2_profile2) < 0) {
     MESSAGE("ERROR : write field values on MED_TRIA3 ...");
@@ -183,7 +183,7 @@ int main (int argc, char **argv) {
 
   /* MED_QUAD4 : with no profile */
   if (MEDfieldValueWithProfileWr(fid, fieldname, 2, 1, 8.9, MED_CELL, MED_QUAD4, 
-				 MED_COMPACT_PFLMODE, MED_NO_PROFILE, MED_NO_LOCALIZATION,
+				 MED_COMPACT_STMODE, MED_NO_PROFILE, MED_NO_LOCALIZATION,
 				 MED_FULL_INTERLACE, MED_ALL_CONSTITUENT,  
 				 nquad4, (unsigned char*) quad4values_step2) < 0) {
     MESSAGE("ERROR : write field values on MED_QUAD4 ... ");

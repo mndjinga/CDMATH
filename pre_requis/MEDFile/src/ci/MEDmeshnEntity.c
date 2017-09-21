@@ -59,7 +59,7 @@ MEDmeshnEntity(const med_idt fid,
 
 
   _ret = _MEDmeshnEntity(fid,  meshname, numdt, numit,entitype,  geotype,
-		       datatype, cmode, MED_GLOBAL_PFLMODE,_profilename, &_profilesize,
+		       datatype, cmode, MED_GLOBAL_STMODE,_profilename, &_profilesize,
 		       changement, transformation );
 
   if ( strlen(_profilename) || (_profilesize > 0) ) {

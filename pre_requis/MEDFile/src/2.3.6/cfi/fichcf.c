@@ -38,16 +38,16 @@ extern void f77ApiIsSet(void * obj);
 #define nedfdemo F77_FUNC(edfdemo,EDFDEMO)
 
 #ifdef PPRO_NT
-med_int
+med_idt
  EDFOUVR (char *nom, unsigned int bidon, med_int * acces, 
                    med_int *lon)
 #else
-med_int
+med_idt
 nedfouvr (char *nom,med_int * acces,med_int *lon)
 #endif
 {
   char *fn;
-  int ret;
+  med_idt ret;
 
   /* Cette méthode a pour unique but de forcer la construction
    de l'objet MedVersionedApiF et donc la mise à jour de MedVersionedApi
@@ -57,10 +57,9 @@ nedfouvr (char *nom,med_int * acces,med_int *lon)
   f77ApiIsSet(MedVersionedApiF);
 
   fn = _MED2cstring(nom, (int) * lon);
-  if (!fn)
-	return(-1);
+  if (!fn) return(-1);
 
-  ret = (med_int) MEDouvrir(fn,(med_mode_acces) *acces); 
+  ret = MEDouvrir(fn,(med_mode_acces) *acces); 
 
   _MEDcstringFree(fn);
 
@@ -69,39 +68,39 @@ nedfouvr (char *nom,med_int * acces,med_int *lon)
 
 #ifdef PPRO_NT
 med_int
- EDFFERM(med_int * fid)
+ EDFFERM(med_idt * fid)
 #else
 med_int
-nedfferm(med_int * fid)
+nedfferm(med_idt * fid)
 #endif
 {
   med_int ret;
-  ret = (med_int) MEDfermer((med_idt) * fid);
+  ret = (med_int) MEDfermer(* fid);
 
   return(ret);
 }
 
 #ifdef PPRO_NT
 med_int
- EDFLFDE(med_int *fid)
+ EDFLFDE(med_idt *fid)
 #else
 med_int
-nedflfde (med_int *fid)
+nedflfde (med_idt *fid)
 #endif
 {
   med_int longueur;
 
-  longueur = MEDlFichDes((med_idt) *fid);
+  longueur = MEDlFichDes(*fid);
 
   return longueur;
 }
 
 #ifdef PPRO_NT
 med_int
- EDFFIEN(med_int *fid,med_int *quoi,char *str, unsigned int bidon1)
+ EDFFIEN(med_idt *fid,med_int *quoi,char *str, unsigned int bidon1)
 #else
 med_int
-nedffien (med_int *fid,med_int *quoi,char *str)
+nedffien (med_idt *fid,med_int *quoi,char *str)
 #endif
 {
   med_int ret;
@@ -109,11 +108,11 @@ nedffien (med_int *fid,med_int *quoi,char *str)
   char * fs1;
 
   /* Solution temporaire */
-  longueur = MEDlFichDes((med_idt) *fid);
+  longueur = MEDlFichDes(*fid);
 /*   ISCRUTE(longueur); */
   fs1 = (char *) malloc(sizeof(char)*longueur+1);
   
-  ret = (med_int) MEDfichEntete((med_idt) *fid,(med_fich_info) *quoi,(char *) fs1);
+  ret = (med_int) MEDfichEntete(*fid,(med_fich_info) *quoi,(char *) fs1);
 
   strncpy(str,fs1,longueur);
   _MEDfstring(str,longueur);
@@ -124,10 +123,10 @@ nedffien (med_int *fid,med_int *quoi,char *str)
 
 #ifdef PPRO_NT
 int
- EDFFIDE(med_int *fid,char *des, unsigned int bidon1,med_int *lon1)
+ EDFFIDE(med_idt *fid,char *des, unsigned int bidon1,med_int *lon1)
 #else
 med_int
-nedffide(med_int *fid,char *des,med_int *lon1)
+nedffide(med_idt *fid,char *des,med_int *lon1)
 #endif
 {
   med_int ret;
@@ -135,7 +134,7 @@ nedffide(med_int *fid,char *des,med_int *lon1)
 
   fn1 = _MED1cstring((char *)des,(int )*lon1,MED_TAILLE_DESC);
 
-  ret = MEDfichDesEcr((med_idt) *fid,(char*)fn1);
+  ret = MEDfichDesEcr(*fid,(char*)fn1);
 
   _MEDcstringFree(fn1);
 
@@ -189,15 +188,15 @@ nedfveco (char *nom,med_int *lon)
 
 #ifdef PPRO_NT
 med_int
- EDFVELI (med_int *fid, med_int *maj, med_int *min, med_int *rel)
+ EDFVELI (med_idt *fid, med_int *maj, med_int *min, med_int *rel)
 #else
 med_int
-nedfveli (med_int *fid, med_int *maj, med_int *min, med_int *rel)
+nedfveli (med_idt *fid, med_int *maj, med_int *min, med_int *rel)
 #endif
 {
   med_int ret;
 
-  ret = (med_int) MEDversionLire((med_idt) *fid, (med_int *) maj, (med_int *) min, (med_int *) rel); 
+  ret = (med_int) MEDversionLire(*fid, (med_int *) maj, (med_int *) min, (med_int *) rel); 
 
   return(ret); 
 }
@@ -220,21 +219,21 @@ nedfvedo (med_int *maj, med_int *min, med_int *rel)
 }
 
 #ifdef PPRO_NT
-med_int
- EDFMONT (med_int *fid, char *acces, unsigned int bidon, med_int *lon, med_int *type)
+med_idt
+ EDFMONT (med_idt *fid, char *acces, unsigned int bidon, med_int *lon, med_int *type)
 #else
-med_int
-nedfmont (med_int *fid, char *acces, med_int *lon, med_int *type)
+med_idt
+nedfmont (med_idt *fid, char *acces, med_int *lon, med_int *type)
 #endif
 {
   char *fn;
-  int ret;
+  med_idt ret;
 
   fn = _MED2cstring(acces, (int) * lon);
   if (!fn)
     return(-1);
 
-  ret = (med_int) MEDmonter((med_idt) *fid,(const char *) fn, (med_type_donnee) *type); 
+  ret = (med_idt) MEDmonter(*fid,(const char *) fn, (med_type_donnee) *type); 
 
   _MEDcstringFree(fn);
 
@@ -244,15 +243,15 @@ nedfmont (med_int *fid, char *acces, med_int *lon, med_int *type)
 
 #ifdef PPRO_NT
 med_int
- EDFDEMO (med_int *fid, med_int *mid, med_int *type)
+ EDFDEMO (med_idt *fid, med_idt *mid, med_int *type)
 #else
 med_int
-nedfdemo (med_int *fid, med_int *mid, med_int *type)
+nedfdemo (med_idt *fid, med_idt *mid, med_int *type)
 #endif
 {
   int ret;
 
-  ret = (med_int) MEDdemonter((med_idt) *fid,(med_idt) * mid, (med_type_donnee) *type); 
+  ret = (med_int) MEDdemonter(*fid,*mid, (med_type_donnee) *type); 
 
   return (ret); 
 }

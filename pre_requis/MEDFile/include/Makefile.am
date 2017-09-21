@@ -1,5 +1,5 @@
 ## For having included files in DISTribution & INSTallation (public headers)
-include_HEADERS =  med.hf med.hf77 med.hf90 med_parameter.hf med_proto.h \
+include_HEADERS =  med.hf med.hf77 med.hf90 med_proto.h \
 		 medlibrary.h medfile.h medmesh.h medfield.h \
                  medfamily.h medequivalence.h medprofile.h \
 		 medlocalization.h medlink.h medparameter.h \
@@ -7,7 +7,7 @@ include_HEADERS =  med.hf med.hf77 med.hf90 med_parameter.hf med_proto.h \
 		 medC_win_dll.h MEDerreur.hxx med_exit_if.h med_err.h
 
 ## For having included files in  INSTallation (public headers)
-nodist_include_HEADERS = med.h med_utils.h 
+nodist_include_HEADERS = med.h med_utils.h med_parameter.hf
 
 ## For having included files in DISTribution only (private headers)
 noinst_HEADERS = med_outils.h  med_misc.h  \
@@ -30,7 +30,7 @@ BUILT_SOURCES = medlibrary_exception.i medfile_exception.i medmesh_exception.i m
 
 SUBDIRS = 2.3.6 . 
 
-CLEANFILES = med_config.h med.h med_utils.h
+CLEANFILES = med_config.h med.h med_utils.h med_parameter.hf
 MAINTAINERCLEANFILES= medlibrary_exception.i medfile_exception.i medmesh_exception.i medfield_exception.i medfamily_exception.i medequivalence_exception.i medprofile_exception.i medlocalization_exception.i medlink_exception.i medparameter_exception.i medfilter_exception.i medsubdomain_exception.i medinterp_exception.i
 MAINTAINERCLEANFILES += med_config.h.in Makefile.in
 EXTRA_DIST = medlibrary_exception.i medfile_exception.i medmesh_exception.i medfield_exception.i medfamily_exception.i medequivalence_exception.i medprofile_exception.i medlocalization_exception.i medlink_exception.i medparameter_exception.i medfilter_exception.i medsubdomain_exception.i medinterp_exception.i

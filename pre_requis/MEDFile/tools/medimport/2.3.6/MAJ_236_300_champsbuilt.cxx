@@ -38,9 +38,9 @@ void MAJ_236_300_champs(med_idt fid)
   med_int  _ncstp=0;
   med_bool _local=MED_FALSE;
   htri_t   _datasetexist;
-  char _pathi[MED_TAILLE_CHA+1+MED_NAME_SIZE+1]=MED_CHA;
-  char _pathf[MED_TAILLE_CHA+2+MED_NAME_SIZE+1]="/CHA_/";
-  char _pathtmp[MED_TAILLE_CHA+3]="/CHA__/";
+  char _pathi[MED_FIELD_GRP_SIZE+1+MED_NAME_SIZE+1]=MED_FIELD_GRP;
+  char _pathf[MED_FIELD_GRP_SIZE+2+MED_NAME_SIZE+1]="/CHA_/";
+  char _pathtmp[MED_FIELD_GRP_SIZE+3]="/CHA__/";
   int i,j;
 
   char nomlien[MED_NAME_SIZE+1]="";
@@ -48,11 +48,11 @@ void MAJ_236_300_champs(med_idt fid)
   med_int nln,nval;
 
   med_int  _nloc,_intgeotype,_sdim;
-  char     _pathloc[MED_TAILLE_GAUSS+MED_NAME_SIZE+1]=MED_GAUSS;
+  char     _pathloc[MED_LOCALIZATION_GRP_SIZE+MED_NAME_SIZE+1]=MED_LOCALIZATION_GRP;
 
   med_int  _npar,_numdt,_numit;
-  char     _pathpari[MED_TAILLE_NUM_DATA+MED_NAME_SIZE+1+2*MED_MAX_PARA+1+1]=MED_NUM_DATA;
-  char     _pathparf[MED_TAILLE_NUM_DATA+MED_NAME_SIZE+1+2*MED_MAX_PARA+1+1]=MED_NUM_DATA;
+  char     _pathpari[MED_NUMERICAL_DATA_GRP_SIZE+MED_NAME_SIZE+1+2*MED_MAX_PARA+1+1]=MED_NUMERICAL_DATA_GRP;
+  char     _pathparf[MED_NUMERICAL_DATA_GRP_SIZE+MED_NAME_SIZE+1+2*MED_MAX_PARA+1+1]=MED_NUMERICAL_DATA_GRP;
   int      _pathparlen;
   med_size _n=0;
   char     _cpstnamei[2*MED_MAX_PARA+1]="";
@@ -69,7 +69,7 @@ void MAJ_236_300_champs(med_idt fid)
   _npar = MEDnParameter(fid);
   if (_npar > 0) {
     fprintf(stdout,"  >>> Normalisation des paramètres scalaires\n");
-    _pathparf[MED_TAILLE_NUM_DATA-2]='_';
+    _pathparf[MED_NUMERICAL_DATA_GRP_SIZE-2]='_';
 /*     _lac_plist_id = H5Pcreate( H5P_LINK_ACCESS ); */
     _ocp_plist_id = H5Pcreate( H5P_OBJECT_COPY );
     _lcp_plist_id = H5Pcreate( H5P_LINK_CREATE );
@@ -79,11 +79,11 @@ void MAJ_236_300_champs(med_idt fid)
 
   for (i=0 ; i < _npar ; i++ ) {
 
-    MED_ERR_EXIT_IF (_MEDobjectGetName(fid, _pathpari ,i, &_pathpari[MED_TAILLE_NUM_DATA]) < 0,
+    MED_ERR_EXIT_IF (_MEDobjectGetName(fid, _pathpari ,i, &_pathpari[MED_NUMERICAL_DATA_GRP_SIZE]) < 0,
 		     MED_ERR_ACCESS,MED_ERR_DATAGROUP,_pathpari);
 
 
-    strcpy(&_pathparf[MED_TAILLE_NUM_DATA],&_pathpari[MED_TAILLE_NUM_DATA]);
+    strcpy(&_pathparf[MED_NUMERICAL_DATA_GRP_SIZE],&_pathpari[MED_NUMERICAL_DATA_GRP_SIZE]);
 /*     SSCRUTE(_pathparf); */
 /*     SSCRUTE(_pathpari); */
 
@@ -131,12 +131,12 @@ void MAJ_236_300_champs(med_idt fid)
 /*       EXIT_IF(ret < 0,"Copie d'une étape de calcul du paramètre scalaire ",_pathpari); */
 
       /*On modifie temporairement _pathpari pour pointer dans _pathparf*/
-      _pathpari[MED_TAILLE_NUM_DATA-2]='_';
+      _pathpari[MED_NUMERICAL_DATA_GRP_SIZE-2]='_';
 /*       SSCRUTE(_pathparf); */
 /*       SSCRUTE(_pathpari); */
       ret = H5Gmove(fid, _pathpari, _pathparf  );
       EXIT_IF(ret < 0,"Renommage de l'étape de calcul",_pathpari);
-      _pathpari[MED_TAILLE_NUM_DATA-2]='A';
+      _pathpari[MED_NUMERICAL_DATA_GRP_SIZE-2]='A';
 
 
       MED_ERR_EXIT_IF(H5Adelete_by_name( fid, _pathparf, MED_NOM_UNI, H5P_DEFAULT ) < 0,
@@ -151,13 +151,13 @@ void MAJ_236_300_champs(med_idt fid)
       }
     }
     _createunt = MED_TRUE;
-    _pathpari[MED_TAILLE_NUM_DATA]='\0';
+    _pathpari[MED_NUMERICAL_DATA_GRP_SIZE]='\0';
   }
 
   if ( _npar > 0 ) {
 
-    _pathpari[MED_TAILLE_NUM_DATA]='\0';
-    _pathparf[MED_TAILLE_NUM_DATA]='\0';
+    _pathpari[MED_NUMERICAL_DATA_GRP_SIZE]='\0';
+    _pathparf[MED_NUMERICAL_DATA_GRP_SIZE]='\0';
     MED_ERR_EXIT_IF ( H5Ldelete(fid,_pathpari,H5P_DEFAULT) < 0 ,
 		      MED_ERR_DELETE,MED_ERR_LINK,_pathpari);
 
@@ -174,7 +174,7 @@ void MAJ_236_300_champs(med_idt fid)
   for (i=0 ; i < _nloc ; i++ ) {
 
 /*     SSCRUTE(_pathloc); */
-    MED_ERR_EXIT_IF (_MEDobjectGetName(fid, _pathloc ,i, &_pathloc[MED_TAILLE_GAUSS]) < 0,
+    MED_ERR_EXIT_IF (_MEDobjectGetName(fid, _pathloc ,i, &_pathloc[MED_LOCALIZATION_GRP_SIZE]) < 0,
 		     MED_ERR_ACCESS,MED_ERR_DATAGROUP,_pathloc);
 /*     SSCRUTE(_pathloc); */
     MED_ERR_EXIT_IF (_MEDattributeNumRdByName(fid,_pathloc,MED_NOM_GEO,
@@ -188,7 +188,7 @@ void MAJ_236_300_champs(med_idt fid)
 
     MED_ERR_EXIT_IF ( _MEDattributeStringWrByName(fid,_pathloc,MED_NOM_INM,MED_NAME_SIZE,"") < 0,
 		      MED_ERR_WRITE,MED_ERR_ATTRIBUTE,MED_NOM_INM);
-    _pathloc[MED_TAILLE_GAUSS]='\0';
+    _pathloc[MED_LOCALIZATION_GRP_SIZE]='\0';
 
   }
 

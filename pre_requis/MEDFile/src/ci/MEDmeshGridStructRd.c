@@ -49,7 +49,7 @@ MEDmeshGridStructRd(const med_idt               fid,
   med_grid_type   _gridtype    = MED_UNDEF_GRID_TYPE;
   med_int         _intgridtype = 0;
   med_int         _meshdim     = 0;
-  char            _meshpath[MED_TAILLE_MAA+MED_NAME_SIZE+1]=MED_MAA;
+  char            _meshpath[MED_MESH_GRP_SIZE+MED_NAME_SIZE+1]=MED_MESH_GRP;
   int             _i=0;
 
   med_int * _ptr;
@@ -118,7 +118,7 @@ MEDmeshGridStructRd(const med_idt               fid,
 			   MED_NODE,
 			   MED_NONE,
 			   MED_NO_CMODE,
-			   MED_UNDEF_PFLMODE,
+			   MED_UNDEF_STMODE,
 			   MED_NO_PROFILE,
 			   MED_FULL_INTERLACE,
 			   MED_ALL_CONSTITUENT,

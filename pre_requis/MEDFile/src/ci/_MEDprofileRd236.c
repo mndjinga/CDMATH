@@ -32,7 +32,7 @@ void _MEDprofileRd236(int dummy, ...) {
 
   med_idt        _pfid=0;
   med_err        _ret=-1;
-  char           _path[MED_TAILLE_PROFILS+MED_NAME_SIZE+1]=MED_PROFILS;
+  char           _path[MED_PROFILE_GRP_SIZE+MED_NAME_SIZE+1]=MED_PROFILE_GRP;
   med_filter     _filter        = MED_FILTER_INIT;
   med_int        _nentity=0;
   

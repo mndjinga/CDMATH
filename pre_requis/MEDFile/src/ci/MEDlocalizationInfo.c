@@ -55,7 +55,7 @@ MEDlocalizationInfo(const med_idt             fid,
 		    med_geometry_type * const sectiongeotype)
 {
   med_err _ret=-1;
-  char    _path[MED_TAILLE_GAUSS+MED_NAME_SIZE+1]=MED_GAUSS;
+  char    _path[MED_LOCALIZATION_GRP_SIZE+MED_NAME_SIZE+1]=MED_LOCALIZATION_GRP;
   int     _num=localizationit-1;
 
   /*

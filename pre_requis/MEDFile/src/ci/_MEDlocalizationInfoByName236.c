@@ -29,7 +29,7 @@ _MEDlocalizationInfoByName236(int dummy, ...) {
 
   med_idt _lzid=0;
   med_err _ret=-1;
-  char    _path[MED_TAILLE_GAUSS+MED_NAME_SIZE+1]=MED_GAUSS;
+  char    _path[MED_LOCALIZATION_GRP_SIZE+MED_NAME_SIZE+1]=MED_LOCALIZATION_GRP;
   med_int _intgeotype = -1;
 
 
@@ -111,7 +111,7 @@ _MEDlocalizationInfoByName236(int dummy, ...) {
  ERROR:
 
   if ( _lzid > 0 ) if ( _MEDdatagroupFermer(_lzid) < 0) {
-    MED_ERR_(_ret,MED_ERR_CLOSE,MED_ERR_DATAGROUP,MED_GAUSS);
+    MED_ERR_(_ret,MED_ERR_CLOSE,MED_ERR_DATAGROUP,MED_LOCALIZATION_GRP);
     ISCRUTE_id(_lzid);
   }
 

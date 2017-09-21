@@ -36,7 +36,7 @@ med_int
 MEDnLocalization(const med_idt fid )
 {
   med_int        _ret=-1,_err=-1;
-  char           _path[MED_TAILLE_GAUSS+1]=MED_GAUSS;
+  char           _path[MED_LOCALIZATION_GRP_SIZE+1]=MED_LOCALIZATION_GRP;
   med_size       _tmpn=0;
 
   /*

@@ -130,11 +130,12 @@ class SauvLoaderTest(unittest.TestCase):
         self.assertEqual(2, um0.getNumberOfCellsWithType( NORM_PYRA5 ))
         self.assertEqual(2, um0.getNumberOfCellsWithType( NORM_HEXA8 ))
         um1 = m.getMeshAtLevel(-1)
-        self.assertEqual(2, um1.getNumberOfCellsWithType( NORM_TRI3 ))
+        #self.assertEqual(2, um1.getNumberOfCellsWithType( NORM_TRI3 ))
+        self.assertEqual(1, um1.getNumberOfCellsWithType( NORM_TRI3 ))
         pointeUM0 = pointeMedMesh.getMeshAtLevel(0)
         self.assertTrue(m.getCoords().isEqualWithoutConsideringStr(pointeMedMesh.getCoords(),1e-12))
-        self.assertEqual( um0.getMeasureField(0).accumulate(0),
-                          pointeUM0.getMeasureField(0).accumulate(0),1e-12)
+        self.assertEqual( um0.getMeasureField(False).accumulate(0),
+                          pointeUM0.getMeasureField(False).accumulate(0),1e-12)
         # check fields
         # fieldnodedouble
         fieldnodedoubleTS1 = pointeMed.getFields().getFieldWithName("fieldnodedouble")
@@ -247,7 +248,7 @@ class SauvLoaderTest(unittest.TestCase):
         os.remove(sauvFile)
         pass
 
-    @unittest.skipUnless(MEDLoader.HasXDR(),"requires XDR")
+    @unittest.skipUnless(HasXDR(),"requires XDR")
     def testMissingGroups(self):
         """test for issue 0021749: [CEA 601] Some missing groups in mesh after reading a SAUV file with SauvReader."""
         sauvFile = os.path.join(self.__getResourcesDirectory(),"BDC-714.sauv")
@@ -290,7 +291,7 @@ class SauvLoaderTest(unittest.TestCase):
         wgt=[0.3,0.3,0.3,0.3,0.4,0.4,0.4,0.4,0.7]
         f.setGaussLocalizationOnType(NORM_QUAD8,refCoo,gpCoo,wgt)
         f.setName("SIGT")
-        f.checkCoherency()
+        f.checkConsistencyLight()
         #
         mm=MEDFileUMesh()
         mm.setMeshAtLevel(0,m)

@@ -12,6 +12,8 @@ SET(_tst_scripts
   test28.py
   test29.py
   test30.py
+  test2.py
+  test3.py
   test4.py
   test5.py
   test6.py

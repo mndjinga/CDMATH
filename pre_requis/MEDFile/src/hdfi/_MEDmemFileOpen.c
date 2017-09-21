@@ -29,20 +29,20 @@
 #include <unistd.h>
 #endif
 
-#define AFF_MEMFILE \
-XSCRUTE(udata->app_image_ptr);\
-ISCRUTE_long(udata->app_image_size);\
-ISCRUTE_int(udata->ref_count);\
-XSCRUTE(udata->fapl_image_ptr);\
-ISCRUTE_long(udata->fapl_image_size);\
-ISCRUTE_int(udata->fapl_ref_count);\
-XSCRUTE(udata->vfd_image_ptr);\
-ISCRUTE_long(udata->vfd_image_size);\
-ISCRUTE_int(udata->vfd_ref_count);\
-ISCRUTE_int(udata->flags);
+/* #define AFF_MEMFILE \ */
+/* XSCRUTE(udata->app_image_ptr);\ */
+/* ISCRUTE_long(udata->app_image_size);\ */
+/* ISCRUTE_int(udata->ref_count);\ */
+/* XSCRUTE(udata->fapl_image_ptr);\ */
+/* ISCRUTE_long(udata->fapl_image_size);\ */
+/* ISCRUTE_int(udata->fapl_ref_count);\ */
+/* XSCRUTE(udata->vfd_image_ptr);\ */
+/* ISCRUTE_long(udata->vfd_image_size);\ */
+/* ISCRUTE_int(udata->vfd_ref_count);\ */
+/* ISCRUTE_int(udata->flags); */
 
 /*
- * - Nom de la fonction : _MEDmemFileCreate
+ * - Nom de la fonction : _MEDmemFileOpen
  * - Description : creation d'un fichier HDF
  * - Parametres :
  *     - nom (IN) : le nom du fichier
@@ -401,7 +401,7 @@ out:
 /* End of callbacks definitions for file image operations */
 
 
-med_idt _MEDmemFileCreate(const char * const filename, med_memfile * const memfile, const med_bool filesync,
+med_idt _MEDmemFileOpen(const char * const filename, med_memfile * const memfile, const med_bool filesync,
 			  const med_access_mode accessmode)
 {
   med_idt _fid=-1,_gid=-1;
@@ -415,11 +415,11 @@ med_idt _MEDmemFileCreate(const char * const filename, med_memfile * const memfi
 #define KB              1024U
 #define CORE_INCREMENT  (4*KB)
 
-  memfile->flags = accessmode;
   H5FD_file_image_callbacks_t  callbacks = {image_malloc, image_memcpy,
 					    image_realloc, image_free,
 					    udata_copy, udata_free,
 					    (void *)(memfile)};
+  memfile->flags = accessmode;
 
   file_exist=!access(filename,F_OK);
 
@@ -434,6 +434,9 @@ med_idt _MEDmemFileCreate(const char * const filename, med_memfile * const memfi
     goto ERROR;
   }
 
+#if H5_VERS_MINOR > 8
+#error "Don't forget to change the compatibility version of the library !"
+#endif
   if ( H5Pset_libver_bounds( _fapl, H5F_LIBVER_18, H5F_LIBVER_18) ) {
     MED_ERR_(_fid,MED_ERR_INIT,MED_ERR_PROPERTY,MED_ERR_FILEVERSION_MSG);
     goto ERROR;
@@ -457,9 +460,9 @@ med_idt _MEDmemFileCreate(const char * const filename, med_memfile * const memfi
 
   /*MESSAGE("-------- 0b ---------");*/
    /* ISCRUTE(file_exist); */
-  if ( (memfile->app_image_size != 0) 
+  if (    (memfile->app_image_size != 0) 
        && ( (!file_exist) || (_accessmode == MED_ACC_CREAT) )
-       ) {
+     ) {
     assert(memfile->app_image_ptr); 
 /*    ISCRUTE_long(memfile->app_image_size);*/
     H5Pset_file_image(_fapl, memfile->app_image_ptr, memfile->app_image_size);

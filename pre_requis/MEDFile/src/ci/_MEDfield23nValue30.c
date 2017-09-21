@@ -28,7 +28,7 @@ void
 _MEDfield23nValue30(int dummy, ...)
 {
   char     _meshname          [MED_NAME_SIZE+1]="";
-  char     _path[MED_TAILLE_CHA+MED_NAME_SIZE+1]=MED_CHA;
+  char     _path[MED_FIELD_GRP_SIZE+MED_NAME_SIZE+1]=MED_FIELD_GRP;
   med_int  _ret=-1;
 
   MED_VARGS_DECL(const, med_idt           , , fid                        );

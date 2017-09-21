@@ -16,6 +16,27 @@ C*  along with MED.  If not, see <http://www.gnu.org/licenses/>.
 C*
 
 
+      subroutine mfivop(fid, name, access, major, minor, rel, cret)
+c     DEC$ ATTRIBUTES DLLEXPORT :: mfivop
+c
+      implicit none
+      save
+      character *(*) name
+      integer fid
+      integer access,cret
+      integer major, minor, rel
+      integer mfifvop
+c
+      fid = mfifvop(name, access, major, minor, rel, len(name))
+      if (fid.lt.0) then
+         cret = fid
+      else
+         cret = 0
+      endif
+c      
+      return
+      end
+
       subroutine mfiope(fid, name, access, cret)
 c     DEC$ ATTRIBUTES DLLEXPORT :: mfiope
 c
@@ -28,9 +49,9 @@ c
 c
       fid = mfifope(name, access, len(name))
       if (fid.lt.0) then
-         cret=-1
+         cret = fid
       else
-         cret=0
+         cret = 0
       endif
 c      
       return
@@ -188,6 +209,38 @@ c
       integer mfifoun
 c
       cret = mfifoun(fid, mid, class)
+c      
+      return
+      end
+
+      
+      subroutine mfioex(fid, class, oname, oexist, cret)
+c     DEC$ ATTRIBUTES DLLEXPORT :: mfioex
+c
+      implicit none
+      save
+c
+      character *(*) oname
+      integer fid, class, oexist, cret
+      integer mfifoex
+c
+      cret = mfifoex(fid, class, oname, len(oname), oexist)
+c      
+      return
+      end
+
+
+      subroutine mfiexi(fname, access, fexist, accok, cret)
+c     DEC$ ATTRIBUTES DLLEXPORT :: mfioex
+c
+      implicit none
+      save
+c
+      character *(*) fname
+      integer access, fexist, accok, cret
+      integer mfifexi
+c
+      cret = mfifexi(fname, len(fname), access, fexist, accok)
 c      
       return
       end

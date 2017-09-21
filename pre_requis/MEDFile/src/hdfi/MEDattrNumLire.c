@@ -32,7 +32,7 @@
  *     - val  (OUT) : la valeur de l'attribut
  * - Resultat : 0 en cas de succes, -1 sinon
  */ 
-med_err _MEDattrNumLire(med_idt pere,med_field_type type,char *nom,unsigned char *val)
+med_err _MEDattrNumLire(med_idt pere,med_field_type type,const char * const nom,unsigned char *val)
 {
   med_idt attid;
   med_err ret;

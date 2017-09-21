@@ -37,7 +37,7 @@ MEDfieldnComponent(const med_idt fid,
   med_err _ret       = -1;
   char    _fieldname[MED_NAME_SIZE+1]="";
   int     _num       = ind-1;
-  char    _path        [MED_TAILLE_CHA+MED_NAME_SIZE+1]=MED_CHA;
+  char    _path        [MED_FIELD_GRP_SIZE+MED_NAME_SIZE+1]=MED_FIELD_GRP;
   /*
    * On inhibe le gestionnaire d'erreur HDF
    */

@@ -22,7 +22,7 @@
 
 #include <cstring>
 
-using namespace ParaMEDMEM;
+using namespace MEDCoupling;
 
 MEDFileString::MEDFileString(int maxLgth):_max_lgth(maxLgth),_content(new char[maxLgth+1])
 {
@@ -34,11 +34,16 @@ MEDFileString::~MEDFileString()
   delete [] _content;
 }
 
+void MEDFileString::clear()
+{
+  std::fill(_content,_content+_max_lgth+1,'\0');
+}
+
 void MEDFileString::set(const char *s)
 {
   if((int)strlen(s)>_max_lgth)
     throw INTERP_KERNEL::Exception("Name is too long to be stored in MEDfile !");
-  std::fill(_content,_content+_max_lgth+1,'\0');
+  clear();
   strcpy(_content,s);
 }
 

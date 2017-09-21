@@ -42,6 +42,7 @@ C      character*16 unicoo(2)
       character*16 nomcoo(3)
       character*16 unicoo(3)
       character*16 dtunit
+      integer      maa1exist,maa4exist
       
 C ** Ouverture du fichier en lecture seule
       call mfiope(fid,'test2.med',MED_ACC_RDONLY, cret)
@@ -50,6 +51,23 @@ C ** Ouverture du fichier en lecture seule
          print *,'Erreur ouverture du fichier en lecture'
          call efexit(-1)
       endif      
+
+C ** Test de la présence d'un maillage
+      call mfioex(fid,MED_MESH,"maa1", maa1exist, cret)
+      print *,cret
+      if (cret .ne. 0 ) then
+         print *,'Erreur de test de présence de maillage'
+         call efexit(-1)
+      endif      
+      print *,"Maillage maa1 existe : ",maa1exist
+
+      call mfioex(fid,MED_MESH,"maa4", maa4exist, cret)
+      print *,cret
+      if (cret .ne. 0 ) then
+         print *,'Erreur de test de présence de maillage'
+         call efexit(-1)
+      endif      
+      print *,"Maillage maa4 existe : ",maa4exist
 
 C ** lecture du nombre de maillage                      **
       call mmhnmh(fid,nmaa,cret)

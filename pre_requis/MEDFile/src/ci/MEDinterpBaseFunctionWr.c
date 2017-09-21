@@ -48,7 +48,7 @@ MEDinterpBaseFunctionWr( const med_idt          fid,
  med_access_mode   _MED_ACCESS_MODE;
  med_idt           _root=0,_interpid=0,_bid=0;
   med_int           _ret=-1;
-  char              _path[MED_TAILLE_INTERP+MED_NAME_SIZE+1]=MED_INTERP;
+  char              _path[MED_INTERPOLATION_GRP_SIZE+MED_NAME_SIZE+1]=MED_INTERPOLATION_GRP;
   char              _basisfuncname[MED_MAX_PARA+1]="";
   med_int           _nvariable  =0;
   med_filter        _filter        = MED_FILTER_INIT;
@@ -117,7 +117,7 @@ MEDinterpBaseFunctionWr( const med_idt          fid,
 
   /*TODO : Créer un _MEDdatasetSimpleWr */
   if ( MEDfilterEntityCr(fid, ncoef, 1, 1, MED_ALL_CONSTITUENT,
-			 MED_NO_INTERLACE,MED_UNDEF_PFLMODE,
+			 MED_NO_INTERLACE,MED_UNDEF_STMODE,
 			 MED_NO_PROFILE, MED_UNDEF_SIZE, NULL, &_filter) < 0 ) {
     MED_ERR_(_ret,MED_ERR_CREATE,MED_ERR_FILTER,MED_ERR_INTERNAL_MSG);
     goto ERROR;
@@ -137,7 +137,7 @@ MEDinterpBaseFunctionWr( const med_idt          fid,
 
 
   if ( MEDfilterEntityCr(fid, ncoef*_nvariable, 1, 1, MED_ALL_CONSTITUENT,
-			 MED_NO_INTERLACE,MED_UNDEF_PFLMODE,
+			 MED_NO_INTERLACE,MED_UNDEF_STMODE,
 			 MED_NO_PROFILE, MED_UNDEF_SIZE, NULL, &_filter) < 0 ) {
     MED_ERR_(_ret,MED_ERR_CREATE,MED_ERR_FILTER,MED_ERR_INTERNAL_MSG);
     goto ERROR;

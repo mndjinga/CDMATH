@@ -32,8 +32,8 @@ med_idt _MEDmeshDatagroupOpen(const med_idt               fid,
 
   med_idt  _ret=-1;
   med_idt  _meshid=0;
-  char     __meshpath        [MED_TAILLE_MAA+MED_NAME_SIZE+1]=MED_MAA;
-  char     __supmeshpath     [MED_TAILLE_SUP_MAA+MED_NAME_SIZE+1]=MED_SUP_MAA;
+  char     __meshpath        [MED_MESH_GRP_SIZE+MED_NAME_SIZE+1]=MED_MESH_GRP;
+  char     __supmeshpath     [MED_MESH_SUPPORT_GRP_SIZE+MED_NAME_SIZE+1]=MED_MESH_SUPPORT_GRP;
   char*   _meshpath         =__meshpath;
 
   *isasupportmesh = MED_FALSE;

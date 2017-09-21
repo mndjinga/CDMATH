@@ -42,7 +42,7 @@ med_int _MEDfileName(med_idt id, char * const filename, const med_int filenamesi
 
   if ( (_size = H5Fget_name(id, filename,  filenamesize+1 ) ) < 0) {
     MED_ERR_(_size,MED_ERR_READ,MED_ERR_FILE,MED_ERR_NAME_MSG);
-    SSCRUTE(filename);ISCRUTE_id(id);ISCRUTE_size(_size);
+    SSCRUTE(filename);ISCRUTE_id(id);ISCRUTE_long(_size);
     goto ERROR;
   }
 

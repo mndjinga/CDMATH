@@ -33,7 +33,7 @@ MEDmeshComputationStepDtRd(const med_idt fid,
 
   med_err  _ret=-1;
   med_idt  _meshid=0,_datagroup1=0;
-  char     _meshpath[MED_TAILLE_MAA+MED_NAME_SIZE+1+2*MED_MAX_PARA+1+1]=MED_MAA;
+  char     _meshpath[MED_MESH_GRP_SIZE+MED_NAME_SIZE+1+2*MED_MAX_PARA+1+1]=MED_MESH_GRP;
   char     _datagroupname1[2*MED_MAX_PARA+1]="";
   med_sorting_type _sortingtype;
   med_int          _intsortingtype;

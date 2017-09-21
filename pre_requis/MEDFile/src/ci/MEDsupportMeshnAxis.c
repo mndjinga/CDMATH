@@ -35,7 +35,7 @@ med_int
 MEDsupportMeshnAxis(const med_idt fid,  const int meshit)
 {
   med_int  _ret=0;
-  char     _meshpath[MED_TAILLE_SUP_MAA+MED_NAME_SIZE+1]=MED_SUP_MAA;
+  char     _meshpath[MED_MESH_SUPPORT_GRP_SIZE+MED_NAME_SIZE+1]=MED_MESH_SUPPORT_GRP;
   char     _meshname[MED_NAME_SIZE+1]="";
   int      _num      = meshit-1;
 

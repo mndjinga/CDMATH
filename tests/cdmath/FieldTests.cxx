@@ -12,7 +12,7 @@
 #include <MEDCouplingFieldDouble.hxx>
 
 using namespace std;
-using namespace ParaMEDMEM;
+using namespace MEDCoupling;
 
 //----------------------------------------------------------------------
 void
@@ -135,7 +135,7 @@ FieldTests::testClassField( void )
 	CPPUNIT_ASSERT_EQUAL( 50, conc6.getNumberOfElements() );
 
 	Field conc7("CONCENTRATION",CELLS,M,2) ;
-	MEDCouplingAutoRefCountObjectPtr<MEDCouplingFieldDouble> f1=conc1.getField();
+	MCAuto<MEDCouplingFieldDouble> f1=conc1.getField();
 	conc7.setFieldByMEDCouplingFieldDouble(f1);
     conc7.setName("CONC");
     for (int i=0;i<conc7.getNumberOfElements();i++)
@@ -153,7 +153,7 @@ FieldTests::testClassField( void )
 	CPPUNIT_ASSERT(conc77.getInfoOnComponent(0).compare("compo1")==0 );
 	CPPUNIT_ASSERT(conc77.getInfoOnComponent(1).compare("compo2")==0 );
 
-	MEDCouplingAutoRefCountObjectPtr<MEDCouplingFieldDouble> f2=conc1.getField();
+	MCAuto<MEDCouplingFieldDouble> f2=conc1.getField();
 	conc77.setFieldByDataArrayDouble(f2->getArray());
     conc77.setName("CONC");
     for (int i=0;i<conc77.getNumberOfElements();i++)

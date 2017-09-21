@@ -52,9 +52,12 @@ atconfig: $(top_builddir)/config.status
 #	$(SHELL) $(CHECKTESTSUITE) $(CHECK_TESTS_ENVIRONMENT) $(CHECKTESTSUITE_FLAGS) $(ADAPT_CHECK_TESTS_EXPONENT)
 
 if WITH_PYTHON
+if INSTALLTEST
+
 installcheck-local:
 #	$(MAKE) installcheck-cplusplus
 	$(MAKE) installcheck-python
+endif
 endif
 
 installcheck-cplusplus: atconfig atlocal $(INSTALLCHECKTESTSUITE)

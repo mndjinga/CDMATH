@@ -8,9 +8,8 @@ from med.medfile import *
 from med.medmesh import *
 from med.medfield import *
 
-#TODO : Creer un import unique
-# BUG : MEDCHAR(n+1) en non MEDCHAR(n), il faut modifier le comportement de la bibliothèque
-# vis à vis des tableaux de tableaux de caractères.
+# ATTENTION:  MEDCHAR(n+1) et non MEDCHAR(n)
+# (sinon il faut modifier le comportement du wrapping de la bibliothèque vis à vis des tableaux de tableaux de caractères)
 
 
 fid = MEDfileOpen("test_medmesh_1_1.med",MED_ACC_CREAT)
@@ -200,9 +199,9 @@ MEDfieldCr(fid,**field1)
 # err,meshname_field1_rd,lmesh_field1_rd,type_field1_rd,comp_field1_rd,unit_field1_rd,dtunit_field1_rd,ncstp_field1_rd=MEDfieldInfoByName(fid,fieldname1)
 field1_info=MEDfieldInfoByName(fid,field1['fieldname'])
 #Les fonctions MED ne renvoient pas de dictionnaire (ou d'objets)
-#On créer un dictionnaire à partir d'une liste de clés ordonnées.
+#On crée un dictionnaire à partir d'une liste de clés ordonnées.
 field1_info2=dict(zip(fieldinfo_keys,field1_info))
-#On supprimer les clés qui ne sont pas a comparer (on pourrait écire une fonction qui compare que les élements communs)
+#On supprime les clés qui ne sont pas a comparer (on pourrait écire une fonction qui compare que les élements communs)
 del field1_info2['ncstp']
 del field1_info2['localmesh']
 field1_info2['fieldname'] =field1['fieldname']
@@ -210,7 +209,7 @@ field1_info2['fieldtype'] =field1['fieldtype']
 field1_info2['ncomponent']=field1['ncomponent']
 field1_info2['meshname']=field1['meshname']
 
-#En python 2.7 il existe des dict copréhension
+#En python 2.7 il existe des dict compréhension
 field1_info3=dict([ (x,field1_info2[x]) for x in fieldinfo_keys if x in field1.keys()] )
  
   

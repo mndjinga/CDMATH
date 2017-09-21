@@ -51,7 +51,7 @@ MEDinterpInfoByName(const med_idt                   fid,
   med_idt           _interpid=0;
   med_int           _err=-1;
   med_err           _ret=-1;
-  char              _path[MED_TAILLE_INTERP+MED_NAME_SIZE+1]=MED_INTERP;
+  char              _path[MED_INTERPOLATION_GRP_SIZE+MED_NAME_SIZE+1]=MED_INTERPOLATION_GRP;
   med_int           _cellnode = 0;
   med_size          _tmpn=0;
   med_int           _medintgeotype=MED_UNDEF_GEOTYPE;

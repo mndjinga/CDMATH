@@ -27,6 +27,8 @@ MEDlibraryHdfNumVersion.c\
 MEDlibraryHdfStrVersion.c\
 MEDlibraryClose.c\
 MEDfileOpen.c\
+MEDfileVersionOpen.c\
+MEDfileExist.c\
 MEDfileName.c\
 MEDmemFileOpen.c\
 MEDfileClose.c \
@@ -38,6 +40,7 @@ MEDfileStrVersionRd.c \
 MEDfileObjectsMount.c \
 MEDfileObjectsMountById.c \
 MEDfileObjectsUnmount.c \
+MEDfileObjectExist.c \
 MEDnProfile.c \
 MEDprofileInfo.c \
 MEDprofileWr.c \

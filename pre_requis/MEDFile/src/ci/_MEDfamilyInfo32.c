@@ -28,8 +28,8 @@ _MEDfamilyInfo32(int dummy,...)
 {
   med_err    _ret=-1,_err=-1;
   med_idt    _datagroup=0,_famid=0;
-  char       _path   [MED_TAILLE_FAS+MED_NAME_SIZE+
-		     MED_TAILLE_FAS_ENTITE+MED_NAME_SIZE+1] = MED_FAS;
+  char       _path   [MED_FAMILY_GRP_SIZE+MED_NAME_SIZE+
+		     MED_TAILLE_FAS_ENTITE+MED_NAME_SIZE+1] = MED_FAMILY_GRP;
   med_int    _n          = 0;
   med_size   _tmpn       = 0;
   int        _pathreflen = 0;

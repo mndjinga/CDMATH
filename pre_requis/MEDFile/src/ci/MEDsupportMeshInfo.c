@@ -47,7 +47,7 @@ med_err MEDsupportMeshInfo(const med_idt            fid,
 			   char *             const axisunit)
 {
   med_err  _ret=-1;
-  char     _meshpath[MED_TAILLE_SUP_MAA+MED_NAME_SIZE+1]=MED_SUP_MAA;
+  char     _meshpath[MED_MESH_SUPPORT_GRP_SIZE+MED_NAME_SIZE+1]=MED_MESH_SUPPORT_GRP;
   int      _num = meshit -1;
 
   /*

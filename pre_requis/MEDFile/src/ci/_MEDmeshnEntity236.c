@@ -37,7 +37,7 @@ _MEDmeshnEntity236(int dummy, ...)
    med_size         _nn =0;
    med_data_type    _meddatatype;
    med_int          _nfaces=0;
-   char             _meshpath[MED_TAILLE_MAA+MED_TAILLE_NOM+1]=MED_MAA;
+   char             _meshpath[MED_MESH_GRP_SIZE+MED_TAILLE_NOM+1]=MED_MESH_GRP;
    med_idt          _meshid=0,_datagroup1=0;
    char             _datagroupname1[MED_TAILLE_NOM_ENTITE+1]="";
    med_err          _err =0;

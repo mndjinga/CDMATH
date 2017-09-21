@@ -31,7 +31,7 @@ _MEDfieldnProfile236(int dummy, ...) {
 
   med_int  _ret=-1,_err=-1;
   med_idt  _gid=0,_datagroup1=0;
-  char     _path[(MED_TAILLE_CHA+MED_NAME_SIZE+1)+(2*MED_MAX_PARA+1)+1]=MED_CHA;
+  char     _path[(MED_FIELD_GRP_SIZE+MED_NAME_SIZE+1)+(2*MED_MAX_PARA+1)+1]=MED_FIELD_GRP;
   char     _datagroupname1  [2*MED_TAILLE_NOM_ENTITE+2]="";
   char     _nomdatagroup2   [2*MED_MAX_PARA+1]         ="";
   char     _geotype         [MED_TAILLE_NOM_ENTITE+1]  ="";

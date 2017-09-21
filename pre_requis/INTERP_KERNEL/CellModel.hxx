@@ -32,7 +32,7 @@ namespace INTERP_KERNEL
   class DiameterCalculator;
   
   /*!
-   * This class descibes all static elements (different from polygons and polyhedron) 3D, 2D and 1D.
+   * This class describes all static elements (different from polygons and polyhedron) 3D, 2D and 1D.
    */
   class CellModel
   {
@@ -55,11 +55,13 @@ namespace INTERP_KERNEL
     INTERPKERNEL_EXPORT bool isSimplex() const { return _is_simplex; }
     //! sonId is in C format.
     INTERPKERNEL_EXPORT const unsigned *getNodesConstituentTheSon(unsigned sonId) const { return _sons_con[sonId]; }
+    INTERPKERNEL_EXPORT const unsigned *getNodesConstituentTheLittleSon(unsigned littleSonId) const { return _little_sons_con[littleSonId]; }
     INTERPKERNEL_EXPORT bool getOrientationStatus(unsigned lgth, const int *conn1, const int *conn2) const;
     INTERPKERNEL_EXPORT unsigned getNumberOfNodes() const { return _nb_of_pts; }
     INTERPKERNEL_EXPORT unsigned getNumberOfSons() const { return _nb_of_sons; }
     INTERPKERNEL_EXPORT unsigned getNumberOfSons2(const int *conn, int lgth) const;
     INTERPKERNEL_EXPORT unsigned getNumberOfEdgesIn3D(const int *conn, int lgth) const;
+    INTERPKERNEL_EXPORT unsigned getNumberOfMicroEdges() const;
     INTERPKERNEL_EXPORT unsigned getNumberOfNodesConstituentTheSon(unsigned sonId) const { return _nb_of_sons_con[sonId]; }
     INTERPKERNEL_EXPORT unsigned getNumberOfNodesConstituentTheSon2(unsigned sonId, const int *nodalConn, int lgth) const;
     INTERPKERNEL_EXPORT NormalizedCellType getExtrudedType() const { return _extruded_type; }
@@ -74,6 +76,7 @@ namespace INTERP_KERNEL
     INTERPKERNEL_EXPORT unsigned fillSonCellNodalConnectivity2(int sonId, const int *nodalConn, int lgth, int *sonNodalConn, NormalizedCellType& typeOfSon) const;
     INTERPKERNEL_EXPORT unsigned fillSonCellNodalConnectivity4(int sonId, const int *nodalConn, int lgth, int *sonNodalConn, NormalizedCellType& typeOfSon) const;
     INTERPKERNEL_EXPORT unsigned fillSonEdgesNodalConnectivity3D(int sonId, const int *nodalConn, int lgth, int *sonNodalConn, NormalizedCellType& typeOfSon) const;
+    INTERPKERNEL_EXPORT unsigned fillMicroEdgeNodalConnectivity(int sonId, const int *nodalConn, int *sonNodalConn, NormalizedCellType& typeOfSon) const;
     INTERPKERNEL_EXPORT void changeOrientationOf2D(int *nodalConn, unsigned int sz) const;
     INTERPKERNEL_EXPORT void changeOrientationOf1D(int *nodalConn, unsigned int sz) const;
     INTERPKERNEL_EXPORT DiameterCalculator *buildInstanceOfDiameterCalulator(int spaceDim) const;

@@ -75,7 +75,7 @@ EXTRA_DIST = test1.sh test2.sh test3.sh test4.sh test6.sh test8.sh  test10.sh te
 LDADD = $(top_builddir)/src/libmed.la
 #test1_LDADD = ....la
 
-noinst_PROGRAMS = test1 test2 test3 test4 test6 test8  test10 test12 test14 test16 test18 test19 test20 test21 test22 test23 test24 test25 test26 test27 test28 test29 test31 test32 test33   $(mycheckPROGRAMS)
+check_PROGRAMS = test1 test2 test3 test4 test6 test8  test10 test12 test14 test16 test18 test19 test20 test21 test22 test23 test24 test25 test26 test27 test28 test29 test31 test32 test33   $(mycheckPROGRAMS)
 
 
 test1_SOURCES = test1.f

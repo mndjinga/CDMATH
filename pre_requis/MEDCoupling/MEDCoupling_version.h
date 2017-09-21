@@ -33,10 +33,10 @@
   MEDCOUPLING_VERSION             : (hex)     complete version number (major << 16) + (minor << 8) + maintenance
 */
 
-#define MEDCOUPLING_VERSION_MAJOR       7
-#define MEDCOUPLING_VERSION_MINOR       8
+#define MEDCOUPLING_VERSION_MAJOR       8
+#define MEDCOUPLING_VERSION_MINOR       3
 #define MEDCOUPLING_VERSION_MAINTENANCE 0
-#define MEDCOUPLING_VERSION_STR         "7.8.0"
-#define MEDCOUPLING_VERSION             0x070800
+#define MEDCOUPLING_VERSION_STR         "8.3.0"
+#define MEDCOUPLING_VERSION             0x080300
 
 #endif // __MEDCOUPLING_VERSION_H__

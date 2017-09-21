@@ -44,7 +44,7 @@ MEDprofileInfo(const med_idt          fid,
 {
   med_idt        _pfid=0;
   med_err        _ret=-1;
-  char           _path[MED_TAILLE_PROFILS+MED_NAME_SIZE+1]=MED_PROFILS;
+  char           _path[MED_PROFILE_GRP_SIZE+MED_NAME_SIZE+1]=MED_PROFILE_GRP;
   int            _num=profileit-1;
 
   /*
@@ -81,7 +81,7 @@ MEDprofileInfo(const med_idt          fid,
  ERROR:
 
   if ( _pfid > 0 ) if ( _MEDdatagroupFermer(_pfid) < 0) {
-    MED_ERR_(_ret,MED_ERR_CLOSE,MED_ERR_DATAGROUP,MED_PROFILS);
+    MED_ERR_(_ret,MED_ERR_CLOSE,MED_ERR_DATAGROUP,MED_PROFILE_GRP);
     ISCRUTE_id(_pfid);
   }
 

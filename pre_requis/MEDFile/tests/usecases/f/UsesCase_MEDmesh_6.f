@@ -131,7 +131,7 @@ C
 C     initial nodes coordinates in a cartesian axis in full interlace mode 
 C     (X1,Y1, X2,Y2, X3,Y3, ...)
       call mmhcpw(fid, mname, MED_NO_DT, MED_NO_IT, 0.0D0,
-     &            MED_COMPACT_PFLMODE, MED_NO_PROFILE,
+     &            MED_COMPACT_STMODE, MED_NO_PROFILE,
      &            MED_FULL_INTERLACE, MED_ALL_CONSTITUENT,
      &            nnodes, inicoo, cret)
       if (cret .ne. 0 ) then
@@ -143,7 +143,7 @@ C
 C     cells connectivity is defined in nodal mode
       call mmhypw(fid, mname, MED_NO_DT, MED_NO_IT, 0.0D0,
      &            MED_CELL, MED_TRIA3, MED_NODAL,
-     &            MED_COMPACT_PFLMODE, MED_NO_PROFILE,
+     &            MED_COMPACT_STMODE, MED_NO_PROFILE,
      &            MED_FULL_INTERLACE, MED_ALL_CONSTITUENT,
      &            ntria3, triacy, cret)
       if (cret .ne. 0 ) then
@@ -154,7 +154,7 @@ C
 C
       call mmhypw(fid, mname, MED_NO_DT, MED_NO_IT, 0.0D0,
      &            MED_CELL, MED_QUAD4, MED_NODAL,
-     &            MED_COMPACT_PFLMODE, MED_NO_PROFILE,
+     &            MED_COMPACT_STMODE, MED_NO_PROFILE,
      &            MED_FULL_INTERLACE, MED_ALL_CONSTITUENT,
      &            nquad4, quadcy, cret)
       if (cret .ne. 0 ) then
@@ -168,7 +168,7 @@ C     The nodes modified are identified by a profile
 C
 C     STEP 1 : dt1 = 5.5, it = 1
       call mmhcpw(fid, mname, 1, 1, 5.5D0,
-     &            MED_COMPACT_PFLMODE, prof1n,
+     &            MED_COMPACT_STMODE, prof1n,
      &            MED_FULL_INTERLACE, MED_ALL_CONSTITUENT,
      &            nnodes, nwcos1, cret)
       if (cret .ne. 0 ) then
@@ -179,7 +179,7 @@ C
 C
 C     STEP 2 : dt2 = 8.9, it = 1
       call mmhcpw(fid, mname, 2, 1, 8.9D0,
-     &            MED_COMPACT_PFLMODE, prof2n,
+     &            MED_COMPACT_STMODE, prof2n,
      &            MED_FULL_INTERLACE, MED_ALL_CONSTITUENT,
      &            nnodes, nwcos2, cret)
       if (cret .ne. 0 ) then

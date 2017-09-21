@@ -1,10 +1,33 @@
+Modifications dans la version 3.2.1 :
+
+- Gestion de la detection d'hdf serial/parallel qui cohabitent dans les répertoires systèmes
+- Ajout des options --with-hdf5-lib, --with-hdf5-include, --with-hdf5-bin en plus de --with-hdf5
+- Detection de la plage de version HDF utilisable avec la version de la bibliothèque (hdf5-1.10 interdit avec med3.y.z)
+- Installation par défaut de la documentation selon le standard gnu et possibilité d'utiliser l'option --docdir au configure (cf README)
+- Les tests sont compilés uniquement si l'on lance make check
+- Les tests sont installés uniquement si l'on utilise ./configure --enable_installtest
+- Ajout d'une fonction MEDfileVersionOpen C/F/py/Doc
+- Ajout d'une fonction MEDfileExist C/F/py/Doc
+- Ajout d'une fonction MEDfileObjectExist C/F/py/Doc
+- Ajout des test de la fonction MEDfileVersionOpen C/F/py/Doc
+- Ajout des tests de la fonction MEDfileExist en C/F/Py
+- Ajout des tests de la fonction MEDfileObjectExist en C/F/Py
+- Correction d'un bug dans MEDfileCompatibility qui dans les versions précédentes de la bibliothèque
+  ne détectait pas les changements de modèles internes liés au changement de la version mineur
+- Mise à jour de la documentation pour utiliser doxygen-1.8.9
+- Modification des noms d'objets internes pour une mise en adéquation avec les noms utilisés dans les classes d'objets MED de med.h
+- Corrections pour portage windows
+- Corrections pour compilation gcc-6.2
+- Préparation de MED4.0.0 avec le format de fichier hdf5-1.10
+- Mise ne conformité Cmake avec les autotools
+
 Modifications dans la version 3.2.0 :
 
-- Gestion rapide d'un grand nombre de famille/groupes (chgt modèle interne).
+- Gestion rapide d'un grand nombre de famille/groupes (chgt modèle interne)
 - Mise en conformité de l'outil medimport (3.1 -> 3.2)
 - Diverses corrections liées à l'utilisation des grilles polaires
 - Mises à jour des usecases grilles
-- Réecriture des usescases polyèdres avec un cas plus réaliste
+- Réecriture des usescases polyèdres 13&14 avec un cas plus réaliste
 - Mises à jour de la documentation polyedres + polygones
 - Réecriture en .svg du schema explicatif de la connectivité des polyèdres
 - Modification des destructeurs cxx pour éviter la défintion de symboles Weak dans la bibliothèque
@@ -12,7 +35,7 @@ Modifications dans la version 3.2.0 :
 Modifications dans la version 3.1.0 :
 
 - Ajout de la fonctionalité de gestion des fichiers en mémoire.  Transferts possibles entre processus.
-- Correction d'une lenteur d'execution de MEDfieldComputingStepInfo pour des champs ayant de nombreuses étapes de calcul (>1000)
+- Correction d'une lenteur d'execution de MEDfieldComputingStepInfo pour des champs ayant de nombreuses étapes de calcul (>1000) (chgt modèle interne)
 - Correction d'une erreur de comptage des Py_None en sortie des appels MED en python.
 - Correction d'une impossibilité d'écriture de MEDmeshGridIndexCoorinateWr en mode MED_ACC_RDEXT à partir d'un n°axe >1
 - Patch CMakeLists pour gérer la detection MPI/HDF5par
@@ -24,7 +47,7 @@ Modifications dans la version 3.0.8p1 :
 
 Modifications dans la version 3.0.8 :
 
-- Correction d'un débordement d'accès à la mémoire concernant l'utilisation des filtres par blocs sur les noms des entites quelque soit le mode d'entrelacement et de stockage 
+- Correction d'un débordement d'accès à la mémoire concernant l'utilisation des filtres par blocs sur les noms des entites quelque soit le mode d'entrelacement et de stockage
 - Correction d'un bug concernant les filtres par entités en mode MED_FULL_INTERLACE et MED_COMPAQ
 - Correction d'un bug concernant les filtres par entités en mode MED_NO_INTERLACE et MED_COMPAQ
 - Corrections docs
@@ -35,10 +58,10 @@ Modifications dans la version 3.0.7 :
 - Correction d'un bug de comptage des informations secondaires noms,numéros optionnels dans le cas d'une grille curvilinear (MEDmeshnEntity)
 - Ajout du type polynôme quadratique (MED_POLYGON2)
 - mdump et xmdump sont maintenant des liens sur mdump3 et xmdump3 ds le répertoire d'installation
-- Mise en adéquation de xmdump3 avec les options spécifiques à mdump3 
+- Mise en adéquation de xmdump3 avec les options spécifiques à mdump3
 - Correction d'un bug renvoyant une erreur ds le cadre des grilles curvilinéaire lorsque l'on demande le nbre de familles et qu'il n'y en a pas.
 - Limitation de l'utilisation mémoire ds l'interface F/C dans le cas du tableau des noms optionnels d'entités
-- Developpement/test/doc de MEDfileObjectsMountById 
+- Developpement/test/doc de MEDfileObjectsMountById
 - séparation des headers med par module (depuis med_proto.h)
 - Ajout d'une extraction de H5public.h à l'étape de configuration pour swig
 - Ajout de certains const manquants de l'interface C utiles à swig (~ ne change pas l'API)
@@ -172,12 +195,12 @@ Modification dans la version 2.3.5 :
 
 Modification dans la version 2.3.4 :
 
-- ID55 : Une optimisation dans la couche basse de MED fichier permet aux routines MEDnAttribut et MEDnGroupe d'avoir 
+- ID55 : Une optimisation dans la couche basse de MED fichier permet aux routines MEDnAttribut et MEDnGroupe d'avoir
 	 un temps d'execution très réduit par rapport aux versions MED antérieures.
 
 - ID52 :  MED_NUM_MAJEUR, MED_NUM_MINEUR, et MED_NUM_RELEASE sont définis dans med.h
 
-- ID53 :  Correction d'un bug dans MEDunvCr qui provoquait parfois un débordement mémoire 
+- ID53 :  Correction d'un bug dans MEDunvCr qui provoquait parfois un débordement mémoire
 	
 Modification dans la version 2.3.3 :
 

@@ -30,7 +30,7 @@ _MEDequivalenceInfo30(int dummy, ...)
 
   med_idt  _eqid=0;
   med_err  _ret=-1,_err=-1;
-  char     _path[MED_TAILLE_EQS+2*MED_NAME_SIZE+2]=MED_EQS;
+  char     _path[MED_EQUIVALENCE_GRP_SIZE+2*MED_NAME_SIZE+2]=MED_EQUIVALENCE_GRP;
   char     _cstpname[2*MED_MAX_PARA+1]="";
   int      _num;
   int      _pathreflen=0;

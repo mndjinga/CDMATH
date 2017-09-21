@@ -20,10 +20,10 @@
 
 #include "MEDCouplingMesh.hxx"
 #include "MEDCouplingUMesh.hxx"
-#include "MEDCouplingMemArray.hxx"
+#include "MEDCouplingMemArray.txx"
 #include "MEDCouplingFieldDouble.hxx"
 #include "MEDCouplingFieldDiscretization.hxx"
-#include "MEDCouplingAutoRefCountObjectPtr.hxx"
+#include "MCAuto.hxx"
 
 #include <set>
 #include <cmath>
@@ -31,7 +31,7 @@
 #include <fstream>
 #include <iterator>
 
-using namespace ParaMEDMEM;
+using namespace MEDCoupling;
 
 MEDCouplingMesh::MEDCouplingMesh():_time(0.),_iteration(-1),_order(-1)
 {
@@ -269,7 +269,7 @@ MEDCouplingMesh *MEDCouplingMesh::buildPartRange(int beginCellIds, int endCellId
     }
   else
     {
-      MEDCouplingAutoRefCountObjectPtr<DataArrayInt> cellIds=DataArrayInt::Range(beginCellIds,endCellIds,stepCellIds);
+      MCAuto<DataArrayInt> cellIds=DataArrayInt::Range(beginCellIds,endCellIds,stepCellIds);
       return buildPart(cellIds->begin(),cellIds->end());
     }
 }
@@ -281,7 +281,7 @@ MEDCouplingMesh *MEDCouplingMesh::buildPartRange(int beginCellIds, int endCellId
  */
 MEDCouplingMesh *MEDCouplingMesh::buildPartRangeAndReduceNodes(int beginCellIds, int endCellIds, int stepCellIds, int& beginOut, int& endOut, int& stepOut, DataArrayInt*& arr) const
 {
-  MEDCouplingAutoRefCountObjectPtr<DataArrayInt> cellIds=DataArrayInt::Range(beginCellIds,endCellIds,stepCellIds);
+  MCAuto<DataArrayInt> cellIds=DataArrayInt::Range(beginCellIds,endCellIds,stepCellIds);
   return buildPartAndReduceNodes(cellIds->begin(),cellIds->end(),arr);
 }
 
@@ -303,7 +303,7 @@ MEDCouplingMesh *MEDCouplingMesh::buildPartRangeAndReduceNodes(int beginCellIds,
  */
 MEDCouplingFieldDouble *MEDCouplingMesh::fillFromAnalytic(TypeOfField t, int nbOfComp, FunctionToEvaluate func) const
 {
-  MEDCouplingAutoRefCountObjectPtr<MEDCouplingFieldDouble> ret=MEDCouplingFieldDouble::New(t,ONE_TIME);
+  MCAuto<MEDCouplingFieldDouble> ret=MEDCouplingFieldDouble::New(t,ONE_TIME);
   ret->setMesh(this);
   ret->fillFromAnalytic(nbOfComp,func);
   ret->synchronizeTimeWithSupport();
@@ -340,7 +340,7 @@ void MEDCouplingMesh::copyTinyInfoFrom(const MEDCouplingMesh *other)
  * Creates a new MEDCouplingFieldDouble of a given type, one time, with given number of
  * components, lying on \a this mesh, with contents got by applying a specified
  * function to coordinates of field location points (defined by the given field type).
- * For example, if \a t == ParaMEDMEM::ON_CELLS, the function is applied to cell
+ * For example, if \a t == MEDCoupling::ON_CELLS, the function is applied to cell
  * barycenters.<br>
  * For more info on supported expressions that can be used in the function, see \ref
  * MEDCouplingArrayApplyFuncExpr. The function can include arbitrary named variables
@@ -378,7 +378,7 @@ void MEDCouplingMesh::copyTinyInfoFrom(const MEDCouplingMesh *other)
  */
 MEDCouplingFieldDouble *MEDCouplingMesh::fillFromAnalytic(TypeOfField t, int nbOfComp, const std::string& func) const
 {
-  MEDCouplingAutoRefCountObjectPtr<MEDCouplingFieldDouble> ret=MEDCouplingFieldDouble::New(t,ONE_TIME);
+  MCAuto<MEDCouplingFieldDouble> ret=MEDCouplingFieldDouble::New(t,ONE_TIME);
   ret->setMesh(this);
   ret->fillFromAnalytic(nbOfComp,func);
   ret->synchronizeTimeWithSupport();
@@ -389,7 +389,7 @@ MEDCouplingFieldDouble *MEDCouplingMesh::fillFromAnalytic(TypeOfField t, int nbO
  * Creates a new MEDCouplingFieldDouble of a given type, one time, with given number of
  * components, lying on \a this mesh, with contents got by applying a specified
  * function to coordinates of field location points (defined by the given field type).
- * For example, if \a t == ParaMEDMEM::ON_CELLS, the function is applied to cell
+ * For example, if \a t == MEDCoupling::ON_CELLS, the function is applied to cell
  * barycenters. This method differs from
  * \ref MEDCouplingMesh::fillFromAnalytic(TypeOfField t, int nbOfComp, const std::string& func) const "fillFromAnalytic()"
  * by the way how variable
@@ -428,11 +428,11 @@ MEDCouplingFieldDouble *MEDCouplingMesh::fillFromAnalytic(TypeOfField t, int nbO
  *  \ref  py_mcmesh_fillFromAnalytic2 "Here is a Python example".
  *  \endif
  */
-MEDCouplingFieldDouble *MEDCouplingMesh::fillFromAnalytic2(TypeOfField t, int nbOfComp, const std::string& func) const
+MEDCouplingFieldDouble *MEDCouplingMesh::fillFromAnalyticCompo(TypeOfField t, int nbOfComp, const std::string& func) const
 {
-  MEDCouplingAutoRefCountObjectPtr<MEDCouplingFieldDouble> ret=MEDCouplingFieldDouble::New(t,ONE_TIME);
+  MCAuto<MEDCouplingFieldDouble> ret=MEDCouplingFieldDouble::New(t,ONE_TIME);
   ret->setMesh(this);
-  ret->fillFromAnalytic2(nbOfComp,func);
+  ret->fillFromAnalyticCompo(nbOfComp,func);
   ret->synchronizeTimeWithSupport();
   return ret.retn();
 }
@@ -441,7 +441,7 @@ MEDCouplingFieldDouble *MEDCouplingMesh::fillFromAnalytic2(TypeOfField t, int nb
  * Creates a new MEDCouplingFieldDouble of a given type, one time, with given number of
  * components, lying on \a this mesh, with contents got by applying a specified
  * function to coordinates of field location points (defined by the given field type).
- * For example, if \a t == ParaMEDMEM::ON_CELLS, the function is applied to cell
+ * For example, if \a t == MEDCoupling::ON_CELLS, the function is applied to cell
  * barycenters. This method differs from \ref  \ref mcmesh_fillFromAnalytic
  * "fillFromAnalytic()" by the way how variable
  * names, used in the function, are associated with components of coordinates of field
@@ -481,11 +481,11 @@ MEDCouplingFieldDouble *MEDCouplingMesh::fillFromAnalytic2(TypeOfField t, int nb
  *  \ref  py_mcmesh_fillFromAnalytic3 "Here is a Python example".
  *  \endif
  */
-MEDCouplingFieldDouble *MEDCouplingMesh::fillFromAnalytic3(TypeOfField t, int nbOfComp, const std::vector<std::string>& varsOrder, const std::string& func) const
+MEDCouplingFieldDouble *MEDCouplingMesh::fillFromAnalyticNamedCompo(TypeOfField t, int nbOfComp, const std::vector<std::string>& varsOrder, const std::string& func) const
 {
-  MEDCouplingAutoRefCountObjectPtr<MEDCouplingFieldDouble> ret=MEDCouplingFieldDouble::New(t,ONE_TIME);
+  MCAuto<MEDCouplingFieldDouble> ret=MEDCouplingFieldDouble::New(t,ONE_TIME);
   ret->setMesh(this);
-  ret->fillFromAnalytic3(nbOfComp,varsOrder,func);
+  ret->fillFromAnalyticNamedCompo(nbOfComp,varsOrder,func);
   ret->synchronizeTimeWithSupport();
   return ret.retn();
 }
@@ -532,7 +532,7 @@ MEDCouplingMesh *MEDCouplingMesh::MergeMeshes(const MEDCouplingMesh *mesh1, cons
  */
 MEDCouplingMesh *MEDCouplingMesh::MergeMeshes(std::vector<const MEDCouplingMesh *>& meshes)
 {
-  std::vector< MEDCouplingAutoRefCountObjectPtr<MEDCouplingUMesh> > ms1(meshes.size());
+  std::vector< MCAuto<MEDCouplingUMesh> > ms1(meshes.size());
   std::vector< const MEDCouplingUMesh * > ms2(meshes.size());
   for(std::size_t i=0;i<meshes.size();i++)
     {
@@ -623,27 +623,6 @@ const char *MEDCouplingMesh::GetReprOfGeometricType(INTERP_KERNEL::NormalizedCel
 }
 
 /*!
- * Finds cells in contact with a ball (i.e. a point with precision).
- * \warning This method is suitable if the caller intends to evaluate only one
- *          point, for more points getCellsContainingPoints() is recommended as it is
- *          faster. 
- *  \param [in] pos - array of coordinates of the ball central point.
- *  \param [in] eps - ball radius.
- *  \param [in,out] elts - vector returning ids of the found cells. It is cleared
- *         before inserting ids.
- *
- *  \if ENABLE_EXAMPLES
- *  \ref cpp_mcumesh_getCellsContainingPoint "Here is a C++ example".<br>
- *  \ref  py_mcumesh_getCellsContainingPoint "Here is a Python example".
- *  \endif
- */
-void MEDCouplingMesh::getCellsContainingPoint(const double *pos, double eps, std::vector<int>& elts) const
-{
-  int ret=getCellContainingPoint(pos,eps);
-  elts.push_back(ret);
-}
-
-/*!
  * Finds cells in contact with several balls (i.e. points with precision).
  * This method is an extension of getCellContainingPoint() and
  * getCellsContainingPoint() for the case of multiple points.
@@ -668,7 +647,7 @@ void MEDCouplingMesh::getCellsContainingPoint(const double *pos, double eps, std
  *  \ref  py_mcumesh_getCellsContainingPoints "Here is a Python example".
  *  \endif
  */
-void MEDCouplingMesh::getCellsContainingPoints(const double *pos, int nbOfPoints, double eps, MEDCouplingAutoRefCountObjectPtr<DataArrayInt>& elts, MEDCouplingAutoRefCountObjectPtr<DataArrayInt>& eltsIndex) const
+void MEDCouplingMesh::getCellsContainingPoints(const double *pos, int nbOfPoints, double eps, MCAuto<DataArrayInt>& elts, MCAuto<DataArrayInt>& eltsIndex) const
 {
   eltsIndex=DataArrayInt::New(); elts=DataArrayInt::New(); eltsIndex->alloc(nbOfPoints+1,1); eltsIndex->setIJ(0,0,0); elts->alloc(0,1);
   int *eltsIndexPtr(eltsIndex->getPointer());
@@ -676,14 +655,10 @@ void MEDCouplingMesh::getCellsContainingPoints(const double *pos, int nbOfPoints
   const double *work(pos);
   for(int i=0;i<nbOfPoints;i++,work+=spaceDim)
     {
-      int ret=getCellContainingPoint(work,eps);
-      if(ret>=0)
-        {
-          elts->pushBackSilent(ret);
-          eltsIndexPtr[i+1]=eltsIndexPtr[i]+1;
-        }
-      else
-        eltsIndexPtr[i+1]=eltsIndexPtr[i];
+      std::vector<int> ret;
+      getCellsContainingPoint(work,eps,ret);
+      elts->insertAtTheEnd(ret.begin(),ret.end());
+      eltsIndexPtr[i+1]=elts->getNumberOfTuples();
     }
 }
 
@@ -700,7 +675,7 @@ std::string MEDCouplingMesh::writeVTK(const std::string& fileName, bool isBinary
   std::string ret(getVTKFileNameOf(fileName));
   //
   std::string cda,pda;
-  MEDCouplingAutoRefCountObjectPtr<DataArrayByte> byteArr;
+  MCAuto<DataArrayByte> byteArr;
   if(isBinary)
     { byteArr=DataArrayByte::New(); byteArr->alloc(0,1); }
   writeVTKAdvanced(ret,cda,pda,byteArr);

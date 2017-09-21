@@ -28,7 +28,7 @@ void _MEDparameterInfoByName30(int dummy, ...) {
   med_err _ret = -1, _err = -1;
   med_int _paramtype = 0;
   med_idt _paramidt = 0;
-  char    _parampath[MED_TAILLE_NUM_DATA+MED_NAME_SIZE+1]=MED_NUM_DATA;
+  char    _parampath[MED_NUMERICAL_DATA_GRP_SIZE+MED_NAME_SIZE+1]=MED_NUMERICAL_DATA_GRP;
   med_size _nstep=0;
   
   MED_VARGS_DECL(const, med_idt              , , fid         );

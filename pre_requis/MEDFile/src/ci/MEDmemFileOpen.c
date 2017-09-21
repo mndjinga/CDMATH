@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2016  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -59,7 +59,7 @@ MEDmemFileOpen(const char* const filename, med_memfile * const memfile, const me
     case MED_ACC_RDONLY :
     case MED_ACC_CREAT :
     case MED_ACC_RDWR :
-	if ((_fid = _MEDmemFileCreate((char *) filename, memfile, filesync,  accessmode)) < 0) { 
+	if ((_fid = _MEDmemFileOpen((char *) filename, memfile, filesync,  accessmode)) < 0) { 
 	  MED_ERR_(_ret,MED_ERR_CREATE,MED_ERR_MEMFILE,filename);
 	  goto ERROR;
 	}

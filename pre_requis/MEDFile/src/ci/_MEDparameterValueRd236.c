@@ -29,8 +29,8 @@ void _MEDparameterValueRd236(int dummy, ...) {
 
   med_idt _paramidt = 0;
   med_idt _cpstidt = 0;
-  char _parampath [MED_TAILLE_NUM_DATA+MED_NAME_SIZE+1] = "";
-  char _cpstpath[MED_TAILLE_SUP_MAA+MED_NAME_SIZE+1+2*MED_MAX_PARA+1+1]="";
+  char _parampath [MED_NUMERICAL_DATA_GRP_SIZE+MED_NAME_SIZE+1] = "";
+  char _cpstpath[MED_MESH_SUPPORT_GRP_SIZE+MED_NAME_SIZE+1+2*MED_MAX_PARA+1+1]="";
   char _cpstname [2*MED_MAX_PARA+1]="";
   med_access_mode       _MED_ACCESS_MODE;
   med_int _intparamtype = 0;
@@ -65,7 +65,7 @@ void _MEDparameterValueRd236(int dummy, ...) {
   /* Si le group HDF correspondant au parametre n'existe pas => erreur
      Sinon on l'ouvre */
   NOFINALBLANK(paramname,ERROR);
-  strcpy(_parampath, MED_NUM_DATA);
+  strcpy(_parampath, MED_NUMERICAL_DATA_GRP);
   strcat(_parampath, paramname);
   if ((_paramidt = _MEDdatagroupOuvrir(fid,_parampath)) < 0) {
     MED_ERR_(_ret,MED_ERR_OPEN,MED_ERR_DATAGROUP,MED_ERR_PARAM_MSG);

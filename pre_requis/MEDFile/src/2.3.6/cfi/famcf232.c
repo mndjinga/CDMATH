@@ -35,7 +35,7 @@ nedffamc232(int dummy,...)
 #endif
 {
 
-  med_int *fid;
+  med_idt *fid;
   char    *maa;
   med_int *lon1;
   char    *fam;
@@ -57,7 +57,7 @@ nedffamc232(int dummy,...)
   va_list params;
   va_start(params,dummy);
 
-  fid        = va_arg(params,  med_int* );
+  fid        = va_arg(params,  med_idt* );
   maa        = va_arg(params,  char*    );
   lon1       = va_arg(params,  med_int* );
   fam        = va_arg(params,  char*    );
@@ -84,7 +84,7 @@ nedffamc232(int dummy,...)
   if (!fn1 || !fn2 || !fn3 || !fn4)
     goto ERROR; 
 
-  if( MEDfamCr((med_idt) *fid,fn1,fn2,(med_int) *num, 
+  if( MEDfamCr(*fid,fn1,fn2,(med_int) *num, 
 	       (med_int *) attr_ident,
 	       (med_int *) attr_val, fn3, (med_int) *n_attr, fn4, 
 	       (med_int) *n_groupe) < 0 )

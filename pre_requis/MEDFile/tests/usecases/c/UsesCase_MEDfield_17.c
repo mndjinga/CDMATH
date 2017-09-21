@@ -155,7 +155,7 @@ int main (int argc, char **argv) {
 
   if (MEDfieldValueWithProfileWr(fid, fieldname, MED_NO_DT, MED_NO_IT, MED_UNDEF_DT, 
 				 MED_STRUCT_ELEMENT, geotype, 
-				 MED_COMPACT_PFLMODE, MED_NO_PROFILE, localization,
+				 MED_COMPACT_STMODE, MED_NO_PROFILE, localization,
 				 MED_FULL_INTERLACE, MED_ALL_CONSTITUENT,
 				 nbeam, (unsigned char*) tempvalue) < 0) {
     MESSAGE("ERROR : write field values on MED_BEAM ");
@@ -164,7 +164,7 @@ int main (int argc, char **argv) {
 
   if (MEDfieldValueWithProfileWr(fid, fieldname, MED_NO_DT, 1, MED_UNDEF_DT, 
 				 MED_STRUCT_ELEMENT, geotype, 
-				 MED_COMPACT_PFLMODE, MED_NO_PROFILE, localization2,
+				 MED_COMPACT_STMODE, MED_NO_PROFILE, localization2,
 				 MED_FULL_INTERLACE, MED_ALL_CONSTITUENT,
 				 nbeam, (unsigned char*) tempvalue) < 0) {
     MESSAGE("ERROR : write field values on MED_BEAM ");

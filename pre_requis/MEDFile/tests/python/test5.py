@@ -78,7 +78,7 @@ if nnoe > 0:
 
     filter=med_filter()
     MEDfilterEntityCr( fid, nnoe, 1, sdim, 2,
-                       MED_FULL_INTERLACE, MED_GLOBAL_PFLMODE,
+                       MED_FULL_INTERLACE, MED_GLOBAL_STMODE,
                        MED_NO_PROFILE, MED_UNDEF_SIZE, NULL, filter)
 
     # /* Lecture des composantes n°2 des coordonnees des noeuds */
@@ -89,7 +89,7 @@ if nnoe > 0:
     MEDfilterClose(filter)
 
     MEDfilterEntityCr( fid, nnoe, 1, sdim, 1,
-                       MED_FULL_INTERLACE, MED_GLOBAL_PFLMODE,
+                       MED_FULL_INTERLACE, MED_GLOBAL_STMODE,
                        MED_NO_PROFILE, MED_UNDEF_SIZE, NULL, filter)
     
     # /* Lecture des composantes n°1 des coordonnees des noeuds */ 
@@ -98,7 +98,7 @@ if nnoe > 0:
     MEDfilterClose(filter)
 
     MEDfilterEntityCr( fid, nnoe, 1, sdim, 1,
-                       MED_FULL_INTERLACE, MED_GLOBAL_PFLMODE,
+                       MED_FULL_INTERLACE, MED_GLOBAL_STMODE,
                        MED_NO_PROFILE, 2, flt, filter)
     # /* Lecture des composantes n°1 des coordonnees des noeuds du filtre */
     if (nnoe > 0):
@@ -107,7 +107,7 @@ if nnoe > 0:
     MEDfilterClose(filter)
 
     MEDfilterEntityCr( fid, nnoe, 1, sdim, 2,
-                       MED_FULL_INTERLACE, MED_GLOBAL_PFLMODE,
+                       MED_FULL_INTERLACE, MED_GLOBAL_STMODE,
                        MED_NO_PROFILE, 2, flt, filter)
     # /* Lecture des composantes n°2 des coordonnees des noeuds du filtre */
     if (nnoe > 0):
@@ -116,7 +116,7 @@ if nnoe > 0:
     MEDfilterClose(filter)
 
     MEDfilterEntityCr( fid, nnoe, 1, sdim, MED_ALL_CONSTITUENT,
-			  MED_FULL_INTERLACE, MED_GLOBAL_PFLMODE,
+			  MED_FULL_INTERLACE, MED_GLOBAL_STMODE,
 			  MED_NO_PROFILE, 2,flt, filter)
     # /* Lecture de toutes les composantes des coordonnees des noeuds du filtre */
     if (nnoe > 0):

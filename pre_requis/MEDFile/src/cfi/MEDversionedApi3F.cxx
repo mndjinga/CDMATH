@@ -25,8 +25,8 @@
 
 using namespace std;
 
-#define STR(chaine) # chaine
-#define XSTR(chaine) STR(chaine)
+// #define STR(chaine) # chaine
+// #define XSTR(chaine) STR(chaine)
 
 static MED_VERSIONED_API3 & addFortranSymbol(MED_VERSIONED_API3& table) {
 

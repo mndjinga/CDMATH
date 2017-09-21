@@ -46,9 +46,9 @@ MEDnField(const med_idt fid)
   /*
    *  nombre de champs
    */
-  if ((_err=_MEDnObjects(fid,MED_CHA,&_n)) <0)
+  if ((_err=_MEDnObjects(fid,MED_FIELD_GRP,&_n)) <0)
     if ( _err == (MED_ERR_COUNT + MED_ERR_DATAGROUP) ) {
-      MED_ERR_(_ret,MED_ERR_COUNT,MED_ERR_DATAGROUP,MED_CHA);
+      MED_ERR_(_ret,MED_ERR_COUNT,MED_ERR_DATAGROUP,MED_FIELD_GRP);
       goto ERROR;
     }
 

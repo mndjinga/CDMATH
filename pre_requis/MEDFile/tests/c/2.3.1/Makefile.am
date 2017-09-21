@@ -5,7 +5,7 @@ DEFAULT_INCLUDES = -I. -I$(srcdir)
 AM_CFLAGS = -DDEF_LECT_ECR
 #AM_CFLAGS = -DDEF_LECT_AJOUT
 
-noinst_PROGRAMS = test10 test11
+check_PROGRAMS = test10 test11
 nodist_EXTRA_test10_SOURCES = dummy.cxx
 nodist_EXTRA_test11_SOURCES = dummy.cxx
 

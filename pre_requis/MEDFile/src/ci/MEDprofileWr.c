@@ -45,7 +45,7 @@ MEDprofileWr(const med_idt        fid,
   med_access_mode _MED_ACCESS_MODE;
   med_idt        _root=0,_pfid=0;
   med_err        _ret=-1;
-  char           _path[MED_TAILLE_PROFILS+MED_NAME_SIZE+1]=MED_PROFILS;
+  char           _path[MED_PROFILE_GRP_SIZE+MED_NAME_SIZE+1]=MED_PROFILE_GRP;
   med_filter     _filter        = MED_FILTER_INIT;
 
   /*
@@ -100,7 +100,7 @@ MEDprofileWr(const med_idt        fid,
    * On stocke le profil dans un dataset
    */
   if ( MEDfilterEntityCr(fid, profilesize, 1, 1, MED_ALL_CONSTITUENT,
-			 MED_NO_INTERLACE,MED_UNDEF_PFLMODE,
+			 MED_NO_INTERLACE,MED_UNDEF_STMODE,
 			 MED_NO_PROFILE, MED_UNDEF_SIZE, NULL, &_filter) < 0 ) {
     MED_ERR_(_ret,MED_ERR_CREATE,MED_ERR_FILTER,MED_ERR_INTERNAL_MSG);
     goto ERROR;
@@ -126,7 +126,7 @@ MEDprofileWr(const med_idt        fid,
   }
 
   if (_root>0)            if (_MEDdatagroupFermer(_root) < 0) {
-    MED_ERR_(_ret,MED_ERR_CLOSE,MED_ERR_DATAGROUP,MED_PROFILS);
+    MED_ERR_(_ret,MED_ERR_CLOSE,MED_ERR_DATAGROUP,MED_PROFILE_GRP);
     ISCRUTE_id(_root);
   }
 

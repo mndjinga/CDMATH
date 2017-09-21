@@ -37,201 +37,238 @@
 #include "MEDFileParameter.hxx"
 #include "MEDFileData.hxx"
 #include "MEDFileEquivalence.hxx"
+#include "MEDFileEntities.hxx"
 #include "MEDFileMeshReadSelector.hxx"
 #include "MEDFileFieldOverView.hxx"
 #include "MEDLoaderTypemaps.i"
 #include "SauvReader.hxx"
 #include "SauvWriter.hxx"
 
-using namespace ParaMEDMEM;
+using namespace MEDCoupling;
 %}
 
 #if SWIG_VERSION >= 0x010329
 %template()  std::vector<std::string>;
 #endif
 
-%typemap(out) ParaMEDMEM::MEDFileMesh*
+%typemap(out) MEDCoupling::MEDFileMesh*
 {
   $result=convertMEDFileMesh($1,$owner);
 }
 
-%typemap(out) ParaMEDMEM::MEDFileParameter1TS*
+%typemap(out) MEDCoupling::MEDFileParameter1TS*
 {
   $result=convertMEDFileParameter1TS($1,$owner);
 }
 
-%typemap(out) ParaMEDMEM::MEDFileAnyTypeFieldMultiTS*
+%typemap(out) MEDCoupling::MEDFileAnyTypeFieldMultiTS*
 {
   $result=convertMEDFileFieldMultiTS($1,$owner);
 }
 
-%typemap(out) ParaMEDMEM::MEDFileAnyTypeField1TS*
+%typemap(out) MEDCoupling::MEDFileAnyTypeField1TS*
 {
   $result=convertMEDFileField1TS($1,$owner);
 }
 
-%typemap(out) ParaMEDMEM::MEDMeshMultiLev*
+%typemap(out) MEDCoupling::MEDMeshMultiLev*
 {
   $result=convertMEDMeshMultiLev($1,$owner);
 }
 
-%newobject MEDLoader::ReadUMeshFromFamilies;
-%newobject MEDLoader::ReadUMeshFromGroups;
-%newobject MEDLoader::ReadUMeshFromFile;
-%newobject MEDLoader::ReadMeshFromFile;
-%newobject MEDLoader::ReadField;
-%newobject MEDLoader::ReadFieldCell;
-%newobject MEDLoader::ReadFieldNode;
-%newobject MEDLoader::ReadFieldGauss;
-%newobject MEDLoader::ReadFieldGaussNE;
-%newobject ParaMEDMEM::MEDFileMesh::New;
-%newobject ParaMEDMEM::MEDFileMesh::createNewEmpty;
-%newobject ParaMEDMEM::MEDFileMesh::deepCpy;
-%newobject ParaMEDMEM::MEDFileMesh::shallowCpy;
-%newobject ParaMEDMEM::MEDFileMesh::getMeshAtLevel;
-%newobject ParaMEDMEM::MEDFileMesh::__getitem__;
-%newobject ParaMEDMEM::MEDFileMesh::getGroupArr;
-%newobject ParaMEDMEM::MEDFileMesh::getGroupsArr;
-%newobject ParaMEDMEM::MEDFileMesh::getFamilyArr;
-%newobject ParaMEDMEM::MEDFileMesh::getFamiliesArr;
-%newobject ParaMEDMEM::MEDFileMesh::getNodeGroupArr;
-%newobject ParaMEDMEM::MEDFileMesh::getNodeGroupsArr;
-%newobject ParaMEDMEM::MEDFileMesh::getNodeFamilyArr;
-%newobject ParaMEDMEM::MEDFileMesh::getNodeFamiliesArr;
-%newobject ParaMEDMEM::MEDFileMesh::getAllFamiliesIdsReferenced;
-%newobject ParaMEDMEM::MEDFileMesh::computeAllFamilyIdsInUse;
-%newobject ParaMEDMEM::MEDFileMesh::getEquivalences;
-%newobject ParaMEDMEM::MEDFileMesh::cartesianize;
-%newobject ParaMEDMEM::MEDFileData::getJoints;
-%newobject ParaMEDMEM::MEDFileStructuredMesh::getImplicitFaceMesh;
-%newobject ParaMEDMEM::MEDFileUMesh::New;
-%newobject ParaMEDMEM::MEDFileUMesh::LoadPartOf;
-%newobject ParaMEDMEM::MEDFileUMesh::getCoords;
-%newobject ParaMEDMEM::MEDFileUMesh::getPartDefAtLevel;
-%newobject ParaMEDMEM::MEDFileUMesh::getGroup;
-%newobject ParaMEDMEM::MEDFileUMesh::getGroups;
-%newobject ParaMEDMEM::MEDFileUMesh::getFamily;
-%newobject ParaMEDMEM::MEDFileUMesh::getFamilies;
-%newobject ParaMEDMEM::MEDFileUMesh::getLevel0Mesh;
-%newobject ParaMEDMEM::MEDFileUMesh::getLevelM1Mesh;
-%newobject ParaMEDMEM::MEDFileUMesh::getLevelM2Mesh;
-%newobject ParaMEDMEM::MEDFileUMesh::getLevelM3Mesh;
-%newobject ParaMEDMEM::MEDFileUMesh::getDirectUndergroundSingleGeoTypeMesh;
-%newobject ParaMEDMEM::MEDFileUMesh::extractFamilyFieldOnGeoType;
-%newobject ParaMEDMEM::MEDFileUMesh::extractNumberFieldOnGeoType;
-%newobject ParaMEDMEM::MEDFileUMesh::zipCoords;
-%newobject ParaMEDMEM::MEDFileUMesh::buildExtrudedMesh;
-%newobject ParaMEDMEM::MEDFileUMesh::linearToQuadratic;
-%newobject ParaMEDMEM::MEDFileUMesh::quadraticToLinear;
-%newobject ParaMEDMEM::MEDFileCMesh::New;
-%newobject ParaMEDMEM::MEDFileCurveLinearMesh::New;
-%newobject ParaMEDMEM::MEDFileMeshMultiTS::New;
-%newobject ParaMEDMEM::MEDFileMeshMultiTS::deepCpy;
-%newobject ParaMEDMEM::MEDFileMeshMultiTS::getOneTimeStep;
-%newobject ParaMEDMEM::MEDFileMeshes::New;
-%newobject ParaMEDMEM::MEDFileMeshes::deepCpy;
-%newobject ParaMEDMEM::MEDFileMeshes::getMeshAtPos;
-%newobject ParaMEDMEM::MEDFileMeshes::getMeshWithName;
-%newobject ParaMEDMEM::MEDFileMeshes::__getitem__;
-%newobject ParaMEDMEM::MEDFileMeshes::__iter__;
+%newobject ReadUMeshFromFamiliesSwig;
+%newobject ReadUMeshFromGroupsSwig;
+%newobject ReadFieldSwig;
+%newobject MEDCoupling::ReadUMeshFromFile;
+%newobject MEDCoupling::ReadMeshFromFile;
+%newobject MEDCoupling::ReadFieldCell;
+%newobject MEDCoupling::ReadFieldNode;
+%newobject MEDCoupling::ReadFieldGauss;
+%newobject MEDCoupling::ReadFieldGaussNE;
+%newobject MEDCoupling::MEDFileMesh::New;
+%newobject MEDCoupling::MEDFileMesh::createNewEmpty;
+%newobject MEDCoupling::MEDFileMesh::deepCopy;
+%newobject MEDCoupling::MEDFileMesh::shallowCpy;
+%newobject MEDCoupling::MEDFileMesh::getMeshAtLevel;
+%newobject MEDCoupling::MEDFileMesh::__getitem__;
+%newobject MEDCoupling::MEDFileMesh::getGroupArr;
+%newobject MEDCoupling::MEDFileMesh::getGroupsArr;
+%newobject MEDCoupling::MEDFileMesh::getFamilyArr;
+%newobject MEDCoupling::MEDFileMesh::getFamiliesArr;
+%newobject MEDCoupling::MEDFileMesh::getNodeGroupArr;
+%newobject MEDCoupling::MEDFileMesh::getNodeGroupsArr;
+%newobject MEDCoupling::MEDFileMesh::getNodeFamilyArr;
+%newobject MEDCoupling::MEDFileMesh::getNodeFamiliesArr;
+%newobject MEDCoupling::MEDFileMesh::getAllFamiliesIdsReferenced;
+%newobject MEDCoupling::MEDFileMesh::computeAllFamilyIdsInUse;
+%newobject MEDCoupling::MEDFileMesh::getEquivalences;
+%newobject MEDCoupling::MEDFileMesh::cartesianize;
+%newobject MEDCoupling::MEDFileData::getJoints;
+%newobject MEDCoupling::MEDFileStructuredMesh::getImplicitFaceMesh;
+%newobject MEDCoupling::MEDFileUMesh::New;
+%newobject MEDCoupling::MEDFileUMesh::LoadPartOf;
+%newobject MEDCoupling::MEDFileUMesh::getCoords;
+%newobject MEDCoupling::MEDFileUMesh::getPartDefAtLevel;
+%newobject MEDCoupling::MEDFileUMesh::getGroup;
+%newobject MEDCoupling::MEDFileUMesh::getGroups;
+%newobject MEDCoupling::MEDFileUMesh::getFamily;
+%newobject MEDCoupling::MEDFileUMesh::getFamilies;
+%newobject MEDCoupling::MEDFileUMesh::getLevel0Mesh;
+%newobject MEDCoupling::MEDFileUMesh::getLevelM1Mesh;
+%newobject MEDCoupling::MEDFileUMesh::getLevelM2Mesh;
+%newobject MEDCoupling::MEDFileUMesh::getLevelM3Mesh;
+%newobject MEDCoupling::MEDFileUMesh::getDirectUndergroundSingleGeoTypeMesh;
+%newobject MEDCoupling::MEDFileUMesh::extractFamilyFieldOnGeoType;
+%newobject MEDCoupling::MEDFileUMesh::extractNumberFieldOnGeoType;
+%newobject MEDCoupling::MEDFileUMesh::zipCoords;
+%newobject MEDCoupling::MEDFileUMesh::deduceNodeSubPartFromCellSubPart;
+%newobject MEDCoupling::MEDFileUMesh::extractPart;
+%newobject MEDCoupling::MEDFileUMesh::buildExtrudedMesh;
+%newobject MEDCoupling::MEDFileUMesh::linearToQuadratic;
+%newobject MEDCoupling::MEDFileUMesh::quadraticToLinear;
+%newobject MEDCoupling::MEDFileUMesh::symmetry3DPlane;
+%newobject MEDCoupling::MEDFileUMesh::Aggregate;
+%newobject MEDCoupling::MEDFileUMesh::convertToExtrudedMesh;
+%newobject MEDCoupling::MEDFileCMesh::New;
+%newobject MEDCoupling::MEDFileCurveLinearMesh::New;
+%newobject MEDCoupling::MEDFileMeshMultiTS::New;
+%newobject MEDCoupling::MEDFileMeshMultiTS::deepCopy;
+%newobject MEDCoupling::MEDFileMeshMultiTS::getOneTimeStep;
+%newobject MEDCoupling::MEDFileMeshes::New;
+%newobject MEDCoupling::MEDFileMeshes::deepCopy;
+%newobject MEDCoupling::MEDFileMeshes::getMeshAtPos;
+%newobject MEDCoupling::MEDFileMeshes::getMeshWithName;
+%newobject MEDCoupling::MEDFileMeshes::__getitem__;
+%newobject MEDCoupling::MEDFileMeshes::__iter__;
 
-%newobject ParaMEDMEM::MEDFileFields::New;
-%newobject ParaMEDMEM::MEDFileFields::LoadPartOf;
-%newobject ParaMEDMEM::MEDFileFields::LoadSpecificEntities;
-%newobject ParaMEDMEM::MEDFileFields::deepCpy;
-%newobject ParaMEDMEM::MEDFileFields::shallowCpy;
-%newobject ParaMEDMEM::MEDFileFields::getFieldWithName;
-%newobject ParaMEDMEM::MEDFileFields::getFieldAtPos;
-%newobject ParaMEDMEM::MEDFileFields::partOfThisLyingOnSpecifiedMeshName;
-%newobject ParaMEDMEM::MEDFileFields::partOfThisLyingOnSpecifiedTimeSteps;
-%newobject ParaMEDMEM::MEDFileFields::partOfThisNotLyingOnSpecifiedTimeSteps;
-%newobject ParaMEDMEM::MEDFileFields::__iter__;
+%newobject MEDCoupling::MEDFileMeshSupports::New;
+%newobject MEDCoupling::MEDFileMeshSupports::getSupMeshWithName;
 
-%newobject ParaMEDMEM::MEDFileAnyTypeFieldMultiTS::New;
-%newobject ParaMEDMEM::MEDFileAnyTypeFieldMultiTS::deepCpy;
-%newobject ParaMEDMEM::MEDFileAnyTypeFieldMultiTS::shallowCpy;
-%newobject ParaMEDMEM::MEDFileAnyTypeFieldMultiTS::getTimeStepAtPos;
-%newobject ParaMEDMEM::MEDFileAnyTypeFieldMultiTS::getTimeStep;
-%newobject ParaMEDMEM::MEDFileAnyTypeFieldMultiTS::getTimeStepGivenTime;
-%newobject ParaMEDMEM::MEDFileAnyTypeFieldMultiTS::__iter__;
-%newobject ParaMEDMEM::MEDFileFieldMultiTS::New;
-%newobject ParaMEDMEM::MEDFileFieldMultiTS::LoadSpecificEntities;
-%newobject ParaMEDMEM::MEDFileFieldMultiTS::getFieldAtLevel;
-%newobject ParaMEDMEM::MEDFileFieldMultiTS::getFieldAtTopLevel;
-%newobject ParaMEDMEM::MEDFileFieldMultiTS::getFieldOnMeshAtLevel;
-%newobject ParaMEDMEM::MEDFileFieldMultiTS::getFieldAtLevelOld;
-%newobject ParaMEDMEM::MEDFileFieldMultiTS::getUndergroundDataArray;
-%newobject ParaMEDMEM::MEDFileFieldMultiTS::convertToInt;
-%newobject ParaMEDMEM::MEDFileIntFieldMultiTS::New;
-%newobject ParaMEDMEM::MEDFileIntFieldMultiTS::LoadSpecificEntities;
-%newobject ParaMEDMEM::MEDFileIntFieldMultiTS::getUndergroundDataArray;
-%newobject ParaMEDMEM::MEDFileIntFieldMultiTS::convertToDouble;
+%newobject MEDCoupling::MEDFileStructureElements::New;
 
-%newobject ParaMEDMEM::MEDFileAnyTypeField1TS::New;
-%newobject ParaMEDMEM::MEDFileAnyTypeField1TS::shallowCpy;
-%newobject ParaMEDMEM::MEDFileAnyTypeField1TS::deepCpy;
-%newobject ParaMEDMEM::MEDFileField1TS::New;
-%newobject ParaMEDMEM::MEDFileField1TS::getFieldAtLevel;
-%newobject ParaMEDMEM::MEDFileField1TS::getFieldAtTopLevel;
-%newobject ParaMEDMEM::MEDFileField1TS::getFieldOnMeshAtLevel;
-%newobject ParaMEDMEM::MEDFileField1TS::getFieldAtLevelOld;
-%newobject ParaMEDMEM::MEDFileField1TS::getUndergroundDataArray;
-%newobject ParaMEDMEM::MEDFileField1TS::convertToInt;
-%newobject ParaMEDMEM::MEDFileIntField1TS::New;
-%newobject ParaMEDMEM::MEDFileIntField1TS::getUndergroundDataArray;
-%newobject ParaMEDMEM::MEDFileIntField1TS::convertToDouble;
+%newobject MEDCoupling::MEDFileFields::New;
+%newobject MEDCoupling::MEDFileFields::NewAdv;
+%newobject MEDCoupling::MEDFileFields::NewWithDynGT;
+%newobject MEDCoupling::MEDFileFields::LoadPartOf;
+%newobject MEDCoupling::MEDFileFields::LoadSpecificEntities;
+%newobject MEDCoupling::MEDFileFields::deepCopy;
+%newobject MEDCoupling::MEDFileFields::shallowCpy;
+%newobject MEDCoupling::MEDFileFields::getFieldWithName;
+%newobject MEDCoupling::MEDFileFields::getFieldAtPos;
+%newobject MEDCoupling::MEDFileFields::partOfThisLyingOnSpecifiedMeshName;
+%newobject MEDCoupling::MEDFileFields::partOfThisLyingOnSpecifiedTimeSteps;
+%newobject MEDCoupling::MEDFileFields::partOfThisNotLyingOnSpecifiedTimeSteps;
+%newobject MEDCoupling::MEDFileFields::partOfThisOnStructureElements;
+%newobject MEDCoupling::MEDFileFields::__iter__;
+%newobject MEDCoupling::MEDFileFields::extractPart;
 
-%newobject ParaMEDMEM::MEDFileData::New;
-%newobject ParaMEDMEM::MEDFileData::deepCpy;
-%newobject ParaMEDMEM::MEDFileData::getMeshes;
-%newobject ParaMEDMEM::MEDFileData::getFields;
-%newobject ParaMEDMEM::MEDFileData::getParams;
+%newobject MEDCoupling::MEDFileWritableStandAlone::serialize;
+%newobject MEDCoupling::MEDFileAnyTypeFieldMultiTS::New;
+%newobject MEDCoupling::MEDFileAnyTypeFieldMultiTS::deepCopy;
+%newobject MEDCoupling::MEDFileAnyTypeFieldMultiTS::shallowCpy;
+%newobject MEDCoupling::MEDFileAnyTypeFieldMultiTS::getTimeStepAtPos;
+%newobject MEDCoupling::MEDFileAnyTypeFieldMultiTS::getTimeStep;
+%newobject MEDCoupling::MEDFileAnyTypeFieldMultiTS::getTimeStepGivenTime;
+%newobject MEDCoupling::MEDFileAnyTypeFieldMultiTS::__iter__;
+%newobject MEDCoupling::MEDFileAnyTypeFieldMultiTS::extractPart;
+%newobject MEDCoupling::MEDFileAnyTypeFieldMultiTS::buildNewEmpty;
+%newobject MEDCoupling::MEDFileFieldMultiTS::New;
+%newobject MEDCoupling::MEDFileFieldMultiTS::LoadSpecificEntities;
+%newobject MEDCoupling::MEDFileFieldMultiTS::field;
+%newobject MEDCoupling::MEDFileFieldMultiTS::getFieldAtLevel;
+%newobject MEDCoupling::MEDFileFieldMultiTS::getFieldAtTopLevel;
+%newobject MEDCoupling::MEDFileFieldMultiTS::getFieldOnMeshAtLevel;
+%newobject MEDCoupling::MEDFileFieldMultiTS::getFieldAtLevelOld;
+%newobject MEDCoupling::MEDFileFieldMultiTS::getUndergroundDataArray;
+%newobject MEDCoupling::MEDFileFieldMultiTS::convertToInt;
+%newobject MEDCoupling::MEDFileIntFieldMultiTS::New;
+%newobject MEDCoupling::MEDFileIntFieldMultiTS::field;
+%newobject MEDCoupling::MEDFileIntFieldMultiTS::LoadSpecificEntities;
+%newobject MEDCoupling::MEDFileIntFieldMultiTS::getUndergroundDataArray;
+%newobject MEDCoupling::MEDFileIntFieldMultiTS::convertToDouble;
+%newobject MEDCoupling::MEDFileIntFieldMultiTS::getFieldAtLevel;
+%newobject MEDCoupling::MEDFileIntFieldMultiTS::getFieldAtTopLevel;
+%newobject MEDCoupling::MEDFileIntFieldMultiTS::getFieldOnMeshAtLevel;
+%newobject MEDCoupling::MEDFileIntFieldMultiTS::getFieldAtLevelOld;
 
-%newobject ParaMEDMEM::MEDFileParameterDouble1TS::New;
-%newobject ParaMEDMEM::MEDFileParameterDouble1TS::deepCpy;
-%newobject ParaMEDMEM::MEDFileParameterMultiTS::New;
-%newobject ParaMEDMEM::MEDFileParameterMultiTS::deepCpy;
-%newobject ParaMEDMEM::MEDFileParameterMultiTS::getTimeStepAtPos;
-%newobject ParaMEDMEM::MEDFileParameterMultiTS::__getitem__;
-%newobject ParaMEDMEM::MEDFileParameters::New;
-%newobject ParaMEDMEM::MEDFileParameters::deepCpy;
-%newobject ParaMEDMEM::MEDFileParameters::getParamAtPos;
-%newobject ParaMEDMEM::MEDFileParameters::getParamWithName;
-%newobject ParaMEDMEM::MEDFileParameters::__getitem__;
+%newobject MEDCoupling::MEDFileAnyTypeField1TS::New;
+%newobject MEDCoupling::MEDFileAnyTypeField1TS::NewAdv;
+%newobject MEDCoupling::MEDFileAnyTypeField1TS::shallowCpy;
+%newobject MEDCoupling::MEDFileAnyTypeField1TS::deepCopy;
+%newobject MEDCoupling::MEDFileAnyTypeField1TS::extractPart;
+%newobject MEDCoupling::MEDFileField1TS::New;
+%newobject MEDCoupling::MEDFileField1TS::field;
+%newobject MEDCoupling::MEDFileField1TS::getFieldAtLevel;
+%newobject MEDCoupling::MEDFileField1TS::getFieldAtTopLevel;
+%newobject MEDCoupling::MEDFileField1TS::getFieldOnMeshAtLevel;
+%newobject MEDCoupling::MEDFileField1TS::getFieldAtLevelOld;
+%newobject MEDCoupling::MEDFileField1TS::getUndergroundDataArray;
+%newobject MEDCoupling::MEDFileField1TS::convertToInt;
 
-%newobject ParaMEDMEM::MEDFileJointCorrespondence::New;
-%newobject ParaMEDMEM::MEDFileJointCorrespondence::deepCpy;
-%newobject ParaMEDMEM::MEDFileJointCorrespondence::shallowCpy;
-%newobject ParaMEDMEM::MEDFileJointOneStep::New;
-%newobject ParaMEDMEM::MEDFileJointOneStep::deepCpy;
-%newobject ParaMEDMEM::MEDFileJointOneStep::shallowCpy;
-%newobject ParaMEDMEM::MEDFileJoint::New;
-%newobject ParaMEDMEM::MEDFileJoint::deepCpy;
-%newobject ParaMEDMEM::MEDFileJoint::shallowCpy;
-%newobject ParaMEDMEM::MEDFileJoints::New;
-%newobject ParaMEDMEM::MEDFileJoints::deepCpy;
-%newobject ParaMEDMEM::MEDFileJoints::getJointAtPos;
-%newobject ParaMEDMEM::MEDFileJoints::getJointWithName;
-%newobject ParaMEDMEM::MEDFileJoints::__getitem__;
-%newobject ParaMEDMEM::MEDFileEquivalences::getEquivalence;
-%newobject ParaMEDMEM::MEDFileEquivalences::getEquivalenceWithName;
-%newobject ParaMEDMEM::MEDFileEquivalences::appendEmptyEquivalenceWithName;
-%newobject ParaMEDMEM::MEDFileEquivalencePair::initCell;
-%newobject ParaMEDMEM::MEDFileEquivalencePair::initNode;
-%newobject ParaMEDMEM::MEDFileEquivalencePair::getCell;
-%newobject ParaMEDMEM::MEDFileEquivalencePair::getNode;
-%newobject ParaMEDMEM::MEDFileEquivalenceData::getArray;
-%newobject ParaMEDMEM::MEDFileEquivalenceCell::getArray;
+%newobject MEDCoupling::MEDFileIntField1TS::New;
+%newobject MEDCoupling::MEDFileIntField1TS::field;
+%newobject MEDCoupling::MEDFileIntField1TS::getFieldAtLevel;
+%newobject MEDCoupling::MEDFileIntField1TS::getFieldAtTopLevel;
+%newobject MEDCoupling::MEDFileIntField1TS::getFieldOnMeshAtLevel;
+%newobject MEDCoupling::MEDFileIntField1TS::getFieldAtLevelOld;
+%newobject MEDCoupling::MEDFileIntField1TS::getUndergroundDataArray;
+%newobject MEDCoupling::MEDFileIntField1TS::convertToDouble;
 
-%newobject ParaMEDMEM::SauvWriter::New;
-%newobject ParaMEDMEM::SauvReader::New;
-%newobject ParaMEDMEM::SauvReader::loadInMEDFileDS;
+%newobject MEDCoupling::MEDFileData::New;
+%newobject MEDCoupling::MEDFileData::deepCopy;
+%newobject MEDCoupling::MEDFileData::getMeshes;
+%newobject MEDCoupling::MEDFileData::getFields;
+%newobject MEDCoupling::MEDFileData::getParams;
+%newobject MEDCoupling::MEDFileData::Aggregate;
 
-%newobject ParaMEDMEM::MEDFileMeshStruct::New;
-%newobject ParaMEDMEM::MEDMeshMultiLev::prepare;
-%newobject ParaMEDMEM::MEDMeshMultiLev::buildDataArray;
-%newobject ParaMEDMEM::MEDFileFastCellSupportComparator::New;
-%newobject ParaMEDMEM::MEDFileFastCellSupportComparator::buildFromScratchDataSetSupport;
+%newobject MEDCoupling::MEDFileEntities::BuildFrom;
+
+%newobject MEDCoupling::MEDFileParameterDouble1TS::New;
+%newobject MEDCoupling::MEDFileParameterDouble1TS::deepCopy;
+%newobject MEDCoupling::MEDFileParameterMultiTS::New;
+%newobject MEDCoupling::MEDFileParameterMultiTS::deepCopy;
+%newobject MEDCoupling::MEDFileParameterMultiTS::getTimeStepAtPos;
+%newobject MEDCoupling::MEDFileParameterMultiTS::__getitem__;
+%newobject MEDCoupling::MEDFileParameters::New;
+%newobject MEDCoupling::MEDFileParameters::deepCopy;
+%newobject MEDCoupling::MEDFileParameters::getParamAtPos;
+%newobject MEDCoupling::MEDFileParameters::getParamWithName;
+%newobject MEDCoupling::MEDFileParameters::__getitem__;
+
+%newobject MEDCoupling::MEDFileJointCorrespondence::New;
+%newobject MEDCoupling::MEDFileJointCorrespondence::deepCopy;
+%newobject MEDCoupling::MEDFileJointCorrespondence::shallowCpy;
+%newobject MEDCoupling::MEDFileJointOneStep::New;
+%newobject MEDCoupling::MEDFileJointOneStep::deepCopy;
+%newobject MEDCoupling::MEDFileJointOneStep::shallowCpy;
+%newobject MEDCoupling::MEDFileJoint::New;
+%newobject MEDCoupling::MEDFileJoint::deepCopy;
+%newobject MEDCoupling::MEDFileJoint::shallowCpy;
+%newobject MEDCoupling::MEDFileJoints::New;
+%newobject MEDCoupling::MEDFileJoints::deepCopy;
+%newobject MEDCoupling::MEDFileJoints::getJointAtPos;
+%newobject MEDCoupling::MEDFileJoints::getJointWithName;
+%newobject MEDCoupling::MEDFileJoints::__getitem__;
+%newobject MEDCoupling::MEDFileEquivalences::getEquivalence;
+%newobject MEDCoupling::MEDFileEquivalences::getEquivalenceWithName;
+%newobject MEDCoupling::MEDFileEquivalences::appendEmptyEquivalenceWithName;
+%newobject MEDCoupling::MEDFileEquivalencePair::initCell;
+%newobject MEDCoupling::MEDFileEquivalencePair::initNode;
+%newobject MEDCoupling::MEDFileEquivalencePair::getCell;
+%newobject MEDCoupling::MEDFileEquivalencePair::getNode;
+%newobject MEDCoupling::MEDFileEquivalenceData::getArray;
+%newobject MEDCoupling::MEDFileEquivalenceCell::getArray;
+
+%newobject MEDCoupling::SauvWriter::New;
+%newobject MEDCoupling::SauvReader::New;
+%newobject MEDCoupling::SauvReader::loadInMEDFileDS;
+
+%newobject MEDCoupling::MEDFileMeshStruct::New;
+%newobject MEDCoupling::MEDMeshMultiLev::prepare;
+%newobject MEDCoupling::MEDMeshMultiLev::buildDataArray;
+%newobject MEDCoupling::MEDMeshMultiLev::retrieveGlobalNodeIdsIfAny;
+%newobject MEDCoupling::MEDFileFastCellSupportComparator::New;
+%newobject MEDCoupling::MEDFileFastCellSupportComparator::buildFromScratchDataSetSupport;
 
 %feature("unref") MEDFileMesh "$this->decrRef();"
 %feature("unref") MEDFileUMesh "$this->decrRef();"
@@ -245,6 +282,8 @@ using namespace ParaMEDMEM;
 %feature("unref") MEDFileAnyTypeFieldMultiTS "$this->decrRef();"
 %feature("unref") MEDFileFieldMultiTS "$this->decrRef();"
 %feature("unref") MEDFileIntFieldMultiTS "$this->decrRef();"
+%feature("unref") MEDFileMeshSupports "$this->decrRef();"
+%feature("unref") MEDFileStructureElements "$this->decrRef();"
 %feature("unref") MEDFileFields "$this->decrRef();"
 %feature("unref") MEDFileParameter1TS "$this->decrRef();"
 %feature("unref") MEDFileParameterDouble1TSWTI "$this->decrRef();"
@@ -271,207 +310,257 @@ using namespace ParaMEDMEM;
 %feature("unref") MEDCurveLinearMeshMultiLev "$this->decrRef();"
 %feature("unref") MEDFileMeshStruct "$this->decrRef();"
 
-class MEDLoader
+namespace MEDCoupling
 {
-public:
-  static bool HasXDR();
-  static std::string MEDFileVersionStr();
-  static void SetEpsilonForNodeComp(double val) throw(INTERP_KERNEL::Exception);
-  static void SetCompPolicyForCell(int val) throw(INTERP_KERNEL::Exception);
-  static void SetTooLongStrPolicy(int val) throw(INTERP_KERNEL::Exception);
-  static void CheckFileForRead(const std::string& fileName) throw(INTERP_KERNEL::Exception);
-  static std::vector<std::string> GetMeshNames(const std::string& fileName) throw(INTERP_KERNEL::Exception);
-  static std::vector<std::string> GetMeshNamesOnField(const std::string& fileName, const std::string& fieldName) throw(INTERP_KERNEL::Exception);
-  static std::vector<std::string> GetMeshGroupsNames(const std::string& fileName, const std::string& meshName) throw(INTERP_KERNEL::Exception);
-  static std::vector<std::string> GetMeshFamiliesNames(const std::string& fileName, const std::string& meshName) throw(INTERP_KERNEL::Exception);
-  static std::vector<std::string> GetMeshFamiliesNamesOnGroup(const std::string& fileName, const std::string& meshName, const std::string& grpName) throw(INTERP_KERNEL::Exception);
-  static std::vector<std::string> GetMeshGroupsNamesOnFamily(const std::string& fileName, const std::string& meshName, const std::string& famName) throw(INTERP_KERNEL::Exception);
-  static std::vector<std::string> GetAllFieldNamesOnMesh(const std::string& fileName, const std::string& meshName) throw(INTERP_KERNEL::Exception);
-  static std::vector<std::string> GetAllFieldNames(const std::string& fileName) throw(INTERP_KERNEL::Exception);
-  static std::vector<std::string> GetFieldNamesOnMesh(ParaMEDMEM::TypeOfField type, const std::string& fileName, const std::string& meshName) throw(INTERP_KERNEL::Exception);
-  static std::vector<std::string> GetCellFieldNamesOnMesh(const std::string& fileName, const std::string& meshName) throw(INTERP_KERNEL::Exception);
-  static std::vector<std::string> GetNodeFieldNamesOnMesh(const std::string& fileName, const std::string& meshName) throw(INTERP_KERNEL::Exception);
-  static double GetTimeAttachedOnFieldIteration(const std::string& fileName, const std::string& fieldName, int iteration, int order) throw(INTERP_KERNEL::Exception);
-  static void AssignStaticWritePropertiesTo(ParaMEDMEM::MEDFileWritable& obj) throw(INTERP_KERNEL::Exception);
-  %extend
-     {
-       static PyObject *MEDFileVersion()
-       {
-         int major,minor,release;
-         MEDLoader::MEDFileVersion(major,minor,release);
-         PyObject *ret(PyTuple_New(3));
-         PyTuple_SetItem(ret,0,SWIG_From_int(major));
-         PyTuple_SetItem(ret,1,SWIG_From_int(minor));
-         PyTuple_SetItem(ret,2,SWIG_From_int(release));
-         return ret;
-       }
+  bool HasXDR();
+  std::string MEDFileVersionStr() throw(INTERP_KERNEL::Exception);
+  std::string MEDFileVersionOfFileStr(const std::string& fileName) throw(INTERP_KERNEL::Exception);
+  void SetEpsilonForNodeComp(double val) throw(INTERP_KERNEL::Exception);
+  void SetCompPolicyForCell(int val) throw(INTERP_KERNEL::Exception);
+  void SetTooLongStrPolicy(int val) throw(INTERP_KERNEL::Exception);
+  void CheckFileForRead(const std::string& fileName) throw(INTERP_KERNEL::Exception);
+  std::vector<std::string> GetMeshNames(const std::string& fileName) throw(INTERP_KERNEL::Exception);
+  std::vector<std::string> GetMeshNamesOnField(const std::string& fileName, const std::string& fieldName) throw(INTERP_KERNEL::Exception);
+  std::vector<std::string> GetMeshGroupsNames(const std::string& fileName, const std::string& meshName) throw(INTERP_KERNEL::Exception);
+  std::vector<std::string> GetMeshFamiliesNames(const std::string& fileName, const std::string& meshName) throw(INTERP_KERNEL::Exception);
+  std::vector<std::string> GetMeshFamiliesNamesOnGroup(const std::string& fileName, const std::string& meshName, const std::string& grpName) throw(INTERP_KERNEL::Exception);
+  std::vector<std::string> GetMeshGroupsNamesOnFamily(const std::string& fileName, const std::string& meshName, const std::string& famName) throw(INTERP_KERNEL::Exception);
+  std::vector<std::string> GetAllFieldNamesOnMesh(const std::string& fileName, const std::string& meshName) throw(INTERP_KERNEL::Exception);
+  std::vector<std::string> GetAllFieldNames(const std::string& fileName) throw(INTERP_KERNEL::Exception);
+  std::vector<std::string> GetFieldNamesOnMesh(MEDCoupling::TypeOfField type, const std::string& fileName, const std::string& meshName) throw(INTERP_KERNEL::Exception);
+  std::vector<std::string> GetCellFieldNamesOnMesh(const std::string& fileName, const std::string& meshName) throw(INTERP_KERNEL::Exception);
+  std::vector<std::string> GetNodeFieldNamesOnMesh(const std::string& fileName, const std::string& meshName) throw(INTERP_KERNEL::Exception);
+  double GetTimeAttachedOnFieldIteration(const std::string& fileName, const std::string& fieldName, int iteration, int order) throw(INTERP_KERNEL::Exception);
+  void AssignStaticWritePropertiesTo(MEDCoupling::MEDFileWritable& obj) throw(INTERP_KERNEL::Exception);
+  MEDCoupling::MEDCouplingMesh *ReadMeshFromFile(const std::string& fileName, const std::string& meshName, int meshDimRelToMax=0) throw(INTERP_KERNEL::Exception);
+  MEDCoupling::MEDCouplingMesh *ReadMeshFromFile(const std::string& fileName, int meshDimRelToMax=0) throw(INTERP_KERNEL::Exception);
+  MEDCoupling::MEDCouplingUMesh *ReadUMeshFromFile(const std::string& fileName, const std::string& meshName, int meshDimRelToMax=0) throw(INTERP_KERNEL::Exception);
+  MEDCoupling::MEDCouplingUMesh *ReadUMeshFromFile(const std::string& fileName, int meshDimRelToMax=0) throw(INTERP_KERNEL::Exception);
+  int ReadUMeshDimFromFile(const std::string& fileName, const std::string& meshName) throw(INTERP_KERNEL::Exception);
+  MEDCoupling::MEDCouplingFieldDouble *ReadFieldCell(const std::string& fileName, const std::string& meshName, int meshDimRelToMax, const std::string& fieldName, int iteration, int order) throw(INTERP_KERNEL::Exception);
+  MEDCoupling::MEDCouplingFieldDouble *ReadFieldNode(const std::string& fileName, const std::string& meshName, int meshDimRelToMax, const std::string& fieldName, int iteration, int order) throw(INTERP_KERNEL::Exception);
+  MEDCoupling::MEDCouplingFieldDouble *ReadFieldGauss(const std::string& fileName, const std::string& meshName, int meshDimRelToMax, const std::string& fieldName, int iteration, int order) throw(INTERP_KERNEL::Exception);
+  MEDCoupling::MEDCouplingFieldDouble *ReadFieldGaussNE(const std::string& fileName, const std::string& meshName, int meshDimRelToMax, const std::string& fieldName, int iteration, int order) throw(INTERP_KERNEL::Exception);
+  void WriteMesh(const std::string& fileName, const MEDCoupling::MEDCouplingMesh *mesh, bool writeFromScratch) throw(INTERP_KERNEL::Exception);
+  void WriteUMesh(const std::string& fileName, const MEDCoupling::MEDCouplingUMesh *mesh, bool writeFromScratch) throw(INTERP_KERNEL::Exception);
+  void WriteUMeshDep(const std::string& fileName, const MEDCoupling::MEDCouplingUMesh *mesh, bool writeFromScratch) throw(INTERP_KERNEL::Exception);
+  void WriteField(const std::string& fileName, const MEDCoupling::MEDCouplingFieldDouble *f, bool writeFromScratch) throw(INTERP_KERNEL::Exception);
+  void WriteFieldDep(const std::string& fileName, const MEDCoupling::MEDCouplingFieldDouble *f, bool writeFromScratch) throw(INTERP_KERNEL::Exception);
+  void WriteFieldUsingAlreadyWrittenMesh(const std::string& fileName, const MEDCoupling::MEDCouplingFieldDouble *f) throw(INTERP_KERNEL::Exception);
+}
 
-       static PyObject *GetFieldIterations(ParaMEDMEM::TypeOfField type, const std::string& fileName, const std::string& meshName, const std::string& fieldName) throw(INTERP_KERNEL::Exception)
-       {
-         std::vector< std::pair<int,int> > res=MEDLoader::GetFieldIterations(type,fileName,meshName,fieldName);
-         PyObject *ret=PyList_New(res.size());
-         int rk=0;
-         for(std::vector< std::pair<int,int> >::const_iterator iter=res.begin();iter!=res.end();iter++,rk++)
-           {
-             PyObject *elt=PyTuple_New(2);
-             PyTuple_SetItem(elt,0,SWIG_From_int((*iter).first));
-             PyTuple_SetItem(elt,1,SWIG_From_int((*iter).second));
-             PyList_SetItem(ret,rk,elt);
-           }
-         return ret;
-       }
+%rename (MEDFileVersion) MEDFileVersionSwig;
+%rename (GetFieldIterations) GetFieldIterationsSwig;
+%rename (GetAllFieldIterations) GetAllFieldIterationsSwig;
+%rename (GetCellFieldIterations) GetCellFieldIterationsSwig;
+%rename (GetNodeFieldIterations) GetNodeFieldIterationsSwig;
+%rename (GetComponentsNamesOfField) GetComponentsNamesOfFieldSwig;
+%rename (GetUMeshGlobalInfo) GetUMeshGlobalInfoSwig;
+%rename (ReadFieldsOnSameMesh) ReadFieldsOnSameMeshSwig;
+%rename (WriteUMeshesPartition) WriteUMeshesPartitionSwig;
+%rename (WriteUMeshesPartitionDep) WriteUMeshesPartitionDepSwig;
+%rename (WriteUMeshes) WriteUMeshesSwig;
+%rename (GetTypesOfField) GetTypesOfFieldSwig;
+%rename (ReadUMeshFromGroups) ReadUMeshFromGroupsSwig;
+%rename (ReadUMeshFromFamilies) ReadUMeshFromFamiliesSwig;
+%rename (ReadField) ReadFieldSwig;
 
-       static PyObject *GetAllFieldIterations(const std::string& fileName, const std::string& fieldName) throw(INTERP_KERNEL::Exception)
-       {
-         std::vector< std::pair< std::pair<int,int>, double> > res=MEDLoader::GetAllFieldIterations(fileName,fieldName);
-         PyObject *ret=PyList_New(res.size());
-         int rk=0;
-         for(std::vector< std::pair< std::pair<int,int>, double> >::const_iterator iter=res.begin();iter!=res.end();iter++,rk++)
-           {
-             PyObject *elt=PyTuple_New(3);
-             PyTuple_SetItem(elt,0,SWIG_From_int((*iter).first.first));
-             PyTuple_SetItem(elt,1,SWIG_From_int((*iter).first.second));
-             PyTuple_SetItem(elt,2,SWIG_From_double((*iter).second));
-             PyList_SetItem(ret,rk,elt);
-           }
-         return ret;
-       }
+%inline
+{
+  PyObject *MEDFileVersionSwig() throw(INTERP_KERNEL::Exception)
+  {
+    int major,minor,release;
+    MEDCoupling::MEDFileVersion(major,minor,release);
+    PyObject *ret(PyTuple_New(3));
+    PyTuple_SetItem(ret,0,SWIG_From_int(major));
+    PyTuple_SetItem(ret,1,SWIG_From_int(minor));
+    PyTuple_SetItem(ret,2,SWIG_From_int(release));
+    return ret;
+  }
 
-       static PyObject *GetCellFieldIterations(const std::string& fileName, const std::string& meshName, const std::string& fieldName) throw(INTERP_KERNEL::Exception)
-       {
-         std::vector< std::pair<int,int> > res=MEDLoader::GetCellFieldIterations(fileName,meshName,fieldName);
-         PyObject *ret=PyList_New(res.size());
-         int rk=0;
-         for(std::vector< std::pair<int,int> >::const_iterator iter=res.begin();iter!=res.end();iter++,rk++)
-           {
-             PyObject *elt=PyTuple_New(2);
-             PyTuple_SetItem(elt,0,SWIG_From_int((*iter).first));
-             PyTuple_SetItem(elt,1,SWIG_From_int((*iter).second));
-             PyList_SetItem(ret,rk,elt);
-           }
-         return ret;
-       }
-       static PyObject *GetNodeFieldIterations(const std::string& fileName, const std::string& meshName, const std::string& fieldName) throw(INTERP_KERNEL::Exception)
-       {
-         std::vector< std::pair<int,int> > res=MEDLoader::GetNodeFieldIterations(fileName,meshName,fieldName);
-         PyObject *ret=PyList_New(res.size());
-         int rk=0;
-         for(std::vector< std::pair<int,int> >::const_iterator iter=res.begin();iter!=res.end();iter++,rk++)
-           {
-             PyObject *elt=PyTuple_New(2);
-             PyTuple_SetItem(elt,0,SWIG_From_int((*iter).first));
-             PyTuple_SetItem(elt,1,SWIG_From_int((*iter).second));
-             PyList_SetItem(ret,rk,elt);
-           }
-         return ret;
-       }
-       static PyObject *GetComponentsNamesOfField(const std::string& fileName, const std::string& fieldName) throw(INTERP_KERNEL::Exception)
-       {
-         std::vector< std::pair<std::string,std::string> > res=MEDLoader::GetComponentsNamesOfField(fileName,fieldName);
-         PyObject *ret=PyList_New(res.size());
-         int rk=0;
-         for(std::vector< std::pair<std::string,std::string> >::const_iterator iter=res.begin();iter!=res.end();iter++,rk++)
-           {
-             PyObject *elt=PyTuple_New(2);
-             PyTuple_SetItem(elt,0,PyString_FromString((*iter).first.c_str()));
-             PyTuple_SetItem(elt,1,PyString_FromString((*iter).second.c_str()));
-             PyList_SetItem(ret,rk,elt);
-           }
-         return ret;
-       }
-       static PyObject *GetUMeshGlobalInfo(const std::string& fileName, const std::string& meshName) throw(INTERP_KERNEL::Exception)
-       {
-         int meshDim,spaceDim,numberOfNodes;
-         std::vector< std::vector< std::pair<INTERP_KERNEL::NormalizedCellType,int> > > res=MEDLoader::GetUMeshGlobalInfo(fileName,meshName,meshDim,spaceDim,numberOfNodes);
-         PyObject *ret=PyTuple_New(4);
-         PyObject *elt0=PyList_New(res.size());
-         int i=0;
-         for(std::vector< std::vector< std::pair<INTERP_KERNEL::NormalizedCellType,int> > >::const_iterator it=res.begin();it!=res.end();it++,i++)
-           {
-             const std::vector< std::pair<INTERP_KERNEL::NormalizedCellType,int> >&obj2=(*it);
-             int j=0;
-             PyObject *elt1=PyList_New(obj2.size());
-             for(std::vector< std::pair<INTERP_KERNEL::NormalizedCellType,int> >::const_iterator it2=obj2.begin();it2!=obj2.end();it2++,j++)
-               {
-                 PyObject *elt2=PyTuple_New(2);
-                 PyTuple_SetItem(elt2,0,SWIG_From_int((int)(*it2).first));
-                 PyTuple_SetItem(elt2,1,SWIG_From_int((*it2).second));
-                 PyList_SetItem(elt1,j,elt2);
-               }
-             PyList_SetItem(elt0,i,elt1);
-           }
-         PyTuple_SetItem(ret,0,elt0);
-         PyTuple_SetItem(ret,1,SWIG_From_int(meshDim));
-         PyTuple_SetItem(ret,2,SWIG_From_int(spaceDim));
-         PyTuple_SetItem(ret,3,SWIG_From_int(numberOfNodes));
-         return ret;
-       }
-       static PyObject *ReadFieldsOnSameMesh(ParaMEDMEM::TypeOfField type, const std::string& fileName, const std::string& meshName, int meshDimRelToMax,
-                                             const std::string& fieldName, PyObject *liIts) throw(INTERP_KERNEL::Exception)
-       {
-         std::vector<std::pair<int,int> > its=convertTimePairIdsFromPy(liIts);
-         std::vector<ParaMEDMEM::MEDCouplingFieldDouble *> res=MEDLoader::ReadFieldsOnSameMesh(type,fileName,meshName,meshDimRelToMax,fieldName,its);
-         return convertFieldDoubleVecToPy(res);
-       }
-       static void WriteUMeshesPartition(const std::string& fileName, const std::string& meshName, PyObject *li, bool writeFromScratch) throw(INTERP_KERNEL::Exception)
-       {
-         std::vector<const ParaMEDMEM::MEDCouplingUMesh *> v;
-         convertFromPyObjVectorOfObj<const ParaMEDMEM::MEDCouplingUMesh *>(li,SWIGTYPE_p_ParaMEDMEM__MEDCouplingUMesh,"MEDCouplingUMesh",v);
-         MEDLoader::WriteUMeshesPartition(fileName,meshName,v,writeFromScratch);
-       }
-       static void WriteUMeshesPartitionDep(const std::string& fileName, const std::string& meshName, PyObject *li, bool writeFromScratch) throw(INTERP_KERNEL::Exception)
-       {
-         std::vector<const ParaMEDMEM::MEDCouplingUMesh *> v;
-         convertFromPyObjVectorOfObj<const ParaMEDMEM::MEDCouplingUMesh *>(li,SWIGTYPE_p_ParaMEDMEM__MEDCouplingUMesh,"MEDCouplingUMesh",v);
-         MEDLoader::WriteUMeshesPartitionDep(fileName,meshName,v,writeFromScratch);
-       }
-       static void WriteUMeshes(const std::string& fileName, PyObject *li, bool writeFromScratch) throw(INTERP_KERNEL::Exception)
-       {
-         std::vector<const ParaMEDMEM::MEDCouplingUMesh *> v;
-         convertFromPyObjVectorOfObj<const ParaMEDMEM::MEDCouplingUMesh *>(li,SWIGTYPE_p_ParaMEDMEM__MEDCouplingUMesh,"MEDCouplingUMesh",v);
-         MEDLoader::WriteUMeshes(fileName,v,writeFromScratch);
-       }
-       static PyObject *GetTypesOfField(const std::string& fileName, const std::string& meshName, const std::string& fieldName) throw(INTERP_KERNEL::Exception)
-       {
-         std::vector< ParaMEDMEM::TypeOfField > v=MEDLoader::GetTypesOfField(fileName,meshName,fieldName);
-         int size=v.size();
-         PyObject *ret=PyList_New(size);
-         for(int i=0;i<size;i++)
-           PyList_SetItem(ret,i,PyInt_FromLong((int)v[i]));
-         return ret;
-       }
-       static ParaMEDMEM::MEDCouplingUMesh *ReadUMeshFromGroups(const std::string& fileName, const std::string& meshName, int meshDimRelToMax, PyObject *li) throw(INTERP_KERNEL::Exception)
-       {
-         std::vector<std::string> grps;
-         converPyListToVecString(li,grps);
-         return MEDLoader::ReadUMeshFromGroups(fileName,meshName,meshDimRelToMax,grps);
-       }
-       static ParaMEDMEM::MEDCouplingUMesh *ReadUMeshFromFamilies(const std::string& fileName, const std::string& meshName, int meshDimRelToMax, PyObject *li) throw(INTERP_KERNEL::Exception)
-       {
-         std::vector<std::string> fams;
-         converPyListToVecString(li,fams);
-         return MEDLoader::ReadUMeshFromFamilies(fileName,meshName,meshDimRelToMax,fams);
-       }
-     }
-  static ParaMEDMEM::MEDCouplingMesh *ReadMeshFromFile(const std::string& fileName, const std::string& meshName, int meshDimRelToMax=0) throw(INTERP_KERNEL::Exception);
-  static ParaMEDMEM::MEDCouplingMesh *ReadMeshFromFile(const std::string& fileName, int meshDimRelToMax=0) throw(INTERP_KERNEL::Exception);
-  static ParaMEDMEM::MEDCouplingUMesh *ReadUMeshFromFile(const std::string& fileName, const std::string& meshName, int meshDimRelToMax=0) throw(INTERP_KERNEL::Exception);
-  static ParaMEDMEM::MEDCouplingUMesh *ReadUMeshFromFile(const std::string& fileName, int meshDimRelToMax=0) throw(INTERP_KERNEL::Exception);
-  static int ReadUMeshDimFromFile(const std::string& fileName, const std::string& meshName) throw(INTERP_KERNEL::Exception);
-  static ParaMEDMEM::MEDCouplingFieldDouble *ReadField(ParaMEDMEM::TypeOfField type, const std::string& fileName, const std::string& meshName, int meshDimRelToMax, const std::string& fieldName, int iteration, int order) throw(INTERP_KERNEL::Exception);
-  static ParaMEDMEM::MEDCouplingFieldDouble *ReadFieldCell(const std::string& fileName, const std::string& meshName, int meshDimRelToMax, const std::string& fieldName, int iteration, int order) throw(INTERP_KERNEL::Exception);
-  static ParaMEDMEM::MEDCouplingFieldDouble *ReadFieldNode(const std::string& fileName, const std::string& meshName, int meshDimRelToMax, const std::string& fieldName, int iteration, int order) throw(INTERP_KERNEL::Exception);
-  static ParaMEDMEM::MEDCouplingFieldDouble *ReadFieldGauss(const std::string& fileName, const std::string& meshName, int meshDimRelToMax, const std::string& fieldName, int iteration, int order) throw(INTERP_KERNEL::Exception);
-  static ParaMEDMEM::MEDCouplingFieldDouble *ReadFieldGaussNE(const std::string& fileName, const std::string& meshName, int meshDimRelToMax, const std::string& fieldName, int iteration, int order) throw(INTERP_KERNEL::Exception);
-  static void WriteMesh(const std::string& fileName, const ParaMEDMEM::MEDCouplingMesh *mesh, bool writeFromScratch) throw(INTERP_KERNEL::Exception);
-  static void WriteUMesh(const std::string& fileName, const ParaMEDMEM::MEDCouplingUMesh *mesh, bool writeFromScratch) throw(INTERP_KERNEL::Exception);
-  static void WriteUMeshDep(const std::string& fileName, const ParaMEDMEM::MEDCouplingUMesh *mesh, bool writeFromScratch) throw(INTERP_KERNEL::Exception);
-  static void WriteField(const std::string& fileName, const ParaMEDMEM::MEDCouplingFieldDouble *f, bool writeFromScratch) throw(INTERP_KERNEL::Exception);
-  static void WriteFieldDep(const std::string& fileName, const ParaMEDMEM::MEDCouplingFieldDouble *f, bool writeFromScratch) throw(INTERP_KERNEL::Exception);
-  static void WriteFieldUsingAlreadyWrittenMesh(const std::string& fileName, const ParaMEDMEM::MEDCouplingFieldDouble *f) throw(INTERP_KERNEL::Exception);
-};
+  MEDCoupling::MEDCouplingFieldDouble *ReadFieldSwig(const std::string& fileName) throw(INTERP_KERNEL::Exception)
+  {
+    MCAuto<MEDCoupling::MEDCouplingFieldDouble> ret(MEDCoupling::ReadField(fileName));
+    return ret.retn();
+  }
 
-namespace ParaMEDMEM
+  MEDCoupling::MEDCouplingFieldDouble *ReadFieldSwig(const std::string& fileName, const std::string& fieldName) throw(INTERP_KERNEL::Exception)
+  {
+    MCAuto<MEDCoupling::MEDCouplingFieldDouble> ret(MEDCoupling::ReadField(fileName,fieldName));
+    return ret.retn();
+  }
+  
+  MEDCoupling::MEDCouplingFieldDouble *ReadFieldSwig(const std::string& fileName, const std::string& fieldName, int iteration, int order) throw(INTERP_KERNEL::Exception)
+  {
+    MCAuto<MEDCoupling::MEDCouplingFieldDouble> ret(MEDCoupling::ReadField(fileName,fieldName,iteration,order));
+    return ret.retn();
+  }
+  
+  MEDCoupling::MEDCouplingFieldDouble *ReadFieldSwig(MEDCoupling::TypeOfField type, const std::string& fileName, const std::string& meshName, int meshDimRelToMax, const std::string& fieldName, int iteration, int order) throw(INTERP_KERNEL::Exception)
+  {
+    MCAuto<MEDCoupling::MEDCouplingFieldDouble> ret(MEDCoupling::ReadField(type,fileName,meshName,meshDimRelToMax,fieldName,iteration,order));
+    return ret.retn();
+  }
+
+  PyObject *GetFieldIterationsSwig(MEDCoupling::TypeOfField type, const std::string& fileName, const std::string& meshName, const std::string& fieldName) throw(INTERP_KERNEL::Exception)
+  {
+    std::vector< std::pair<int,int> > res=MEDCoupling::GetFieldIterations(type,fileName,meshName,fieldName);
+    PyObject *ret=PyList_New(res.size());
+    int rk=0;
+    for(std::vector< std::pair<int,int> >::const_iterator iter=res.begin();iter!=res.end();iter++,rk++)
+      {
+        PyObject *elt=PyTuple_New(2);
+        PyTuple_SetItem(elt,0,SWIG_From_int((*iter).first));
+        PyTuple_SetItem(elt,1,SWIG_From_int((*iter).second));
+        PyList_SetItem(ret,rk,elt);
+      }
+    return ret;
+  }
+  
+  PyObject *GetAllFieldIterationsSwig(const std::string& fileName, const std::string& fieldName) throw(INTERP_KERNEL::Exception)
+    {
+      std::vector< std::pair< std::pair<int,int>, double> > res=MEDCoupling::GetAllFieldIterations(fileName,fieldName);
+      PyObject *ret=PyList_New(res.size());
+      int rk=0;
+      for(std::vector< std::pair< std::pair<int,int>, double> >::const_iterator iter=res.begin();iter!=res.end();iter++,rk++)
+        {
+          PyObject *elt=PyTuple_New(3);
+          PyTuple_SetItem(elt,0,SWIG_From_int((*iter).first.first));
+          PyTuple_SetItem(elt,1,SWIG_From_int((*iter).first.second));
+          PyTuple_SetItem(elt,2,SWIG_From_double((*iter).second));
+          PyList_SetItem(ret,rk,elt);
+        }
+      return ret;
+    }
+  
+  PyObject *GetCellFieldIterationsSwig(const std::string& fileName, const std::string& meshName, const std::string& fieldName) throw(INTERP_KERNEL::Exception)
+    {
+      std::vector< std::pair<int,int> > res=MEDCoupling::GetCellFieldIterations(fileName,meshName,fieldName);
+      PyObject *ret=PyList_New(res.size());
+      int rk=0;
+      for(std::vector< std::pair<int,int> >::const_iterator iter=res.begin();iter!=res.end();iter++,rk++)
+        {
+          PyObject *elt=PyTuple_New(2);
+          PyTuple_SetItem(elt,0,SWIG_From_int((*iter).first));
+          PyTuple_SetItem(elt,1,SWIG_From_int((*iter).second));
+          PyList_SetItem(ret,rk,elt);
+        }
+      return ret;
+    }
+
+  PyObject *GetNodeFieldIterationsSwig(const std::string& fileName, const std::string& meshName, const std::string& fieldName) throw(INTERP_KERNEL::Exception)
+    {
+      std::vector< std::pair<int,int> > res=MEDCoupling::GetNodeFieldIterations(fileName,meshName,fieldName);
+      PyObject *ret=PyList_New(res.size());
+      int rk=0;
+      for(std::vector< std::pair<int,int> >::const_iterator iter=res.begin();iter!=res.end();iter++,rk++)
+        {
+          PyObject *elt=PyTuple_New(2);
+          PyTuple_SetItem(elt,0,SWIG_From_int((*iter).first));
+          PyTuple_SetItem(elt,1,SWIG_From_int((*iter).second));
+          PyList_SetItem(ret,rk,elt);
+        }
+      return ret;
+    }
+
+  PyObject *GetComponentsNamesOfFieldSwig(const std::string& fileName, const std::string& fieldName) throw(INTERP_KERNEL::Exception)
+    {
+      std::vector< std::pair<std::string,std::string> > res=MEDCoupling::GetComponentsNamesOfField(fileName,fieldName);
+      PyObject *ret=PyList_New(res.size());
+      int rk=0;
+      for(std::vector< std::pair<std::string,std::string> >::const_iterator iter=res.begin();iter!=res.end();iter++,rk++)
+        {
+          PyObject *elt=PyTuple_New(2);
+          PyTuple_SetItem(elt,0,PyString_FromString((*iter).first.c_str()));
+          PyTuple_SetItem(elt,1,PyString_FromString((*iter).second.c_str()));
+          PyList_SetItem(ret,rk,elt);
+        }
+      return ret;
+    }
+
+  PyObject *GetUMeshGlobalInfoSwig(const std::string& fileName, const std::string& meshName) throw(INTERP_KERNEL::Exception)
+    {
+      int meshDim,spaceDim,numberOfNodes;
+      std::vector< std::vector< std::pair<INTERP_KERNEL::NormalizedCellType,int> > > res=MEDCoupling::GetUMeshGlobalInfo(fileName,meshName,meshDim,spaceDim,numberOfNodes);
+      PyObject *ret=PyTuple_New(4);
+      PyObject *elt0=PyList_New(res.size());
+      int i=0;
+      for(std::vector< std::vector< std::pair<INTERP_KERNEL::NormalizedCellType,int> > >::const_iterator it=res.begin();it!=res.end();it++,i++)
+        {
+          const std::vector< std::pair<INTERP_KERNEL::NormalizedCellType,int> >&obj2=(*it);
+          int j=0;
+          PyObject *elt1=PyList_New(obj2.size());
+          for(std::vector< std::pair<INTERP_KERNEL::NormalizedCellType,int> >::const_iterator it2=obj2.begin();it2!=obj2.end();it2++,j++)
+            {
+              PyObject *elt2=PyTuple_New(2);
+              PyTuple_SetItem(elt2,0,SWIG_From_int((int)(*it2).first));
+              PyTuple_SetItem(elt2,1,SWIG_From_int((*it2).second));
+              PyList_SetItem(elt1,j,elt2);
+            }
+          PyList_SetItem(elt0,i,elt1);
+        }
+      PyTuple_SetItem(ret,0,elt0);
+      PyTuple_SetItem(ret,1,SWIG_From_int(meshDim));
+      PyTuple_SetItem(ret,2,SWIG_From_int(spaceDim));
+      PyTuple_SetItem(ret,3,SWIG_From_int(numberOfNodes));
+      return ret;
+    }
+  
+  PyObject *ReadFieldsOnSameMeshSwig(MEDCoupling::TypeOfField type, const std::string& fileName, const std::string& meshName, int meshDimRelToMax,
+                                     const std::string& fieldName, PyObject *liIts) throw(INTERP_KERNEL::Exception)
+    {
+      std::vector<std::pair<int,int> > its=convertTimePairIdsFromPy(liIts);
+      std::vector<MEDCoupling::MEDCouplingFieldDouble *> res=MEDCoupling::ReadFieldsOnSameMesh(type,fileName,meshName,meshDimRelToMax,fieldName,its);
+      return convertFieldDoubleVecToPy(res);
+    }
+  
+  void WriteUMeshesPartitionSwig(const std::string& fileName, const std::string& meshName, PyObject *li, bool writeFromScratch) throw(INTERP_KERNEL::Exception)
+  {
+    std::vector<const MEDCoupling::MEDCouplingUMesh *> v;
+    convertFromPyObjVectorOfObj<const MEDCoupling::MEDCouplingUMesh *>(li,SWIGTYPE_p_MEDCoupling__MEDCouplingUMesh,"MEDCouplingUMesh",v);
+    MEDCoupling::WriteUMeshesPartition(fileName,meshName,v,writeFromScratch);
+  }
+  
+  void WriteUMeshesPartitionDepSwig(const std::string& fileName, const std::string& meshName, PyObject *li, bool writeFromScratch) throw(INTERP_KERNEL::Exception)
+  {
+    std::vector<const MEDCoupling::MEDCouplingUMesh *> v;
+    convertFromPyObjVectorOfObj<const MEDCoupling::MEDCouplingUMesh *>(li,SWIGTYPE_p_MEDCoupling__MEDCouplingUMesh,"MEDCouplingUMesh",v);
+    MEDCoupling::WriteUMeshesPartitionDep(fileName,meshName,v,writeFromScratch);
+  }
+  
+  void WriteUMeshesSwig(const std::string& fileName, PyObject *li, bool writeFromScratch) throw(INTERP_KERNEL::Exception)
+  {
+    std::vector<const MEDCoupling::MEDCouplingUMesh *> v;
+    convertFromPyObjVectorOfObj<const MEDCoupling::MEDCouplingUMesh *>(li,SWIGTYPE_p_MEDCoupling__MEDCouplingUMesh,"MEDCouplingUMesh",v);
+    MEDCoupling::WriteUMeshes(fileName,v,writeFromScratch);
+  }
+  
+  PyObject *GetTypesOfFieldSwig(const std::string& fileName, const std::string& meshName, const std::string& fieldName) throw(INTERP_KERNEL::Exception)
+    {
+      std::vector< MEDCoupling::TypeOfField > v=MEDCoupling::GetTypesOfField(fileName,meshName,fieldName);
+      int size=v.size();
+      PyObject *ret=PyList_New(size);
+      for(int i=0;i<size;i++)
+        PyList_SetItem(ret,i,PyInt_FromLong((int)v[i]));
+      return ret;
+    }
+  
+  MEDCoupling::MEDCouplingUMesh *ReadUMeshFromGroupsSwig(const std::string& fileName, const std::string& meshName, int meshDimRelToMax, PyObject *li) throw(INTERP_KERNEL::Exception)
+    {
+      std::vector<std::string> grps;
+      converPyListToVecString(li,grps);
+      return MEDCoupling::ReadUMeshFromGroups(fileName,meshName,meshDimRelToMax,grps);
+    }
+
+  MEDCoupling::MEDCouplingUMesh *ReadUMeshFromFamiliesSwig(const std::string& fileName, const std::string& meshName, int meshDimRelToMax, PyObject *li) throw(INTERP_KERNEL::Exception)
+    {
+      std::vector<std::string> fams;
+      converPyListToVecString(li,fams);
+      return MEDCoupling::ReadUMeshFromFamilies(fileName,meshName,meshDimRelToMax,fams);
+    }
+}
+
+namespace MEDCoupling
 {
   class MEDFileWritable
   {
@@ -482,7 +571,50 @@ namespace ParaMEDMEM
     int getZipConnPolicy() throw(INTERP_KERNEL::Exception);
     void setZipConnPolicy(int newVal) throw(INTERP_KERNEL::Exception);
   };
+  
+  class MEDFileWritableStandAlone : public MEDFileWritable
+  {
+  public:
+    void write(const std::string& fileName, int mode) const throw(INTERP_KERNEL::Exception);
+    void write30(const std::string& fileName, int mode) const throw(INTERP_KERNEL::Exception);
+    %extend
+       {
+         DataArrayByte *serialize() const throw(INTERP_KERNEL::Exception)
+         {
+           MCAuto<DataArrayByte> ret(self->serialize());
+           return ret.retn();
+         }
 
+         PyObject *__getstate__() throw(INTERP_KERNEL::Exception)
+         {
+           PyObject *ret(PyList_New(0));
+           return ret;
+         }
+
+         void __setstate__(PyObject *inp) throw(INTERP_KERNEL::Exception)
+         {
+         }
+
+         PyObject *__getnewargs__() throw(INTERP_KERNEL::Exception)
+         {
+#ifdef WITH_NUMPY
+           PyObject *ret(PyTuple_New(1));
+           PyObject *ret0(PyDict_New());
+           DataArrayByte *retCpp(MEDCoupling_MEDFileWritableStandAlone_serialize(self));
+           PyObject *numpyArryObj=SWIG_NewPointerObj(SWIG_as_voidptr(retCpp),SWIGTYPE_p_MEDCoupling__DataArrayByte, SWIG_POINTER_OWN | 0 );
+           {// create a dict to discriminite in __new__ if __init__ should be called. Not beautiful but not idea ...
+             PyObject *tmp1(PyInt_FromLong(0));
+             PyDict_SetItem(ret0,tmp1,numpyArryObj); Py_DECREF(tmp1); Py_DECREF(numpyArryObj);
+             PyTuple_SetItem(ret,0,ret0);
+           }
+           return ret;
+#else
+           throw INTERP_KERNEL::Exception("PyWrap of MEDFileData.__getnewargs__ : not implemented because numpy is not active in your configuration ! No serialization/unserialization available without numpy !");
+#endif
+         }
+       }
+  };
+  
   class MEDFileMeshReadSelector
   {
   public:
@@ -530,7 +662,7 @@ namespace ParaMEDMEM
                                            INTERP_KERNEL::NormalizedCellType rem_geo_type)
       throw(INTERP_KERNEL::Exception);
     std::vector<const BigMemoryObject *> getDirectChildrenWithNull() const;
-    MEDFileJointCorrespondence *deepCpy() const;
+    MEDFileJointCorrespondence *deepCopy() const;
     MEDFileJointCorrespondence *shallowCpy() const;
     void setIsNodal(bool isNodal);
     bool getIsNodal() const;
@@ -572,7 +704,7 @@ namespace ParaMEDMEM
   public:
     static MEDFileJointOneStep *New(int dt=-1, int it=-1) throw(INTERP_KERNEL::Exception);
     static MEDFileJointOneStep *New(const std::string& fileName, const std::string& mName, const std::string& jointName, int number=1) throw(INTERP_KERNEL::Exception);
-    MEDFileJointOneStep *deepCpy() const;
+    MEDFileJointOneStep *deepCopy() const;
     MEDFileJointOneStep *shallowCpy() const;
     bool isEqual(const MEDFileJointOneStep *other) const;
     void setOrder(int order);
@@ -603,13 +735,13 @@ namespace ParaMEDMEM
     }
   };
 
-  class MEDFileJoint : public RefCountObject, public MEDFileWritable
+  class MEDFileJoint : public RefCountObject, public MEDFileWritableStandAlone
   {
   public:
     static MEDFileJoint *New() throw(INTERP_KERNEL::Exception);
     static MEDFileJoint *New(const std::string& fileName, const std::string& mName, int num) throw(INTERP_KERNEL::Exception);
     static MEDFileJoint *New(const std::string& jointName, const std::string& locMeshName, const std::string& remoteMeshName, int remoteMeshNum ) throw(INTERP_KERNEL::Exception);
-    MEDFileJoint *deepCpy() const;
+    MEDFileJoint *deepCopy() const;
     MEDFileJoint *shallowCpy() const;
     bool isEqual(const MEDFileJoint *other) const;
     void setLocalMeshName(const std::string& name);
@@ -626,7 +758,6 @@ namespace ParaMEDMEM
     void pushStep(MEDFileJointOneStep* step);
     int getNumberOfSteps() const;
     MEDFileJointOneStep *getStepAtPos(int i) const;
-    void write(const std::string& fileName, int mode) const throw(INTERP_KERNEL::Exception);
     std::string simpleRepr() const;
     %extend
     {
@@ -647,14 +778,13 @@ namespace ParaMEDMEM
     }
   };
 
-  class MEDFileJoints : public RefCountObject, public MEDFileWritable
+  class MEDFileJoints : public RefCountObject, public MEDFileWritableStandAlone
   {
   public:
     static MEDFileJoints *New() throw(INTERP_KERNEL::Exception);
     static MEDFileJoints *New(const std::string& fileName, const std::string& meshName) throw(INTERP_KERNEL::Exception);
-    MEDFileJoints *deepCpy() const;
+    MEDFileJoints *deepCopy() const;
     std::string simpleRepr() const;
-    void write(const std::string& fileName, int mode) const throw(INTERP_KERNEL::Exception);
     std::string getMeshName() const;
     int getNumberOfJoints() const;
     std::vector<std::string> getJointsNames() const;
@@ -723,7 +853,7 @@ namespace ParaMEDMEM
     }
   };
   
-  class MEDFileEquivalenceBase : public RefCountObject
+  class MEDFileEquivalenceBase : public RefCountObject, public MEDFileWritableStandAlone
   {
   private:
     MEDFileEquivalenceBase();
@@ -782,7 +912,7 @@ namespace ParaMEDMEM
     }
   };
 
-  class MEDFileEquivalencePair : public RefCountObject
+  class MEDFileEquivalencePair : public RefCountObject, public MEDFileWritableStandAlone
   {
   private:
     MEDFileEquivalencePair();
@@ -824,7 +954,7 @@ namespace ParaMEDMEM
     }
   };
   
-  class MEDFileEquivalences : public RefCountObject
+  class MEDFileEquivalences : public RefCountObject, public MEDFileWritableStandAlone
   {
   private:
     MEDFileEquivalences();
@@ -858,13 +988,14 @@ namespace ParaMEDMEM
     }
   };
 
-  class MEDFileMesh : public RefCountObject, public MEDFileWritable
+  class MEDFileMesh : public RefCountObject, public MEDFileWritableStandAlone
   {
   public:
     static MEDFileMesh *New(const std::string& fileName, MEDFileMeshReadSelector *mrs=0) throw(INTERP_KERNEL::Exception);
     static MEDFileMesh *New(const std::string& fileName, const std::string& mName, int dt=-1, int it=-1, MEDFileMeshReadSelector *mrs=0) throw(INTERP_KERNEL::Exception);
+    static MEDFileMesh *New(DataArrayByte *db) throw(INTERP_KERNEL::Exception);
     virtual MEDFileMesh *createNewEmpty() const throw(INTERP_KERNEL::Exception);
-    virtual MEDFileMesh *deepCpy() const throw(INTERP_KERNEL::Exception);
+    virtual MEDFileMesh *deepCopy() const throw(INTERP_KERNEL::Exception);
     virtual MEDFileMesh *shallowCpy() const throw(INTERP_KERNEL::Exception);
     virtual void clearNonDiscrAttributes() const throw(INTERP_KERNEL::Exception);
     void setName(const std::string& name);
@@ -883,8 +1014,8 @@ namespace ParaMEDMEM
     double getTimeValue() const;
     void setTimeUnit(const std::string& unit);
     std::string getTimeUnit() const;
-    void setAxType(MEDCouplingAxisType at);
-    MEDCouplingAxisType getAxType() const;
+    void setAxisType(MEDCouplingAxisType at);
+    MEDCouplingAxisType getAxisType() const;
     virtual int getNumberOfNodes() const throw(INTERP_KERNEL::Exception);
     virtual int getNumberOfCellsAtLevel(int meshDimRelToMaxExt) const throw(INTERP_KERNEL::Exception);
     virtual bool hasImplicitPart() const throw(INTERP_KERNEL::Exception);
@@ -898,7 +1029,6 @@ namespace ParaMEDMEM
     virtual MEDFileMesh *cartesianize() const throw(INTERP_KERNEL::Exception);
     std::vector<int> getNonEmptyLevels() const throw(INTERP_KERNEL::Exception);
     std::vector<int> getNonEmptyLevelsExt() const throw(INTERP_KERNEL::Exception);
-    void write(const std::string& fileName, int mode) const throw(INTERP_KERNEL::Exception);
     int getSizeAtLevel(int meshDimRelToMaxExt) const throw(INTERP_KERNEL::Exception);
     //
     bool existsGroup(const std::string& groupName) const throw(INTERP_KERNEL::Exception);
@@ -991,6 +1121,8 @@ namespace ParaMEDMEM
     void setJoints( MEDFileJoints* joints );
     void initializeEquivalences();
     void killEquivalences();
+    bool presenceOfStructureElements() const throw(INTERP_KERNEL::Exception);
+    void killStructureElements() throw(INTERP_KERNEL::Exception);
     %extend
        {
          std::string __str__() const throw(INTERP_KERNEL::Exception)
@@ -1029,7 +1161,7 @@ namespace ParaMEDMEM
          void setGroupsAtLevel(int meshDimRelToMaxExt, PyObject *li, bool renum=false) throw(INTERP_KERNEL::Exception)
          {
            std::vector<const DataArrayInt *> grps;
-           convertFromPyObjVectorOfObj<const ParaMEDMEM::DataArrayInt *>(li,SWIGTYPE_p_ParaMEDMEM__DataArrayInt,"DataArrayInt",grps);
+           convertFromPyObjVectorOfObj<const MEDCoupling::DataArrayInt *>(li,SWIGTYPE_p_MEDCoupling__DataArrayInt,"DataArrayInt",grps);
            self->setGroupsAtLevel(meshDimRelToMaxExt,grps,renum);
          }
          
@@ -1082,7 +1214,7 @@ namespace ParaMEDMEM
            const DataArrayInt *tmp=self->getFamilyFieldAtLevel(meshDimRelToMaxExt);
            if(tmp)
              tmp->incrRef();
-           return SWIG_NewPointerObj(SWIG_as_voidptr(tmp),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 );
+           return SWIG_NewPointerObj(SWIG_as_voidptr(tmp),SWIGTYPE_p_MEDCoupling__DataArrayInt, SWIG_POINTER_OWN | 0 );
          }
 
          PyObject *getOrCreateAndGetFamilyFieldAtLevel(int meshDimRelToMaxExt) throw(INTERP_KERNEL::Exception)
@@ -1090,7 +1222,7 @@ namespace ParaMEDMEM
            const DataArrayInt *tmp=self->getOrCreateAndGetFamilyFieldAtLevel(meshDimRelToMaxExt);
            if(tmp)
              tmp->incrRef();
-           return SWIG_NewPointerObj(SWIG_as_voidptr(tmp),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 );
+           return SWIG_NewPointerObj(SWIG_as_voidptr(tmp),SWIGTYPE_p_MEDCoupling__DataArrayInt, SWIG_POINTER_OWN | 0 );
          }
 
          PyObject *getNumberFieldAtLevel(int meshDimRelToMaxExt) const throw(INTERP_KERNEL::Exception)
@@ -1098,7 +1230,7 @@ namespace ParaMEDMEM
            const DataArrayInt *tmp=self->getNumberFieldAtLevel(meshDimRelToMaxExt);
            if(tmp)
              tmp->incrRef();
-           return SWIG_NewPointerObj(SWIG_as_voidptr(tmp),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 );
+           return SWIG_NewPointerObj(SWIG_as_voidptr(tmp),SWIGTYPE_p_MEDCoupling__DataArrayInt, SWIG_POINTER_OWN | 0 );
          }
 
          PyObject *getRevNumberFieldAtLevel(int meshDimRelToMaxExt) const throw(INTERP_KERNEL::Exception)
@@ -1106,7 +1238,7 @@ namespace ParaMEDMEM
            const DataArrayInt *tmp=self->getRevNumberFieldAtLevel(meshDimRelToMaxExt);
            if(tmp)
              tmp->incrRef();
-           return SWIG_NewPointerObj(SWIG_as_voidptr(tmp),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 );
+           return SWIG_NewPointerObj(SWIG_as_voidptr(tmp),SWIGTYPE_p_MEDCoupling__DataArrayInt, SWIG_POINTER_OWN | 0 );
          }
          
          PyObject *getNameFieldAtLevel(int meshDimRelToMaxExt) const throw(INTERP_KERNEL::Exception)
@@ -1114,7 +1246,7 @@ namespace ParaMEDMEM
            const DataArrayAsciiChar *tmp=self->getNameFieldAtLevel(meshDimRelToMaxExt);
            if(tmp)
              tmp->incrRef();
-           return SWIG_NewPointerObj(SWIG_as_voidptr(tmp),SWIGTYPE_p_ParaMEDMEM__DataArrayAsciiChar, SWIG_POINTER_OWN | 0 );
+           return SWIG_NewPointerObj(SWIG_as_voidptr(tmp),SWIGTYPE_p_MEDCoupling__DataArrayAsciiChar, SWIG_POINTER_OWN | 0 );
          }
 
          PyObject *findOrCreateAndGiveFamilyWithId(int id, bool& created) throw(INTERP_KERNEL::Exception)
@@ -1157,7 +1289,7 @@ namespace ParaMEDMEM
              }
            PyTuple_SetItem(ret,2,retLev1_1);
            //
-           PyTuple_SetItem(ret,3,SWIG_NewPointerObj(SWIG_as_voidptr(ret3),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 ));
+           PyTuple_SetItem(ret,3,SWIG_NewPointerObj(SWIG_as_voidptr(ret3),SWIGTYPE_p_MEDCoupling__DataArrayInt, SWIG_POINTER_OWN | 0 ));
            return ret;
          }
 
@@ -1175,12 +1307,15 @@ namespace ParaMEDMEM
   public:
     static MEDFileUMesh *New(const std::string& fileName, const std::string& mName, int dt=-1, int it=-1, MEDFileMeshReadSelector *mrs=0) throw(INTERP_KERNEL::Exception);
     static MEDFileUMesh *New(const std::string& fileName, MEDFileMeshReadSelector *mrs=0) throw(INTERP_KERNEL::Exception);
+    static MEDFileUMesh *New(const MEDCouplingMappedExtrudedMesh *mem) throw(INTERP_KERNEL::Exception);
+    static MEDFileUMesh *New(DataArrayByte *db) throw(INTERP_KERNEL::Exception);
     static MEDFileUMesh *New();
+    static const char *GetSpeStr4ExtMesh();
     ~MEDFileUMesh();
     int getSpaceDimension() const throw(INTERP_KERNEL::Exception);
     int getRelativeLevOnGeoType(INTERP_KERNEL::NormalizedCellType gt) const throw(INTERP_KERNEL::Exception);
-    void checkCoherency() const throw(INTERP_KERNEL::Exception);
-    void checkSMESHCoherency() const throw(INTERP_KERNEL::Exception);
+    void checkConsistency() const throw(INTERP_KERNEL::Exception);
+    void checkSMESHConsistency() const throw(INTERP_KERNEL::Exception);
     void clearNodeAndCellNumbers();
     //
     MEDCouplingUMesh *getGroup(int meshDimRelToMaxExt, const std::string& grp, bool renum=false) const throw(INTERP_KERNEL::Exception);
@@ -1196,6 +1331,7 @@ namespace ParaMEDMEM
     //
     void setFamilyNameAttachedOnId(int id, const std::string& newFamName) throw(INTERP_KERNEL::Exception);
     void setCoords(DataArrayDouble *coords) throw(INTERP_KERNEL::Exception);
+    void setCoordsForced(DataArrayDouble *coords) throw(INTERP_KERNEL::Exception);
     void eraseGroupsAtLevel(int meshDimRelToMaxExt) throw(INTERP_KERNEL::Exception);
     void removeMeshAtLevel(int meshDimRelToMax) throw(INTERP_KERNEL::Exception);
     void setMeshAtLevel(int meshDimRelToMax, MEDCoupling1GTUMesh *m) throw(INTERP_KERNEL::Exception);
@@ -1207,6 +1343,7 @@ namespace ParaMEDMEM
     MEDFileUMesh *buildExtrudedMesh(const MEDCouplingUMesh *m1D, int policy) const throw(INTERP_KERNEL::Exception);
     MEDFileUMesh *linearToQuadratic(int conversionType=0, double eps=1e-12) const throw(INTERP_KERNEL::Exception);
     MEDFileUMesh *quadraticToLinear(double eps=1e-12) const throw(INTERP_KERNEL::Exception);
+    MEDCouplingMappedExtrudedMesh *convertToExtrudedMesh() const throw(INTERP_KERNEL::Exception);
     %extend
        { 
          MEDFileUMesh(const std::string& fileName, const std::string& mName, int dt=-1, int it=-1, MEDFileMeshReadSelector *mrs=0) throw(INTERP_KERNEL::Exception)
@@ -1217,6 +1354,16 @@ namespace ParaMEDMEM
          MEDFileUMesh(const std::string& fileName, MEDFileMeshReadSelector *mrs=0) throw(INTERP_KERNEL::Exception)
          {
            return MEDFileUMesh::New(fileName,mrs);
+         }
+
+         MEDFileUMesh(const MEDCouplingMappedExtrudedMesh *mem) throw(INTERP_KERNEL::Exception)
+         {
+           return MEDFileUMesh::New(mem);
+         }
+
+         MEDFileUMesh(DataArrayByte *db) throw(INTERP_KERNEL::Exception)
+         {
+           return MEDFileUMesh::New(db);
          }
 
          MEDFileUMesh()
@@ -1254,8 +1401,8 @@ namespace ParaMEDMEM
            std::vector<double> a0;
            std::vector<int> a1;
            std::vector<std::string> a2;
-           std::vector< MEDCouplingAutoRefCountObjectPtr<DataArrayInt> > a3;
-           MEDCouplingAutoRefCountObjectPtr<DataArrayDouble> a4;
+           std::vector< MCAuto<DataArrayInt> > a3;
+           MCAuto<DataArrayDouble> a4;
            self->serialize(a0,a1,a2,a3,a4);
            PyObject *ret(PyTuple_New(5));
            PyTuple_SetItem(ret,0,convertDblArrToPyList2(a0));
@@ -1272,13 +1419,13 @@ namespace ParaMEDMEM
                DataArrayInt *elt(a3[i]);
                if(elt)
                  elt->incrRef();
-               PyList_SetItem(ret3,i,SWIG_NewPointerObj(SWIG_as_voidptr(elt),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 ));
+               PyList_SetItem(ret3,i,SWIG_NewPointerObj(SWIG_as_voidptr(elt),SWIGTYPE_p_MEDCoupling__DataArrayInt, SWIG_POINTER_OWN | 0 ));
              }
            PyTuple_SetItem(ret,3,ret3);
            DataArrayDouble *ret4(a4);
            if(ret4)
              ret4->incrRef();
-           PyTuple_SetItem(ret,4,SWIG_NewPointerObj(SWIG_as_voidptr(ret4),SWIGTYPE_p_ParaMEDMEM__DataArrayDouble, SWIG_POINTER_OWN | 0 ));
+           PyTuple_SetItem(ret,4,SWIG_NewPointerObj(SWIG_as_voidptr(ret4),SWIGTYPE_p_MEDCoupling__DataArrayDouble, SWIG_POINTER_OWN | 0 ));
            return ret;
          }
 
@@ -1293,8 +1440,8 @@ namespace ParaMEDMEM
            std::vector<double> a0;
            std::vector<int> a1;
            std::vector<std::string> a2;
-           std::vector< MEDCouplingAutoRefCountObjectPtr<DataArrayInt> > a3;
-           MEDCouplingAutoRefCountObjectPtr<DataArrayDouble> a4;
+           std::vector< MCAuto<DataArrayInt> > a3;
+           MCAuto<DataArrayDouble> a4;
            //
            PyObject *a0py(PyTuple_GetItem(inp,0)),*a1py(PyTuple_GetItem(inp,1)),*a2py(PyTuple_GetItem(inp,2));
            int tmp(-1);
@@ -1304,7 +1451,7 @@ namespace ParaMEDMEM
            //
            PyObject *b0py(PyTuple_GetItem(inp,3)),*b1py(PyTuple_GetItem(inp,4));
            void *argp(0);
-           int status(SWIG_ConvertPtr(b1py,&argp,SWIGTYPE_p_ParaMEDMEM__DataArrayDouble,0|0));
+           int status(SWIG_ConvertPtr(b1py,&argp,SWIGTYPE_p_MEDCoupling__DataArrayDouble,0|0));
            if(!SWIG_IsOK(status))
              throw INTERP_KERNEL::Exception(MSG);
            a4=reinterpret_cast<DataArrayDouble *>(argp);
@@ -1312,7 +1459,7 @@ namespace ParaMEDMEM
              a4->incrRef();
            {
              std::vector< DataArrayInt * > a3Tmp;
-             convertFromPyObjVectorOfObj<ParaMEDMEM::DataArrayInt *>(b0py,SWIGTYPE_p_ParaMEDMEM__DataArrayInt,"DataArrayInt",a3Tmp);
+             convertFromPyObjVectorOfObj<MEDCoupling::DataArrayInt *>(b0py,SWIGTYPE_p_MEDCoupling__DataArrayInt,"DataArrayInt",a3Tmp);
              std::size_t sz(a3Tmp.size());
              a3.resize(sz);
              for(std::size_t i=0;i<sz;i++)
@@ -1349,24 +1496,66 @@ namespace ParaMEDMEM
            self->removeMeshAtLevel(meshDimRelToMax);
          }
 
+         MEDFileUMesh *symmetry3DPlane(PyObject *point, PyObject *normalVector) const throw(INTERP_KERNEL::Exception)
+         {
+           const char msg[]="Python wrap of MEDFileUMesh::symmetry3DPlane : ";
+           double val,val2;
+           DataArrayDouble *a,*a2;
+           DataArrayDoubleTuple *aa,*aa2;
+           std::vector<double> bb,bb2;
+           int sw;
+           const double *centerPtr(convertObjToPossibleCpp5_Safe(point,sw,val,a,aa,bb,msg,1,3,true));
+           const double *vectorPtr(convertObjToPossibleCpp5_Safe(normalVector,sw,val2,a2,aa2,bb2,msg,1,3,true));
+           MCAuto<MEDFileUMesh> ret(self->symmetry3DPlane(centerPtr,vectorPtr));
+           return ret.retn();
+         }
+
+         static MEDFileUMesh *Aggregate(PyObject *meshes) throw(INTERP_KERNEL::Exception)
+         {
+           std::vector<const MEDFileUMesh *> meshesCpp;
+           convertFromPyObjVectorOfObj<const MEDCoupling::MEDFileUMesh *>(meshes,SWIGTYPE_p_MEDCoupling__MEDFileUMesh,"MEDFileUMesh",meshesCpp);
+           MCAuto<MEDFileUMesh> ret(MEDFileUMesh::Aggregate(meshesCpp));
+           return ret.retn();
+         }
+
+         PyObject *getAllDistributionOfTypes() const throw(INTERP_KERNEL::Exception)
+         {
+           std::vector< std::pair<int,int> > ret(self->getAllDistributionOfTypes());
+           return convertVecPairIntToPy(ret);
+         }
+         
+         DataArrayInt *deduceNodeSubPartFromCellSubPart(PyObject *extractDef) const throw(INTERP_KERNEL::Exception)
+         {
+           std::map<int, MCAuto<DataArrayInt> > extractDefCpp;
+           convertToMapIntDataArrayInt(extractDef,extractDefCpp);
+           return self->deduceNodeSubPartFromCellSubPart(extractDefCpp);
+         }
+
+         MEDFileUMesh *extractPart(PyObject *extractDef) const throw(INTERP_KERNEL::Exception)
+         {
+           std::map<int, MCAuto<DataArrayInt> > extractDefCpp;
+           convertToMapIntDataArrayInt(extractDef,extractDefCpp);
+           return self->extractPart(extractDefCpp);
+         }
+
          void setMeshes(PyObject *li, bool renum=false) throw(INTERP_KERNEL::Exception)
          {
            std::vector<const MEDCouplingUMesh *> ms;
-           convertFromPyObjVectorOfObj<const ParaMEDMEM::MEDCouplingUMesh *>(li,SWIGTYPE_p_ParaMEDMEM__MEDCouplingUMesh,"MEDCouplingUMesh",ms);
+           convertFromPyObjVectorOfObj<const MEDCoupling::MEDCouplingUMesh *>(li,SWIGTYPE_p_MEDCoupling__MEDCouplingUMesh,"MEDCouplingUMesh",ms);
            self->setMeshes(ms,renum);
          }
 
          void setGroupsFromScratch(int meshDimRelToMax, PyObject *li, bool renum=false) throw(INTERP_KERNEL::Exception)
          {
            std::vector<const MEDCouplingUMesh *> ms;
-           convertFromPyObjVectorOfObj<const ParaMEDMEM::MEDCouplingUMesh *>(li,SWIGTYPE_p_ParaMEDMEM__MEDCouplingUMesh,"MEDCouplingUMesh",ms);
+           convertFromPyObjVectorOfObj<const MEDCoupling::MEDCouplingUMesh *>(li,SWIGTYPE_p_MEDCoupling__MEDCouplingUMesh,"MEDCouplingUMesh",ms);
            self->setGroupsFromScratch(meshDimRelToMax,ms,renum);
          }
          
          void setGroupsOnSetMesh(int meshDimRelToMax, PyObject *li, bool renum=false) throw(INTERP_KERNEL::Exception)
          {
            std::vector<const MEDCouplingUMesh *> ms;
-           convertFromPyObjVectorOfObj<const ParaMEDMEM::MEDCouplingUMesh *>(li,SWIGTYPE_p_ParaMEDMEM__MEDCouplingUMesh,"MEDCouplingUMesh",ms);
+           convertFromPyObjVectorOfObj<const MEDCoupling::MEDCouplingUMesh *>(li,SWIGTYPE_p_MEDCoupling__MEDCouplingUMesh,"MEDCouplingUMesh",ms);
            self->setGroupsOnSetMesh(meshDimRelToMax,ms,renum);
          }
 
@@ -1391,9 +1580,9 @@ namespace ParaMEDMEM
            DataArrayInt *ret0=0,*ret1=0,*ret2=0;
            self->buildInnerBoundaryAlongM1Group(grpNameM1,ret0,ret1,ret2);
            PyObject *ret=PyTuple_New(3);
-           PyTuple_SetItem(ret,0,SWIG_NewPointerObj(SWIG_as_voidptr(ret0),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 ));
-           PyTuple_SetItem(ret,1,SWIG_NewPointerObj(SWIG_as_voidptr(ret1),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 ));
-           PyTuple_SetItem(ret,2,SWIG_NewPointerObj(SWIG_as_voidptr(ret2),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 ));
+           PyTuple_SetItem(ret,0,SWIG_NewPointerObj(SWIG_as_voidptr(ret0),SWIGTYPE_p_MEDCoupling__DataArrayInt, SWIG_POINTER_OWN | 0 ));
+           PyTuple_SetItem(ret,1,SWIG_NewPointerObj(SWIG_as_voidptr(ret1),SWIGTYPE_p_MEDCoupling__DataArrayInt, SWIG_POINTER_OWN | 0 ));
+           PyTuple_SetItem(ret,2,SWIG_NewPointerObj(SWIG_as_voidptr(ret2),SWIGTYPE_p_MEDCoupling__DataArrayInt, SWIG_POINTER_OWN | 0 ));
            return ret;
          }
          
@@ -1440,6 +1629,7 @@ namespace ParaMEDMEM
   {
   public:
     static MEDFileCMesh *New();
+    static MEDFileCMesh *New(DataArrayByte *db) throw(INTERP_KERNEL::Exception);
     static MEDFileCMesh *New(const std::string& fileName, MEDFileMeshReadSelector *mrs=0) throw(INTERP_KERNEL::Exception);
     static MEDFileCMesh *New(const std::string& fileName, const std::string& mName, int dt=-1, int it=-1, MEDFileMeshReadSelector *mrs=0) throw(INTERP_KERNEL::Exception);
     void setMesh(MEDCouplingCMesh *m) throw(INTERP_KERNEL::Exception);
@@ -1460,13 +1650,24 @@ namespace ParaMEDMEM
          {
            return MEDFileCMesh::New(fileName,mName,dt,it,mrs);
          }
+
+         MEDFileCMesh(DataArrayByte *db) throw(INTERP_KERNEL::Exception)
+         {
+           return MEDFileCMesh::New(db);
+         }
+
+         // serialization
+         static PyObject *___new___(PyObject *cls, PyObject *args) throw(INTERP_KERNEL::Exception)
+         {
+           return NewMethWrapCallInitOnlyIfDictWithSingleEltInInput(cls,args,"MEDFileCMesh");
+         }
          
          PyObject *getMesh() const throw(INTERP_KERNEL::Exception)
          {
            const MEDCouplingCMesh *tmp=self->getMesh();
            if(tmp)
              tmp->incrRef();
-           return SWIG_NewPointerObj(SWIG_as_voidptr(tmp),SWIGTYPE_p_ParaMEDMEM__MEDCouplingCMesh, SWIG_POINTER_OWN | 0 );
+           return SWIG_NewPointerObj(SWIG_as_voidptr(tmp),SWIGTYPE_p_MEDCoupling__MEDCouplingCMesh, SWIG_POINTER_OWN | 0 );
          }
        }
   };
@@ -1475,6 +1676,7 @@ namespace ParaMEDMEM
   {
   public:
     static MEDFileCurveLinearMesh *New();
+    static MEDFileCurveLinearMesh *New(DataArrayByte *db) throw(INTERP_KERNEL::Exception);
     static MEDFileCurveLinearMesh *New(const std::string& fileName, MEDFileMeshReadSelector *mrs=0) throw(INTERP_KERNEL::Exception);
     static MEDFileCurveLinearMesh *New(const std::string& fileName, const std::string& mName, int dt=-1, int it=-1, MEDFileMeshReadSelector *mrs=0) throw(INTERP_KERNEL::Exception);
     void setMesh(MEDCouplingCurveLinearMesh *m) throw(INTERP_KERNEL::Exception);
@@ -1494,26 +1696,36 @@ namespace ParaMEDMEM
          {
            return MEDFileCurveLinearMesh::New(fileName,mName,dt,it,mrs);
          }
+
+         MEDFileCurveLinearMesh(DataArrayByte *db) throw(INTERP_KERNEL::Exception)
+         {
+           return MEDFileCurveLinearMesh::New(db);
+         }
+
+         // serialization
+         static PyObject *___new___(PyObject *cls, PyObject *args) throw(INTERP_KERNEL::Exception)
+         {
+           return NewMethWrapCallInitOnlyIfDictWithSingleEltInInput(cls,args,"MEDFileCurveLinearMesh");
+         }
          
          PyObject *getMesh() const throw(INTERP_KERNEL::Exception)
          {
            const MEDCouplingCurveLinearMesh *tmp=self->getMesh();
            if(tmp)
              tmp->incrRef();
-           return SWIG_NewPointerObj(SWIG_as_voidptr(tmp),SWIGTYPE_p_ParaMEDMEM__MEDCouplingCurveLinearMesh, SWIG_POINTER_OWN | 0 );
+           return SWIG_NewPointerObj(SWIG_as_voidptr(tmp),SWIGTYPE_p_MEDCoupling__MEDCouplingCurveLinearMesh, SWIG_POINTER_OWN | 0 );
          }
        }
   };
 
-  class MEDFileMeshMultiTS : public RefCountObject, public MEDFileWritable
+  class MEDFileMeshMultiTS : public RefCountObject, public MEDFileWritableStandAlone
   {
   public:
     static MEDFileMeshMultiTS *New();
     static MEDFileMeshMultiTS *New(const std::string& fileName) throw(INTERP_KERNEL::Exception);
     static MEDFileMeshMultiTS *New(const std::string& fileName, const std::string& mName) throw(INTERP_KERNEL::Exception);
-    MEDFileMeshMultiTS *deepCpy() const throw(INTERP_KERNEL::Exception);
+    MEDFileMeshMultiTS *deepCopy() const throw(INTERP_KERNEL::Exception);
     std::string getName() const throw(INTERP_KERNEL::Exception);
-    void write(const std::string& fileName, int mode) const throw(INTERP_KERNEL::Exception);
     void setOneTimeStep(MEDFileMesh *mesh1TimeStep) throw(INTERP_KERNEL::Exception);
     void cartesianizeMe() throw(INTERP_KERNEL::Exception);
     %extend
@@ -1565,13 +1777,12 @@ namespace ParaMEDMEM
     }
   };
 
-  class MEDFileMeshes : public RefCountObject, public MEDFileWritable
+  class MEDFileMeshes : public RefCountObject, public MEDFileWritableStandAlone
   {
   public:
     static MEDFileMeshes *New();
-    static MEDFileMeshes *New(const std::string& fileName) throw(INTERP_KERNEL::Exception);
-    MEDFileMeshes *deepCpy() const throw(INTERP_KERNEL::Exception);
-    void write(const std::string& fileName, int mode) const throw(INTERP_KERNEL::Exception);
+    static MEDFileMeshes *New(DataArrayByte *db) throw(INTERP_KERNEL::Exception);
+    MEDFileMeshes *deepCopy() const throw(INTERP_KERNEL::Exception);
     int getNumberOfMeshes() const throw(INTERP_KERNEL::Exception);
     std::vector<std::string> getMeshesNames() const throw(INTERP_KERNEL::Exception);
     //
@@ -1580,6 +1791,8 @@ namespace ParaMEDMEM
     void setMeshAtPos(int i, MEDFileMesh *mesh) throw(INTERP_KERNEL::Exception);
     void destroyMeshAtPos(int i) throw(INTERP_KERNEL::Exception);
     void cartesianizeMe() throw(INTERP_KERNEL::Exception);
+    bool presenceOfStructureElements() const throw(INTERP_KERNEL::Exception);
+    void killStructureElements() throw(INTERP_KERNEL::Exception);
     %extend
        {
          MEDFileMeshes()
@@ -1590,6 +1803,17 @@ namespace ParaMEDMEM
          MEDFileMeshes(const std::string& fileName) throw(INTERP_KERNEL::Exception)
          {
            return MEDFileMeshes::New(fileName);
+         }
+
+         MEDFileMeshes(DataArrayByte *db) throw(INTERP_KERNEL::Exception)
+         {
+           return MEDFileMeshes::New(db);
+         }
+
+         // serialization
+         static PyObject *___new___(PyObject *cls, PyObject *args) throw(INTERP_KERNEL::Exception)
+         {
+           return NewMethWrapCallInitOnlyIfDictWithSingleEltInInput(cls,args,"MEDFileMeshes");
          }
 
          std::string __str__() const throw(INTERP_KERNEL::Exception)
@@ -1700,6 +1924,7 @@ namespace ParaMEDMEM
     void changeLocName(const std::string& oldName, const std::string& newName) throw(INTERP_KERNEL::Exception);
     int getNbOfGaussPtPerCell(int locId) const throw(INTERP_KERNEL::Exception);
     int getLocalizationId(const std::string& loc) const throw(INTERP_KERNEL::Exception);
+    void killStructureElementsInGlobs() throw(INTERP_KERNEL::Exception);
   %extend
      {
        PyObject *getProfile(const std::string& pflName) const throw(INTERP_KERNEL::Exception)
@@ -1707,7 +1932,7 @@ namespace ParaMEDMEM
          const DataArrayInt *ret=self->getProfile(pflName);
          if(ret)
            ret->incrRef();
-         return SWIG_NewPointerObj(SWIG_as_voidptr(ret),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 );
+         return SWIG_NewPointerObj(SWIG_as_voidptr(ret),SWIGTYPE_p_MEDCoupling__DataArrayInt, SWIG_POINTER_OWN | 0 );
        }
 
        PyObject *getProfileFromId(int pflId) const throw(INTERP_KERNEL::Exception)
@@ -1715,7 +1940,7 @@ namespace ParaMEDMEM
          const DataArrayInt *ret=self->getProfileFromId(pflId);
          if(ret)
            ret->incrRef();
-         return SWIG_NewPointerObj(SWIG_as_voidptr(ret),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 );
+         return SWIG_NewPointerObj(SWIG_as_voidptr(ret),SWIGTYPE_p_MEDCoupling__DataArrayInt, SWIG_POINTER_OWN | 0 );
        }
 
        PyObject *getLocalizationFromId(int locId) const throw(INTERP_KERNEL::Exception)
@@ -1723,7 +1948,7 @@ namespace ParaMEDMEM
          const MEDFileFieldLoc *loc=&self->getLocalizationFromId(locId);
          if(loc)
            loc->incrRef();
-         return SWIG_NewPointerObj(SWIG_as_voidptr(loc),SWIGTYPE_p_ParaMEDMEM__MEDFileFieldLoc, SWIG_POINTER_OWN | 0 );
+         return SWIG_NewPointerObj(SWIG_as_voidptr(loc),SWIGTYPE_p_MEDCoupling__MEDFileFieldLoc, SWIG_POINTER_OWN | 0 );
        }
        
        PyObject *getLocalization(const std::string& locName) const throw(INTERP_KERNEL::Exception)
@@ -1731,7 +1956,7 @@ namespace ParaMEDMEM
          const MEDFileFieldLoc *loc=&self->getLocalization(locName);
          if(loc)
            loc->incrRef();
-         return SWIG_NewPointerObj(SWIG_as_voidptr(loc),SWIGTYPE_p_ParaMEDMEM__MEDFileFieldLoc, SWIG_POINTER_OWN | 0 );
+         return SWIG_NewPointerObj(SWIG_as_voidptr(loc),SWIGTYPE_p_MEDCoupling__MEDFileFieldLoc, SWIG_POINTER_OWN | 0 );
        }
        
        PyObject *zipPflsNames() throw(INTERP_KERNEL::Exception)
@@ -1791,13 +2016,35 @@ namespace ParaMEDMEM
      }
   };
 
-  class MEDFileAnyTypeField1TS : public RefCountObject, public MEDFileFieldGlobsReal, public MEDFileWritable
+  class MEDFileEntities
+  {
+  public:
+    %extend
+      {
+        static MEDFileEntities *BuildFrom(PyObject *entities) throw(INTERP_KERNEL::Exception)
+        {
+          std::vector< std::pair<TypeOfField,INTERP_KERNEL::NormalizedCellType> > inp;
+          std::vector< std::pair<int,int> > inp0(convertTimePairIdsFromPy(entities));
+          {
+            std::size_t sz(inp0.size());
+            inp.resize(sz);
+            for(std::size_t i=0;i<sz;i++)
+              inp[i]=std::pair<TypeOfField,INTERP_KERNEL::NormalizedCellType>((TypeOfField)inp0[i].first,(INTERP_KERNEL::NormalizedCellType)inp0[i].second);
+          }
+          return MEDFileEntities::BuildFrom(&inp);
+        }
+      }
+  private:
+    MEDFileEntities();
+  };
+
+  class MEDFileAnyTypeField1TS : public RefCountObject, public MEDFileFieldGlobsReal, public MEDFileWritableStandAlone
   {
   public:
     static MEDFileAnyTypeField1TS *New(const std::string& fileName, bool loadAll=true) throw(INTERP_KERNEL::Exception);
     static MEDFileAnyTypeField1TS *New(const std::string& fileName, const std::string& fieldName, bool loadAll=true) throw(INTERP_KERNEL::Exception);
     static MEDFileAnyTypeField1TS *New(const std::string& fileName, const std::string& fieldName, int iteration, int order, bool loadAll=true) throw(INTERP_KERNEL::Exception);
-    void write(const std::string& fileName, int mode) const throw(INTERP_KERNEL::Exception);
+    static MEDFileAnyTypeField1TS *NewAdv(const std::string& fileName, const std::string& fieldName, int iteration, int order, bool loadAll, const MEDFileEntities *entities) throw(INTERP_KERNEL::Exception);
     void loadArrays() throw(INTERP_KERNEL::Exception);
     void loadArraysIfNecessary() throw(INTERP_KERNEL::Exception);
     void unloadArrays() throw(INTERP_KERNEL::Exception);
@@ -1818,7 +2065,7 @@ namespace ParaMEDMEM
     bool presenceOfMultiDiscPerGeoType() const throw(INTERP_KERNEL::Exception);
     void setTime(int iteration, int order, double val) throw(INTERP_KERNEL::Exception);
     virtual MEDFileAnyTypeField1TS *shallowCpy() const throw(INTERP_KERNEL::Exception);
-    MEDFileAnyTypeField1TS *deepCpy() const throw(INTERP_KERNEL::Exception);
+    MEDFileAnyTypeField1TS *deepCopy() const throw(INTERP_KERNEL::Exception);
     std::string getDtUnit() const throw(INTERP_KERNEL::Exception);
     void setDtUnit(const std::string& dtUnit) throw(INTERP_KERNEL::Exception);
     %extend
@@ -1915,7 +2162,7 @@ namespace ParaMEDMEM
 
       PyObject *splitComponents() const throw(INTERP_KERNEL::Exception)
       {
-        std::vector< MEDCouplingAutoRefCountObjectPtr< MEDFileAnyTypeField1TS > > ret=self->splitComponents();
+        std::vector< MCAuto< MEDFileAnyTypeField1TS > > ret=self->splitComponents();
         std::size_t sz=ret.size();
         PyObject *retPy=PyList_New(sz);
         for(std::size_t i=0;i<sz;i++)
@@ -1925,7 +2172,7 @@ namespace ParaMEDMEM
 
       PyObject *splitDiscretizations() const throw(INTERP_KERNEL::Exception)
       {
-        std::vector< MEDCouplingAutoRefCountObjectPtr< MEDFileAnyTypeField1TS > > ret=self->splitDiscretizations();
+        std::vector< MCAuto< MEDFileAnyTypeField1TS > > ret=self->splitDiscretizations();
         std::size_t sz=ret.size();
         PyObject *retPy=PyList_New(sz);
         for(std::size_t i=0;i<sz;i++)
@@ -1935,12 +2182,19 @@ namespace ParaMEDMEM
 
       PyObject *splitMultiDiscrPerGeoTypes() const throw(INTERP_KERNEL::Exception)
       {
-        std::vector< MEDCouplingAutoRefCountObjectPtr< MEDFileAnyTypeField1TS > > ret=self->splitMultiDiscrPerGeoTypes();
+        std::vector< MCAuto< MEDFileAnyTypeField1TS > > ret=self->splitMultiDiscrPerGeoTypes();
         std::size_t sz=ret.size();
         PyObject *retPy=PyList_New(sz);
         for(std::size_t i=0;i<sz;i++)
           PyList_SetItem(retPy,i,convertMEDFileField1TS(ret[i].retn(), SWIG_POINTER_OWN | 0 ));
         return retPy;
+      }
+
+      MEDFileAnyTypeField1TS *extractPart(PyObject *extractDef, MEDFileMesh *mm) const throw(INTERP_KERNEL::Exception)
+      {
+        std::map<int, MCAuto<DataArrayInt> > extractDefCpp;
+        convertToMapIntDataArrayInt(extractDef,extractDefCpp);
+        return self->extractPart(extractDefCpp,mm);
       }
     }
   };
@@ -1951,8 +2205,10 @@ namespace ParaMEDMEM
     static MEDFileField1TS *New(const std::string& fileName, const std::string& fieldName, int iteration, int order, bool loadAll=true) throw(INTERP_KERNEL::Exception);
     static MEDFileField1TS *New(const std::string& fileName, const std::string& fieldName, bool loadAll=true) throw(INTERP_KERNEL::Exception);
     static MEDFileField1TS *New(const std::string& fileName, bool loadAll=true) throw(INTERP_KERNEL::Exception);
+    static MEDFileField1TS *New(DataArrayByte *db) throw(INTERP_KERNEL::Exception);
     static MEDFileField1TS *New();
-    ParaMEDMEM::MEDFileIntField1TS *convertToInt(bool isDeepCpyGlobs=true) const throw(INTERP_KERNEL::Exception);
+    MEDCoupling::MEDFileIntField1TS *convertToInt(bool isDeepCpyGlobs=true) const throw(INTERP_KERNEL::Exception);
+    MEDCouplingFieldDouble *field(const MEDFileMesh *mesh) const throw(INTERP_KERNEL::Exception);
     MEDCouplingFieldDouble *getFieldAtLevel(TypeOfField type, int meshDimRelToMax, int renumPol=0) const throw(INTERP_KERNEL::Exception);
     MEDCouplingFieldDouble *getFieldAtTopLevel(TypeOfField type, int renumPol=0) const throw(INTERP_KERNEL::Exception);
     MEDCouplingFieldDouble *getFieldOnMeshAtLevel(TypeOfField type, const MEDCouplingMesh *mesh, int renumPol=0) const throw(INTERP_KERNEL::Exception);
@@ -1980,11 +2236,22 @@ namespace ParaMEDMEM
            return MEDFileField1TS::New(fileName,fieldName,iteration,order,loadAll);
          }
 
+         MEDFileField1TS(DataArrayByte *db) throw(INTERP_KERNEL::Exception)
+         {
+           return MEDFileField1TS::New(db);
+         }
+
          MEDFileField1TS()
          {
            return MEDFileField1TS::New();
          }
 
+         // serialization
+         static PyObject *___new___(PyObject *cls, PyObject *args) throw(INTERP_KERNEL::Exception)
+         {
+           return NewMethWrapCallInitOnlyIfDictWithSingleEltInInput(cls,args,"MEDFileField1TS");
+         }
+         
          void copyTinyInfoFrom(const MEDCouplingFieldDouble *field) throw(INTERP_KERNEL::Exception)
          {
            const DataArrayDouble *arr=0;
@@ -2003,8 +2270,8 @@ namespace ParaMEDMEM
            DataArrayInt *ret1=0;
            DataArrayDouble *ret0=self->getFieldWithProfile(type,meshDimRelToMax,mesh,ret1);
            PyObject *ret=PyTuple_New(2);
-           PyTuple_SetItem(ret,0,SWIG_NewPointerObj(SWIG_as_voidptr(ret0),SWIGTYPE_p_ParaMEDMEM__DataArrayDouble, SWIG_POINTER_OWN | 0 ));
-           PyTuple_SetItem(ret,1,SWIG_NewPointerObj(SWIG_as_voidptr(ret1),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 ));
+           PyTuple_SetItem(ret,0,SWIG_NewPointerObj(SWIG_as_voidptr(ret0),SWIGTYPE_p_MEDCoupling__DataArrayDouble, SWIG_POINTER_OWN | 0 ));
+           PyTuple_SetItem(ret,1,SWIG_NewPointerObj(SWIG_as_voidptr(ret1),SWIGTYPE_p_MEDCoupling__DataArrayInt, SWIG_POINTER_OWN | 0 ));
            return ret;
          }
 
@@ -2031,7 +2298,7 @@ namespace ParaMEDMEM
                  {
                    PyObject *elt3=PyTuple_New(4);
                    PyTuple_SetItem(elt3,0,SWIG_From_int(typesFI[j]));
-                   PyTuple_SetItem(elt3,1,SWIG_NewPointerObj(SWIG_as_voidptr(dadsI[j]),SWIGTYPE_p_ParaMEDMEM__DataArrayDouble, SWIG_POINTER_OWN | 0 ));
+                   PyTuple_SetItem(elt3,1,SWIG_NewPointerObj(SWIG_as_voidptr(dadsI[j]),SWIGTYPE_p_MEDCoupling__DataArrayDouble, SWIG_POINTER_OWN | 0 ));
                    PyTuple_SetItem(elt3,2,PyString_FromString(pflsI[j].c_str()));
                    PyTuple_SetItem(elt3,3,PyString_FromString(locsI[j].c_str()));
                    PyList_SetItem(elt2,j,elt3);
@@ -2057,7 +2324,7 @@ namespace ParaMEDMEM
            if(elt0)
              elt0->incrRef();
            PyObject *ret=PyTuple_New(2);
-           PyTuple_SetItem(ret,0,SWIG_NewPointerObj(SWIG_as_voidptr(elt0),SWIGTYPE_p_ParaMEDMEM__DataArrayDouble, SWIG_POINTER_OWN | 0 ));
+           PyTuple_SetItem(ret,0,SWIG_NewPointerObj(SWIG_as_voidptr(elt0),SWIGTYPE_p_MEDCoupling__DataArrayDouble, SWIG_POINTER_OWN | 0 ));
            std::size_t sz=elt1Cpp.size();
            PyObject *elt=PyList_New(sz);
            for(std::size_t i=0;i<sz;i++)
@@ -2084,12 +2351,19 @@ namespace ParaMEDMEM
   public:
     static MEDFileIntField1TS *New();
     static MEDFileIntField1TS *New(const std::string& fileName, bool loadAll=true) throw(INTERP_KERNEL::Exception);
+    static MEDFileIntField1TS *New(DataArrayByte *db) throw(INTERP_KERNEL::Exception);
     static MEDFileIntField1TS *New(const std::string& fileName, const std::string& fieldName, bool loadAll=true) throw(INTERP_KERNEL::Exception);
     static MEDFileIntField1TS *New(const std::string& fileName, const std::string& fieldName, int iteration, int order, bool loadAll=true) throw(INTERP_KERNEL::Exception);
-    ParaMEDMEM::MEDFileField1TS *convertToDouble(bool isDeepCpyGlobs=true) const throw(INTERP_KERNEL::Exception);
+    MEDCoupling::MEDFileField1TS *convertToDouble(bool isDeepCpyGlobs=true) const throw(INTERP_KERNEL::Exception);
     //
-    void setFieldNoProfileSBT(const MEDCouplingFieldDouble *field, const DataArrayInt *arrOfVals) throw(INTERP_KERNEL::Exception);
-    void setFieldProfile(const MEDCouplingFieldDouble *field, const DataArrayInt *arrOfVals, const MEDFileMesh *mesh, int meshDimRelToMax, const DataArrayInt *profile) throw(INTERP_KERNEL::Exception);
+    void setFieldNoProfileSBT(const MEDCouplingFieldInt *field) throw(INTERP_KERNEL::Exception);
+    void setFieldProfile(const MEDCouplingFieldInt *field, const MEDFileMesh *mesh, int meshDimRelToMax, const DataArrayInt *profile) throw(INTERP_KERNEL::Exception);
+    MEDCouplingFieldInt *field(const MEDFileMesh *mesh) const throw(INTERP_KERNEL::Exception);
+    MEDCouplingFieldInt *getFieldAtLevel(TypeOfField type, int meshDimRelToMax, int renumPol=0) const throw(INTERP_KERNEL::Exception);
+    MEDCouplingFieldInt *getFieldAtTopLevel(TypeOfField type, int renumPol=0) const throw(INTERP_KERNEL::Exception);
+    MEDCouplingFieldInt *getFieldOnMeshAtLevel(TypeOfField type, int meshDimRelToMax, const MEDFileMesh *mesh, int renumPol=0) const throw(INTERP_KERNEL::Exception);
+    MEDCouplingFieldInt *getFieldOnMeshAtLevel(TypeOfField type, const MEDCouplingMesh *mesh, int renumPol=0) const throw(INTERP_KERNEL::Exception);
+    MEDCouplingFieldInt *getFieldAtLevelOld(TypeOfField type, const std::string& mname, int meshDimRelToMax, int renumPol=0) const throw(INTERP_KERNEL::Exception);
     %extend
     {
       MEDFileIntField1TS() throw(INTERP_KERNEL::Exception)
@@ -2112,59 +2386,20 @@ namespace ParaMEDMEM
         return MEDFileIntField1TS::New(fileName,fieldName,iteration,order,loadAll);
       }
 
+      MEDFileIntField1TS(DataArrayByte *db) throw(INTERP_KERNEL::Exception)
+      {
+        return MEDFileIntField1TS::New(db);
+      }
+
+      // serialization
+      static PyObject *___new___(PyObject *cls, PyObject *args) throw(INTERP_KERNEL::Exception)
+      {
+        return NewMethWrapCallInitOnlyIfDictWithSingleEltInInput(cls,args,"MEDFileIntField1TS");
+      }
+
       std::string __str__() const throw(INTERP_KERNEL::Exception)
       {
         return self->simpleRepr();
-      }
-
-      PyObject *getFieldAtLevel(TypeOfField type, int meshDimRelToMax, int renumPol=0) const throw(INTERP_KERNEL::Exception)
-      {
-        DataArrayInt *ret1=0;
-        MEDCouplingFieldDouble *ret0=self->getFieldAtLevel(type,meshDimRelToMax,ret1,renumPol);
-        PyObject *ret=PyTuple_New(2);
-        PyTuple_SetItem(ret,0,SWIG_NewPointerObj(SWIG_as_voidptr(ret0),SWIGTYPE_p_ParaMEDMEM__MEDCouplingFieldDouble, SWIG_POINTER_OWN | 0 ));
-        PyTuple_SetItem(ret,1,SWIG_NewPointerObj(SWIG_as_voidptr(ret1),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 ));
-        return ret;
-      }
-
-      PyObject *getFieldAtTopLevel(TypeOfField type, int renumPol=0) const throw(INTERP_KERNEL::Exception)
-      {
-        DataArrayInt *ret1=0;
-        MEDCouplingFieldDouble *ret0=self->getFieldAtTopLevel(type,ret1,renumPol);
-        PyObject *ret=PyTuple_New(2);
-        PyTuple_SetItem(ret,0,SWIG_NewPointerObj(SWIG_as_voidptr(ret0),SWIGTYPE_p_ParaMEDMEM__MEDCouplingFieldDouble, SWIG_POINTER_OWN | 0 ));
-        PyTuple_SetItem(ret,1,SWIG_NewPointerObj(SWIG_as_voidptr(ret1),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 ));
-        return ret;
-      }
-
-      PyObject *getFieldOnMeshAtLevel(TypeOfField type, int meshDimRelToMax, const MEDFileMesh *mesh, int renumPol=0) const throw(INTERP_KERNEL::Exception)
-      {
-        DataArrayInt *ret1=0;
-        MEDCouplingFieldDouble *ret0=self->getFieldOnMeshAtLevel(type,meshDimRelToMax,mesh,ret1,renumPol);
-        PyObject *ret=PyTuple_New(2);
-        PyTuple_SetItem(ret,0,SWIG_NewPointerObj(SWIG_as_voidptr(ret0),SWIGTYPE_p_ParaMEDMEM__MEDCouplingFieldDouble, SWIG_POINTER_OWN | 0 ));
-        PyTuple_SetItem(ret,1,SWIG_NewPointerObj(SWIG_as_voidptr(ret1),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 ));
-        return ret;
-      }
-      
-      PyObject *getFieldOnMeshAtLevel(TypeOfField type, const MEDCouplingMesh *mesh, int renumPol=0) const throw(INTERP_KERNEL::Exception)
-      {
-        DataArrayInt *ret1=0;
-        MEDCouplingFieldDouble *ret0=self->getFieldOnMeshAtLevel(type,mesh,ret1,renumPol);
-        PyObject *ret=PyTuple_New(2);
-        PyTuple_SetItem(ret,0,SWIG_NewPointerObj(SWIG_as_voidptr(ret0),SWIGTYPE_p_ParaMEDMEM__MEDCouplingFieldDouble, SWIG_POINTER_OWN | 0 ));
-        PyTuple_SetItem(ret,1,SWIG_NewPointerObj(SWIG_as_voidptr(ret1),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 ));
-        return ret;
-      }
-      
-      PyObject *getFieldAtLevelOld(TypeOfField type, const std::string& mname, int meshDimRelToMax, int renumPol=0) const throw(INTERP_KERNEL::Exception)
-      {
-        DataArrayInt *ret1=0;
-        MEDCouplingFieldDouble *ret0=self->getFieldAtLevelOld(type,mname,meshDimRelToMax,ret1,renumPol);
-        PyObject *ret=PyTuple_New(2);
-        PyTuple_SetItem(ret,0,SWIG_NewPointerObj(SWIG_as_voidptr(ret0),SWIGTYPE_p_ParaMEDMEM__MEDCouplingFieldDouble, SWIG_POINTER_OWN | 0 ));
-        PyTuple_SetItem(ret,1,SWIG_NewPointerObj(SWIG_as_voidptr(ret1),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 ));
-        return ret;
       }
 
       PyObject *getFieldWithProfile(TypeOfField type, int meshDimRelToMax, const MEDFileMesh *mesh) const throw(INTERP_KERNEL::Exception)
@@ -2172,8 +2407,8 @@ namespace ParaMEDMEM
          DataArrayInt *ret1=0;
          DataArrayInt *ret0=self->getFieldWithProfile(type,meshDimRelToMax,mesh,ret1);
          PyObject *ret=PyTuple_New(2);
-         PyTuple_SetItem(ret,0,SWIG_NewPointerObj(SWIG_as_voidptr(ret0),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 ));
-         PyTuple_SetItem(ret,1,SWIG_NewPointerObj(SWIG_as_voidptr(ret1),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 ));
+         PyTuple_SetItem(ret,0,SWIG_NewPointerObj(SWIG_as_voidptr(ret0),SWIGTYPE_p_MEDCoupling__DataArrayInt, SWIG_POINTER_OWN | 0 ));
+         PyTuple_SetItem(ret,1,SWIG_NewPointerObj(SWIG_as_voidptr(ret1),SWIGTYPE_p_MEDCoupling__DataArrayInt, SWIG_POINTER_OWN | 0 ));
          return ret;
       }
       
@@ -2206,12 +2441,12 @@ namespace ParaMEDMEM
     }
   };
 
-  class MEDFileAnyTypeFieldMultiTS : public RefCountObject, public MEDFileFieldGlobsReal, public MEDFileWritable
+  class MEDFileAnyTypeFieldMultiTS : public RefCountObject, public MEDFileFieldGlobsReal, public MEDFileWritableStandAlone
   {
   public:
     static MEDFileAnyTypeFieldMultiTS *New(const std::string& fileName, bool loadAll=true) throw(INTERP_KERNEL::Exception);
     static MEDFileAnyTypeFieldMultiTS *New(const std::string& fileName, const std::string& fieldName, bool loadAll=true) throw(INTERP_KERNEL::Exception);
-    MEDFileAnyTypeFieldMultiTS *deepCpy() const throw(INTERP_KERNEL::Exception);
+    MEDFileAnyTypeFieldMultiTS *deepCopy() const throw(INTERP_KERNEL::Exception);
     virtual MEDFileAnyTypeFieldMultiTS *shallowCpy() const throw(INTERP_KERNEL::Exception);
     std::string getName() const throw(INTERP_KERNEL::Exception);
     void setName(const std::string& name) throw(INTERP_KERNEL::Exception);
@@ -2226,7 +2461,6 @@ namespace ParaMEDMEM
     void eraseEmptyTS() throw(INTERP_KERNEL::Exception);
     int getPosOfTimeStep(int iteration, int order) const throw(INTERP_KERNEL::Exception);
     int getPosGivenTime(double time, double eps=1e-8) const throw(INTERP_KERNEL::Exception);
-    void write(const std::string& fileName, int mode) const throw(INTERP_KERNEL::Exception);
     void loadArrays() throw(INTERP_KERNEL::Exception);
     void loadArraysIfNecessary() throw(INTERP_KERNEL::Exception);
     void unloadArrays() throw(INTERP_KERNEL::Exception);
@@ -2237,6 +2471,7 @@ namespace ParaMEDMEM
     MEDFileAnyTypeField1TS *getTimeStepGivenTime(double time, double eps=1e-8) const throw(INTERP_KERNEL::Exception);
     void pushBackTimeStep(MEDFileAnyTypeField1TS *f1ts) throw(INTERP_KERNEL::Exception);
     void synchronizeNameScope() throw(INTERP_KERNEL::Exception);
+    MEDFileAnyTypeFieldMultiTS *buildNewEmpty() const throw(INTERP_KERNEL::Exception);
     %extend
     {
       int __len__() const throw(INTERP_KERNEL::Exception)
@@ -2280,17 +2515,8 @@ namespace ParaMEDMEM
       
       PyObject *getIterations() const throw(INTERP_KERNEL::Exception)
       {
-        std::vector< std::pair<int,int> > res=self->getIterations();
-        PyObject *ret=PyList_New(res.size());
-        int rk=0;
-        for(std::vector< std::pair<int,int> >::const_iterator iter=res.begin();iter!=res.end();iter++,rk++)
-          {
-            PyObject *elt=PyTuple_New(2);
-            PyTuple_SetItem(elt,0,SWIG_From_int((*iter).first));
-            PyTuple_SetItem(elt,1,SWIG_From_int((*iter).second));
-            PyList_SetItem(ret,rk,elt);
-          }
-        return ret;
+        std::vector< std::pair<int,int> > res(self->getIterations());
+        return convertVecPairIntToPy(res);
       }
       
       PyObject *getTimeSteps() const throw(INTERP_KERNEL::Exception)
@@ -2379,14 +2605,14 @@ namespace ParaMEDMEM
             for(int i=0;i<sz;i++)
               {
                 PyObject *elt=PyList_GetItem(elts,i);
-                ret[i]=ParaMEDMEM_MEDFileAnyTypeFieldMultiTS_getTimeId(self,elt);
+                ret[i]=MEDCoupling_MEDFileAnyTypeFieldMultiTS_getTimeId(self,elt);
               }
             return ret;
           }
         else
           {
             std::vector<int> ret(1);
-            ret[0]=ParaMEDMEM_MEDFileAnyTypeFieldMultiTS_getTimeId(self,elts);
+            ret[0]=MEDCoupling_MEDFileAnyTypeFieldMultiTS_getTimeId(self,elts);
             return ret;
           }
       }
@@ -2402,7 +2628,7 @@ namespace ParaMEDMEM
           }
         else
           {
-            std::vector<int> idsToRemove=ParaMEDMEM_MEDFileAnyTypeFieldMultiTS_getTimeIds(self,elts);
+            std::vector<int> idsToRemove=MEDCoupling_MEDFileAnyTypeFieldMultiTS_getTimeIds(self,elts);
             if(!idsToRemove.empty())
               self->eraseTimeStepIds(&idsToRemove[0],&idsToRemove[0]+idsToRemove.size());
           }
@@ -2450,7 +2676,7 @@ namespace ParaMEDMEM
         if(elt0 && PyList_Check(elt0))
           {
             int sz=PyList_Size(elt0);
-            MEDCouplingAutoRefCountObjectPtr<DataArrayInt> da=DataArrayInt::New(); da->alloc(sz,1);
+            MCAuto<DataArrayInt> da=DataArrayInt::New(); da->alloc(sz,1);
             int *pt=da->getPointer();
             for(int i=0;i<sz;i++,pt++)
               {
@@ -2478,7 +2704,7 @@ namespace ParaMEDMEM
 
       PyObject *splitComponents() const throw(INTERP_KERNEL::Exception)
       {
-        std::vector< MEDCouplingAutoRefCountObjectPtr< MEDFileAnyTypeFieldMultiTS > > ret=self->splitComponents();
+        std::vector< MCAuto< MEDFileAnyTypeFieldMultiTS > > ret=self->splitComponents();
         std::size_t sz=ret.size();
         PyObject *retPy=PyList_New(sz);
         for(std::size_t i=0;i<sz;i++)
@@ -2488,7 +2714,7 @@ namespace ParaMEDMEM
 
       PyObject *splitDiscretizations() const throw(INTERP_KERNEL::Exception)
       {
-        std::vector< MEDCouplingAutoRefCountObjectPtr< MEDFileAnyTypeFieldMultiTS > > ret=self->splitDiscretizations();
+        std::vector< MCAuto< MEDFileAnyTypeFieldMultiTS > > ret=self->splitDiscretizations();
         std::size_t sz=ret.size();
         PyObject *retPy=PyList_New(sz);
         for(std::size_t i=0;i<sz;i++)
@@ -2498,7 +2724,7 @@ namespace ParaMEDMEM
 
       PyObject *splitMultiDiscrPerGeoTypes() const throw(INTERP_KERNEL::Exception)
       {
-        std::vector< MEDCouplingAutoRefCountObjectPtr< MEDFileAnyTypeFieldMultiTS > > ret=self->splitMultiDiscrPerGeoTypes();
+        std::vector< MCAuto< MEDFileAnyTypeFieldMultiTS > > ret=self->splitMultiDiscrPerGeoTypes();
         std::size_t sz=ret.size();
         PyObject *retPy=PyList_New(sz);
         for(std::size_t i=0;i<sz;i++)
@@ -2509,7 +2735,7 @@ namespace ParaMEDMEM
       void pushBackTimeSteps(PyObject *li) throw(INTERP_KERNEL::Exception)
       {
         void *argp(0);
-        int status(SWIG_ConvertPtr(li,&argp,SWIGTYPE_p_ParaMEDMEM__MEDFileAnyTypeFieldMultiTS,0|0));
+        int status(SWIG_ConvertPtr(li,&argp,SWIGTYPE_p_MEDCoupling__MEDFileAnyTypeFieldMultiTS,0|0));
         if(SWIG_IsOK(status))
           {
             self->pushBackTimeSteps(reinterpret_cast<MEDFileAnyTypeFieldMultiTS *>(argp));
@@ -2517,15 +2743,22 @@ namespace ParaMEDMEM
         else
           {
             std::vector<MEDFileAnyTypeField1TS *> tmp;
-            convertFromPyObjVectorOfObj<ParaMEDMEM::MEDFileAnyTypeField1TS *>(li,SWIGTYPE_p_ParaMEDMEM__MEDFileAnyTypeField1TS,"MEDFileAnyTypeField1TS",tmp);
+            convertFromPyObjVectorOfObj<MEDCoupling::MEDFileAnyTypeField1TS *>(li,SWIGTYPE_p_MEDCoupling__MEDFileAnyTypeField1TS,"MEDFileAnyTypeField1TS",tmp);
             self->pushBackTimeSteps(tmp);
           }
+      }
+
+      MEDFileAnyTypeFieldMultiTS *extractPart(PyObject *extractDef, MEDFileMesh *mm) const throw(INTERP_KERNEL::Exception)
+      {
+        std::map<int, MCAuto<DataArrayInt> > extractDefCpp;
+        convertToMapIntDataArrayInt(extractDef,extractDefCpp);
+        return self->extractPart(extractDefCpp,mm);
       }
 
       static PyObject *MEDFileAnyTypeFieldMultiTS::SplitIntoCommonTimeSeries(PyObject *li) throw(INTERP_KERNEL::Exception)
       {
         std::vector<MEDFileAnyTypeFieldMultiTS *> vectFMTS;
-        convertFromPyObjVectorOfObj<ParaMEDMEM::MEDFileAnyTypeFieldMultiTS *>(li,SWIGTYPE_p_ParaMEDMEM__MEDFileAnyTypeFieldMultiTS,"MEDFileAnyTypeFieldMultiTS",vectFMTS);
+        convertFromPyObjVectorOfObj<MEDCoupling::MEDFileAnyTypeFieldMultiTS *>(li,SWIGTYPE_p_MEDCoupling__MEDFileAnyTypeFieldMultiTS,"MEDFileAnyTypeFieldMultiTS",vectFMTS);
         std::vector< std::vector<MEDFileAnyTypeFieldMultiTS *> > ret=MEDFileAnyTypeFieldMultiTS::SplitIntoCommonTimeSeries(vectFMTS);
         std::size_t sz=ret.size();
         PyObject *retPy=PyList_New(sz);
@@ -2548,8 +2781,8 @@ namespace ParaMEDMEM
       static PyObject *MEDFileAnyTypeFieldMultiTS::SplitPerCommonSupport(PyObject *li, const MEDFileMesh *mesh) throw(INTERP_KERNEL::Exception)
       {
         std::vector<MEDFileAnyTypeFieldMultiTS *> vectFMTS;
-        convertFromPyObjVectorOfObj<ParaMEDMEM::MEDFileAnyTypeFieldMultiTS *>(li,SWIGTYPE_p_ParaMEDMEM__MEDFileAnyTypeFieldMultiTS,"MEDFileAnyTypeFieldMultiTS",vectFMTS);
-        std::vector< MEDCouplingAutoRefCountObjectPtr<MEDFileFastCellSupportComparator> > ret2;
+        convertFromPyObjVectorOfObj<MEDCoupling::MEDFileAnyTypeFieldMultiTS *>(li,SWIGTYPE_p_MEDCoupling__MEDFileAnyTypeFieldMultiTS,"MEDFileAnyTypeFieldMultiTS",vectFMTS);
+        std::vector< MCAuto<MEDFileFastCellSupportComparator> > ret2;
         std::vector< std::vector<MEDFileAnyTypeFieldMultiTS *> > ret=MEDFileAnyTypeFieldMultiTS::SplitPerCommonSupport(vectFMTS,mesh,ret2);
         if(ret2.size()!=ret.size())
           {
@@ -2571,7 +2804,7 @@ namespace ParaMEDMEM
                 PyList_SetItem(ret1Py,j,convertMEDFileFieldMultiTS(elt,SWIG_POINTER_OWN | 0 ));
               }
             PyTuple_SetItem(ret0Py,0,ret1Py);
-            PyTuple_SetItem(ret0Py,1,SWIG_NewPointerObj(SWIG_as_voidptr(ret2[i].retn()),SWIGTYPE_p_ParaMEDMEM__MEDFileFastCellSupportComparator, SWIG_POINTER_OWN | 0 ));
+            PyTuple_SetItem(ret0Py,1,SWIG_NewPointerObj(SWIG_as_voidptr(ret2[i].retn()),SWIGTYPE_p_MEDCoupling__MEDFileFastCellSupportComparator, SWIG_POINTER_OWN | 0 ));
             PyList_SetItem(retPy,i,ret0Py);
           }
         return retPy;
@@ -2585,7 +2818,9 @@ namespace ParaMEDMEM
     static MEDFileFieldMultiTS *New() throw(INTERP_KERNEL::Exception);
     static MEDFileFieldMultiTS *New(const std::string& fileName, bool loadAll=true) throw(INTERP_KERNEL::Exception);
     static MEDFileFieldMultiTS *New(const std::string& fileName, const std::string& fieldName, bool loadAll=true) throw(INTERP_KERNEL::Exception);
+    static MEDFileFieldMultiTS *New(DataArrayByte *db) throw(INTERP_KERNEL::Exception);
     //
+    MEDCouplingFieldDouble *field(int iteration, int order, const MEDFileMesh *mesh) const throw(INTERP_KERNEL::Exception);
     MEDCouplingFieldDouble *getFieldAtLevel(TypeOfField type, int iteration, int order, int meshDimRelToMax, int renumPol=0) const throw(INTERP_KERNEL::Exception);
     MEDCouplingFieldDouble *getFieldAtTopLevel(TypeOfField type, int iteration, int order, int renumPol=0) const throw(INTERP_KERNEL::Exception);
     MEDCouplingFieldDouble *getFieldOnMeshAtLevel(TypeOfField type, int iteration, int order, int meshDimRelToMax, const MEDFileMesh *mesh, int renumPol=0) const throw(INTERP_KERNEL::Exception);
@@ -2594,7 +2829,7 @@ namespace ParaMEDMEM
     //
     void appendFieldNoProfileSBT(const MEDCouplingFieldDouble *field) throw(INTERP_KERNEL::Exception);
     void appendFieldProfile(const MEDCouplingFieldDouble *field, const MEDFileMesh *mesh, int meshDimRelToMax, const DataArrayInt *profile) throw(INTERP_KERNEL::Exception);
-    ParaMEDMEM::MEDFileIntFieldMultiTS *convertToInt(bool isDeepCpyGlobs=true) const throw(INTERP_KERNEL::Exception);
+    MEDCoupling::MEDFileIntFieldMultiTS *convertToInt(bool isDeepCpyGlobs=true) const throw(INTERP_KERNEL::Exception);
     %extend
        {
          MEDFileFieldMultiTS()
@@ -2610,6 +2845,17 @@ namespace ParaMEDMEM
          MEDFileFieldMultiTS(const std::string& fileName, const std::string& fieldName, bool loadAll=true) throw(INTERP_KERNEL::Exception)
          {
            return MEDFileFieldMultiTS::New(fileName,fieldName,loadAll);
+         }
+         
+         MEDFileFieldMultiTS(DataArrayByte *db) throw(INTERP_KERNEL::Exception)
+         {
+           return MEDFileFieldMultiTS::New(db);
+         }
+         
+         // serialization
+         static PyObject *___new___(PyObject *cls, PyObject *args) throw(INTERP_KERNEL::Exception)
+         {
+           return NewMethWrapCallInitOnlyIfDictWithSingleEltInInput(cls,args,"MEDFileFieldMultiTS");
          }
 
          static MEDFileFieldMultiTS *LoadSpecificEntities(const std::string& fileName, const std::string& fieldName, PyObject *entities, bool loadAll=true)
@@ -2635,8 +2881,8 @@ namespace ParaMEDMEM
            DataArrayInt *ret1=0;
            DataArrayDouble *ret0=self->getFieldWithProfile(type,iteration,order,meshDimRelToMax,mesh,ret1);
            PyObject *ret=PyTuple_New(2);
-           PyTuple_SetItem(ret,0,SWIG_NewPointerObj(SWIG_as_voidptr(ret0),SWIGTYPE_p_ParaMEDMEM__DataArrayDouble, SWIG_POINTER_OWN | 0 ));
-           PyTuple_SetItem(ret,1,SWIG_NewPointerObj(SWIG_as_voidptr(ret1),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 ));
+           PyTuple_SetItem(ret,0,SWIG_NewPointerObj(SWIG_as_voidptr(ret0),SWIGTYPE_p_MEDCoupling__DataArrayDouble, SWIG_POINTER_OWN | 0 ));
+           PyTuple_SetItem(ret,1,SWIG_NewPointerObj(SWIG_as_voidptr(ret1),SWIGTYPE_p_MEDCoupling__DataArrayInt, SWIG_POINTER_OWN | 0 ));
            return ret;
          }
 
@@ -2663,7 +2909,7 @@ namespace ParaMEDMEM
                  {
                    PyObject *elt3=PyTuple_New(4);
                    PyTuple_SetItem(elt3,0,SWIG_From_int(typesFI[j]));
-                   PyTuple_SetItem(elt3,1,SWIG_NewPointerObj(SWIG_as_voidptr(dadsI[j]),SWIGTYPE_p_ParaMEDMEM__DataArrayDouble, SWIG_POINTER_OWN | 0 ));
+                   PyTuple_SetItem(elt3,1,SWIG_NewPointerObj(SWIG_as_voidptr(dadsI[j]),SWIGTYPE_p_MEDCoupling__DataArrayDouble, SWIG_POINTER_OWN | 0 ));
                    PyTuple_SetItem(elt3,2,PyString_FromString(pflsI[j].c_str()));
                    PyTuple_SetItem(elt3,3,PyString_FromString(locsI[j].c_str()));
                    PyList_SetItem(elt2,j,elt3);
@@ -2688,7 +2934,7 @@ namespace ParaMEDMEM
            if(elt0)
              elt0->incrRef();
            PyObject *ret=PyTuple_New(2);
-           PyTuple_SetItem(ret,0,SWIG_NewPointerObj(SWIG_as_voidptr(elt0),SWIGTYPE_p_ParaMEDMEM__DataArrayDouble, SWIG_POINTER_OWN | 0 ));
+           PyTuple_SetItem(ret,0,SWIG_NewPointerObj(SWIG_as_voidptr(elt0),SWIGTYPE_p_MEDCoupling__DataArrayDouble, SWIG_POINTER_OWN | 0 ));
            std::size_t sz=elt1Cpp.size();
            PyObject *elt=PyList_New(sz);
            for(std::size_t i=0;i<sz;i++)
@@ -2735,10 +2981,17 @@ namespace ParaMEDMEM
     static MEDFileIntFieldMultiTS *New();
     static MEDFileIntFieldMultiTS *New(const std::string& fileName, bool loadAll=true) throw(INTERP_KERNEL::Exception);
     static MEDFileIntFieldMultiTS *New(const std::string& fileName, const std::string& fieldName, bool loadAll=true) throw(INTERP_KERNEL::Exception);
+    static MEDFileIntFieldMultiTS *New(DataArrayByte *db) throw(INTERP_KERNEL::Exception);
     //
-    void appendFieldNoProfileSBT(const MEDCouplingFieldDouble *field, const DataArrayInt *arrOfVals) throw(INTERP_KERNEL::Exception);
-    void appendFieldProfile(const MEDCouplingFieldDouble *field, const DataArrayInt *arrOfVals, const MEDFileMesh *mesh, int meshDimRelToMax, const DataArrayInt *profile) throw(INTERP_KERNEL::Exception);
-    ParaMEDMEM::MEDFileFieldMultiTS *convertToDouble(bool isDeepCpyGlobs=true) const throw(INTERP_KERNEL::Exception);
+    void appendFieldNoProfileSBT(const MEDCouplingFieldInt *field) throw(INTERP_KERNEL::Exception);
+    void appendFieldProfile(const MEDCouplingFieldInt *field, const MEDFileMesh *mesh, int meshDimRelToMax, const DataArrayInt *profile) throw(INTERP_KERNEL::Exception);
+    MEDCoupling::MEDFileFieldMultiTS *convertToDouble(bool isDeepCpyGlobs=true) const throw(INTERP_KERNEL::Exception);
+    MEDCouplingFieldDouble *field(int iteration, int order, const MEDFileMesh *mesh) const throw(INTERP_KERNEL::Exception);
+    MEDCouplingFieldInt *getFieldAtLevel(TypeOfField type, int iteration, int order, int meshDimRelToMax, int renumPol=0) const throw(INTERP_KERNEL::Exception);
+    MEDCouplingFieldInt *getFieldAtTopLevel(TypeOfField type, int iteration, int order, int renumPol=0) const throw(INTERP_KERNEL::Exception);
+    MEDCouplingFieldInt *getFieldOnMeshAtLevel(TypeOfField type, int iteration, int order, int meshDimRelToMax, const MEDFileMesh *mesh, int renumPol=0) const throw(INTERP_KERNEL::Exception);
+    MEDCouplingFieldInt *getFieldOnMeshAtLevel(TypeOfField type, int iteration, int order, const MEDCouplingMesh *mesh, int renumPol=0) const throw(INTERP_KERNEL::Exception);
+    MEDCouplingFieldInt *getFieldAtLevelOld(TypeOfField type, int iteration, int order, const std::string& mname, int meshDimRelToMax, int renumPol=0) const throw(INTERP_KERNEL::Exception);
     %extend
     {
       MEDFileIntFieldMultiTS()
@@ -2756,6 +3009,17 @@ namespace ParaMEDMEM
         return MEDFileIntFieldMultiTS::New(fileName,fieldName,loadAll);
       }
 
+      MEDFileIntFieldMultiTS(DataArrayByte *db) throw(INTERP_KERNEL::Exception)
+      {
+        return MEDFileIntFieldMultiTS::New(db);
+      }
+      
+      // serialization
+      static PyObject *___new___(PyObject *cls, PyObject *args) throw(INTERP_KERNEL::Exception)
+      {
+        return NewMethWrapCallInitOnlyIfDictWithSingleEltInInput(cls,args,"MEDFileIntFieldMultiTS");
+      }
+      
       static MEDFileIntFieldMultiTS *LoadSpecificEntities(const std::string& fileName, const std::string& fieldName, PyObject *entities, bool loadAll=true)
       {
         std::vector<std::pair<int,int> > tmp(convertTimePairIdsFromPy(entities));
@@ -2774,63 +3038,13 @@ namespace ParaMEDMEM
         return self->simpleRepr();
       }
 
-      PyObject *getFieldAtLevel(TypeOfField type, int iteration, int order, int meshDimRelToMax, int renumPol=0) const throw(INTERP_KERNEL::Exception)
-      {
-        DataArrayInt *ret1=0;
-        MEDCouplingFieldDouble *ret0=self->getFieldAtLevel(type,iteration,order,meshDimRelToMax,ret1,renumPol);
-        PyObject *ret=PyTuple_New(2);
-        PyTuple_SetItem(ret,0,SWIG_NewPointerObj(SWIG_as_voidptr(ret0),SWIGTYPE_p_ParaMEDMEM__MEDCouplingFieldDouble, SWIG_POINTER_OWN | 0 ));
-        PyTuple_SetItem(ret,1,SWIG_NewPointerObj(SWIG_as_voidptr(ret1),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 ));
-        return ret;
-      }
-
-      PyObject *getFieldAtTopLevel(TypeOfField type, int iteration, int order, int renumPol=0) const throw(INTERP_KERNEL::Exception)
-      {
-        DataArrayInt *ret1=0;
-        MEDCouplingFieldDouble *ret0=self->getFieldAtTopLevel(type,iteration,order,ret1,renumPol);
-        PyObject *ret=PyTuple_New(2);
-        PyTuple_SetItem(ret,0,SWIG_NewPointerObj(SWIG_as_voidptr(ret0),SWIGTYPE_p_ParaMEDMEM__MEDCouplingFieldDouble, SWIG_POINTER_OWN | 0 ));
-        PyTuple_SetItem(ret,1,SWIG_NewPointerObj(SWIG_as_voidptr(ret1),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 ));
-        return ret;
-      }
-
-      PyObject *getFieldOnMeshAtLevel(TypeOfField type, int iteration, int order, int meshDimRelToMax, const MEDFileMesh *mesh, int renumPol=0) const throw(INTERP_KERNEL::Exception)
-      {
-        DataArrayInt *ret1=0;
-        MEDCouplingFieldDouble *ret0=self->getFieldOnMeshAtLevel(type,iteration,order,meshDimRelToMax,mesh,ret1,renumPol);
-        PyObject *ret=PyTuple_New(2);
-        PyTuple_SetItem(ret,0,SWIG_NewPointerObj(SWIG_as_voidptr(ret0),SWIGTYPE_p_ParaMEDMEM__MEDCouplingFieldDouble, SWIG_POINTER_OWN | 0 ));
-        PyTuple_SetItem(ret,1,SWIG_NewPointerObj(SWIG_as_voidptr(ret1),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 ));
-        return ret;
-      }
-      
-      PyObject *getFieldOnMeshAtLevel(TypeOfField type, int iteration, int order, const MEDCouplingMesh *mesh, int renumPol=0) const throw(INTERP_KERNEL::Exception)
-      {
-        DataArrayInt *ret1=0;
-        MEDCouplingFieldDouble *ret0=self->getFieldOnMeshAtLevel(type,iteration,order,mesh,ret1,renumPol);
-        PyObject *ret=PyTuple_New(2);
-        PyTuple_SetItem(ret,0,SWIG_NewPointerObj(SWIG_as_voidptr(ret0),SWIGTYPE_p_ParaMEDMEM__MEDCouplingFieldDouble, SWIG_POINTER_OWN | 0 ));
-        PyTuple_SetItem(ret,1,SWIG_NewPointerObj(SWIG_as_voidptr(ret1),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 ));
-        return ret;
-      }
-      
-      PyObject *getFieldAtLevelOld(TypeOfField type, int iteration, int order, const std::string& mname, int meshDimRelToMax, int renumPol=0) const throw(INTERP_KERNEL::Exception)
-      {
-        DataArrayInt *ret1=0;
-        MEDCouplingFieldDouble *ret0=self->getFieldAtLevelOld(type,iteration,order,mname,meshDimRelToMax,ret1,renumPol);
-        PyObject *ret=PyTuple_New(2);
-        PyTuple_SetItem(ret,0,SWIG_NewPointerObj(SWIG_as_voidptr(ret0),SWIGTYPE_p_ParaMEDMEM__MEDCouplingFieldDouble, SWIG_POINTER_OWN | 0 ));
-        PyTuple_SetItem(ret,1,SWIG_NewPointerObj(SWIG_as_voidptr(ret1),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 ));
-        return ret;
-      }
-
       PyObject *getFieldWithProfile(TypeOfField type, int iteration, int order, int meshDimRelToMax, const MEDFileMesh *mesh) const throw(INTERP_KERNEL::Exception)
       {
          DataArrayInt *ret1=0;
          DataArrayInt *ret0=self->getFieldWithProfile(type,iteration,order,meshDimRelToMax,mesh,ret1);
          PyObject *ret=PyTuple_New(2);
-         PyTuple_SetItem(ret,0,SWIG_NewPointerObj(SWIG_as_voidptr(ret0),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 ));
-         PyTuple_SetItem(ret,1,SWIG_NewPointerObj(SWIG_as_voidptr(ret1),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 ));
+         PyTuple_SetItem(ret,0,SWIG_NewPointerObj(SWIG_as_voidptr(ret0),SWIGTYPE_p_MEDCoupling__DataArrayInt, SWIG_POINTER_OWN | 0 ));
+         PyTuple_SetItem(ret,1,SWIG_NewPointerObj(SWIG_as_voidptr(ret1),SWIGTYPE_p_MEDCoupling__DataArrayInt, SWIG_POINTER_OWN | 0 ));
          return ret;
       }
 
@@ -2843,20 +3057,48 @@ namespace ParaMEDMEM
       }
     }
   };
+  
+  class MEDFileMeshSupports : public RefCountObject, public MEDFileWritableStandAlone
+  {
+  public:
+    static MEDFileMeshSupports *New(const std::string& fileName) throw(INTERP_KERNEL::Exception);
+    std::vector<std::string> getSupMeshNames() const throw(INTERP_KERNEL::Exception);
+    %extend
+       {
+         MEDFileUMesh *getSupMeshWithName(const std::string& name) const throw(INTERP_KERNEL::Exception)
+         {
+           const MEDFileUMesh *ret(self->getSupMeshWithName(name));
+           MEDFileUMesh *ret2(const_cast<MEDFileUMesh *>(ret));
+           if(ret2)
+             ret2->incrRef();
+           return ret2;
+         }
+       }
+  };
+ 
+  class MEDFileStructureElements : public RefCountObject, public MEDFileWritableStandAlone
+  {
+  public:
+    static MEDFileStructureElements *New(const std::string& fileName, const MEDFileMeshSupports *ms) throw(INTERP_KERNEL::Exception);
+  private:
+    MEDFileStructureElements();
+  };
 
-  class MEDFileFields : public RefCountObject, public MEDFileFieldGlobsReal, public MEDFileWritable
+  class MEDFileFields : public RefCountObject, public MEDFileFieldGlobsReal, public MEDFileWritableStandAlone
   {
   public:
     static MEDFileFields *New() throw(INTERP_KERNEL::Exception);
     static MEDFileFields *New(const std::string& fileName, bool loadAll=true) throw(INTERP_KERNEL::Exception);
+    static MEDFileFields *New(DataArrayByte *db) throw(INTERP_KERNEL::Exception);
+    static MEDFileFields *NewAdv(const std::string& fileName, bool loadAll, const MEDFileEntities *entities) throw(INTERP_KERNEL::Exception);
     static MEDFileFields *LoadPartOf(const std::string& fileName, bool loadAll=true, const MEDFileMeshes *ms=0) throw(INTERP_KERNEL::Exception);
-    MEDFileFields *deepCpy() const throw(INTERP_KERNEL::Exception);
+    static MEDFileFields *NewWithDynGT(const std::string& fileName, const MEDFileStructureElements *se, bool loadAll=true) throw(INTERP_KERNEL::Exception);
+    MEDFileFields *deepCopy() const throw(INTERP_KERNEL::Exception);
     MEDFileFields *shallowCpy() const throw(INTERP_KERNEL::Exception);
     void loadArrays() throw(INTERP_KERNEL::Exception);
     void loadArraysIfNecessary() throw(INTERP_KERNEL::Exception);
     void unloadArrays() throw(INTERP_KERNEL::Exception);
     void unloadArraysWithoutDataLoss() throw(INTERP_KERNEL::Exception);
-    void write(const std::string& fileName, int mode) const throw(INTERP_KERNEL::Exception);
     int getNumberOfFields() const;
     std::vector<std::string> getFieldsNames() const throw(INTERP_KERNEL::Exception);
     std::vector<std::string> getMeshesNames() const throw(INTERP_KERNEL::Exception);
@@ -2868,6 +3110,12 @@ namespace ParaMEDMEM
     MEDFileAnyTypeFieldMultiTS *getFieldAtPos(int i) const throw(INTERP_KERNEL::Exception);
     MEDFileAnyTypeFieldMultiTS *getFieldWithName(const std::string& fieldName) const throw(INTERP_KERNEL::Exception);
     MEDFileFields *partOfThisLyingOnSpecifiedMeshName(const std::string& meshName) const throw(INTERP_KERNEL::Exception);
+    bool presenceOfStructureElements() const throw(INTERP_KERNEL::Exception);
+    void aggregate(const MEDFileFields& other) throw(INTERP_KERNEL::Exception);
+    void killStructureElements() throw(INTERP_KERNEL::Exception);
+    void keepOnlyStructureElements() throw(INTERP_KERNEL::Exception);
+    void keepOnlyOnMeshSE(const std::string& meshName, const std::string& seName) throw(INTERP_KERNEL::Exception);
+    void blowUpSE(MEDFileMeshes *ms, const MEDFileStructureElements *ses) throw(INTERP_KERNEL::Exception);
     void destroyFieldAtPos(int i) throw(INTERP_KERNEL::Exception);
     bool removeFieldsWithoutAnyTimeStep() throw(INTERP_KERNEL::Exception);
     %extend
@@ -2881,12 +3129,40 @@ namespace ParaMEDMEM
          {
            return MEDFileFields::New(fileName,loadAll);
          }
+
+         MEDFileFields(DataArrayByte *db) throw(INTERP_KERNEL::Exception)
+         {
+           return MEDFileFields::New(db);
+         }
+
+         MEDFileFields(const std::string& fileName, bool loadAll, const MEDFileEntities *entities) throw(INTERP_KERNEL::Exception)
+         {
+           return MEDFileFields::NewAdv(fileName,loadAll,entities);
+         }
+         
+         // serialization
+         static PyObject *___new___(PyObject *cls, PyObject *args) throw(INTERP_KERNEL::Exception)
+         {
+           return NewMethWrapCallInitOnlyIfDictWithSingleEltInInput(cls,args,"MEDFileFields");
+         }
          
          std::string __str__() const throw(INTERP_KERNEL::Exception)
          {
            return self->simpleRepr();
          }
+         
+         MEDFileFields *partOfThisOnStructureElements() const throw(INTERP_KERNEL::Exception)
+         {
+           MCAuto<MEDFileFields> ret(self->partOfThisOnStructureElements());
+           return ret.retn();
+         }
 
+         MEDFileFields *partOfThisLyingOnSpecifiedMeshSEName(const std::string& meshName, const std::string& seName) const throw(INTERP_KERNEL::Exception)
+         {
+           MCAuto<MEDFileFields> ret(self->partOfThisLyingOnSpecifiedMeshSEName(meshName,seName));
+           return ret.retn();
+         }
+         
          static MEDFileFields *LoadSpecificEntities(const std::string& fileName, PyObject *entities, bool loadAll=true) throw(INTERP_KERNEL::Exception)
          {
            std::vector<std::pair<int,int> > tmp(convertTimePairIdsFromPy(entities));
@@ -2898,6 +3174,13 @@ namespace ParaMEDMEM
                entitiesCpp[i].second=(INTERP_KERNEL::NormalizedCellType)tmp[i].second;
              }
            return MEDFileFields::LoadSpecificEntities(fileName,entitiesCpp,loadAll);
+         }
+
+         PyObject *getMeshSENames() const throw(INTERP_KERNEL::Exception)
+         {
+           std::vector< std::pair<std::string,std::string> > ps;
+           self->getMeshSENames(ps);
+           return convertVectPairStToPy(ps);
          }
 
          PyObject *getCommonIterations() const throw(INTERP_KERNEL::Exception)
@@ -2937,14 +3220,14 @@ namespace ParaMEDMEM
            if(obj && PyList_Check(obj))
              {
                int sz=PyList_Size(obj);
-               MEDCouplingAutoRefCountObjectPtr<DataArrayInt> da=DataArrayInt::New(); da->alloc(sz,1);
+               MCAuto<DataArrayInt> da=DataArrayInt::New(); da->alloc(sz,1);
                int *pt=da->getPointer();
                for(int i=0;i<sz;i++,pt++)
                  {
                    PyObject *elt1=PyList_GetItem(obj,i);
                    *pt=MEDFileFieldsgetitemSingleTS__(self,elt1);
                  }
-               return SWIG_NewPointerObj(SWIG_as_voidptr(self->buildSubPart(da->begin(),da->end())),SWIGTYPE_p_ParaMEDMEM__MEDFileFields, SWIG_POINTER_OWN | 0 );
+               return SWIG_NewPointerObj(SWIG_as_voidptr(self->buildSubPart(da->begin(),da->end())),SWIGTYPE_p_MEDCoupling__MEDFileFields, SWIG_POINTER_OWN | 0 );
              }
            else
              return convertMEDFileFieldMultiTS(self->getFieldAtPos(MEDFileFieldsgetitemSingleTS__(self,obj)), SWIG_POINTER_OWN | 0 );
@@ -2993,14 +3276,14 @@ namespace ParaMEDMEM
                for(int i=0;i<sz;i++)
                  {
                    PyObject *elt=PyList_GetItem(elts,i);
-                   ret[i]=ParaMEDMEM_MEDFileFields_getPosOfField(self,elt);
+                   ret[i]=MEDCoupling_MEDFileFields_getPosOfField(self,elt);
                  }
                return ret;
              }
            else
              {
                std::vector<int> ret(1);
-               ret[0]=ParaMEDMEM_MEDFileFields_getPosOfField(self,elts);
+               ret[0]=MEDCoupling_MEDFileFields_getPosOfField(self,elts);
                return ret;
              }
          }
@@ -3008,7 +3291,7 @@ namespace ParaMEDMEM
          void pushFields(PyObject *fields) throw(INTERP_KERNEL::Exception)
          {
            std::vector<MEDFileAnyTypeFieldMultiTS *> tmp;
-           convertFromPyObjVectorOfObj<ParaMEDMEM::MEDFileAnyTypeFieldMultiTS *>(fields,SWIGTYPE_p_ParaMEDMEM__MEDFileAnyTypeFieldMultiTS,"MEDFileAnyTypeFieldMultiTS",tmp);
+           convertFromPyObjVectorOfObj<MEDCoupling::MEDFileAnyTypeFieldMultiTS *>(fields,SWIGTYPE_p_MEDCoupling__MEDFileAnyTypeFieldMultiTS,"MEDFileAnyTypeFieldMultiTS",tmp);
            self->pushFields(tmp);
          }
          
@@ -3023,10 +3306,17 @@ namespace ParaMEDMEM
              }
            else
              {
-               std::vector<int> idsToRemove=ParaMEDMEM_MEDFileFields_getPosOfFields(self,elts);
+               std::vector<int> idsToRemove=MEDCoupling_MEDFileFields_getPosOfFields(self,elts);
                if(!idsToRemove.empty())
                  self->destroyFieldsAtPos(&idsToRemove[0],&idsToRemove[0]+idsToRemove.size());
              }
+         }
+
+         MEDFileFields *extractPart(PyObject *extractDef, MEDFileMesh *mm) const throw(INTERP_KERNEL::Exception)
+         {
+           std::map<int, MCAuto<DataArrayInt> > extractDefCpp;
+           convertToMapIntDataArrayInt(extractDef,extractDefCpp);
+           return self->extractPart(extractDefCpp,mm);
          }
        }
   };
@@ -3075,7 +3365,7 @@ namespace ParaMEDMEM
     static MEDFileParameterDouble1TS *New(const std::string& fileName) throw(INTERP_KERNEL::Exception);
     static MEDFileParameterDouble1TS *New(const std::string& fileName, const std::string& paramName) throw(INTERP_KERNEL::Exception);
     static MEDFileParameterDouble1TS *New(const std::string& fileName, const std::string& paramName, int dt, int it) throw(INTERP_KERNEL::Exception);
-    virtual MEDFileParameter1TS *deepCpy() const throw(INTERP_KERNEL::Exception);
+    virtual MEDFileParameter1TS *deepCopy() const throw(INTERP_KERNEL::Exception);
     virtual std::string simpleRepr() const throw(INTERP_KERNEL::Exception);
     void setName(const std::string& name) throw(INTERP_KERNEL::Exception);
     std::string getName() const throw(INTERP_KERNEL::Exception);
@@ -3129,7 +3419,7 @@ namespace ParaMEDMEM
     static MEDFileParameterMultiTS *New(const std::string& fileName, const std::string& paramName) throw(INTERP_KERNEL::Exception);
     std::string getName() const;
     void setName(const std::string& name);
-    MEDFileParameterMultiTS *deepCpy() const throw(INTERP_KERNEL::Exception);
+    MEDFileParameterMultiTS *deepCopy() const throw(INTERP_KERNEL::Exception);
     void write(const std::string& fileName, int mode) const throw(INTERP_KERNEL::Exception);
     std::string simpleRepr() const throw(INTERP_KERNEL::Exception);
     void appendValue(int dt, int it, double time, double val) throw(INTERP_KERNEL::Exception);
@@ -3239,7 +3529,7 @@ namespace ParaMEDMEM
 
       MEDFileParameter1TS *__getitem__(PyObject *elt0) const throw(INTERP_KERNEL::Exception)
       {
-        MEDFileParameter1TS *ret=self->getTimeStepAtPos(ParaMEDMEM_MEDFileParameterMultiTS_getTimeStepId(self,elt0));
+        MEDFileParameter1TS *ret=self->getTimeStepAtPos(MEDCoupling_MEDFileParameterMultiTS_getTimeStepId(self,elt0));
         if(ret)
           ret->incrRef();
         return ret;
@@ -3254,21 +3544,21 @@ namespace ParaMEDMEM
             for(int i=0;i<sz;i++)
               {
                 PyObject *elt=PyList_GetItem(elts,i);
-                ret[i]=ParaMEDMEM_MEDFileParameterMultiTS_getTimeStepId(self,elt);
+                ret[i]=MEDCoupling_MEDFileParameterMultiTS_getTimeStepId(self,elt);
               }
             return ret;
           }
         else
           {
             std::vector<int> ret(1);
-            ret[0]=ParaMEDMEM_MEDFileParameterMultiTS_getTimeStepId(self,elts);
+            ret[0]=MEDCoupling_MEDFileParameterMultiTS_getTimeStepId(self,elts);
             return ret;
           }
       }
 
       void __delitem__(PyObject *elts) throw(INTERP_KERNEL::Exception)
       {
-        std::vector<int> idsToRemove=ParaMEDMEM_MEDFileParameterMultiTS_getTimeStepIds(self,elts);
+        std::vector<int> idsToRemove=MEDCoupling_MEDFileParameterMultiTS_getTimeStepIds(self,elts);
         if(!idsToRemove.empty())
           self->eraseTimeStepIds(&idsToRemove[0],&idsToRemove[0]+idsToRemove.size());
       }
@@ -3315,13 +3605,13 @@ namespace ParaMEDMEM
     }
   };
 
-  class MEDFileParameters : public RefCountObject, public MEDFileWritable
+  class MEDFileParameters : public RefCountObject, public MEDFileWritableStandAlone
   {
   public:
     static MEDFileParameters *New();
     static MEDFileParameters *New(const std::string& fileName) throw(INTERP_KERNEL::Exception);
-    MEDFileParameters *deepCpy() const throw(INTERP_KERNEL::Exception);
-    void write(const std::string& fileName, int mode) const throw(INTERP_KERNEL::Exception);
+    static MEDFileParameters *New(DataArrayByte *db) throw(INTERP_KERNEL::Exception);
+    MEDFileParameters *deepCopy() const throw(INTERP_KERNEL::Exception);
     std::vector<std::string> getParamsNames() const throw(INTERP_KERNEL::Exception);
     std::string simpleRepr() const throw(INTERP_KERNEL::Exception);
     void resize(int newSize) throw(INTERP_KERNEL::Exception);
@@ -3342,6 +3632,17 @@ namespace ParaMEDMEM
         return MEDFileParameters::New(fileName);
       }
 
+      MEDFileParameters(DataArrayByte *db) throw(INTERP_KERNEL::Exception)
+      {
+        return MEDFileParameters::New(db);
+      }
+
+      // serialization
+      static PyObject *___new___(PyObject *cls, PyObject *args) throw(INTERP_KERNEL::Exception)
+      {
+        return NewMethWrapCallInitOnlyIfDictWithSingleEltInInput(cls,args,"MEDFileParameters");
+      }
+      
       std::string __str__() const throw(INTERP_KERNEL::Exception)
       {
         return self->simpleRepr();
@@ -3402,12 +3703,13 @@ namespace ParaMEDMEM
     }
   };
 
-  class MEDFileData : public RefCountObject, public MEDFileWritable
+  class MEDFileData : public RefCountObject, public MEDFileWritableStandAlone
   {
   public:
+    static MEDFileData *New(DataArrayByte *db) throw(INTERP_KERNEL::Exception);
     static MEDFileData *New(const std::string& fileName) throw(INTERP_KERNEL::Exception);
     static MEDFileData *New();
-    MEDFileData *deepCpy() const throw(INTERP_KERNEL::Exception);
+    MEDFileData *deepCopy() const throw(INTERP_KERNEL::Exception);
     void setFields(MEDFileFields *fields) throw(INTERP_KERNEL::Exception);
     void setMeshes(MEDFileMeshes *meshes) throw(INTERP_KERNEL::Exception);
     void setParams(MEDFileParameters *params) throw(INTERP_KERNEL::Exception);
@@ -3417,13 +3719,20 @@ namespace ParaMEDMEM
     //
     bool changeMeshName(const std::string& oldMeshName, const std::string& newMeshName) throw(INTERP_KERNEL::Exception);
     bool unPolyzeMeshes() throw(INTERP_KERNEL::Exception);
+    void dealWithStructureElements() throw(INTERP_KERNEL::Exception);
+    std::string getHeader() const throw(INTERP_KERNEL::Exception);
+    void setHeader(const std::string& header) throw(INTERP_KERNEL::Exception);
     //
-    void write(const std::string& fileName, int mode) const throw(INTERP_KERNEL::Exception);
     %extend
        {
          MEDFileData(const std::string& fileName) throw(INTERP_KERNEL::Exception)
          {
            return MEDFileData::New(fileName);
+         }
+
+         MEDFileData(DataArrayByte *db) throw(INTERP_KERNEL::Exception)
+         {
+           return MEDFileData::New(db);
          }
 
          MEDFileData()
@@ -3464,6 +3773,20 @@ namespace ParaMEDMEM
          {
            std::vector< std::pair<std::string,std::string> > modifTab=convertVecPairStStFromPy(li);
            return self->changeMeshNames(modifTab);
+         }
+
+         static MEDFileData *Aggregate(PyObject *mfds) throw(INTERP_KERNEL::Exception)
+         {
+           std::vector<const MEDFileData *> mfdsCpp;
+           convertFromPyObjVectorOfObj<const MEDCoupling::MEDFileData *>(mfds,SWIGTYPE_p_MEDCoupling__MEDFileData,"MEDFileData",mfdsCpp);
+           MCAuto<MEDFileData> ret(MEDFileData::Aggregate(mfdsCpp));
+           return ret.retn();
+         }
+
+         // serialization
+         static PyObject *___new___(PyObject *cls, PyObject *args) throw(INTERP_KERNEL::Exception)
+         {
+           return NewMethWrapCallInitOnlyIfDictWithSingleEltInInput(cls,args,"MEDFileData");
          }
        }
   };
@@ -3522,6 +3845,7 @@ namespace ParaMEDMEM
   public:
     virtual MEDMeshMultiLev *prepare() const throw(INTERP_KERNEL::Exception);
     DataArray *buildDataArray(const MEDFileField1TSStructItem& fst, const MEDFileFieldGlobsReal *globs, const DataArray *vals) const throw(INTERP_KERNEL::Exception);
+    DataArrayInt *retrieveGlobalNodeIdsIfAny() const throw(INTERP_KERNEL::Exception);
   protected:
     ~MEDMeshMultiLev();
   public:
@@ -3535,7 +3859,7 @@ namespace ParaMEDMEM
         PyObject *ret=PyTuple_New(2);
         PyObject *ret1Py=isWithoutCopy?Py_True:Py_False;
         Py_XINCREF(ret1Py);
-        PyTuple_SetItem(ret,0,SWIG_NewPointerObj(SWIG_as_voidptr(famIds),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 ));
+        PyTuple_SetItem(ret,0,SWIG_NewPointerObj(SWIG_as_voidptr(famIds),SWIGTYPE_p_MEDCoupling__DataArrayInt, SWIG_POINTER_OWN | 0 ));
         PyTuple_SetItem(ret,1,ret1Py);
         return ret;
       }
@@ -3548,7 +3872,7 @@ namespace ParaMEDMEM
         PyObject *ret=PyTuple_New(2);
         PyObject *ret1Py=isWithoutCopy?Py_True:Py_False;
         Py_XINCREF(ret1Py);
-        PyTuple_SetItem(ret,0,SWIG_NewPointerObj(SWIG_as_voidptr(numIds),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 ));
+        PyTuple_SetItem(ret,0,SWIG_NewPointerObj(SWIG_as_voidptr(numIds),SWIGTYPE_p_MEDCoupling__DataArrayInt, SWIG_POINTER_OWN | 0 ));
         PyTuple_SetItem(ret,1,ret1Py);
         return ret;
       }
@@ -3561,7 +3885,7 @@ namespace ParaMEDMEM
         PyObject *ret=PyTuple_New(2);
         PyObject *ret1Py=isWithoutCopy?Py_True:Py_False;
         Py_XINCREF(ret1Py);
-        PyTuple_SetItem(ret,0,SWIG_NewPointerObj(SWIG_as_voidptr(famIds),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 ));
+        PyTuple_SetItem(ret,0,SWIG_NewPointerObj(SWIG_as_voidptr(famIds),SWIGTYPE_p_MEDCoupling__DataArrayInt, SWIG_POINTER_OWN | 0 ));
         PyTuple_SetItem(ret,1,ret1Py);
         return ret;
       }
@@ -3574,7 +3898,7 @@ namespace ParaMEDMEM
         PyObject *ret=PyTuple_New(2);
         PyObject *ret1Py=isWithoutCopy?Py_True:Py_False;
         Py_XINCREF(ret1Py);
-        PyTuple_SetItem(ret,0,SWIG_NewPointerObj(SWIG_as_voidptr(numIds),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 ));
+        PyTuple_SetItem(ret,0,SWIG_NewPointerObj(SWIG_as_voidptr(numIds),SWIGTYPE_p_MEDCoupling__DataArrayInt, SWIG_POINTER_OWN | 0 ));
         PyTuple_SetItem(ret,1,ret1Py);
         return ret;
       }
@@ -3606,12 +3930,12 @@ namespace ParaMEDMEM
          Py_XINCREF(ret0Py);
          PyObject *ret=PyTuple_New(7);
          PyTuple_SetItem(ret,0,ret0Py);
-         PyTuple_SetItem(ret,1,SWIG_NewPointerObj(SWIG_as_voidptr(coords),SWIGTYPE_p_ParaMEDMEM__DataArrayDouble, SWIG_POINTER_OWN | 0 ));
-         PyTuple_SetItem(ret,2,SWIG_NewPointerObj(SWIG_as_voidptr(types),SWIGTYPE_p_ParaMEDMEM__DataArrayByte, SWIG_POINTER_OWN | 0 ));
-         PyTuple_SetItem(ret,3,SWIG_NewPointerObj(SWIG_as_voidptr(cellLocations),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 ));
-         PyTuple_SetItem(ret,4,SWIG_NewPointerObj(SWIG_as_voidptr(cells),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 ));
-         PyTuple_SetItem(ret,5,SWIG_NewPointerObj(SWIG_as_voidptr(faceLocations),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 ));
-         PyTuple_SetItem(ret,6,SWIG_NewPointerObj(SWIG_as_voidptr(faces),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 ));
+         PyTuple_SetItem(ret,1,SWIG_NewPointerObj(SWIG_as_voidptr(coords),SWIGTYPE_p_MEDCoupling__DataArrayDouble, SWIG_POINTER_OWN | 0 ));
+         PyTuple_SetItem(ret,2,SWIG_NewPointerObj(SWIG_as_voidptr(types),SWIGTYPE_p_MEDCoupling__DataArrayByte, SWIG_POINTER_OWN | 0 ));
+         PyTuple_SetItem(ret,3,SWIG_NewPointerObj(SWIG_as_voidptr(cellLocations),SWIGTYPE_p_MEDCoupling__DataArrayInt, SWIG_POINTER_OWN | 0 ));
+         PyTuple_SetItem(ret,4,SWIG_NewPointerObj(SWIG_as_voidptr(cells),SWIGTYPE_p_MEDCoupling__DataArrayInt, SWIG_POINTER_OWN | 0 ));
+         PyTuple_SetItem(ret,5,SWIG_NewPointerObj(SWIG_as_voidptr(faceLocations),SWIGTYPE_p_MEDCoupling__DataArrayInt, SWIG_POINTER_OWN | 0 ));
+         PyTuple_SetItem(ret,6,SWIG_NewPointerObj(SWIG_as_voidptr(faces),SWIGTYPE_p_MEDCoupling__DataArrayInt, SWIG_POINTER_OWN | 0 ));
          return ret;
        }
      }
@@ -3638,7 +3962,7 @@ namespace ParaMEDMEM
         PyObject *ret(PyTuple_New(2));
         PyObject *ret0=PyList_New(sz);
         for(std::size_t i=0;i<sz;i++)
-          PyList_SetItem(ret0,i,SWIG_NewPointerObj(SWIG_as_voidptr(objs[i]),SWIGTYPE_p_ParaMEDMEM__DataArrayDouble, SWIG_POINTER_OWN | 0 ));
+          PyList_SetItem(ret0,i,SWIG_NewPointerObj(SWIG_as_voidptr(objs[i]),SWIGTYPE_p_MEDCoupling__DataArrayDouble, SWIG_POINTER_OWN | 0 ));
         PyTuple_SetItem(ret,0,ret0);
         PyObject *ret1Py(isInternal?Py_True:Py_False);
         Py_XINCREF(ret1Py);
@@ -3663,7 +3987,7 @@ namespace ParaMEDMEM
         self->buildVTUArrays(ret0,ret1,ret2);
         std::size_t sz(ret1.size());
         PyObject *ret=PyTuple_New(3);
-        PyTuple_SetItem(ret,0,SWIG_NewPointerObj(SWIG_as_voidptr(ret0),SWIGTYPE_p_ParaMEDMEM__DataArrayDouble, SWIG_POINTER_OWN | 0 ));
+        PyTuple_SetItem(ret,0,SWIG_NewPointerObj(SWIG_as_voidptr(ret0),SWIGTYPE_p_MEDCoupling__DataArrayDouble, SWIG_POINTER_OWN | 0 ));
         PyObject *ret1Py=PyList_New(sz);
         for(std::size_t i=0;i<sz;i++)
           PyList_SetItem(ret1Py,i,SWIG_From_int(ret1[i]));

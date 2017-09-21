@@ -140,47 +140,49 @@ void _MEDfileObjectsMount30(int dummy, ...){
   switch(medclass) {
 
   case MED_MESH :
-    strcpy(_link,MED_MAA);
+    strcpy(_link,MED_MESH_GRP);
     break;
 
   case MED_MESH_SUPPORT :
-    strcpy(_link,MED_SUP_MAA);
+    strcpy(_link,MED_MESH_SUPPORT_GRP);
     break;
 
   case MED_ELSTRUCT :
-    strcpy(_link,MED_STRCT);
+    strcpy(_link,MED_ELSTRUCT_GRP);
     break;
 
   case MED_FAMILY :
-    strcpy(_link,MED_FAS);
+    strcpy(_link,MED_FAMILY_GRP);
     break;
 
   case MED_EQUIVALENCE :
-    strcpy(_link,MED_EQS);
+    strcpy(_link,MED_EQUIVALENCE_GRP);
     break;
 
   case MED_JOINT :
-    strcpy(_link,MED_JNT);
+    strcpy(_link,MED_JOINT_GRP);
     break;
 
-  case MED_FIELD :         /* Ajouter aussi MED_CHA_INTERP*/
-    strcpy(_link,MED_CHA);
+  case MED_FIELD :
+    /* Ajouter aussi MED_CHA_INTERP*/
+    //strcpy(_link,MED_CHA_INTERP);
+    strcpy(_link,MED_FIELD_GRP);
     break;
 
   case MED_LOCALIZATION :
-    strcpy(_link,MED_GAUSS);
+    strcpy(_link,MED_LOCALIZATION_GRP);
     break;
 
   case MED_PROFILE :
-    strcpy(_link,MED_PROFILS);
+    strcpy(_link,MED_PROFILE_GRP);
     break;
 
   case MED_INTERPOLATION :
-    strcpy(_link,MED_JNT);
+    strcpy(_link,MED_INTERPOLATION_GRP);
     break;
 
   case MED_NUMERICAL_DATA :
-    strcpy(_link,MED_NUM_DATA);
+    strcpy(_link,MED_NUMERICAL_DATA_GRP);
     break;
 
   default :
@@ -226,7 +228,7 @@ void _MEDfileObjectsMount30(int dummy, ...){
    */
 
   if ( chfid && strlen(mountfilename) ) {
-    /* <mountfilename> doit être un chamin absolu (commencer par /) */
+    /* <mountfilename> doit être un chemin absolu (commencer par /) */
     /* <mountfilename> n'est pas obligé de finir par /              */
     strncpy(&_mountPath[strlen(_mountPath)-1],mountfilename,MED_MAX_CHFID_PATH);
     strcpy(&_mountPath[strlen(_mountPath)],_link);

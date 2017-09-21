@@ -30,8 +30,8 @@ _MEDfield23ComputingStepMeshInfo31(int dummy,...)
   med_idt _gid=0,_datagroup1=0,_meshgid=0,_linkgid=0;
   int     _num;
   char    _datagroupname1[2*MED_MAX_PARA+1]="";
-  char    _path          [(MED_TAILLE_CHA+MED_NAME_SIZE+1)+2*MED_MAX_PARA+1]=MED_CHA;
-  char    _meshpath [MED_TAILLE_MAA+MED_NAME_SIZE+1]=MED_MAA;
+  char    _path          [(MED_FIELD_GRP_SIZE+MED_NAME_SIZE+1)+2*MED_MAX_PARA+1]=MED_FIELD_GRP;
+  char    _meshpath [MED_MESH_GRP_SIZE+MED_NAME_SIZE+1]=MED_MESH_GRP;
   char    _linkpath [MED_TAILLE_LIENS+MED_NAME_SIZE+1]=MED_LIENS;
   char    _cstpname[2*MED_MAX_PARA+1]="";
 

@@ -43,7 +43,7 @@ med_err MEDparameterInfo(const med_idt            fid,
 			 med_int *            const nstep)
 {
   med_err  _ret = -1;
-  char     _parampath[MED_TAILLE_NUM_DATA+MED_NAME_SIZE+1] = MED_NUM_DATA;
+  char     _parampath[MED_NUMERICAL_DATA_GRP_SIZE+MED_NAME_SIZE+1] = MED_NUMERICAL_DATA_GRP;
   int      _num = paramit -1;
 
   _MEDmodeErreurVerrouiller();

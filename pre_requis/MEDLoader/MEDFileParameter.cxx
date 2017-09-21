@@ -19,7 +19,6 @@
 // Author : Anthony Geay (CEA/DEN)
 
 #include "MEDFileParameter.hxx"
-#include "MEDFileUtilities.hxx"
 #include "MEDFileSafeCaller.txx"
 #include "MEDLoaderBase.hxx"
 
@@ -27,7 +26,7 @@
 
 #include <set>
 
-using namespace ParaMEDMEM;
+using namespace MEDCoupling;
 
 MEDFileParameter1TS::MEDFileParameter1TS(int iteration, int order, double time):_iteration(iteration),_order(order),_time(time)
 {
@@ -51,7 +50,7 @@ bool MEDFileParameter1TS::isEqual(const MEDFileParameter1TS *other, double eps, 
   return true;
 }
 
-MEDFileParameter1TS *MEDFileParameterDouble1TSWTI::deepCpy() const
+MEDFileParameter1TS *MEDFileParameterDouble1TSWTI::deepCopy() const
 {
   return new MEDFileParameterDouble1TSWTI(*this);
 }
@@ -144,7 +143,7 @@ void MEDFileParameterDouble1TSWTI::finishLoading(med_idt fid, const std::string&
   MEDFILESAFECALLERRD0(MEDparameterValueRd,(fid,name.c_str(),_iteration,_order,reinterpret_cast<unsigned char *const>(&_arr)));
 }
 
-void MEDFileParameterDouble1TSWTI::writeLL(med_idt fid, const std::string& name, const MEDFileWritable& mw) const
+void MEDFileParameterDouble1TSWTI::writeAdvanced(med_idt fid, const std::string& name, const MEDFileWritable& mw) const
 {
   char nameW[MED_NAME_SIZE+1];
   MEDLoaderBase::safeStrCpy(name.c_str(),MED_NAME_SIZE,nameW,mw.getTooLongStrPolicy());
@@ -333,7 +332,7 @@ bool MEDFileParameterDouble1TS::isEqual(const MEDFileParameter1TS *other, double
   return true;
 }
 
-MEDFileParameter1TS *MEDFileParameterDouble1TS::deepCpy() const
+MEDFileParameter1TS *MEDFileParameterDouble1TS::deepCopy() const
 {
   return new MEDFileParameterDouble1TS(*this);
 }
@@ -361,7 +360,7 @@ void MEDFileParameterDouble1TS::write(const std::string& fileName, int mode) con
   med_access_mode medmod=MEDFileUtilities::TraduceWriteMode(mode);
   MEDFileUtilities::AutoFid fid=MEDfileOpen(fileName.c_str(),medmod);
   MEDFileParameterTinyInfo::writeLLHeader(fid,MED_FLOAT64);
-  MEDFileParameterDouble1TSWTI::writeLL(fid,_name,*this);
+  MEDFileParameterDouble1TSWTI::writeAdvanced(fid,_name,*this);
 }
 
 MEDFileParameterMultiTS *MEDFileParameterMultiTS::New()
@@ -371,12 +370,24 @@ MEDFileParameterMultiTS *MEDFileParameterMultiTS::New()
 
 MEDFileParameterMultiTS *MEDFileParameterMultiTS::New(const std::string& fileName)
 {
-  return new MEDFileParameterMultiTS(fileName);
+  MEDFileUtilities::AutoFid fid(OpenMEDFileForRead(fileName));
+  return New(fid);
+}
+
+MEDFileParameterMultiTS *MEDFileParameterMultiTS::New(med_idt fid)
+{
+  return new MEDFileParameterMultiTS(fid);
 }
 
 MEDFileParameterMultiTS *MEDFileParameterMultiTS::New(const std::string& fileName, const std::string& paramName)
 {
-  return new MEDFileParameterMultiTS(fileName,paramName);
+  MEDFileUtilities::AutoFid fid(OpenMEDFileForRead(fileName));
+  return New(fid,paramName);
+}
+
+MEDFileParameterMultiTS *MEDFileParameterMultiTS::New(med_idt fid, const std::string& paramName)
+{
+  return new MEDFileParameterMultiTS(fid,paramName);
 }
 
 MEDFileParameterMultiTS::MEDFileParameterMultiTS()
@@ -390,48 +401,44 @@ MEDFileParameterMultiTS::MEDFileParameterMultiTS(const MEDFileParameterMultiTS& 
       {
         const MEDFileParameter1TS *elt=_param_per_ts[i];
         if(elt)
-          _param_per_ts[i]=elt->deepCpy();
+          _param_per_ts[i]=elt->deepCopy();
       }
 }
 
-MEDFileParameterMultiTS::MEDFileParameterMultiTS(const std::string& fileName)
+MEDFileParameterMultiTS::MEDFileParameterMultiTS(med_idt fid)
 {
-  MEDFileUtilities::CheckFileForRead(fileName);
-  MEDFileUtilities::AutoFid fid=MEDfileOpen(fileName.c_str(),MED_ACC_RDONLY);
-  int nbPar=MEDnParameter(fid);
+  int nbPar(MEDnParameter(fid));
   if(nbPar<1)
     {
-      std::ostringstream oss; oss << "MEDFileParameterMultiTS : no parameter in file \"" << fileName << "\" !" ;
+      std::ostringstream oss; oss << "MEDFileParameterMultiTS : no parameter in file \"" << FileNameFromFID(fid) << "\" !" ;
       throw INTERP_KERNEL::Exception(oss.str().c_str());
     }
-  INTERP_KERNEL::AutoPtr<char> pName=MEDLoaderBase::buildEmptyString(MED_NAME_SIZE);
-  INTERP_KERNEL::AutoPtr<char> descName=MEDLoaderBase::buildEmptyString(MED_COMMENT_SIZE);
-  INTERP_KERNEL::AutoPtr<char> unitName=MEDLoaderBase::buildEmptyString(MED_SNAME_SIZE);
+  INTERP_KERNEL::AutoPtr<char> pName(MEDLoaderBase::buildEmptyString(MED_NAME_SIZE));
+  INTERP_KERNEL::AutoPtr<char> descName(MEDLoaderBase::buildEmptyString(MED_COMMENT_SIZE));
+  INTERP_KERNEL::AutoPtr<char> unitName(MEDLoaderBase::buildEmptyString(MED_SNAME_SIZE));
   med_parameter_type paramType;
   int nbOfSteps;
   MEDFILESAFECALLERRD0(MEDparameterInfo,(fid,1,pName,&paramType,descName,unitName,&nbOfSteps));
-  std::string paramNameCpp=MEDLoaderBase::buildStringFromFortran(pName,MED_NAME_SIZE);
+  std::string paramNameCpp(MEDLoaderBase::buildStringFromFortran(pName,MED_NAME_SIZE));
   _dt_unit=MEDLoaderBase::buildStringFromFortran(unitName,MED_SNAME_SIZE);
   _name=paramNameCpp;
   _desc_name=MEDLoaderBase::buildStringFromFortran(descName,MED_COMMENT_SIZE);
   finishLoading(fid,paramType,nbOfSteps);
 }
 
-MEDFileParameterMultiTS::MEDFileParameterMultiTS(const std::string& fileName, const std::string& paramName)
+MEDFileParameterMultiTS::MEDFileParameterMultiTS(med_idt fid, const std::string& paramName)
 {
-  MEDFileUtilities::CheckFileForRead(fileName);
-  MEDFileUtilities::AutoFid fid=MEDfileOpen(fileName.c_str(),MED_ACC_RDONLY);
-  int nbPar=MEDnParameter(fid);
+  int nbPar(MEDnParameter(fid));
   std::ostringstream oss; oss << "MEDFileParameterDouble1TS : no double param name \"" << paramName << "\" ! Double Parameters available are : ";
-  INTERP_KERNEL::AutoPtr<char> pName=MEDLoaderBase::buildEmptyString(MED_NAME_SIZE);
-  INTERP_KERNEL::AutoPtr<char> descName=MEDLoaderBase::buildEmptyString(MED_COMMENT_SIZE);
-  INTERP_KERNEL::AutoPtr<char> unitName=MEDLoaderBase::buildEmptyString(MED_SNAME_SIZE);
+  INTERP_KERNEL::AutoPtr<char> pName(MEDLoaderBase::buildEmptyString(MED_NAME_SIZE));
+  INTERP_KERNEL::AutoPtr<char> descName(MEDLoaderBase::buildEmptyString(MED_COMMENT_SIZE));
+  INTERP_KERNEL::AutoPtr<char> unitName(MEDLoaderBase::buildEmptyString(MED_SNAME_SIZE));
   med_parameter_type paramType;
   for(int i=0;i<nbPar;i++)
     {
       int nbOfSteps;
       MEDFILESAFECALLERRD0(MEDparameterInfo,(fid,i+1,pName,&paramType,descName,unitName,&nbOfSteps));
-      std::string paramNameCpp=MEDLoaderBase::buildStringFromFortran(pName,MED_NAME_SIZE);
+      std::string paramNameCpp(MEDLoaderBase::buildStringFromFortran(pName,MED_NAME_SIZE));
       if(paramNameCpp==paramName)
         {
           if(nbOfSteps>0)
@@ -483,19 +490,19 @@ void MEDFileParameterMultiTS::finishLoading(med_idt fid, med_parameter_type typ,
 std::size_t MEDFileParameterMultiTS::getHeapMemorySizeWithoutChildren() const
 {
   std::size_t ret(sizeof(MEDFileParameterMultiTS));
-  ret+=sizeof(MEDCouplingAutoRefCountObjectPtr<MEDFileParameter1TS>)*_param_per_ts.capacity();
+  ret+=sizeof(MCAuto<MEDFileParameter1TS>)*_param_per_ts.capacity();
   return ret;
 }
 
 std::vector<const BigMemoryObject *> MEDFileParameterMultiTS::getDirectChildrenWithNull() const
 {
   std::vector<const BigMemoryObject *> ret;
-  for(std::vector< MEDCouplingAutoRefCountObjectPtr<MEDFileParameter1TS> >::const_iterator it=_param_per_ts.begin();it!=_param_per_ts.end();it++)
+  for(std::vector< MCAuto<MEDFileParameter1TS> >::const_iterator it=_param_per_ts.begin();it!=_param_per_ts.end();it++)
     ret.push_back((const MEDFileParameter1TS *)*it);
   return ret;
 }
 
-MEDFileParameterMultiTS *MEDFileParameterMultiTS::deepCpy() const
+MEDFileParameterMultiTS *MEDFileParameterMultiTS::deepCopy() const
 {
   return new MEDFileParameterMultiTS(*this,true);
 }
@@ -523,29 +530,29 @@ void MEDFileParameterMultiTS::write(const std::string& fileName, int mode) const
 {
   med_access_mode medmod=MEDFileUtilities::TraduceWriteMode(mode);
   MEDFileUtilities::AutoFid fid=MEDfileOpen(fileName.c_str(),medmod);
-  writeLL(fid,*this);
+  writeAdvanced(fid,*this);
 }
 
-void MEDFileParameterMultiTS::writeLL(med_idt fid, const MEDFileWritable& mw) const
+void MEDFileParameterMultiTS::writeAdvanced(med_idt fid, const MEDFileWritable& mw) const
 {
   std::set<med_parameter_type> diffType;
-  for(std::vector< MEDCouplingAutoRefCountObjectPtr<MEDFileParameter1TS> >::const_iterator it=_param_per_ts.begin();it!=_param_per_ts.end();it++)
+  for(std::vector< MCAuto<MEDFileParameter1TS> >::const_iterator it=_param_per_ts.begin();it!=_param_per_ts.end();it++)
     {
       const MEDFileParameter1TS *elt(*it);
       if(dynamic_cast<const MEDFileParameterDouble1TSWTI *>(elt))
         diffType.insert(MED_FLOAT64);
     }
   if(diffType.size()>1)
-    throw INTERP_KERNEL::Exception("MEDFileParameterMultiTS::writeLL : impossible to mix type of data in parameters in MED file ! Only float64 or only int32 ...");
+    throw INTERP_KERNEL::Exception("MEDFileParameterMultiTS::writeAdvanced : impossible to mix type of data in parameters in MED file ! Only float64 or only int32 ...");
   if(diffType.empty())
     return;
-  med_parameter_type typ=*diffType.begin();
+  med_parameter_type typ(*diffType.begin());
   MEDFileParameterTinyInfo::writeLLHeader(fid,typ);
-  for(std::vector< MEDCouplingAutoRefCountObjectPtr<MEDFileParameter1TS> >::const_iterator it=_param_per_ts.begin();it!=_param_per_ts.end();it++)
+  for(std::vector< MCAuto<MEDFileParameter1TS> >::const_iterator it=_param_per_ts.begin();it!=_param_per_ts.end();it++)
     {
       const MEDFileParameter1TS *elt(*it);
       if(elt)
-        elt->writeLL(fid,_name,mw);
+        elt->writeAdvanced(fid,_name,mw);
     }
 }
 
@@ -559,7 +566,7 @@ std::string MEDFileParameterMultiTS::simpleRepr() const
 void MEDFileParameterMultiTS::simpleRepr2(int bkOffset, std::ostream& oss) const
 {
   MEDFileParameterTinyInfo::mainRepr(bkOffset,oss);
-  for(std::vector< MEDCouplingAutoRefCountObjectPtr<MEDFileParameter1TS> >::const_iterator it=_param_per_ts.begin();it!=_param_per_ts.end();it++)
+  for(std::vector< MCAuto<MEDFileParameter1TS> >::const_iterator it=_param_per_ts.begin();it!=_param_per_ts.end();it++)
     {
       const MEDFileParameter1TS *elt(*it);
       if(elt)
@@ -569,9 +576,9 @@ void MEDFileParameterMultiTS::simpleRepr2(int bkOffset, std::ostream& oss) const
 
 void MEDFileParameterMultiTS::appendValue(int dt, int it, double time, double val)
 {
-  MEDCouplingAutoRefCountObjectPtr<MEDFileParameterDouble1TSWTI> elt=MEDFileParameterDouble1TSWTI::New(dt,it,time);
+  MCAuto<MEDFileParameterDouble1TSWTI> elt=MEDFileParameterDouble1TSWTI::New(dt,it,time);
   elt->setValue(val);
-  MEDCouplingAutoRefCountObjectPtr<MEDFileParameter1TS> elt2((MEDFileParameterDouble1TSWTI*)elt); elt2->incrRef();
+  MCAuto<MEDFileParameter1TS> elt2((MEDFileParameterDouble1TSWTI*)elt); elt2->incrRef();
   _param_per_ts.push_back(elt2);
 }
 
@@ -598,7 +605,7 @@ int MEDFileParameterMultiTS::getPosOfTimeStep(int iteration, int order) const
 {
   int ret=0;
   std::ostringstream oss; oss << "MEDFileParameterMultiTS::getPosOfTimeStep : no such iteration=" << iteration << " order=" << order << " ! Possibilities are :";
-  for(std::vector< MEDCouplingAutoRefCountObjectPtr<MEDFileParameter1TS> >::const_iterator it=_param_per_ts.begin();it!=_param_per_ts.end();it++,ret++)
+  for(std::vector< MCAuto<MEDFileParameter1TS> >::const_iterator it=_param_per_ts.begin();it!=_param_per_ts.end();it++,ret++)
     {
       const MEDFileParameter1TS *elt(*it);
       if(elt)
@@ -616,7 +623,7 @@ int MEDFileParameterMultiTS::getPosGivenTime(double time, double eps) const
 {
   int ret=0;
   std::ostringstream oss; oss << "MEDFileParameterMultiTS::getPosGivenTime : no such time=" << time << " ! Possibilities are :";
-  for(std::vector< MEDCouplingAutoRefCountObjectPtr<MEDFileParameter1TS> >::const_iterator it=_param_per_ts.begin();it!=_param_per_ts.end();it++,ret++)
+  for(std::vector< MCAuto<MEDFileParameter1TS> >::const_iterator it=_param_per_ts.begin();it!=_param_per_ts.end();it++,ret++)
     {
       const MEDFileParameter1TS *elt(*it);
       if(elt)
@@ -655,7 +662,7 @@ void MEDFileParameterMultiTS::eraseTimeStepIds(const int *startIds, const int *e
         std::ostringstream oss; oss << "MEDFileParameterMultiTS::eraseTimeStepIds : At pos #" << std::distance(startIds,w) << " value is " << *w << " should be in [0," << len << ") !"; throw INTERP_KERNEL::Exception(oss.str().c_str());
       }
   std::size_t newNb=std::count(b.begin(),b.end(),true);
-  std::vector< MEDCouplingAutoRefCountObjectPtr<MEDFileParameter1TS> > paramPerTs(newNb);
+  std::vector< MCAuto<MEDFileParameter1TS> > paramPerTs(newNb);
   std::size_t j=0;
   for(std::size_t i=0;i<_param_per_ts.size();i++)
     if(b[i])
@@ -671,7 +678,7 @@ int MEDFileParameterMultiTS::getNumberOfTS() const
 std::vector< std::pair<int,int> > MEDFileParameterMultiTS::getIterations() const
 {
   std::vector< std::pair<int,int> > ret;
-  for(std::vector< MEDCouplingAutoRefCountObjectPtr<MEDFileParameter1TS> >::const_iterator it=_param_per_ts.begin();it!=_param_per_ts.end();it++)
+  for(std::vector< MCAuto<MEDFileParameter1TS> >::const_iterator it=_param_per_ts.begin();it!=_param_per_ts.end();it++)
     {
       const MEDFileParameter1TS *elt(*it);
       if(elt)
@@ -687,7 +694,7 @@ std::vector< std::pair<int,int> > MEDFileParameterMultiTS::getTimeSteps(std::vec
 {
   std::vector< std::pair<int,int> > ret0;
   ret1.clear();
-  for(std::vector< MEDCouplingAutoRefCountObjectPtr<MEDFileParameter1TS> >::const_iterator it=_param_per_ts.begin();it!=_param_per_ts.end();it++)
+  for(std::vector< MCAuto<MEDFileParameter1TS> >::const_iterator it=_param_per_ts.begin();it!=_param_per_ts.end();it++)
     {
       const MEDFileParameter1TS *elt(*it);
       if(elt)
@@ -706,25 +713,29 @@ MEDFileParameters *MEDFileParameters::New()
 
 MEDFileParameters *MEDFileParameters::New(const std::string& fileName)
 {
-  return new MEDFileParameters(fileName);
+  MEDFileUtilities::AutoFid fid(OpenMEDFileForRead(fileName));
+  return New(fid);
 }
 
-MEDFileParameters::MEDFileParameters(const std::string& fileName)
+MEDFileParameters *MEDFileParameters::New(med_idt fid)
 {
-  MEDFileUtilities::CheckFileForRead(fileName);
-  MEDFileUtilities::AutoFid fid=MEDfileOpen(fileName.c_str(),MED_ACC_RDONLY);
+  return new MEDFileParameters(fid);
+}
+
+MEDFileParameters::MEDFileParameters(med_idt fid)
+{
   int nbPar=MEDnParameter(fid);
   _params.resize(nbPar);
-  INTERP_KERNEL::AutoPtr<char> pName=MEDLoaderBase::buildEmptyString(MED_NAME_SIZE);
-  INTERP_KERNEL::AutoPtr<char> descName=MEDLoaderBase::buildEmptyString(MED_COMMENT_SIZE);
-  INTERP_KERNEL::AutoPtr<char> unitName=MEDLoaderBase::buildEmptyString(MED_SNAME_SIZE);
+  INTERP_KERNEL::AutoPtr<char> pName(MEDLoaderBase::buildEmptyString(MED_NAME_SIZE));
+  INTERP_KERNEL::AutoPtr<char> descName(MEDLoaderBase::buildEmptyString(MED_COMMENT_SIZE));
+  INTERP_KERNEL::AutoPtr<char> unitName(MEDLoaderBase::buildEmptyString(MED_SNAME_SIZE));
   med_parameter_type paramType;
   for(int i=0;i<nbPar;i++)
     {
       int nbOfSteps;
       MEDFILESAFECALLERRD0(MEDparameterInfo,(fid,i+1,pName,&paramType,descName,unitName,&nbOfSteps));
-      std::string paramNameCpp=MEDLoaderBase::buildStringFromFortran(pName,MED_NAME_SIZE);
-      _params[i]=MEDFileParameterMultiTS::New(fileName,paramNameCpp);
+      std::string paramNameCpp(MEDLoaderBase::buildStringFromFortran(pName,MED_NAME_SIZE));
+      _params[i]=MEDFileParameterMultiTS::New(fid,paramNameCpp);
     }
 }
 
@@ -735,19 +746,19 @@ MEDFileParameters::MEDFileParameters()
 std::size_t MEDFileParameters::getHeapMemorySizeWithoutChildren() const
 {
   std::size_t ret(sizeof(MEDFileParameters));
-  ret+=sizeof(MEDCouplingAutoRefCountObjectPtr<MEDFileParameterMultiTS>)*_params.capacity();
+  ret+=sizeof(MCAuto<MEDFileParameterMultiTS>)*_params.capacity();
   return ret;
 }
 
 std::vector<const BigMemoryObject *> MEDFileParameters::getDirectChildrenWithNull() const
 {
   std::vector<const BigMemoryObject *> ret;
-  for(std::vector< MEDCouplingAutoRefCountObjectPtr<MEDFileParameterMultiTS> >::const_iterator it=_params.begin();it!=_params.end();it++)
+  for(std::vector< MCAuto<MEDFileParameterMultiTS> >::const_iterator it=_params.begin();it!=_params.end();it++)
     ret.push_back((const MEDFileParameterMultiTS *)*it);
   return ret;
 }
 
-MEDFileParameters *MEDFileParameters::deepCpy() const
+MEDFileParameters *MEDFileParameters::deepCopy() const
 {
   return new MEDFileParameters(*this,true);
 }
@@ -771,31 +782,24 @@ bool MEDFileParameters::isEqual(const MEDFileParameters *other, double eps, std:
   return true;
 }
 
-MEDFileParameters::MEDFileParameters(const MEDFileParameters& other, bool deepCopy):MEDFileWritable(other),_params(other._params)
+MEDFileParameters::MEDFileParameters(const MEDFileParameters& other, bool deepCopy):MEDFileWritableStandAlone(other),_params(other._params)
 {
   if(deepCopy)
     for(std::size_t i=0;i<_params.size();i++)
       {
         const MEDFileParameterMultiTS *elt=_params[i];
         if(elt)
-          _params[i]=elt->deepCpy();
+          _params[i]=elt->deepCopy();
       }
-}
-
-void MEDFileParameters::write(const std::string& fileName, int mode) const
-{
-  med_access_mode medmod=MEDFileUtilities::TraduceWriteMode(mode);
-  MEDFileUtilities::AutoFid fid=MEDfileOpen(fileName.c_str(),medmod);
-  writeLL(fid);
 }
 
 void MEDFileParameters::writeLL(med_idt fid) const
 {
-  for(std::vector< MEDCouplingAutoRefCountObjectPtr<MEDFileParameterMultiTS> >::const_iterator it=_params.begin();it!=_params.end();it++)
+  for(std::vector< MCAuto<MEDFileParameterMultiTS> >::const_iterator it=_params.begin();it!=_params.end();it++)
     {
       const MEDFileParameterMultiTS *elt(*it);
       if(elt)
-        elt->writeLL(fid,*this);
+        elt->writeAdvanced(fid,*this);
     }
 }
 
@@ -803,7 +807,7 @@ std::vector<std::string> MEDFileParameters::getParamsNames() const
 {
   std::vector<std::string> ret(_params.size());
   int i=0;
-  for(std::vector< MEDCouplingAutoRefCountObjectPtr<MEDFileParameterMultiTS> >::const_iterator it=_params.begin();it!=_params.end();it++,i++)
+  for(std::vector< MCAuto<MEDFileParameterMultiTS> >::const_iterator it=_params.begin();it!=_params.end();it++,i++)
     {
       const MEDFileParameterMultiTS *p=(*it);
       if(p)
@@ -828,7 +832,7 @@ std::string MEDFileParameters::simpleRepr() const
 
 void MEDFileParameters::simpleReprWithoutHeader(std::ostream& oss) const
 {
-  for(std::vector< MEDCouplingAutoRefCountObjectPtr<MEDFileParameterMultiTS> >::const_iterator it=_params.begin();it!=_params.end();it++)
+  for(std::vector< MCAuto<MEDFileParameterMultiTS> >::const_iterator it=_params.begin();it!=_params.end();it++)
     {
       const MEDFileParameterMultiTS *elt(*it);
       if(elt)
@@ -847,7 +851,7 @@ void MEDFileParameters::pushParam(MEDFileParameterMultiTS *param)
 {
   if(param)
     param->incrRef();
-  MEDCouplingAutoRefCountObjectPtr<MEDFileParameterMultiTS> elt(param);
+  MCAuto<MEDFileParameterMultiTS> elt(param);
   _params.push_back(elt);
 }
 
@@ -859,7 +863,7 @@ void MEDFileParameters::setParamAtPos(int i, MEDFileParameterMultiTS *param)
     _params.resize(i+1);
   if(param)
     param->incrRef();
-  MEDCouplingAutoRefCountObjectPtr<MEDFileParameterMultiTS> elt(param);
+  MCAuto<MEDFileParameterMultiTS> elt(param);
   _params[i]=elt;
 }
 
@@ -893,14 +897,14 @@ void MEDFileParameters::destroyParamAtPos(int i)
       std::ostringstream oss; oss << "MEDFileParameters::destroyParamAtPos : should be in [0," << _params.size() << ") !";
       throw INTERP_KERNEL::Exception(oss.str().c_str());
     }
-  _params[i]=MEDCouplingAutoRefCountObjectPtr<MEDFileParameterMultiTS>(0);
+  _params[i]=MCAuto<MEDFileParameterMultiTS>(0);
 }
 
 int MEDFileParameters::getPosFromParamName(const std::string& paramName) const
 {
   std::ostringstream oss; oss << "MEDFileParameters::getPosFromParamName : no such name=" << paramName << " ! Possibilities are :";
   int ret=0;
-  for(std::vector< MEDCouplingAutoRefCountObjectPtr<MEDFileParameterMultiTS> >::const_iterator it=_params.begin();it!=_params.end();it++,ret++)
+  for(std::vector< MCAuto<MEDFileParameterMultiTS> >::const_iterator it=_params.begin();it!=_params.end();it++,ret++)
     {
       const MEDFileParameterMultiTS *elt(*it);
       if(elt)

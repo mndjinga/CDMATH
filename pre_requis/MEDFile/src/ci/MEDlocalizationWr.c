@@ -64,7 +64,7 @@ MEDlocalizationWr(const med_idt           fid,
   med_idt _lzid=0, _root=0;
   med_int _nentity=0;
   med_int _intgeotype = -1;
-  char    _path[MED_TAILLE_GAUSS+MED_NAME_SIZE+1]=MED_GAUSS;
+  char    _path[MED_LOCALIZATION_GRP_SIZE+MED_NAME_SIZE+1]=MED_LOCALIZATION_GRP;
   med_filter     _filter        = MED_FILTER_INIT;
 
   /*
@@ -158,7 +158,7 @@ MEDlocalizationWr(const med_idt           fid,
     _nentity = (geotype%100);
 
     if ( MEDfilterEntityCr(fid,_nentity, 1, spacedimension, MED_ALL_CONSTITUENT,
-			   switchmode,MED_UNDEF_PFLMODE,
+			   switchmode,MED_UNDEF_STMODE,
 			   MED_NO_PROFILE, MED_UNDEF_SIZE, NULL, &_filter) < 0 ) {
       MED_ERR_(_ret,MED_ERR_CREATE,MED_ERR_FILTER,MED_ERR_INTERNAL_MSG);
       goto ERROR;
@@ -201,7 +201,7 @@ MEDlocalizationWr(const med_idt           fid,
 
   _nentity = nipoint;
   if ( MEDfilterEntityCr(fid,_nentity, 1, spacedimension, MED_ALL_CONSTITUENT,
-			 switchmode,MED_UNDEF_PFLMODE,
+			 switchmode,MED_UNDEF_STMODE,
 			 MED_NO_PROFILE, MED_UNDEF_SIZE, NULL, &_filter) < 0 ) {
     MED_ERR_(_ret,MED_ERR_CREATE,MED_ERR_FILTER,MED_ERR_INTERNAL_MSG);
     goto ERROR;
@@ -223,7 +223,7 @@ MEDlocalizationWr(const med_idt           fid,
 
   _nentity = nipoint;
   if ( MEDfilterEntityCr(fid,_nentity, 1, 1, MED_ALL_CONSTITUENT,
-			 switchmode,MED_UNDEF_PFLMODE,
+			 switchmode,MED_UNDEF_STMODE,
 			 MED_NO_PROFILE, MED_UNDEF_SIZE, NULL, &_filter) < 0 ) {
     MED_ERR_(_ret,MED_ERR_CREATE,MED_ERR_FILTER,MED_ERR_INTERNAL_MSG);
     goto ERROR;
@@ -250,7 +250,7 @@ MEDlocalizationWr(const med_idt           fid,
   }
 
   if (_root>0)            if (_MEDdatagroupFermer(_root) < 0) {
-    MED_ERR_(_ret,MED_ERR_CLOSE,MED_ERR_DATAGROUP,MED_GAUSS);
+    MED_ERR_(_ret,MED_ERR_CLOSE,MED_ERR_DATAGROUP,MED_LOCALIZATION_GRP);
     ISCRUTE_id(_root);
   }
 

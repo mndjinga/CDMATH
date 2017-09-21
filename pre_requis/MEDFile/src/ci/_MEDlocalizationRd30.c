@@ -31,15 +31,15 @@ _MEDlocalizationRd30(int dummy, ...) {
   med_idt _lzid=0, _root=0;
   med_int _nentity=0,_nipoint=0,_localizationspacedimension=0;
   med_int _intgeotype = -1;
-  char    _path[MED_TAILLE_GAUSS+MED_NAME_SIZE+1]=MED_GAUSS;
+  char    _path[MED_LOCALIZATION_GRP_SIZE+MED_NAME_SIZE+1]=MED_LOCALIZATION_GRP;
   med_filter     _filter        = MED_FILTER_INIT;
 
-  char     _elempath[MED_TAILLE_STRCT+MED_NAME_SIZE+1]=MED_STRCT;
+  char     _elempath[MED_ELSTRUCT_GRP_SIZE+MED_NAME_SIZE+1]=MED_ELSTRUCT_GRP;
   char     _supportmeshname[MED_NAME_SIZE+1]="";
   med_bool _chgt=MED_FALSE,_trsf=MED_FALSE;
   med_int  _nnodes=0;
   med_int  _supportmeshspacedimension=0;
-  char     _meshpath[MED_TAILLE_SUP_MAA+MED_NAME_SIZE+1]=MED_SUP_MAA;
+  char     _meshpath[MED_MESH_SUPPORT_GRP_SIZE+MED_NAME_SIZE+1]=MED_MESH_SUPPORT_GRP;
 
   MED_VARGS_DECL(const, med_idt                 , , fid               );
   MED_VARGS_DECL(const, char*            , const  , localizationname  );
@@ -136,7 +136,7 @@ _MEDlocalizationRd30(int dummy, ...) {
     _nentity = (_intgeotype%100);
 
     if ( MEDfilterEntityCr(fid,_nentity, 1, _localizationspacedimension, MED_ALL_CONSTITUENT,
-			   switchmode,MED_UNDEF_PFLMODE,
+			   switchmode,MED_UNDEF_STMODE,
 			   MED_NO_PROFILE, MED_UNDEF_SIZE, NULL, &_filter) < 0 ) {
       MED_ERR_(_ret,MED_ERR_CREATE,MED_ERR_FILTER,MED_ERR_INTERNAL_MSG);
       goto ERROR;
@@ -218,7 +218,7 @@ _MEDlocalizationRd30(int dummy, ...) {
 
   _nentity = _nipoint;
   if ( MEDfilterEntityCr(fid,_nentity, 1, _localizationspacedimension, MED_ALL_CONSTITUENT,
-			 switchmode,MED_UNDEF_PFLMODE,
+			 switchmode,MED_UNDEF_STMODE,
 			 MED_NO_PROFILE, MED_UNDEF_SIZE, NULL, &_filter) < 0 ) {
     MED_ERR_(_ret,MED_ERR_CREATE,MED_ERR_FILTER,MED_ERR_INTERNAL_MSG);
     goto ERROR;
@@ -253,7 +253,7 @@ _MEDlocalizationRd30(int dummy, ...) {
 
   _nentity = _nipoint;
   if ( MEDfilterEntityCr(fid,_nentity, 1, 1, MED_ALL_CONSTITUENT,
-			 switchmode,MED_UNDEF_PFLMODE,
+			 switchmode,MED_UNDEF_STMODE,
 			 MED_NO_PROFILE, MED_UNDEF_SIZE, NULL, &_filter) < 0 ) {
     MED_ERR_(_ret,MED_ERR_CREATE,MED_ERR_FILTER,MED_ERR_INTERNAL_MSG);
     goto ERROR;
@@ -281,7 +281,7 @@ _MEDlocalizationRd30(int dummy, ...) {
   }
 
   if (_root>0)            if (_MEDdatagroupFermer(_root) < 0) {
-    MED_ERR_(_ret,MED_ERR_CLOSE,MED_ERR_DATAGROUP,MED_GAUSS);
+    MED_ERR_(_ret,MED_ERR_CLOSE,MED_ERR_DATAGROUP,MED_LOCALIZATION_GRP);
     ISCRUTE_id(_root);
   }
 

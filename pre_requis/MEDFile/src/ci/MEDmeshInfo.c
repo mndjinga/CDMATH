@@ -55,7 +55,7 @@ med_err MEDmeshInfo(const med_idt            fid,
 		    char *             const axisunit)
 {
   med_err  _ret=-1;
-  char     _meshpath[MED_TAILLE_MAA+MED_NAME_SIZE+1]=MED_MAA;
+  char     _meshpath[MED_MESH_GRP_SIZE+MED_NAME_SIZE+1]=MED_MESH_GRP;
   int      _num = meshit -1;
 
   /*
@@ -72,7 +72,7 @@ med_err MEDmeshInfo(const med_idt            fid,
   }
   strcat(_meshpath,meshname);
 
-/*   if ( _MEDmeshInfoByName(fid, MED_MAA, meshname, spacedim, meshdim, meshtype, */
+/*   if ( _MEDmeshInfoByName(fid, MED_MESH_GRP, meshname, spacedim, meshdim, meshtype, */
 /* 			  description, dtunit, sortingtype, nstep,axistype, axisname, axisunit)  < 0) { */
 /*     MED_ERR_(_ret,MED_ERR_CALL,MED_ERR_API,MED_ERR_MESH_MSG); */
 /*     SSCRUTE(meshname);SSCRUTE(_meshpath);SSCRUTE("MEDmeshInfoByName"); */

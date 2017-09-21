@@ -171,7 +171,7 @@ int main (int argc, char **argv) {
       if ((nnodes = MEDmeshnEntityWithProfile(fid, meshname, numdt, numit, 
 					      MED_NODE, MED_NONE,
 					      MED_COORDINATE, MED_NO_CMODE,
-					      MED_GLOBAL_PFLMODE, profilename, &profilesize,
+					      MED_GLOBAL_STMODE, profilename, &profilesize,
 					      &coordinatechangement, &geotransformation)) < 0) {
 	MESSAGE("ERROR : number of nodes ..."); 
 	goto ERROR;
@@ -181,7 +181,7 @@ int main (int argc, char **argv) {
       /* to verify if there is a matrix transformation => UsesCase_MEDmesh12. */
       if (coordinatechangement && geotransformation) {
 	if (MEDmeshNodeCoordinateWithProfileRd(fid, meshname, numdt, numit, 
-					       MED_GLOBAL_PFLMODE,profilename,
+					       MED_GLOBAL_STMODE,profilename,
 					       MED_FULL_INTERLACE,MED_ALL_CONSTITUENT,
 					       coordinates) < 0) {
 	  MESSAGE("ERROR : nodes coordinates ...");

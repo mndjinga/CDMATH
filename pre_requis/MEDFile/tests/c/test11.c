@@ -39,7 +39,7 @@
 #define USER_INTERLACE MED_FULL_INTERLACE
 #endif
 
-#define USER_MODE MED_COMPACT_PFLMODE
+#define USER_MODE MED_COMPACT_STMODE
 
 med_err getFieldsOn(med_idt fid, char * nomcha, med_field_type typcha, med_int ncomp,
 		    med_entity_type entite, med_switch_mode stockage, med_int ncstp);

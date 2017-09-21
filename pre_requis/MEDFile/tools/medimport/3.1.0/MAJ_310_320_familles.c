@@ -74,9 +74,9 @@ void MAJ_310_320_familles(med_idt fid)
 {
   med_err  _ret=0;
   htri_t   _datasetexist;
-  char     _pathi[(MED_TAILLE_FAS+MED_NAME_SIZE+1)  + MED_TAILLE_FAS_ENTITE+MED_NAME_SIZE+1] = MED_FAS;
-  char     _pathf[(MED_TAILLE_FAS+1+MED_NAME_SIZE+1)+ MED_TAILLE_FAS_ENTITE+MED_NAME_SIZE+1] = "/FAS_/";
-  /* char _pathtmp[MED_TAILLE_FAS+3]="/FAS__/"; */
+  char     _pathi[(MED_FAMILY_GRP_SIZE+MED_NAME_SIZE+1)  + MED_TAILLE_FAS_ENTITE+MED_NAME_SIZE+1] = MED_FAMILY_GRP;
+  char     _pathf[(MED_FAMILY_GRP_SIZE+1+MED_NAME_SIZE+1)+ MED_TAILLE_FAS_ENTITE+MED_NAME_SIZE+1] = "/FAS_/";
+  /* char _pathtmp[MED_FAMILY_GRP_SIZE+3]="/FAS__/"; */
   int      _meshi=0;
   med_size _sizei=0,_sizef=0,_size=0,_nmesh=0;
   med_idt  _famId=0,_famMeshId=0,_famZeId=0,_famElId=0,_famNoeId=0;
@@ -91,10 +91,10 @@ void MAJ_310_320_familles(med_idt fid)
     /*
      * On recupere le nom du maillage
      */
-    _pathi[MED_TAILLE_FAS  ]='\0';
-    _pathf[MED_TAILLE_FAS+1]='\0';
+    _pathi[MED_FAMILY_GRP_SIZE  ]='\0';
+    _pathf[MED_FAMILY_GRP_SIZE+1]='\0';
 
-   _ret =  _MEDobjectGetName(fid, _pathi ,_meshi, &_pathi[MED_TAILLE_FAS]) < 0;
+   _ret =  _MEDobjectGetName(fid, _pathi ,_meshi, &_pathi[MED_FAMILY_GRP_SIZE]) < 0;
     MED_ERR_EXIT_IF(_ret,MED_ERR_ACCESS,MED_ERR_DATAGROUP,_pathi);
     /* SSCRUTE(_pathi); */
 
@@ -107,7 +107,7 @@ void MAJ_310_320_familles(med_idt fid)
       MED_ERR_EXIT_IF(_ret,MED_ERR_CLOSE,MED_ERR_DATAGROUP,_pathf);
     }
     /*Création de la famille sur le maillage courant*/
-    strncpy(&_pathf[MED_TAILLE_FAS+1],&_pathi[MED_TAILLE_FAS],MED_NAME_SIZE+1);
+    strncpy(&_pathf[MED_FAMILY_GRP_SIZE+1],&_pathi[MED_FAMILY_GRP_SIZE],MED_NAME_SIZE+1);
     _datasetexist=H5Lexists( fid, _pathf, H5P_DEFAULT );
     if(!_datasetexist) {
       _famMeshId = _MEDdatagroupCreer(fid,_pathf);
@@ -156,8 +156,8 @@ void MAJ_310_320_familles(med_idt fid)
     MED_ERR_EXIT_IF(_ret,MED_ERR_CLOSE,MED_ERR_DATAGROUP,_pathf);
   }
 
-  _pathi[MED_TAILLE_FAS  ]='\0';
-  _pathf[MED_TAILLE_FAS+1]='\0';
+  _pathi[MED_FAMILY_GRP_SIZE  ]='\0';
+  _pathf[MED_FAMILY_GRP_SIZE+1]='\0';
   _datasetexist=H5Lexists( fid, _pathf, H5P_DEFAULT );
 
   if (_datasetexist ) {

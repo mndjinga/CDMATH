@@ -38,11 +38,11 @@ void  _MEDfieldValueAdvancedWr30(int dummy,...) {
   med_int               _intfieldtype=0;
   med_geometry_type     _locgeotype=0;
   med_int               _intlocgeotype=0;
-  char _gidname           [MED_TAILLE_CHA+MED_NAME_SIZE+1]="";
+  char _gidname           [MED_FIELD_GRP_SIZE+MED_NAME_SIZE+1]="";
   char _datagroupname1    [2*MED_MAX_PARA+1]="";
   char _datagroupname2    [2*MED_TAILLE_NOM_ENTITE+2]="";
   char _profilename       [MED_NAME_SIZE+1]="";
-  char _locgidname        [MED_TAILLE_GAUSS+MED_NAME_SIZE+1]=MED_GAUSS;
+  char _locgidname        [MED_LOCALIZATION_GRP_SIZE+MED_NAME_SIZE+1]=MED_LOCALIZATION_GRP;
   char _sectionmeshname      [MED_NAME_SIZE+1]="";
   char _sectiongeotypename   [MED_NAME_SIZE+1]="";
   char _geotypename       [MED_TAILLE_NOM_ENTITE+1]="";
@@ -129,11 +129,11 @@ if (_MEDcheckVersion30(fid) < 0) goto ERROR;
   }
 
   /*
-   * Si le DataGroup MED_CHA n'existe pas => erreur
+   * Si le DataGroup MED_FIELD_GRP n'existe pas => erreur
    */
   NOFINALBLANK(fieldname,ERROR);
 
-  strcpy(_gidname,MED_CHA);
+  strcpy(_gidname,MED_FIELD_GRP);
   strcat(_gidname,fieldname);
   if ((_gid = _MEDdatagroupOuvrir(fid,_gidname)) < 0) {
     MED_ERR_(_ret,MED_ERR_OPEN,MED_ERR_DATAGROUP,MED_ERR_FIELD_MSG);

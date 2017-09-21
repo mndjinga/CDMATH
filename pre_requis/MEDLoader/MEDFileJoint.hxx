@@ -21,11 +21,13 @@
 #define __MEDFILEJOINT_HXX__
 
 #include "MEDLoaderDefines.hxx"
-#include "MEDFileUtilities.hxx"
+#include "MEDFileUtilities.txx"
 #include "MEDCouplingMemArray.hxx"
-#include "MEDCouplingAutoRefCountObjectPtr.hxx"
+#include "MCAuto.hxx"
 
-namespace ParaMEDMEM
+#include "NormalizedGeometricTypes"
+
+namespace MEDCoupling
 {
 /*!
  * \brief Joint Correspondence enumerates pairs of corresponding entities of a
@@ -43,7 +45,7 @@ public:
                                                           INTERP_KERNEL::NormalizedCellType rem_geo_type);
   MEDLOADER_EXPORT std::size_t getHeapMemorySizeWithoutChildren() const;
   MEDLOADER_EXPORT std::vector<const BigMemoryObject *> getDirectChildrenWithNull() const;
-  MEDLOADER_EXPORT MEDFileJointCorrespondence *deepCpy() const;
+  MEDLOADER_EXPORT MEDFileJointCorrespondence *deepCopy() const;
   MEDLOADER_EXPORT MEDFileJointCorrespondence *shallowCpy() const;
   MEDLOADER_EXPORT bool isEqual(const MEDFileJointCorrespondence *other) const;
   MEDLOADER_EXPORT void setIsNodal(bool isNodal) { _is_nodal = isNodal; }
@@ -68,7 +70,7 @@ private:
   bool                                           _is_nodal;
   INTERP_KERNEL::NormalizedCellType              _loc_geo_type;
   INTERP_KERNEL::NormalizedCellType              _rem_geo_type;
-  MEDCouplingAutoRefCountObjectPtr<DataArrayInt> _correspondence;
+  MCAuto<DataArrayInt> _correspondence;
 };
 
 /*!
@@ -82,7 +84,7 @@ public:
   MEDLOADER_EXPORT static MEDFileJointOneStep *New(med_idt fid, const std::string& mName, const std::string& jointName, int number=1);
   MEDLOADER_EXPORT std::size_t getHeapMemorySizeWithoutChildren() const;
   MEDLOADER_EXPORT std::vector<const BigMemoryObject *> getDirectChildrenWithNull() const;
-  MEDLOADER_EXPORT MEDFileJointOneStep *deepCpy() const;
+  MEDLOADER_EXPORT MEDFileJointOneStep *deepCopy() const;
   MEDLOADER_EXPORT MEDFileJointOneStep *shallowCpy() const;
   MEDLOADER_EXPORT bool isEqual(const MEDFileJointOneStep *other) const;
   MEDLOADER_EXPORT void setOrder(int order) { _order=order; }
@@ -105,14 +107,14 @@ protected:
   int _order;
   int _iteration;
 private:
-  std::vector<MEDCouplingAutoRefCountObjectPtr<MEDFileJointCorrespondence> > _correspondences;
+  std::vector<MCAuto<MEDFileJointCorrespondence> > _correspondences;
 };
 
 /*!
  * \brief Joint holds a sequence of joints of different iterations relating to
  *        a pair of mesh domains: a local one and a distant one
  */
-class MEDFileJoint : public RefCountObject, public MEDFileWritable
+class MEDFileJoint : public RefCountObject, public MEDFileWritableStandAlone
 {
 public:
     MEDLOADER_EXPORT static MEDFileJoint *New();
@@ -121,7 +123,7 @@ public:
     MEDLOADER_EXPORT static MEDFileJoint *New(const std::string& jointName, const std::string& locMeshName, const std::string& remoteMeshName, int remoteMeshNum );
     MEDLOADER_EXPORT std::size_t getHeapMemorySizeWithoutChildren() const;
     MEDLOADER_EXPORT std::vector<const BigMemoryObject *> getDirectChildrenWithNull() const;
-    MEDLOADER_EXPORT MEDFileJoint *deepCpy() const;
+    MEDLOADER_EXPORT MEDFileJoint *deepCopy() const;
     MEDLOADER_EXPORT MEDFileJoint *shallowCpy() const;
     MEDLOADER_EXPORT bool isEqual(const MEDFileJoint *other) const;
     MEDLOADER_EXPORT void setLocalMeshName(const std::string& name) { _loc_mesh_name=name; }
@@ -139,8 +141,7 @@ public:
     MEDLOADER_EXPORT int getNumberOfSteps() const;
     MEDLOADER_EXPORT MEDFileJointOneStep *getStepAtPos(int i) const;
 
-    MEDLOADER_EXPORT void write(const std::string& fileName, int mode) const;
-    MEDLOADER_EXPORT void write(med_idt fid) const;
+    MEDLOADER_EXPORT void writeLL(med_idt fid) const;
 
     MEDLOADER_EXPORT std::string simpleRepr() const;
   private:
@@ -152,25 +153,24 @@ public:
     std::string _desc_name;
     int _domain_number;
     std::string _rem_mesh_name;
-    std::vector< MEDCouplingAutoRefCountObjectPtr<MEDFileJointOneStep> > _joint;
+    std::vector< MCAuto<MEDFileJointOneStep> > _joint;
   };
 
   /*!
    * \brief Joints of a mesh domain relating to all other mesh domains
    */
-  class MEDFileJoints : public RefCountObject, public MEDFileWritable
+  class MEDFileJoints : public RefCountObject, public MEDFileWritableStandAlone
   {
   public:
     MEDLOADER_EXPORT static MEDFileJoints *New();
     MEDLOADER_EXPORT static MEDFileJoints *New(const std::string& fileName, const std::string& meshName);
     MEDLOADER_EXPORT static MEDFileJoints *New(med_idt fid, const std::string& meshName);
-    MEDLOADER_EXPORT MEDFileJoints *deepCpy() const;
+    MEDLOADER_EXPORT MEDFileJoints *deepCopy() const;
     MEDLOADER_EXPORT std::size_t getHeapMemorySizeWithoutChildren() const;
     MEDLOADER_EXPORT std::vector<const BigMemoryObject *> getDirectChildrenWithNull() const;
     MEDLOADER_EXPORT std::string simpleRepr() const;
     MEDLOADER_EXPORT void simpleReprWithoutHeader(std::ostream& oss) const;
-    MEDLOADER_EXPORT void write(const std::string& fileName, int mode) const;
-    MEDLOADER_EXPORT void write(med_idt fid) const;
+    MEDLOADER_EXPORT void writeLL(med_idt fid) const;
     MEDLOADER_EXPORT std::string getMeshName() const;
     MEDLOADER_EXPORT int getNumberOfJoints() const;
     MEDLOADER_EXPORT MEDFileJoint *getJointAtPos(int i) const;
@@ -187,7 +187,7 @@ public:
     MEDFileJoints();
     MEDFileJoints(med_idt fid, const std::string& meshName);
   private:
-    std::vector< MEDCouplingAutoRefCountObjectPtr<MEDFileJoint> > _joints;
+    std::vector< MCAuto<MEDFileJoint> > _joints;
   };
 }
 

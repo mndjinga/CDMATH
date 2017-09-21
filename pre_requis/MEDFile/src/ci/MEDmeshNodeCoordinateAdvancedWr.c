@@ -51,7 +51,7 @@ med_err MEDmeshNodeCoordinateAdvancedWr(const med_idt               fid,
   med_idt         _meshid      = 0,_datagroup1=0,_datagroup_trsf=0;
   med_idt         _dataset_trsf = 0;
   med_int         _intmeshtype = 0;
-  char            _meshpath   [MED_TAILLE_SUP_MAA+MED_NAME_SIZE+1]="";
+  char            _meshpath   [MED_MESH_SUPPORT_GRP_SIZE+MED_NAME_SIZE+1]="";
   char            _datagroup_trsfname[MED_TAILLE_NOM_ENTITE+MED_TAILLE_COOTRF+1]=MED_NOM_NOE MED_COOTRF;
   med_bool        _isasupportmesh=MED_FALSE,_isasoftlink=MED_FALSE;
 
@@ -75,7 +75,7 @@ if (_MEDcheckVersion30(fid) < 0) goto ERROR;
       SSCRUTE(meshname);ISCRUTE(numdt);ISCRUTE(numit);goto ERROR;
     }
   } else
-    if ( (_datagroup1 =_MEDmeshAssociatedGroupCr(fid, MED_MAA,
+    if ( (_datagroup1 =_MEDmeshAssociatedGroupCr(fid, MED_MESH_GRP,
 						 meshname, numdt, numit, dt, MED_FALSE,
 					       "." ) ) < 0 ) {
       MED_ERR_(_ret,MED_ERR_CALL,MED_ERR_API,"_MEDmeshAssociatedGroupCr");
@@ -128,7 +128,7 @@ if (_MEDcheckVersion30(fid) < 0) goto ERROR;
 			    MED_NODE,
 			    MED_NONE,
 			    MED_NO_CMODE,
-			    MED_UNDEF_PFLMODE,
+			    MED_UNDEF_STMODE,
 			    MED_NO_PROFILE,
 			    MED_UNDEF_INTERLACE,
 			    MED_ALL_CONSTITUENT,

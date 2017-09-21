@@ -29,8 +29,8 @@ void _MEDnFamilyGroup30(int dummy, ... )
 
   med_int   _ret=-1,_err=-1;
   med_idt   _datagroup=0,_famid=0;
-  char      _path   [MED_TAILLE_FAS+MED_NAME_SIZE+
-		     MED_TAILLE_FAS_ENTITE+MED_NAME_SIZE+1] = MED_FAS;
+  char      _path   [MED_FAMILY_GRP_SIZE+MED_NAME_SIZE+
+		     MED_TAILLE_FAS_ENTITE+MED_NAME_SIZE+1] = MED_FAMILY_GRP;
   char      _family [MED_NAME_SIZE+1] = "";
   med_int   _n          = 0;
   med_size  _tmpn       = 0;
@@ -124,7 +124,7 @@ void _MEDnFamilyGroup30(int dummy, ... )
  }
 
  if (_famid>0)     if (_MEDdatagroupFermer(_famid) < 0) {
-   MED_ERR_(_ret,MED_ERR_CLOSE,MED_ERR_DATAGROUP,MED_FAS);
+   MED_ERR_(_ret,MED_ERR_CLOSE,MED_ERR_DATAGROUP,MED_FAMILY_GRP);
    ISCRUTE_id(_famid);
  }
 

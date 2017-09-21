@@ -28,8 +28,8 @@ _MEDfamilyInfo30(int dummy,...)
 {
   med_err    _ret=-1,_err=-1;
   med_idt    _datagroup=0,_famid=0;
-  char       _path   [MED_TAILLE_FAS+MED_NAME_SIZE+
-		     MED_TAILLE_FAS_ENTITE+MED_NAME_SIZE+1] = MED_FAS;
+  char       _path   [MED_FAMILY_GRP_SIZE+MED_NAME_SIZE+
+		     MED_TAILLE_FAS_ENTITE+MED_NAME_SIZE+1] = MED_FAMILY_GRP;
   med_int    _n          = 0;
   med_size   _tmpn       = 0;
   int        _pathreflen = 0;
@@ -162,7 +162,7 @@ if (_MEDcheckVersion30(fid) < 0) goto ERROR;
      * Data Set des noms des groupes "NOM"
      */
     if ( MEDfilterEntityCr(fid, _ngroup, 1, 1, MED_ALL_CONSTITUENT,
-			   MED_NO_INTERLACE,MED_UNDEF_PFLMODE,
+			   MED_NO_INTERLACE,MED_UNDEF_STMODE,
 			   MED_NO_PROFILE, MED_UNDEF_SIZE, NULL, &_filter) < 0 ) {
       MED_ERR_(_ret,MED_ERR_CREATE,MED_ERR_FILTER,MED_ERR_INTERNAL_MSG);
       goto ERROR;

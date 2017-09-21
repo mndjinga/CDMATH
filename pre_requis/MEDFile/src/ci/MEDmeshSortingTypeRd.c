@@ -39,12 +39,12 @@ MEDmeshSortingTypeRd(const med_idt               fid,
 {
   med_idt               _ret=-1;
   med_idt               _meshid=0;
-  char                  _meshpath         [MED_TAILLE_MAA+MED_NAME_SIZE+1]=MED_MAA;
+  char                  _meshpath         [MED_MESH_GRP_SIZE+MED_NAME_SIZE+1]=MED_MESH_GRP;
   med_int               _intsortingtype=0;
 
 
   /*
-   * Si le DataGroup MED_MAA n'existe pas => erreur
+   * Si le DataGroup MED_MESH_GRP n'existe pas => erreur
    */
 
   strcat(_meshpath,meshname);

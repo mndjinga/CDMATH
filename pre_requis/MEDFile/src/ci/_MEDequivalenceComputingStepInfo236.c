@@ -32,7 +32,7 @@ void _MEDequivalenceComputingStepInfo236(int dummy, ...) {
   med_err  _ret=-1,_err=-1;
   int      _dummy =0;
   med_err  _fret=-1;
-  char     _path[MED_TAILLE_MAA+MED_TAILLE_EQS+2*MED_TAILLE_NOM+1]=MED_MAA;
+  char     _path[MED_MESH_GRP_SIZE+MED_EQUIVALENCE_GRP_SIZE+2*MED_TAILLE_NOM+1]=MED_MESH_GRP;
   med_size _nocstpncorrespondence=0;
 
   MED_VARGS_DECL(const, med_idt      , , fid                    );
@@ -68,7 +68,7 @@ void _MEDequivalenceComputingStepInfo236(int dummy, ...) {
   _MEDmodeErreurVerrouiller();
 
   strcat(_path,meshname);
-  strcat(_path,MED_EQS);
+  strcat(_path,MED_EQUIVALENCE_GRP);
   strcat(_path,equivname);
 
   if ((_err=_MEDnObjects(fid,_path,&_nocstpncorrespondence)) <0)

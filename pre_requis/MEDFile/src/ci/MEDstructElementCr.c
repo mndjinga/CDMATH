@@ -59,7 +59,7 @@ MEDstructElementCr(const med_idt                 fid,
   med_err           _err=-1;
   med_idt           _root=0,_elemid=0;
   med_int           _ret=-1;
-  char              _path[MED_TAILLE_STRCT+MED_NAME_SIZE+1]=MED_STRCT;
+  char              _path[MED_ELSTRUCT_GRP_SIZE+MED_NAME_SIZE+1]=MED_ELSTRUCT_GRP;
   med_size          _tmpn=0;
   med_geometry_type _stgeotype=0;
   med_int           _medintstgeotype = 0;
@@ -214,8 +214,8 @@ MEDstructElementCr(const med_idt                 fid,
 
     /*Si l'�l�ment de struture ne pr�-existait pas,
       il a �t� cr�e en d�but de proc�dure (il y a au moins 1 �l�ment dans le groupe) */
-    if ((_err=_MEDnObjects(fid,MED_STRCT,&_tmpn)) <0) {
-      MED_ERR_(_ret,MED_ERR_COUNT,MED_ERR_STRUCT,MED_STRCT);
+    if ((_err=_MEDnObjects(fid,MED_ELSTRUCT_GRP,&_tmpn)) <0) {
+      MED_ERR_(_ret,MED_ERR_COUNT,MED_ERR_STRUCT,MED_ELSTRUCT_GRP);
       goto ERROR;
     }
 
@@ -242,7 +242,7 @@ MEDstructElementCr(const med_idt                 fid,
   }
 
   if (_root>0)            if (_MEDdatagroupFermer(_root) < 0) {
-    MED_ERR_(_ret,MED_ERR_CLOSE,MED_ERR_DATAGROUP,MED_STRCT);
+    MED_ERR_(_ret,MED_ERR_CLOSE,MED_ERR_DATAGROUP,MED_ELSTRUCT_GRP);
     ISCRUTE_id(_root);
   }
 

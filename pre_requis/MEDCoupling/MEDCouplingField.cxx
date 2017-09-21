@@ -24,7 +24,15 @@
 
 #include <sstream>
 
-using namespace ParaMEDMEM;
+using namespace MEDCoupling;
+
+void MEDCouplingField::checkConsistencyLight() const
+{
+  if(!_mesh)
+    throw INTERP_KERNEL::Exception("Field invalid because no mesh specified !");
+  if(_type.isNull())
+    throw INTERP_KERNEL::Exception("MEDCouplingField::checkConsistencyLight : no spatial discretization !");
+}
 
 bool MEDCouplingField::isEqualIfNotWhy(const MEDCouplingField *other, double meshPrec, double valsPrec, std::string& reason) const
 {
@@ -186,8 +194,8 @@ std::vector<const BigMemoryObject *> MEDCouplingField::getDirectChildrenWithNull
 
 /*!
  * Returns a type of \ref MEDCouplingSpatialDisc "spatial discretization" of \a this
- * field in terms of enum ParaMEDMEM::TypeOfField. 
- * \return ParaMEDMEM::TypeOfField - the type of \a this field.
+ * field in terms of enum MEDCoupling::TypeOfField. 
+ * \return MEDCoupling::TypeOfField - the type of \a this field.
  * \throw If the geometric type is empty.
  */
 TypeOfField MEDCouplingField::getTypeOfField() const
@@ -199,7 +207,7 @@ TypeOfField MEDCouplingField::getTypeOfField() const
 
 /*!
  * Returns the nature of \a this field. This information is very important during
- * interpolation process using ParaMEDMEM::MEDCouplingRemapper or ParaMEDMEM::InterpKernelDEC.
+ * interpolation process using MEDCoupling::MEDCouplingRemapper or MEDCoupling::InterpKernelDEC.
  * In other context than the two mentioned above, this attribute is unimportant. This
  * attribute is not stored in the MED file.
  * For more information of the semantics and the influence of this attribute to the
@@ -214,7 +222,7 @@ NatureOfField MEDCouplingField::getNature() const
 
 /*!
  * Sets the nature of \a this field. This information is very important during
- * interpolation process using ParaMEDMEM::MEDCouplingRemapper or ParaMEDMEM::InterpKernelDEC.
+ * interpolation process using MEDCoupling::MEDCouplingRemapper or MEDCoupling::InterpKernelDEC.
  * In other context than the two mentioned above, this attribute is unimportant. This
  * attribute is not stored in the MED file.
  * For more information of the semantics and the influence of this attribute to the
@@ -228,6 +236,8 @@ NatureOfField MEDCouplingField::getNature() const
 void MEDCouplingField::setNature(NatureOfField nat)
 {
   MEDCouplingNatureOfField::GetRepr(nat);//generate a throw if nat not recognized
+  if(_type)
+    _type->checkCompatibilityWithNature(nat);
   _nature=nat;
 }
 
@@ -366,7 +376,7 @@ void MEDCouplingField::clearGaussLocalizations()
  *          problem.
  *  \param [in] locId - the id of the Gauss localization object of interest.
  *         It must be in range <em> 0 <= locId < getNbOfGaussLocalization() </em>.
- *  \return \ref ParaMEDMEM::MEDCouplingGaussLocalization "MEDCouplingGaussLocalization" & - the
+ *  \return \ref MEDCoupling::MEDCouplingGaussLocalization "MEDCouplingGaussLocalization" & - the
  *  Gauss localization object.
  *  \throw If \a this field is not on Gauss points.
  *  \throw If \a locId is not within the valid range.

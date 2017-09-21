@@ -17,13 +17,26 @@ AM_CFLAGS = -DDEF_LECT_ECR
 #-DUSER_INTERLACE=MED_NO_INTERLACE
 #-DDEF_LECT_AJOUT 
 
+if INSTALLTEST
 
 testc_PROGRAMS = test1 test2 test3 test4 test5 test6  \
-test7  test8  test9  test10 test11 test11b test12 \
+test7  test8  test9  test10 test10_mem test11 test11b test12 \
+test13  test14 test15 test16 test17 test18 \
+test20 test23 test24 test25 test26 test27 test28 \
+test29 test30 test31 test32 test33 test21 test22 
+#test19
+
+else
+
+check_PROGRAMS = test1 test2 test3 test4 test5 test6  \
+test7  test8  test9  test10 test10_mem test11 test11b test12 \
 test13  test14 test15 test16 test17 test18 \
 test20 test23 test24 test25 test26 test27 test28 \
 test29 test30 test31 test32 test33 test21 test22
 #test19
+
+endif
+
 
 LDADD = $(top_builddir)/src/libmedC.la
 
@@ -37,6 +50,7 @@ nodist_EXTRA_test7_SOURCES = dummy.cxx
 nodist_EXTRA_test8_SOURCES = dummy.cxx
 nodist_EXTRA_test9_SOURCES = dummy.cxx
 nodist_EXTRA_test10_SOURCES = dummy.cxx
+nodist_EXTRA_test10_mem_SOURCES = dummy.cxx
 nodist_EXTRA_test11_SOURCES = dummy.cxx
 nodist_EXTRA_test11b_SOURCES = dummy.cxx
 nodist_EXTRA_test12_SOURCES = dummy.cxx
@@ -107,6 +121,7 @@ CLEANFILES = \
 ./test4.med\
 ./test6.med\
 ./test8.med\
+./test10_mem.med\
 ./test10.med\
 ./test12.med\
 ./test14.med\

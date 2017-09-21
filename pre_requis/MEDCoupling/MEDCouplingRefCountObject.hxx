@@ -29,7 +29,7 @@
 #include <string>
 #include <cstddef>
 
-namespace ParaMEDMEM
+namespace MEDCoupling
 {
   typedef enum
   {

@@ -51,7 +51,7 @@ MEDfieldInfo(const med_idt fid,
 	     med_int *const ncstp)
 {
   med_err  _ret=-1;
-  char     _fieldpath[MED_TAILLE_CHA+MED_NAME_SIZE+1]=MED_CHA;
+  char     _fieldpath[MED_FIELD_GRP_SIZE+MED_NAME_SIZE+1]=MED_FIELD_GRP;
   int      _num = ind -1;
 
   /*

@@ -3,6 +3,8 @@ AT_INIT([Post-installation test suite for PYTHON])
 
 # Common
 m4_include(test1.atpy)
+m4_include(test2.atpy)
+m4_include(test3.atpy)
 m4_include(test4.atpy) 
 m4_include(test6.atpy)
 m4_include(test8.atpy)

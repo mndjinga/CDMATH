@@ -39,7 +39,7 @@ MEDfieldnInterp(const med_idt fid,
 
   med_int  _ret=-1,_err=-1;
   med_idt  _fieldinterpid=0,_fieldid=0;
-  char     _interppath[MED_TAILLE_CHA+MED_NAME_SIZE+MED_TAILLE_INTERP+1]=MED_CHA;
+  char     _interppath[MED_FIELD_GRP_SIZE+MED_NAME_SIZE+MED_INTERPOLATION_GRP_SIZE+1]=MED_FIELD_GRP;
   char     _path[MED_TAILLE_CHA_INTERP+MED_NAME_SIZE+1]=MED_CHA_INTERP;
   med_size _tmpn=0;
 

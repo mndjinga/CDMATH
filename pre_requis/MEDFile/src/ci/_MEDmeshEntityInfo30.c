@@ -29,7 +29,7 @@ _MEDmeshEntityInfo30(int dummy, ...) {
   med_access_mode       _MED_ACCESS_MODE;
   med_int               _ret=-1;
   med_idt               _meshid=0, _datagroup=0,_datagroup1=0,_datagroup2=0,_datagroup3=0;
-  char                  _meshpath         [MED_TAILLE_SUP_MAA+MED_NAME_SIZE+1]="";
+  char                  _meshpath         [MED_MESH_SUPPORT_GRP_SIZE+MED_NAME_SIZE+1]="";
   char                  _datagroupname1   [2*MED_MAX_PARA+1]="";
   char                  _datagroupname2   [MED_TAILLE_NOM_ENTITE+1]="";
   char                  _datagroupname3   [MED_TAILLE_NOM_ENTITE+1]="";

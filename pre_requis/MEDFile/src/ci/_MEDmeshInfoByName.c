@@ -30,8 +30,8 @@ _MEDmeshInfoByName(const med_idt fid, const char * const root,const char * const
 {
   med_err  _ret=-1,_err=-1;
   med_idt  _root=0,_meshid=0;
-/*   char     _meshpath[MED_TAILLE_CHA+MED_TAILLE_NOM+1]=MED_CHA; */
-/*   char     _meshpath [MED_TAILLE_MAA+MED_TAILLE_NOM+1]=MED_MAA; */
+/*   char     _meshpath[MED_FIELD_GRP_SIZE+MED_TAILLE_NOM+1]=MED_FIELD_GRP; */
+/*   char     _meshpath [MED_MESH_GRP_SIZE+MED_TAILLE_NOM+1]=MED_MESH_GRP; */
 /*   char     _linkpath [MED_TAILLE_LIENS+MED_TAILLE_NOM+1]=MED_LIENS; */
   med_size _nstep=0;
   med_int  _intmeshtype=0;

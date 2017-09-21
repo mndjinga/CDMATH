@@ -39,9 +39,9 @@ MEDnParameter(const med_idt fid)
   _MEDmodeErreurVerrouiller();
 
   /* combien de parametres dans le fichier ? */
-  if ((_err=_MEDnObjects(fid,MED_NUM_DATA,&_n)) < 0)
+  if ((_err=_MEDnObjects(fid,MED_NUMERICAL_DATA_GRP,&_n)) < 0)
     if ( _err == (MED_ERR_COUNT + MED_ERR_DATAGROUP) ) {
-      MED_ERR_(_ret,MED_ERR_COUNT,MED_ERR_MESH,MED_NUM_DATA);
+      MED_ERR_(_ret,MED_ERR_COUNT,MED_ERR_MESH,MED_NUMERICAL_DATA_GRP);
       goto ERROR;
     }
 

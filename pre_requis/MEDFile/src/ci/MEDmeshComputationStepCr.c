@@ -49,7 +49,7 @@ MEDmeshComputationStepCr(const med_idt fid,
   med_access_mode _MED_ACCESS_MODE;
   med_err  _ret=-1;
   med_idt  _meshid=0,_datagroup1=0,_datagroup2=0,_datagroup3=0;
-  char     _meshpath [MED_TAILLE_SUP_MAA+MED_NAME_SIZE+1]="";
+  char     _meshpath [MED_MESH_SUPPORT_GRP_SIZE+MED_NAME_SIZE+1]="";
   char     _datagroupname [2*MED_MAX_PARA+1]="";
   char     _datagroupname2[2*MED_MAX_PARA+1]="";
   char     _datagroupname1bis[2*MED_MAX_PARA+1]="";
@@ -57,8 +57,8 @@ MEDmeshComputationStepCr(const med_idt fid,
   char*    _datagroupname1=_datagroupname;
   char     _datagroupname3[2*MED_MAX_PARA+1]="";
   char     _prevcpstname[2*MED_MAX_PARA+1]="";
-  char     _pathsrc[MED_TAILLE_SUP_MAA+MED_NAME_SIZE+1+2*MED_MAX_PARA+1+1]="";
-  char     _pathdst[MED_TAILLE_SUP_MAA+MED_NAME_SIZE+1+2*MED_MAX_PARA+1+1]="";
+  char     _pathsrc[MED_MESH_SUPPORT_GRP_SIZE+MED_NAME_SIZE+1+2*MED_MAX_PARA+1+1]="";
+  char     _pathdst[MED_MESH_SUPPORT_GRP_SIZE+MED_NAME_SIZE+1+2*MED_MAX_PARA+1+1]="";
   med_bool _datagroup1exist = MED_TRUE;
   med_bool _isasupportmesh = MED_FALSE;
   med_int  _nextdt=MED_NO_DT, _nextit=MED_NO_IT,_pvdt=MED_NO_DT, _pvit=MED_NO_IT;

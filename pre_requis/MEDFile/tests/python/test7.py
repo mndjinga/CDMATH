@@ -77,7 +77,7 @@ nomtr3  = MEDCHAR(MED_SNAME_SIZE*ntr3+1)
 
 filter=med_filter()
 MEDfilterEntityCr( fid, nse2, 1, sdim, 2,
-                   MED_FULL_INTERLACE, MED_GLOBAL_PFLMODE,
+                   MED_FULL_INTERLACE, MED_GLOBAL_STMODE,
                    MED_NO_PROFILE, fltsize,
                    flt, filter)
 #/* Lecture des connectivites des segments avec flt */

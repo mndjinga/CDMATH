@@ -36,7 +36,7 @@
 
 #ifdef PPRO_NT
 med_int 
- EDFJNTC (med_int *fid,
+ EDFJNTC (med_idt *fid,
                    char *maa_lcl,  unsigned int bidon1, med_int *lon1,
                    char *jn,   unsigned int bidon2, med_int *lon2, 
                    char *desc, unsigned int bidon3, med_int *lon3,
@@ -45,7 +45,7 @@ med_int
 		   )
 #else
 med_int 
-nedfjntc (med_int *fid, 
+nedfjntc (med_idt *fid, 
 	  char *maa_lcl,med_int *lon1,
 	  char *jn,med_int *lon2, 
 	  char *desc, med_int *lon3,
@@ -65,7 +65,7 @@ nedfjntc (med_int *fid,
   if (!fn1 || !fn2 || !fn3 || !fn4)
     return(-1); 
 
-  ret = (med_int) MEDjointCr((med_idt) *fid,
+  ret = (med_int) MEDjointCr( *fid,
 			     (char *)fn1,(char *)fn2,
 			     (char *)fn3,(med_int) *dom,
 			     (char *)fn4); 
@@ -84,13 +84,13 @@ nedfjntc (med_int *fid,
 
 #ifdef PPRO_NT
 med_int 
- EDFNJNT (med_int *fid,
+ EDFNJNT (med_idt *fid,
                    char *maa_lcl,  unsigned int bidon1, med_int *lon1,
 		   med_int *n
 		   )
 #else
 med_int 
-nedfnjnt (med_int *fid, 
+nedfnjnt (med_idt *fid, 
 	  char *maa_lcl,med_int *lon1,
 	  med_int *n
 	  )
@@ -104,7 +104,7 @@ nedfnjnt (med_int *fid,
   if (!fn1)
     return(-1); 
 
-  *n = (med_int) MEDnJoint((med_idt) *fid,
+  *n = (med_int) MEDnJoint( *fid,
 			   (char *)fn1);
 
   _MEDcstringFree(fn1);
@@ -118,7 +118,7 @@ nedfnjnt (med_int *fid,
 
 #ifdef PPRO_NT
 med_int 
- EDFJNTI (med_int *fid,
+ EDFJNTI (med_idt *fid,
                    char *maa_lcl,  unsigned int bidon1, med_int *lon1,
 		   med_int *ind,
                    char *jn, unsigned int bidon2,  
@@ -128,7 +128,7 @@ med_int
 		   )
 #else
 med_int 
-nedfjnti (med_int *fid, 
+nedfjnti (med_idt *fid, 
 	  char *maa_lcl,med_int *lon1,
 	  med_int *ind,
 	  char *jn,
@@ -151,7 +151,7 @@ nedfjnti (med_int *fid,
   if (!fn1)
     return(-1); 
 
-  ret = (med_int) MEDjointInfo((med_idt) *fid,
+  ret = (med_int) MEDjointInfo( *fid,
 			       (char *)   fn1,     /* maillage local IN */
 			       (med_int) *ind,      /* indice du joint dans le maillage IN */
 			       (char *)fs1,        /* nom joint OUT */
@@ -183,7 +183,7 @@ nedfjnti (med_int *fid,
 
 #ifdef PPRO_NT
 med_int 
- EDFJNTE (med_int *fid, 
+ EDFJNTE (med_idt *fid, 
 		   char *maa_local,unsigned int bidon1, med_int *lon1,
 		   char *jn,     unsigned int bidon2, med_int *lon2, 
 		   med_int *corrtab, med_int *n,
@@ -191,7 +191,7 @@ med_int
 		   med_int * typ_ent_distant, med_int * typ_geo_distant)
 #else
 med_int 
-nedfjnte (med_int *fid, 
+nedfjnte (med_idt *fid, 
 	  char *maa_local,med_int *lon1,
 	  char *jn,med_int *lon2, 
 	  med_int *corrtab, med_int *n,
@@ -208,7 +208,7 @@ nedfjnte (med_int *fid,
   if (!fn1 || !fn2)
     return(-1); 
 
-  ret = (med_int) MEDjointEcr((med_idt) *fid, (char *)fn1, (char *) fn2,  (med_int *) corrtab, (med_int) *n,
+  ret = (med_int) MEDjointEcr( *fid, (char *)fn1, (char *) fn2,  (med_int *) corrtab, (med_int) *n,
 				  (med_entite_maillage) *typ_ent_local,   (med_geometrie_element) *typ_geo_local,
 				  (med_entite_maillage) *typ_ent_distant, (med_geometrie_element) *typ_geo_distant);
 
@@ -224,7 +224,7 @@ nedfjnte (med_int *fid,
 
 #ifdef PPRO_NT
 med_int 
- EDFJNTL (med_int *fid, 
+ EDFJNTL (med_idt *fid, 
 		   char *maa_local,unsigned int bidon1, med_int *lon1,
 		   char *jn,     unsigned int bidon2, med_int *lon2, 
 		   med_int *corrtab, med_int *n,
@@ -232,7 +232,7 @@ med_int
 		   med_int * typ_ent_distant, med_int * typ_geo_distant)
 #else
 med_int 
-nedfjntl (med_int *fid, 
+nedfjntl (med_idt *fid, 
 	  char *maa_local,med_int *lon1,
 	  char *jn,med_int *lon2, 
 	  med_int *corrtab, med_int *n,
@@ -249,7 +249,7 @@ nedfjntl (med_int *fid,
   if (!fn1 || !fn2 )
     return(-1); 
 
-  ret = (med_int) MEDjointLire((med_idt) *fid, (char *)fn1, (char *) fn2, (med_int *) corrtab, (med_int) *n,
+  ret = (med_int) MEDjointLire( *fid, (char *)fn1, (char *) fn2, (med_int *) corrtab, (med_int) *n,
 			       (med_entite_maillage) *typ_ent_local,   (med_geometrie_element) *typ_geo_local,
 			       (med_entite_maillage) *typ_ent_distant, (med_geometrie_element) *typ_geo_distant);
 
@@ -269,7 +269,7 @@ nedfjntl (med_int *fid,
 
 #ifdef PPRO_NT
 med_int 
- EDFJNCO (med_int *fid,
+ EDFJNCO (med_idt *fid,
                    char *maa_lcl,  unsigned int bidon1, med_int *lon1,
                    char *jn,   unsigned int bidon2, med_int *lon2, 
 		   med_int * typ_ent_local, med_int * typ_geo_local,
@@ -277,7 +277,7 @@ med_int
 		   )
 #else
 med_int 
-nedfjnco (med_int *fid, 
+nedfjnco (med_idt *fid, 
 	  char *maa_lcl,med_int *lon1,
 	  char *jn, med_int *lon2,
 	  med_int * typ_ent_local, med_int * typ_geo_local,
@@ -299,7 +299,7 @@ nedfjnco (med_int *fid,
   if (!fn1)
     return(-1); 
 
-  ret = (med_int) MEDjointnCorres((med_idt) *fid,
+  ret = (med_int) MEDjointnCorres( *fid,
   			          (char *)   fn1,     /* maillage local IN */
 			          (char *)   fn2,    /* nom du joint IN */
 				  (med_entite_maillage)   *typ_ent_local,
@@ -328,7 +328,7 @@ nedfjnco (med_int *fid,
 
 #ifdef PPRO_NT
 med_int 
- EDFJTCO (med_int *fid,
+ EDFJTCO (med_idt *fid,
                    char *maa_lcl,  unsigned int bidon1, med_int *lon1,
                    char *jn,   unsigned int bidon2, med_int *lon2, 
 		   int *ind,
@@ -337,7 +337,7 @@ med_int
 		   )
 #else
 med_int 
-nedfjtco (med_int *fid, 
+nedfjtco (med_idt *fid, 
 	  char *maa_lcl,med_int *lon1,
 	  char *jn, med_int *lon2,
 	  int *ind,
@@ -362,7 +362,7 @@ nedfjtco (med_int *fid,
 
   if (!fn1) return(-1);
 
-  ret = (med_int) MEDjointTypeCorres((med_idt) *fid,
+  ret = (med_int) MEDjointTypeCorres( *fid,
                                      (char *)   fn1,    /* maillage local IN */
                                      (char *)   fn2,    /* nom du joint IN */
                                      (int) *ind,        /* numero de la correspondance  IN*/
@@ -389,13 +389,13 @@ nedfjtco (med_int *fid,
 
 #ifdef PPRO_NT
 med_int 
- EDFGNME (med_int *fid, 
+ EDFGNME (med_idt *fid, 
 		   char *maa, unsigned int bidon1, med_int *lon1,
 		   med_int *numtab, med_int *n,
 		   med_int * typ_ent, med_int * typ_geo)
 #else
 med_int 
-nedfgnme (med_int *fid, 
+nedfgnme (med_idt *fid, 
 	  char *maa,med_int *lon1,
 	  med_int *numtab, med_int *n,
 	  med_int * typ_ent, med_int * typ_geo)
@@ -410,7 +410,7 @@ nedfgnme (med_int *fid,
   if (!fn1 )
     return(-1); 
 
-  ret = (med_int) MEDglobalNumEcr((med_idt) *fid, (char *)fn1, 
+  ret = (med_int) MEDglobalNumEcr( *fid, (char *)fn1, 
 				  (med_int *) numtab, (med_int) *n,
 				  (med_entite_maillage) *typ_ent,   (med_geometrie_element) *typ_geo);
 
@@ -425,13 +425,13 @@ nedfgnme (med_int *fid,
 
 #ifdef PPRO_NT
 med_int 
- EDFGNML (med_int *fid, 
+ EDFGNML (med_idt *fid, 
 		   char *maa, unsigned int bidon1, med_int *lon1,
 		   med_int *numtab, med_int *n,
 		   med_int * typ_ent, med_int * typ_geo)
 #else
 med_int 
-nedfgnml (med_int *fid, 
+nedfgnml (med_idt *fid, 
 	  char *maa,med_int *lon1,
 	  med_int *numtab, med_int *n,
 	  med_int * typ_ent, med_int * typ_geo)
@@ -446,7 +446,7 @@ nedfgnml (med_int *fid,
   if (!fn1 )
     return(-1); 
 
-  ret = (med_int) MEDglobalNumLire((med_idt) *fid, (char *)fn1, 
+  ret = (med_int) MEDglobalNumLire( *fid, (char *)fn1, 
 				  (med_int *) numtab, (med_int) *n,
 				  (med_entite_maillage) *typ_ent,   (med_geometrie_element) *typ_geo);
 

@@ -38,11 +38,11 @@ void MAJ_236_300_maillages(med_idt fid)
   med_err _fret = -1;
   med_err _err  = -1;
   int     dummy=0;
-  char _pathi[MED_TAILLE_MAA+MED_NAME_SIZE+1+2*MED_TAILLE_NOM_ENTITE+1+3+1]=MED_MAA;
-  char _pathf[MED_TAILLE_MAA+MED_NAME_SIZE+1+2*MED_MAX_PARA+1+2*MED_TAILLE_NOM_ENTITE+1+1]=MED_MAA;
-  char _pathgridf[MED_TAILLE_MAA+MED_NAME_SIZE+1+2*MED_MAX_PARA+1+2*MED_TAILLE_NOM_ENTITE+1+1]=MED_MAA;
-  char _pathgridi[MED_TAILLE_MAA+MED_NAME_SIZE+1+2*MED_TAILLE_NOM_ENTITE+1+3+1]=MED_MAA;
-  char _pathfam[MED_TAILLE_FAS+MED_NAME_SIZE+1+MED_NAME_SIZE+1]=MED_FAS;
+  char _pathi[MED_MESH_GRP_SIZE+MED_NAME_SIZE+1+2*MED_TAILLE_NOM_ENTITE+1+3+1]=MED_MESH_GRP;
+  char _pathf[MED_MESH_GRP_SIZE+MED_NAME_SIZE+1+2*MED_MAX_PARA+1+2*MED_TAILLE_NOM_ENTITE+1+1]=MED_MESH_GRP;
+  char _pathgridf[MED_MESH_GRP_SIZE+MED_NAME_SIZE+1+2*MED_MAX_PARA+1+2*MED_TAILLE_NOM_ENTITE+1+1]=MED_MESH_GRP;
+  char _pathgridi[MED_MESH_GRP_SIZE+MED_NAME_SIZE+1+2*MED_TAILLE_NOM_ENTITE+1+3+1]=MED_MESH_GRP;
+  char _pathfam[MED_FAMILY_GRP_SIZE+MED_NAME_SIZE+1+MED_NAME_SIZE+1]=MED_FAMILY_GRP;
   med_size _n=0;
   med_idt            _datagroup=0;
   int                _meshit=0;
@@ -76,9 +76,9 @@ void MAJ_236_300_maillages(med_idt fid)
    *  nombre de maillages
    */
 
-  ret=_MEDnObjects(fid,MED_MAA,&_n);
+  ret=_MEDnObjects(fid,MED_MESH_GRP,&_n);
   MED_ERR_EXIT_IF( ( ret == (MED_ERR_COUNT + MED_ERR_DATAGROUP)),
-		     MED_ERR_COUNT,MED_ERR_MESH,MED_MAA);
+		     MED_ERR_COUNT,MED_ERR_MESH,MED_MESH_GRP);
 
   /*
    * Mise a jour des maillages :
@@ -103,7 +103,7 @@ void MAJ_236_300_maillages(med_idt fid)
     /*
      * On recupere le nom du maillage
      */
-    MED_ERR_EXIT_IF( _MEDobjectGetName(fid, MED_MAA ,_meshit, _imeshname) < 0 ,
+    MED_ERR_EXIT_IF( _MEDobjectGetName(fid, MED_MESH_GRP ,_meshit, _imeshname) < 0 ,
 		     MED_ERR_ACCESS,MED_ERR_DATAGROUP,_imeshname);
 
     MAJ_version_num(fid,2,3,6);
@@ -120,16 +120,16 @@ void MAJ_236_300_maillages(med_idt fid)
 
       fprintf(stdout,"  >>> Normalisation du nom de maillage [%s] \n",_imeshname);
       /* on accede au maillage */
-      strcpy(&_pathi[MED_TAILLE_MAA],_imeshname);
-      strcpy(&_pathf[MED_TAILLE_MAA],_fmeshname);
+      strcpy(&_pathi[MED_MESH_GRP_SIZE],_imeshname);
+      strcpy(&_pathf[MED_MESH_GRP_SIZE],_fmeshname);
 
       ret = H5Gmove(fid, _pathi, _pathf  );
       EXIT_IF(ret < 0,"Renommage du maillage en",_fmeshname);
       _meshname=_fmeshname;
       fprintf(stdout,"  >>> Normalisation du nom du maillage [%s] ... OK ... \n",_fmeshname);
     } else {
-      strcpy(&_pathf[MED_TAILLE_MAA],_meshname);
-      strcpy(&_pathi[MED_TAILLE_MAA],_meshname);
+      strcpy(&_pathf[MED_MESH_GRP_SIZE],_meshname);
+      strcpy(&_pathi[MED_MESH_GRP_SIZE],_meshname);
     }
     /*     SSCRUTE(_pathf); */
     /*     SSCRUTE(_pathi); */
@@ -149,8 +149,8 @@ void MAJ_236_300_maillages(med_idt fid)
       MED_ERR_EXIT_IF( MEDnatureGrilleLire(fid, _meshname, &_gridtype) < 0
 		       ,MED_ERR_CALL,MED_ERR_API," MEDnatureGrilleLire");
 
-/*       strcpy(&_pathgridf[MED_TAILLE_MAA],_meshname); */
-      strcpy(&_pathgridi[MED_TAILLE_MAA],_meshname);
+/*       strcpy(&_pathgridf[MED_MESH_GRP_SIZE],_meshname); */
+      strcpy(&_pathgridi[MED_MESH_GRP_SIZE],_meshname);
 /*       strcat(_pathgridf,"/-0000000000000000001-0000000000000000001/NOE/"); */
       strcat(_pathgridi,"/NOE/");
       _gitmplen=strlen(_pathgridi);
@@ -222,7 +222,7 @@ void MAJ_236_300_maillages(med_idt fid)
     /*     SSCRUTE(_pathf); */
 
     /* Normalisation des familles */
-    strcpy(&_pathi[_itmplen-1],MED_FAS);
+    strcpy(&_pathi[_itmplen-1],MED_FAMILY_GRP);
 /*     SSCRUTE(_pathi); */
     MED_ERR_EXIT_IF( _MEDdatagroupExist(fid,_pathi,&_datagroupexist,&_isasoftlink) < 0 ,
 		     MED_ERR_CALL,MED_ERR_API,"_MEDdatagroupExist");
@@ -236,7 +236,7 @@ void MAJ_236_300_maillages(med_idt fid)
       MED_ERR_EXIT_IF(_ret < 0,MED_ERR_CLOSE,MED_ERR_DATAGROUP,_pathfam);
     }
 
-    strcpy(&_pathfam[MED_TAILLE_FAS],_meshname);strcat(_pathfam,"/");
+    strcpy(&_pathfam[MED_FAMILY_GRP_SIZE],_meshname);strcat(_pathfam,"/");
 
     if( _datagroupexist) {
 
@@ -262,7 +262,7 @@ void MAJ_236_300_maillages(med_idt fid)
     }
 
     /* Normalisation des equivalences */
-    strcpy(&_pathi[_itmplen-1],MED_EQS);
+    strcpy(&_pathi[_itmplen-1],MED_EQUIVALENCE_GRP);
 
     MED_ERR_EXIT_IF( MAJ_236_300_equivalence(fid,_meshname) < 0,
 		     MED_ERR_CALL,MED_ERR_API,"MAJ_236_300_equivalence");
@@ -273,7 +273,7 @@ void MAJ_236_300_maillages(med_idt fid)
     }
 
     /* Normalisation des joint */
-    strcpy(&_pathi[_itmplen-1],MED_JNT);
+    strcpy(&_pathi[_itmplen-1],MED_JOINT_GRP);
 
     MED_ERR_EXIT_IF( MAJ_236_300_joint(fid,_meshname) < 0,
 		     MED_ERR_CALL,MED_ERR_API,"MAJ_236_300_joint");

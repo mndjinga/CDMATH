@@ -35,12 +35,12 @@ void _MEDfieldValueAdvancedRd30(int dummy,...) {
   med_int               _intfieldtype=0;
   med_geometry_type     _locgeotype=0,_sectiongeotype=0;
   med_int               _intlocgeotype=0;
-  char _gidname           [MED_TAILLE_CHA+MED_NAME_SIZE+1]=MED_CHA;
+  char _gidname           [MED_FIELD_GRP_SIZE+MED_NAME_SIZE+1]=MED_FIELD_GRP;
   char _datagroupname1    [2*MED_MAX_PARA+1]="";
   char _datagroupname2    [2*MED_TAILLE_NOM_ENTITE+2]="";
   char _profilename       [MED_NAME_SIZE+1]=""; /*TODO DEFAULT? */
   char _meshname          [MED_NAME_SIZE+1]="";
-  char _locgidname        [MED_TAILLE_GAUSS+MED_NAME_SIZE+1]="";
+  char _locgidname        [MED_LOCALIZATION_GRP_SIZE+MED_NAME_SIZE+1]="";
   char _sectionmeshname      [MED_NAME_SIZE+1]="";
   char _localizationname  [MED_NAME_SIZE+1]=""; /*TODO DEFAULT? */
   char _geotypename[MED_TAILLE_NOM_ENTITE+1]="", pfltmp[MED_NAME_SIZE+1]="";
@@ -269,7 +269,7 @@ void _MEDfieldValueAdvancedRd30(int dummy,...) {
     /* le nombre de points de Gauss est egal au nombre de noeuds de l'element */
     _nvaluesperentityfromloc = geotype % 100;
   } else  if ( strlen( _localizationname) ) {
-    strcpy(_locgidname,MED_GAUSS);
+    strcpy(_locgidname,MED_LOCALIZATION_GRP);
     strcat(_locgidname,_localizationname);
 
     if ((_locgid = _MEDdatagroupOuvrir(fid,_locgidname)) < 0) {

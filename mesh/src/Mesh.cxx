@@ -22,7 +22,7 @@
 #include <iostream>
 #include <cassert>
 
-using namespace ParaMEDMEM;
+using namespace MEDCoupling;
 using namespace std;
 
 //----------------------------------------------------------------------
@@ -55,7 +55,7 @@ Mesh::~Mesh( void )
     delete [] _faces;
 }
 
-Mesh::Mesh( const ParaMEDMEM::MEDCouplingIMesh* mesh )
+Mesh::Mesh( const MEDCoupling::MEDCouplingIMesh* mesh )
 {
     _dim=mesh->getSpaceDimension();
     vector<double> dxyz=mesh->getDXYZ();
@@ -134,7 +134,7 @@ Mesh::Mesh( const Mesh& m )
     for (int i=0;i<_numberOfCells;i++)
         _cells[i]=m.getCell(i);
 
-    MEDCouplingAutoRefCountObjectPtr<MEDCouplingMesh> m1=m.getMEDCouplingMesh()->deepCpy();
+    MCAuto<MEDCouplingMesh> m1=m.getMEDCouplingMesh()->deepCopy();
     _mesh=m1;
 }
 
@@ -294,7 +294,7 @@ Mesh::setGroups( const MEDFileUMesh* medmesh)
 		if (it != nonEmptyGrp.end()){
 			_groups.push_back(groupName);
 			MEDCouplingUMesh *m=medmesh->getGroup(-1,groupName.c_str());
-			DataArrayDouble *baryCell = m->getBarycenterAndOwner() ;
+			DataArrayDouble *baryCell = m->computeCellCenterOfMass() ;
 			const double *coorBary=baryCell->getConstPointer();
 			int nb=m->getNumberOfCells();
 			int k=0;
@@ -340,7 +340,7 @@ Mesh::setMesh( void )
 	const int *tmp=desc->getConstPointer();
 	const int *tmpI=descI->getConstPointer();
 
-	DataArrayDouble *baryCell = mu->getBarycenterAndOwner() ;
+	DataArrayDouble *baryCell = mu->computeCellCenterOfMass() ;
 	const double *coorBary=baryCell->getConstPointer();
 
 	MEDCouplingFieldDouble* fields=mu->getMeasureField(true);
@@ -450,7 +450,7 @@ Mesh::setMesh( void )
 		const int *tmp2=desc2->getConstPointer();
 		const int *tmpI2=descI2->getConstPointer();
 
-		DataArrayDouble *baryCellF = m2->getBarycenterAndOwner() ;
+		DataArrayDouble *baryCellF = m2->computeCellCenterOfMass() ;
 
 		MEDCouplingFieldDouble* fieldn = m2->buildOrthogonalField();
 		DataArrayDouble *normal = fieldn->getArray();
@@ -519,7 +519,7 @@ Mesh::setMesh( void )
 		DataArrayDouble *longueur = fieldl->getArray();
 		const double *lon=longueur->getConstPointer();
 
-		DataArrayDouble *barySeg = m2->getBarycenterAndOwner() ;
+		DataArrayDouble *barySeg = m2->computeCellCenterOfMass() ;
 		const double *coorBarySeg=barySeg->getConstPointer();
 		//DataArrayDouble *normalFaces1 = m2->buildOrthogonalField()->getArray() ;
 		MEDCouplingFieldDouble * orthoField = m2->buildOrthogonalField();
@@ -626,7 +626,7 @@ Mesh::Mesh( double xinf, double xsup, int nx )
     MEDCouplingUMesh *m2=mu->buildDescendingConnectivity(desc,descI,revDesc,revDescI);
     m2->setName(mu->getName());
 
-    DataArrayDouble *baryCell = mu->getBarycenterAndOwner() ;
+    DataArrayDouble *baryCell = mu->computeCellCenterOfMass() ;
     const double *coorBary=baryCell->getConstPointer();
 
     _numberOfCells = _mesh->getNumberOfCells() ;
@@ -921,7 +921,7 @@ Mesh::getZSup( void )  const
 }
 
 //----------------------------------------------------------------------
-MEDCouplingAutoRefCountObjectPtr<MEDCouplingMesh>
+MCAuto<MEDCouplingMesh>
 Mesh::getMEDCouplingMesh( void )  const
 //----------------------------------------------------------------------
 {
@@ -1053,7 +1053,7 @@ Mesh::operator= ( const Mesh& mesh )
     for (int i=0;i<_numberOfCells;i++)
         _cells[i]=mesh.getCell(i);
 
-    MEDCouplingAutoRefCountObjectPtr<MEDCouplingMesh> m1=mesh.getMEDCouplingMesh()->deepCpy();
+    MCAuto<MEDCouplingMesh> m1=mesh.getMEDCouplingMesh()->deepCopy();
     _mesh=m1;
     return *this;
 }
@@ -1074,6 +1074,6 @@ Mesh::writeMED ( const std::string fileName ) const
 {
     string fname=fileName+".med";
     MEDCouplingUMesh* mu=_mesh->buildUnstructured();
-    MEDLoader::WriteUMesh(fname.c_str(),mu,true);
+    MEDCoupling::WriteUMesh(fname.c_str(),mu,true);
     mu->decrRef();
 }

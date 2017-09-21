@@ -32,7 +32,7 @@ void _MEDmeshGridIndexCoordinateRd236(int dummy, ...) {
   med_grid_type   _gridtype    = MED_UNDEF_GRID_TYPE;
   med_int         _intgridtype = 0;
   med_int         _meshdim     = 0;
-  char            _meshpath[MED_TAILLE_MAA+MED_NAME_SIZE+1]=MED_MAA;
+  char            _meshpath[MED_MESH_GRP_SIZE+MED_NAME_SIZE+1]=MED_MESH_GRP;
   med_int  _intaxistype=0;
 
 

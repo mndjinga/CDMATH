@@ -32,7 +32,7 @@ med_err _MEDgetDynGeometricParameter(const med_idt fid,
 
   med_err _ret=-1;
   med_idt _elemid=0;
-  char    _path[MED_TAILLE_STRCT+MED_NAME_SIZE+1]=MED_STRCT;
+  char    _path[MED_ELSTRUCT_GRP_SIZE+MED_NAME_SIZE+1]=MED_ELSTRUCT_GRP;
   char    _supportmeshname[MED_NAME_SIZE+1]="";
 /*   char *  _modelname[MED_NAME_SIZE+1]=""; */
   med_bool          _chgt=MED_FALSE,_trsf=MED_FALSE;

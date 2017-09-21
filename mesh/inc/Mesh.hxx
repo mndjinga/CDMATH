@@ -16,14 +16,14 @@
  * - case 4 (not yet): 3D : xmin, xmax, ymin and ymax and numbers of cells in x direction, y direction and z direction
  */
 
-namespace ParaMEDMEM
+namespace MEDCoupling
 {
   class MEDFileUMesh;
   class MEDCouplingMesh;
   class MEDCouplingIMesh;
 }
 
-#include <MEDCouplingAutoRefCountObjectPtr.hxx>
+#include <MCAuto.hxx>
 
 class Node;
 class Cell;
@@ -81,7 +81,7 @@ class Mesh
      */
     Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny, double zinf, double zsup, int nz) ;
 
-    Mesh( const ParaMEDMEM::MEDCouplingIMesh* mesh ) ;
+    Mesh( const MEDCoupling::MEDCouplingIMesh* mesh ) ;
 
     /**
      * constructor with data
@@ -203,7 +203,7 @@ class Mesh
      * return the mesh MEDCoupling
      * return _mesh
      */
-    ParaMEDMEM::MEDCouplingAutoRefCountObjectPtr<ParaMEDMEM::MEDCouplingMesh> getMEDCouplingMesh ( void )  const ;
+    MEDCoupling::MCAuto<MEDCoupling::MEDCouplingMesh> getMEDCouplingMesh ( void )  const ;
 
     /**
      * return the mesh MEDCoupling
@@ -235,7 +235,7 @@ class Mesh
 
     void setMesh( void ) ;
 
-    void setGroups( const ParaMEDMEM::MEDFileUMesh* medmesh) ;
+    void setGroups( const MEDCoupling::MEDFileUMesh* medmesh) ;
 
     /**
      * Space dimension
@@ -295,7 +295,7 @@ class Mesh
     /*
      * The mesh MEDCoupling
      */
-    ParaMEDMEM::MEDCouplingAutoRefCountObjectPtr<ParaMEDMEM::MEDCouplingMesh> _mesh;
+    MEDCoupling::MCAuto<MEDCoupling::MEDCouplingMesh> _mesh;
 };
 
 #endif /* MESH_HXX_ */

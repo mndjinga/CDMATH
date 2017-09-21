@@ -17379,6 +17379,186 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_MEDfileVersionOpen(PyObject *SWIGUNUSEDPARM(self), PyObject *args, PyObject *kwargs) {
+  PyObject *resultobj = 0;
+  char *arg1 = (char *) (char *)0 ;
+  med_access_mode arg2 ;
+  med_int arg3 ;
+  med_int arg4 ;
+  med_int arg5 ;
+  int res1 ;
+  char *buf1 = 0 ;
+  int alloc1 = 0 ;
+  int val2 ;
+  int ecode2 = 0 ;
+  int val3 ;
+  int ecode3 = 0 ;
+  int val4 ;
+  int ecode4 = 0 ;
+  int val5 ;
+  int ecode5 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  PyObject * obj3 = 0 ;
+  PyObject * obj4 = 0 ;
+  char *  kwnames[] = {
+    (char *) "filename",(char *) "accessmode",(char *) "major",(char *) "minor",(char *) "release", NULL 
+  };
+  med_idt result;
+  
+  if (!PyArg_ParseTupleAndKeywords(args,kwargs,(char *)"OOOOO:MEDfileVersionOpen",kwnames,&obj0,&obj1,&obj2,&obj3,&obj4)) SWIG_fail;
+  res1 = SWIG_AsCharPtrAndSize(obj0, &buf1, NULL, &alloc1);
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "MEDfileVersionOpen" "', argument " "1"" of type '" "(const char * const)""'");
+  }
+  arg1 = (char *) buf1;
+  ecode2 = SWIG_AsVal_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "MEDfileVersionOpen" "', argument " "2"" of type '" "med_access_mode""'");
+  } 
+  arg2 = static_cast< med_access_mode >(val2);
+  ecode3 = SWIG_AsVal_int(obj2, &val3);
+  if (!SWIG_IsOK(ecode3)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "MEDfileVersionOpen" "', argument " "3"" of type '" "med_int""'");
+  } 
+  arg3 = static_cast< med_int >(val3);
+  ecode4 = SWIG_AsVal_int(obj3, &val4);
+  if (!SWIG_IsOK(ecode4)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "MEDfileVersionOpen" "', argument " "4"" of type '" "med_int""'");
+  } 
+  arg4 = static_cast< med_int >(val4);
+  ecode5 = SWIG_AsVal_int(obj4, &val5);
+  if (!SWIG_IsOK(ecode5)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode5), "in method '" "MEDfileVersionOpen" "', argument " "5"" of type '" "med_int""'");
+  } 
+  arg5 = static_cast< med_int >(val5);
+  {
+    result = (med_idt)MEDfileVersionOpen((char const *)arg1,arg2,arg3,arg4,arg5);
+    if ( result < 0 ) {
+      /* fprintf(stderr,"Code erreur MED : %2d\n",result); */
+      /* SWIG_exception(SWIG_RuntimeError,"Error returned from MEDfichier API (MEDfileVersionOpen)."); */
+      PyObject* exobj = PyTuple_New(2);
+      PyTuple_SetItem(exobj,0,PyString_FromString("Error returned from MEDfichier API (MEDfileVersionOpen)."));
+      PyTuple_SetItem(exobj,1,PyInt_FromLong((long) result));
+      SWIG_Python_SetErrorObj(PyExc_RuntimeError,exobj);
+      /* PyErr_SetString(PyExc_Exception, str(result));  */
+      return NULL;
+    }
+  }
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  
+  if (alloc1 == SWIG_NEWOBJ) delete[] buf1;
+  return resultobj;
+fail:
+  if (alloc1 == SWIG_NEWOBJ) delete[] buf1;
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_MEDfileExist(PyObject *SWIGUNUSEDPARM(self), PyObject *args, PyObject *kwargs) {
+  PyObject *resultobj = 0;
+  char *arg1 = (char *) (char *)0 ;
+  med_access_mode arg2 ;
+  med_bool *arg3 = (med_bool *) (med_bool *)0 ;
+  med_bool *arg4 = (med_bool *) (med_bool *)0 ;
+  int res1 ;
+  char *buf1 = 0 ;
+  int alloc1 = 0 ;
+  int val2 ;
+  int ecode2 = 0 ;
+  med_bool temp3 ;
+  med_bool temp4 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  char *  kwnames[] = {
+    (char *) "filename",(char *) "accessmode", NULL 
+  };
+  med_err result;
+  
+  {
+    arg3 = &temp3;
+  }
+  {
+    arg4 = &temp4;
+  }
+  if (!PyArg_ParseTupleAndKeywords(args,kwargs,(char *)"OO:MEDfileExist",kwnames,&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_AsCharPtrAndSize(obj0, &buf1, NULL, &alloc1);
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "MEDfileExist" "', argument " "1"" of type '" "(const char * const)""'");
+  }
+  arg1 = (char *) buf1;
+  ecode2 = SWIG_AsVal_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "MEDfileExist" "', argument " "2"" of type '" "med_access_mode""'");
+  } 
+  arg2 = static_cast< med_access_mode >(val2);
+  {
+    result = (med_err)MEDfileExist((char const *)arg1,arg2,arg3,arg4);
+    if ( result < 0 ) {
+      /* fprintf(stderr,"Code erreur MED : %2d\n",result); */
+      /* SWIG_exception(SWIG_RuntimeError,"Error returned from MEDfichier API (MEDfileExist)."); */
+      PyObject* exobj = PyTuple_New(2);
+      PyTuple_SetItem(exobj,0,PyString_FromString("Error returned from MEDfichier API (MEDfileExist)."));
+      PyTuple_SetItem(exobj,1,PyInt_FromLong((long) result));
+      SWIG_Python_SetErrorObj(PyExc_RuntimeError,exobj);
+      /* PyErr_SetString(PyExc_Exception, str(result));  */
+      return NULL;
+    }
+  }
+  {
+    Py_INCREF(Py_None);
+    resultobj=Py_None;
+  }
+  
+  {
+    PyObject *o, *o2, *o3;
+    o = PyBool_FromLong(*arg3);
+    /* if ((!resultobj) || (resultobj == Py_None)) { */
+    /*      resultobj = o; */
+    /*  } else { */
+    /*      if (!PyTuple_Check(resultobj)) { */
+    /*          PyObject *o2 = resultobj; */
+    /*          resultobj = PyTuple_New(1); */
+    /*          PyTuple_SetItem(resultobj,0,o2); */
+    /*      } */
+    /*      o3 = PyTuple_New(1); */
+    /*      PyTuple_SetItem(o3,0,o); */
+    /*      o2 = resultobj; */
+    /*      resultobj = PySequence_Concat(o2,o3); */
+    /*      Py_DECREF(o2); */
+    /*      Py_DECREF(o3); */
+    /*  } */
+    resultobj=SWIG_Python_AppendOutput(resultobj, o);
+  }
+  {
+    PyObject *o, *o2, *o3;
+    o = PyBool_FromLong(*arg4);
+    /* if ((!resultobj) || (resultobj == Py_None)) { */
+    /*      resultobj = o; */
+    /*  } else { */
+    /*      if (!PyTuple_Check(resultobj)) { */
+    /*          PyObject *o2 = resultobj; */
+    /*          resultobj = PyTuple_New(1); */
+    /*          PyTuple_SetItem(resultobj,0,o2); */
+    /*      } */
+    /*      o3 = PyTuple_New(1); */
+    /*      PyTuple_SetItem(o3,0,o); */
+    /*      o2 = resultobj; */
+    /*      resultobj = PySequence_Concat(o2,o3); */
+    /*      Py_DECREF(o2); */
+    /*      Py_DECREF(o3); */
+    /*  } */
+    resultobj=SWIG_Python_AppendOutput(resultobj, o);
+  }
+  if (alloc1 == SWIG_NEWOBJ) delete[] buf1;
+  return resultobj;
+fail:
+  if (alloc1 == SWIG_NEWOBJ) delete[] buf1;
+  return NULL;
+}
+
+
 SWIGINTERN PyObject *_wrap_MEDfileName(PyObject *SWIGUNUSEDPARM(self), PyObject *args, PyObject *kwargs) {
   PyObject *resultobj = 0;
   med_idt arg1 ;
@@ -17974,6 +18154,93 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_MEDfileObjectExist(PyObject *SWIGUNUSEDPARM(self), PyObject *args, PyObject *kwargs) {
+  PyObject *resultobj = 0;
+  med_idt arg1 ;
+  med_class arg2 ;
+  char *arg3 = (char *) (char *)0 ;
+  med_bool *arg4 = (med_bool *) (med_bool *)0 ;
+  int val1 ;
+  int ecode1 = 0 ;
+  int val2 ;
+  int ecode2 = 0 ;
+  int res3 ;
+  char *buf3 = 0 ;
+  int alloc3 = 0 ;
+  med_bool temp4 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  char *  kwnames[] = {
+    (char *) "fid",(char *) "medclass",(char *) "objectname", NULL 
+  };
+  med_err result;
+  
+  {
+    arg4 = &temp4;
+  }
+  if (!PyArg_ParseTupleAndKeywords(args,kwargs,(char *)"OOO:MEDfileObjectExist",kwnames,&obj0,&obj1,&obj2)) SWIG_fail;
+  ecode1 = SWIG_AsVal_int(obj0, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "MEDfileObjectExist" "', argument " "1"" of type '" "med_idt""'");
+  } 
+  arg1 = static_cast< med_idt >(val1);
+  ecode2 = SWIG_AsVal_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "MEDfileObjectExist" "', argument " "2"" of type '" "med_class""'");
+  } 
+  arg2 = static_cast< med_class >(val2);
+  res3 = SWIG_AsCharPtrAndSize(obj2, &buf3, NULL, &alloc3);
+  if (!SWIG_IsOK(res3)) {
+    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "MEDfileObjectExist" "', argument " "3"" of type '" "(const char * const)""'");
+  }
+  arg3 = (char *) buf3;
+  {
+    result = (med_err)MEDfileObjectExist(arg1,arg2,(char const *)arg3,arg4);
+    if ( result < 0 ) {
+      /* fprintf(stderr,"Code erreur MED : %2d\n",result); */
+      /* SWIG_exception(SWIG_RuntimeError,"Error returned from MEDfichier API (MEDfileObjectExist)."); */
+      PyObject* exobj = PyTuple_New(2);
+      PyTuple_SetItem(exobj,0,PyString_FromString("Error returned from MEDfichier API (MEDfileObjectExist)."));
+      PyTuple_SetItem(exobj,1,PyInt_FromLong((long) result));
+      SWIG_Python_SetErrorObj(PyExc_RuntimeError,exobj);
+      /* PyErr_SetString(PyExc_Exception, str(result));  */
+      return NULL;
+    }
+  }
+  {
+    Py_INCREF(Py_None);
+    resultobj=Py_None;
+  }
+  
+  {
+    PyObject *o, *o2, *o3;
+    o = PyBool_FromLong(*arg4);
+    /* if ((!resultobj) || (resultobj == Py_None)) { */
+    /*      resultobj = o; */
+    /*  } else { */
+    /*      if (!PyTuple_Check(resultobj)) { */
+    /*          PyObject *o2 = resultobj; */
+    /*          resultobj = PyTuple_New(1); */
+    /*          PyTuple_SetItem(resultobj,0,o2); */
+    /*      } */
+    /*      o3 = PyTuple_New(1); */
+    /*      PyTuple_SetItem(o3,0,o); */
+    /*      o2 = resultobj; */
+    /*      resultobj = PySequence_Concat(o2,o3); */
+    /*      Py_DECREF(o2); */
+    /*      Py_DECREF(o3); */
+    /*  } */
+    resultobj=SWIG_Python_AppendOutput(resultobj, o);
+  }
+  if (alloc3 == SWIG_NEWOBJ) delete[] buf3;
+  return resultobj;
+fail:
+  if (alloc3 == SWIG_NEWOBJ) delete[] buf3;
+  return NULL;
+}
+
+
 static PyMethodDef SwigMethods[] = {
 	 { (char *)"SWIG_PyInstanceMethod_New", (PyCFunction)SWIG_PyInstanceMethod_New, METH_O, NULL},
 	 { (char *)"delete_SwigPyIterator_medfile", _wrap_delete_SwigPyIterator_medfile, METH_VARARGS, NULL},
@@ -18283,6 +18550,25 @@ static PyMethodDef SwigMethods[] = {
 		"    accessmode: enum med_access_mode const\n"
 		"\n"
 		""},
+	 { (char *)"MEDfileVersionOpen", (PyCFunction) _wrap_MEDfileVersionOpen, METH_VARARGS | METH_KEYWORDS, (char *)"\n"
+		"MEDfileVersionOpen(filename, accessmode, major, minor, release) -> med_idt\n"
+		"\n"
+		"Parameters:\n"
+		"    filename: char const *const\n"
+		"    accessmode: enum med_access_mode const\n"
+		"    major: med_int const\n"
+		"    minor: med_int const\n"
+		"    release: med_int const\n"
+		"\n"
+		""},
+	 { (char *)"MEDfileExist", (PyCFunction) _wrap_MEDfileExist, METH_VARARGS | METH_KEYWORDS, (char *)"\n"
+		"MEDfileExist(filename, accessmode) -> med_err\n"
+		"\n"
+		"Parameters:\n"
+		"    filename: char const *const\n"
+		"    accessmode: enum med_access_mode const\n"
+		"\n"
+		""},
 	 { (char *)"MEDfileName", (PyCFunction) _wrap_MEDfileName, METH_VARARGS | METH_KEYWORDS, (char *)"MEDfileName(fid) -> string"},
 	 { (char *)"MEDfileClose", (PyCFunction) _wrap_MEDfileClose, METH_VARARGS | METH_KEYWORDS, (char *)"\n"
 		"MEDfileClose(fid) -> med_err\n"
@@ -18353,6 +18639,15 @@ static PyMethodDef SwigMethods[] = {
 		"    fid: med_idt const\n"
 		"    mid: med_idt const\n"
 		"    medclass: enum med_class const\n"
+		"\n"
+		""},
+	 { (char *)"MEDfileObjectExist", (PyCFunction) _wrap_MEDfileObjectExist, METH_VARARGS | METH_KEYWORDS, (char *)"\n"
+		"MEDfileObjectExist(fid, medclass, objectname) -> med_err\n"
+		"\n"
+		"Parameters:\n"
+		"    fid: med_idt const\n"
+		"    medclass: enum med_class const\n"
+		"    objectname: char const *const\n"
 		"\n"
 		""},
 	 { NULL, NULL, 0, NULL }
@@ -19263,7 +19558,7 @@ SWIG_init(void) {
   SWIG_Python_SetConstant(d, "HAVE_MALLOC_H",SWIG_From_int(static_cast< int >(1)));
   SWIG_Python_SetConstant(d, "HAVE_MEMORY_H",SWIG_From_int(static_cast< int >(1)));
   SWIG_Python_SetConstant(d, "HAVE_PWD_H",SWIG_From_int(static_cast< int >(1)));
-  SWIG_Python_SetConstant(d, "HAVE_PYTHON",SWIG_FromCharPtr("2.6"));
+  SWIG_Python_SetConstant(d, "HAVE_PYTHON",SWIG_FromCharPtr("2.7"));
   SWIG_Python_SetConstant(d, "HAVE_STDBOOL_H",SWIG_From_int(static_cast< int >(1)));
   SWIG_Python_SetConstant(d, "HAVE_STDINT_H",SWIG_From_int(static_cast< int >(1)));
   SWIG_Python_SetConstant(d, "HAVE_STDLIB_H",SWIG_From_int(static_cast< int >(1)));
@@ -19284,24 +19579,30 @@ SWIG_init(void) {
   SWIG_Python_SetConstant(d, "PACKAGE",SWIG_FromCharPtr("med"));
   SWIG_Python_SetConstant(d, "PACKAGE_BUGREPORT",SWIG_FromCharPtr("eric.fayolle@edf.fr"));
   SWIG_Python_SetConstant(d, "PACKAGE_NAME",SWIG_FromCharPtr("MED Fichier"));
-  SWIG_Python_SetConstant(d, "PACKAGE_STRING",SWIG_FromCharPtr("MED Fichier 3.2.0"));
+  SWIG_Python_SetConstant(d, "PACKAGE_STRING",SWIG_FromCharPtr("MED Fichier 3.2.1"));
   SWIG_Python_SetConstant(d, "PACKAGE_TARNAME",SWIG_FromCharPtr("med"));
   SWIG_Python_SetConstant(d, "PACKAGE_URL",SWIG_FromCharPtr(""));
-  SWIG_Python_SetConstant(d, "PACKAGE_VERSION",SWIG_FromCharPtr("3.2.0"));
+  SWIG_Python_SetConstant(d, "PACKAGE_VERSION",SWIG_FromCharPtr("3.2.1"));
   SWIG_Python_SetConstant(d, "SIZEOF_FORTRAN_INTEGER",SWIG_From_int(static_cast< int >(4)));
+  SWIG_Python_SetConstant(d, "SIZEOF_FORTRAN_INTEGERp4",SWIG_From_int(static_cast< int >(4)));
+  SWIG_Python_SetConstant(d, "SIZEOF_HID_T",SWIG_From_int(static_cast< int >(4)));
   SWIG_Python_SetConstant(d, "SIZEOF_INT",SWIG_From_int(static_cast< int >(4)));
   SWIG_Python_SetConstant(d, "SIZEOF_LONG",SWIG_From_int(static_cast< int >(8)));
   SWIG_Python_SetConstant(d, "STDC_HEADERS",SWIG_From_int(static_cast< int >(1)));
   SWIG_Python_SetConstant(d, "TIME_WITH_SYS_TIME",SWIG_From_int(static_cast< int >(1)));
-  SWIG_Python_SetConstant(d, "VERSION",SWIG_FromCharPtr("3.2.0"));
+  SWIG_Python_SetConstant(d, "VERSION",SWIG_FromCharPtr("3.2.1"));
+  SWIG_Python_SetConstant(d, "HDF_VERSION_MAJOR_REF",SWIG_From_int(static_cast< int >(1)));
+  SWIG_Python_SetConstant(d, "HDF_VERSION_MINOR_REF",SWIG_From_int(static_cast< int >(8)));
+  SWIG_Python_SetConstant(d, "HDF_VERSION_RELEASE_REF",SWIG_From_int(static_cast< int >(11)));
+  SWIG_Python_SetConstant(d, "HDF_VERSION_NUM_REF",SWIG_From_int(static_cast< int >((1*10000+8*100+11))));
   SWIG_Python_SetConstant(d, "H5F_LIBVER_18",SWIG_From_int(static_cast< int >(1)));
   SWIG_Python_SetConstant(d, "MED_MAJOR_NUM",SWIG_From_int(static_cast< int >(3)));
   SWIG_Python_SetConstant(d, "MED_MINOR_NUM",SWIG_From_int(static_cast< int >(2)));
-  SWIG_Python_SetConstant(d, "MED_RELEASE_NUM",SWIG_From_int(static_cast< int >(0)));
+  SWIG_Python_SetConstant(d, "MED_RELEASE_NUM",SWIG_From_int(static_cast< int >(1)));
   SWIG_Python_SetConstant(d, "MED_NUM_MAJEUR",SWIG_From_int(static_cast< int >(3)));
   SWIG_Python_SetConstant(d, "MED_NUM_MINEUR",SWIG_From_int(static_cast< int >(2)));
-  SWIG_Python_SetConstant(d, "MED_NUM_RELEASE",SWIG_From_int(static_cast< int >(0)));
-  SWIG_Python_SetConstant(d, "MED_VERSION_STR",SWIG_FromCharPtr("3.2.0"));
+  SWIG_Python_SetConstant(d, "MED_NUM_RELEASE",SWIG_From_int(static_cast< int >(1)));
+  SWIG_Python_SetConstant(d, "MED_VERSION_STR",SWIG_FromCharPtr("3.2.1"));
   SWIG_Python_SetConstant(d, "MED_MAX_PARA",SWIG_From_int(static_cast< int >(20)));
   SWIG_Python_SetConstant(d, "MED_COMMENT_SIZE",SWIG_From_int(static_cast< int >(200)));
   SWIG_Python_SetConstant(d, "MED_IDENT_SIZE",SWIG_From_int(static_cast< int >(8)));

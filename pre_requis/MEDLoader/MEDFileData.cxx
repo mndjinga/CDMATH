@@ -19,12 +19,23 @@
 // Author : Anthony Geay (CEA/DEN)
 
 #include "MEDFileData.hxx"
+#include "MEDLoaderBase.hxx"
+#include "MEDFileSafeCaller.txx"
+#include "MEDFileBlowStrEltUp.hxx"
 
-using namespace ParaMEDMEM;
+#include "InterpKernelAutoPtr.hxx"
+
+using namespace MEDCoupling;
 
 MEDFileData *MEDFileData::New(const std::string& fileName)
 {
-  return new MEDFileData(fileName);
+  MEDFileUtilities::AutoFid fid(OpenMEDFileForRead(fileName));
+  return New(fid);
+}
+
+MEDFileData *MEDFileData::New(med_idt fid)
+{
+  return new MEDFileData(fid);
 }
 
 MEDFileData *MEDFileData::New()
@@ -32,25 +43,25 @@ MEDFileData *MEDFileData::New()
   return new MEDFileData;
 }
 
-MEDFileData *MEDFileData::deepCpy() const
+MEDFileData *MEDFileData::deepCopy() const
 {
-  MEDCouplingAutoRefCountObjectPtr<MEDFileFields> fields;
-  if((const MEDFileFields *)_fields)
-    fields=_fields->deepCpy();
-  MEDCouplingAutoRefCountObjectPtr<MEDFileMeshes> meshes;
-  if((const MEDFileMeshes *)_meshes)
-    meshes=_meshes->deepCpy();
-  MEDCouplingAutoRefCountObjectPtr<MEDFileParameters> params;
-  if((const MEDFileParameters *)_params)
-    params=_params->deepCpy();
-  MEDCouplingAutoRefCountObjectPtr<MEDFileData> ret(MEDFileData::New());
+  MCAuto<MEDFileFields> fields;
+  if(_fields.isNotNull())
+    fields=_fields->deepCopy();
+  MCAuto<MEDFileMeshes> meshes;
+  if(_meshes.isNotNull())
+    meshes=_meshes->deepCopy();
+  MCAuto<MEDFileParameters> params;
+  if(_params.isNotNull())
+    params=_params->deepCopy();
+  MCAuto<MEDFileData> ret(MEDFileData::New());
   ret->_fields=fields; ret->_meshes=meshes; ret->_params=params;
   return ret.retn();
 }
 
 std::size_t MEDFileData::getHeapMemorySizeWithoutChildren() const
 {
-  return 0;
+  return _header.capacity();
 }
 
 std::vector<const BigMemoryObject *> MEDFileData::getDirectChildrenWithNull() const
@@ -59,6 +70,8 @@ std::vector<const BigMemoryObject *> MEDFileData::getDirectChildrenWithNull() co
   ret.push_back((const MEDFileFields *)_fields);
   ret.push_back((const MEDFileMeshes *)_meshes);
   ret.push_back((const MEDFileParameters *)_params);
+  ret.push_back((const MEDFileMeshSupports *)_mesh_supports);
+  ret.push_back((const MEDFileStructureElements *)_struct_elems);
   return ret;
 
 }
@@ -192,7 +205,7 @@ bool MEDFileData::unPolyzeMeshes()
   std::vector< MEDFileMesh * > meshesImpacted;
   std::vector< DataArrayInt * > renumParamsOfMeshImpacted;//same size as meshesImpacted
   std::vector< std::vector<int> > oldCodeOfMeshImpacted,newCodeOfMeshImpacted;//same size as meshesImpacted
-  std::vector<MEDCouplingAutoRefCountObjectPtr<DataArrayInt> > memSaverIfThrow;//same size as meshesImpacted
+  std::vector<MCAuto<DataArrayInt> > memSaverIfThrow;//same size as meshesImpacted
   for(int i=0;i<ms->getNumberOfMeshes();i++)
     {
       MEDFileMesh *m=ms->getMeshAtPos(i);
@@ -219,33 +232,139 @@ bool MEDFileData::unPolyzeMeshes()
   return !meshesImpacted.empty();
 }
 
+void MEDFileData::dealWithStructureElements()
+{
+  if(_struct_elems.isNull())
+    throw INTERP_KERNEL::Exception("MEDFileData::dealWithStructureElements : no structure elements in this !");
+  if(_meshes.isNull() || _fields.isNull())
+    throw INTERP_KERNEL::Exception("MEDFileData::dealWithStructureElements : meshes and fields must be not null !");
+  MEDFileBlowStrEltUp::DealWithSE(_fields,_meshes,_struct_elems);
+}
+
+/*!
+ * Precondition : all instances in \a mfds should have a single mesh with fields on it. If there is an instance with not exactly one mesh an exception will be thrown.
+ * You can invoke MEDFileFields::partOfThisLyingOnSpecifiedMeshName method to make it work.
+ */
+MCAuto<MEDFileData> MEDFileData::Aggregate(const std::vector<const MEDFileData *>& mfds)
+{
+  if(mfds.empty())
+    throw INTERP_KERNEL::Exception("MEDFileData::Aggregate : empty vector !");
+  std::size_t sz(mfds.size()),i(0);
+  MCAuto<MEDFileData> ret(MEDFileData::New());
+  std::vector<const MEDFileUMesh *> ms(sz);
+  std::vector< std::vector< std::pair<int,int> > > dts(sz);
+  for(std::vector<const MEDFileData *>::const_iterator it=mfds.begin();it!=mfds.end();it++,i++)
+    {
+      const MEDFileData *elt(*it);
+      if(!elt)
+        throw INTERP_KERNEL::Exception("MEDFileData::Aggregate : presence of NULL pointer !");
+      const MEDFileMeshes *meshes(elt->getMeshes());
+      if(!meshes)
+        throw INTERP_KERNEL::Exception("MEDFileData::Aggregate : presence of an instance with no meshes attached on it !");
+      if(meshes->getNumberOfMeshes()!=1)
+        throw INTERP_KERNEL::Exception("MEDFileData::Aggregate : all instances in input vector must lie on exactly one mesh ! To have it you can invoke partOfThisLyingOnSpecifiedMeshName method.");
+      const MEDFileMesh *mesh(meshes->getMeshAtPos(0));
+      if(!mesh)
+        throw INTERP_KERNEL::Exception("MEDFileData::Aggregate : presence of null mesh in a MEDFileData instance among input vector !");
+      const MEDFileUMesh *umesh(dynamic_cast<const MEDFileUMesh *>(mesh));
+      if(!umesh)
+        throw INTERP_KERNEL::Exception("MEDFileData::Aggregate : works only for unstructured meshes !");
+      ms[i]=umesh;
+      dts[i]=umesh->getAllDistributionOfTypes();
+    }
+  MCAuto<MEDFileUMesh> agg_m(MEDFileUMesh::Aggregate(ms));
+  MCAuto<MEDFileMeshes> mss(MEDFileMeshes::New()); mss->pushMesh(agg_m);
+  ret->setMeshes(mss);
+  // fields
+  std::vector<std::string> fieldNames(mfds[0]->getFields()->getFieldsNames());
+  std::set<std::string> fieldNamess(fieldNames.begin(),fieldNames.end());
+  if(fieldNames.size()!=fieldNamess.size())
+    throw INTERP_KERNEL::Exception("MEDFileData::Aggregate : field names must be different each other !");
+  std::vector< std::vector<const MEDFileAnyTypeFieldMultiTS *> > vectOfFields(fieldNames.size());
+  std::vector< std::vector< MCAuto< MEDFileAnyTypeFieldMultiTS > > > vectOfFields2(fieldNames.size());
+  MCAuto<MEDFileFields> fss(MEDFileFields::New());
+  for(std::vector<const MEDFileData *>::const_iterator it=mfds.begin();it!=mfds.end();it++)
+    {
+      std::vector<std::string> fieldNames0((*it)->getFields()->getFieldsNames());
+      std::set<std::string> fieldNamess0(fieldNames0.begin(),fieldNames0.end());
+      if(fieldNamess!=fieldNamess0)
+        throw INTERP_KERNEL::Exception("MEDFileData::Aggregate : field names must be the same for all input instances !");
+      i=0;
+      for(std::vector<std::string>::const_iterator it1=fieldNames.begin();it1!=fieldNames.end();it1++,i++)
+        {
+          MCAuto<MEDFileAnyTypeFieldMultiTS> fmts((*it)->getFields()->getFieldWithName(*it1));
+          if(fmts.isNull())
+            throw INTERP_KERNEL::Exception("MEDFileData::Aggregate : internal error 1 !");
+          vectOfFields2[i].push_back(fmts); vectOfFields[i].push_back(fmts);
+        }
+    }
+  i=0;
+  for(std::vector<std::string>::const_iterator it1=fieldNames.begin();it1!=fieldNames.end();it1++,i++)
+    {
+      MCAuto<MEDFileAnyTypeFieldMultiTS> fmts(MEDFileAnyTypeFieldMultiTS::Aggregate(vectOfFields[i],dts));
+      fmts->setMeshName(agg_m->getName());
+      fss->pushField(fmts);
+    }
+  ret->setFields(fss);
+  return ret;
+}
+
 MEDFileData::MEDFileData()
 {
 }
 
-MEDFileData::MEDFileData(const std::string& fileName)
+MEDFileData::MEDFileData(med_idt fid)
 try
 {
-    _fields=MEDFileFields::New(fileName);
-    _meshes=MEDFileMeshes::New(fileName);
-    _params=MEDFileParameters::New(fileName);
+  readHeader(fid);
+  _mesh_supports=MEDFileMeshSupports::New(fid);
+  _struct_elems=MEDFileStructureElements::New(fid,_mesh_supports);
+  _fields=MEDFileFields::NewWithDynGT(fid,_struct_elems,true);
+  _meshes=MEDFileMeshes::New(fid);
+  _params=MEDFileParameters::New(fid);
 }
 catch(INTERP_KERNEL::Exception& e)
 {
     throw e;
 }
 
-void MEDFileData::write(const std::string& fileName, int mode) const
+void MEDFileData::writeLL(med_idt fid) const
 {
-  med_access_mode medmod=MEDFileUtilities::TraduceWriteMode(mode);
-  MEDFileUtilities::AutoFid fid=MEDfileOpen(fileName.c_str(),medmod);
-  const MEDFileMeshes *ms=_meshes;
-  if(ms)
-    ms->write(fid);
-  const MEDFileFields *fs=_fields;
-  if(fs)
-    fs->writeLL(fid);
-  const MEDFileParameters *ps=_params;
-  if(ps)
-    ps->writeLL(fid);
+  writeHeader(fid);
+  if(_meshes.isNotNull())
+    _meshes->writeLL(fid);
+  if(_fields.isNotNull())
+    _fields->writeLL(fid);
+  if(_params.isNotNull())
+    _params->writeLL(fid);
+  if(_mesh_supports.isNotNull())
+    _mesh_supports->writeLL(fid);
+  if(_struct_elems.isNotNull())
+    _struct_elems->writeLL(fid);
+}
+
+std::string MEDFileData::getHeader() const
+{
+  return _header;
+}
+
+
+void MEDFileData::setHeader(const std::string& header)
+{
+  _header=header;
+}
+
+void MEDFileData::readHeader(med_idt fid)
+{
+  INTERP_KERNEL::AutoPtr<char> header(MEDLoaderBase::buildEmptyString(MED_COMMENT_SIZE));
+  int ret(MEDfileCommentRd(fid,header));
+  if(ret==0)
+    _header=MEDLoaderBase::buildStringFromFortran(header,MED_COMMENT_SIZE);
+}
+
+void MEDFileData::writeHeader(med_idt fid) const
+{
+  INTERP_KERNEL::AutoPtr<char> header(MEDLoaderBase::buildEmptyString(MED_COMMENT_SIZE));
+  MEDLoaderBase::safeStrCpy(_header.c_str(),MED_COMMENT_SIZE,header,_too_long_str);
+  MEDFILESAFECALLERWR0(MEDfileCommentWr,(fid,header));
 }

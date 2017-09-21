@@ -37,7 +37,7 @@ TESTS =  $(TESTS_ECR) $(TESTS_LEC)
 
 EXTRA_DIST = test.med.ref $(EXTRA_LEC) $(EXTRA_ECR)
 
-noinst_PROGRAMS = $(PROG_ECR) $(PROG_LEC)
+check_PROGRAMS = $(PROG_ECR) $(PROG_LEC)
 LDADD = $(top_builddir)/src/libmed.la
 
 CLEANFILES = \

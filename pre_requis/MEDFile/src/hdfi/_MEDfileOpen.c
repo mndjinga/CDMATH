@@ -53,15 +53,25 @@ H5AC_cache_config_t config;
   }
 
 
-  /* Ce ligne présente depuis la 3.0 impose l'utilisation du modèle
-   de données HDF 1.8 pour :
-  - Utiliser les nouvelles représentations plus efficaces que dans
-  les versions précédentes
-  - Empêcher l'utilisation de nvlle représentations d'une future bibliothèque hdf 1.9 :
-  qui posèrerait d'eventuels problèmes de relecture aux bibliothèques med
-  utilisant encore la 1.8 (ce choix doit être manuel) :
-  Les fichier HDF 1.8 utilisent la nouvelle représentation des liens au sein des groupes :
-  compact (header) ou dense (hors header)  */
+  /* Cette ligne, présente depuis la 3.0, impose l'utilisation du modèle de données HDF 1.8 pour :
+     - Utiliser les nouvelles représentations HDF plus efficaces que dans les versions précédentes
+     - Empêcher l'utilisation de nvlles représentations d'une future bibliothèque HDF 1.9 
+       qui poseait d'eventuels problèmes de relecture aux bibliothèques med
+       utilisant encore la 1.8 (ce choix doit être manuel) :
+    Les fichier HDF 1.8 utilisent la nouvelle représentation des liens au sein des groupes :
+    compact (header) ou dense (hors header)  
+  */
+  /* HDF-5 : UG
+    Groups will be initially created in the compact‐or‐indexed format only when one or more of the following
+    conditions is met:
+   •    The low version bound value of the library version bounds property has been set to Release 1.8.0
+        or later in the file access property list (see H5Pset_libver_bounds). Currently, that would
+        require an H5Pset_libver_bounds call with the low parameter set to H5F_LIBVER_LATEST.
+        When this property is set for an HDF5 file, all objects in the file will be created using the latest
+        available format; no effort will be made to create a file that can be read by older libraries.
+
+   •   The creation order tracking property, H5P_CRT_ORDER_TRACKED, has been set in the group creation property list (see H5Pset_link_creation_order).
+  */
   if ( H5Pset_libver_bounds( _fapl, H5F_LIBVER_18, H5F_LIBVER_18 ) ) {
     MED_ERR_(_fid,MED_ERR_INIT,MED_ERR_PROPERTY,MED_ERR_FILEVERSION_MSG);
     goto ERROR;
@@ -76,12 +86,6 @@ pour tester la présence d'un fichier */
     goto ERROR;
   }
 
-/*   if ((_fid = H5Fopen(filename,_hdf_mode,H5P_DEFAULT)) < 0) { */
-/*     MED_ERR_(_fid,MED_ERR_OPEN,MED_ERR_FILE,""); */
-/*     ISCRUTE_int(accessmode); */
-/*     H5Eprint1(stderr); */
-/*     goto ERROR; */
-/*   } */
 
   if ( H5Pclose(_fapl) < 0 ) {
     MED_ERR_(_fid,MED_ERR_CLOSE,MED_ERR_PROPERTY,"");

@@ -46,7 +46,7 @@ med_err MEDmeshNodeCoordinateTrsfRd(const med_idt               fid,
   med_err         _ret         = -1;
   med_idt         _meshid      = 0,_datagroup1=0,_dataset_coo=0;
   med_int         _intmeshtype = 0;
-  char            _meshpath   [MED_TAILLE_SUP_MAA+MED_NAME_SIZE+1]="";
+  char            _meshpath   [MED_MESH_SUPPORT_GRP_SIZE+MED_NAME_SIZE+1]="";
   char            _dataset_cooname[MED_TAILLE_NOM_ENTITE+1+3+1]=MED_NOM_NOE"/"MED_NOM_COO;
   med_bool        _isasupportmesh=MED_FALSE,_isasoftlink=MED_FALSE;
 
@@ -73,7 +73,7 @@ med_err MEDmeshNodeCoordinateTrsfRd(const med_idt               fid,
       MED_ERR_(_ret,MED_ERR_INVALID,MED_ERR_PARAMETER,"");
       SSCRUTE(meshname);goto ERROR;
   } else
-    if ( (_datagroup1 =_MEDmeshAssociatedGroupCr(fid, MED_MAA,
+    if ( (_datagroup1 =_MEDmeshAssociatedGroupCr(fid, MED_MESH_GRP,
 						 meshname, numdt, numit, MED_UNDEF_DT, MED_TRUE,
 						 "." ) ) < 0 ) {
       MED_ERR_(_ret,MED_ERR_CALL,MED_ERR_API,"_MEDmeshAssociatedGroupCr");
@@ -103,7 +103,7 @@ med_err MEDmeshNodeCoordinateTrsfRd(const med_idt               fid,
 			     MED_NODE,
 			     MED_NONE,
 			     MED_NO_CMODE,
-			     MED_UNDEF_PFLMODE,
+			     MED_UNDEF_STMODE,
 			     MED_NO_PROFILE,
 			     MED_NO_INTERLACE,
 			     MED_ALL_CONSTITUENT,

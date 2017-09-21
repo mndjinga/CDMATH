@@ -75,7 +75,7 @@ void _MEDmeshInfoByName30(int dummy, ...) {
    */
   _MEDmodeErreurVerrouiller();
 
-  if ( _MEDmeshInfoByName(fid, MED_MAA, meshname, spacedim, meshdim, meshtype,
+  if ( _MEDmeshInfoByName(fid, MED_MESH_GRP, meshname, spacedim, meshdim, meshtype,
 			  description, dtunit, sortingtype, nstep,axistype,
 			  axisname, axisunit)  < 0) {
     MED_ERR_(_ret,MED_ERR_CALL,MED_ERR_API,MED_ERR_MESH_MSG);

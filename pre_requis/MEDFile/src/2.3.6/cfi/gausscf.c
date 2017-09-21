@@ -30,11 +30,11 @@
 
 #ifdef PPRO_NT
 med_int 
- EDFGAUI(med_int *fid, med_int *indice, char * locname, unsigned int bidon,
+ EDFGAUI(med_idt *fid, med_int *indice, char * locname, unsigned int bidon,
 		  med_int *typ_geo, med_int *ngauss)
 #else
 med_int
-nedfgaui(med_int *fid,med_int *indice, char * locname,
+nedfgaui(med_idt *fid,med_int *indice, char * locname,
 	 med_int *typ_geo, med_int *ngauss)
 #endif
 {
@@ -55,15 +55,15 @@ nedfgaui(med_int *fid,med_int *indice, char * locname,
 
 #ifdef PPRO_NT
 med_int 
- EDFNGAU(med_int *fid)
+ EDFNGAU(med_idt *fid)
 #else
 med_int 
-nedfngau(med_int *fid)
+nedfngau(med_idt *fid)
 #endif
 {
   med_int ret; 
   
-  ret = (med_int) MEDnGauss((med_idt) *fid); 
+  ret = (med_int) MEDnGauss(*fid); 
 
   return(ret); 
 }
@@ -71,13 +71,13 @@ nedfngau(med_int *fid)
 
 #ifdef PPRO_NT
 med_int
- EDFGAUE(med_int *fid,med_int *typ_geo,
+ EDFGAUE(med_idt *fid,med_int *typ_geo,
 		  med_float *refcoo, med_int *mode_coo,
 		  med_int *ngauss, med_float *gscoo, med_float *wg,
 		  char *locname, unsigned int bidon1, med_int *lon1)
 #else
 med_int 
-nedfgaue(med_int *fid,med_int *typ_geo,
+nedfgaue(med_idt *fid,med_int *typ_geo,
 		  med_float *refcoo, med_int *mode_coo,
 		  med_int *ngauss, med_float *gscoo, med_float *wg,
 		  char *locname, med_int *lon1)
@@ -92,7 +92,7 @@ nedfgaue(med_int *fid,med_int *typ_geo,
 
   if (!fn1) return(-1); 
   
-  ret = (med_int) MEDgaussEcr( (med_idt) *fid, type,
+  ret = (med_int) MEDgaussEcr( *fid, type,
 			       (med_float *) refcoo, mode,
 			       (med_int) *ngauss, (med_float *) gscoo, (med_float *) wg,
 			       (char *) fn1);
@@ -105,11 +105,11 @@ nedfgaue(med_int *fid,med_int *typ_geo,
 
 #ifdef PPRO_NT
 med_int
- EDFGAUL(med_int * fid, med_float *refcoo, med_float *gscoo, med_float * wg,
+ EDFGAUL(med_idt * fid, med_float *refcoo, med_float *gscoo, med_float * wg,
 		  med_int *mode_coo, char *locname, unsigned int bidon1, med_int *lon1)
 #else
 med_int 
-nedfgaul(med_int * fid, med_float *refcoo, med_float *gscoo, med_float * wg,
+nedfgaul(med_idt * fid, med_float *refcoo, med_float *gscoo, med_float * wg,
 	 med_int *mode_coo, char *locname, med_int *lon1)
 #endif
 {
@@ -121,7 +121,7 @@ nedfgaul(med_int * fid, med_float *refcoo, med_float *gscoo, med_float * wg,
 
   if (!fn1) return(-1); 
   
-  ret = (med_int) MEDgaussLire( (med_idt) *fid, (med_float *) refcoo, (med_float *)gscoo,
+  ret = (med_int) MEDgaussLire( *fid, (med_float *) refcoo, (med_float *)gscoo,
 				(med_float *) wg, mode,
 				(char *) fn1);
 

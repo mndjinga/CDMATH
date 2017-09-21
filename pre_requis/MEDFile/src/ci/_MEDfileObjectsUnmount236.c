@@ -50,47 +50,50 @@ void _MEDfileObjectsUnmount236(int dummy, ...) {
   switch(medclass) {
 
   case MED_MESH :
-    strcpy(_link,MED_MAA);
+    strcpy(_link,MED_MESH_GRP);
     break;
 
+  case MED_FIELD :
+    // n'existe pas en 2.3.6 : strcpy(_link,MED_CHA_INTERP);
+    strcpy(_link,MED_FIELD_GRP);
+    break;
+
+    //Les usescases suivants ne sont pas mountables
+    //par _MEDfileObjectsMount236 :
   case MED_MESH_SUPPORT :
-    strcpy(_link,MED_SUP_MAA);
+    strcpy(_link,MED_MESH_SUPPORT_GRP);
     break;
 
   case MED_ELSTRUCT :
-    strcpy(_link,MED_STRCT);
+    strcpy(_link,MED_ELSTRUCT_GRP);
     break;
 
   case MED_FAMILY :
-    strcpy(_link,MED_FAS);
+    strcpy(_link,MED_FAMILY_GRP);
     break;
 
   case MED_EQUIVALENCE :
-    strcpy(_link,MED_EQS);
+    strcpy(_link,MED_EQUIVALENCE_GRP);
     break;
 
   case MED_JOINT :
-    strcpy(_link,MED_JNT);
-    break;
-
-  case MED_FIELD :         /* Ajouter aussi MED_CHA_INTERP*/
-    strcpy(_link,MED_CHA);
+    strcpy(_link,MED_JOINT_GRP);
     break;
 
   case MED_LOCALIZATION :
-    strcpy(_link,MED_GAUSS);
+    strcpy(_link,MED_LOCALIZATION_GRP);
     break;
 
   case MED_PROFILE :
-    strcpy(_link,MED_PROFILS);
+    strcpy(_link,MED_PROFILE_GRP);
     break;
 
   case MED_INTERPOLATION :
-    strcpy(_link,MED_JNT);
+    strcpy(_link,MED_INTERPOLATION_GRP);
     break;
 
   case MED_NUMERICAL_DATA :
-    strcpy(_link,MED_NUM_DATA);
+    strcpy(_link,MED_NUMERICAL_DATA_GRP);
     break;
 
   default :

@@ -26,18 +26,20 @@
 
 #include <vector>
 
-namespace ParaMEDMEM
+namespace MEDCoupling
 {
   class DataArrayInt;
   class DataArrayDouble;
   class MEDCouplingUMesh;
+  class MEDCouplingCMesh;
   class MEDCouplingFieldDouble;
 
-  class MEDCouplingExtrudedMesh : public MEDCouplingMesh
+  class MEDCouplingMappedExtrudedMesh : public MEDCouplingMesh
   {
   public:
-    MEDCOUPLING_EXPORT static MEDCouplingExtrudedMesh *New(const MEDCouplingUMesh *mesh3D, const MEDCouplingUMesh *mesh2D, int cell2DId);
-    MEDCOUPLING_EXPORT static MEDCouplingExtrudedMesh *New();
+    MEDCOUPLING_EXPORT static MEDCouplingMappedExtrudedMesh *New(const MEDCouplingUMesh *mesh3D, const MEDCouplingUMesh *mesh2D, int cell2DId);
+    MEDCOUPLING_EXPORT static MEDCouplingMappedExtrudedMesh *New(const MEDCouplingCMesh *mesh3D);
+    MEDCOUPLING_EXPORT static MEDCouplingMappedExtrudedMesh *New();
     MEDCOUPLING_EXPORT MEDCouplingMeshType getType() const;
     MEDCOUPLING_EXPORT std::size_t getHeapMemorySizeWithoutChildren() const;
     MEDCOUPLING_EXPORT std::vector<const BigMemoryObject *> getDirectChildrenWithNull() const;
@@ -46,8 +48,9 @@ namespace ParaMEDMEM
     MEDCOUPLING_EXPORT int getNumberOfNodes() const;
     MEDCOUPLING_EXPORT int getSpaceDimension() const;
     MEDCOUPLING_EXPORT int getMeshDimension() const;
-    MEDCOUPLING_EXPORT MEDCouplingExtrudedMesh *deepCpy() const;
-    MEDCouplingExtrudedMesh *clone(bool recDeepCpy) const;
+    MEDCOUPLING_EXPORT MEDCouplingMappedExtrudedMesh *deepCopy() const;
+    MEDCOUPLING_EXPORT MEDCouplingMappedExtrudedMesh *clone(bool recDeepCpy) const;
+    MEDCOUPLING_EXPORT const DataArrayDouble *getDirectAccessOfCoordsArrIfInStructure() const;
     MEDCOUPLING_EXPORT bool isEqualIfNotWhy(const MEDCouplingMesh *other, double prec, std::string& reason) const;
     MEDCOUPLING_EXPORT bool isEqualWithoutConsideringStr(const MEDCouplingMesh *other, double prec) const;
     MEDCOUPLING_EXPORT void checkDeepEquivalWith(const MEDCouplingMesh *other, int cellCompPol, double prec,
@@ -65,20 +68,21 @@ namespace ParaMEDMEM
     MEDCOUPLING_EXPORT void getCoordinatesOfNode(int nodeId, std::vector<double>& coo) const;
     MEDCOUPLING_EXPORT std::string simpleRepr() const;
     MEDCOUPLING_EXPORT std::string advancedRepr() const;
-    MEDCOUPLING_EXPORT void checkCoherency() const;
-    MEDCOUPLING_EXPORT void checkCoherency1(double eps=1e-12) const;
+    MEDCOUPLING_EXPORT void checkConsistencyLight() const;
+    MEDCOUPLING_EXPORT void checkConsistency(double eps=1e-12) const;
     MEDCOUPLING_EXPORT void getBoundingBox(double *bbox) const;
     MEDCOUPLING_EXPORT void updateTime() const;
     MEDCOUPLING_EXPORT void renumberCells(const int *old2NewBg, bool check=true);
-    MEDCOUPLING_EXPORT MEDCouplingUMesh *getMesh2D() const { return _mesh2D; }
-    MEDCOUPLING_EXPORT MEDCouplingUMesh *getMesh1D() const { return _mesh1D; }
-    MEDCOUPLING_EXPORT DataArrayInt *getMesh3DIds() const { return _mesh3D_ids; }
+    MEDCOUPLING_EXPORT MEDCouplingUMesh *getMesh2D() const { return _mesh2D.iAmATrollConstCast(); }
+    MEDCOUPLING_EXPORT MEDCouplingUMesh *getMesh1D() const { return _mesh1D.iAmATrollConstCast(); }
+    MEDCOUPLING_EXPORT DataArrayInt *getMesh3DIds() const { return _mesh3D_ids.iAmATrollConstCast(); }
     MEDCOUPLING_EXPORT MEDCouplingUMesh *build3DUnstructuredMesh() const;
     MEDCOUPLING_EXPORT MEDCouplingUMesh *buildUnstructured() const;
     MEDCOUPLING_EXPORT MEDCouplingFieldDouble *getMeasureField(bool) const;
     MEDCOUPLING_EXPORT MEDCouplingFieldDouble *getMeasureFieldOnNode(bool) const;
     MEDCOUPLING_EXPORT MEDCouplingFieldDouble *buildOrthogonalField() const;
     MEDCOUPLING_EXPORT int getCellContainingPoint(const double *pos, double eps) const;
+    MEDCOUPLING_EXPORT void getCellsContainingPoint(const double *pos, double eps, std::vector<int>& elts) const;
     MEDCOUPLING_EXPORT static int FindCorrespCellByNodalConn(const std::vector<int>& nodalConnec,
                                                              const int *revNodalPtr, const int *revNodalIndxPtr);
     MEDCOUPLING_EXPORT static void Project1DMeshes(const MEDCouplingUMesh *m1, const MEDCouplingUMesh *m2, double eps,
@@ -94,7 +98,7 @@ namespace ParaMEDMEM
     MEDCOUPLING_EXPORT DataArrayInt *simplexize(int policy);
     MEDCOUPLING_EXPORT MEDCouplingMesh *mergeMyselfWith(const MEDCouplingMesh *other) const;
     MEDCOUPLING_EXPORT DataArrayDouble *getCoordinatesAndOwner() const;
-    MEDCOUPLING_EXPORT DataArrayDouble *getBarycenterAndOwner() const;
+    MEDCOUPLING_EXPORT DataArrayDouble *computeCellCenterOfMass() const;
     MEDCOUPLING_EXPORT DataArrayDouble *computeIsoBarycenterOfNodesPerCell() const;
     MEDCOUPLING_EXPORT void getReverseNodalConnectivity(DataArrayInt *revNodal, DataArrayInt *revNodalIndx) const;
     //Serialization unserialisation
@@ -105,10 +109,12 @@ namespace ParaMEDMEM
                                             const std::vector<std::string>& littleStrings);
     MEDCOUPLING_EXPORT void reprQuickOverview(std::ostream& stream) const;
     MEDCOUPLING_EXPORT std::string getVTKFileExtension() const;
+    MEDCOUPLING_EXPORT int get2DCellIdForExtrusion() const { return _cell_2D_id; }
   private:
-    MEDCouplingExtrudedMesh(const MEDCouplingUMesh *mesh3D, const MEDCouplingUMesh *mesh2D, int cell2DId);
-    MEDCouplingExtrudedMesh(const MEDCouplingExtrudedMesh& other, bool deepCopy);
-    MEDCouplingExtrudedMesh();
+    MEDCouplingMappedExtrudedMesh(const MEDCouplingUMesh *mesh3D, const MEDCouplingUMesh *mesh2D, int cell2DId);
+    MEDCouplingMappedExtrudedMesh(const MEDCouplingCMesh *mesh3D);
+    MEDCouplingMappedExtrudedMesh(const MEDCouplingMappedExtrudedMesh& other, bool deepCopy);
+    MEDCouplingMappedExtrudedMesh();
     void computeExtrusion(const MEDCouplingUMesh *mesh3D);
     void computeExtrusionAlg(const MEDCouplingUMesh *mesh3D);
     void build1DExtrusion(int idIn3DDesc, int newId, int nbOf1DLev, MEDCouplingUMesh *subMesh,
@@ -119,14 +125,14 @@ namespace ParaMEDMEM
                            const int *desc3D, const int *descIndx3D,
                            const int *conn2D, const int *conn2DIndx);
     void computeBaryCenterOfFace(const std::vector<int>& nodalConnec, int lev1DId);
-    ~MEDCouplingExtrudedMesh();
+    ~MEDCouplingMappedExtrudedMesh();
     void writeVTKLL(std::ostream& ofs, const std::string& cellData, const std::string& pointData, DataArrayByte *byteData) const;
     std::string getVTKDataSetType() const;
   private:
-    MEDCouplingUMesh *_mesh2D;
-    MEDCouplingUMesh *_mesh1D;
+    MCAuto<MEDCouplingUMesh> _mesh2D;
+    MCAuto<MEDCouplingUMesh> _mesh1D;
     //! New to old 3D cell Ids Array
-    DataArrayInt *_mesh3D_ids;
+    MCAuto<DataArrayInt> _mesh3D_ids;
     int _cell_2D_id;
   };
 }

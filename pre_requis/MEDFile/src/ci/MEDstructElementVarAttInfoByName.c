@@ -48,7 +48,7 @@ MEDstructElementVarAttInfoByName(const med_idt                   fid,
 
   med_err           _ret=-1;
   med_idt           _attid=0;
-  char              _path[MED_TAILLE_STRCT+MED_NAME_SIZE+1+MED_TAILLE_VARATR+MED_NAME_SIZE+1]=MED_STRCT;
+  char              _path[MED_ELSTRUCT_GRP_SIZE+MED_NAME_SIZE+1+MED_TAILLE_VARATR+MED_NAME_SIZE+1]=MED_ELSTRUCT_GRP;
   med_int           _intentitytype = MED_UNDEF_ENTITY_TYPE;
   med_int           _profilesize=0;
   med_int           _medintvaratttype=0;

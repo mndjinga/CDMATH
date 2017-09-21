@@ -99,26 +99,26 @@ med_err MEDfilterBlockOfEntityCr(const med_idt          fid,
 
 
     switch(storagemode) {  /* switch Interlace */
-    case MED_GLOBAL_PFLMODE :
+    case MED_GLOBAL_STMODE :
 
       if ( _MEDfilterBlockOfEntityFullIGlobalCr(fid,nentity,nvaluesperentity,nconstituentpervalue,constituentselect,
 						storagemode,profilename,start,stride,count,blocksize,lastblocksize,filter) < 0 ) {
 	MED_ERR_(_ret,MED_ERR_SELECT,MED_ERR_FILTER,MED_ERR_MODE_MSG);
-	MESSAGE("MED_FULL_INTERLACE, MED_GLOBAL_PFLMODE");
+	MESSAGE("MED_FULL_INTERLACE, MED_GLOBAL_STMODE");
 	goto ERROR;
       }
       break;
-    case MED_COMPACT_PFLMODE :
+    case MED_COMPACT_STMODE :
       if ( _MEDfilterBlockOfEntityFullICompactCr(fid,nentity,nvaluesperentity,nconstituentpervalue,constituentselect,
 						 storagemode,profilename,start,stride,count,blocksize,lastblocksize,filter) < 0 ) {
 	MED_ERR_(_ret,MED_ERR_SELECT,MED_ERR_FILTER,MED_ERR_MODE_MSG);
-	MESSAGE("MED_FULL_INTERLACE, MED_COMPACT_PFLMODE");
+	MESSAGE("MED_FULL_INTERLACE, MED_COMPACT_STMODE");
 	goto ERROR;
       }
       break;
     default:
       MED_ERR_(_ret,MED_ERR_INIT,MED_ERR_FILTER,MED_ERR_MODE_MSG);
-      MESSAGE("MED_UNDEF_PFLMODE");
+      MESSAGE("MED_UNDEF_STMODE");
       MESSAGE("MED_FULL_INTERLACE");
       SSCRUTE(profilename);
       ISCRUTE_int(storagemode);
@@ -132,28 +132,28 @@ med_err MEDfilterBlockOfEntityCr(const med_idt          fid,
 
     switch(storagemode) {
 
-    case MED_GLOBAL_PFLMODE :
+    case MED_GLOBAL_STMODE :
 
       if ( _MEDfilterBlockOfEntityNoIGlobalCr(fid,nentity,nvaluesperentity,nconstituentpervalue,constituentselect,
 					      storagemode,profilename,start,stride,count,blocksize,lastblocksize,filter) < 0 ) {
 	MED_ERR_(_ret,MED_ERR_SELECT,MED_ERR_FILTER,MED_ERR_MODE_MSG);
-	MESSAGE("MED_NO_INTERLACE, MED_GLOBAL_PFLMODE");
+	MESSAGE("MED_NO_INTERLACE, MED_GLOBAL_STMODE");
 	goto ERROR;
       }
       break;
 
-    case MED_COMPACT_PFLMODE :
+    case MED_COMPACT_STMODE :
       if ( _MEDfilterBlockOfEntityNoICompactCr(fid,nentity,nvaluesperentity,nconstituentpervalue,constituentselect,
 					       storagemode,profilename,start,stride,count,blocksize,lastblocksize,filter) < 0 ) {
 	MED_ERR_(_ret,MED_ERR_SELECT,MED_ERR_FILTER,MED_ERR_MODE_MSG);
-	MESSAGE("MED_NO_INTERLACE, MED_COMPACT_PFLMODE");
+	MESSAGE("MED_NO_INTERLACE, MED_COMPACT_STMODE");
 	goto ERROR;
       }
       break;
 
     default:
       MED_ERR_(_ret,MED_ERR_INIT,MED_ERR_FILTER,MED_ERR_MODE_MSG);
-      MESSAGE("MED_UNDEF_PFLMODE");
+      MESSAGE("MED_UNDEF_STMODE");
       MESSAGE("MED_NO_INTERLACE");
       SSCRUTE(profilename);
       ISCRUTE_int(storagemode);

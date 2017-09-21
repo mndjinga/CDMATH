@@ -18,7 +18,6 @@
 //
 
 #include "MEDFileJoint.hxx"
-#include "MEDFileUtilities.hxx"
 #include "MEDLoader.hxx"
 #include "MEDLoaderBase.hxx"
 #include "MEDFileSafeCaller.txx"
@@ -30,11 +29,11 @@ extern med_geometry_type                 typmai[MED_N_CELL_FIXED_GEO];
 extern INTERP_KERNEL::NormalizedCellType typmai2[MED_N_CELL_FIXED_GEO];
 extern med_geometry_type                 typmai3[34];
 
-using namespace ParaMEDMEM;
+using namespace MEDCoupling;
 
 std::size_t MEDFileJointCorrespondence::getHeapMemorySizeWithoutChildren() const
 {
-  return sizeof(MEDCouplingAutoRefCountObjectPtr<DataArrayInt>);
+  return sizeof(MCAuto<DataArrayInt>);
 }
 
 std::vector<const BigMemoryObject *> MEDFileJointCorrespondence::getDirectChildrenWithNull() const
@@ -175,15 +174,15 @@ bool MEDFileJointCorrespondence::isEqual(const MEDFileJointCorrespondence *other
   return true;
 }
 
-MEDFileJointCorrespondence *MEDFileJointCorrespondence::deepCpy() const
+MEDFileJointCorrespondence *MEDFileJointCorrespondence::deepCopy() const
 {
-  MEDCouplingAutoRefCountObjectPtr<MEDFileJointCorrespondence> ret=new MEDFileJointCorrespondence(*this);
+  MCAuto<MEDFileJointCorrespondence> ret=new MEDFileJointCorrespondence(*this);
   return ret.retn();
 }
 
 MEDFileJointCorrespondence *MEDFileJointCorrespondence::shallowCpy() const
 {
-  MEDCouplingAutoRefCountObjectPtr<MEDFileJointCorrespondence> ret=new MEDFileJointCorrespondence(*this);
+  MCAuto<MEDFileJointCorrespondence> ret=new MEDFileJointCorrespondence(*this);
   return ret.retn();
 }
 
@@ -223,7 +222,7 @@ MEDFileJointOneStep::MEDFileJointOneStep():_order(-1),_iteration(-1)
 
 std::size_t MEDFileJointOneStep::getHeapMemorySizeWithoutChildren() const
 {
-  return _correspondences.capacity()*sizeof(MEDCouplingAutoRefCountObjectPtr<DataArrayInt>);
+  return _correspondences.capacity()*sizeof(MCAuto<DataArrayInt>);
 }
 
 std::vector<const BigMemoryObject *> MEDFileJointOneStep::getDirectChildrenWithNull() const
@@ -276,7 +275,7 @@ MEDFileJointOneStep::MEDFileJointOneStep(med_idt fid, const std::string& mName, 
                                                                &loc_ent_type, &loc_geo_type, &rem_ent_type, &rem_geo_type, &num_entity));
       if ( num_entity > 0 )
         {
-          MEDCouplingAutoRefCountObjectPtr<DataArrayInt> correspondence=DataArrayInt::New();
+          MCAuto<DataArrayInt> correspondence=DataArrayInt::New();
           correspondence->alloc(num_entity*2, 1);
           MEDFILESAFECALLERRD0(MEDsubdomainCorrespondenceRd,(fid, mName.c_str(), jointName.c_str(), order, iteration, loc_ent_type,
                                                              loc_geo_type, rem_ent_type, rem_geo_type, correspondence->getPointer()));
@@ -313,7 +312,7 @@ void MEDFileJointOneStep::write(const std::string& fileName, int mode, const std
 
 void MEDFileJointOneStep::writeLL(med_idt fid, const std::string& localMeshName, const std::string& jointName) const
 {
-  for(std::vector< MEDCouplingAutoRefCountObjectPtr<MEDFileJointCorrespondence> >::const_iterator it=_correspondences.begin();it!=_correspondences.end();it++)
+  for(std::vector< MCAuto<MEDFileJointCorrespondence> >::const_iterator it=_correspondences.begin();it!=_correspondences.end();it++)
     {
       (*it)->writeLL(fid, localMeshName, jointName, getOrder(), getIteration());
     }
@@ -377,21 +376,21 @@ bool MEDFileJointOneStep::isEqual(const MEDFileJointOneStep *other) const
   return true;
 }
 
-MEDFileJointOneStep *MEDFileJointOneStep::deepCpy() const
+MEDFileJointOneStep *MEDFileJointOneStep::deepCopy() const
 {
-  std::vector< MEDCouplingAutoRefCountObjectPtr<MEDFileJointCorrespondence> > correspondences(_correspondences.size());
+  std::vector< MCAuto<MEDFileJointCorrespondence> > correspondences(_correspondences.size());
   std::size_t i=0;
-  for(std::vector< MEDCouplingAutoRefCountObjectPtr<MEDFileJointCorrespondence> >::const_iterator it=_correspondences.begin();it!=_correspondences.end();it++,i++)
+  for(std::vector< MCAuto<MEDFileJointCorrespondence> >::const_iterator it=_correspondences.begin();it!=_correspondences.end();it++,i++)
     if((const MEDFileJointCorrespondence *)*it)
-      correspondences[i]=(*it)->deepCpy();
-  MEDCouplingAutoRefCountObjectPtr<MEDFileJointOneStep> ret= new MEDFileJointOneStep;
+      correspondences[i]=(*it)->deepCopy();
+  MCAuto<MEDFileJointOneStep> ret= new MEDFileJointOneStep;
   ret->_correspondences=correspondences;
   return ret.retn();
 }
 
 MEDFileJointOneStep *MEDFileJointOneStep::shallowCpy() const
 {
-  MEDCouplingAutoRefCountObjectPtr<MEDFileJointOneStep> ret=new MEDFileJointOneStep(*this);
+  MCAuto<MEDFileJointOneStep> ret=new MEDFileJointOneStep(*this);
   return ret.retn();
 }
 
@@ -405,7 +404,7 @@ std::string MEDFileJointOneStep::simpleRepr() const
   std::ostringstream oss;
   oss << "(*************************************)\n(* JOINT_ONE_STEP INFORMATION: *)\n(*************************************)\n";
   oss << "- Number of the correspondences : <<" << _correspondences.size() << ">>\n";
-  for(std::vector< MEDCouplingAutoRefCountObjectPtr<MEDFileJointCorrespondence> >::const_iterator it=_correspondences.begin();it!=_correspondences.end();it++)
+  for(std::vector< MCAuto<MEDFileJointCorrespondence> >::const_iterator it=_correspondences.begin();it!=_correspondences.end();it++)
     {
       oss << (*it)->simpleRepr();
     }
@@ -426,7 +425,7 @@ INTERP_KERNEL::NormalizedCellType MEDFileJointOneStep::convertGeometryType(med_g
 }
 std::size_t MEDFileJoint::getHeapMemorySizeWithoutChildren() const
 {
-  return _joint.capacity()*sizeof(MEDCouplingAutoRefCountObjectPtr<MEDFileJointOneStep>);
+  return _joint.capacity()*sizeof(MCAuto<MEDFileJointOneStep>);
 }
 
 std::vector<const BigMemoryObject *> MEDFileJoint::getDirectChildrenWithNull() const
@@ -495,33 +494,13 @@ MEDFileJoint::MEDFileJoint(med_idt fid, const std::string& mName, int curJoint)
     }
 }
 
-/*!
- * Writes \a this joint into a MED file specified by its name.
- *  \param [in] fileName - the MED file name.
- *  \param [in] mode - the writing mode. For more on \a mode, see \ref AdvMEDLoaderBasics.
- * - 2 - erase; an existing file is removed.
- * - 1 - append; same data should not be present in an existing file.
- * - 0 - overwrite; same data present in an existing file is overwritten.
- *  \throw If the mesh name is not set.
- *  \throw If \a mode == 1 and the same data is present in an existing file.
- */
-void MEDFileJoint::write(const std::string& fileName, int mode) const
-{
-  med_access_mode medmod=MEDFileUtilities::TraduceWriteMode(mode);
-  MEDFileUtilities::AutoFid fid=MEDfileOpen(fileName.c_str(),medmod);
-  std::ostringstream oss; oss << "MEDFileJoint : error on attempt to write in file : \"" << fileName << "\"";
-  MEDFileUtilities::CheckMEDCode(fid,fid,oss.str());
-  write(fid);
-}
-
-void MEDFileJoint::write(med_idt fid) const
+void MEDFileJoint::writeLL(med_idt fid) const
 {
   // if ( _loc_mesh_name.empty() )
   //   throw INTERP_KERNEL::Exception("MEDFileJoint::write : name of a local mesh not defined!");
   MEDFILESAFECALLERWR0(MEDsubdomainJointCr,(fid,getLocalMeshName().c_str(),getJointName().c_str(),getDescription().c_str(),getDomainNumber(),getRemoteMeshName().c_str()));
-  for(std::vector< MEDCouplingAutoRefCountObjectPtr<MEDFileJointOneStep> >::const_iterator it=_joint.begin();it!=_joint.end();it++) {
+  for(std::vector< MCAuto<MEDFileJointOneStep> >::const_iterator it=_joint.begin();it!=_joint.end();it++)
     (*it)->writeLL(fid, getLocalMeshName(),getJointName());
-  }
 }
 
 void MEDFileJoint::pushStep(MEDFileJointOneStep* step)
@@ -585,21 +564,21 @@ bool MEDFileJoint::isEqual(const MEDFileJoint *other) const
   return true;
 }
 
-MEDFileJoint *MEDFileJoint::deepCpy() const
+MEDFileJoint *MEDFileJoint::deepCopy() const
 {
-  std::vector< MEDCouplingAutoRefCountObjectPtr<MEDFileJointOneStep> > joint(_joint.size());
+  std::vector< MCAuto<MEDFileJointOneStep> > joint(_joint.size());
   std::size_t i=0;
-  for(std::vector< MEDCouplingAutoRefCountObjectPtr<MEDFileJointOneStep> >::const_iterator it=_joint.begin();it!=_joint.end();it++,i++)
+  for(std::vector< MCAuto<MEDFileJointOneStep> >::const_iterator it=_joint.begin();it!=_joint.end();it++,i++)
     if((const MEDFileJointOneStep *)*it)
-      joint[i]=(*it)->deepCpy();
-  MEDCouplingAutoRefCountObjectPtr<MEDFileJoint> ret=MEDFileJoint::New();
+      joint[i]=(*it)->deepCopy();
+  MCAuto<MEDFileJoint> ret=MEDFileJoint::New();
   ret->_joint=joint;
   return ret.retn();
 }
 
 MEDFileJoint *MEDFileJoint::shallowCpy() const
 {
-  MEDCouplingAutoRefCountObjectPtr<MEDFileJoint> ret=new MEDFileJoint(*this);
+  MCAuto<MEDFileJoint> ret=new MEDFileJoint(*this);
   return ret.retn();
 }
 
@@ -630,7 +609,7 @@ std::string MEDFileJoint::simpleRepr() const
   oss << "- Description : <<" << getDescription() << ">>\n";
   oss << "- Joint name : <<" << getJointName() << ">>\n";
   oss << "- Domain number : " << getDomainNumber() << "\n";
-  for(std::vector< MEDCouplingAutoRefCountObjectPtr<MEDFileJointOneStep> >::const_iterator it=_joint.begin();it!=_joint.end();it++)
+  for(std::vector< MCAuto<MEDFileJointOneStep> >::const_iterator it=_joint.begin();it!=_joint.end();it++)
     {
       oss << (*it)->simpleRepr();
     }
@@ -654,21 +633,10 @@ MEDFileJoints *MEDFileJoints::New(med_idt fid, const std::string& meshName)
   return new MEDFileJoints( fid, meshName );
 }
 
-void MEDFileJoints::write(med_idt fid) const
+void MEDFileJoints::writeLL(med_idt fid) const
 {
-  for(std::vector< MEDCouplingAutoRefCountObjectPtr<MEDFileJoint> >::const_iterator it=_joints.begin();it!=_joints.end();it++)
-    {
-      (*it)->write(fid);
-    }
-}
-
-void MEDFileJoints::write(const std::string& fileName, int mode) const
-{
-  med_access_mode medmod=MEDFileUtilities::TraduceWriteMode(mode);
-  MEDFileUtilities::AutoFid fid=MEDfileOpen(fileName.c_str(),medmod);
-  std::ostringstream oss; oss << "MEDFileJoints : error on attempt to write in file : \"" << fileName << "\"";
-  MEDFileUtilities::CheckMEDCode(fid,fid,oss.str());
-  write(fid);
+  for(std::vector< MCAuto<MEDFileJoint> >::const_iterator it=_joints.begin();it!=_joints.end();it++)
+    (*it)->writeLL(fid);
 }
 
 std::string MEDFileJoints::getMeshName() const
@@ -716,7 +684,7 @@ std::vector<std::string> MEDFileJoints::getJointsNames() const
 {
   std::vector<std::string> ret(_joints.size());
   int i=0;
-  for(std::vector< MEDCouplingAutoRefCountObjectPtr<MEDFileJoint> >::const_iterator it=_joints.begin();it!=_joints.end();it++,i++)
+  for(std::vector< MCAuto<MEDFileJoint> >::const_iterator it=_joints.begin();it!=_joints.end();it++,i++)
     {
       const MEDFileJoint *f=(*it);
       if(f)
@@ -735,7 +703,7 @@ std::vector<std::string> MEDFileJoints::getJointsNames() const
 bool MEDFileJoints::changeJointNames(const std::vector< std::pair<std::string,std::string> >& modifTab)
 {
   bool ret=false;
-  for(std::vector< MEDCouplingAutoRefCountObjectPtr<MEDFileJoint> >::iterator it=_joints.begin();it!=_joints.end();it++)
+  for(std::vector< MCAuto<MEDFileJoint> >::iterator it=_joints.begin();it!=_joints.end();it++)
     {
       MEDFileJoint *cur(*it);
       if(cur)
@@ -792,27 +760,27 @@ MEDFileJoints::MEDFileJoints(med_idt fid, const std::string& meshName)
     _joints.push_back(MEDFileJoint::New(fid,meshName,i));
 }
 
-MEDFileJoints *MEDFileJoints::deepCpy() const
+MEDFileJoints *MEDFileJoints::deepCopy() const
 {
-  std::vector< MEDCouplingAutoRefCountObjectPtr<MEDFileJoint> > joints(_joints.size());
+  std::vector< MCAuto<MEDFileJoint> > joints(_joints.size());
   std::size_t i=0;
-  for(std::vector< MEDCouplingAutoRefCountObjectPtr<MEDFileJoint> >::const_iterator it=_joints.begin();it!=_joints.end();it++,i++)
+  for(std::vector< MCAuto<MEDFileJoint> >::const_iterator it=_joints.begin();it!=_joints.end();it++,i++)
     if((const MEDFileJoint *)*it)
-      joints[i]=(*it)->deepCpy();
-  MEDCouplingAutoRefCountObjectPtr<MEDFileJoints> ret=MEDFileJoints::New();
+      joints[i]=(*it)->deepCopy();
+  MCAuto<MEDFileJoints> ret=MEDFileJoints::New();
   ret->_joints=joints;
   return ret.retn();
 }
 
 std::size_t MEDFileJoints::getHeapMemorySizeWithoutChildren() const
 {
-  return _joints.capacity()*(sizeof(MEDCouplingAutoRefCountObjectPtr<MEDFileJoint>));
+  return _joints.capacity()*(sizeof(MCAuto<MEDFileJoint>));
 }
 
 std::vector<const BigMemoryObject *> MEDFileJoints::getDirectChildrenWithNull() const
 {
   std::vector<const BigMemoryObject *> ret;
-  for(std::vector< MEDCouplingAutoRefCountObjectPtr<MEDFileJoint> >::const_iterator it=_joints.begin();it!=_joints.end();it++)
+  for(std::vector< MCAuto<MEDFileJoint> >::const_iterator it=_joints.begin();it!=_joints.end();it++)
     ret.push_back((const MEDFileJoint *)*it);
   return ret;
 }
@@ -832,7 +800,7 @@ void MEDFileJoints::simpleReprWithoutHeader(std::ostream& oss) const
   std::vector<std::string> jns=getJointsNames();
   for(int i=0;i<nbOfJoints;i++)
     oss << "  - #" << i << " \"" << jns[i] << "\"\n";
-  for(std::vector< MEDCouplingAutoRefCountObjectPtr<MEDFileJoint> >::const_iterator it=_joints.begin();it!=_joints.end();it++)
+  for(std::vector< MCAuto<MEDFileJoint> >::const_iterator it=_joints.begin();it!=_joints.end();it++)
     {
       oss << (*it)->simpleRepr();
     }

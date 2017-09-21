@@ -36,8 +36,10 @@
   \param sectiongeotype \sectiongeotype
   \retval med_err  \error
   \details \MEDlocalizationInfoByNameDetails
-  \par Défintion 
+
+  \par Définition 
   \MEDlocalizationDef
+
   \remarks
   \MEDlocalizationRem
  */

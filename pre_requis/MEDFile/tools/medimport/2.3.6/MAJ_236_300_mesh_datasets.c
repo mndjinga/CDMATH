@@ -38,13 +38,13 @@ int MAJ_236_300_mesh_datasets(med_idt fid,
   int      _itdataset=0;
   char     _idatasetname[MED_NAME_SIZE+1]="";
   med_int  _cgs=MED_FALSE;
-  char     _savpathi[MED_TAILLE_MAA+MED_NAME_SIZE+1+2*MED_TAILLE_NOM_ENTITE+1+3+1]="";
+  char     _savpathi[MED_MESH_GRP_SIZE+MED_NAME_SIZE+1+2*MED_TAILLE_NOM_ENTITE+1+3+1]="";
   int      _itmplen=0;
   int      _ftmplen=0;
   med_int  _1 = 1, _nbratt=0,_nbtype=0;
 
   /*
-   * Remarque : Cette procédure modifie le contenue des paramètres _pathi et pathf
+   * Remarque : Cette procédure modifie le contenu des paramètres _pathi et pathf
    */
 
    _itmplen=strlen(_pathi);
@@ -55,7 +55,7 @@ int MAJ_236_300_mesh_datasets(med_idt fid,
    */
   if ((_err=_MEDnObjects(fid,_pathi,&_ndatasets)) <0)
     if ( _err == (MED_ERR_COUNT + MED_ERR_DATAGROUP) ) {
-      MED_ERR_(_ret,MED_ERR_COUNT,MED_ERR_MESH,MED_MAA);
+      MED_ERR_(_ret,MED_ERR_COUNT,MED_ERR_MESH,"");
       goto ERROR;
     }
 

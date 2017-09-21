@@ -28,27 +28,56 @@
  *     - nom (IN) : le nom du fichier
  * - Resultat : ID du fichier en cas de succes, -1 sinon
  */
-med_idt _MEDfileCreate(const char * const filename, const med_access_mode accessmode)
+med_idt _MEDfileCreate(const char * const filename, const med_access_mode accessmode,
+		       const med_int major,
+		       const med_int minor,
+		       const med_int release)
 {
   med_idt _fid=-1,_gid=-1;
-  med_int _major   = MED_NUM_MAJEUR;
-  med_int _minor   = MED_NUM_MINEUR;
-  med_int _release = MED_NUM_RELEASE;
+  med_int _major   = 0;
+  med_int _minor   = 0;
+  med_int _release = 0;
   hid_t   _fapl    = H5P_DEFAULT;
 
-H5AC_cache_config_t config;
+  /* H5AC_cache_config_t config; */
 
   /*
    * On inhibe le gestionnaire d'erreur HDF 5
    */
   _MEDmodeErreurVerrouiller();
 
+  if ( major != MED_NUM_MAJEUR ) {
+    MED_ERR_(_fid,MED_ERR_RANGE,MED_ERR_PROPERTY,MED_ERR_FILEVERSION_MSG);
+    ISCRUTE(major);ISCRUTE(minor);ISCRUTE(release);
+    goto ERROR;
+  } else  _major = MED_NUM_MAJEUR;
 
+  _minor = minor;
+  switch(minor)
+    {
+    case 0: _release = 8; break;
+    case 1: _release = 0; break;
+#if MED_NUM_MINEUR-1 > 1
+#error "Don't forget to add a case line version here when you change the minor version of the library !"
+#endif
+    case MED_NUM_MINEUR: _release = MED_NUM_RELEASE; break;
+    default:
+      MED_ERR_(_fid,MED_ERR_RANGE,MED_ERR_PROPERTY,MED_ERR_FILEVERSION_MSG);
+      ISCRUTE(major);ISCRUTE(minor);ISCRUTE(release);
+      goto ERROR;
+    }
+  
   if ( (_fapl = H5Pcreate (H5P_FILE_ACCESS)) < 0 ) {
     MED_ERR_(_fid,MED_ERR_CREATE,MED_ERR_PROPERTY,MED_ERR_FILEVERSION_MSG);
     goto ERROR;
   }
 
+  /*
+   * Cette ligne est censée obliger HDF à ne pas utiliser un modèle interne supérieur à 1.8.z
+   * En HDF5-1.10.0p1 cela n'a aucun effet ! 
+   * Un test autoconf permet de fixer un intervalle de version HDF à MED.
+   */
+    
   if ( H5Pset_libver_bounds( _fapl, H5F_LIBVER_18, H5F_LIBVER_18 ) ) {
     MED_ERR_(_fid,MED_ERR_INIT,MED_ERR_PROPERTY,MED_ERR_FILEVERSION_MSG);
     goto ERROR;

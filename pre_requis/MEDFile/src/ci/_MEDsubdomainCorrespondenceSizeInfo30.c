@@ -28,7 +28,7 @@ void _MEDsubdomainCorrespondenceSizeInfo30(int dummy, ...) {
   med_err  _ret=-1;
   med_idt  _datagroup1=0,_dataset=0;
   int      _num;
-  char     _path[MED_TAILLE_JNT+2*MED_NAME_SIZE+2+2*MED_MAX_PARA+1+4*MED_TAILLE_NOM_ENTITE+4]=MED_JNT;
+  char     _path[MED_JOINT_GRP_SIZE+2*MED_NAME_SIZE+2+2*MED_MAX_PARA+1+4*MED_TAILLE_NOM_ENTITE+4]=MED_JOINT_GRP;
   char     _datagroupname1[2*MED_TAILLE_NOM_ENTITE+2]="";
   char     _cstpname[2*MED_MAX_PARA+1]="";
   med_sorting_type  _sortingtype=0;

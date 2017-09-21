@@ -72,7 +72,7 @@ void getContinuousBlocksOfEntities(const int myrank, const int nproc, const int 
     ++(*start);
     *lastusedrank=_lastusedrank;
     printf("My rank %d , start %l , stride %l , blocksize %l , count %l , lastblocksize %l\n",
-	   myrank,*start,*stride,*blocksize,*count,*lastblocksize);
+            myrank,*start,*stride,*blocksize,*count,*lastblocksize);
     return;
 }
 

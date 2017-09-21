@@ -119,7 +119,7 @@
 
 !    ** on initialise le filtre pour lire uniquement la deuxième composante.
      if (cret .eq. 0) then
-        call mfrcre(fid,nse2,1,edim,2,MED_FULL_INTERLACE,MED_GLOBAL_PFLMODE, &
+        call mfrcre(fid,nse2,1,edim,2,MED_FULL_INTERLACE,MED_GLOBAL_STMODE, &
                     MED_NO_PROFILE,MED_UNDEF_SIZE,flta,flt(1),cret)
      endif
      if (cret.ne.0) then

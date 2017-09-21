@@ -42,7 +42,7 @@ MEDequivalenceCr(const med_idt      fid,
   med_access_mode _MED_ACCESS_MODE;
   med_idt        _root=0,_eqid=0,_meshid=0;
   med_err        _ret=-1;
-  char           _path[MED_TAILLE_EQS+MED_NAME_SIZE+1]=MED_EQS;
+  char           _path[MED_EQUIVALENCE_GRP_SIZE+MED_NAME_SIZE+1]=MED_EQUIVALENCE_GRP;
 
   /*
    * On inhibe le gestionnaire d'erreur
@@ -94,7 +94,7 @@ MEDequivalenceCr(const med_idt      fid,
     }
 
  /*  if ( (_eqid = _MEDmeshAssociatedGroupCr(fid, */
-/* 					  MED_EQS_NOM, */
+/* 					  MED_EQUIVALENCE_NAME, */
 /* 					  meshname, */
 /* 					  numdt, */
 /* 					  numit, */
@@ -102,7 +102,7 @@ MEDequivalenceCr(const med_idt      fid,
 /* 					  MED_FALSE, */
 /* 					  equivalencename ) ) < 0)  { */
 /*     MED_ERR_(_ret,MED_ERR_CALL,MED_ERR_API,"_MEDmeshAssociatedGroupCr"); */
-/*     SSCRUTE(MED_EQS_NOM);SSCRUTE(meshname);ISCRUTE(numit);ISCRUTE(numdt); */
+/*     SSCRUTE(MED_EQUIVALENCE_NAME);SSCRUTE(meshname);ISCRUTE(numit);ISCRUTE(numdt); */
 /*     SSCRUTE(equivalencename); */
 /*     goto ERROR; */
 /*   } */
@@ -133,7 +133,7 @@ MEDequivalenceCr(const med_idt      fid,
   }
 
   if (_root>0)            if (_MEDdatagroupFermer(_root) < 0) {
-    MED_ERR_(_ret,MED_ERR_CLOSE,MED_ERR_DATAGROUP,MED_EQS);
+    MED_ERR_(_ret,MED_ERR_CLOSE,MED_ERR_DATAGROUP,MED_EQUIVALENCE_GRP);
     ISCRUTE_id(_eqid);
   }
 

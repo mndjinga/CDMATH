@@ -23,8 +23,9 @@
 
 #include "MEDCouplingField.hxx"
 
-namespace ParaMEDMEM
+namespace MEDCoupling
 {
+  class MEDCouplingFieldInt;
   class MEDCouplingFieldDouble;
   /*!
    * \brief A field template can be seen as a field without the array of values.
@@ -40,10 +41,11 @@ namespace ParaMEDMEM
   {
   public:
     MEDCOUPLING_EXPORT static MEDCouplingFieldTemplate *New(const MEDCouplingFieldDouble& f);
+    MEDCOUPLING_EXPORT static MEDCouplingFieldTemplate *New(const MEDCouplingFieldInt& f);
     MEDCOUPLING_EXPORT static MEDCouplingFieldTemplate *New(TypeOfField type);
     MEDCOUPLING_EXPORT std::string simpleRepr() const;
     MEDCOUPLING_EXPORT std::string advancedRepr() const;
-    MEDCOUPLING_EXPORT void checkCoherency() const;
+    MEDCOUPLING_EXPORT void checkConsistencyLight() const;
     //
     MEDCOUPLING_EXPORT void getTinySerializationIntInformation(std::vector<int>& tinyInfo) const;
     MEDCOUPLING_EXPORT void getTinySerializationDbleInformation(std::vector<double>& tinyInfo) const;
@@ -55,6 +57,7 @@ namespace ParaMEDMEM
     MEDCOUPLING_EXPORT void reprQuickOverview(std::ostream& stream) const;
   private:
     MEDCouplingFieldTemplate(const MEDCouplingFieldDouble& f);
+    MEDCouplingFieldTemplate(const MEDCouplingFieldInt& f);
     MEDCouplingFieldTemplate(TypeOfField type);
   };
 }

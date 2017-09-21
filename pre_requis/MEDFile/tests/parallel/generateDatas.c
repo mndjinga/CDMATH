@@ -21,6 +21,12 @@
 #define MESGERR 1
 #include "med_utils.h"
 
+static inline med_int _identity  (int i)  { return i; }
+static const med_int * profilearray_global;
+static inline med_int _withprofilearray(int i) {
+  return (profilearray_global[i]-1);
+}
+
 /*Les données générées, le sont uniquement aux endroits utilisés */
 void generateFullIDatas(const int myrank, const int lastrank, const int sizeoftype,
 			const med_storage_mode profilemode, const med_size profilesize, const med_int * const profilearray,
@@ -30,12 +36,12 @@ void generateFullIDatas(const int myrank, const int lastrank, const int sizeofty
 
   med_size _start=start-1,_blockstart = 0,_blocksize=blocksize,_allblocksize=0,_index=0;
   med_int  (*_profilearrayfunc)(int)=0;
-  inline med_int _identity  (int i)  { return i; }
-  inline med_int _withprofilearray(int i) { return (profilearray[i]-1); }
   int _blocknum=0,_i=0,_j=0,_k=0;
 
+  profilearray_global = profilearray;
+  
   if (profilesize) {
-    if ( profilearray == NULL ) {MESSAGE("Error, profilesize > 0 && profilearray == 0"); }
+    if ( profilearray == NULL ) { MESSAGE("Error, profilesize > 0 && profilearray == 0"); }
     MESSAGE("Using a profile...");
     _profilearrayfunc = _withprofilearray;
   } else {
@@ -44,7 +50,7 @@ void generateFullIDatas(const int myrank, const int lastrank, const int sizeofty
 
   switch(profilemode) {
 
-  case MED_GLOBAL_PFLMODE :
+  case MED_GLOBAL_STMODE :
 
     /*       ISCRUTE(lastblocksize); */
     /*En mode global on n'a normalement pas besoin de prendre en compte les profils. Il ne peut pas y en avoir.
@@ -69,7 +75,7 @@ void generateFullIDatas(const int myrank, const int lastrank, const int sizeofty
     }
     break;
 
-  case MED_COMPACT_PFLMODE :
+  case MED_COMPACT_STMODE :
 
     /*Idem avec ou sans profil*/
     if ( (myrank == lastrank) ) _allblocksize=blocksize*count+lastblocksize; else _allblocksize = blocksize*count;
@@ -102,9 +108,8 @@ void generateNoIDatas(const int myrank, const int lastrank, const int sizeoftype
 
   med_size _start=start-1,_blockstart = 0,_blocksize=blocksize,_allblocksize=0,_index=0,_dim=0;
   med_int  (*_profilearrayfunc)(int)=0;
-  inline med_int _identity  (int i)  { return i; }
-  inline med_int _withprofilearray(int i) { return (profilearray[i]-1); }
   int _blocknum=0,_i=0,_j=0,_k=0;
+  profilearray_global = profilearray;
 
   if (profilearraysize) {
     MESSAGE("Using a profile...");
@@ -116,7 +121,7 @@ void generateNoIDatas(const int myrank, const int lastrank, const int sizeoftype
 
   switch(storagemode) {
 
-  case MED_GLOBAL_PFLMODE :
+  case MED_GLOBAL_STMODE :
 
     /*En mode global on n'a normalement pas besoin de prendre en compte les profils. Il ne peut pas y en avoir.
       Celà n'a pas de sens sauf si la sélection demandée est un seul block !
@@ -141,7 +146,7 @@ void generateNoIDatas(const int myrank, const int lastrank, const int sizeoftype
     }
     break;
 
-  case MED_COMPACT_PFLMODE :
+  case MED_COMPACT_STMODE :
     if ( (myrank == lastrank) ) _allblocksize=blocksize*count+lastblocksize; else _allblocksize = blocksize*count;
     *valuesarray = (med_float *) calloc(_allblocksize*nvaluesperentity*nconstituentpervalue,sizeoftype);
 

@@ -30,12 +30,12 @@ _MEDfieldnValue30(int dummy, ...)
 
   med_int  _ret=-1;
   med_idt  _gid=0,_locgid=0,_datagroup1=0,_datagroup2=0;
-  char     _path[(MED_TAILLE_CHA+MED_NAME_SIZE+1)+(2*MED_MAX_PARA+1)+1]=MED_CHA;
+  char     _path[(MED_FIELD_GRP_SIZE+MED_NAME_SIZE+1)+(2*MED_MAX_PARA+1)+1]=MED_FIELD_GRP;
   char     _datagroupname1[2*MED_TAILLE_NOM_ENTITE+2]="";
   char     _datagroupname2[MED_NAME_SIZE+1]="";
   char     _tmpprofilename[MED_NAME_SIZE+1]="", *_profilename=0;
   char     _geotypename      [MED_TAILLE_NOM_ENTITE+1]="";
-  char     _locgidname        [MED_TAILLE_GAUSS+MED_NAME_SIZE+1]="";
+  char     _locgidname        [MED_LOCALIZATION_GRP_SIZE+MED_NAME_SIZE+1]="";
   char     _sectionmeshname      [MED_NAME_SIZE+1]="";
   char     _localizationname  [MED_NAME_SIZE+1]=""; /*TODO DEFAULT? */
   med_int  _nconstituentpervalue=0,_nvaluesperentityfromloc=0;
@@ -219,11 +219,11 @@ _MEDfieldnValue30(int dummy, ...)
 
     switch(storagemode) {
       
-    case MED_GLOBAL_PFLMODE :
+    case MED_GLOBAL_STMODE :
       
       break;
       
-    case MED_COMPACT_PFLMODE :
+    case MED_COMPACT_STMODE :
       
       _n=_profilearraysize;
       
@@ -265,7 +265,7 @@ _MEDfieldnValue30(int dummy, ...)
       /* le nombre de points de Gauss est egal au nombre de noeuds de l'element */
       _nvaluesperentityfromloc = geotype % 100;
     } else if ( strlen( _localizationname) ) {
-      strcpy(_locgidname,MED_GAUSS);
+      strcpy(_locgidname,MED_LOCALIZATION_GRP);
       strcat(_locgidname,_localizationname);
       
       if ((_locgid = _MEDdatagroupOuvrir(fid,_locgidname)) < 0) {

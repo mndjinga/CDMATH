@@ -14,8 +14,10 @@ AM_CFLAGS = -DDEF_LECT_ECR
 #-DUSER_INTERLACE=MED_FULL_INTERLACE
 #-DDEF_LECT_AJOUT
 
-
-unittests_PROGRAMS = Unittest_MEDlibrary_1 \
+# Les tests unitaires n'ont pas besoin d'être installés 
+#unittests_PROGRAMS =
+check_PROGRAMS = \
+Unittest_MEDlibrary_1 \
 Unittest_MEDfile_1 \
 Unittest_MEDparameter_1 \
 Test_MEDsupportMesh \

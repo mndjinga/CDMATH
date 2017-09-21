@@ -20,14 +20,20 @@
 
 #include "MEDCouplingFieldTemplate.hxx"
 #include "MEDCouplingMesh.hxx"
+#include "MEDCouplingFieldInt.hxx"
 #include "MEDCouplingFieldDouble.hxx"
 #include "MEDCouplingFieldDiscretization.hxx"
 
 #include <sstream>
 
-using namespace ParaMEDMEM;
+using namespace MEDCoupling;
 
 MEDCouplingFieldTemplate *MEDCouplingFieldTemplate::New(const MEDCouplingFieldDouble& f)
+{
+  return new MEDCouplingFieldTemplate(f);
+}
+
+MEDCouplingFieldTemplate *MEDCouplingFieldTemplate::New(const MEDCouplingFieldInt& f)
 {
   return new MEDCouplingFieldTemplate(f);
 }
@@ -43,17 +49,23 @@ MEDCouplingFieldTemplate *MEDCouplingFieldTemplate::New(TypeOfField type)
 MEDCouplingFieldTemplate::MEDCouplingFieldTemplate(const MEDCouplingFieldDouble& f):MEDCouplingField(f,false) 
 {
   forceTimeOfThis(f);
-  checkCoherency();
+  checkConsistencyLight();
+}
+
+MEDCouplingFieldTemplate::MEDCouplingFieldTemplate(const MEDCouplingFieldInt& f):MEDCouplingField(f,false) 
+{
+  forceTimeOfThis(f);
+  checkConsistencyLight();
 }
 
 MEDCouplingFieldTemplate::MEDCouplingFieldTemplate(TypeOfField type):MEDCouplingField(type)
 {
 }
 
-void MEDCouplingFieldTemplate::checkCoherency() const
+void MEDCouplingFieldTemplate::checkConsistencyLight() const
 {
   if(_mesh==0)
-    throw INTERP_KERNEL::Exception("MEDCouplingFieldTemplate::checkCoherency : Empty mesh !");
+    throw INTERP_KERNEL::Exception("MEDCouplingFieldTemplate::checkConsistencyLight : Empty mesh !");
 }
 
 std::string MEDCouplingFieldTemplate::simpleRepr() const

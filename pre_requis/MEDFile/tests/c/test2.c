@@ -42,6 +42,7 @@ int main (int argc, char **argv)
   med_idt fid=0;
   char des[MED_COMMENT_SIZE+1]="";
   med_bool hdfok=MED_FALSE, medok=MED_FALSE;
+  med_bool fileexist=MED_FALSE, accessok=MED_FALSE;
   char axisname[3*MED_SNAME_SIZE+1]="";
   char axisunit[3*MED_SNAME_SIZE+1]="";
   int  cstp = 0;
@@ -52,6 +53,15 @@ int main (int argc, char **argv)
   strcat(axisunit,"cm              ");
   strcat(axisunit,"cm              ");
   strcat(axisunit,"cm              ");
+
+  /* Verification de la conformite du format med du fichier test1.med */
+  MEDfileExist( "test1.med", MED_ACC_RDONLY, &fileexist, &accessok );
+  if (!fileexist) {
+    MESSAGE("Le fichier test1.med n'existe pas.");
+  }
+  if (!accessok) {
+    MESSAGE("Le fichier test1.med ne peut pas être ouvert selon le mode d'accès demandé .");
+  }
 
   /* Verification de la conformite du format med du fichier test1.med */
   ret = MEDfileCompatibility("test1.med",&hdfok,&medok);
@@ -87,6 +97,14 @@ int main (int argc, char **argv)
     return -1;
   }
 
+  /* Verification de la conformite du format med du fichier test2.med */
+  MEDfileExist( "test2.med", MODE_ACCES, &fileexist, &accessok );
+  if (!fileexist) {
+    MESSAGE("Le fichier test2.med n'existe pas.");
+  }
+  if (!accessok) {
+    MESSAGE("Le fichier test2.med ne peut pas être ouvert selon le mode d'accès demandé .");
+  }
   /* Ouverture en mode creation du fichier test2.med */
   fid = MEDfileOpen("test2.med",MODE_ACCES);
   if (fid < 0) {

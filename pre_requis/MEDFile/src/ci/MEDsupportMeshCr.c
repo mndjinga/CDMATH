@@ -53,7 +53,7 @@ MEDsupportMeshCr(const med_idt        fid,
 		 const char*   const  axisunit
 		 )
 {
-  return  _MEDmeshCr(fid, MED_SUP_MAA , supportmeshname, spacedim, meshdim,  MED_UNSTRUCTURED_MESH,
+  return  _MEDmeshCr(fid, MED_MESH_SUPPORT_GRP , supportmeshname, spacedim, meshdim,  MED_UNSTRUCTURED_MESH,
 		     description, "", MED_SORT_DTIT, axistype, axisname, axisunit);
 
 }

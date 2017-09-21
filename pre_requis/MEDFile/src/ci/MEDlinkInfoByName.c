@@ -70,7 +70,7 @@ MEDlinkInfoByName(const med_idt             fid,
  ERROR:
 
   if ( _lid > 0 ) if ( _MEDdatagroupFermer(_lid) < 0) {
-    MED_ERR_(_ret,MED_ERR_CLOSE,MED_ERR_DATAGROUP,MED_PROFILS);
+    MED_ERR_(_ret,MED_ERR_CLOSE,MED_ERR_DATAGROUP,MED_PROFILE_GRP);
     ISCRUTE_id(_lid);
   }
 

@@ -43,11 +43,11 @@
 
 #ifdef PPRO_NT
 med_int
-EDFDIML(med_int *fid, char *maa, unsigned int bidon, 
+EDFDIML(med_idt *fid, char *maa, unsigned int bidon, 
                   med_int *lon)
 #else
 med_int
-nedfdiml(med_int *fid, char *maa,med_int *lon)
+nedfdiml(med_idt *fid, char *maa,med_int *lon)
 #endif
 {
   char *fn;
@@ -57,7 +57,7 @@ nedfdiml(med_int *fid, char *maa,med_int *lon)
   if (!fn)
     return(-1); 
 
-  ret = (med_int) MEDdimLire((med_idt) *fid,fn); 
+  ret = (med_int) MEDdimLire(*fid,fn); 
 
   _MEDcstringFree(fn);
 
@@ -66,12 +66,12 @@ nedfdiml(med_int *fid, char *maa,med_int *lon)
 
 #ifdef PPRO_NT
 med_int 
-EDFMAAC(med_int *fid , char *nom, unsigned int bidon, 
+EDFMAAC(med_idt *fid , char *nom, unsigned int bidon, 
                   med_int *lon, med_int * dim, med_int *type,
 		  char *desc, unsigned int bidon2, med_int *lon2)
 #else
 med_int 
-nedfmaac(med_int *fid , char *nom, med_int *lon, med_int * dim, med_int *type,
+nedfmaac(med_idt *fid , char *nom, med_int *lon, med_int * dim, med_int *type,
 	 char *desc, med_int *lon2)
 #endif
 {
@@ -87,7 +87,7 @@ nedfmaac(med_int *fid , char *nom, med_int *lon, med_int * dim, med_int *type,
   if (!fn2)
     return -1;
 
-  ret = (med_int) MEDmaaCr((med_idt) *fid, fn1, (med_int) *dim, 
+  ret = (med_int) MEDmaaCr(*fid, fn1, (med_int) *dim, 
 			   (med_maillage) *type,fn2); 
 
   _MEDcstringFree(fn1);
@@ -98,12 +98,12 @@ nedfmaac(med_int *fid , char *nom, med_int *lon, med_int * dim, med_int *type,
 
 #ifdef PPRO_NT
 med_int 
- EDFMAAI(med_int *fid, med_int *indice, char *maa, 
+ EDFMAAI(med_idt *fid, med_int *indice, char *maa, 
                   unsigned int bidon, med_int *dim, med_int *type,
 		  char *desc, unsigned int bidon2)
 #else
 med_int
-nedfmaai(med_int *fid,med_int *indice, char *maa,med_int *dim, 
+nedfmaai(med_idt *fid,med_int *indice, char *maa,med_int *dim, 
 	 med_int *type,char *desc)
 #endif
 {
@@ -112,7 +112,7 @@ nedfmaai(med_int *fid,med_int *indice, char *maa,med_int *dim,
   char fs2[MED_TAILLE_DESC+1];
   med_maillage local_type;
 
-  ret = (med_int) MEDmaaInfo((med_idt)*fid,(med_int) *indice, (char *) fs1, 
+  ret = (med_int) MEDmaaInfo(*fid,(med_int) *indice, (char *) fs1, 
 			     (med_int *) dim,&local_type,
 			     (char *) fs2); 
 
@@ -129,25 +129,25 @@ nedfmaai(med_int *fid,med_int *indice, char *maa,med_int *dim,
 
 #ifdef PPRO_NT
 med_int 
-EDFNMAA(med_int *fid)
+EDFNMAA(med_idt *fid)
 #else
 med_int 
-nedfnmaa(med_int *fid)
+nedfnmaa(med_idt *fid)
 #endif
 {
   med_int ret; 
   
-  ret = (med_int) MEDnMaa((med_idt) *fid); 
+  ret = (med_int) MEDnMaa(*fid); 
 
   return(ret); 
 }
 
 #ifdef PPRO_NT
 med_int 
- EDFNNSL(med_int *fid,char *maa,unsigned int bidon1, med_int *lon1)
+ EDFNNSL(med_idt *fid,char *maa,unsigned int bidon1, med_int *lon1)
 #else
 med_int
-nedfnnsl(med_int *fid,char *maa,med_int *lon1)
+nedfnnsl(med_idt *fid,char *maa,med_int *lon1)
 #endif
 {
   med_int ret;
@@ -158,7 +158,7 @@ nedfnnsl(med_int *fid,char *maa,med_int *lon1)
   if (!fn1)
     return -1;
 
-  ret = (med_int) MEDnbnosoLire((med_idt) *fid,(char *)fn1);
+  ret = (med_int) MEDnbnosoLire(*fid,(char *)fn1);
 
   _MEDcstringFree(fn1);
 
@@ -167,11 +167,11 @@ nedfnnsl(med_int *fid,char *maa,med_int *lon1)
 
 #ifdef PPRO_NT
 med_int 
- EDFNNSE(med_int *fid,char *maa, unsigned int bidon1, 
+ EDFNNSE(med_idt *fid,char *maa, unsigned int bidon1, 
                   med_int *lon1,med_int *n)
 #else
 med_int
-nedfnnse(med_int *fid,char *maa,med_int *lon1,med_int *n)
+nedfnnse(med_idt *fid,char *maa,med_int *lon1,med_int *n)
 #endif
 {
   med_int ret;
@@ -182,7 +182,7 @@ nedfnnse(med_int *fid,char *maa,med_int *lon1,med_int *n)
   if (!fn1)
     return -1;
 
-  ret = (med_int) MEDnbnosoEcr((med_idt) *fid,(char *)fn1,(med_int)*n);
+  ret = (med_int) MEDnbnosoEcr(*fid,(char *)fn1,(med_int)*n);
 
   _MEDcstringFree(fn1);
 
@@ -191,10 +191,10 @@ nedfnnse(med_int *fid,char *maa,med_int *lon1,med_int *n)
 
 #ifdef PPRO_NT
 med_int 
- EDFNNIL(med_int *fid,char *maa,unsigned bidon1, med_int *lon1)
+ EDFNNIL(med_idt *fid,char *maa,unsigned bidon1, med_int *lon1)
 #else
 med_int
-nedfnnil(med_int *fid,char *maa,med_int *lon1)
+nedfnnil(med_idt *fid,char *maa,med_int *lon1)
 #endif
 {
   med_int ret;
@@ -205,7 +205,7 @@ nedfnnil(med_int *fid,char *maa,med_int *lon1)
   if (!fn1)
     return -1;
 
-  ret = (med_int) MEDnbnosoLire((med_idt) *fid,(char *)fn1);
+  ret = (med_int) MEDnbnosoLire(*fid,(char *)fn1);
 
   _MEDcstringFree(fn1);
 
@@ -215,11 +215,11 @@ nedfnnil(med_int *fid,char *maa,med_int *lon1)
 
 #ifdef PPRO_NT
 med_int 
- EDFNNIE(med_int *fid, char *maa, unsigned int bidon1,
+ EDFNNIE(med_idt *fid, char *maa, unsigned int bidon1,
                   med_int *lon1,med_int *n)
 #else
 med_int
-nedfnnie(med_int *fid,char *maa,med_int *lon1,med_int *n)
+nedfnnie(med_idt *fid,char *maa,med_int *lon1,med_int *n)
 #endif
 {
   med_int ret;
@@ -230,7 +230,7 @@ nedfnnie(med_int *fid,char *maa,med_int *lon1,med_int *n)
   if (!fn1)
     return -1;
 
-  ret = (med_int) MEDnbnosoEcr((med_idt) *fid,(char *)fn1,(med_int)*n);
+  ret = (med_int) MEDnbnosoEcr(*fid,(char *)fn1,(med_int)*n);
 
   _MEDcstringFree(fn1);
 
@@ -239,10 +239,10 @@ nedfnnie(med_int *fid,char *maa,med_int *lon1,med_int *n)
 
 #ifdef PPRO_NT
 med_int 
- EDFNNML(med_int *fid,char *maa,unsigned int bidon1,med_int *lon1)
+ EDFNNML(med_idt *fid,char *maa,unsigned int bidon1,med_int *lon1)
 #else
 med_int
-nedfnnml(med_int *fid,char *maa,med_int *lon1)
+nedfnnml(med_idt *fid,char *maa,med_int *lon1)
 #endif
 {
   med_int ret;
@@ -253,7 +253,7 @@ nedfnnml(med_int *fid,char *maa,med_int *lon1)
   if (!fn1)
     return -1;
 
-  ret = (med_int) MEDnbnosoLire((med_idt) *fid,(char *)fn1);
+  ret = (med_int) MEDnbnosoLire(*fid,(char *)fn1);
 
   _MEDcstringFree(fn1);
 
@@ -262,11 +262,11 @@ nedfnnml(med_int *fid,char *maa,med_int *lon1)
 
 #ifdef PPRO_NT
 med_int 
- EDFNNME(med_int *fid,char *maa,unsigned int bidon1,
+ EDFNNME(med_idt *fid,char *maa,unsigned int bidon1,
                   med_int *lon1,med_int *n)
 #else
 med_int
-nedfnnme(med_int *fid,char *maa,med_int *lon1,med_int *n)
+nedfnnme(med_idt *fid,char *maa,med_int *lon1,med_int *n)
 #endif
 {
   med_int ret;
@@ -277,7 +277,7 @@ nedfnnme(med_int *fid,char *maa,med_int *lon1,med_int *n)
   if (!fn1)
     return -1;
 
-  ret = (med_int) MEDnbnosoEcr((med_idt) *fid,(char *)fn1,(med_int)*n);
+  ret = (med_int) MEDnbnosoEcr(*fid,(char *)fn1,(med_int)*n);
 
   _MEDcstringFree(fn1);
 
@@ -287,10 +287,10 @@ nedfnnme(med_int *fid,char *maa,med_int *lon1,med_int *n)
 
 #ifdef PPRO_NT
 med_int
- EDFUNVC(med_int *fid , char *nom, unsigned int bidon, med_int *lon)
+ EDFUNVC(med_idt *fid , char *nom, unsigned int bidon, med_int *lon)
 #else
 med_int
-nedfunvc(med_int *fid , char *nom, med_int *lon)
+nedfunvc(med_idt *fid , char *nom, med_int *lon)
 #endif
 {
   char *fn;
@@ -301,7 +301,7 @@ nedfunvc(med_int *fid , char *nom, med_int *lon)
   if (!fn)
     return(-1);
  
-  ret = (med_int) MEDunvCr((med_idt) *fid, fn);
+  ret = (med_int) MEDunvCr(*fid, fn);
  
   _MEDcstringFree(fn);
  
@@ -310,11 +310,11 @@ nedfunvc(med_int *fid , char *nom, med_int *lon)
 
 #ifdef PPRO_NT
 med_int
- EDFUNVL(med_int *fid,char *nom, unsigned int bidon, med_int *lon,
+ EDFUNVL(med_idt *fid,char *nom, unsigned int bidon, med_int *lon,
                   char *nomu, unsigned int bidon1, med_int *lonu)
 #else
 med_int
-nedfunvl(med_int *fid,char *nom,med_int *lon,char *nomu,med_int *lonu)
+nedfunvl(med_idt *fid,char *nom,med_int *lon,char *nomu,med_int *lonu)
 #endif
 {
   char *fn;
@@ -327,7 +327,7 @@ nedfunvl(med_int *fid,char *nom,med_int *lon,char *nomu,med_int *lonu)
   if (!(fn&&fs1))
     return(-1);
 
-  ret = (med_int) MEDunvLire((med_idt)*fid,fn,fs1);
+  ret = (med_int) MEDunvLire(*fid,fn,fs1);
 
   strncpy(nomu,fs1,MED_TAILLE_LNOM);
   _MEDfstring(nomu,MED_TAILLE_LNOM);
@@ -340,11 +340,11 @@ nedfunvl(med_int *fid,char *nom,med_int *lon,char *nomu,med_int *lonu)
 
 #ifdef PPRO_NT
 med_int
- EDFESPC(med_int *fid, char *maa, unsigned int bidon, 
+ EDFESPC(med_idt *fid, char *maa, unsigned int bidon, 
                   med_int *lon, med_int *dim)
 #else
 med_int
-nedfespc(med_int *fid, char *maa,med_int *lon,med_int *dim)
+nedfespc(med_idt *fid, char *maa,med_int *lon,med_int *dim)
 #endif
 {
   char *fn;
@@ -355,7 +355,7 @@ nedfespc(med_int *fid, char *maa,med_int *lon,med_int *dim)
   if (!fn)
     return(-1); 
 
-  ret = (med_int) MEDdimEspaceCr((med_idt) *fid, fn, (med_int) *dim); 
+  ret = (med_int) MEDdimEspaceCr(*fid, fn, (med_int) *dim); 
 
   _MEDcstringFree(fn);
 
@@ -364,11 +364,11 @@ nedfespc(med_int *fid, char *maa,med_int *lon,med_int *dim)
 
 #ifdef PPRO_NT
 med_int
- EDFESPL(med_int *fid, char *maa, unsigned int bidon, 
+ EDFESPL(med_idt *fid, char *maa, unsigned int bidon, 
                   med_int *lon)
 #else
 med_int
-nedfespl(med_int *fid, char *maa,med_int *lon)
+nedfespl(med_idt *fid, char *maa,med_int *lon)
 #endif
 {
   char *fn;
@@ -379,7 +379,7 @@ nedfespl(med_int *fid, char *maa,med_int *lon)
   if (!fn)
     return(-1); 
 
-  ret = (med_int) MEDdimEspaceLire((med_idt) *fid,fn); 
+  ret = (med_int) MEDdimEspaceLire(*fid,fn); 
 
   _MEDcstringFree(fn);
 
@@ -388,11 +388,11 @@ nedfespl(med_int *fid, char *maa,med_int *lon)
 
 #ifdef PPRO_NT
 med_int 
- EDFNAGE(med_int *fid,char *maa, unsigned int bidon1, 
+ EDFNAGE(med_idt *fid,char *maa, unsigned int bidon1, 
                   med_int *lon1,med_int *type)
 #else
 med_int
-nedfnage(med_int *fid,char *maa,med_int *lon1,med_int *type)
+nedfnage(med_idt *fid,char *maa,med_int *lon1,med_int *type)
 #endif
 {
   med_int ret;
@@ -403,7 +403,7 @@ nedfnage(med_int *fid,char *maa,med_int *lon1,med_int *type)
   if (!fn1)
     return -1;
 
-  ret = (med_int) MEDnatureGrilleEcr((med_idt) *fid,(char *)fn1,(med_type_grille)*type);
+  ret = (med_int) MEDnatureGrilleEcr(*fid,(char *)fn1,(med_type_grille)*type);
 
   _MEDcstringFree(fn1);
 
@@ -412,11 +412,11 @@ nedfnage(med_int *fid,char *maa,med_int *lon1,med_int *type)
 
 #ifdef PPRO_NT
 med_int 
- EDFNAGL(med_int *fid,char *maa, unsigned int bidon1, 
+ EDFNAGL(med_idt *fid,char *maa, unsigned int bidon1, 
                   med_int *lon1,med_int *type)
 #else
 med_int
-nedfnagl(med_int *fid,char *maa,med_int *lon1,med_int *type)
+nedfnagl(med_idt *fid,char *maa,med_int *lon1,med_int *type)
 #endif
 {
   med_int ret;
@@ -427,7 +427,7 @@ nedfnagl(med_int *fid,char *maa,med_int *lon1,med_int *type)
   if (!fn1)
     return -1;
 
-  ret = (med_int) MEDnatureGrilleLire((med_idt) *fid,(char *)fn1,(med_type_grille *)type);
+  ret = (med_int) MEDnatureGrilleLire(*fid,(char *)fn1,(med_type_grille *)type);
 
   _MEDcstringFree(fn1);
 

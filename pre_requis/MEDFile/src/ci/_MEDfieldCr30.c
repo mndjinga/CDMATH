@@ -75,11 +75,11 @@ _MEDfieldCr30(int dummy, ...) {
   }
 
   /*
-   * Si le DataGroup MED_CHA n'existe pas, on le cree
+   * Si le DataGroup MED_FIELD_GRP n'existe pas, on le cree
    */
-  if ((_root = _MEDdatagroupOuvrir(fid,MED_CHA)) < 0)
-    if ((_root = _MEDdatagroupCreer(fid,MED_CHA)) < 0) {
-     MED_ERR_(_ret,MED_ERR_CREATE,MED_ERR_DATAGROUP,MED_CHA);
+  if ((_root = _MEDdatagroupOuvrir(fid,MED_FIELD_GRP)) < 0)
+    if ((_root = _MEDdatagroupCreer(fid,MED_FIELD_GRP)) < 0) {
+     MED_ERR_(_ret,MED_ERR_CREATE,MED_ERR_DATAGROUP,MED_FIELD_GRP);
      goto ERROR;
     }
 
@@ -89,7 +89,7 @@ _MEDfieldCr30(int dummy, ...) {
    */
   if ((_datagroup1 = _MEDdatagroupOuvrir(_root,fieldname)) < 0)
     if ((_datagroup1 = _MEDdatagroupCreer(_root,fieldname)) < 0 ) {
-      MED_ERR_(_ret,MED_ERR_CREATE,MED_ERR_DATAGROUP,MED_CHA);
+      MED_ERR_(_ret,MED_ERR_CREATE,MED_ERR_DATAGROUP,MED_FIELD_GRP);
       SSCRUTE(fieldname);goto ERROR;
     }
 
@@ -156,7 +156,7 @@ _MEDfieldCr30(int dummy, ...) {
   }
 
   if (_root>0)            if (_MEDdatagroupFermer(_root) < 0) {
-    MED_ERR_(_ret,MED_ERR_CLOSE,MED_ERR_DATAGROUP,MED_CHA);
+    MED_ERR_(_ret,MED_ERR_CLOSE,MED_ERR_DATAGROUP,MED_FIELD_GRP);
     ISCRUTE_id(_root);
   }
 

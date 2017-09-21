@@ -68,6 +68,7 @@
 //const char * const chpath
 //const char* const comment
 //const char* const filename
+//const char* const objectname,
 //const med_access_mode accessmode
 //const med_class medclass
 //const med_idt chfid
@@ -75,6 +76,7 @@
 //const med_idt mid
 //med_bool* const hdfok
 //med_bool* const medok
+//med_bool* const objectexist 
 //med_idt fid
 //med_int* const major
 //med_int* const minor

@@ -22,7 +22,6 @@
 from MEDLoader import *
 import unittest
 from math import pi,e,sqrt
-from distutils.version import StrictVersion
 
 class MEDLoaderTest4(unittest.TestCase):
     """
@@ -38,13 +37,13 @@ class MEDLoaderTest4(unittest.TestCase):
         tri=MEDCouplingUMesh("tri",2)
         tri.allocateCells() ; tri.insertNextCell(NORM_TRI3,[0,1,2])
         tri.setCoords(DataArrayDouble([(0.,0.),(0.,1.),(1.,0.)]))
-        tris=[tri.deepCpy() for i in xrange(4)]
+        tris=[tri.deepCopy() for i in xrange(4)]
         for i,elt in enumerate(tris): elt.translate([i,0])
         tris=MEDCouplingUMesh.MergeUMeshes(tris)
         quad=MEDCouplingUMesh("quad",2)
         quad.allocateCells() ; quad.insertNextCell(NORM_QUAD4,[0,1,2,3])
         quad.setCoords(DataArrayDouble([(0.,0.),(0.,1.),(1.,1.),(1.,0.)]))
-        quads=[quad.deepCpy() for i in xrange(5)]
+        quads=[quad.deepCopy() for i in xrange(5)]
         for i,elt in enumerate(quads): elt.translate([5+i,0])
         quads=MEDCouplingUMesh.MergeUMeshes(quads)
         m=MEDCouplingUMesh.MergeUMeshes(tris,quads)
@@ -65,13 +64,13 @@ class MEDLoaderTest4(unittest.TestCase):
         fCell0.setName(fieldName) ; fCell0.setMesh(m)
         arr=DataArrayDouble(2*m.getNumberOfCells()) ; arr.iota(100) ; arr.rearrange(2)
         fCell0.setArray(arr) ; arr.setInfoOnComponents(["Comp1 [m]","Com2 [s^2]"])
-        fCell0.checkCoherency()
+        fCell0.checkConsistencyLight()
         f.setFieldNoProfileSBT(fCell0)
         fCell1=MEDCouplingFieldDouble(ON_CELLS) ; fCell1.setTime(float(i),i,0)
         fCell1.setName(fieldName) ; fCell1.setMesh(m1)
         arr=DataArrayDouble(2*m1.getNumberOfCells()) ; arr.iota(200) ; arr.rearrange(2)
         fCell1.setArray(arr) ; arr.setInfoOnComponents(["Comp1 [m]","Com2 [s^2]"])
-        fCell1.checkCoherency()
+        fCell1.checkConsistencyLight()
         f.setFieldNoProfileSBT(fCell1)
         fs.pushBackTimeStep(f)
         ##### Time step 1
@@ -81,14 +80,14 @@ class MEDLoaderTest4(unittest.TestCase):
         fCell0.setName(fieldName) ; fCell0.setMesh(m)
         arr=DataArrayDouble(2*m.getNumberOfCells()) ; arr.iota(1100) ; arr.rearrange(2)
         fCell0.setArray(arr) ; arr.setInfoOnComponents(["Comp1 [m]","Com2 [s^2]"])
-        fCell0.checkCoherency()
+        fCell0.checkConsistencyLight()
         f.setFieldNoProfileSBT(fCell0)
         #
         fCell1=MEDCouplingFieldDouble(ON_CELLS) ; fCell1.setTime(float(i),i,0)
         fCell1.setName(fieldName) ; fCell1.setMesh(m1)
         arr=DataArrayDouble(2*m1.getNumberOfCells()) ; arr.iota(1200) ; arr.rearrange(2)
         fCell1.setArray(arr) ; arr.setInfoOnComponents(["Comp1 [m]","Com2 [s^2]"])
-        fCell1.checkCoherency()
+        fCell1.checkConsistencyLight()
         f.setFieldNoProfileSBT(fCell1)
         fs.pushBackTimeStep(f)
         ##### Time step 2
@@ -98,14 +97,14 @@ class MEDLoaderTest4(unittest.TestCase):
         fCell0.setName(fieldName) ; fCell0.setMesh(m)
         arr=DataArrayDouble(2*m.getNumberOfCells()) ; arr.iota(2100) ; arr.rearrange(2)
         fCell0.setArray(arr) ; arr.setInfoOnComponents(["Comp1 [m]","Com2 [s^2]"])
-        fCell0.checkCoherency()
+        fCell0.checkConsistencyLight()
         f.setFieldNoProfileSBT(fCell0)
         #
         fCell1=MEDCouplingFieldDouble(ON_CELLS) ; fCell1.setTime(float(i),i,0)
         fCell1.setName(fieldName) ; fCell1.setMesh(m1)
         arr=DataArrayDouble(2*m1.getNumberOfCells()) ; arr.iota(2200) ; arr.rearrange(2)
         fCell1.setArray(arr) ; arr.setInfoOnComponents(["Comp1 [m]","Com2 [s^2]"])
-        fCell1.checkCoherency()
+        fCell1.checkConsistencyLight()
         f.setFieldNoProfileSBT(fCell1)
         fs.pushBackTimeStep(f)
         ##### Time step 3
@@ -116,14 +115,14 @@ class MEDLoaderTest4(unittest.TestCase):
         fCell0.setName(fieldName) ; fCell0.setMesh(m)
         arr=DataArrayDouble(2*m.getNumberOfCells()) ; arr.iota(3100) ; arr.rearrange(2)
         fCell0.setArray(arr) ; arr.setInfoOnComponents(["Comp1 [m]","Com2 [s^2]"])
-        fCell0.checkCoherency()
+        fCell0.checkConsistencyLight()
         f.setFieldNoProfileSBT(fCell0)
         #
         fCell1=MEDCouplingFieldDouble(ON_CELLS) ; fCell1.setTime(float(i),i,0)
         fCell1.setName(fieldName) ; fCell1.setMesh(m1)
         arr=DataArrayDouble(2*m1.getNumberOfCells()) ; arr.iota(3200) ; arr.rearrange(2)
         fCell1.setArray(arr) ; arr.setInfoOnComponents(["Comp1 [m]","Com2 [s^2]"])
-        fCell1.checkCoherency()
+        fCell1.checkConsistencyLight()
         f.setFieldNoProfileSBT(fCell1)
         #
         fs.pushBackTimeStep(f)
@@ -135,19 +134,19 @@ class MEDLoaderTest4(unittest.TestCase):
         fCell0.setName(fieldName) ; fCell0.setMesh(m)
         arr=DataArrayDouble(2*m.getNumberOfCells()) ; arr.iota(4100) ; arr.rearrange(2)
         fCell0.setArray(arr) ; arr.setInfoOnComponents(["Comp1 [m]","Com2 [s^2]"])
-        fCell0.checkCoherency()
+        fCell0.checkConsistencyLight()
         f.setFieldNoProfileSBT(fCell0)
         #
         fCell1=MEDCouplingFieldDouble(ON_CELLS) ; fCell1.setTime(float(i),i,0)
         fCell1.setName(fieldName) ; fCell1.setMesh(m1)
         arr=DataArrayDouble(2*m1.getNumberOfCells()) ; arr.iota(4200) ; arr.rearrange(2)
         fCell1.setArray(arr) ; arr.setInfoOnComponents(["Comp1 [m]","Com2 [s^2]"])
-        fCell1.checkCoherency()
+        fCell1.checkConsistencyLight()
         f.setFieldNoProfileSBT(fCell1)
         fs.pushBackTimeStep(f)
         mm.write(fname,2)
         fs.write(fname,0)
-        a0Exp=mm.getCoords().deepCpy()
+        a0Exp=mm.getCoords().deepCopy()
         del m,m1,mm,fs,f,fCell0,fCell1
         ########## GO for reading in MEDReader, by not loading all. Mesh is fully loaded but not fields values
         ms=MEDFileMeshes(fname) ; ms.cartesianizeMe()
@@ -199,6 +198,7 @@ class MEDLoaderTest4(unittest.TestCase):
         a8,a9=mml2.retrieveNumberIdsOnCells()
         self.assertTrue(a8.isEqual(DataArrayInt([120,121,122,123,124,125,126,127,128,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,144,145,146,147,148,149,150,151,100,101,102,103,104,105,106,107,108])))
         self.assertTrue(not a9)
+        self.assertTrue(mml2.retrieveGlobalNodeIdsIfAny() is None)
         for i in xrange(5):
             fsst=MEDFileField1TSStructItem.BuildItemFrom(fields[0][i],mst)
             fields[0][i].loadArraysIfNecessary()
@@ -222,13 +222,13 @@ class MEDLoaderTest4(unittest.TestCase):
         tri=MEDCouplingUMesh("tri",2)
         tri.allocateCells() ; tri.insertNextCell(NORM_TRI3,[0,1,2])
         tri.setCoords(DataArrayDouble([(0.,0.),(0.,1.),(1.,0.)]))
-        tris=[tri.deepCpy() for i in xrange(4)]
+        tris=[tri.deepCopy() for i in xrange(4)]
         for i,elt in enumerate(tris): elt.translate([i,0])
         tris=MEDCouplingUMesh.MergeUMeshes(tris)
         quad=MEDCouplingUMesh("quad",2)
         quad.allocateCells() ; quad.insertNextCell(NORM_QUAD4,[0,1,2,3])
         quad.setCoords(DataArrayDouble([(0.,0.),(0.,1.),(1.,1.),(1.,0.)]))
-        quads=[quad.deepCpy() for i in xrange(5)]
+        quads=[quad.deepCopy() for i in xrange(5)]
         for i,elt in enumerate(quads): elt.translate([5+i,0])
         quads=MEDCouplingUMesh.MergeUMeshes(quads)
         m=MEDCouplingUMesh.MergeUMeshes(tris,quads)
@@ -245,20 +245,20 @@ class MEDLoaderTest4(unittest.TestCase):
         fCell0.setName(fieldName) ; fCell0.setMesh(m)
         arr=DataArrayDouble(2*m.getNumberOfCells()) ; arr.iota(100) ; arr.rearrange(2)
         fCell0.setArray(arr) ; arr.setInfoOnComponents(["Comp1 [m]","Com2 [s^2]"])
-        fCell0.checkCoherency()
+        fCell0.checkConsistencyLight()
         f.setFieldNoProfileSBT(fCell0)
         fCell1=MEDCouplingFieldDouble(ON_CELLS) ; fCell1.setTime(float(i),i,0)
         fCell1.setName(fieldName) ; fCell1.setMesh(m1)
         arr=DataArrayDouble(2*m1.getNumberOfCells()) ; arr.iota(200) ; arr.rearrange(2)
         fCell1.setArray(arr) ; arr.setInfoOnComponents(["Comp1 [m]","Com2 [s^2]"])
-        fCell1.checkCoherency()
+        fCell1.checkConsistencyLight()
         f.setFieldNoProfileSBT(fCell1)
         #
         fNode=MEDCouplingFieldDouble(ON_NODES) ; fNode.setTime(float(i),i,0)
         fNode.setName(fieldName) ; fNode.setMesh(m1)
         arr=DataArrayDouble(2*m.getNumberOfNodes()) ; arr.iota(300) ; arr.rearrange(2)
         fNode.setArray(arr) ; arr.setInfoOnComponents(["Comp1 [m]","Com2 [s^2]"])
-        fNode.checkCoherency()
+        fNode.checkConsistencyLight()
         f.setFieldNoProfileSBT(fNode)
         fs.pushBackTimeStep(f)
         ##### Time step 1
@@ -268,21 +268,21 @@ class MEDLoaderTest4(unittest.TestCase):
         fCell0.setName(fieldName) ; fCell0.setMesh(m)
         arr=DataArrayDouble(2*m.getNumberOfCells()) ; arr.iota(1100) ; arr.rearrange(2)
         fCell0.setArray(arr) ; arr.setInfoOnComponents(["Comp1 [m]","Com2 [s^2]"])
-        fCell0.checkCoherency()
+        fCell0.checkConsistencyLight()
         f.setFieldNoProfileSBT(fCell0)
         #
         fCell1=MEDCouplingFieldDouble(ON_CELLS) ; fCell1.setTime(float(i),i,0)
         fCell1.setName(fieldName) ; fCell1.setMesh(m1)
         arr=DataArrayDouble(2*m1.getNumberOfCells()) ; arr.iota(1200) ; arr.rearrange(2)
         fCell1.setArray(arr) ; arr.setInfoOnComponents(["Comp1 [m]","Com2 [s^2]"])
-        fCell1.checkCoherency()
+        fCell1.checkConsistencyLight()
         f.setFieldNoProfileSBT(fCell1)
         #
         fNode=MEDCouplingFieldDouble(ON_NODES) ; fNode.setTime(float(i),i,0)
         fNode.setName(fieldName) ; fNode.setMesh(m1)
         arr=DataArrayDouble(2*m.getNumberOfNodes()) ; arr.iota(1300) ; arr.rearrange(2)
         fNode.setArray(arr) ; arr.setInfoOnComponents(["Comp1 [m]","Com2 [s^2]"])
-        fNode.checkCoherency()
+        fNode.checkConsistencyLight()
         f.setFieldNoProfileSBT(fNode)
         fs.pushBackTimeStep(f)
         ##### Time step 2
@@ -292,21 +292,21 @@ class MEDLoaderTest4(unittest.TestCase):
         fNode.setName(fieldName) ; fNode.setMesh(m1)
         arr=DataArrayDouble(2*m.getNumberOfNodes()) ; arr.iota(2300) ; arr.rearrange(2)
         fNode.setArray(arr) ; arr.setInfoOnComponents(["Comp1 [m]","Com2 [s^2]"])
-        fNode.checkCoherency()
+        fNode.checkConsistencyLight()
         f.setFieldNoProfileSBT(fNode)
         #
         fCell0=MEDCouplingFieldDouble(ON_CELLS) ; fCell0.setTime(float(i),i,0)
         fCell0.setName(fieldName) ; fCell0.setMesh(m)
         arr=DataArrayDouble(2*m.getNumberOfCells()) ; arr.iota(2100) ; arr.rearrange(2)
         fCell0.setArray(arr) ; arr.setInfoOnComponents(["Comp1 [m]","Com2 [s^2]"])
-        fCell0.checkCoherency()
+        fCell0.checkConsistencyLight()
         f.setFieldNoProfileSBT(fCell0)
         #
         fCell1=MEDCouplingFieldDouble(ON_CELLS) ; fCell1.setTime(float(i),i,0)
         fCell1.setName(fieldName) ; fCell1.setMesh(m1)
         arr=DataArrayDouble(2*m1.getNumberOfCells()) ; arr.iota(2200) ; arr.rearrange(2)
         fCell1.setArray(arr) ; arr.setInfoOnComponents(["Comp1 [m]","Com2 [s^2]"])
-        fCell1.checkCoherency()
+        fCell1.checkConsistencyLight()
         f.setFieldNoProfileSBT(fCell1)
         fs.pushBackTimeStep(f)
         ##### Time step 3
@@ -317,21 +317,21 @@ class MEDLoaderTest4(unittest.TestCase):
         fCell0.setName(fieldName) ; fCell0.setMesh(m)
         arr=DataArrayDouble(2*m.getNumberOfCells()) ; arr.iota(3100) ; arr.rearrange(2)
         fCell0.setArray(arr) ; arr.setInfoOnComponents(["Comp1 [m]","Com2 [s^2]"])
-        fCell0.checkCoherency()
+        fCell0.checkConsistencyLight()
         f.setFieldNoProfileSBT(fCell0)
         #
         fCell1=MEDCouplingFieldDouble(ON_CELLS) ; fCell1.setTime(float(i),i,0)
         fCell1.setName(fieldName) ; fCell1.setMesh(m1)
         arr=DataArrayDouble(2*m1.getNumberOfCells()) ; arr.iota(3200) ; arr.rearrange(2)
         fCell1.setArray(arr) ; arr.setInfoOnComponents(["Comp1 [m]","Com2 [s^2]"])
-        fCell1.checkCoherency()
+        fCell1.checkConsistencyLight()
         f.setFieldNoProfileSBT(fCell1)
         #
         fNode=MEDCouplingFieldDouble(ON_NODES) ; fNode.setTime(float(i),i,0)
         fNode.setName(fieldName) ; fNode.setMesh(m1)
         arr=DataArrayDouble(2*m.getNumberOfNodes()) ; arr.iota(3300) ; arr.rearrange(2)
         fNode.setArray(arr) ; arr.setInfoOnComponents(["Comp1 [m]","Com2 [s^2]"])
-        fNode.checkCoherency()
+        fNode.checkConsistencyLight()
         f.setFieldNoProfileSBT(fNode)
         #
         fs.pushBackTimeStep(f)
@@ -343,27 +343,27 @@ class MEDLoaderTest4(unittest.TestCase):
         fCell0.setName(fieldName) ; fCell0.setMesh(m)
         arr=DataArrayDouble(2*m.getNumberOfCells()) ; arr.iota(4100) ; arr.rearrange(2)
         fCell0.setArray(arr) ; arr.setInfoOnComponents(["Comp1 [m]","Com2 [s^2]"])
-        fCell0.checkCoherency()
+        fCell0.checkConsistencyLight()
         f.setFieldNoProfileSBT(fCell0)
         #
         fCell1=MEDCouplingFieldDouble(ON_CELLS) ; fCell1.setTime(float(i),i,0)
         fCell1.setName(fieldName) ; fCell1.setMesh(m1)
         arr=DataArrayDouble(2*m1.getNumberOfCells()) ; arr.iota(4200) ; arr.rearrange(2)
         fCell1.setArray(arr) ; arr.setInfoOnComponents(["Comp1 [m]","Com2 [s^2]"])
-        fCell1.checkCoherency()
+        fCell1.checkConsistencyLight()
         f.setFieldNoProfileSBT(fCell1)
         #
         fNode=MEDCouplingFieldDouble(ON_NODES) ; fNode.setTime(float(i),i,0)
         fNode.setName(fieldName) ; fNode.setMesh(m1)
         arr=DataArrayDouble(2*m.getNumberOfNodes()) ; arr.iota(4300) ; arr.rearrange(2)
         fNode.setArray(arr) ; arr.setInfoOnComponents(["Comp1 [m]","Com2 [s^2]"])
-        fNode.checkCoherency()
+        fNode.checkConsistencyLight()
         f.setFieldNoProfileSBT(fNode)
         #
         fs.pushBackTimeStep(f)
         mm.write(fname,2)
         fs.write(fname,0)
-        a0Exp=mm.getCoords().deepCpy()
+        a0Exp=mm.getCoords().deepCopy()
         del m,m1,mm,fs,f,fCell0,fCell1
         ########## GO for reading in MEDReader, by not loading all. Mesh is fully loaded but not fields values
         ms=MEDFileMeshes(fname) ; ms.cartesianizeMe()
@@ -410,6 +410,7 @@ class MEDLoaderTest4(unittest.TestCase):
         self.assertTrue(a3.isEqual(DataArrayInt([2,0,1,2,1,2,2,2,0,2,3,4,2,4,5,2,5,3,2,6,7,2,7,8,2,8,6,2,9,10,2,10,11,2,11,9,2,12,13,2,13,14,2,14,15,2,15,12,2,16,17,2,17,18,2,18,19,2,19,16,2,20,21,2,21,22,2,22,23,2,23,20,2,24,25,2,25,26,2,26,27,2,27,24,2,28,29,2,29,30,2,30,31,2,31,28,3,0,1,2,3,3,4,5,3,6,7,8,3,9,10,11,4,12,13,14,15,4,16,17,18,19,4,20,21,22,23,4,24,25,26,27,4,28,29,30,31])))
         self.assertTrue(a4 is None)
         self.assertTrue(a5 is None)
+        self.assertTrue(mml2.retrieveGlobalNodeIdsIfAny() is None)
         # for cells
         for i in xrange(5):
             f=allFMTSLeavesPerCommonSupport[0][0][0][i]
@@ -440,13 +441,13 @@ class MEDLoaderTest4(unittest.TestCase):
         tri=MEDCouplingUMesh("tri",2)
         tri.allocateCells() ; tri.insertNextCell(NORM_TRI3,[0,1,2])
         tri.setCoords(DataArrayDouble([(0.,0.),(0.,1.),(1.,0.)]))
-        tris=[tri.deepCpy() for i in xrange(4)]
+        tris=[tri.deepCopy() for i in xrange(4)]
         for i,elt in enumerate(tris): elt.translate([i,0])
         tris=MEDCouplingUMesh.MergeUMeshes(tris)
         quad=MEDCouplingUMesh("quad",2)
         quad.allocateCells() ; quad.insertNextCell(NORM_QUAD4,[0,1,2,3])
         quad.setCoords(DataArrayDouble([(0.,0.),(0.,1.),(1.,1.),(1.,0.)]))
-        quads=[quad.deepCpy() for i in xrange(5)]
+        quads=[quad.deepCopy() for i in xrange(5)]
         for i,elt in enumerate(quads): elt.translate([5+i,0])
         quads=MEDCouplingUMesh.MergeUMeshes(quads)
         m=MEDCouplingUMesh.MergeUMeshes(tris,quads)
@@ -463,13 +464,13 @@ class MEDLoaderTest4(unittest.TestCase):
         fCell0.setName(fieldName) ; fCell0.setMesh(m)
         arr=DataArrayDouble(2*m.getNumberOfCells()) ; arr.iota(100) ; arr.rearrange(2)
         fCell0.setArray(arr) ; arr.setInfoOnComponents(["Comp1 [m]","Com2 [s^2]"])
-        fCell0.checkCoherency()
+        fCell0.checkConsistencyLight()
         f.setFieldNoProfileSBT(fCell0)
         fCell1=MEDCouplingFieldDouble(ON_CELLS) ; fCell1.setTime(float(i),i,0)
         fCell1.setName(fieldName) ; fCell1.setMesh(m1)
         arr=DataArrayDouble(2*m1.getNumberOfCells()) ; arr.iota(200) ; arr.rearrange(2)
         fCell1.setArray(arr) ; arr.setInfoOnComponents(["Comp1 [m]","Com2 [s^2]"])
-        fCell1.checkCoherency()
+        fCell1.checkConsistencyLight()
         f.setFieldNoProfileSBT(fCell1)
         fs.pushBackTimeStep(f)
         ##### Time step 1 on nodes
@@ -479,7 +480,7 @@ class MEDLoaderTest4(unittest.TestCase):
         fNode.setName(fieldName) ; fNode.setMesh(m1)
         arr=DataArrayDouble(2*m.getNumberOfNodes()) ; arr.iota(1300) ; arr.rearrange(2)
         fNode.setArray(arr) ; arr.setInfoOnComponents(["Comp1 [m]","Com2 [s^2]"])
-        fNode.checkCoherency()
+        fNode.checkConsistencyLight()
         f.setFieldNoProfileSBT(fNode)
         fs.pushBackTimeStep(f)
         ##### Time step 2 on cells
@@ -489,14 +490,14 @@ class MEDLoaderTest4(unittest.TestCase):
         fCell0.setName(fieldName) ; fCell0.setMesh(m)
         arr=DataArrayDouble(2*m.getNumberOfCells()) ; arr.iota(2100) ; arr.rearrange(2)
         fCell0.setArray(arr) ; arr.setInfoOnComponents(["Comp1 [m]","Com2 [s^2]"])
-        fCell0.checkCoherency()
+        fCell0.checkConsistencyLight()
         f.setFieldNoProfileSBT(fCell0)
         #
         fCell1=MEDCouplingFieldDouble(ON_CELLS) ; fCell1.setTime(float(i),i,0)
         fCell1.setName(fieldName) ; fCell1.setMesh(m1)
         arr=DataArrayDouble(2*m1.getNumberOfCells()) ; arr.iota(2200) ; arr.rearrange(2)
         fCell1.setArray(arr) ; arr.setInfoOnComponents(["Comp1 [m]","Com2 [s^2]"])
-        fCell1.checkCoherency()
+        fCell1.checkConsistencyLight()
         f.setFieldNoProfileSBT(fCell1)
         fs.pushBackTimeStep(f)
         ##### Time step 3 on nodes
@@ -506,7 +507,7 @@ class MEDLoaderTest4(unittest.TestCase):
         fNode.setName(fieldName) ; fNode.setMesh(m1)
         arr=DataArrayDouble(2*m.getNumberOfNodes()) ; arr.iota(3300) ; arr.rearrange(2)
         fNode.setArray(arr) ; arr.setInfoOnComponents(["Comp1 [m]","Com2 [s^2]"])
-        fNode.checkCoherency()
+        fNode.checkConsistencyLight()
         f.setFieldNoProfileSBT(fNode)
         fs.pushBackTimeStep(f)
         ##### Time step 4
@@ -516,20 +517,20 @@ class MEDLoaderTest4(unittest.TestCase):
         fCell0.setName(fieldName) ; fCell0.setMesh(m)
         arr=DataArrayDouble(2*m.getNumberOfCells()) ; arr.iota(4100) ; arr.rearrange(2)
         fCell0.setArray(arr) ; arr.setInfoOnComponents(["Comp1 [m]","Com2 [s^2]"])
-        fCell0.checkCoherency()
+        fCell0.checkConsistencyLight()
         f.setFieldNoProfileSBT(fCell0)
         #
         fCell1=MEDCouplingFieldDouble(ON_CELLS) ; fCell1.setTime(float(i),i,0)
         fCell1.setName(fieldName) ; fCell1.setMesh(m1)
         arr=DataArrayDouble(2*m1.getNumberOfCells()) ; arr.iota(4200) ; arr.rearrange(2)
         fCell1.setArray(arr) ; arr.setInfoOnComponents(["Comp1 [m]","Com2 [s^2]"])
-        fCell1.checkCoherency()
+        fCell1.checkConsistencyLight()
         f.setFieldNoProfileSBT(fCell1)
         #
         fs.pushBackTimeStep(f)
         mm.write(fname,2)
         fs.write(fname,0)
-        a0Exp=mm.getCoords().deepCpy()
+        a0Exp=mm.getCoords().deepCopy()
         del m,m1,mm,fs,f,fCell0,fCell1
         ########## GO for reading in MEDReader, by not loading all. Mesh is fully loaded but not fields values
         ms=MEDFileMeshes(fname) ; ms.cartesianizeMe()
@@ -574,6 +575,7 @@ class MEDLoaderTest4(unittest.TestCase):
         self.assertTrue(a3.isEqual(DataArrayInt([2,0,1,2,1,2,2,2,0,2,3,4,2,4,5,2,5,3,2,6,7,2,7,8,2,8,6,2,9,10,2,10,11,2,11,9,2,12,13,2,13,14,2,14,15,2,15,12,2,16,17,2,17,18,2,18,19,2,19,16,2,20,21,2,21,22,2,22,23,2,23,20,2,24,25,2,25,26,2,26,27,2,27,24,2,28,29,2,29,30,2,30,31,2,31,28,3,0,1,2,3,3,4,5,3,6,7,8,3,9,10,11,4,12,13,14,15,4,16,17,18,19,4,20,21,22,23,4,24,25,26,27,4,28,29,30,31])))
         assert a4 is None
         assert a5 is None
+        self.assertTrue(mml2.retrieveGlobalNodeIdsIfAny() is None)
         # for cells
         for i in xrange(3):
             f=allFMTSLeavesPerCommonSupport[0][0][0][i]
@@ -604,6 +606,7 @@ class MEDLoaderTest4(unittest.TestCase):
         self.assertTrue(a3.isEqual(DataArrayInt([3,0,1,2,3,3,4,5,3,6,7,8,3,9,10,11,4,12,13,14,15,4,16,17,18,19,4,20,21,22,23,4,24,25,26,27,4,28,29,30,31,2,0,1,2,1,2,2,2,0,2,3,4,2,4,5,2,5,3,2,6,7,2,7,8,2,8,6,2,9,10,2,10,11,2,11,9,2,12,13,2,13,14,2,14,15,2,15,12,2,16,17,2,17,18,2,18,19,2,19,16,2,20,21,2,21,22,2,22,23,2,23,20,2,24,25,2,25,26,2,26,27,2,27,24,2,28,29,2,29,30,2,30,31,2,31,28])))
         self.assertTrue(a4 is None)
         self.assertTrue(a5 is None)
+        self.assertTrue(mml2.retrieveGlobalNodeIdsIfAny() is None)
         for i in xrange(2):
             f=allFMTSLeavesPerCommonSupport[0][0][0][i]
             fsst=MEDFileField1TSStructItem.BuildItemFrom(f,mst)# Second 0 is for cells
@@ -624,13 +627,13 @@ class MEDLoaderTest4(unittest.TestCase):
         tri=MEDCouplingUMesh("tri",2)
         tri.allocateCells() ; tri.insertNextCell(NORM_TRI3,[0,1,2])
         tri.setCoords(DataArrayDouble([(0.,0.),(0.,1.),(1.,0.)]))
-        tris=[tri.deepCpy() for i in xrange(4)]
+        tris=[tri.deepCopy() for i in xrange(4)]
         for i,elt in enumerate(tris): elt.translate([i,0])
         tris=MEDCouplingUMesh.MergeUMeshes(tris)
         quad=MEDCouplingUMesh("quad",2)
         quad.allocateCells() ; quad.insertNextCell(NORM_QUAD4,[0,1,2,3])
         quad.setCoords(DataArrayDouble([(0.,0.),(0.,1.),(1.,1.),(1.,0.)]))
-        quads=[quad.deepCpy() for i in xrange(5)]
+        quads=[quad.deepCopy() for i in xrange(5)]
         for i,elt in enumerate(quads): elt.translate([5+i,0])
         quads=MEDCouplingUMesh.MergeUMeshes(quads)
         m=MEDCouplingUMesh.MergeUMeshes(tris,quads)
@@ -648,7 +651,7 @@ class MEDLoaderTest4(unittest.TestCase):
         fNode.setName(fieldName1) ; fNode.setMesh(m)
         arr=DataArrayDouble(2*m.getNumberOfNodes()) ; arr.iota(0+1000*i) ; arr.rearrange(2)
         fNode.setArray(arr) ; arr.setInfoOnComponents(["Comp1_0 [m]","Com2_0 [s^2]"])
-        fNode.checkCoherency()
+        fNode.checkConsistencyLight()
         f.setFieldNoProfileSBT(fNode)
         fs1.pushBackTimeStep(f)
         #
@@ -657,7 +660,7 @@ class MEDLoaderTest4(unittest.TestCase):
         fNode.setName(fieldName2) ; fNode.setMesh(m)
         arr=DataArrayDouble(2*m.getNumberOfNodes()) ; arr.iota(100+1000*i) ; arr.rearrange(2)
         fNode.setArray(arr) ; arr.setInfoOnComponents(["Comp1_1 [m]","Com2_1 [s^2]"])
-        fNode.checkCoherency()
+        fNode.checkConsistencyLight()
         f.setFieldNoProfileSBT(fNode)
         fs2.pushBackTimeStep(f)
         #
@@ -666,7 +669,7 @@ class MEDLoaderTest4(unittest.TestCase):
         fNode.setName(fieldName3) ; fNode.setMesh(m)
         arr=DataArrayDouble(2*m.getNumberOfNodes()) ; arr.iota(200+1000*i) ; arr.rearrange(2)
         fNode.setArray(arr) ; arr.setInfoOnComponents(["Comp1_2 [m]","Com2_2 [s^2]"])
-        fNode.checkCoherency()
+        fNode.checkConsistencyLight()
         f.setFieldNoProfileSBT(fNode)
         fs3.pushBackTimeStep(f)
         ##### Time step 1
@@ -676,7 +679,7 @@ class MEDLoaderTest4(unittest.TestCase):
         fNode.setName(fieldName1) ; fNode.setMesh(m)
         arr=DataArrayDouble(2*m.getNumberOfNodes()) ; arr.iota(0+1000*i) ; arr.rearrange(2)
         fNode.setArray(arr) ; arr.setInfoOnComponents(["Comp1_0 [m]","Com2_0 [s^2]"])
-        fNode.checkCoherency()
+        fNode.checkConsistencyLight()
         f.setFieldNoProfileSBT(fNode)
         fs1.pushBackTimeStep(f)
         #
@@ -685,7 +688,7 @@ class MEDLoaderTest4(unittest.TestCase):
         fNode.setName(fieldName2) ; fNode.setMesh(m)
         arr=DataArrayDouble(2*m.getNumberOfNodes()) ; arr.iota(100+1000*i) ; arr.rearrange(2)
         fNode.setArray(arr) ; arr.setInfoOnComponents(["Comp1_1 [m]","Com2_1 [s^2]"])
-        fNode.checkCoherency()
+        fNode.checkConsistencyLight()
         f.setFieldNoProfileSBT(fNode)
         fs2.pushBackTimeStep(f)
         #
@@ -694,7 +697,7 @@ class MEDLoaderTest4(unittest.TestCase):
         fNode.setName(fieldName3) ; fNode.setMesh(m)
         arr=DataArrayDouble(2*m.getNumberOfNodes()) ; arr.iota(200+1000*i) ; arr.rearrange(2)
         fNode.setArray(arr) ; arr.setInfoOnComponents(["Comp1_2 [m]","Com2_2 [s^2]"])
-        fNode.checkCoherency()
+        fNode.checkConsistencyLight()
         f.setFieldNoProfileSBT(fNode)
         fs3.pushBackTimeStep(f)
         ##### Time step 2
@@ -704,7 +707,7 @@ class MEDLoaderTest4(unittest.TestCase):
         fNode.setName(fieldName1) ; fNode.setMesh(m)
         arr=DataArrayDouble(2*m.getNumberOfNodes()) ; arr.iota(0+1000*i) ; arr.rearrange(2)
         fNode.setArray(arr) ; arr.setInfoOnComponents(["Comp1_0 [m]","Com2_0 [s^2]"])
-        fNode.checkCoherency()
+        fNode.checkConsistencyLight()
         f.setFieldNoProfileSBT(fNode)
         fs1.pushBackTimeStep(f)
         #
@@ -713,7 +716,7 @@ class MEDLoaderTest4(unittest.TestCase):
         fNode.setName(fieldName2) ; fNode.setMesh(m)
         arr=DataArrayDouble(2*m.getNumberOfNodes()) ; arr.iota(100+1000*i) ; arr.rearrange(2)
         fNode.setArray(arr) ; arr.setInfoOnComponents(["Comp1_1 [m]","Com2_1 [s^2]"])
-        fNode.checkCoherency()
+        fNode.checkConsistencyLight()
         f.setFieldNoProfileSBT(fNode)
         fs2.pushBackTimeStep(f)
         #
@@ -722,7 +725,7 @@ class MEDLoaderTest4(unittest.TestCase):
         fNode.setName(fieldName3) ; fNode.setMesh(m)
         arr=DataArrayDouble(2*m.getNumberOfNodes()) ; arr.iota(200+1000*i) ; arr.rearrange(2)
         fNode.setArray(arr) ; arr.setInfoOnComponents(["Comp1_2 [m]","Com2_2 [s^2]"])
-        fNode.checkCoherency()
+        fNode.checkConsistencyLight()
         f.setFieldNoProfileSBT(fNode)
         fs3.pushBackTimeStep(f)
         ##### Time step 3
@@ -732,7 +735,7 @@ class MEDLoaderTest4(unittest.TestCase):
         fNode.setName(fieldName1) ; fNode.setMesh(m)
         arr=DataArrayDouble(2*m.getNumberOfNodes()) ; arr.iota(0+1000*i) ; arr.rearrange(2)
         fNode.setArray(arr) ; arr.setInfoOnComponents(["Comp1_0 [m]","Com2_0 [s^2]"])
-        fNode.checkCoherency()
+        fNode.checkConsistencyLight()
         f.setFieldNoProfileSBT(fNode)
         fs1.pushBackTimeStep(f)
         #
@@ -741,7 +744,7 @@ class MEDLoaderTest4(unittest.TestCase):
         fNode.setName(fieldName2) ; fNode.setMesh(m)
         arr=DataArrayDouble(2*m.getNumberOfNodes()) ; arr.iota(100+1000*i) ; arr.rearrange(2)
         fNode.setArray(arr) ; arr.setInfoOnComponents(["Comp1_1 [m]","Com2_1 [s^2]"])
-        fNode.checkCoherency()
+        fNode.checkConsistencyLight()
         f.setFieldNoProfileSBT(fNode)
         fs2.pushBackTimeStep(f)
         #
@@ -750,7 +753,7 @@ class MEDLoaderTest4(unittest.TestCase):
         fNode.setName(fieldName3) ; fNode.setMesh(m)
         arr=DataArrayDouble(2*m.getNumberOfNodes()) ; arr.iota(200+1000*i) ; arr.rearrange(2)
         fNode.setArray(arr) ; arr.setInfoOnComponents(["Comp1_2 [m]","Com2_2 [s^2]"])
-        fNode.checkCoherency()
+        fNode.checkConsistencyLight()
         f.setFieldNoProfileSBT(fNode)
         fs3.pushBackTimeStep(f)
         ##### Time step 4
@@ -760,7 +763,7 @@ class MEDLoaderTest4(unittest.TestCase):
         fNode.setName(fieldName1) ; fNode.setMesh(m)
         arr=DataArrayDouble(2*m.getNumberOfNodes()) ; arr.iota(0+1000*i) ; arr.rearrange(2)
         fNode.setArray(arr) ; arr.setInfoOnComponents(["Comp1_0 [m]","Com2_0 [s^2]"])
-        fNode.checkCoherency()
+        fNode.checkConsistencyLight()
         f.setFieldNoProfileSBT(fNode)
         fs1.pushBackTimeStep(f)
         #
@@ -769,7 +772,7 @@ class MEDLoaderTest4(unittest.TestCase):
         fNode.setName(fieldName2) ; fNode.setMesh(m)
         arr=DataArrayDouble(2*m.getNumberOfNodes()) ; arr.iota(100+1000*i) ; arr.rearrange(2)
         fNode.setArray(arr) ; arr.setInfoOnComponents(["Comp1_1 [m]","Com2_1 [s^2]"])
-        fNode.checkCoherency()
+        fNode.checkConsistencyLight()
         f.setFieldNoProfileSBT(fNode)
         fs2.pushBackTimeStep(f)
         #
@@ -778,13 +781,13 @@ class MEDLoaderTest4(unittest.TestCase):
         fNode.setName(fieldName3) ; fNode.setMesh(m)
         arr=DataArrayDouble(2*m.getNumberOfNodes()) ; arr.iota(200+1000*i) ; arr.rearrange(2)
         fNode.setArray(arr) ; arr.setInfoOnComponents(["Comp1_2 [m]","Com2_2 [s^2]"])
-        fNode.checkCoherency()
+        fNode.checkConsistencyLight()
         f.setFieldNoProfileSBT(fNode)
         fs3.pushBackTimeStep(f)
         #
         mm.write(fname,2)
         fs1.write(fname,0) ; fs2.write(fname,0) ; fs3.write(fname,0)
-        a0Exp=mm.getCoords().deepCpy()
+        a0Exp=mm.getCoords().deepCopy()
         del m,mm,fs1,fs2,fs3,f,fNode
         ########## GO for reading in MEDReader, by not loading all. Mesh is fully loaded but not fields values
         ms=MEDFileMeshes(fname) ; ms.cartesianizeMe()
@@ -831,6 +834,7 @@ class MEDLoaderTest4(unittest.TestCase):
         self.assertTrue(a3.isEqual(DataArrayInt([3,0,1,2,3,3,4,5,3,6,7,8,3,9,10,11,4,12,13,14,15,4,16,17,18,19,4,20,21,22,23,4,24,25,26,27,4,28,29,30,31])))
         self.assertTrue(a4 is None)
         self.assertTrue(a5 is None)
+        self.assertTrue(mml2.retrieveGlobalNodeIdsIfAny() is None)
         # test all the time steps of the 1/1 time step serie, on field 1
         for i in xrange(5):
             f=allFMTSLeavesPerCommonSupport[0][0][0][i]
@@ -916,7 +920,7 @@ class MEDLoaderTest4(unittest.TestCase):
             pass
         mm.write(fname,2)
         fs1.write(fname,0) ; fs2.write(fname,0) ; fs3.write(fname,0)
-        a0Exp=mm.getCoords().deepCpy()
+        a0Exp=mm.getCoords().deepCopy()
         del m,mm,fs1,fs2,fs3,f,fNode
         ########## GO for reading in MEDReader,by not loading all. Mesh is fully loaded but not fields values
         ms=MEDFileMeshes(fname) ; ms.cartesianizeMe()
@@ -968,6 +972,7 @@ class MEDLoaderTest4(unittest.TestCase):
         a8,a9=mml2.retrieveNumberIdsOnCells()
         self.assertTrue(a8.isEqual(DataArrayInt([100,101,102,103,104,105])))
         self.assertTrue(not a9)
+        self.assertTrue(mml2.retrieveGlobalNodeIdsIfAny() is None)
         for i in xrange(5):
             nbOfT=[6,8]
             fieldNames=[fieldName1,fieldName2]
@@ -1005,6 +1010,7 @@ class MEDLoaderTest4(unittest.TestCase):
         a8,a9=mml2.retrieveNumberIdsOnCells()
         self.assertTrue(a8.isEqual(DataArrayInt([100,101,102,103,104,105,109,110])))
         self.assertTrue(not a9)
+        self.assertTrue(mml2.retrieveGlobalNodeIdsIfAny() is None)
         for i in xrange(5):
             f=allFMTSLeavesPerCommonSupport[1][0][0][i]
             fsst=MEDFileField1TSStructItem.BuildItemFrom(f,mst)
@@ -1042,7 +1048,7 @@ class MEDLoaderTest4(unittest.TestCase):
             fNode=MEDCouplingFieldDouble(ON_CELLS) ; fNode.setTime(float(i),i,0)
             fNode.setName(fieldName0) ; fNode.setMesh(m)
             arr=DataArrayDouble(2*8) ; arr.iota(0+1000*i) ; arr.rearrange(2)
-            fNode.setArray(arr) ; arr.setInfoOnComponents(["Comp1_0 [m]","Com2_0 [s^2]"]) ; fNode.checkCoherency()
+            fNode.setArray(arr) ; arr.setInfoOnComponents(["Comp1_0 [m]","Com2_0 [s^2]"]) ; fNode.checkConsistencyLight()
             f.setFieldNoProfileSBT(fNode)
             fs0.pushBackTimeStep(f)
             #
@@ -1077,7 +1083,7 @@ class MEDLoaderTest4(unittest.TestCase):
             fNode=MEDCouplingFieldDouble(ON_NODES) ; fNode.setTime(float(i),i,0)
             fNode.setName(fieldName4) ; fNode.setMesh(m)
             arr=DataArrayDouble(2*15) ; arr.iota(400+1000*i) ; arr.rearrange(2)
-            fNode.setArray(arr) ; arr.setInfoOnComponents(["Comp1_4 [m]","Com2_4 [s^2]"]) ; fNode.checkCoherency()
+            fNode.setArray(arr) ; arr.setInfoOnComponents(["Comp1_4 [m]","Com2_4 [s^2]"]) ; fNode.checkConsistencyLight()
             f.setFieldNoProfileSBT(fNode)
             fs4.pushBackTimeStep(f)
             pass
@@ -1134,6 +1140,7 @@ class MEDLoaderTest4(unittest.TestCase):
         a10,a11=mml2.retrieveNumberIdsOnNodes()
         self.assertTrue(a10.isEqual(DataArrayInt([200,201,202,203,204,205,206,207,208,209,210,211,212,213,214])))
         self.assertTrue(a11) # True because no copy
+        self.assertTrue(mml2.retrieveGlobalNodeIdsIfAny() is None)
         for i in xrange(5):
             f=allFMTSLeavesPerCommonSupport[0][0][0][i]
             fsst=MEDFileField1TSStructItem.BuildItemFrom(f,mst)
@@ -1171,6 +1178,7 @@ class MEDLoaderTest4(unittest.TestCase):
         a10,a11=mml2.retrieveNumberIdsOnNodes()
         self.assertTrue(a10.isEqual(DataArrayInt([202,203,204,207,208,209,212,213,214])))
         self.assertTrue(not a11) # False because copy
+        self.assertTrue(mml2.retrieveGlobalNodeIdsIfAny() is None)
         for i in xrange(1,5):
             self.assertTrue((fcscp.isDataSetSupportEqualToThePreviousOne(i,fields)))
             pass
@@ -1214,6 +1222,7 @@ class MEDLoaderTest4(unittest.TestCase):
         a8,a9=mml2.retrieveNumberIdsOnCells()
         self.assertTrue(a8.isEqual(DataArrayInt([102,103,105,107])))
         self.assertTrue(not a9) # False because copy
+        self.assertTrue(mml2.retrieveGlobalNodeIdsIfAny() is None)
         for i in xrange(5):
             f=allFMTSLeavesPerCommonSupport[2][0][0][i]
             fsst=MEDFileField1TSStructItem.BuildItemFrom(f,mst)
@@ -1251,7 +1260,7 @@ class MEDLoaderTest4(unittest.TestCase):
             fNode=MEDCouplingFieldDouble(ON_CELLS) ; fNode.setTime(float(i),i,0)
             fNode.setName(fieldName0) ; fNode.setMesh(m)
             arr=DataArrayDouble(2*8) ; arr.iota(0+1000*i) ; arr.rearrange(2)
-            fNode.setArray(arr) ; arr.setInfoOnComponents(["Comp1_0 [m]","Com2_0 [s^2]"]) ; fNode.checkCoherency()
+            fNode.setArray(arr) ; arr.setInfoOnComponents(["Comp1_0 [m]","Com2_0 [s^2]"]) ; fNode.checkConsistencyLight()
             f.setFieldNoProfileSBT(fNode)
             fs0.pushBackTimeStep(f)
             #
@@ -1286,7 +1295,7 @@ class MEDLoaderTest4(unittest.TestCase):
             fNode=MEDCouplingFieldDouble(ON_NODES) ; fNode.setTime(float(i),i,0)
             fNode.setName(fieldName4) ; fNode.setMesh(m)
             arr=DataArrayDouble(2*15) ; arr.iota(400+1000*i) ; arr.rearrange(2)
-            fNode.setArray(arr) ; arr.setInfoOnComponents(["Comp1_4 [m]","Com2_4 [s^2]"]) ; fNode.checkCoherency()
+            fNode.setArray(arr) ; arr.setInfoOnComponents(["Comp1_4 [m]","Com2_4 [s^2]"]) ; fNode.checkConsistencyLight()
             f.setFieldNoProfileSBT(fNode)
             fs4.pushBackTimeStep(f)
             pass
@@ -1337,6 +1346,7 @@ class MEDLoaderTest4(unittest.TestCase):
         a8,a9=mml2.retrieveNumberIdsOnCells()
         self.assertTrue(a8.isEqual(DataArrayInt([100,101,102,103,104,105,106,107])))
         self.assertTrue(a9) # True because no copy
+        self.assertTrue(mml2.retrieveGlobalNodeIdsIfAny() is None)
         for i in xrange(1,5):
             self.assertTrue((fcscp.isDataSetSupportEqualToThePreviousOne(i,fields)))
             pass
@@ -1374,6 +1384,7 @@ class MEDLoaderTest4(unittest.TestCase):
         a8,a9=mml2.retrieveNumberIdsOnCells()
         self.assertTrue(a8.isEqual(DataArrayInt([102,103,106,107])))
         self.assertTrue(not a9) # False because copy
+        self.assertTrue(mml2.retrieveGlobalNodeIdsIfAny() is None)
         for i in xrange(1,5):
             self.assertTrue((fcscp.isDataSetSupportEqualToThePreviousOne(i,fields)))
             pass
@@ -1417,6 +1428,7 @@ class MEDLoaderTest4(unittest.TestCase):
         a8,a9=mml2.retrieveNumberIdsOnCells()
         self.assertTrue(a8.isEqual(DataArrayInt([102,103,105,107])))
         self.assertTrue(not a9) # False because copy
+        self.assertTrue(mml2.retrieveGlobalNodeIdsIfAny() is None)
         for i in xrange(5):
             f=allFMTSLeavesPerCommonSupport[2][0][0][i]
             fsst=MEDFileField1TSStructItem.BuildItemFrom(f,mst)
@@ -1454,7 +1466,7 @@ class MEDLoaderTest4(unittest.TestCase):
             fNode=MEDCouplingFieldDouble(ON_GAUSS_NE) ; fNode.setTime(float(i),i,0)
             fNode.setName(fieldName0) ; fNode.setMesh(m)
             arr=DataArrayDouble(2*38) ; arr.iota(0+1000*i) ; arr.rearrange(2)
-            fNode.setArray(arr) ; arr.setInfoOnComponents(["Comp1_0 [m]","Com2_0 [s^2]"]) ; fNode.checkCoherency()
+            fNode.setArray(arr) ; arr.setInfoOnComponents(["Comp1_0 [m]","Com2_0 [s^2]"]) ; fNode.checkConsistencyLight()
             f.setFieldNoProfileSBT(fNode)
             fs0.pushBackTimeStep(f)
             #
@@ -1462,7 +1474,7 @@ class MEDLoaderTest4(unittest.TestCase):
             fNode=MEDCouplingFieldDouble(ON_CELLS) ; fNode.setTime(float(i),i,0)
             fNode.setName(fieldName1) ; fNode.setMesh(m)
             arr=DataArrayDouble(2*11) ; arr.iota(100+1000*i) ; arr.rearrange(2)
-            fNode.setArray(arr) ; arr.setInfoOnComponents(["Comp1_1 [m]","Com2_1 [s^2]"]) ; fNode.checkCoherency()
+            fNode.setArray(arr) ; arr.setInfoOnComponents(["Comp1_1 [m]","Com2_1 [s^2]"]) ; fNode.checkConsistencyLight()
             f.setFieldNoProfileSBT(fNode)
             fs1.pushBackTimeStep(f)
             #
@@ -1474,7 +1486,7 @@ class MEDLoaderTest4(unittest.TestCase):
             fNode.setGaussLocalizationOnCells([6,7,8],[-1.,-1.,1.,-1.,1.,1.,-1.,1.],[0.5,0.5,0.7,0.7,0.1,0.1,0.2,0.2],[0.8,0.05,0.1,0.04])
             fNode.setGaussLocalizationOnCells([9,10],[-1.,-1.,1.,-1.,1.,1.,-1.,1.],[0.5,0.5,0.7,0.7,0.1,0.1,0.2,0.2,0.3,0.3,0.4,0.4,0.8,0.8],[0.8,0.05,0.1,0.01,0.02,0.005,0.005])
             arr=DataArrayDouble(2*(4*2+2*5+3*4+2*7)) ; arr.iota(300+1000*i) ; arr.rearrange(2)
-            fNode.setArray(arr) ; arr.setInfoOnComponents(["Comp1_2 [m]","Com2_2 [s^2]"]) ; fNode.checkCoherency()
+            fNode.setArray(arr) ; arr.setInfoOnComponents(["Comp1_2 [m]","Com2_2 [s^2]"]) ; fNode.checkConsistencyLight()
             f.setFieldNoProfileSBT(fNode)
             fs2.pushBackTimeStep(f)
             #
@@ -1482,7 +1494,7 @@ class MEDLoaderTest4(unittest.TestCase):
             fNode=MEDCouplingFieldDouble(ON_NODES) ; fNode.setTime(float(i),i,0)
             fNode.setName(fieldName3) ; fNode.setMesh(m)
             arr=DataArrayDouble(2*15) ; arr.iota(400+1000*i) ; arr.rearrange(2)
-            fNode.setArray(arr) ; arr.setInfoOnComponents(["Comp1_3 [m]","Com2_3 [s^2]"]) ; fNode.checkCoherency()
+            fNode.setArray(arr) ; arr.setInfoOnComponents(["Comp1_3 [m]","Com2_3 [s^2]"]) ; fNode.checkConsistencyLight()
             f.setFieldNoProfileSBT(fNode)
             fs3.pushBackTimeStep(f)
             #
@@ -1490,7 +1502,7 @@ class MEDLoaderTest4(unittest.TestCase):
         #
         mm.write(fname,2)
         fs0.write(fname,0) ; fs1.write(fname,0) ; fs2.write(fname,0) ; fs3.write(fname,0)
-        a0Exp=mm.getCoords().deepCpy()
+        a0Exp=mm.getCoords().deepCopy()
         del m,mm,fs1,fs2,fs3,f,fNode
         ########## GO for reading in MEDReader,by not loading all. Mesh is fully loaded but not fields values
         ms=MEDFileMeshes(fname) ; ms.cartesianizeMe()
@@ -1532,6 +1544,7 @@ class MEDLoaderTest4(unittest.TestCase):
         self.assertTrue(a3.isEqual(DataArrayInt([3,2,7,3,3,7,8,3,3,3,8,4,3,8,9,4,3,13,9,8,3,13,14,9,4,0,5,6,1,4,1,6,7,2,4,5,10,11,6,4,6,11,12,7,4,12,13,8,7])))
         self.assertTrue(a4 is None)
         self.assertTrue(a5 is None)
+        self.assertTrue(mml2.retrieveGlobalNodeIdsIfAny() is None)
         for i in xrange(1,5):
             self.assertTrue((fcscp.isDataSetSupportEqualToThePreviousOne(i,fields)))
             pass
@@ -1622,7 +1635,7 @@ class MEDLoaderTest4(unittest.TestCase):
             fNode.setGaussLocalizationOnCells([2,3],[-1.,-1.,1.,-1.,1.,1.,-1.,1.],[0.5,0.5,0.7,0.7,0.1,0.1,0.2,0.2],[0.8,0.05,0.1,0.04])
             fNode.setGaussLocalizationOnCells([4],[-1.,-1.,1.,-1.,1.,1.,-1.,1.],[0.5,0.5,0.7,0.7,0.1,0.1,0.2,0.2,0.3,0.3,0.4,0.4,0.8,0.8],[0.8,0.05,0.1,0.01,0.02,0.005,0.005])
             arr=DataArrayDouble(2*(2*1+5*1+4*2+7*1)) ; arr.iota(300+1000*i) ; arr.rearrange(2)
-            fNode.setArray(arr) ; arr.setInfoOnComponents(["Comp1_2 [m]","Com2_2 [s^2]"]) ; fNode.checkCoherency()
+            fNode.setArray(arr) ; arr.setInfoOnComponents(["Comp1_2 [m]","Com2_2 [s^2]"]) ; fNode.checkConsistencyLight()
             f.setFieldProfile(fNode,mm,0,pfl1)
             fs2.pushBackTimeStep(f)
             #
@@ -1638,7 +1651,7 @@ class MEDLoaderTest4(unittest.TestCase):
         #
         mm.write(fname,2)
         fs0.write(fname,0) ; fs1.write(fname,0) ; fs2.write(fname,0) ; fs3.write(fname,0)
-        a0Exp=mm.getCoords().deepCpy()
+        a0Exp=mm.getCoords().deepCopy()
         del m,mm,fs1,fs2,fs3,f,fNode
         ########## GO for reading in MEDReader,by not loading all. Mesh is fully loaded but not fields values
         ms=MEDFileMeshes(fname) ; ms.cartesianizeMe()
@@ -1680,6 +1693,7 @@ class MEDLoaderTest4(unittest.TestCase):
         self.assertTrue(a3.isEqual(DataArrayInt([3,1,4,2,3,4,5,2,4,0,3,4,1,4,3,6,7,4,4,7,8,5,4])))
         self.assertTrue(a4 is None)
         self.assertTrue(a5 is None)
+        self.assertTrue(mml2.retrieveGlobalNodeIdsIfAny() is None)
         for i in xrange(1,5):
             self.assertTrue((fcscp.isDataSetSupportEqualToThePreviousOne(i,fields)))
             pass
@@ -1771,7 +1785,7 @@ class MEDLoaderTest4(unittest.TestCase):
         #
         mm.write(fname,2)
         fs0.write(fname,0) ; fs1.write(fname,0) ; fs2.write(fname,0)
-        a0Exp=mm.getCoords().deepCpy()
+        a0Exp=mm.getCoords().deepCopy()
         del m,mm,fs1,fs2,f,fNode
         ########## GO for reading in MEDReader,by not loading all. Mesh is fully loaded but not fields values
         ms=MEDFileMeshes(fname) ; ms.cartesianizeMe()
@@ -1813,6 +1827,7 @@ class MEDLoaderTest4(unittest.TestCase):
         self.assertTrue(a3.isEqual(DataArrayInt([3,1,4,2,3,4,5,2,4,0,3,4,1,4,3,6,7,4,4,7,8,5,4])))
         self.assertTrue(a4 is None)
         self.assertTrue(a5 is None)
+        self.assertTrue(mml2.retrieveGlobalNodeIdsIfAny() is None)
         for i in xrange(1,5):
             self.assertTrue((fcscp.isDataSetSupportEqualToThePreviousOne(i,fields)))
             pass
@@ -1868,13 +1883,13 @@ class MEDLoaderTest4(unittest.TestCase):
             fNode.setGaussLocalizationOnCells([6,10,13],[-1.,-1.,1.,-1.,1.,1.,-1.,1.],[0.5,0.5,0.7,0.7,0.1,0.1,0.2,0.2],[0.8,0.05,0.1,0.04])
             fNode.setGaussLocalizationOnCells([11,12,14],[-1.,-1.,1.,-1.,1.,1.,-1.,1.],[0.5,0.5,0.7,0.7,0.1,0.1,0.2,0.2,0.3,0.3,0.4,0.4,0.8,0.8],[0.8,0.05,0.1,0.01,0.02,0.005,0.005])
             arr=DataArrayDouble(2*(2*6+5*4+4*3+7*3)) ; arr.iota(0+1000*i) ; arr.rearrange(2)
-            fNode.setArray(arr) ; arr.setInfoOnComponents(["Comp1_0 [m]","Com2_0 [s^2]"]) ; fNode.checkCoherency()
+            fNode.setArray(arr) ; arr.setInfoOnComponents(["Comp1_0 [m]","Com2_0 [s^2]"]) ; fNode.checkConsistencyLight()
             f.setFieldNoProfileSBT(fNode)
             fs0.pushBackTimeStep(f)
             pass
         mm.write(fname,2)
         fs0.write(fname,0)
-        a0Exp=mm.getCoords().deepCpy()
+        a0Exp=mm.getCoords().deepCopy()
         del m,mm,fs0,f,fNode
         ########## GO for reading in MEDReader,by not loading all. Mesh is fully loaded but not fields values
         ms=MEDFileMeshes(fname) ; ms.cartesianizeMe()
@@ -1916,6 +1931,7 @@ class MEDLoaderTest4(unittest.TestCase):
         self.assertTrue(a3.isEqual(DataArrayInt([4,1,0,5,6,4,3,2,7,8,4,4,3,8,9,4,6,5,10,11,4,9,8,13,14,4,19,18,23,24,4,2,1,6,7,4,7,6,11,12,4,11,10,15,16,4,12,11,16,17,4,8,7,12,13,4,13,12,17,18,4,17,16,21,22,4,14,13,18,19,4,16,15,20,21,4,18,17,22,23]))) # <- here the mesh is renumbered : the mesh is equal to m[[0,2,3,4,7,15, 1,5,8,9, 6,10,13, 11,12,14]]
         self.assertTrue(a4 is None)
         self.assertTrue(a5 is None)
+        self.assertTrue(mml2.retrieveGlobalNodeIdsIfAny() is None)
         for i in xrange(1,5):
             self.assertTrue((fcscp.isDataSetSupportEqualToThePreviousOne(i,fields)))
             pass
@@ -1955,7 +1971,7 @@ class MEDLoaderTest4(unittest.TestCase):
             fNode.setGaussLocalizationOnCells([6,10,13],[-1.,-1.,1.,-1.,1.,1.,-1.,1.],[0.5,0.5,0.7,0.7,0.1,0.1,0.2,0.2],[0.8,0.05,0.1,0.04])
             fNode.setGaussLocalizationOnCells([11,12,14],[-1.,-1.,1.,-1.,1.,1.,-1.,1.],[0.5,0.5,0.7,0.7,0.1,0.1,0.2,0.2,0.3,0.3,0.4,0.4,0.8,0.8],[0.8,0.05,0.1,0.01,0.02,0.005,0.005])
             arr=DataArrayDouble(2*(2*6+5*4+4*3+7*3)) ; arr.iota(0+1000*i) ; arr.rearrange(2)
-            fNode.setArray(arr) ; arr.setInfoOnComponents(["Comp1_0 [m]","Com2_0 [s^2]"]) ; fNode.checkCoherency()
+            fNode.setArray(arr) ; arr.setInfoOnComponents(["Comp1_0 [m]","Com2_0 [s^2]"]) ; fNode.checkConsistencyLight()
             f.setFieldNoProfileSBT(fNode)
             fs0.pushBackTimeStep(f)
             #
@@ -1963,13 +1979,13 @@ class MEDLoaderTest4(unittest.TestCase):
             fNode=MEDCouplingFieldDouble(ON_CELLS) ; fNode.setTime(float(i),i,0)
             fNode.setName(fieldName1) ; fNode.setMesh(m)
             arr=DataArrayDouble(2*16) ; arr.iota(300+1000*i) ; arr.rearrange(2)
-            fNode.setArray(arr) ; arr.setInfoOnComponents(["Comp1_1 [m]","Com2_1 [s^2]"]) ; fNode.checkCoherency()
+            fNode.setArray(arr) ; arr.setInfoOnComponents(["Comp1_1 [m]","Com2_1 [s^2]"]) ; fNode.checkConsistencyLight()
             f.setFieldNoProfileSBT(fNode)
             fs1.pushBackTimeStep(f)
             pass
         mm.write(fname,2)
         fs0.write(fname,0) ; fs1.write(fname,0)
-        a0Exp=mm.getCoords().deepCpy()
+        a0Exp=mm.getCoords().deepCopy()
         del m,mm,fs0,fs1,f,fNode
         ########## GO for reading in MEDReader,by not loading all. Mesh is fully loaded but not fields values
         ms=MEDFileMeshes(fname) ; ms.cartesianizeMe()
@@ -2011,6 +2027,7 @@ class MEDLoaderTest4(unittest.TestCase):
         self.assertTrue(a3.isEqual(DataArrayInt([4,1,0,5,6,4,2,1,6,7,4,3,2,7,8,4,4,3,8,9,4,6,5,10,11,4,7,6,11,12,4,8,7,12,13,4,9,8,13,14,4,11,10,15,16,4,12,11,16,17,4,13,12,17,18,4,14,13,18,19,4,16,15,20,21,4,17,16,21,22,4,18,17,22,23,4,19,18,23,24]))) # <- here the mesh is NOT renumbered : the mesh is equal to m
         self.assertTrue(a4 is None)
         self.assertTrue(a5 is None)
+        self.assertTrue(mml2.retrieveGlobalNodeIdsIfAny() is None)
         for i in xrange(1,5):
             self.assertTrue((fcscp.isDataSetSupportEqualToThePreviousOne(i,fields)))
             pass
@@ -2056,7 +2073,7 @@ class MEDLoaderTest4(unittest.TestCase):
                 fNode=MEDCouplingFieldDouble(ON_CELLS) ; fNode.setTime(float(i),i,0)
                 fNode.setName(fieldName0) ; fNode.setMesh(m)
                 arr=DataArrayDouble(2*5) ; arr.iota(0+1000*i) ; arr.rearrange(2)
-                fNode.setArray(arr) ; arr.setInfoOnComponents(["Comp1_0 [m]","Com2_0 [s^2]"]) ; fNode.checkCoherency()
+                fNode.setArray(arr) ; arr.setInfoOnComponents(["Comp1_0 [m]","Com2_0 [s^2]"]) ; fNode.checkConsistencyLight()
                 f.setFieldNoProfileSBT(fNode)
                 fs0.pushBackTimeStep(f)
                 #
@@ -2064,7 +2081,7 @@ class MEDLoaderTest4(unittest.TestCase):
                 fNode=MEDCouplingFieldDouble(ON_CELLS) ; fNode.setTime(float(i),i,0)
                 fNode.setName(fieldName1) ; fNode.setMesh(m)
                 arr=DataArrayDouble(2*5) ; arr.iota(100+1000*i) ; arr.rearrange(2)
-                fNode.setArray(arr) ; arr.setInfoOnComponents(["Comp1_1 [m]","Com2_1 [s^2]"]) ; fNode.checkCoherency()
+                fNode.setArray(arr) ; arr.setInfoOnComponents(["Comp1_1 [m]","Com2_1 [s^2]"]) ; fNode.checkConsistencyLight()
                 f.setFieldNoProfileSBT(fNode)
                 fs1.pushBackTimeStep(f)
                 #
@@ -2072,7 +2089,7 @@ class MEDLoaderTest4(unittest.TestCase):
                 fNode=MEDCouplingFieldDouble(ON_CELLS) ; fNode.setTime(float(i),i,0)
                 fNode.setName(fieldName2) ; fNode.setMesh(m[pfl1])
                 arr=DataArrayDouble(2*2) ; arr.iota(200+1000*i) ; arr.rearrange(2)
-                fNode.setArray(arr) ; arr.setInfoOnComponents(["Comp1_2 [m]","Com2_2 [s^2]"]) ; fNode.checkCoherency()
+                fNode.setArray(arr) ; arr.setInfoOnComponents(["Comp1_2 [m]","Com2_2 [s^2]"]) ; fNode.checkConsistencyLight()
                 f.setFieldProfile(fNode,mm,0,pfl1)
                 fs2.pushBackTimeStep(f)
                 #
@@ -2080,13 +2097,13 @@ class MEDLoaderTest4(unittest.TestCase):
                 fNode=MEDCouplingFieldDouble(ON_CELLS) ; fNode.setTime(float(i),i,0)
                 fNode.setName(fieldName3) ; fNode.setMesh(m[pfl2])
                 arr=DataArrayDouble(2*3) ; arr.iota(300+1000*i) ; arr.rearrange(2)
-                fNode.setArray(arr) ; arr.setInfoOnComponents(["Comp1_3 [m]","Com2_3 [s^2]"]) ; fNode.checkCoherency()
+                fNode.setArray(arr) ; arr.setInfoOnComponents(["Comp1_3 [m]","Com2_3 [s^2]"]) ; fNode.checkConsistencyLight()
                 f.setFieldProfile(fNode,mm,0,pfl2)
                 fs3.pushBackTimeStep(f)
                 pass
             mm.write(fname,2)
             fs0.write(fname,0) ; fs1.write(fname,0) ; fs2.write(fname,0) ; fs3.write(fname,0)
-            a0Exp=mm.getCoords().deepCpy()
+            a0Exp=mm.getCoords().deepCopy()
             del m,mm,fs0
             ########## GO for reading in MEDReader,by not loading all. Mesh is fully loaded but not fields values
             ms=MEDFileMeshes(fname) ; ms.cartesianizeMe()
@@ -2130,6 +2147,7 @@ class MEDLoaderTest4(unittest.TestCase):
             self.assertTrue(a3.isEqual(DataArrayInt([8,1,0,6,7,13,12,18,19,8,2,1,7,8,14,13,19,20,8,2,3,8,9,14,15,20,21,8,3,4,9,10,15,16,21,22,8,4,5,10,11,16,17,22,23])))
             self.assertTrue(a4.isEqual(DataArrayInt([-1,-1,0,31,62])))
             self.assertTrue(a5.isEqual(DataArrayInt([6,4,3,2,8,9,4,15,21,20,14,4,3,15,14,2,4,2,14,20,8,4,8,20,21,9,4,9,21,15,3,6,4,4,3,9,10,4,16,22,21,15,4,4,16,15,3,4,3,15,21,9,4,9,21,22,10,4,10,22,16,4,6,4,5,4,10,11,4,17,23,22,16,4,5,17,16,4,4,4,16,22,10,4,10,22,23,11,4,11,23,17,5])))
+            self.assertTrue(mml2.retrieveGlobalNodeIdsIfAny() is None)
             for i in xrange(1,5):
                 self.assertTrue((fcscp.isDataSetSupportEqualToThePreviousOne(i,fields)))
                 pass
@@ -2166,6 +2184,7 @@ class MEDLoaderTest4(unittest.TestCase):
             self.assertTrue(a3.isEqual(DataArrayInt([8,2,3,8,9,14,15,20,21,8,3,4,9,10,15,16,21,22])))
             self.assertTrue(a4.isEqual(DataArrayInt([0,31])))
             self.assertTrue(a5.isEqual(DataArrayInt([6,4,3,2,8,9,4,15,21,20,14,4,3,15,14,2,4,2,14,20,8,4,8,20,21,9,4,9,21,15,3,6,4,4,3,9,10,4,16,22,21,15,4,4,16,15,3,4,3,15,21,9,4,9,21,22,10,4,10,22,16,4])))
+            self.assertTrue(mml2.retrieveGlobalNodeIdsIfAny() is None)
             for i in xrange(1,5):
                 self.assertTrue((fcscp.isDataSetSupportEqualToThePreviousOne(i,fields)))
                 pass
@@ -2228,7 +2247,7 @@ class MEDLoaderTest4(unittest.TestCase):
                 fNode=MEDCouplingFieldDouble(ON_CELLS) ; fNode.setTime(float(i),i,0)
                 fNode.setName(fieldName0) ; fNode.setMesh(m)
                 arr=DataArrayDouble(2*3) ; arr.iota(0+1000*i) ; arr.rearrange(2)
-                fNode.setArray(arr) ; arr.setInfoOnComponents(["Comp1_0 [m]","Com2_0 [s^2]"]) ; fNode.checkCoherency()
+                fNode.setArray(arr) ; arr.setInfoOnComponents(["Comp1_0 [m]","Com2_0 [s^2]"]) ; fNode.checkConsistencyLight()
                 f.setFieldNoProfileSBT(fNode)
                 fs0.pushBackTimeStep(f)
                 #
@@ -2236,13 +2255,13 @@ class MEDLoaderTest4(unittest.TestCase):
                 fNode=MEDCouplingFieldDouble(ON_CELLS) ; fNode.setTime(float(i),i,0)
                 fNode.setName(fieldName1) ; fNode.setMesh(m)
                 arr=DataArrayDouble(2*3) ; arr.iota(100+1000*i) ; arr.rearrange(2)
-                fNode.setArray(arr) ; arr.setInfoOnComponents(["Comp1_1 [m]","Com2_1 [s^2]"]) ; fNode.checkCoherency()
+                fNode.setArray(arr) ; arr.setInfoOnComponents(["Comp1_1 [m]","Com2_1 [s^2]"]) ; fNode.checkConsistencyLight()
                 f.setFieldNoProfileSBT(fNode)
                 fs1.pushBackTimeStep(f)
                 pass
             mm.write(fname,2)
             fs0.write(fname,0) ; fs1.write(fname,0)
-            a0Exp=mm.getCoords().deepCpy()
+            a0Exp=mm.getCoords().deepCopy()
             del m,mm,fs0
             ########## GO for reading in MEDReader,by not loading all. Mesh is fully loaded but not fields values
             ms=MEDFileMeshes(fname) ; ms.cartesianizeMe()
@@ -2284,6 +2303,7 @@ class MEDLoaderTest4(unittest.TestCase):
             self.assertTrue(a3.isEqual(DataArrayInt([8,2,3,8,9,14,15,20,21,8,3,4,9,10,15,16,21,22,8,4,5,10,11,16,17,22,23])))
             self.assertTrue(a4.isEqual(DataArrayInt([0,31,62])))
             self.assertTrue(a5.isEqual(DataArrayInt([6,4,3,2,8,9,4,15,21,20,14,4,3,15,14,2,4,2,14,20,8,4,8,20,21,9,4,9,21,15,3,6,4,4,3,9,10,4,16,22,21,15,4,4,16,15,3,4,3,15,21,9,4,9,21,22,10,4,10,22,16,4,6,4,5,4,10,11,4,17,23,22,16,4,5,17,16,4,4,4,16,22,10,4,10,22,23,11,4,11,23,17,5])))
+            self.assertTrue(mml2.retrieveGlobalNodeIdsIfAny() is None)
             for i in xrange(1,5):
                 self.assertTrue((fcscp.isDataSetSupportEqualToThePreviousOne(i,fields)))
                 pass
@@ -2349,12 +2369,12 @@ class MEDLoaderTest4(unittest.TestCase):
         a=DataArrayDouble(m0.getNumberOfCells()) ; a.iota(off) ; a.setInfoOnComponents(["xx [m]"])
         fCell.setArray(a)
         fCell.setTime(*t)
-        fCell.checkCoherency()
+        fCell.checkConsistencyLight()
         a=DataArrayDouble(m0.getNumberOfNodes()) ; a.iota(off) ; a.setInfoOnComponents(["xx [m]"])
         a=a.negate()
         fNode.setArray(a)
         fNode.setTime(*t)
-        fNode.checkCoherency()
+        fNode.checkConsistencyLight()
         f1ts.setFieldNoProfileSBT(fCell)
         f1ts.setFieldNoProfileSBT(fNode)
         ffs.pushBackTimeStep(f1ts)
@@ -2364,12 +2384,12 @@ class MEDLoaderTest4(unittest.TestCase):
         a=DataArrayDouble(m0.getNumberOfCells()) ; a.iota(off) ; a.setInfoOnComponents(["xx [m]"])
         fCell.setArray(a)
         fCell.setTime(*t)
-        fCell.checkCoherency()
+        fCell.checkConsistencyLight()
         a=DataArrayDouble(m0.getNumberOfNodes()) ; a.iota(off) ; a.setInfoOnComponents(["xx [m]"])
         a=a.negate()
         fNode.setArray(a)
         fNode.setTime(*t)
-        fNode.checkCoherency()
+        fNode.checkConsistencyLight()
         f1ts.setFieldNoProfileSBT(fCell)
         f1ts.setFieldNoProfileSBT(fNode)
         ffs.pushBackTimeStep(f1ts)
@@ -2379,12 +2399,12 @@ class MEDLoaderTest4(unittest.TestCase):
         a=DataArrayDouble(m0.getNumberOfCells()) ; a.iota(off) ; a.setInfoOnComponents(["xx [m]"])
         fCell.setArray(a)
         fCell.setTime(*t)
-        fCell.checkCoherency()
+        fCell.checkConsistencyLight()
         a=DataArrayDouble(m0.getNumberOfNodes()) ; a.iota(off) ; a.setInfoOnComponents(["xx [m]"])
         a=a.negate()
         fNode.setArray(a)
         fNode.setTime(*t)
-        fNode.checkCoherency()
+        fNode.checkConsistencyLight()
         f1ts.setFieldNoProfileSBT(fCell)
         f1ts.setFieldNoProfileSBT(fNode)
         ffs.pushBackTimeStep(f1ts)
@@ -2394,12 +2414,12 @@ class MEDLoaderTest4(unittest.TestCase):
         a=DataArrayDouble(m0.getNumberOfCells()) ; a.iota(off) ; a.setInfoOnComponents(["xx [m]"])
         fCell.setArray(a)
         fCell.setTime(*t)
-        fCell.checkCoherency()
+        fCell.checkConsistencyLight()
         a=DataArrayDouble(m0.getNumberOfNodes()) ; a.iota(off) ; a.setInfoOnComponents(["xx [m]"])
         a=a.negate()
         fNode.setArray(a)
         fNode.setTime(*t)
-        fNode.checkCoherency()
+        fNode.checkConsistencyLight()
         f1ts.setFieldNoProfileSBT(fCell)
         f1ts.setFieldNoProfileSBT(fNode)
         ffs.pushBackTimeStep(f1ts)
@@ -2452,6 +2472,7 @@ class MEDLoaderTest4(unittest.TestCase):
         a8,a9=mml2.retrieveNumberIdsOnCells()
         self.assertTrue(a8.isEqual(DataArrayInt([100,101,102,103,104,105,106,107])))
         self.assertTrue(a9) # no copy here
+        self.assertTrue(mml2.retrieveGlobalNodeIdsIfAny() is None)
         pass
 
     def test16(self):
@@ -2484,7 +2505,7 @@ class MEDLoaderTest4(unittest.TestCase):
         mm1.setFamiliesIdsOnGroup("Grp1_1",[0,1]) ; mm1.setFamiliesIdsOnGroup("Grp1_2",[2,3])
         mms.pushMesh(mm1) ; del mm1
         #
-        m1=m0.deepCpy() ; m1.translate([2.5,0.,0.]) ; m1.setName("mesh2")
+        m1=m0.deepCopy() ; m1.translate([2.5,0.,0.]) ; m1.setName("mesh2")
         #
         fCell2=MEDCouplingFieldDouble(ON_CELLS)
         fCell2.setName("zeField3_1")
@@ -2516,12 +2537,12 @@ class MEDLoaderTest4(unittest.TestCase):
         a=DataArrayDouble(m0.getNumberOfCells()) ; a.iota(off) ; a.setInfoOnComponents(["xx [m]"])
         fCell1.setArray(a)
         fCell1.setTime(*t)
-        fCell1.checkCoherency()
+        fCell1.checkConsistencyLight()
         a=DataArrayDouble(m0.getNumberOfNodes()) ; a.iota(off) ; a.setInfoOnComponents(["xx [m]"])
         a=a.negate()
         fNode1.setArray(a)
         fNode1.setTime(*t)
-        fNode1.checkCoherency()
+        fNode1.checkConsistencyLight()
         f1ts1.setFieldNoProfileSBT(fCell1) ; ffs1_1.pushBackTimeStep(f1ts1)
         f1ts2.setFieldNoProfileSBT(fNode1) ; ffs1_2.pushBackTimeStep(f1ts2)
         #
@@ -2530,12 +2551,12 @@ class MEDLoaderTest4(unittest.TestCase):
         a=DataArrayDouble(m1.getNumberOfCells()) ; a.iota(1000.+off) ; a.setInfoOnComponents(["xx [m]"])
         fCell2.setArray(a)
         fCell2.setTime(*t)
-        fCell2.checkCoherency()
+        fCell2.checkConsistencyLight()
         a=DataArrayDouble(m1.getNumberOfNodes()) ; a.iota(1000+off) ; a.setInfoOnComponents(["xx [m]"])
         a=a.negate()
         fNode2.setArray(a)
         fNode2.setTime(*t)
-        fNode2.checkCoherency()
+        fNode2.checkConsistencyLight()
         f1ts1.setFieldNoProfileSBT(fCell2) ; ffs2_1.pushBackTimeStep(f1ts1)
         f1ts2.setFieldNoProfileSBT(fNode2) ; ffs2_2.pushBackTimeStep(f1ts2)
         # TimeStep 1
@@ -2545,12 +2566,12 @@ class MEDLoaderTest4(unittest.TestCase):
         a=DataArrayDouble(m0.getNumberOfCells()) ; a.iota(off) ; a.setInfoOnComponents(["xx [m]"])
         fCell1.setArray(a)
         fCell1.setTime(*t)
-        fCell1.checkCoherency()
+        fCell1.checkConsistencyLight()
         a=DataArrayDouble(m0.getNumberOfNodes()) ; a.iota(off) ; a.setInfoOnComponents(["xx [m]"])
         a=a.negate()
         fNode1.setArray(a)
         fNode1.setTime(*t)
-        fNode1.checkCoherency()
+        fNode1.checkConsistencyLight()
         f1ts1.setFieldNoProfileSBT(fCell1) ; ffs1_1.pushBackTimeStep(f1ts1)
         f1ts2.setFieldNoProfileSBT(fNode1) ; ffs1_2.pushBackTimeStep(f1ts2)
         #
@@ -2559,12 +2580,12 @@ class MEDLoaderTest4(unittest.TestCase):
         a=DataArrayDouble(m1.getNumberOfCells()) ; a.iota(1000.+off) ; a.setInfoOnComponents(["xx [m]"])
         fCell2.setArray(a)
         fCell2.setTime(*t)
-        fCell2.checkCoherency()
+        fCell2.checkConsistencyLight()
         a=DataArrayDouble(m1.getNumberOfNodes()) ; a.iota(1000+off) ; a.setInfoOnComponents(["xx [m]"])
         a=a.negate()
         fNode2.setArray(a)
         fNode2.setTime(*t)
-        fNode2.checkCoherency()
+        fNode2.checkConsistencyLight()
         f1ts1.setFieldNoProfileSBT(fCell2) ; ffs2_1.pushBackTimeStep(f1ts1)
         f1ts2.setFieldNoProfileSBT(fNode2) ; ffs2_2.pushBackTimeStep(f1ts2)
         # TimeStep 2
@@ -2574,12 +2595,12 @@ class MEDLoaderTest4(unittest.TestCase):
         a=DataArrayDouble(m0.getNumberOfCells()) ; a.iota(off) ; a.setInfoOnComponents(["xx [m]"])
         fCell1.setArray(a)
         fCell1.setTime(*t)
-        fCell1.checkCoherency()
+        fCell1.checkConsistencyLight()
         a=DataArrayDouble(m0.getNumberOfNodes()) ; a.iota(off) ; a.setInfoOnComponents(["xx [m]"])
         a=a.negate()
         fNode1.setArray(a)
         fNode1.setTime(*t)
-        fNode1.checkCoherency()
+        fNode1.checkConsistencyLight()
         f1ts1.setFieldNoProfileSBT(fCell1) ; ffs1_1.pushBackTimeStep(f1ts1)
         f1ts2.setFieldNoProfileSBT(fNode1) ; ffs1_2.pushBackTimeStep(f1ts2)
         #
@@ -2588,12 +2609,12 @@ class MEDLoaderTest4(unittest.TestCase):
         a=DataArrayDouble(m1.getNumberOfCells()) ; a.iota(1000.+off) ; a.setInfoOnComponents(["xx [m]"])
         fCell2.setArray(a)
         fCell2.setTime(*t)
-        fCell2.checkCoherency()
+        fCell2.checkConsistencyLight()
         a=DataArrayDouble(m1.getNumberOfNodes()) ; a.iota(1000+off) ; a.setInfoOnComponents(["xx [m]"])
         a=a.negate()
         fNode2.setArray(a)
         fNode2.setTime(*t)
-        fNode2.checkCoherency()
+        fNode2.checkConsistencyLight()
         f1ts1.setFieldNoProfileSBT(fCell2) ; ffs2_1.pushBackTimeStep(f1ts1)
         f1ts2.setFieldNoProfileSBT(fNode2) ; ffs2_2.pushBackTimeStep(f1ts2)
         #
@@ -2643,37 +2664,37 @@ class MEDLoaderTest4(unittest.TestCase):
         m.allocateCells()
         m.insertNextCell(NORM_QUAD4,[0,3,4,1])
         m.insertNextCell(NORM_QUAD4,[1,4,5,2])
-        m.checkCoherency1()
+        m.checkConsistency()
         #
         t=(1.1,0,-1)
         f=MEDCouplingFieldDouble(ON_GAUSS_NE) ; f.setTime(*t) ; f.setMesh(m)
         f.setArray(DataArrayDouble([3.,5.,7.,6.,2.,3.,11.,8.]))
         f.setName(fieldName1)
-        f.checkCoherency()
-        MEDLoader.WriteField(fname,f,True)
+        f.checkConsistencyLight()
+        WriteField(fname,f,True)
         f2=MEDCouplingFieldDouble(ON_CELLS) ; f2.setTime(*t) ; f2.setMesh(m)
         f2.setArray(DataArrayDouble([7.,11.],2,1))
         f2.setName(fieldName2)
-        MEDLoader.WriteFieldUsingAlreadyWrittenMesh(fname,f2)
+        WriteFieldUsingAlreadyWrittenMesh(fname,f2)
         f3=MEDCouplingFieldDouble(ON_NODES) ; f3.setTime(*t) ; f3.setMesh(m)
         f3.setArray(DataArrayDouble([1.,2.,4.,1.,2.,4.],6,1))
         f3.setName(fieldName3)
-        MEDLoader.WriteFieldUsingAlreadyWrittenMesh(fname,f3)
+        WriteFieldUsingAlreadyWrittenMesh(fname,f3)
         #
         t=(2.1,1,-1)
         f=MEDCouplingFieldDouble(ON_GAUSS_NE) ; f.setTime(*t) ; f.setMesh(m)
         f.setArray(DataArrayDouble([7.,6.,3.,5.,11.,8.,2.,3.]))
         f.setName(fieldName1)
-        f.checkCoherency()
-        MEDLoader.WriteFieldUsingAlreadyWrittenMesh(fname,f)
+        f.checkConsistencyLight()
+        WriteFieldUsingAlreadyWrittenMesh(fname,f)
         f2=MEDCouplingFieldDouble(ON_CELLS) ; f2.setTime(*t) ; f2.setMesh(m)
         f2.setArray(DataArrayDouble([11.,7.],2,1))
         f2.setName(fieldName2)
-        MEDLoader.WriteFieldUsingAlreadyWrittenMesh(fname,f2)
+        WriteFieldUsingAlreadyWrittenMesh(fname,f2)
         f3=MEDCouplingFieldDouble(ON_NODES) ; f3.setTime(*t) ; f3.setMesh(m)
         f3.setArray(DataArrayDouble([4.,2.,1.,4.,2.,1.],6,1))
         f3.setName(fieldName3)
-        MEDLoader.WriteFieldUsingAlreadyWrittenMesh(fname,f3)
+        WriteFieldUsingAlreadyWrittenMesh(fname,f3)
         ########## GO for reading in MEDReader,by not loading all. Mesh is fully loaded but not fields values
         ms=MEDFileMeshes(fname) ; ms.cartesianizeMe()
         fields=MEDFileFields(fname,False)
@@ -2720,6 +2741,7 @@ class MEDLoaderTest4(unittest.TestCase):
         a8,a9=mml2.retrieveNumberIdsOnCells()
         self.assertTrue(a8.isEqual(DataArrayInt([0,1])))
         self.assertTrue(a9) # no copy here
+        self.assertTrue(mml2.retrieveGlobalNodeIdsIfAny() is None)
         for i in xrange(1,2):
             self.assertTrue((fcscp.isDataSetSupportEqualToThePreviousOne(i,fields)))
             pass
@@ -2757,39 +2779,39 @@ class MEDLoaderTest4(unittest.TestCase):
         m.allocateCells()
         m.insertNextCell(NORM_QUAD4,[0,3,4,1])
         m.insertNextCell(NORM_QUAD4,[1,4,5,2])
-        m.checkCoherency1()
+        m.checkConsistency()
         #
         t=(1.1,0,-1)
         f=MEDCouplingFieldDouble(ON_GAUSS_PT) ; f.setTime(*t) ; f.setMesh(m)
         f.setGaussLocalizationOnType(NORM_QUAD4,[-1.,-1.,1.,-1.,1.,1.,-1.,1.],[0.2,0.2,0.8,0.8],[0.7,0.3])
         f.setArray(DataArrayDouble([3.,5.,4.,6.])) ; f.getArray().setInfoOnComponents(["Smth"])
         f.setName(fieldName1)
-        f.checkCoherency()
-        MEDLoader.WriteField(fname,f,True)
+        f.checkConsistencyLight()
+        WriteField(fname,f,True)
         f2=MEDCouplingFieldDouble(ON_CELLS) ; f2.setTime(*t) ; f2.setMesh(m)
         f2.setArray(DataArrayDouble([7.,11.],2,1))
         f2.setName(fieldName2)
-        MEDLoader.WriteFieldUsingAlreadyWrittenMesh(fname,f2)
+        WriteFieldUsingAlreadyWrittenMesh(fname,f2)
         f3=MEDCouplingFieldDouble(ON_NODES) ; f3.setTime(*t) ; f3.setMesh(m)
         f3.setArray(DataArrayDouble([1.,2.,4.,1.,2.,4.],6,1))
         f3.setName(fieldName3)
-        MEDLoader.WriteFieldUsingAlreadyWrittenMesh(fname,f3)
+        WriteFieldUsingAlreadyWrittenMesh(fname,f3)
         #
         t=(2.1,1,-1)
         f=MEDCouplingFieldDouble(ON_GAUSS_PT) ; f.setTime(*t) ; f.setMesh(m)
         f.setGaussLocalizationOnType(NORM_QUAD4,[-1.,-1.,1.,-1.,1.,1.,-1.,1.],[0.2,0.2,0.8,0.8],[0.7,0.3])
         f.setArray(DataArrayDouble([5.,3.,6.,4.])) ; f.getArray().setInfoOnComponents(["Smth"])
         f.setName(fieldName1)
-        f.checkCoherency()
-        MEDLoader.WriteFieldUsingAlreadyWrittenMesh(fname,f)
+        f.checkConsistencyLight()
+        WriteFieldUsingAlreadyWrittenMesh(fname,f)
         f2=MEDCouplingFieldDouble(ON_CELLS) ; f2.setTime(*t) ; f2.setMesh(m)
         f2.setArray(DataArrayDouble([11.,7.],2,1))
         f2.setName(fieldName2)
-        MEDLoader.WriteFieldUsingAlreadyWrittenMesh(fname,f2)
+        WriteFieldUsingAlreadyWrittenMesh(fname,f2)
         f3=MEDCouplingFieldDouble(ON_NODES) ; f3.setTime(*t) ; f3.setMesh(m)
         f3.setArray(DataArrayDouble([4.,2.,1.,4.,2.,1.],6,1))
         f3.setName(fieldName3)
-        MEDLoader.WriteFieldUsingAlreadyWrittenMesh(fname,f3)
+        WriteFieldUsingAlreadyWrittenMesh(fname,f3)
         ########## GO for reading in MEDReader,by not loading all. Mesh is fully loaded but not fields values
         ms=MEDFileMeshes(fname) ; ms.cartesianizeMe()
         fields=MEDFileFields(fname,False)
@@ -2837,6 +2859,7 @@ class MEDLoaderTest4(unittest.TestCase):
         a8,a9=mml2.retrieveNumberIdsOnCells()
         self.assertTrue(a8.isEqual(DataArrayInt([0,1])))
         self.assertTrue(a9) # no copy here
+        self.assertTrue(mml2.retrieveGlobalNodeIdsIfAny() is None)
         for i in xrange(1,2):
             self.assertTrue((fcscp.isDataSetSupportEqualToThePreviousOne(i,fields)))
             pass
@@ -2905,6 +2928,7 @@ class MEDLoaderTest4(unittest.TestCase):
         a8,a9=mml2.retrieveNumberIdsOnCells()
         self.assertTrue(a8.isEqual(DataArrayInt([0,1])))
         self.assertTrue(a9) # no copy here
+        self.assertTrue(mml2.retrieveGlobalNodeIdsIfAny() is None)
         for i in xrange(1,2):
             self.assertTrue((fcscp.isDataSetSupportEqualToThePreviousOne(i,fields)))
             pass
@@ -2949,7 +2973,7 @@ class MEDLoaderTest4(unittest.TestCase):
         f.setName(fieldName)
         arr=DataArrayDouble(24) ; arr.iota() ; arr.setInfoOnComponents(["AStr"])
         f.setArray(arr)
-        f.checkCoherency()
+        f.checkConsistencyLight()
         f1ts=MEDFileField1TS() ; f1ts.setFieldNoProfileSBT(f)
         ff.pushBackTimeStep(f1ts)
         # time 1
@@ -2958,7 +2982,7 @@ class MEDLoaderTest4(unittest.TestCase):
         f.setName(fieldName)
         arr=DataArrayDouble(24) ; arr.iota() ; arr.reverse() ; arr.setInfoOnComponents(["AStr"])
         f.setArray(arr)
-        f.checkCoherency()
+        f.checkConsistencyLight()
         f1ts=MEDFileField1TS() ; f1ts.setFieldNoProfileSBT(f)
         ff.pushBackTimeStep(f1ts)
         #
@@ -3016,6 +3040,7 @@ class MEDLoaderTest4(unittest.TestCase):
         a12,a13=mml2.retrieveNumberIdsOnNodes()
         self.assertTrue(not a12)
         self.assertTrue(a13) # no copy here
+        self.assertTrue(mml2.retrieveGlobalNodeIdsIfAny() is None)
         for i in xrange(1,2):
             self.assertTrue((fcscp.isDataSetSupportEqualToThePreviousOne(i,fields)))
             pass
@@ -3067,16 +3092,16 @@ class MEDLoaderTest4(unittest.TestCase):
         f0.setName(fieldName0) ; f0.setTime(*t)
         da=m.getCoords().magnitude() ; da.setInfoOnComponents(["zeInfo"])
         f0.setArray(da)
-        f0.checkCoherency()
+        f0.checkConsistencyLight()
         f1ts=MEDFileField1TS()
         f1ts.setFieldNoProfileSBT(f0)
         fmts0.pushBackTimeStep(f1ts)
         #
         f1=MEDCouplingFieldDouble(ON_CELLS) ; f1.setMesh(m)
         f1.setName(fieldName1) ; f1.setTime(*t)
-        da=m.getBarycenterAndOwner().magnitude() ; da.setInfoOnComponents(["zeInfoCell"])
+        da=m.computeCellCenterOfMass().magnitude() ; da.setInfoOnComponents(["zeInfoCell"])
         f1.setArray(da)
-        f1.checkCoherency()
+        f1.checkConsistencyLight()
         f1ts=MEDFileField1TS()
         f1ts.setFieldNoProfileSBT(f1)
         fmts1.pushBackTimeStep(f1ts)
@@ -3085,16 +3110,16 @@ class MEDLoaderTest4(unittest.TestCase):
         f2.setName(fieldName2) ; f2.setTime(*t)
         da=m.getCoords().magnitude()[pfl2] ; da.setInfoOnComponents(["zzzz"])
         f2.setArray(da)
-        f2.checkCoherency()
+        f2.checkConsistencyLight()
         f1ts=MEDFileField1TS()
         f1ts.setFieldProfile(f2,mm,0,pfl2)
         fmts2.pushBackTimeStep(f1ts)
         #
         f3=MEDCouplingFieldDouble(ON_CELLS) ; mTmp=m[pfl3] ; mTmp.setName(m.getName()) ; f3.setMesh(mTmp)
         f3.setName(fieldName3) ; f3.setTime(*t)
-        da=mTmp.getBarycenterAndOwner().magnitude() ; da.setInfoOnComponents(["abcdefg"])
+        da=mTmp.computeCellCenterOfMass().magnitude() ; da.setInfoOnComponents(["abcdefg"])
         f3.setArray(da)
-        f3.checkCoherency()
+        f3.checkConsistencyLight()
         f1ts=MEDFileField1TS()
         f1ts.setFieldProfile(f3,mm,0,pfl3)
         fmts3.pushBackTimeStep(f1ts)
@@ -3104,16 +3129,16 @@ class MEDLoaderTest4(unittest.TestCase):
         f0.setName(fieldName0) ; f0.setTime(*t)
         da=m.getCoords().magnitude() ; da.reverse() ; da.setInfoOnComponents(["zeInfo"])
         f0.setArray(da)
-        f0.checkCoherency()
+        f0.checkConsistencyLight()
         f1ts=MEDFileField1TS()
         f1ts.setFieldNoProfileSBT(f0)
         fmts0.pushBackTimeStep(f1ts)
         #
         f1=MEDCouplingFieldDouble(ON_CELLS) ; f1.setMesh(m)
         f1.setName(fieldName1) ; f1.setTime(*t)
-        da=m.getBarycenterAndOwner().magnitude() ; da.reverse() ; da.setInfoOnComponents(["zeInfoCell"])
+        da=m.computeCellCenterOfMass().magnitude() ; da.reverse() ; da.setInfoOnComponents(["zeInfoCell"])
         f1.setArray(da)
-        f1.checkCoherency()
+        f1.checkConsistencyLight()
         f1ts=MEDFileField1TS()
         f1ts.setFieldNoProfileSBT(f1)
         fmts1.pushBackTimeStep(f1ts)
@@ -3122,16 +3147,16 @@ class MEDLoaderTest4(unittest.TestCase):
         f2.setName(fieldName2) ; f2.setTime(*t)
         da=m.getCoords().magnitude()[pfl2] ; da.reverse() ; da.setInfoOnComponents(["zzzz"])
         f2.setArray(da)
-        f2.checkCoherency()
+        f2.checkConsistencyLight()
         f1ts=MEDFileField1TS()
         f1ts.setFieldProfile(f2,mm,0,pfl2)
         fmts2.pushBackTimeStep(f1ts)
         #
         f3=MEDCouplingFieldDouble(ON_CELLS) ; mTmp=m[pfl3] ; mTmp.setName(m.getName()) ; f3.setMesh(mTmp)
         f3.setName(fieldName3) ; f3.setTime(*t)
-        da=mTmp.getBarycenterAndOwner().magnitude() ; da.reverse() ; da.setInfoOnComponents(["abcdefg"])
+        da=mTmp.computeCellCenterOfMass().magnitude() ; da.reverse() ; da.setInfoOnComponents(["abcdefg"])
         f3.setArray(da)
-        f3.checkCoherency()
+        f3.checkConsistencyLight()
         f1ts=MEDFileField1TS()
         f1ts.setFieldProfile(f3,mm,0,pfl3)
         fmts3.pushBackTimeStep(f1ts)
@@ -3201,6 +3226,7 @@ class MEDLoaderTest4(unittest.TestCase):
         a12,a13=mml2.retrieveNumberIdsOnNodes()
         self.assertTrue(a12.isEqual(DataArrayInt([0,10,20,30,40,50,60,70,80,90,100,110,120,130,140,150,160,170,180,190,200,210,220,230,240])))
         self.assertTrue(a13) # no copy here
+        self.assertTrue(mml2.retrieveGlobalNodeIdsIfAny() is None)
         for i in xrange(1,2):
             self.assertTrue((fcscp.isDataSetSupportEqualToThePreviousOne(i,fields)))
             pass
@@ -3253,6 +3279,7 @@ class MEDLoaderTest4(unittest.TestCase):
         a12,a13=mml2.retrieveNumberIdsOnNodes()
         self.assertTrue(a12.isEqual(DataArrayInt([50,60,70,100,110,120,150,160,170,200,210,220])))
         self.assertTrue(not a13) # copy here
+        self.assertTrue(mml2.retrieveGlobalNodeIdsIfAny() is None)
         for i in xrange(2):
             f=allFMTSLeavesPerCommonSupport1[1][0][0][i]
             fsst=MEDFileField1TSStructItem.BuildItemFrom(f,mst)
@@ -3332,7 +3359,7 @@ class MEDLoaderTest4(unittest.TestCase):
         f0.setName(fieldName0) ; f0.setTime(*t)
         da=DataArrayDouble(9) ; da.iota() ; da.setInfoOnComponents(["zeInfo"])
         f0.setArray(da)
-        f0.checkCoherency()
+        f0.checkConsistencyLight()
         f1ts=MEDFileField1TS()
         f1ts.setFieldNoProfileSBT(f0)
         fmts0.pushBackTimeStep(f1ts)
@@ -3342,7 +3369,7 @@ class MEDLoaderTest4(unittest.TestCase):
         f0.setName(fieldName0) ; f0.setTime(*t)
         da=DataArrayDouble(9) ; da.iota() ; da.reverse() ; da.setInfoOnComponents(["zeInfo"])
         f0.setArray(da)
-        f0.checkCoherency()
+        f0.checkConsistencyLight()
         f1ts=MEDFileField1TS()
         f1ts.setFieldNoProfileSBT(f0)
         fmts0.pushBackTimeStep(f1ts)
@@ -3402,6 +3429,7 @@ class MEDLoaderTest4(unittest.TestCase):
         a12,a13=mml2.retrieveNumberIdsOnNodes()
         self.assertTrue(not a12)
         self.assertTrue(a13) # no copy here
+        self.assertTrue(mml2.retrieveGlobalNodeIdsIfAny() is None)
         #
         f=allFMTSLeavesPerCommonSupport1[0][0][0][0]
         fsst=MEDFileField1TSStructItem.BuildItemFrom(f,mst)
@@ -3445,7 +3473,7 @@ class MEDLoaderTest4(unittest.TestCase):
         f0.setName(fieldName0) ; f0.setTime(*t)
         da=DataArrayDouble(4) ; da.iota() ; da.setInfoOnComponents(["zeInfo"])
         f0.setArray(da)
-        f0.checkCoherency()
+        f0.checkConsistencyLight()
         f1ts=MEDFileField1TS()
         f1ts.setFieldProfile(f0,mm,-1,pfl)
         fmts0.pushBackTimeStep(f1ts)
@@ -3455,7 +3483,7 @@ class MEDLoaderTest4(unittest.TestCase):
         f0.setName(fieldName0) ; f0.setTime(*t)
         da=DataArrayDouble(4) ; da.iota() ; da.reverse() ; da.setInfoOnComponents(["zeInfo"])
         f0.setArray(da)
-        f0.checkCoherency()
+        f0.checkConsistencyLight()
         f1ts=MEDFileField1TS()
         f1ts.setFieldProfile(f0,mm,-1,pfl)
         fmts0.pushBackTimeStep(f1ts)
@@ -3513,6 +3541,7 @@ class MEDLoaderTest4(unittest.TestCase):
         a12,a13=mml2.retrieveNumberIdsOnNodes()
         self.assertTrue(not a12)
         self.assertTrue(a13) # no copy here
+        self.assertTrue(mml2.retrieveGlobalNodeIdsIfAny() is None)
         #
         f=allFMTSLeavesPerCommonSupport1[0][0][0][0]
         fsst=MEDFileField1TSStructItem.BuildItemFrom(f,mst)
@@ -3603,6 +3632,7 @@ class MEDLoaderTest4(unittest.TestCase):
         self.assertTrue(a.isEqual(arr0,1e-12))
         self.assertTrue(b.isEqual(arr1,1e-12))
         self.assertTrue(c.isEqual(arr2,1e-12))
+        self.assertTrue(mml2.retrieveGlobalNodeIdsIfAny() is None)
         for i in xrange(2):
             f=allFMTSLeavesPerCommonSupport[0][0][0][i]
             fsst=MEDFileField1TSStructItem.BuildItemFrom(f,mst)
@@ -3668,7 +3698,7 @@ class MEDLoaderTest4(unittest.TestCase):
         pfl1=DataArrayInt([1,3,5]) ; pfl1.setName(pflName1)
         tmp=m0[pfl1] ; f2.setMesh(tmp)
         f2.setGaussLocalizationOnType(NORM_QUAD4,[-1.,-1.,1.,-1.,1.,1.,-1.,1.],[-0.5,-0.5,0.5,-0.5,0.5,0.5,-0.5,0.5,0.,0.],[0.1,0.1,0.1,0.1,0.6])
-        f2.checkCoherency()
+        f2.checkConsistencyLight()
         f1ts.setFieldProfile(f2,m,0,pfl1)
         fmts.pushBackTimeStep(f1ts)
         #
@@ -3722,6 +3752,7 @@ class MEDLoaderTest4(unittest.TestCase):
         self.assertTrue(a3.isEqual(DataArrayInt([2,10,12,2,12,13])))
         self.assertTrue(a4 is None)
         self.assertTrue(a5 is None)
+        self.assertTrue(mml2.retrieveGlobalNodeIdsIfAny() is None)
         a6,a7=mml2.retrieveFamilyIdsOnCells()
         self.assertTrue(a6.isEqual(DataArrayInt([-7,-8])))
         self.assertTrue(not a7) # copy here because profile on cells
@@ -3734,6 +3765,7 @@ class MEDLoaderTest4(unittest.TestCase):
         a12,a13=mml2.retrieveNumberIdsOnNodes()
         self.assertTrue(a12.isEqual(DataArrayInt([203,204,205,206,207,208,209,210,211,212,213,214,215,216,217])))
         self.assertTrue(a13) # no copy here
+        self.assertTrue(mml2.retrieveGlobalNodeIdsIfAny() is None)
         fff0=allFMTSLeavesPerCommonSupport1[0][0][0][0]
         fsst=MEDFileField1TSStructItem.BuildItemFrom(fff0,mst)
         fff0.loadArraysIfNecessary()
@@ -3759,6 +3791,7 @@ class MEDLoaderTest4(unittest.TestCase):
         self.assertTrue(a3.isEqual(DataArrayInt([4,1,4,5,2,4,4,7,8,5,4,7,10,11,8])))
         self.assertTrue(a4 is None)
         self.assertTrue(a5 is None)
+        self.assertTrue(mml2.retrieveGlobalNodeIdsIfAny() is None)
         a6,a7=mml2.retrieveFamilyIdsOnCells()
         self.assertTrue(a6.isEqual(DataArrayInt([-2,-4,-6])))
         self.assertTrue(not a7) # copy here because profile on cells
@@ -3794,6 +3827,7 @@ class MEDLoaderTest4(unittest.TestCase):
         self.assertTrue(a3.isEqual(DataArrayInt([2,10,12,2,12,13])))
         self.assertTrue(a4 is None)
         self.assertTrue(a5 is None)
+        self.assertTrue(mml2.retrieveGlobalNodeIdsIfAny() is None)
         a6,a7=mml2.retrieveFamilyIdsOnCells()
         self.assertTrue(a6.isEqual(DataArrayInt([-7,-8])))
         self.assertTrue(not a7) # copy here because profile on cells
@@ -3930,6 +3964,7 @@ class MEDLoaderTest4(unittest.TestCase):
         self.assertTrue(a3.isEqual(DataArrayInt([3,4,2,1,4,0,3,4,1,1,5])))
         self.assertTrue(a4 is None)
         self.assertTrue(a5 is None)
+        self.assertTrue(mml2.retrieveGlobalNodeIdsIfAny() is None)
         a6,a7=mml2.retrieveFamilyIdsOnCells()
         self.assertTrue(a6.isEqual(DataArrayInt([-3,-7,13])))
         self.assertTrue(not a7) # copy here because profile on cells
@@ -3947,6 +3982,7 @@ class MEDLoaderTest4(unittest.TestCase):
         fsst=MEDFileField1TSStructItem.BuildItemFrom(fff0,mst)
         fff0.loadArraysIfNecessary()
         v=mml2.buildDataArray(fsst,fields,fff0.getUndergroundDataArray())
+        self.assertTrue(mml2.retrieveGlobalNodeIdsIfAny() is None)
         self.assertEqual(fff0.getName(),"f0Node")
         self.assertEqual(v.getHiddenCppPointer(),fff0.getUndergroundDataArray().getHiddenCppPointer())
         vExp=DataArrayDouble([0.,1.,2.,3.,4.,5.])
@@ -3956,6 +3992,7 @@ class MEDLoaderTest4(unittest.TestCase):
         fsst=MEDFileField1TSStructItem.BuildItemFrom(fff1,mst)
         fff1.loadArraysIfNecessary()
         v=mml2.buildDataArray(fsst,fields,fff1.getUndergroundDataArray())
+        self.assertTrue(mml2.retrieveGlobalNodeIdsIfAny() is None)
         self.assertEqual(fff1.getName(),"f1Node")
         self.assertEqual(v.getHiddenCppPointer(),fff1.getUndergroundDataArray().getHiddenCppPointer())
         vExp=DataArrayDouble([5.,4.,3.,2.,1.,0.])
@@ -3982,7 +4019,7 @@ class MEDLoaderTest4(unittest.TestCase):
         f0=MEDCouplingFieldDouble(ON_NODES) ; f0.setMesh(m0) ; f0.setName("f0NoPfl")
         arr0=DataArrayDouble([0.,1.,2.,3.,1.,1.5,2.2,3.1,2.,2.2,3.,3.1,3.,3.1,3.5,4.])
         f0.setArray(arr0)
-        f0.checkCoherency()
+        f0.checkConsistencyLight()
         f1ts0.setFieldNoProfileSBT(f0)
         self.assertEqual(f1ts0.getMeshName(),"mesh")
         #
@@ -4048,6 +4085,7 @@ class MEDLoaderTest4(unittest.TestCase):
         self.assertTrue(a3.isEqual(DataArrayInt([])))
         self.assertTrue(a4 is None)
         self.assertTrue(a5 is None)
+        self.assertTrue(mml2.retrieveGlobalNodeIdsIfAny() is None)
         #
         fff0=allFMTSLeavesPerCommonSupport1[0][0][0][0]
         fsst=MEDFileField1TSStructItem.BuildItemFrom(fff0,mst)
@@ -4191,6 +4229,7 @@ class MEDLoaderTest4(unittest.TestCase):
         self.assertTrue(a3.isEqual(DataArrayInt([3,4,2,1,4,0,3,4,1,1,3,1,5])))
         self.assertTrue(a4 is None)
         self.assertTrue(a5 is None)
+        self.assertTrue(mml2.retrieveGlobalNodeIdsIfAny() is None)
         a6,a7=mml2.retrieveFamilyIdsOnCells()
         self.assertTrue(a6.isEqual(DataArrayInt([-3,-7,-12,13])))
         self.assertTrue(not a7) # copy here because profile on cells
@@ -4208,6 +4247,7 @@ class MEDLoaderTest4(unittest.TestCase):
         fsst=MEDFileField1TSStructItem.BuildItemFrom(fff0,mst)
         fff0.loadArraysIfNecessary()
         v=mml2.buildDataArray(fsst,fields,fff0.getUndergroundDataArray())
+        self.assertTrue(mml2.retrieveGlobalNodeIdsIfAny() is None)
         self.assertEqual(fff0.getName(),"f0Node")
         self.assertEqual(v.getHiddenCppPointer(),fff0.getUndergroundDataArray().getHiddenCppPointer())
         vExp=DataArrayDouble([0.,1.,2.,3.,4.,5.])
@@ -4225,10 +4265,12 @@ class MEDLoaderTest4(unittest.TestCase):
         self.assertTrue(a3.isEqual(DataArrayInt([3,2,6,3,3,6,7,3,4,0,4,5,1,4,1,5,6,2,4,6,8,9,7,4,8,10,11,9])))
         self.assertTrue(a4 is None)
         self.assertTrue(a5 is None)
+        self.assertTrue(mml2.retrieveGlobalNodeIdsIfAny() is None)
         fff1=allFMTSLeavesPerCommonSupport1[0][0][0][0]
         fsst=MEDFileField1TSStructItem.BuildItemFrom(fff1,mst)
         fff1.loadArraysIfNecessary()
         v=mml2.buildDataArray(fsst,fields,fff1.getUndergroundDataArray())
+        self.assertTrue(mml2.retrieveGlobalNodeIdsIfAny() is None)
         self.assertEqual(fff1.getName(),"f2Cell")
         self.assertNotEqual(v.getHiddenCppPointer(),fff0.getUndergroundDataArray().getHiddenCppPointer())
         vExp=DataArrayDouble([2,3,0,1,4,5])
@@ -4258,6 +4300,7 @@ class MEDLoaderTest4(unittest.TestCase):
         fsst=MEDFileField1TSStructItem.BuildItemFrom(fff3,mst)
         fff3.loadArraysIfNecessary()
         v=mml2.buildDataArray(fsst,fields,fff3.getUndergroundDataArray())
+        self.assertTrue(mml2.retrieveGlobalNodeIdsIfAny() is None)
         self.assertEqual(fff3.getName(),"f3Cell")
         self.assertNotEqual(v.getHiddenCppPointer(),fff0.getUndergroundDataArray().getHiddenCppPointer())
         vExp=DataArrayDouble([-1.1,-3.1,5,4,3,2,1,0])
@@ -4277,7 +4320,7 @@ class MEDLoaderTest4(unittest.TestCase):
         fCell=MEDCouplingFieldDouble(ON_CELLS) ; fCell.setName("fCell")
         arrCell=DataArrayDouble([7.]) ; arrCell.setInfoOnComponent(0,"smth") ; fCell.setArray(arrCell)
         fCell.setMesh(m)
-        MEDLoader.WriteField(fname,fCell,True)
+        WriteField(fname,fCell,True)
         refCoo=[-1.,-1.,-1.,-1.,1.,-1.,1.,1.,-1.,1.,-1.,-1.,-1.,-1.,1.,-1.,1.,1.,1.,1.,1.,1.,-1.,1.,-1.,0.,-1.,0.,1.,-1.,1.,0.,-1.,0.,-1.,-1.,-1.,0.,1.,0.,1.,1.,1.,0.,1.,0.,-1.,1.,-1.,-1.,0.,-1.,1.,0.,1.,1.,0.,1.,-1.,0.,0.,0.,-1.,-1.,0.,0.,0.,1.,0.,1.,0.,0.,0.,-1.,0.,0.,0.,1.,0.,0.,0.]
         weights=[0.1714677640603571,0.27434842249657115,0.1714677640603571,0.27434842249657115,0.43895747599451346,0.27434842249657115,0.1714677640603571,0.27434842249657115,0.1714677640603571,0.27434842249657115,0.43895747599451346,0.27434842249657115,0.43895747599451346,0.7023319615912209,0.43895747599451346,0.27434842249657115,0.43895747599451346,0.27434842249657115,0.1714677640603571,0.27434842249657115,0.1714677640603571,0.27434842249657115,0.43895747599451346,0.27434842249657115,0.1714677640603571,0.27434842249657115,0.1714677640603571]
         gCoords=[-0.774596669241483,-0.774596669241483,-0.774596669241483,-0.774596669241483,-0.774596669241483,0.0,-0.774596669241483,-0.774596669241483,0.774596669241483,-0.774596669241483,0.0,-0.774596669241483,-0.774596669241483,0.0,0.0,-0.774596669241483,0.0,0.774596669241483,-0.774596669241483,0.774596669241483,-0.774596669241483,-0.774596669241483,0.774596669241483,0.0,-0.774596669241483,0.774596669241483,0.774596669241483,0.0,-0.774596669241483,-0.774596669241483,0.0,-0.774596669241483,0.0,0.0,-0.774596669241483,0.774596669241483,0.0,0.0,-0.774596669241483,0.0,0.0,0.0,0.0,0.0,0.774596669241483,0.0,0.774596669241483,-0.774596669241483,0.0,0.774596669241483,0.0,0.0,0.774596669241483,0.774596669241483,0.774596669241483,-0.774596669241483,-0.774596669241483,0.774596669241483,-0.774596669241483,0.0,0.774596669241483,-0.774596669241483,0.774596669241483,0.774596669241483,0.0,-0.774596669241483,0.774596669241483,0.0,0.0,0.774596669241483,0.0,0.774596669241483,0.774596669241483,0.774596669241483,-0.774596669241483,0.774596669241483,0.774596669241483,0.0,0.774596669241483,0.774596669241483,0.774596669241483]
@@ -4286,7 +4329,7 @@ class MEDLoaderTest4(unittest.TestCase):
         fGauss.setGaussLocalizationOnType(NORM_HEXA27,refCoo,gCoords,weights)
         arrGauss=DataArrayDouble(fGauss.getNumberOfTuplesExpected()) ; arrGauss.setInfoOnComponent(0,"gaussc") ; arrGauss.iota()
         fGauss.setArray(arrGauss)
-        MEDLoader.WriteFieldUsingAlreadyWrittenMesh(fname,fGauss)
+        WriteFieldUsingAlreadyWrittenMesh(fname,fGauss)
         ########## GO for reading in MEDReader,by not loading all. Mesh is fully loaded but not fields values
         ms=MEDFileMeshes(fname) ; ms.cartesianizeMe()
         fields=MEDFileFields(fname,False)
@@ -4320,6 +4363,7 @@ class MEDLoaderTest4(unittest.TestCase):
         mml2=mml.prepare()
         self.assertTrue(isinstance(mml2,MEDUMeshMultiLev))
         ncc,a0,a1,a2,a3,a4,a5=mml2.buildVTUArrays()
+        self.assertTrue(mml2.retrieveGlobalNodeIdsIfAny() is None)
         self.assertTrue(a0.isEqual(coo,1e-12))
         self.assertTrue(a1.isEqual(DataArrayByte([29])))
         self.assertTrue(a2.isEqual(DataArrayInt([0])))
@@ -4331,6 +4375,7 @@ class MEDLoaderTest4(unittest.TestCase):
         fsst=MEDFileField1TSStructItem.BuildItemFrom(ffCell,mst)
         ffCell.loadArraysIfNecessary()
         v=mml2.buildDataArray(fsst,fields,ffCell.getUndergroundDataArray())
+        self.assertTrue(mml2.retrieveGlobalNodeIdsIfAny() is None)
         self.assertEqual(v.getHiddenCppPointer(),ffCell.getUndergroundDataArray().getHiddenCppPointer())
         self.assertEqual(ffCell.getName(),"fCell")
         self.assertTrue(v.isEqual(arrCell,1e-12)) ; self.assertTrue(v.isEqualWithoutConsideringStr(DataArrayDouble([7.]),1e-12)) ; self.assertEqual(v.getInfoOnComponents(),["smth"])
@@ -4340,6 +4385,7 @@ class MEDLoaderTest4(unittest.TestCase):
         fsst=MEDFileField1TSStructItem.BuildItemFrom(ffGauss,mst)
         ffGauss.loadArraysIfNecessary()
         v=mml2.buildDataArray(fsst,fields,ffGauss.getUndergroundDataArray())
+        self.assertTrue(mml2.retrieveGlobalNodeIdsIfAny() is None)
         self.assertEqual(v.getHiddenCppPointer(),ffGauss.getUndergroundDataArray().getHiddenCppPointer())
         self.assertEqual(ffGauss.getName(),"fGauss")
         self.assertTrue(v.isEqual(arrGauss,1e-12)) ; self.assertTrue(v.isEqualWithoutConsideringStr(DataArrayDouble(range(27)),1e-12)) ; self.assertEqual(v.getInfoOnComponents(),["gaussc"])
@@ -4433,6 +4479,7 @@ class MEDLoaderTest4(unittest.TestCase):
         self.assertTrue(a.isEqual(arrX,1e-12))
         self.assertTrue(b.isEqual(arrY,1e-12))
         self.assertTrue(c.isEqual(arrZ,1e-12))
+        self.assertTrue(mml2.retrieveGlobalNodeIdsIfAny() is None)
         for i in xrange(30):
             ffCell=allFMTSLeavesPerCommonSupport1[0][0][0][i]
             fsst=MEDFileField1TSStructItem.BuildItemFrom(ffCell,mst)
@@ -4538,6 +4585,7 @@ class MEDLoaderTest4(unittest.TestCase):
         mml2=mml.prepare()
         self.assertTrue(isinstance(mml2,MEDUMeshMultiLev)) # here UMesh is important
         ncc,a0,a1,a2,a3,a4,a5=mml2.buildVTUArrays()
+        self.assertTrue(mml2.retrieveGlobalNodeIdsIfAny() is None)
         self.assertTrue(not ncc)# here ncc=False because the coordinates are not in ms neither in children. This is the most important line in the test.
         self.assertTrue(a0.isEqual(DataArrayDouble([0.,0.,0.,1.,0.,0.,2.,0.,0.,0.,1.,0.,1.,1.,0.,2.,1.,0.,0.,2.,0.,1.,2.,0.,2.,2.,0.,0.,3.,0.,1.,3.,0.,2.,3.,0.,0.,0.,1.,1.,0.,1.,2.,0.,1.,0.,1.,1.,1.,1.,1.,2.,1.,1.,0.,2.,1.,1.,2.,1.,2.,2.,1.,0.,3.,1.,1.,3.,1.,2.,3.,1.,0.,0.,2.,1.,0.,2.,2.,0.,2.,0.,1.,2.,1.,1.,2.,2.,1.,2.,0.,2.,2.,1.,2.,2.,2.,2.,2.,0.,3.,2.,1.,3.,2.,2.,3.,2.,0.,0.,3.,1.,0.,3.,2.,0.,3.,0.,1.,3.,1.,1.,3.,2.,1.,3.,0.,2.,3.,1.,2.,3.,2.,2.,3.,0.,3.,3.,1.,3.,3.,2.,3.,3.,0.,0.,4.,1.,0.,4.,2.,0.,4.,0.,1.,4.,1.,1.,4.,2.,1.,4.,0.,2.,4.,1.,2.,4.,2.,2.,4.,0.,3.,4.,1.,3.,4.,2.,3.,4.],60,3),1e-12))
         self.assertTrue(a1.isEqual(DataArrayByte([12,12,12,12,12,12,12,12,12,12,12])))
@@ -4643,6 +4691,7 @@ class MEDLoaderTest4(unittest.TestCase):
         self.assertTrue(a.isEqual(arrX,1e-12))
         self.assertTrue(b.isEqual(arrY,1e-12))
         self.assertTrue(c.isEqual(arrZ,1e-12))
+        self.assertTrue(mml2.retrieveGlobalNodeIdsIfAny() is None)
         for i in xrange(30):
             ffCell=allFMTSLeavesPerCommonSupport1[0][0][0][i]
             fsst=MEDFileField1TSStructItem.BuildItemFrom(ffCell,mst)
@@ -4659,6 +4708,7 @@ class MEDLoaderTest4(unittest.TestCase):
         mml2=mml.prepare()
         self.assertTrue(isinstance(mml2,MEDUMeshMultiLev)) # here UMesh is important
         ncc,a0,a1,a2,a3,a4,a5=mml2.buildVTUArrays()
+        self.assertTrue(mml2.retrieveGlobalNodeIdsIfAny() is None)
         self.assertTrue(ncc)# True because, the coords are computed by the implicit unstructured level -1 structured mesh
         self.assertTrue(a0.isEqual(DataArrayDouble([0.,0.,0.,1.,0.,0.,2.,0.,0.,0.,1.,0.,1.,1.,0.,2.,1.,0.,0.,2.,0.,1.,2.,0.,2.,2.,0.,0.,3.,0.,1.,3.,0.,2.,3.,0.,0.,0.,1.,1.,0.,1.,2.,0.,1.,0.,1.,1.,1.,1.,1.,2.,1.,1.,0.,2.,1.,1.,2.,1.,2.,2.,1.,0.,3.,1.,1.,3.,1.,2.,3.,1.,0.,0.,2.,1.,0.,2.,2.,0.,2.,0.,1.,2.,1.,1.,2.,2.,1.,2.,0.,2.,2.,1.,2.,2.,2.,2.,2.,0.,3.,2.,1.,3.,2.,2.,3.,2.,0.,0.,3.,1.,0.,3.,2.,0.,3.,0.,1.,3.,1.,1.,3.,2.,1.,3.,0.,2.,3.,1.,2.,3.,2.,2.,3.,0.,3.,3.,1.,3.,3.,2.,3.,3.,0.,0.,4.,1.,0.,4.,2.,0.,4.,0.,1.,4.,1.,1.,4.,2.,1.,4.,0.,2.,4.,1.,2.,4.,2.,2.,4.,0.,3.,4.,1.,3.,4.,2.,3.,4.],60,3),1e-12))
         self.assertTrue(a1.isEqual(DataArrayByte([9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9])))
@@ -4706,8 +4756,8 @@ class MEDLoaderTest4(unittest.TestCase):
             fCell0.setName(fieldName) ; fCell0.setMesh(m)
             arr=DataArrayDouble(m.getNumberOfCells()) ; arr.iota(0) ; arr[i%10]=100.
             fCell0.setArray(arr) ; arr.setInfoOnComponents(["Comp1 [m]"])
-            fCell0.checkCoherency()
-            MEDLoader.WriteFieldUsingAlreadyWrittenMesh(fname,fCell0)
+            fCell0.checkConsistencyLight()
+            WriteFieldUsingAlreadyWrittenMesh(fname,fCell0)
             pass
         ########## GO for reading in MEDReader,by not loading all. Mesh is fully loaded but not fields values
         ms=MEDFileMeshes(fname) ; ms.cartesianizeMe()
@@ -4749,6 +4799,7 @@ class MEDLoaderTest4(unittest.TestCase):
         self.assertTrue(a3.isEqual(DataArrayInt([4,1,0,2,3,4,3,2,5,6,4,2,4,7,5,4,6,5,9,10,4,5,7,11,9,4,7,8,12,11,4,10,9,14,15,4,9,11,16,14,4,11,12,17,16,4,12,13,18,17])))
         self.assertTrue(a4 is None)
         self.assertTrue(a5 is None)
+        self.assertTrue(mml2.retrieveGlobalNodeIdsIfAny() is None)
         for i in xrange(15):
             ffCell=allFMTSLeavesPerCommonSupport1[0][0][0][i]
             fsst=MEDFileField1TSStructItem.BuildItemFrom(ffCell,mst)
@@ -4785,7 +4836,7 @@ class MEDLoaderTest4(unittest.TestCase):
             fNode.setGaussLocalizationOnCells([6,10,13],[-1.,-1.,1.,-1.,1.,1.,-1.,1.],[0.5,0.5,0.7,0.7,0.1,0.1,0.2,0.2],[0.8,0.05,0.1,0.04])
             fNode.setGaussLocalizationOnCells([11,12,14],[-1.,-1.,1.,-1.,1.,1.,-1.,1.],[0.5,0.5,0.7,0.7,0.1,0.1,0.2,0.2,0.3,0.3,0.4,0.4,0.8,0.8],[0.8,0.05,0.1,0.01,0.02,0.005,0.005])
             arr=DataArrayDouble(2*(2*6+5*4+4*3+7*3)) ; arr.iota(0+1000*i) ; arr.rearrange(2)
-            fNode.setArray(arr) ; arr.setInfoOnComponents(["Comp1_0 [m]","Com2_0 [s^2]"]) ; fNode.checkCoherency()
+            fNode.setArray(arr) ; arr.setInfoOnComponents(["Comp1_0 [m]","Com2_0 [s^2]"]) ; fNode.checkConsistencyLight()
             f.setFieldNoProfileSBT(fNode)
             fs0.pushBackTimeStep(f)
             #
@@ -4793,13 +4844,13 @@ class MEDLoaderTest4(unittest.TestCase):
             fNode=MEDCouplingFieldDouble(ON_CELLS) ; fNode.setTime(float(i),i,0)
             fNode.setName(fieldName1) ; fNode.setMesh(m)
             arr=DataArrayDouble(2*16) ; arr.iota(300+1000*i) ; arr.rearrange(2)
-            fNode.setArray(arr) ; arr.setInfoOnComponents(["Comp1_1 [m]","Com2_1 [s^2]"]) ; fNode.checkCoherency()
+            fNode.setArray(arr) ; arr.setInfoOnComponents(["Comp1_1 [m]","Com2_1 [s^2]"]) ; fNode.checkConsistencyLight()
             f.setFieldNoProfileSBT(fNode)
             fs1.pushBackTimeStep(f)
             pass
         mm.write(fname,2)
         fs0.write(fname,0) ; fs1.write(fname,0)
-        a0Exp=mm.getCoords().deepCpy()
+        a0Exp=mm.getCoords().deepCopy()
         del m,mm,fs0,fs1,f,fNode
         ########## GO for reading in MEDReader,by not loading all. Mesh is fully loaded but not fields values
         ms=MEDFileMeshes(fname) ; ms.cartesianizeMe()
@@ -4851,6 +4902,7 @@ class MEDLoaderTest4(unittest.TestCase):
         self.assertTrue(a3.isEqual(DataArrayInt([4,1,0,5,6,4,2,1,6,7,4,3,2,7,8,4,4,3,8,9,4,6,5,10,11,4,7,6,11,12,4,8,7,12,13,4,9,8,13,14,4,11,10,15,16,4,12,11,16,17,4,13,12,17,18,4,14,13,18,19,4,16,15,20,21,4,17,16,21,22,4,18,17,22,23,4,19,18,23,24]))) # <- here the mesh is NOT renumbered : the mesh is equal to m
         self.assertTrue(a4 is None)
         self.assertTrue(a5 is None)
+        self.assertTrue(mml2.retrieveGlobalNodeIdsIfAny() is None)
         for i in xrange(1,5):
             self.assertTrue((fcscp.isDataSetSupportEqualToThePreviousOne(i,fields)))
             pass
@@ -4913,8 +4965,8 @@ class MEDLoaderTest4(unittest.TestCase):
         arrY=DataArrayDouble([0.,1.])
         m=MEDCouplingCMesh() ; m.setCoords(arrX,arrY) ; m=m.buildUnstructured() ; m=m[[0,5,1,4,2,3]] ; m.changeSpaceDimension(3,0.) ; m.setName("Mesh")
         f=MEDCouplingFieldDouble(ON_CELLS) ; f.setMesh(m) ; f.setName("Field") ; f.setArray(DataArrayDouble([(0.1,1.1),(2.1,3.1),(4.1,5.1),(6.1,7.1),(8.1,9.1),(10.1,11.1)])) ; f.getArray().setInfoOnComponents(["aa","bbb"])
-        MEDLoader.WriteUMesh(fname,m,True)
-        MEDLoader.WriteFieldUsingAlreadyWrittenMesh(fname,f)
+        WriteUMesh(fname,m,True)
+        WriteFieldUsingAlreadyWrittenMesh(fname,f)
         ########## GO for reading in MEDReader,by not loading all. Mesh is fully loaded but not fields values
         ms=MEDFileMeshes() # here we reproduce what is done by ParaMEDFileMeshes.ParaNew
         ms.pushMesh(MEDFileUMesh.LoadPartOf(fname,"Mesh",[NORM_QUAD4],[0,2,1],-1,-1));
@@ -4968,6 +5020,7 @@ class MEDLoaderTest4(unittest.TestCase):
         self.assertTrue(a3.isEqual(DataArrayInt([4,1,0,4,5,4,3,2,6,7])))
         self.assertTrue(a4 is None)
         self.assertTrue(a5 is None)
+        self.assertTrue(mml2.retrieveGlobalNodeIdsIfAny().isEqual(DataArrayInt([0,1,5,6,7,8,12,13])))
         f2=allFMTSLeavesPerCommonSupport[0][0][0][0]
         fsst=MEDFileField1TSStructItem.BuildItemFrom(f2,mst)
         f2.loadArraysIfNecessary()
@@ -5001,7 +5054,7 @@ class MEDLoaderTest4(unittest.TestCase):
         arr=DataArrayDouble(7) ; arr.iota(2000)
         f1.setArray(arr)
         f1.setName("bbb")
-        f1.checkCoherency()
+        f1.checkConsistencyLight()
         f1.setTime(*zeTime)
         ff1.setFieldNoProfileSBT(f1)
         #
@@ -5010,7 +5063,7 @@ class MEDLoaderTest4(unittest.TestCase):
         arr=DataArrayDouble(9) ; arr.iota(4000)
         f2.setArray(arr)
         f2.setName("ddd")
-        f2.checkCoherency()
+        f2.checkConsistencyLight()
         f2.setTime(*zeTime)
         ff2.setFieldNoProfileSBT(f2)
         #
@@ -5019,18 +5072,18 @@ class MEDLoaderTest4(unittest.TestCase):
         f3.setGaussLocalizationOnType(NORM_TRI3,[0,0,1,0,0,1],[0.333333,0.333333],[0.5])
         arr=DataArrayDouble(3) ; arr.iota(1000)
         f3.setArray(arr)
-        f3.checkCoherency()
+        f3.checkConsistencyLight()
         f3.setTime(*zeTime)
         f3.setName("aaa")
         ff3.setFieldNoProfileSBT(f3)
         #
         ff4=MEDFileField1TS()
-        m0d=m0.deepCpy() ; m0d.zipCoords()
+        m0d=m0.deepCopy() ; m0d.zipCoords()
         f4=MEDCouplingFieldDouble(ON_NODES) ; f4.setMesh(m0d)
         arr=DataArrayDouble(5) ; arr.iota(3000)
         f4.setArray(arr)
         f4.setName("ccc")
-        f4.checkCoherency()
+        f4.checkConsistencyLight()
         f4.setTime(*zeTime)
         pfl=DataArrayInt([0,1,2,3,4]) ; pfl.setName("PFL")
         ff4.setFieldProfile(f4,mm,0,pfl)
@@ -5079,6 +5132,7 @@ class MEDLoaderTest4(unittest.TestCase):
         self.assertTrue(a3.isEqual(DataArrayInt([3,0,2,1,3,3,2,0,3,2,4,1])))
         self.assertTrue(a4 is None)
         self.assertTrue(a5 is None)
+        self.assertTrue(mml2.retrieveGlobalNodeIdsIfAny() is None)
         for i in xrange(1):
             ffCell=allFMTSLeavesPerCommonSupport1[0][0][0][i]
             fsst=MEDFileField1TSStructItem.BuildItemFrom(ffCell,mst)
@@ -5106,6 +5160,7 @@ class MEDLoaderTest4(unittest.TestCase):
         self.assertTrue(a3.isEqual(DataArrayInt([3,0,2,1,3,3,2,0,3,2,4,1,2,5,0,2,0,3,2,3,2,2,2,6])))
         self.assertTrue(a4 is None)
         self.assertTrue(a5 is None)
+        self.assertTrue(mml2.retrieveGlobalNodeIdsIfAny() is None)
         for i in xrange(1):
             ffCell=allFMTSLeavesPerCommonSupport1[1][0][0][i]
             fsst=MEDFileField1TSStructItem.BuildItemFrom(ffCell,mst)
@@ -5116,7 +5171,6 @@ class MEDLoaderTest4(unittest.TestCase):
             pass
         pass
 
-    @unittest.skipUnless(StrictVersion(MEDLoader.MEDFileVersionStr())>=StrictVersion("3.2.0"),"requires at least 3.2.0 MED file version")
     def test37(self):
         """ Introduction of non cartesian meshes management. Here cylindrical."""
         fname="ForMEDReader37.med"
@@ -5128,9 +5182,9 @@ class MEDLoaderTest4(unittest.TestCase):
         arrZ=DataArrayDouble(5) ; arrZ.iota() ; arrZ*=1.6 ; arrZ-=8. ; arrZ.setInfoOnComponent(0,comps[2])
         m=MEDCouplingCMesh() ; m.setCoords(arrX,arrY,arrZ) ; m.setName(meshName)
         mm=MEDFileCMesh() ; mm.setMesh(m) ; mm.setDescription(description)
-        mm.setAxType(AX_CYL) # the test is here !
+        mm.setAxisType(AX_CYL) # the test is here !
         f=MEDCouplingFieldDouble(ON_CELLS) ; f.setMesh(m) ; f.setName("Field")
-        arr=DataArrayDouble(m.getNumberOfCells()) ; arr.iota() ; arr*=0.1 ; f.setArray(arr) ; f.checkCoherency()
+        arr=DataArrayDouble(m.getNumberOfCells()) ; arr.iota() ; arr*=0.1 ; f.setArray(arr) ; f.checkConsistencyLight()
         ff=MEDFileField1TS() ; ff.setFieldNoProfileSBT(f)
         fmts=MEDFileFieldMultiTS() ; fmts.pushBackTimeStep(ff)
         #
@@ -5176,6 +5230,7 @@ class MEDLoaderTest4(unittest.TestCase):
         ref_a.setInfoOnComponents(comps)
         self.assertTrue(a.isEqual(ref_a,1e-14))
         self.assertEqual(b,[3,4,5])
+        self.assertTrue(mml2.retrieveGlobalNodeIdsIfAny() is None)
         for i in xrange(1):
             ffCell=allFMTSLeavesPerCommonSupport1[0][0][0][i]
             fsst=MEDFileField1TSStructItem.BuildItemFrom(ffCell,mst)
@@ -5185,8 +5240,7 @@ class MEDLoaderTest4(unittest.TestCase):
             self.assertTrue(v.isEqual(DataArrayDouble([0.0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0,1.1,1.2,1.3,1.4,1.5,1.6,1.7,1.8,1.9,2.0,2.1,2.2,2.3]),1e-14))
             pass
         pass
-    
-    @unittest.skipUnless(StrictVersion(MEDLoader.MEDFileVersionStr())>=StrictVersion("3.2.0"),"requires at least 3.2.0 MED file version")
+
     def test38(self):
         """ Introduction of non cartesian meshes management. Here spherical."""
         fname="ForMEDReader38.med"
@@ -5198,9 +5252,9 @@ class MEDLoaderTest4(unittest.TestCase):
         arrZ=DataArrayDouble(5) ; arrZ.iota() ; arrZ*=2*pi/(len(arrZ)-1) ; arrZ.setInfoOnComponent(0,comps[2])
         m=MEDCouplingCMesh() ; m.setCoords(arrX,arrY,arrZ) ; m.setName(meshName)
         mm=MEDFileCMesh() ; mm.setMesh(m) ; mm.setDescription(description)
-        mm.setAxType(AX_SPHER) # the test is here !
+        mm.setAxisType(AX_SPHER) # the test is here !
         f=MEDCouplingFieldDouble(ON_CELLS) ; f.setMesh(m) ; f.setName("Field")
-        arr=DataArrayDouble(m.getNumberOfCells()) ; arr.iota() ; arr*=0.1 ; f.setArray(arr) ; f.checkCoherency()
+        arr=DataArrayDouble(m.getNumberOfCells()) ; arr.iota() ; arr*=0.1 ; f.setArray(arr) ; f.checkConsistencyLight()
         ff=MEDFileField1TS() ; ff.setFieldNoProfileSBT(f)
         fmts=MEDFileFieldMultiTS() ; fmts.pushBackTimeStep(ff)
         #
@@ -5246,6 +5300,7 @@ class MEDLoaderTest4(unittest.TestCase):
         ref_a.setInfoOnComponents(comps)
         self.assertTrue(a.isEqual(ref_a,1e-14))
         self.assertEqual(b,[3,4,5])
+        self.assertTrue(mml2.retrieveGlobalNodeIdsIfAny() is None)
         for i in xrange(1):
             ffCell=allFMTSLeavesPerCommonSupport1[0][0][0][i]
             fsst=MEDFileField1TSStructItem.BuildItemFrom(ffCell,mst)
@@ -5267,9 +5322,9 @@ class MEDLoaderTest4(unittest.TestCase):
         arrZ=DataArrayDouble(5) ; arrZ.iota() ; arrZ*=2*pi/(len(arrZ)-1) ; arrZ.setInfoOnComponent(0,comps[2])
         m=MEDCouplingCMesh() ; m.setCoords(arrX,arrY,arrZ) ; m.setName(meshName) ; m=m.buildUnstructured()
         mm=MEDFileUMesh() ; mm[0]=m ; mm.setDescription(description) # the test is here : UMesh !
-        mm.setAxType(AX_SPHER) # the test is here !
+        mm.setAxisType(AX_SPHER) # the test is here !
         f=MEDCouplingFieldDouble(ON_CELLS) ; f.setMesh(m) ; f.setName("Field")
-        arr=DataArrayDouble(m.getNumberOfCells()) ; arr.iota() ; arr*=0.1 ; f.setArray(arr) ; f.checkCoherency()
+        arr=DataArrayDouble(m.getNumberOfCells()) ; arr.iota() ; arr*=0.1 ; f.setArray(arr) ; f.checkConsistencyLight()
         ff=MEDFileField1TS() ; ff.setFieldNoProfileSBT(f)
         fmts=MEDFileFieldMultiTS() ; fmts.pushBackTimeStep(ff)
         #
@@ -5315,6 +5370,7 @@ class MEDLoaderTest4(unittest.TestCase):
         ref_a=DataArrayDouble([0.,0.,0.,0.,0.,0.8,0.,0.,1.6,0.,0.,0.,0.6928203230275509,0.,0.4,1.3856406460551018,0.,0.8,0.,0.,-0.,0.692820323027551,0.,-0.4,1.385640646055102,0.,-0.8,0.,0.,-0.,0.,0.,-0.8,0.,0.,-1.6,0.,0.,0.,0.,0.,0.8,0.,0.,1.6,0.,0.,0.,0.,0.6928203230275509,0.4,0.,1.3856406460551018,0.8,0.,0.,-0.,0.,0.692820323027551,-0.4,0.,1.385640646055102,-0.8,0.,0.,-0.,0.,0.,-0.8,0.,0.,-1.6,-0.,0.,0.,-0.,0.,0.8,-0.,0.,1.6,-0.,0.,0.,-0.6928203230275509,0.,0.4,-1.3856406460551018,0.,0.8,-0.,0.,-0.,-0.692820323027551,0.,-0.4,-1.385640646055102,0.,-0.8,-0.,0.,-0.,0.,0.,-0.8,0.,0.,-1.6,-0.,-0.,0.,-0.,-0.,0.8,-0.,-0.,1.6,-0.,-0.,0.,0.,-0.6928203230275509,0.4,0.,-1.3856406460551018,0.8,-0.,-0.,-0.,0.,-0.692820323027551,-0.4,0.,-1.385640646055102,-0.8,-0.,-0.,-0.,0.,0.,-0.8,0.,0.,-1.6,0.,-0.,0.,0.,-0.,0.8,0.,-0.,1.6,0.,-0.,0.,0.6928203230275509,0.,0.4,1.3856406460551018,0.,0.8,0.,-0.,-0.,0.692820323027551,0.,-0.4,1.385640646055102,0.,-0.8,0.,-0.,-0.,0.,0.,-0.8,0.,0.,-1.6],60,3)
         ref_a.setInfoOnComponents(comps)
         self.assertTrue(a0.isEqual(ref_a,1e-14))#<- Test is here
+        self.assertTrue(mml2.retrieveGlobalNodeIdsIfAny() is None)
         for i in xrange(1):
             ffCell=allFMTSLeavesPerCommonSupport1[0][0][0][i]
             fsst=MEDFileField1TSStructItem.BuildItemFrom(ffCell,mst)
@@ -5335,9 +5391,9 @@ class MEDLoaderTest4(unittest.TestCase):
         arrZ=DataArrayDouble(5) ; arrZ.iota() ; arrZ*=2*pi/(len(arrZ)-1) ; arrZ.setInfoOnComponent(0,comps[2])
         m=MEDCouplingCMesh() ; m.setCoords(arrX,arrY,arrZ) ; m.setName(meshName) ; m=m.buildCurveLinear()
         mm=MEDFileCurveLinearMesh() ; mm.setMesh(m) ; mm.setDescription(description) # the test is here CLMesh!
-        mm.setAxType(AX_SPHER) # the test is here !
+        mm.setAxisType(AX_SPHER) # the test is here !
         f=MEDCouplingFieldDouble(ON_CELLS) ; f.setMesh(m) ; f.setName("Field")
-        arr=DataArrayDouble(m.getNumberOfCells()) ; arr.iota() ; arr*=0.1 ; f.setArray(arr) ; f.checkCoherency()
+        arr=DataArrayDouble(m.getNumberOfCells()) ; arr.iota() ; arr*=0.1 ; f.setArray(arr) ; f.checkConsistencyLight()
         ff=MEDFileField1TS() ; ff.setFieldNoProfileSBT(f)
         fmts=MEDFileFieldMultiTS() ; fmts.pushBackTimeStep(ff)
         #
@@ -5380,6 +5436,7 @@ class MEDLoaderTest4(unittest.TestCase):
         ref_a.setInfoOnComponents(comps)
         self.assertTrue(a.isEqual(ref_a,1e-14))#<- Test is here
         self.assertEqual(b,[3,4,5])
+        self.assertTrue(mml2.retrieveGlobalNodeIdsIfAny() is None)
         for i in xrange(1):
             ffCell=allFMTSLeavesPerCommonSupport1[0][0][0][i]
             fsst=MEDFileField1TSStructItem.BuildItemFrom(ffCell,mst)
@@ -5387,6 +5444,75 @@ class MEDLoaderTest4(unittest.TestCase):
             v=mml2.buildDataArray(fsst,fields,ffCell.getUndergroundDataArray())
             self.assertEqual(v.getHiddenCppPointer(),ffCell.getUndergroundDataArray().getHiddenCppPointer())
             self.assertTrue(v.isEqual(DataArrayDouble([0.0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0,1.1,1.2,1.3,1.4,1.5,1.6,1.7,1.8,1.9,2.0,2.1,2.2,2.3]),1e-14))
+        pass
+
+    def test41(self):
+        """This test focused on bug revealed with // load of multi nodes field with no profile. The error was the first node field (dataarray partdef) change the partdef for the others ! """
+        fname="ForMEDReader41.med"
+        meshName="mesh"
+        nx=5
+        arr=DataArrayDouble(nx) ; arr.iota()
+        m=MEDCouplingCMesh() ; m.setCoords(arr,arr) ; m=m.buildUnstructured() ; m.setName(meshName)
+        renum=DataArrayInt.Aggregate([DataArrayInt.Range(0,m.getNumberOfCells(),2),DataArrayInt.Range(1,m.getNumberOfCells(),2)])
+        m=m[renum] # important think to renum if not we see nothing. The goal if to have dynamic_cast<DataPartDefinition>!=NULL
+        mm=MEDFileUMesh() ; mm[0]=m
+        mm.write(fname,2)
+        f0=MEDCouplingFieldDouble(ON_NODES) ; f0.setMesh(m) ; f0.setName("aaa")
+        arr0=DataArrayDouble(nx*nx) ; arr0.iota() ; f0.setArray(arr0)
+        ff0=MEDFileField1TS() ; ff0.setFieldNoProfileSBT(f0)
+        f1=MEDCouplingFieldDouble(ON_NODES) ; f1.setMesh(m) ; f1.setName("bbb")
+        arr1=DataArrayDouble(nx*nx) ; arr1.iota() ; arr1+=100 ; f1.setArray(arr1)
+        ff1=MEDFileField1TS() ; ff1.setFieldNoProfileSBT(f1)
+        ff0.write(fname,0) ; ff1.write(fname,0)
+        # 
+        a=8 ; b=16
+        ms=MEDFileMeshes()
+        mm=MEDFileUMesh.LoadPartOf(fname,meshName,[NORM_QUAD4],[a,b,1],-1,-1)
+        ms.pushMesh(mm)
+        ms[0].zipCoords()
+        ms.cartesianizeMe()
+        fields=MEDFileFields.LoadPartOf(fname,False,ms);
+        fields.removeFieldsWithoutAnyTimeStep()
+        fields_per_mesh=[fields.partOfThisLyingOnSpecifiedMeshName(meshName) for meshName in ms.getMeshesNames()]
+        allFMTSLeavesToDisplay=[]
+        for fields in fields_per_mesh:
+            allFMTSLeavesToDisplay2=[]
+            for fmts in fields:
+                tmp=fmts.splitDiscretizations()
+                for itmp in tmp:
+                    if itmp.presenceOfMultiDiscPerGeoType():
+                        tmp2=itmp.splitMultiDiscrPerGeoTypes()
+                        for iii,itmp2 in enumerate(tmp2):
+                            name="%s_%i"%(itmp2.getName(),iii)
+                            itmp2.setName(name)
+                            allFMTSLeavesToDisplay2.append(itmp2)
+                            pass
+                        pass
+                    else:
+                        allFMTSLeavesToDisplay2.append(itmp)
+                        pass
+                    pass
+                allFMTSLeavesToDisplay.append(allFMTSLeavesToDisplay2)
+                pass
+        # GO for reading in MEDReader, by not loading all. Mesh is fully loaded but not fields values
+        allFMTSLeavesPerTimeSeries=MEDFileAnyTypeFieldMultiTS.SplitIntoCommonTimeSeries(sum(allFMTSLeavesToDisplay,[]))
+        allFMTSLeavesPerCommonSupport=MEDFileAnyTypeFieldMultiTS.SplitPerCommonSupport(allFMTSLeavesPerTimeSeries[0],ms[ms.getMeshesNames()[0]])
+        mst=MEDFileMeshStruct.New(ms[0])
+        fcscp=allFMTSLeavesPerCommonSupport[0][1]
+        mml=fcscp.buildFromScratchDataSetSupport(0,fields)
+        mml2=mml.prepare()
+        #
+        f2=allFMTSLeavesPerCommonSupport[0][0][0][0]
+        fsst=MEDFileField1TSStructItem.BuildItemFrom(f2,mst)
+        f2.loadArraysIfNecessary()
+        v0=mml.buildDataArray(fsst,fields,f2.getUndergroundDataArray())
+        assert(v0.isEqual(DataArrayDouble([1,2,3,4,6,7,8,9,11,12,13,14,16,17,18,19,21,22,23,24]),1e-12))
+        #
+        f2=allFMTSLeavesPerCommonSupport[0][0][1][0]
+        fsst=MEDFileField1TSStructItem.BuildItemFrom(f2,mst)
+        f2.loadArraysIfNecessary()
+        v1=mml.buildDataArray(fsst,fields,f2.getUndergroundDataArray())
+        assert(v1.isEqual(DataArrayDouble([101,102,103,104,106,107,108,109,111,112,113,114,116,117,118,119,121,122,123,124]),1e-12))
         pass
 
     pass

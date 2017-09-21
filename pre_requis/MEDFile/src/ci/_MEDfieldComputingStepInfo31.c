@@ -30,7 +30,7 @@ _MEDfieldComputingStepInfo31(int dummy,...)
   med_idt _gid=0,_datagroup1=0;
   int     _num;
   char    _datagroupname1[2*MED_MAX_PARA+1]="";
-  char    _path          [(MED_TAILLE_CHA+MED_NAME_SIZE+1)+2*MED_MAX_PARA+1]=MED_CHA;
+  char    _path          [(MED_FIELD_GRP_SIZE+MED_NAME_SIZE+1)+2*MED_MAX_PARA+1]=MED_FIELD_GRP;
   char    _cstpname[2*MED_MAX_PARA+1]="";
   med_int _meshnumdt=MED_NO_DT;
   med_int _meshnumit=MED_NO_IT;

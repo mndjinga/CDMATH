@@ -139,14 +139,14 @@ int main (int argc, char **argv)
   /* med_int filterarray[2]={2,4}; */
 
   /* if ( MEDfilterEntityCr( fid, nnoe, 1, sdim, MED_ALL_CONSTITUENT, */
-  /* 			  MED_NO_INTERLACE, MED_GLOBAL_PFLMODE, */
+  /* 			  MED_NO_INTERLACE, MED_GLOBAL_STMODE, */
   /* 			  MED_NO_PROFILE, 2, */
   /* 			  filterarray, &filter) < 0 ) { */
   /*   MESSAGE("Erreur à la création du filtre 1."); */
   /* } */
 
   if ( MEDfilterEntityCr( fid, nnoe, 1, sdim, 2,
-  			  MED_FULL_INTERLACE, MED_GLOBAL_PFLMODE,
+  			  MED_FULL_INTERLACE, MED_GLOBAL_STMODE,
   			  MED_NO_PROFILE, MED_UNDEF_SIZE,
   			  NULL, &filter) < 0 ) {
     MESSAGE("Erreur à la création du filtre 1.");
@@ -168,7 +168,7 @@ int main (int argc, char **argv)
 
   MEDfilterClose(&filter);
   if ( MEDfilterEntityCr( fid, nnoe, 1, sdim, 1,
-			  MED_FULL_INTERLACE, MED_GLOBAL_PFLMODE,
+			  MED_FULL_INTERLACE, MED_GLOBAL_STMODE,
 			  MED_NO_PROFILE, MED_UNDEF_SIZE,
 			  NULL, &filter) < 0 ) {
     MESSAGE("Erreur à la création du filtre 2.");
@@ -191,7 +191,7 @@ int main (int argc, char **argv)
 
   MEDfilterClose(&filter);
   if ( MEDfilterEntityCr( fid, nnoe, 1, sdim, 1,
-			  MED_FULL_INTERLACE, MED_GLOBAL_PFLMODE,
+			  MED_FULL_INTERLACE, MED_GLOBAL_STMODE,
 			  MED_NO_PROFILE, 2,
 			  flt, &filter) < 0 ) {
     MESSAGE("Erreur à la création du filtre 3.");
@@ -213,7 +213,7 @@ int main (int argc, char **argv)
 
   MEDfilterClose(&filter);
   if ( MEDfilterEntityCr( fid, nnoe, 1, sdim, 2,
-			  MED_FULL_INTERLACE, MED_GLOBAL_PFLMODE,
+			  MED_FULL_INTERLACE, MED_GLOBAL_STMODE,
 			  MED_NO_PROFILE, 2,
 			  flt, &filter) < 0 ) {
     MESSAGE("Erreur à la création du filtre 4.");
@@ -237,7 +237,7 @@ int main (int argc, char **argv)
 
   MEDfilterClose(&filter);
   if ( MEDfilterEntityCr( fid, nnoe, 1, sdim, MED_ALL_CONSTITUENT,
-			  MED_FULL_INTERLACE, MED_GLOBAL_PFLMODE,
+			  MED_FULL_INTERLACE, MED_GLOBAL_STMODE,
 			  MED_NO_PROFILE, 2,
 			  flt, &filter) < 0 ) {
     MESSAGE("Erreur à la création du filtre 5.");

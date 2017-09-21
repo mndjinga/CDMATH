@@ -45,9 +45,9 @@ MEDnSupportMesh(const med_idt fid)
   /*
    *  nombre de champs
    */
-  if ((_err=_MEDnObjects(fid,MED_SUP_MAA,&_n)) <0)
+  if ((_err=_MEDnObjects(fid,MED_MESH_SUPPORT_GRP,&_n)) <0)
     if ( _err == (MED_ERR_COUNT + MED_ERR_DATAGROUP) ) {
-      MED_ERR_(_ret,MED_ERR_COUNT,MED_ERR_MESH,MED_MAA);
+      MED_ERR_(_ret,MED_ERR_COUNT,MED_ERR_MESH,MED_MESH_GRP);
       goto ERROR;
     }
 

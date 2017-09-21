@@ -31,8 +31,8 @@ void _MEDequivalenceCorrespondenceSizeInfo236( int dummy, ...) {
 
 
   med_err   _ret=-1,_err=-1;
-  char      _path[MED_TAILLE_MAA+MED_TAILLE_EQS+2*MED_TAILLE_NOM+1+
-		 2*MED_TAILLE_NOM_ENTITE+1+1]=MED_MAA;
+  char      _path[MED_MESH_GRP_SIZE+MED_EQUIVALENCE_GRP_SIZE+2*MED_TAILLE_NOM+1+
+		 2*MED_TAILLE_NOM_ENTITE+1+1]=MED_MESH_GRP;
   char      _entgeoname[2*MED_TAILLE_NOM_ENTITE+2]="";
   med_size  _nocstpncorrespondence=0;
   med_int   _intentitytype;
@@ -77,7 +77,7 @@ void _MEDequivalenceCorrespondenceSizeInfo236( int dummy, ...) {
   _MEDmodeErreurVerrouiller();
 
   strcat(_path,meshname);
-  strcat(_path,MED_EQS);
+  strcat(_path,MED_EQUIVALENCE_GRP);
   strcat(_path,equivname);
   strcat(_path,"/");
 

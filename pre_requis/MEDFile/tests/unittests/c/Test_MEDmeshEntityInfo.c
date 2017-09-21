@@ -51,7 +51,7 @@ int main (int argc, char **argv)
 
   /* TODO : Créer un itérateur sur les types d'entités*/
   if ( (_ngeotype = MEDmeshnEntity(_fid,_meshname,MED_NO_DT,MED_NO_IT,
-				   MED_STRUCT_ELEMENT,MED_GEO_ALL,MED_CONNECTIVITY,MED_GLOBAL_PFLMODE,
+				   MED_STRUCT_ELEMENT,MED_GEO_ALL,MED_CONNECTIVITY,MED_GLOBAL_STMODE,
 				   &_chgt,&_trsf) ) < 0 ) {
     MESSAGE ("Erreur à la lecture du nombre de type géométrique pour le type d'entités MED_STRUCT_ELEMENT");
     goto ERROR;

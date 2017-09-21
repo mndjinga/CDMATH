@@ -21,7 +21,7 @@
 #include "MEDCouplingBasicsTest1.hxx"
 #include "MEDCouplingUMesh.hxx"
 #include "MEDCouplingCMesh.hxx"
-#include "MEDCouplingExtrudedMesh.hxx"
+#include "MEDCouplingMappedExtrudedMesh.hxx"
 #include "MEDCouplingFieldDouble.hxx"
 #include "MEDCouplingMemArray.hxx"
 
@@ -30,7 +30,11 @@
 #include <algorithm>
 #include <functional>
 
-using namespace ParaMEDMEM;
+#ifdef WIN32
+#include "MEDCouplingMemArray.txx"
+#endif
+
+using namespace MEDCoupling;
 
 void MEDCouplingBasicsTest1::testArray()
 {
@@ -88,17 +92,17 @@ void MEDCouplingBasicsTest1::testArray3()
   int *tmp=arr1->getPointer();
   const int arr1Ref[14]={0,10,1,11,2,12,3,13,4,14,5,15,6,16};
   std::copy(arr1Ref,arr1Ref+14,tmp);
-  CPPUNIT_ASSERT_EQUAL(7,arr1->getNumberOfTuples());
-  CPPUNIT_ASSERT_EQUAL(2,arr1->getNumberOfComponents());
+  CPPUNIT_ASSERT_EQUAL(7,(int)arr1->getNumberOfTuples());
+  CPPUNIT_ASSERT_EQUAL(2,(int)arr1->getNumberOfComponents());
   CPPUNIT_ASSERT(std::equal(arr1Ref,arr1Ref+14,arr1->getConstPointer()));
-  DataArrayInt *arr2=arr1->substr(3);
-  CPPUNIT_ASSERT_EQUAL(4,arr2->getNumberOfTuples());
-  CPPUNIT_ASSERT_EQUAL(2,arr2->getNumberOfComponents());
+  DataArrayInt *arr2=arr1->subArray(3);
+  CPPUNIT_ASSERT_EQUAL(4,(int)arr2->getNumberOfTuples());
+  CPPUNIT_ASSERT_EQUAL(2,(int)arr2->getNumberOfComponents());
   CPPUNIT_ASSERT(std::equal(arr1Ref+6,arr1Ref+14,arr2->getConstPointer()));
   arr2->decrRef();
-  DataArrayInt *arr3=arr1->substr(2,5);
-  CPPUNIT_ASSERT_EQUAL(3,arr3->getNumberOfTuples());
-  CPPUNIT_ASSERT_EQUAL(2,arr3->getNumberOfComponents());
+  DataArrayInt *arr3=arr1->subArray(2,5);
+  CPPUNIT_ASSERT_EQUAL(3,(int)arr3->getNumberOfTuples());
+  CPPUNIT_ASSERT_EQUAL(2,(int)arr3->getNumberOfComponents());
   CPPUNIT_ASSERT(std::equal(arr1Ref+4,arr1Ref+10,arr3->getConstPointer()));
   arr1->decrRef();
   arr3->decrRef();
@@ -108,17 +112,17 @@ void MEDCouplingBasicsTest1::testArray3()
   double *tmp2=arr4->getPointer();
   const double arr4Ref[14]={0.8,10.8,1.9,11.9,2.1,12.1,3.2,13.2,4.3,14.3,5.4,15.4,6.5,16.5};
   std::copy(arr4Ref,arr4Ref+14,tmp2);
-  CPPUNIT_ASSERT_EQUAL(7,arr4->getNumberOfTuples());
-  CPPUNIT_ASSERT_EQUAL(2,arr4->getNumberOfComponents());
+  CPPUNIT_ASSERT_EQUAL(7,(int)arr4->getNumberOfTuples());
+  CPPUNIT_ASSERT_EQUAL(2,(int)arr4->getNumberOfComponents());
   CPPUNIT_ASSERT(std::equal(arr4Ref,arr4Ref+14,arr4->getConstPointer()));
-  DataArrayDouble *arr5=arr4->substr(3);
-  CPPUNIT_ASSERT_EQUAL(4,arr5->getNumberOfTuples());
-  CPPUNIT_ASSERT_EQUAL(2,arr5->getNumberOfComponents());
+  DataArrayDouble *arr5=arr4->subArray(3);
+  CPPUNIT_ASSERT_EQUAL(4,(int)arr5->getNumberOfTuples());
+  CPPUNIT_ASSERT_EQUAL(2,(int)arr5->getNumberOfComponents());
   CPPUNIT_ASSERT(std::equal(arr4Ref+6,arr4Ref+14,arr5->getConstPointer()));
   arr5->decrRef();
-  DataArrayDouble *arr6=arr4->substr(2,5);
-  CPPUNIT_ASSERT_EQUAL(3,arr6->getNumberOfTuples());
-  CPPUNIT_ASSERT_EQUAL(2,arr6->getNumberOfComponents());
+  DataArrayDouble *arr6=arr4->subArray(2,5);
+  CPPUNIT_ASSERT_EQUAL(3,(int)arr6->getNumberOfTuples());
+  CPPUNIT_ASSERT_EQUAL(2,(int)arr6->getNumberOfComponents());
   CPPUNIT_ASSERT(std::equal(arr4Ref+4,arr4Ref+10,arr6->getConstPointer()));
   arr4->decrRef();
   arr6->decrRef();
@@ -170,7 +174,7 @@ void MEDCouplingBasicsTest1::testMesh()
   mesh->setCoords(myCoords);
   myCoords->decrRef();
   CPPUNIT_ASSERT_EQUAL(nbOfCells,mesh->getNumberOfCells());
-  mesh->checkCoherency();
+  mesh->checkConsistencyLight();
   //test 1 - no copy ownership C++
   myCoords=DataArrayDouble::New();
   double *tmp=new double[3*nbOfNodes];
@@ -179,7 +183,7 @@ void MEDCouplingBasicsTest1::testMesh()
   mesh->setCoords(myCoords);
   myCoords->decrRef();
   CPPUNIT_ASSERT_EQUAL(nbOfCells,mesh->getNumberOfCells());
-  mesh->checkCoherency();
+  mesh->checkConsistencyLight();
   //test 2 - no copy ownership C
   myCoords=DataArrayDouble::New();
   tmp=(double *)malloc(3*nbOfNodes*sizeof(double));
@@ -188,7 +192,7 @@ void MEDCouplingBasicsTest1::testMesh()
   mesh->setCoords(myCoords);
   myCoords->decrRef();
   CPPUNIT_ASSERT_EQUAL(nbOfNodes,mesh->getNumberOfNodes());
-  mesh->checkCoherency();
+  mesh->checkConsistencyLight();
   //test 3 - copy.
   myCoords=DataArrayDouble::New();
   myCoords->alloc(nbOfNodes,3);
@@ -202,12 +206,12 @@ void MEDCouplingBasicsTest1::testMesh()
   mesh->setCoords(myCoords);
   myCoords->decrRef();
   CPPUNIT_ASSERT_EQUAL(nbOfNodes,mesh->getNumberOfNodes());
-  mesh->checkCoherency();
+  mesh->checkConsistencyLight();
   CPPUNIT_ASSERT_EQUAL(3,mesh->getSpaceDimension());
   // test clone not recursively
   MEDCouplingUMesh *mesh2=mesh->clone(false);
   CPPUNIT_ASSERT(mesh2!=mesh);
-  mesh2->checkCoherency();
+  mesh2->checkConsistencyLight();
   CPPUNIT_ASSERT_EQUAL(nbOfCells,mesh2->getNumberOfCells());
   CPPUNIT_ASSERT_EQUAL(nbOfNodes,mesh2->getNumberOfNodes());
   CPPUNIT_ASSERT_EQUAL(3,mesh2->getSpaceDimension());
@@ -222,7 +226,7 @@ void MEDCouplingBasicsTest1::testMesh()
   // test clone not recursively
   MEDCouplingUMesh *mesh3=mesh->clone(true);
   CPPUNIT_ASSERT(mesh3!=mesh);
-  mesh3->checkCoherency();
+  mesh3->checkConsistencyLight();
   CPPUNIT_ASSERT_EQUAL(nbOfCells,mesh3->getNumberOfCells());
   CPPUNIT_ASSERT_EQUAL(nbOfNodes,mesh3->getNumberOfNodes());
   CPPUNIT_ASSERT_EQUAL(3,mesh3->getSpaceDimension());
@@ -245,22 +249,22 @@ void MEDCouplingBasicsTest1::testMesh()
   std::fill(tmp,tmp+9*nbOfCells,7.);
   //content of field changed -> declare it.
   fieldOnCells->declareAsNew();
-  fieldOnCells->checkCoherency();
+  fieldOnCells->checkConsistencyLight();
   // testing clone of fields - no recursive
   MEDCouplingFieldDouble *fieldOnCells2=fieldOnCells->clone(false);
   CPPUNIT_ASSERT(fieldOnCells2!=fieldOnCells);
-  fieldOnCells2->checkCoherency();
-  CPPUNIT_ASSERT_EQUAL(nbOfCells,fieldOnCells2->getNumberOfTuples());
-  CPPUNIT_ASSERT_EQUAL(9,fieldOnCells2->getNumberOfComponents());
+  fieldOnCells2->checkConsistencyLight();
+  CPPUNIT_ASSERT_EQUAL(nbOfCells,(int)fieldOnCells2->getNumberOfTuples());
+  CPPUNIT_ASSERT_EQUAL(9,(int)fieldOnCells2->getNumberOfComponents());
   CPPUNIT_ASSERT(fieldOnCells2->getArray()==fieldOnCells->getArray());
   CPPUNIT_ASSERT_DOUBLES_EQUAL(7.,fieldOnCells2->getArray()->getIJ(3,7),1e-14);
   CPPUNIT_ASSERT(fieldOnCells2->getMesh()==fieldOnCells->getMesh());
   // testing clone of fields - recursive
   MEDCouplingFieldDouble *fieldOnCells3=fieldOnCells->clone(true);
   CPPUNIT_ASSERT(fieldOnCells3!=fieldOnCells);
-  fieldOnCells3->checkCoherency();
-  CPPUNIT_ASSERT_EQUAL(nbOfCells,fieldOnCells3->getNumberOfTuples());
-  CPPUNIT_ASSERT_EQUAL(9,fieldOnCells3->getNumberOfComponents());
+  fieldOnCells3->checkConsistencyLight();
+  CPPUNIT_ASSERT_EQUAL(nbOfCells,(int)fieldOnCells3->getNumberOfTuples());
+  CPPUNIT_ASSERT_EQUAL(9,(int)fieldOnCells3->getNumberOfComponents());
   CPPUNIT_ASSERT(fieldOnCells3->getArray()!=fieldOnCells->getArray());
   CPPUNIT_ASSERT_DOUBLES_EQUAL(7.,fieldOnCells3->getArray()->getIJ(3,7),1e-14);
   CPPUNIT_ASSERT(fieldOnCells3->getMesh()==fieldOnCells->getMesh());
@@ -288,14 +292,14 @@ void MEDCouplingBasicsTest1::testMeshPointsCloud()
   targetMesh->insertNextCell(INTERP_KERNEL::NORM_POINT1,1,targetConn+6);
   targetMesh->insertNextCell(INTERP_KERNEL::NORM_POINT1,1,targetConn+7);
   targetMesh->finishInsertingCells();
-  CPPUNIT_ASSERT_THROW(targetMesh->checkCoherency(),INTERP_KERNEL::Exception);
+  CPPUNIT_ASSERT_THROW(targetMesh->checkConsistencyLight(),INTERP_KERNEL::Exception);
   DataArrayDouble *myCoords=DataArrayDouble::New();
   myCoords->alloc(9,3);
   std::copy(targetCoords,targetCoords+27,myCoords->getPointer());
   targetMesh->setCoords(myCoords);
   myCoords->decrRef();
   //
-  targetMesh->checkCoherency();
+  targetMesh->checkConsistencyLight();
   CPPUNIT_ASSERT_EQUAL(3,targetMesh->getSpaceDimension());
   CPPUNIT_ASSERT_EQUAL(8,targetMesh->getNumberOfCells());
   CPPUNIT_ASSERT_EQUAL(9,targetMesh->getNumberOfNodes());
@@ -312,9 +316,9 @@ void MEDCouplingBasicsTest1::testMeshM1D()
   CPPUNIT_ASSERT_THROW(meshM1D->getNumberOfCells(),INTERP_KERNEL::Exception);
   CPPUNIT_ASSERT_THROW(meshM1D->setMeshDimension(-2),INTERP_KERNEL::Exception);
   CPPUNIT_ASSERT_THROW(meshM1D->setMeshDimension(-10),INTERP_KERNEL::Exception);
-  CPPUNIT_ASSERT_THROW(meshM1D->checkCoherency(),INTERP_KERNEL::Exception);
+  CPPUNIT_ASSERT_THROW(meshM1D->checkConsistencyLight(),INTERP_KERNEL::Exception);
   meshM1D->setMeshDimension(-1);
-  meshM1D->checkCoherency();
+  meshM1D->checkConsistencyLight();
   CPPUNIT_ASSERT_EQUAL(-1,meshM1D->getMeshDimension());
   CPPUNIT_ASSERT_EQUAL(1,meshM1D->getNumberOfCells());
   CPPUNIT_ASSERT_THROW(meshM1D->getNumberOfNodes(),INTERP_KERNEL::Exception);
@@ -330,7 +334,7 @@ void MEDCouplingBasicsTest1::testMeshM1D()
   double *tmp=array->getPointer();
   array->decrRef();
   std::fill(tmp,tmp+6,7.);
-  fieldOnCells->checkCoherency();
+  fieldOnCells->checkConsistencyLight();
   //
   fieldOnCells->decrRef();
   meshM1D->decrRef();
@@ -343,7 +347,7 @@ void MEDCouplingBasicsTest1::testDeepCopy()
   std::fill(array->getPointer(),array->getPointer()+5*3,7.);
   CPPUNIT_ASSERT_DOUBLES_EQUAL(7.,array->getIJ(3,2),1e-14);
   double *tmp1=array->getPointer();
-  DataArrayDouble *array2=array->deepCpy();
+  DataArrayDouble *array2=array->deepCopy();
   double *tmp2=array2->getPointer();
   CPPUNIT_ASSERT(tmp1!=tmp2);
   array->decrRef();
@@ -355,7 +359,7 @@ void MEDCouplingBasicsTest1::testDeepCopy()
   std::fill(array3->getPointer(),array3->getPointer()+5*3,17);
   CPPUNIT_ASSERT_EQUAL(17,array3->getIJ(3,2));
   int *tmp3=array3->getPointer();
-  DataArrayInt *array4=array3->deepCpy();
+  DataArrayInt *array4=array3->deepCopy();
   int *tmp4=array4->getPointer();
   CPPUNIT_ASSERT(tmp3!=tmp4);
   array3->decrRef();
@@ -390,9 +394,9 @@ void MEDCouplingBasicsTest1::testConvertToPolyTypes()
   const int elts[2]={1,3};
   std::vector<int> eltsV(elts,elts+2);
   mesh->convertToPolyTypes(&eltsV[0],&eltsV[0]+eltsV.size());
-  mesh->checkCoherency();
+  mesh->checkConsistencyLight();
   CPPUNIT_ASSERT_EQUAL(5,mesh->getNumberOfCells());
-  CPPUNIT_ASSERT_EQUAL(23,mesh->getNodalConnectivity()->getNumberOfTuples());
+  CPPUNIT_ASSERT_EQUAL(23,(int)mesh->getNodalConnectivity()->getNumberOfTuples());
   const int *pt=mesh->getNodalConnectivity()->getConstPointer();
   const int expected1[23]={4, 0, 3, 4, 1, 5, 1, 4, 2, 3, 4, 5, 2, 5, 6, 7, 4, 3, 4, 7, 8, 5, 4};
   CPPUNIT_ASSERT(std::equal(expected1,expected1+23,pt));
@@ -401,13 +405,13 @@ void MEDCouplingBasicsTest1::testConvertToPolyTypes()
   ////// 3D
   mesh=build3DTargetMesh_1();
   mesh->convertToPolyTypes(&eltsV[0],&eltsV[0]+eltsV.size());
-  mesh->checkCoherency();
+  mesh->checkConsistencyLight();
   CPPUNIT_ASSERT_EQUAL(8,mesh->getNumberOfCells());
-  CPPUNIT_ASSERT_EQUAL(114,mesh->getNodalConnectivity()->getNumberOfTuples());
+  CPPUNIT_ASSERT_EQUAL(114,(int)mesh->getNodalConnectivity()->getNumberOfTuples());
   mesh->convertToPolyTypes(&eltsV[0],&eltsV[0]+eltsV.size());
-  mesh->checkCoherency();
+  mesh->checkConsistencyLight();
   CPPUNIT_ASSERT_EQUAL(8,mesh->getNumberOfCells());
-  CPPUNIT_ASSERT_EQUAL(114,mesh->getNodalConnectivity()->getNumberOfTuples());
+  CPPUNIT_ASSERT_EQUAL(114,(int)mesh->getNodalConnectivity()->getNumberOfTuples());
   //
   mesh->decrRef();
 }
@@ -421,13 +425,13 @@ void MEDCouplingBasicsTest1::testDescConn2D()
   DataArrayInt *revDescIndx=DataArrayInt::New();
   //
   MEDCouplingUMesh *mesh2=mesh->buildDescendingConnectivity(desc,descIndx,revDesc,revDescIndx);
-  mesh2->checkCoherency();
+  mesh2->checkConsistencyLight();
   CPPUNIT_ASSERT_EQUAL(1,mesh2->getMeshDimension());
   CPPUNIT_ASSERT_EQUAL(13,mesh2->getNumberOfCells());
-  CPPUNIT_ASSERT_EQUAL((std::size_t)14,revDescIndx->getNbOfElems()); CPPUNIT_ASSERT_EQUAL(14,revDescIndx->getNumberOfTuples());
-  CPPUNIT_ASSERT_EQUAL((std::size_t)6,descIndx->getNbOfElems()); CPPUNIT_ASSERT_EQUAL(6,descIndx->getNumberOfTuples());
-  CPPUNIT_ASSERT_EQUAL((std::size_t)18,desc->getNbOfElems()); CPPUNIT_ASSERT_EQUAL(18,desc->getNumberOfTuples());
-  CPPUNIT_ASSERT_EQUAL((std::size_t)18,revDesc->getNbOfElems()); CPPUNIT_ASSERT_EQUAL(18,revDesc->getNumberOfTuples());
+  CPPUNIT_ASSERT_EQUAL((std::size_t)14,revDescIndx->getNbOfElems()); CPPUNIT_ASSERT_EQUAL(14,(int)revDescIndx->getNumberOfTuples());
+  CPPUNIT_ASSERT_EQUAL((std::size_t)6,descIndx->getNbOfElems()); CPPUNIT_ASSERT_EQUAL(6,(int)descIndx->getNumberOfTuples());
+  CPPUNIT_ASSERT_EQUAL((std::size_t)18,desc->getNbOfElems()); CPPUNIT_ASSERT_EQUAL(18,(int)desc->getNumberOfTuples());
+  CPPUNIT_ASSERT_EQUAL((std::size_t)18,revDesc->getNbOfElems()); CPPUNIT_ASSERT_EQUAL(18,(int)revDesc->getNumberOfTuples());
   const int expected1[18]={0,1,2,3, 2,4,5, 6,7,4, 8,9,1,10, 11,12,6,9};
   CPPUNIT_ASSERT(std::equal(expected1,expected1+18,desc->getConstPointer()));
   const int expected2[6]={0,4,7,10,14,18};
@@ -452,7 +456,7 @@ void MEDCouplingBasicsTest1::testDescConn2D()
   const int elts[2]={1,3};
   std::vector<int> eltsV(elts,elts+2);
   mesh->convertToPolyTypes(&eltsV[0],&eltsV[0]+eltsV.size());
-  mesh->checkCoherency();
+  mesh->checkConsistencyLight();
   //
   desc=DataArrayInt::New();
   descIndx=DataArrayInt::New();
@@ -460,13 +464,13 @@ void MEDCouplingBasicsTest1::testDescConn2D()
   revDescIndx=DataArrayInt::New();
   //
   mesh2=mesh->buildDescendingConnectivity(desc,descIndx,revDesc,revDescIndx);
-  mesh2->checkCoherency();
+  mesh2->checkConsistencyLight();
   CPPUNIT_ASSERT_EQUAL(1,mesh2->getMeshDimension());
   CPPUNIT_ASSERT_EQUAL(13,mesh2->getNumberOfCells());
-  CPPUNIT_ASSERT_EQUAL((std::size_t)14,revDescIndx->getNbOfElems()); CPPUNIT_ASSERT_EQUAL(14,revDescIndx->getNumberOfTuples());
-  CPPUNIT_ASSERT_EQUAL((std::size_t)6,descIndx->getNbOfElems()); CPPUNIT_ASSERT_EQUAL(6,descIndx->getNumberOfTuples());
-  CPPUNIT_ASSERT_EQUAL((std::size_t)18,desc->getNbOfElems()); CPPUNIT_ASSERT_EQUAL(18,desc->getNumberOfTuples());
-  CPPUNIT_ASSERT_EQUAL((std::size_t)18,revDesc->getNbOfElems()); CPPUNIT_ASSERT_EQUAL(18,revDesc->getNumberOfTuples());
+  CPPUNIT_ASSERT_EQUAL((std::size_t)14,revDescIndx->getNbOfElems()); CPPUNIT_ASSERT_EQUAL(14,(int)revDescIndx->getNumberOfTuples());
+  CPPUNIT_ASSERT_EQUAL((std::size_t)6,descIndx->getNbOfElems()); CPPUNIT_ASSERT_EQUAL(6,(int)descIndx->getNumberOfTuples());
+  CPPUNIT_ASSERT_EQUAL((std::size_t)18,desc->getNbOfElems()); CPPUNIT_ASSERT_EQUAL(18,(int)desc->getNumberOfTuples());
+  CPPUNIT_ASSERT_EQUAL((std::size_t)18,revDesc->getNbOfElems()); CPPUNIT_ASSERT_EQUAL(18,(int)revDesc->getNumberOfTuples());
   CPPUNIT_ASSERT(std::equal(expected1,expected1+18,desc->getConstPointer()));
   CPPUNIT_ASSERT(std::equal(expected2,expected2+6,descIndx->getConstPointer()));
   CPPUNIT_ASSERT(std::equal(expected3,expected3+14,revDescIndx->getConstPointer()));
@@ -493,13 +497,13 @@ void MEDCouplingBasicsTest1::testDescConn3D()
   DataArrayInt *revDescIndx=DataArrayInt::New();
   //
   MEDCouplingUMesh *mesh2=mesh->buildDescendingConnectivity(desc,descIndx,revDesc,revDescIndx);
-  mesh2->checkCoherency();
+  mesh2->checkConsistencyLight();
   CPPUNIT_ASSERT_EQUAL(2,mesh2->getMeshDimension());
   CPPUNIT_ASSERT_EQUAL(36,mesh2->getNumberOfCells());
-  CPPUNIT_ASSERT_EQUAL((std::size_t)37,revDescIndx->getNbOfElems()); CPPUNIT_ASSERT_EQUAL(37,revDescIndx->getNumberOfTuples());
-  CPPUNIT_ASSERT_EQUAL((std::size_t)9,descIndx->getNbOfElems()); CPPUNIT_ASSERT_EQUAL(9,descIndx->getNumberOfTuples());
-  CPPUNIT_ASSERT_EQUAL((std::size_t)48,desc->getNbOfElems()); CPPUNIT_ASSERT_EQUAL(48,desc->getNumberOfTuples());
-  CPPUNIT_ASSERT_EQUAL((std::size_t)48,revDesc->getNbOfElems()); CPPUNIT_ASSERT_EQUAL(48,revDesc->getNumberOfTuples());
+  CPPUNIT_ASSERT_EQUAL((std::size_t)37,revDescIndx->getNbOfElems()); CPPUNIT_ASSERT_EQUAL(37,(int)revDescIndx->getNumberOfTuples());
+  CPPUNIT_ASSERT_EQUAL((std::size_t)9,descIndx->getNbOfElems()); CPPUNIT_ASSERT_EQUAL(9,(int)descIndx->getNumberOfTuples());
+  CPPUNIT_ASSERT_EQUAL((std::size_t)48,desc->getNbOfElems()); CPPUNIT_ASSERT_EQUAL(48,(int)desc->getNumberOfTuples());
+  CPPUNIT_ASSERT_EQUAL((std::size_t)48,revDesc->getNbOfElems()); CPPUNIT_ASSERT_EQUAL(48,(int)revDesc->getNumberOfTuples());
   const int expected1[9]={0, 6, 12, 18, 24, 30, 36, 42, 48};
   const int expected2[48]={0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 3, 11, 12, 4, 13, 14, 15, 16, 17, 10, 18, 19, 13, 1, 20, 21, 22, 23, 24, 7, 25, 26, 27, 28, 22, 12, 29, 23, 30, 31, 32, 17, 33, 28, 34, 35, 30};
   const int expected3[37]={0, 1, 3, 4, 6, 8, 9, 10, 12, 13, 14, 16, 17, 19, 21, 22, 23, 24, 26, 27, 28, 29, 30, 32, 34, 35, 36, 37, 38, 40, 41, 43, 44, 45, 46, 47, 48};
@@ -530,19 +534,19 @@ void MEDCouplingBasicsTest1::testDescConn3D()
   const int elts[2]={1,3};
   std::vector<int> eltsV(elts,elts+2);
   mesh->convertToPolyTypes(&eltsV[0],&eltsV[0]+eltsV.size());
-  mesh->checkCoherency();
+  mesh->checkConsistencyLight();
   desc=DataArrayInt::New();
   descIndx=DataArrayInt::New();
   revDesc=DataArrayInt::New();
   revDescIndx=DataArrayInt::New();
   mesh2=mesh->buildDescendingConnectivity(desc,descIndx,revDesc,revDescIndx);
-  mesh2->checkCoherency();
+  mesh2->checkConsistencyLight();
   CPPUNIT_ASSERT_EQUAL(2,mesh2->getMeshDimension());
   CPPUNIT_ASSERT_EQUAL(36,mesh2->getNumberOfCells());
-  CPPUNIT_ASSERT_EQUAL((std::size_t)37,revDescIndx->getNbOfElems()); CPPUNIT_ASSERT_EQUAL(37,revDescIndx->getNumberOfTuples());
-  CPPUNIT_ASSERT_EQUAL((std::size_t)9,descIndx->getNbOfElems()); CPPUNIT_ASSERT_EQUAL(9,descIndx->getNumberOfTuples());
-  CPPUNIT_ASSERT_EQUAL((std::size_t)48,desc->getNbOfElems()); CPPUNIT_ASSERT_EQUAL(48,desc->getNumberOfTuples());
-  CPPUNIT_ASSERT_EQUAL((std::size_t)48,revDesc->getNbOfElems()); CPPUNIT_ASSERT_EQUAL(48,revDesc->getNumberOfTuples());
+  CPPUNIT_ASSERT_EQUAL((std::size_t)37,revDescIndx->getNbOfElems()); CPPUNIT_ASSERT_EQUAL(37,(int)revDescIndx->getNumberOfTuples());
+  CPPUNIT_ASSERT_EQUAL((std::size_t)9,descIndx->getNbOfElems()); CPPUNIT_ASSERT_EQUAL(9,(int)descIndx->getNumberOfTuples());
+  CPPUNIT_ASSERT_EQUAL((std::size_t)48,desc->getNbOfElems()); CPPUNIT_ASSERT_EQUAL(48,(int)desc->getNumberOfTuples());
+  CPPUNIT_ASSERT_EQUAL((std::size_t)48,revDesc->getNbOfElems()); CPPUNIT_ASSERT_EQUAL(48,(int)revDesc->getNumberOfTuples());
   CPPUNIT_ASSERT(std::equal(expected1,expected1+9,descIndx->getConstPointer()));
   CPPUNIT_ASSERT(std::equal(expected2,expected2+48,desc->getConstPointer()));
   CPPUNIT_ASSERT(std::equal(expected3,expected3+37,revDescIndx->getConstPointer()));
@@ -562,8 +566,8 @@ void MEDCouplingBasicsTest1::testFindBoundaryNodes()
 {
   MEDCouplingUMesh *mesh=build3DTargetMesh_1();
   DataArrayInt *boundaryNodes=mesh->findBoundaryNodes();
-  CPPUNIT_ASSERT_EQUAL(26,boundaryNodes->getNumberOfTuples());
-  CPPUNIT_ASSERT_EQUAL(1,boundaryNodes->getNumberOfComponents());
+  CPPUNIT_ASSERT_EQUAL(26,(int)boundaryNodes->getNumberOfTuples());
+  CPPUNIT_ASSERT_EQUAL(1,(int)boundaryNodes->getNumberOfComponents());
   const int expected1[26]={0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26};
   CPPUNIT_ASSERT(std::equal(expected1,expected1+26,boundaryNodes->begin()));
   boundaryNodes->decrRef();
@@ -892,7 +896,7 @@ void MEDCouplingBasicsTest1::testEqualFieldDouble()
   CPPUNIT_ASSERT(fieldOnCells1->isEqual(fieldOnCells2,1e-12,1e-15));
   CPPUNIT_ASSERT(fieldOnCells2->isEqual(fieldOnCells1,1e-12,1e-15));
   //
-  DataArrayDouble *arr2=arr->deepCpy();
+  DataArrayDouble *arr2=arr->deepCopy();
   fieldOnCells2->setArray(arr2);
   arr2->decrRef();
   CPPUNIT_ASSERT(fieldOnCells1->isEqual(fieldOnCells2,1e-12,1e-15));
@@ -928,14 +932,14 @@ void MEDCouplingBasicsTest1::testEqualFieldDouble()
 void MEDCouplingBasicsTest1::testNatureChecking()
 {
   MEDCouplingFieldDouble *field=MEDCouplingFieldDouble::New(ON_CELLS,NO_TIME);
-  field->setNature(Integral);
-  field->setNature(ConservativeVolumic);
-  field->setNature(IntegralGlobConstraint);
+  field->setNature(ExtensiveMaximum);
+  field->setNature(IntensiveMaximum);
+  field->setNature(ExtensiveConservation);
   field->decrRef();
   field=MEDCouplingFieldDouble::New(ON_NODES,NO_TIME);
-  field->setNature(ConservativeVolumic);
-  CPPUNIT_ASSERT_THROW(field->setNature(Integral),INTERP_KERNEL::Exception);
-  CPPUNIT_ASSERT_THROW(field->setNature(IntegralGlobConstraint),INTERP_KERNEL::Exception);
+  field->setNature(IntensiveMaximum);
+  CPPUNIT_ASSERT_THROW(field->setNature(ExtensiveMaximum),INTERP_KERNEL::Exception);
+  CPPUNIT_ASSERT_THROW(field->setNature(ExtensiveConservation),INTERP_KERNEL::Exception);
   field->decrRef();
 }
 
@@ -950,8 +954,8 @@ void MEDCouplingBasicsTest1::testBuildSubMeshData()
   MEDCouplingMesh *ret1=fieldCells->buildSubMeshData(elts,elts+3,di);
   CPPUNIT_ASSERT_EQUAL(3,ret1->getNumberOfCells());
   CPPUNIT_ASSERT_EQUAL(9,ret1->getNumberOfNodes());
-  CPPUNIT_ASSERT_EQUAL(3,di->getNumberOfTuples());
-  CPPUNIT_ASSERT_EQUAL(1,di->getNumberOfComponents());
+  CPPUNIT_ASSERT_EQUAL(3,(int)di->getNumberOfTuples());
+  CPPUNIT_ASSERT_EQUAL(1,(int)di->getNumberOfComponents());
   const int *toCheck=di->getConstPointer();
   CPPUNIT_ASSERT(std::equal(elts,elts+3,toCheck));
   MEDCouplingUMesh *ret1DC=dynamic_cast<MEDCouplingUMesh *>(ret1);
@@ -967,8 +971,8 @@ void MEDCouplingBasicsTest1::testBuildSubMeshData()
   CPPUNIT_ASSERT(ret2DC);
   CPPUNIT_ASSERT_EQUAL(3,ret2->getNumberOfCells());
   CPPUNIT_ASSERT_EQUAL(6,ret2->getNumberOfNodes());
-  CPPUNIT_ASSERT_EQUAL(6,di->getNumberOfTuples());
-  CPPUNIT_ASSERT_EQUAL(1,di->getNumberOfComponents());
+  CPPUNIT_ASSERT_EQUAL(6,(int)di->getNumberOfTuples());
+  CPPUNIT_ASSERT_EQUAL(1,(int)di->getNumberOfComponents());
   toCheck=di->getConstPointer();
   const int expected[6]={1,2,4,5,7,8};
   CPPUNIT_ASSERT(std::equal(expected,expected+6,toCheck));
@@ -982,25 +986,25 @@ void MEDCouplingBasicsTest1::testExtrudedMesh1()
 {
   MEDCouplingUMesh *mesh2D=0;
   MEDCouplingUMesh *mesh3D=build3DExtrudedUMesh_1(mesh2D);
-  MEDCouplingExtrudedMesh *ext=MEDCouplingExtrudedMesh::New(mesh3D,mesh2D,1);
+  MEDCouplingMappedExtrudedMesh *ext=MEDCouplingMappedExtrudedMesh::New(mesh3D,mesh2D,1);
   CPPUNIT_ASSERT_EQUAL(18,ext->getNumberOfCells());
   CPPUNIT_ASSERT_EQUAL(60,ext->getNumberOfNodes());
   DataArrayInt *ids3D=ext->getMesh3DIds();
   const int ids3DExpected[18]={5,4,3,2,1,0, 11,10,9,8,7,6, 17,16,15,14,13,12};
-  CPPUNIT_ASSERT_EQUAL(18,ids3D->getNumberOfTuples());
-  CPPUNIT_ASSERT_EQUAL(1,ids3D->getNumberOfComponents());
+  CPPUNIT_ASSERT_EQUAL(18,(int)ids3D->getNumberOfTuples());
+  CPPUNIT_ASSERT_EQUAL(1,(int)ids3D->getNumberOfComponents());
   CPPUNIT_ASSERT(std::equal(ids3DExpected,ids3DExpected+18,ids3D->getConstPointer()));
   MEDCouplingUMesh *mesh1D=ext->getMesh1D();
   CPPUNIT_ASSERT_EQUAL(4,mesh1D->getNumberOfNodes());
   CPPUNIT_ASSERT_EQUAL(3,mesh1D->getNumberOfCells());
   const double mesh1DExpected[12]={0.66666666666666663, 1.4583333333333333, 0, 0.66666666666666663, 1.4583333333333333, 1, 0.66666666666666663, 1.4583333333333333, 2, 0.66666666666666663, 1.4583333333333333, 3};
   DataArrayDouble *mesh1DCoords=mesh1D->getCoords();
-  CPPUNIT_ASSERT_EQUAL(4,mesh1DCoords->getNumberOfTuples());
-  CPPUNIT_ASSERT_EQUAL(3,mesh1DCoords->getNumberOfComponents());
+  CPPUNIT_ASSERT_EQUAL(4,(int)mesh1DCoords->getNumberOfTuples());
+  CPPUNIT_ASSERT_EQUAL(3,(int)mesh1DCoords->getNumberOfComponents());
   CPPUNIT_ASSERT(std::equal(mesh1DExpected,mesh1DExpected+12,mesh1DCoords->getConstPointer()));
   DataArrayInt *conn1D=mesh1D->getNodalConnectivity();
-  CPPUNIT_ASSERT_EQUAL(9,conn1D->getNumberOfTuples());
-  CPPUNIT_ASSERT_EQUAL(1,conn1D->getNumberOfComponents());
+  CPPUNIT_ASSERT_EQUAL(9,(int)conn1D->getNumberOfTuples());
+  CPPUNIT_ASSERT_EQUAL(1,(int)conn1D->getNumberOfComponents());
   const int conn1DExpected[9]={1,0,1,1,1,2,1,2,3};
   CPPUNIT_ASSERT(std::equal(conn1DExpected,conn1DExpected+9,conn1D->getConstPointer()));
   ext->decrRef();
@@ -1024,7 +1028,7 @@ void MEDCouplingBasicsTest1::testExtrudedMesh2()
   mTT->findNodesOnPlane(pt,v,1e-12,n);
   CPPUNIT_ASSERT_EQUAL(43,(int)n.size());
   MEDCouplingUMesh *mTT3dSurf=(MEDCouplingUMesh *)mTT->buildFacePartOfMySelfNode(&n[0],&n[0]+n.size(),true);
-  MEDCouplingExtrudedMesh *meTT=MEDCouplingExtrudedMesh::New(mTT,mTT3dSurf,0);
+  MEDCouplingMappedExtrudedMesh *meTT=MEDCouplingMappedExtrudedMesh::New(mTT,mTT3dSurf,0);
   CPPUNIT_ASSERT_EQUAL(200,meTT->getNumberOfCells());
   CPPUNIT_ASSERT_EQUAL(10,meTT->getMesh2D()->getNumberOfCells());
   CPPUNIT_ASSERT_EQUAL(20,meTT->getMesh1D()->getNumberOfCells());
@@ -1038,7 +1042,7 @@ void MEDCouplingBasicsTest1::testExtrudedMesh2()
   mN->findNodesOnPlane(pt,v,1e-12,n);
   CPPUNIT_ASSERT_EQUAL(30,(int)n.size());
   MEDCouplingUMesh *mN3dSurf=(MEDCouplingUMesh *)mN->buildFacePartOfMySelfNode(&n[0],&n[0]+n.size(),true);
-  MEDCouplingExtrudedMesh *meN=MEDCouplingExtrudedMesh::New(mN,mN3dSurf,0);
+  MEDCouplingMappedExtrudedMesh *meN=MEDCouplingMappedExtrudedMesh::New(mN,mN3dSurf,0);
   CPPUNIT_ASSERT_EQUAL(40,meN->getNumberOfCells());
   CPPUNIT_ASSERT_EQUAL(20,meN->getMesh2D()->getNumberOfCells());
   CPPUNIT_ASSERT_EQUAL(2,meN->getMesh1D()->getNumberOfCells());
@@ -1052,7 +1056,7 @@ void MEDCouplingBasicsTest1::testExtrudedMesh2()
   mTF->findNodesOnPlane(pt,v,1e-12,n);
   CPPUNIT_ASSERT_EQUAL(27,(int)n.size());
   MEDCouplingUMesh *mTF3dSurf=(MEDCouplingUMesh *)mTF->buildFacePartOfMySelfNode(&n[0],&n[0]+n.size(),true);
-  MEDCouplingExtrudedMesh *meTF=MEDCouplingExtrudedMesh::New(mTF,mTF3dSurf,0);
+  MEDCouplingMappedExtrudedMesh *meTF=MEDCouplingMappedExtrudedMesh::New(mTF,mTF3dSurf,0);
   CPPUNIT_ASSERT_EQUAL(340,meTF->getNumberOfCells());
   CPPUNIT_ASSERT_EQUAL(17,meTF->getMesh2D()->getNumberOfCells());
   CPPUNIT_ASSERT_EQUAL(20,meTF->getMesh1D()->getNumberOfCells());
@@ -1081,7 +1085,7 @@ void MEDCouplingBasicsTest1::testExtrudedMesh3()
   m2->rotate(center,vector,-M_PI/2.);
   MEDCouplingUMesh *m3=m1->buildExtrudedMesh(m2,0);
   //
-  MEDCouplingExtrudedMesh *m4=MEDCouplingExtrudedMesh::New(m3,m1,0);
+  MEDCouplingMappedExtrudedMesh *m4=MEDCouplingMappedExtrudedMesh::New(m3,m1,0);
   CPPUNIT_ASSERT_EQUAL(15,m4->getNumberOfCells());
   CPPUNIT_ASSERT_EQUAL(5,m4->getMesh2D()->getNumberOfCells());
   CPPUNIT_ASSERT_EQUAL(3,m4->getMesh1D()->getNumberOfCells());
@@ -1092,7 +1096,7 @@ void MEDCouplingBasicsTest1::testExtrudedMesh3()
   //some random in cells to check that extrusion alg find it correctly
   const int expected1[15]={1,3,2,0,6,5,7,10,11,8,12,9,14,13,4};
   m3->renumberCells(expected1,false);
-  m4=MEDCouplingExtrudedMesh::New(m3,m1,0);
+  m4=MEDCouplingMappedExtrudedMesh::New(m3,m1,0);
   CPPUNIT_ASSERT_EQUAL(15,m4->getNumberOfCells());
   CPPUNIT_ASSERT_EQUAL(5,m4->getMesh2D()->getNumberOfCells());
   CPPUNIT_ASSERT_EQUAL(3,m4->getMesh1D()->getNumberOfCells());
@@ -1111,7 +1115,7 @@ void MEDCouplingBasicsTest1::testExtrudedMesh3()
   CPPUNIT_ASSERT_EQUAL((int)INTERP_KERNEL::NORM_POLYHED,(int)m3->getTypeOfCell(3));
   CPPUNIT_ASSERT_EQUAL((int)INTERP_KERNEL::NORM_HEXA8,(int)m3->getTypeOfCell(4));
   m3->renumberCells(expected1,false);
-  m4=MEDCouplingExtrudedMesh::New(m3,m1,0);
+  m4=MEDCouplingMappedExtrudedMesh::New(m3,m1,0);
   CPPUNIT_ASSERT_EQUAL(15,m4->getNumberOfCells());
   CPPUNIT_ASSERT_EQUAL(5,m4->getMesh2D()->getNumberOfCells());
   CPPUNIT_ASSERT_EQUAL(3,m4->getMesh1D()->getNumberOfCells());
@@ -1126,7 +1130,7 @@ void MEDCouplingBasicsTest1::testExtrudedMesh3()
 }
 
 /*!
- * This test check MEDCouplingUMesh::buildExtrudedMesh method, but also, MEDCouplingExtrudedMesh following methods :
+ * This test check MEDCouplingUMesh::buildExtrudedMesh method, but also, MEDCouplingMappedExtrudedMesh following methods :
  * getCellContainingPoint getMeasureField getNodeIdsOfCell getCoordinateOfNode getTypeOfCell build3DUnstructuredMesh.
  */
 void MEDCouplingBasicsTest1::testExtrudedMesh4()
@@ -1145,15 +1149,15 @@ void MEDCouplingBasicsTest1::testExtrudedMesh4()
   const int expected1[15]= {1,3,2,0,6,5,7,10,11,8,12,9,14,13,4};
   const int rexpected1[15]={3, 0, 2, 1, 14, 5, 4, 6, 9, 11, 7, 8, 10, 13, 12};
   m3->renumberCells(expected1,false);
-  MEDCouplingExtrudedMesh *m4=MEDCouplingExtrudedMesh::New(m3,m1,0);
+  MEDCouplingMappedExtrudedMesh *m4=MEDCouplingMappedExtrudedMesh::New(m3,m1,0);
   CPPUNIT_ASSERT_EQUAL(INTERP_KERNEL::NORM_HEXA8,m4->getTypeOfCell(0));
   CPPUNIT_ASSERT_EQUAL(INTERP_KERNEL::NORM_HEXA8,m4->getTypeOfCell(1));
   CPPUNIT_ASSERT_EQUAL(INTERP_KERNEL::NORM_POLYHED,m4->getTypeOfCell(2));
   CPPUNIT_ASSERT_EQUAL(INTERP_KERNEL::NORM_PENTA6,m4->getTypeOfCell(7));
   MEDCouplingFieldDouble *f=m4->getMeasureField(true);
   DataArrayDouble *arr=f->getArray();
-  CPPUNIT_ASSERT_EQUAL(15,arr->getNumberOfTuples());
-  CPPUNIT_ASSERT_EQUAL(1,arr->getNumberOfComponents());
+  CPPUNIT_ASSERT_EQUAL(15,(int)arr->getNumberOfTuples());
+  CPPUNIT_ASSERT_EQUAL(1,(int)arr->getNumberOfComponents());
   const double *arrPtr=arr->getConstPointer();
   const double expected2[15]={0.075,0.0375,0.0375,0.075,0.075,   0.1125,0.05625,0.05625,0.1125,0.1125,   0.0625,0.03125,0.03125,0.0625,0.0625};
   for(int i=0;i<15;i++)
@@ -1313,7 +1317,7 @@ void MEDCouplingBasicsTest1::testMergeMesh1()
   MEDCouplingMesh *m3=m1->mergeMyselfWith(m2);
   MEDCouplingUMesh *m3C=dynamic_cast<MEDCouplingUMesh *>(m3);
   CPPUNIT_ASSERT(m3C);
-  m3->checkCoherency();
+  m3->checkConsistencyLight();
   MEDCouplingUMesh *m4=build2DTargetMeshMerged_1();
   CPPUNIT_ASSERT(m3->isEqual(m4,1.e-12));
   m4->decrRef();
@@ -1343,7 +1347,7 @@ void MEDCouplingBasicsTest1::testMergeMeshOnSameCoords1()
   std::vector<const MEDCouplingUMesh *> meshes;
   meshes.push_back(m1); meshes.push_back(m2); meshes.push_back(m3);
   MEDCouplingUMesh *m4=MEDCouplingUMesh::MergeUMeshesOnSameCoords(meshes);
-  m4->checkCoherency();
+  m4->checkConsistencyLight();
   CPPUNIT_ASSERT(m4->getCoords()==m1->getCoords());
   CPPUNIT_ASSERT_EQUAL(15,m4->getNumberOfCells());
   const int cells1[5]={0,1,2,3,4};
@@ -1375,15 +1379,15 @@ void MEDCouplingBasicsTest1::testMergeField1()
   MEDCouplingFieldDouble *f1=m1->getMeasureField(true);
   MEDCouplingFieldDouble *f2=m2->getMeasureField(true);
   MEDCouplingFieldDouble *f3=MEDCouplingFieldDouble::MergeFields(f1,f2);
-  f3->checkCoherency();
+  f3->checkConsistencyLight();
   MEDCouplingUMesh *m4=build2DTargetMeshMerged_1();
   CPPUNIT_ASSERT(f3->getMesh()->isEqual(m4,1.e-12));
   std::string name=f3->getName();
   CPPUNIT_ASSERT(name=="MeasureOfMesh_");
   CPPUNIT_ASSERT(f3->getTypeOfField()==ON_CELLS);
   CPPUNIT_ASSERT(f3->getTimeDiscretization()==ONE_TIME);
-  CPPUNIT_ASSERT_EQUAL(1,f3->getNumberOfComponents());
-  CPPUNIT_ASSERT_EQUAL(7,f3->getNumberOfTuples());
+  CPPUNIT_ASSERT_EQUAL(1,(int)f3->getNumberOfComponents());
+  CPPUNIT_ASSERT_EQUAL(7,(int)f3->getNumberOfTuples());
   double values[7]={0.25,0.125,0.125,0.25,0.25,0.5,0.5};
   const double *tmp=f3->getArray()->getConstPointer();
   std::transform(tmp,tmp+7,values,values,std::minus<double>());
@@ -1433,11 +1437,11 @@ void MEDCouplingBasicsTest1::testFillFromAnalytic()
   CPPUNIT_ASSERT_DOUBLES_EQUAL(3.4,f1->getTime(a,b),1.e-14);
   CPPUNIT_ASSERT_EQUAL(5,a); CPPUNIT_ASSERT_EQUAL(6,b);
   CPPUNIT_ASSERT_EQUAL(std::string(f1->getTimeUnit()),std::string("us"));
-  f1->checkCoherency();
+  f1->checkConsistencyLight();
   CPPUNIT_ASSERT(f1->getTypeOfField()==ON_CELLS);
   CPPUNIT_ASSERT(f1->getTimeDiscretization()==ONE_TIME);
-  CPPUNIT_ASSERT_EQUAL(1,f1->getNumberOfComponents());
-  CPPUNIT_ASSERT_EQUAL(5,f1->getNumberOfTuples());
+  CPPUNIT_ASSERT_EQUAL(1,(int)f1->getNumberOfComponents());
+  CPPUNIT_ASSERT_EQUAL(5,(int)f1->getNumberOfTuples());
   double values1[5]={-0.1,0.23333333333333336,0.56666666666666665,0.4,0.9};
   const double *tmp=f1->getArray()->getConstPointer();
   std::transform(tmp,tmp+5,values1,values1,std::minus<double>());
@@ -1447,11 +1451,11 @@ void MEDCouplingBasicsTest1::testFillFromAnalytic()
   f1->decrRef();
   //
   f1=m->fillFromAnalytic(ON_NODES,1,func1);
-  f1->checkCoherency();
+  f1->checkConsistencyLight();
   CPPUNIT_ASSERT(f1->getTypeOfField()==ON_NODES);
   CPPUNIT_ASSERT(f1->getTimeDiscretization()==ONE_TIME);
-  CPPUNIT_ASSERT_EQUAL(1,f1->getNumberOfComponents());
-  CPPUNIT_ASSERT_EQUAL(9,f1->getNumberOfTuples());
+  CPPUNIT_ASSERT_EQUAL(1,(int)f1->getNumberOfComponents());
+  CPPUNIT_ASSERT_EQUAL(9,(int)f1->getNumberOfTuples());
   double values2[9]={-0.6,-0.1,0.4,-0.1,0.4,0.9,0.4,0.9,1.4};
   tmp=f1->getArray()->getConstPointer();
   std::transform(tmp,tmp+9,values2,values2,std::minus<double>());
@@ -1461,11 +1465,11 @@ void MEDCouplingBasicsTest1::testFillFromAnalytic()
   f1->decrRef();
   //
   f1=m->fillFromAnalytic(ON_NODES,2,func2);
-  f1->checkCoherency();
+  f1->checkConsistencyLight();
   CPPUNIT_ASSERT(f1->getTypeOfField()==ON_NODES);
   CPPUNIT_ASSERT(f1->getTimeDiscretization()==ONE_TIME);
-  CPPUNIT_ASSERT_EQUAL(2,f1->getNumberOfComponents());
-  CPPUNIT_ASSERT_EQUAL(9,f1->getNumberOfTuples());
+  CPPUNIT_ASSERT_EQUAL(2,(int)f1->getNumberOfComponents());
+  CPPUNIT_ASSERT_EQUAL(9,(int)f1->getNumberOfTuples());
   double values3[18]={-0.6,-1.2,-0.1,-0.2,0.4,0.8,-0.1,-0.2,0.4,0.8,0.9,1.8,0.4,0.8,0.9,1.8,1.4,2.8};
   tmp=f1->getArray()->getConstPointer();
   std::transform(tmp,tmp+18,values3,values3,std::minus<double>());
@@ -1490,11 +1494,11 @@ void MEDCouplingBasicsTest1::testFillFromAnalytic2()
 {
   MEDCouplingUMesh *m=build2DTargetMesh_1();
   MEDCouplingFieldDouble *f1=m->fillFromAnalytic(ON_CELLS,1,"y+x");
-  f1->checkCoherency();
+  f1->checkConsistencyLight();
   CPPUNIT_ASSERT(f1->getTypeOfField()==ON_CELLS);
   CPPUNIT_ASSERT(f1->getTimeDiscretization()==ONE_TIME);
-  CPPUNIT_ASSERT_EQUAL(1,f1->getNumberOfComponents());
-  CPPUNIT_ASSERT_EQUAL(5,f1->getNumberOfTuples());
+  CPPUNIT_ASSERT_EQUAL(1,(int)f1->getNumberOfComponents());
+  CPPUNIT_ASSERT_EQUAL(5,(int)f1->getNumberOfTuples());
   double values1[5]={-0.1,0.23333333333333336,0.56666666666666665,0.4,0.9};
   const double *tmp=f1->getArray()->getConstPointer();
   std::transform(tmp,tmp+5,values1,values1,std::minus<double>());
@@ -1504,11 +1508,11 @@ void MEDCouplingBasicsTest1::testFillFromAnalytic2()
   f1->decrRef();
   //
   f1=m->fillFromAnalytic(ON_NODES,1,"y+2*x");
-  f1->checkCoherency();
+  f1->checkConsistencyLight();
   CPPUNIT_ASSERT(f1->getTypeOfField()==ON_NODES);
   CPPUNIT_ASSERT(f1->getTimeDiscretization()==ONE_TIME);
-  CPPUNIT_ASSERT_EQUAL(1,f1->getNumberOfComponents());
-  CPPUNIT_ASSERT_EQUAL(9,f1->getNumberOfTuples());
+  CPPUNIT_ASSERT_EQUAL(1,(int)f1->getNumberOfComponents());
+  CPPUNIT_ASSERT_EQUAL(9,(int)f1->getNumberOfTuples());
   double values2[9]={-0.9,0.1,1.1,-0.4,0.6,1.6,0.1,1.1,2.1};
   tmp=f1->getArray()->getConstPointer();
   std::transform(tmp,tmp+9,values2,values2,std::minus<double>());
@@ -1517,11 +1521,11 @@ void MEDCouplingBasicsTest1::testFillFromAnalytic2()
   CPPUNIT_ASSERT_DOUBLES_EQUAL(0.,max,1.e-12);
   f1->decrRef();
   f1=m->fillFromAnalytic(ON_NODES,1,"2.*x+y");
-  f1->checkCoherency();
+  f1->checkConsistencyLight();
   CPPUNIT_ASSERT(f1->getTypeOfField()==ON_NODES);
   CPPUNIT_ASSERT(f1->getTimeDiscretization()==ONE_TIME);
-  CPPUNIT_ASSERT_EQUAL(1,f1->getNumberOfComponents());
-  CPPUNIT_ASSERT_EQUAL(9,f1->getNumberOfTuples());
+  CPPUNIT_ASSERT_EQUAL(1,(int)f1->getNumberOfComponents());
+  CPPUNIT_ASSERT_EQUAL(9,(int)f1->getNumberOfTuples());
   tmp=f1->getArray()->getConstPointer();
   double values2Bis[9]={-0.9,0.1,1.1,-0.4,0.6,1.6,0.1,1.1,2.1};
   std::transform(tmp,tmp+9,values2Bis,values2Bis,std::minus<double>());
@@ -1531,11 +1535,11 @@ void MEDCouplingBasicsTest1::testFillFromAnalytic2()
   f1->decrRef();
   //
   f1=m->fillFromAnalytic(ON_NODES,2,"(x+y)*IVec+2*(x+y)*JVec");
-  f1->checkCoherency();
+  f1->checkConsistencyLight();
   CPPUNIT_ASSERT(f1->getTypeOfField()==ON_NODES);
   CPPUNIT_ASSERT(f1->getTimeDiscretization()==ONE_TIME);
-  CPPUNIT_ASSERT_EQUAL(2,f1->getNumberOfComponents());
-  CPPUNIT_ASSERT_EQUAL(9,f1->getNumberOfTuples());
+  CPPUNIT_ASSERT_EQUAL(2,(int)f1->getNumberOfComponents());
+  CPPUNIT_ASSERT_EQUAL(9,(int)f1->getNumberOfTuples());
   double values3[18]={-0.6,-1.2,-0.1,-0.2,0.4,0.8,-0.1,-0.2,0.4,0.8,0.9,1.8,0.4,0.8,0.9,1.8,1.4,2.8};
   tmp=f1->getArray()->getConstPointer();
   std::transform(tmp,tmp+18,values3,values3,std::minus<double>());
@@ -1560,16 +1564,16 @@ void MEDCouplingBasicsTest1::testApplyFunc()
 {
   MEDCouplingUMesh *m=build2DTargetMesh_1();
   MEDCouplingFieldDouble *f1=m->fillFromAnalytic(ON_NODES,2,func2);
-  f1->checkCoherency();
+  f1->checkConsistencyLight();
   CPPUNIT_ASSERT(f1->getTypeOfField()==ON_NODES);
   CPPUNIT_ASSERT(f1->getTimeDiscretization()==ONE_TIME);
-  CPPUNIT_ASSERT_EQUAL(2,f1->getNumberOfComponents());
-  CPPUNIT_ASSERT_EQUAL(9,f1->getNumberOfTuples());
+  CPPUNIT_ASSERT_EQUAL(2,(int)f1->getNumberOfComponents());
+  CPPUNIT_ASSERT_EQUAL(9,(int)f1->getNumberOfTuples());
   f1->applyFunc(1,func1);
   CPPUNIT_ASSERT(f1->getTypeOfField()==ON_NODES);
   CPPUNIT_ASSERT(f1->getTimeDiscretization()==ONE_TIME);
-  CPPUNIT_ASSERT_EQUAL(1,f1->getNumberOfComponents());
-  CPPUNIT_ASSERT_EQUAL(9,f1->getNumberOfTuples());
+  CPPUNIT_ASSERT_EQUAL(1,(int)f1->getNumberOfComponents());
+  CPPUNIT_ASSERT_EQUAL(9,(int)f1->getNumberOfTuples());
   double values1[9]={-1.8,-0.3,1.2,-0.3,1.2,2.7,1.2,2.7,4.2};
   const double *tmp=f1->getArray()->getConstPointer();
   std::transform(tmp,tmp+9,values1,values1,std::minus<double>());
@@ -1584,11 +1588,11 @@ void MEDCouplingBasicsTest1::testApplyFunc2()
 {
   MEDCouplingUMesh *m=build2DTargetMesh_1();
   MEDCouplingFieldDouble *f1=m->fillFromAnalytic(ON_NODES,2,func2);
-  f1->checkCoherency();
+  f1->checkConsistencyLight();
   CPPUNIT_ASSERT(f1->getTypeOfField()==ON_NODES);
   CPPUNIT_ASSERT(f1->getTimeDiscretization()==ONE_TIME);
-  CPPUNIT_ASSERT_EQUAL(2,f1->getNumberOfComponents());
-  CPPUNIT_ASSERT_EQUAL(9,f1->getNumberOfTuples());
+  CPPUNIT_ASSERT_EQUAL(2,(int)f1->getNumberOfComponents());
+  CPPUNIT_ASSERT_EQUAL(9,(int)f1->getNumberOfTuples());
   //
   MEDCouplingFieldDouble *f2=f1->clone(true);
   CPPUNIT_ASSERT_THROW(f2->applyFunc(1,"a+b+c+d"),INTERP_KERNEL::Exception);
@@ -1597,8 +1601,8 @@ void MEDCouplingBasicsTest1::testApplyFunc2()
   f2->applyFunc("abs(u)^2.4+2*u");
   CPPUNIT_ASSERT(f1->getTypeOfField()==ON_NODES);
   CPPUNIT_ASSERT(f1->getTimeDiscretization()==ONE_TIME);
-  CPPUNIT_ASSERT_EQUAL(2,f1->getNumberOfComponents());
-  CPPUNIT_ASSERT_EQUAL(9,f1->getNumberOfTuples());
+  CPPUNIT_ASSERT_EQUAL(2,(int)f1->getNumberOfComponents());
+  CPPUNIT_ASSERT_EQUAL(9,(int)f1->getNumberOfTuples());
   double values2[18]={-0.9065304805418678, -0.85105859001709905, -0.19601892829446504, -0.37898777756476987,
                       0.91090317490482353, 2.1853504664669781, -0.19601892829446504, -0.37898777756476987,
                       0.91090317490482353, 2.1853504664669781, 2.5765725275664879, 7.6987743736515295,
@@ -1614,8 +1618,8 @@ void MEDCouplingBasicsTest1::testApplyFunc2()
   f1->applyFunc(1,"x+y");
   CPPUNIT_ASSERT(f1->getTypeOfField()==ON_NODES);
   CPPUNIT_ASSERT(f1->getTimeDiscretization()==ONE_TIME);
-  CPPUNIT_ASSERT_EQUAL(1,f1->getNumberOfComponents());
-  CPPUNIT_ASSERT_EQUAL(9,f1->getNumberOfTuples());
+  CPPUNIT_ASSERT_EQUAL(1,(int)f1->getNumberOfComponents());
+  CPPUNIT_ASSERT_EQUAL(9,(int)f1->getNumberOfTuples());
   double values1[9]={-1.8,-0.3,1.2,-0.3,1.2,2.7,1.2,2.7,4.2};
   tmp=f1->getArray()->getConstPointer();
   std::transform(tmp,tmp+9,values1,values1,std::minus<double>());
@@ -1631,10 +1635,10 @@ void MEDCouplingBasicsTest1::testOperationsOnFields()
   MEDCouplingUMesh *m=build2DTargetMesh_1();
   MEDCouplingFieldDouble *f1=m->fillFromAnalytic(ON_NODES,1,func1);
   MEDCouplingFieldDouble *f2=m->fillFromAnalytic(ON_NODES,1,func1);
-  f1->checkCoherency();
-  f2->checkCoherency();
+  f1->checkConsistencyLight();
+  f2->checkConsistencyLight();
   MEDCouplingFieldDouble *f3=(*f1)+(*f2);
-  f3->checkCoherency();
+  f3->checkConsistencyLight();
   CPPUNIT_ASSERT(f3->getTypeOfField()==ON_NODES);
   CPPUNIT_ASSERT(f3->getTimeDiscretization()==ONE_TIME);
   double values1[9]={-1.2,-0.2,0.8,-0.2,0.8,1.8,0.8,1.8,2.8};
@@ -1646,7 +1650,7 @@ void MEDCouplingBasicsTest1::testOperationsOnFields()
   f3->decrRef();
   //
   f3=(*f1)*(*f2);
-  f3->checkCoherency();
+  f3->checkConsistencyLight();
   CPPUNIT_ASSERT(f3->getTypeOfField()==ON_NODES);
   CPPUNIT_ASSERT(f3->getTimeDiscretization()==ONE_TIME);
   double values2[9]={0.36,0.01,0.16,0.01,0.16,0.81,0.16,0.81,1.96};
@@ -1659,7 +1663,7 @@ void MEDCouplingBasicsTest1::testOperationsOnFields()
   //
   f3=(*f1)+(*f2);
   MEDCouplingFieldDouble *f4=(*f1)-(*f3);
-  f4->checkCoherency();
+  f4->checkConsistencyLight();
   CPPUNIT_ASSERT(f4->getTypeOfField()==ON_NODES);
   CPPUNIT_ASSERT(f4->getTimeDiscretization()==ONE_TIME);
   double values3[9]={0.6,0.1,-0.4,0.1,-0.4,-0.9,-0.4,-0.9,-1.4};
@@ -1673,7 +1677,7 @@ void MEDCouplingBasicsTest1::testOperationsOnFields()
   //
   f3=(*f1)+(*f2);
   f4=(*f3)/(*f2);
-  f4->checkCoherency();
+  f4->checkConsistencyLight();
   CPPUNIT_ASSERT(f4->getTypeOfField()==ON_NODES);
   CPPUNIT_ASSERT(f4->getTimeDiscretization()==ONE_TIME);
   tmp=f4->getArray()->getConstPointer();
@@ -1683,7 +1687,7 @@ void MEDCouplingBasicsTest1::testOperationsOnFields()
   f4->decrRef();
   //
   f4=f2->buildNewTimeReprFromThis(NO_TIME,false);
-  f4->checkCoherency();
+  f4->checkConsistencyLight();
   CPPUNIT_ASSERT(f4->getArray()==f2->getArray());
   CPPUNIT_ASSERT(f4->getTypeOfField()==ON_NODES);
   CPPUNIT_ASSERT(f4->getTimeDiscretization()==NO_TIME);
@@ -1704,7 +1708,7 @@ void MEDCouplingBasicsTest1::testOperationsOnFields()
   f3->decrRef();
   //
   f4=f2->buildNewTimeReprFromThis(NO_TIME,true);
-  f4->checkCoherency();
+  f4->checkConsistencyLight();
   CPPUNIT_ASSERT(f4->getArray()!=f2->getArray());
   CPPUNIT_ASSERT(f4->getTypeOfField()==ON_NODES);
   CPPUNIT_ASSERT(f4->getTimeDiscretization()==NO_TIME);
@@ -1738,14 +1742,14 @@ void MEDCouplingBasicsTest1::testOperationsOnFields2()
   MEDCouplingFieldDouble *f1=m->fillFromAnalytic(ON_NODES,1,"x+y+z");
   MEDCouplingFieldDouble *f2=m->fillFromAnalytic(ON_NODES,1,"a*a+b+c*c");
   MEDCouplingFieldDouble *f3=(*f1)/(*f2);
-  f3->checkCoherency();
+  f3->checkConsistencyLight();
   CPPUNIT_ASSERT(f3->getTypeOfField()==ON_NODES);
   CPPUNIT_ASSERT(f3->getTimeDiscretization()==ONE_TIME);
   const double expected1[9]={-2.4999999999999991, 1.2162162162162162, 0.77868852459016391,
                              0.7407407407407407, 1.129032258064516, 0.81632653061224492,
                              0.86538461538461531, 1.0919540229885056, 0.84302325581395343};
-  CPPUNIT_ASSERT_EQUAL(1,f3->getNumberOfComponents());
-  CPPUNIT_ASSERT_EQUAL(9,f3->getNumberOfTuples());
+  CPPUNIT_ASSERT_EQUAL(1,(int)f3->getNumberOfComponents());
+  CPPUNIT_ASSERT_EQUAL(9,(int)f3->getNumberOfTuples());
   const double *val=f3->getArray()->getConstPointer();
   for(int i=0;i<9;i++)
     CPPUNIT_ASSERT_DOUBLES_EQUAL(expected1[i],val[i],1.e-12);
@@ -1783,14 +1787,14 @@ void MEDCouplingBasicsTest1::testOperationsOnFields3()
   MEDCouplingFieldDouble *f1=m->fillFromAnalytic(ON_NODES,1,"x+y+z");
   MEDCouplingFieldDouble *f2=m->fillFromAnalytic(ON_NODES,1,"a*a+b+c*c");
   (*f1)/=(*f2);
-  f1->checkCoherency();
+  f1->checkConsistencyLight();
   CPPUNIT_ASSERT(f1->getTypeOfField()==ON_NODES);
   CPPUNIT_ASSERT(f1->getTimeDiscretization()==ONE_TIME);
   const double expected1[9]={-2.4999999999999991, 1.2162162162162162, 0.77868852459016391,
                              0.7407407407407407, 1.129032258064516, 0.81632653061224492,
                              0.86538461538461531, 1.0919540229885056, 0.84302325581395343};
-  CPPUNIT_ASSERT_EQUAL(1,f1->getNumberOfComponents());
-  CPPUNIT_ASSERT_EQUAL(9,f1->getNumberOfTuples());
+  CPPUNIT_ASSERT_EQUAL(1,(int)f1->getNumberOfComponents());
+  CPPUNIT_ASSERT_EQUAL(9,(int)f1->getNumberOfTuples());
   const double *val=f1->getArray()->getConstPointer();
   for(int i=0;i<9;i++)
     CPPUNIT_ASSERT_DOUBLES_EQUAL(expected1[i],val[i],1.e-12);
@@ -1835,7 +1839,7 @@ void MEDCouplingBasicsTest1::testOperationsOnFields4()
   std::copy(arr1,arr1+15,tmp);
   f1->setStartTime(2.,0,0);
   f1->setEndTime(3.,0,0);
-  f1->checkCoherency();
+  f1->checkConsistencyLight();
   double res[3];
   const double pos[2]={0.3,-0.2};
   f1->getValueOn(pos,res);
@@ -1854,14 +1858,14 @@ void MEDCouplingBasicsTest1::testOperationsOnFields4()
   f2->setArray(f1->getArray());
   f2->setStartTime(2.,3,0);
   f2->setEndTime(4.,13,0);
-  CPPUNIT_ASSERT_THROW(f2->checkCoherency(),INTERP_KERNEL::Exception);
+  CPPUNIT_ASSERT_THROW(f2->checkConsistencyLight(),INTERP_KERNEL::Exception);
   DataArrayDouble *array2=DataArrayDouble::New();
   array2->alloc(nbOfCells,3);
   tmp=array2->getPointer();
   std::copy(arr2,arr2+15,tmp);
   f2->setEndArray(array2);
   array2->decrRef();
-  f2->checkCoherency();
+  f2->checkConsistencyLight();
   //
   std::fill(res,res+3,0.);
   f2->getValueOn(pos,3.21,res);
@@ -1956,14 +1960,14 @@ void MEDCouplingBasicsTest1::testCheckConsecutiveCellTypes()
   CPPUNIT_ASSERT(!targetMesh->checkConsecutiveCellTypesAndOrder(order1,order1+2));
   CPPUNIT_ASSERT(!targetMesh->checkConsecutiveCellTypesAndOrder(order2,order2+2));
   DataArrayInt *da=targetMesh->getRenumArrForConsecutiveCellTypesSpec(order1,order1+2);
-  CPPUNIT_ASSERT_EQUAL(5,da->getNumberOfTuples());
-  CPPUNIT_ASSERT_EQUAL(1,da->getNumberOfComponents());
+  CPPUNIT_ASSERT_EQUAL(5,(int)da->getNumberOfTuples());
+  CPPUNIT_ASSERT_EQUAL(1,(int)da->getNumberOfComponents());
   const int expected1[5]={2,0,1,3,4};
   CPPUNIT_ASSERT(std::equal(expected1,expected1+5,da->getConstPointer()));
   da->decrRef();
   da=targetMesh->getRenumArrForConsecutiveCellTypesSpec(order2,order2+2);
-  CPPUNIT_ASSERT_EQUAL(5,da->getNumberOfTuples());
-  CPPUNIT_ASSERT_EQUAL(1,da->getNumberOfComponents());
+  CPPUNIT_ASSERT_EQUAL(5,(int)da->getNumberOfTuples());
+  CPPUNIT_ASSERT_EQUAL(1,(int)da->getNumberOfComponents());
   const int expected2[5]={0,3,4,1,2};
   CPPUNIT_ASSERT(std::equal(expected2,expected2+5,da->getConstPointer()));
   da->decrRef();
@@ -1984,18 +1988,18 @@ void MEDCouplingBasicsTest1::testRearrange2ConsecutiveCellTypes()
   MEDCouplingUMesh *m1_2=build2DSourceMesh_1();
   CPPUNIT_ASSERT(m1_2->isEqual(m1_1,1e-12));
   const int expected1[2]={0,1};
-  CPPUNIT_ASSERT_EQUAL(2,arr1->getNumberOfTuples());
-  CPPUNIT_ASSERT_EQUAL(1,arr1->getNumberOfComponents());
+  CPPUNIT_ASSERT_EQUAL(2,(int)arr1->getNumberOfTuples());
+  CPPUNIT_ASSERT_EQUAL(1,(int)arr1->getNumberOfComponents());
   CPPUNIT_ASSERT(std::equal(expected1,expected1+2,arr1->getConstPointer()));
   arr1->decrRef();
   const int expected2[5]={0,3,4,1,2};
   arr1=m2_1->rearrange2ConsecutiveCellTypes();
   CPPUNIT_ASSERT_EQUAL(5,arr1->getNumberOfTuples());
-  CPPUNIT_ASSERT_EQUAL(1,arr1->getNumberOfComponents());
+  CPPUNIT_ASSERT_EQUAL(1,(int)arr1->getNumberOfComponents());
   CPPUNIT_ASSERT(std::equal(expected2,expected2+5,arr1->getConstPointer()));
   MEDCouplingUMesh *m2_2=build2DTargetMesh_1();
   CPPUNIT_ASSERT_EQUAL(5,arr1->getNumberOfTuples());
-  CPPUNIT_ASSERT_EQUAL(1,arr1->getNumberOfComponents());
+  CPPUNIT_ASSERT_EQUAL(1,(int)arr1->getNumberOfComponents());
   CPPUNIT_ASSERT(std::equal(expected2,expected2+5,arr1->getConstPointer()));
   CPPUNIT_ASSERT(!m2_2->isEqual(m2_1,1e-12));
   m2_2->renumberCells(expected2,false);
@@ -2052,7 +2056,7 @@ void MEDCouplingBasicsTest1::testFuseUMeshesOnSameCoords()
   for(int i=0;i<3;i++)
     {
       DataArrayInt *arr=corr[i];
-      CPPUNIT_ASSERT_EQUAL(1,arr->getNumberOfComponents());
+      CPPUNIT_ASSERT_EQUAL(1,(int)arr->getNumberOfComponents());
       int nbOfVals=expectedVals1[i];
       CPPUNIT_ASSERT_EQUAL(nbOfVals,arr->getNumberOfTuples());
       const int *vals=arr->getConstPointer();
@@ -2065,7 +2069,7 @@ void MEDCouplingBasicsTest1::testFuseUMeshesOnSameCoords()
   const int fidExp[4]={5,1,3,4};
   const int fidsGrp[3][3]={{1,3,5},{3,4,5},{4,5,23344}};
   CPPUNIT_ASSERT_EQUAL(3,(int)fidsOfGroups.size());
-  CPPUNIT_ASSERT_EQUAL(1,arr2->getNumberOfComponents());
+  CPPUNIT_ASSERT_EQUAL(1,(int)arr2->getNumberOfComponents());
   CPPUNIT_ASSERT_EQUAL(4,arr2->getNumberOfTuples());
   CPPUNIT_ASSERT(std::equal(fidExp,fidExp+4,arr2->getConstPointer()));
   for(int i=0;i<3;i++)
@@ -2129,8 +2133,8 @@ void MEDCouplingBasicsTest1::testBuildOrthogonalField()
   MEDCouplingUMesh *targetMesh=build3DSurfTargetMesh_1();
   MEDCouplingFieldDouble *field=targetMesh->buildOrthogonalField();
   double expected[3]={0.70710678118654746,0.,-0.70710678118654746};
-  CPPUNIT_ASSERT_EQUAL(5,field->getNumberOfTuples());
-  CPPUNIT_ASSERT_EQUAL(3,field->getNumberOfComponents());
+  CPPUNIT_ASSERT_EQUAL(5,(int)field->getNumberOfTuples());
+  CPPUNIT_ASSERT_EQUAL(3,(int)field->getNumberOfComponents());
   const double *vals=field->getArray()->getConstPointer();
   for(int i=0;i<15;i++)
     CPPUNIT_ASSERT_DOUBLES_EQUAL(expected[i%3],vals[i],1e-12);
@@ -2150,8 +2154,8 @@ void MEDCouplingBasicsTest1::testBuildOrthogonalField()
   targetMesh->setCoords(myCoords);
   myCoords->decrRef();
   field=targetMesh->buildOrthogonalField();
-  CPPUNIT_ASSERT_EQUAL(1,field->getNumberOfTuples());
-  CPPUNIT_ASSERT_EQUAL(3,field->getNumberOfComponents());
+  CPPUNIT_ASSERT_EQUAL(1,(int)field->getNumberOfTuples());
+  CPPUNIT_ASSERT_EQUAL(3,(int)field->getNumberOfComponents());
   vals=field->getArray()->getConstPointer();
   CPPUNIT_ASSERT_DOUBLES_EQUAL(-0.70710678118654746,vals[0],1e-12);
   CPPUNIT_ASSERT_DOUBLES_EQUAL(0.,vals[1],1e-12);
@@ -2164,7 +2168,7 @@ void MEDCouplingBasicsTest1::testGetCellsContainingPoint()
 {
   MEDCouplingUMesh *targetMesh=build2DTargetMesh_1();
   double pos[12]={0.,0.,0.4,0.4,0.,0.4,0.1,0.1,0.25,0.,0.65,0.};
-  MEDCouplingAutoRefCountObjectPtr<DataArrayInt> t1,t2;
+  MCAuto<DataArrayInt> t1,t2;
   //2D basic
   targetMesh->getCellsContainingPoints(pos,6,1e-12,t1,t2);
   CPPUNIT_ASSERT_EQUAL(6,(int)t1->getNbOfElems());
@@ -2175,7 +2179,7 @@ void MEDCouplingBasicsTest1::testGetCellsContainingPoint()
   CPPUNIT_ASSERT(std::equal(t2->begin(),t2->end(),expectedValues2));
   //2D with no help of bounding box.
   double center[2]={0.2,0.2};
-  MEDCouplingPointSet::Rotate2DAlg(center,0.78539816339744830962,6,pos);
+  DataArrayDouble::Rotate2DAlg(center,0.78539816339744830962,6,pos,pos);
   targetMesh->rotate(center,0,0.78539816339744830962);
   targetMesh->getCellsContainingPoints(pos,6,1e-12,t1,t2);
   CPPUNIT_ASSERT_EQUAL(6,(int)t1->getNbOfElems());
@@ -2301,8 +2305,8 @@ void MEDCouplingBasicsTest1::testCMesh0()
   coordsZ->decrRef();
   //
   MEDCouplingFieldDouble *fieldOnNodes=mesh->fillFromAnalytic(ON_NODES,1,"x+y/2.+z/3.");
-  CPPUNIT_ASSERT_EQUAL(1,fieldOnNodes->getNumberOfComponents());
-  CPPUNIT_ASSERT_EQUAL(64,fieldOnNodes->getNumberOfTuples());
+  CPPUNIT_ASSERT_EQUAL(1,(int)fieldOnNodes->getNumberOfComponents());
+  CPPUNIT_ASSERT_EQUAL(64,(int)fieldOnNodes->getNumberOfTuples());
   const double expected1[64]={-3., -1., 0., 2., -1., 1., 2., 4., 0., 2., 3., 5., 2., 4., 5., 7., -1., 1., 2.,
                               4., 1., 3., 4., 6., 2., 4., 5., 7., 4., 6., 7., 9., 0., 2., 3., 5., 2., 4., 5.,
                               7., 3., 5., 6., 8., 5., 7., 8., 10., 2., 4., 5.,
@@ -2316,8 +2320,8 @@ void MEDCouplingBasicsTest1::testCMesh0()
   fieldOnNodes->decrRef();
   //
   MEDCouplingFieldDouble *fieldOnCells=mesh->fillFromAnalytic(ON_CELLS,1,"x+y/2.+z/3.");
-  CPPUNIT_ASSERT_EQUAL(1,fieldOnCells->getNumberOfComponents());
-  CPPUNIT_ASSERT_EQUAL(27,fieldOnCells->getNumberOfTuples());
+  CPPUNIT_ASSERT_EQUAL(1,(int)fieldOnCells->getNumberOfComponents());
+  CPPUNIT_ASSERT_EQUAL(27,(int)fieldOnCells->getNumberOfTuples());
   val=fieldOnCells->getArray()->getConstPointer();
   const double expected2[27]={0, 1.5, 3, 1.5, 3, 4.5, 3, 4.5, 6, 1.5, 3, 4.5, 3, 4.5,
                               6, 4.5, 6, 7.5, 3, 4.5, 6, 4.5, 6, 7.5, 6, 7.5, 9};
@@ -2327,7 +2331,7 @@ void MEDCouplingBasicsTest1::testCMesh0()
   CPPUNIT_ASSERT_DOUBLES_EQUAL(6.,res[0],1e-12);
   fieldOnCells->decrRef();
   //
-  MEDCouplingMesh* meshDeepCopy=mesh->deepCpy();
+  MEDCouplingMesh* meshDeepCopy=mesh->deepCopy();
   MEDCouplingCMesh* meshClone=mesh->clone(false);
   
   CPPUNIT_ASSERT_THROW(meshEmpty->copyTinyStringsFrom(0),INTERP_KERNEL::Exception);
@@ -2399,8 +2403,8 @@ void MEDCouplingBasicsTest1::testCMesh1()
   CPPUNIT_ASSERT(mesh1->isEqual(mesh2,1e-5));
   CPPUNIT_ASSERT(!mesh1->isEqual(mesh2,1e-7));
   
-  CPPUNIT_ASSERT_THROW(mesh3->checkCoherency1(1e-12),INTERP_KERNEL::Exception);
-  mesh1->checkCoherency1(1e-12);
+  CPPUNIT_ASSERT_THROW(mesh3->checkConsistency(1e-12),INTERP_KERNEL::Exception);
+  mesh1->checkConsistency(1e-12);
   CPPUNIT_ASSERT_EQUAL(INTERP_KERNEL::NORM_HEXA8,mesh1->getTypeOfCell(1));
   
   CPPUNIT_ASSERT_EQUAL(INTERP_KERNEL::NORM_HEXA8,*((mesh1->getAllGeoTypes()).begin()));
@@ -2628,7 +2632,7 @@ void MEDCouplingBasicsTest1::testFindNodeOnPlane()
   mesh->findNodesOnPlane(pt,v,1e-12,n);
   CPPUNIT_ASSERT_EQUAL(9,(int)n.size());
   MEDCouplingUMesh *m3dSurf=(MEDCouplingUMesh *)mesh->buildFacePartOfMySelfNode(&n[0],&n[0]+n.size(),true);
-  MEDCouplingExtrudedMesh *me=MEDCouplingExtrudedMesh::New(mesh,m3dSurf,0);
+  MEDCouplingMappedExtrudedMesh *me=MEDCouplingMappedExtrudedMesh::New(mesh,m3dSurf,0);
   const DataArrayInt *da=me->getMesh3DIds();
   CPPUNIT_ASSERT_EQUAL(8,me->getNumberOfCells());
   const int expected[8]={0,1,2,3,4,5,6,7};

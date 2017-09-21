@@ -57,7 +57,7 @@ MEDsupportMeshInfoByName(const med_idt         fid,
   _MEDmodeErreurVerrouiller();
 
 
-  if ( _MEDmeshInfoByName(fid, MED_SUP_MAA, supportmeshname, spacedim, meshdim, &_meshtype,
+  if ( _MEDmeshInfoByName(fid, MED_MESH_SUPPORT_GRP, supportmeshname, spacedim, meshdim, &_meshtype,
 			  description, _dtunit, &_sortingtype, &_nstep,
 			  axistype,  axisname, axisunit)  < 0) {
     MED_ERR_(_ret,MED_ERR_CALL,MED_ERR_API,MED_ERR_MESH_MSG);

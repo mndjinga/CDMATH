@@ -21,22 +21,26 @@
 #ifndef __MEDFILEDATA_HXX__
 #define __MEDFILEDATA_HXX__
 
-#include "MEDCouplingAutoRefCountObjectPtr.hxx"
+#include "MCAuto.hxx"
 #include "MEDFileParameter.hxx"
 #include "MEDFileField.hxx"
 #include "MEDFileMesh.hxx"
+#include "MEDFileMeshSupport.hxx"
+#include "MEDFileStructureElement.hxx"
 
-namespace ParaMEDMEM
+namespace MEDCoupling
 {
   /*!
    * User class.
    */
-  class MEDFileData : public RefCountObject, public MEDFileWritable
+  class MEDFileData : public RefCountObject, public MEDFileWritableStandAlone
   {
   public:
     MEDLOADER_EXPORT static MEDFileData *New(const std::string& fileName);
+    MEDLOADER_EXPORT static MEDFileData *New(med_idt fid);
     MEDLOADER_EXPORT static MEDFileData *New();
-    MEDLOADER_EXPORT MEDFileData *deepCpy() const;
+    MEDLOADER_EXPORT static MEDFileData *New(DataArrayByte *db) { return BuildFromMemoryChunk<MEDFileData>(db); }
+    MEDLOADER_EXPORT MEDFileData *deepCopy() const;
     MEDLOADER_EXPORT std::size_t getHeapMemorySizeWithoutChildren() const;
     MEDLOADER_EXPORT std::vector<const BigMemoryObject *> getDirectChildrenWithNull() const;
     MEDLOADER_EXPORT MEDFileFields *getFields() const;
@@ -50,18 +54,29 @@ namespace ParaMEDMEM
     MEDLOADER_EXPORT int getNumberOfParams() const;
     MEDLOADER_EXPORT std::string simpleRepr() const;
     //
+    MEDLOADER_EXPORT std::string getHeader() const;
+    MEDLOADER_EXPORT void setHeader(const std::string& header);
+    //
     MEDLOADER_EXPORT bool changeMeshNames(const std::vector< std::pair<std::string,std::string> >& modifTab);
     MEDLOADER_EXPORT bool changeMeshName(const std::string& oldMeshName, const std::string& newMeshName);
     MEDLOADER_EXPORT bool unPolyzeMeshes();
+    MEDLOADER_EXPORT void dealWithStructureElements();
+    MEDLOADER_EXPORT static MCAuto<MEDFileData> Aggregate(const std::vector<const MEDFileData *>& mfds);
     //
-    MEDLOADER_EXPORT void write(const std::string& fileName, int mode) const;
+    MEDLOADER_EXPORT void writeLL(med_idt fid) const;
   private:
     MEDFileData();
-    MEDFileData(const std::string& fileName);
+    MEDFileData(med_idt fid);
+    void readHeader(med_idt fid);
+    void writeHeader(med_idt fid) const;
+    void readMeshSupports(med_idt fid);
   private:
-    MEDCouplingAutoRefCountObjectPtr<MEDFileFields> _fields;
-    MEDCouplingAutoRefCountObjectPtr<MEDFileMeshes> _meshes;
-    MEDCouplingAutoRefCountObjectPtr<MEDFileParameters> _params;
+    MCAuto<MEDFileFields> _fields;
+    MCAuto<MEDFileMeshes> _meshes;
+    MCAuto<MEDFileParameters> _params;
+    MCAuto<MEDFileMeshSupports> _mesh_supports;
+    MCAuto<MEDFileStructureElements> _struct_elems;
+    std::string _header;
   };
 }
 

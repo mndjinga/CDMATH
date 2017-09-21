@@ -45,14 +45,14 @@
 
 #ifdef PPRO_NT
 med_int 
- EDFCONE(med_int *fid, char *maa, unsigned int bidon,
+ EDFCONE(med_idt *fid, char *maa, unsigned int bidon,
                   med_int *lon, med_int *mdim, med_int *con,med_int *mode_switch,
 		  med_int *nbre, 
 	          med_int *type_ent,
                   med_int *type_geo,med_int *type_con )
 #else
 med_int
-nedfcone(med_int *fid, char *maa, med_int *lon,med_int *mdim, 
+nedfcone(med_idt *fid, char *maa, med_int *lon,med_int *mdim, 
 	 med_int *con, med_int *mode_switch, med_int *nbre, 
 	 med_int *type_ent,med_int *type_geo,med_int *type_con)
 #endif
@@ -65,7 +65,7 @@ nedfcone(med_int *fid, char *maa, med_int *lon,med_int *mdim,
   if (!fn)
     return(-1); 
   
-  ret = (med_int) MEDconnEcr ((med_idt) *fid,fn,(med_int) *mdim,
+  ret = (med_int) MEDconnEcr (*fid,fn,(med_int) *mdim,
 			      (med_int *)con,(med_mode_switch) *mode_switch,(med_int)*nbre, 
 			      (med_entite_maillage)*type_ent,
 			      (med_geometrie_element) *type_geo,
@@ -80,14 +80,14 @@ nedfcone(med_int *fid, char *maa, med_int *lon,med_int *mdim,
 
 #ifdef PPRO_NT
 med_int 
- EDFCONL(med_int *fid, char *maa, unsigned int bidon, 
+ EDFCONL(med_idt *fid, char *maa, unsigned int bidon, 
                   med_int *lon, med_int *mdim, med_int *con, med_int *mode_switch,
 		  med_int * pfltabtmp, med_int *psizetmp,
                   med_int *type_ent,med_int *type_geo,
                   med_int *type_con )
 #else
 med_int 
-nedfconl(med_int *fid, char *maa, med_int *lon,med_int *mdim,med_int *con, 
+nedfconl(med_idt *fid, char *maa, med_int *lon,med_int *mdim,med_int *con, 
 	 med_int *mode_switch,
 	 med_int * pfltabtmp, med_int *psizetmp,
 	 med_int *type_ent,med_int *type_geo,med_int *type_con )
@@ -101,7 +101,7 @@ nedfconl(med_int *fid, char *maa, med_int *lon,med_int *mdim,med_int *con,
   if (!fn)
     return(-1); 
 
-  ret = (med_int) MEDconnLire((med_idt) *fid, fn,(med_int) *mdim,(med_int *) con, 
+  ret = (med_int) MEDconnLire(*fid, fn,(med_int) *mdim,(med_int *) con, 
 			      (med_mode_switch) *mode_switch,
 			      (med_int *) pfltabtmp, (med_size) *psizetmp,
 			      (med_entite_maillage) *type_ent,
@@ -116,14 +116,14 @@ nedfconl(med_int *fid, char *maa, med_int *lon,med_int *mdim,med_int *con,
 
 #ifdef PPRO_NT
 med_int
- EDFCOOE(med_int *fid,char *maa,unsigned int bidon1,med_int *lon1,
+ EDFCOOE(med_idt *fid,char *maa,unsigned int bidon1,med_int *lon1,
 		  med_int *mdim, med_float * coo,med_int * modcoo, med_int *n, 
 	          med_int *type_rep, char *nom, 
                   unsigned int bidon2, med_int *lon2, 
 	          char *unit, unsigned int bidon3, med_int *lon3)
 #else
 med_int
-nedfcooe(med_int *fid, char *maa, med_int *lon1, med_int *mdim,
+nedfcooe(med_idt *fid, char *maa, med_int *lon1, med_int *mdim,
 	 med_float* coo,med_int *modcoo, med_int *n, 
 	 med_int *type_rep, char *nom, med_int *lon2, 
 	 char *unit, med_int *lon3)
@@ -141,7 +141,7 @@ nedfcooe(med_int *fid, char *maa, med_int *lon1, med_int *mdim,
     return(-1);
 
   type_rep_c = (med_repere) *type_rep; 
-  ret = (med_int) MEDcoordEcr((med_idt) *fid, fn1, (med_int) *mdim,
+  ret = (med_int) MEDcoordEcr(*fid, fn1, (med_int) *mdim,
 			      (med_float *) coo,(med_mode_switch)*modcoo,
 			      (med_int) *n,type_rep_c,
 			      fn2,fn3);
@@ -156,14 +156,14 @@ nedfcooe(med_int *fid, char *maa, med_int *lon1, med_int *mdim,
 
 #ifdef PPRO_NT
 med_int
- EDFCOOL(med_int *fid, char *maa, unsigned int bidon1, 
+ EDFCOOL(med_idt *fid, char *maa, unsigned int bidon1, 
                   med_int *lon1, med_int *mdim, med_float * coo, med_int * modcoo, 
 		  med_int *numco, med_int * pfltabtmp, med_int * psize, 
 		  med_int *type_rep, char *nom, unsigned int bidon2, char *unit, 
                   unsigned int bidon3)
 #else
 med_int
-nedfcool(med_int *fid, char *maa,med_int *lon1,med_int *mdim,
+nedfcool(med_idt *fid, char *maa,med_int *lon1,med_int *mdim,
 	 med_float * coo,med_int * modcoo,
 	 med_int * numco,med_int * pfltabtmp, med_int * psize, 
 	 med_int *type_rep, char *nom, 
@@ -184,7 +184,7 @@ nedfcool(med_int *fid, char *maa,med_int *lon1,med_int *mdim,
   if (!(fn1&&fs1&&fs2))
     return(-1);
 
-  ret = (med_int) MEDcoordLire((med_idt) *fid, fn1, (med_int ) *mdim,
+  ret = (med_int) MEDcoordLire(*fid, fn1, (med_int ) *mdim,
 			       (med_float *) coo,(med_mode_switch)*modcoo,
 			       (med_int) *numco, (med_int *) pfltabtmp, lpsize, 
 			       &type_rep_c, fs1, fs2);
@@ -205,14 +205,14 @@ nedfcool(med_int *fid, char *maa,med_int *lon1,med_int *mdim,
 
 #ifdef PPRO_NT
 int
- EDFNOME (med_int *fid,char *maa, unsigned int bidon1, med_int *lon1,
+ EDFNOME (med_idt *fid,char *maa, unsigned int bidon1, med_int *lon1,
                    char *nom, unsigned int bidon2, med_int *lon2, 
                    med_int *n, med_int *type_ent,
                    med_int *type_geo)
 
 #else
 med_int
-nedfnome(med_int *fid,char *maa,med_int *lon1, char *nom,med_int *lon2, 
+nedfnome(med_idt *fid,char *maa,med_int *lon1, char *nom,med_int *lon2, 
 	 med_int *n,med_int *type_ent,med_int *type_geo)
 #endif
 {
@@ -225,7 +225,7 @@ nedfnome(med_int *fid,char *maa,med_int *lon1, char *nom,med_int *lon2,
   if (!fn1 || !fn2)
     return(-1);
 
-  ret = (med_int) MEDnomEcr((med_idt) *fid, fn1, fn2, (med_int) *n, 
+  ret = (med_int) MEDnomEcr(*fid, fn1, fn2, (med_int) *n, 
 			    (med_entite_maillage) *type_ent,
 			    (med_geometrie_element) *type_geo); 
 
@@ -237,13 +237,13 @@ nedfnome(med_int *fid,char *maa,med_int *lon1, char *nom,med_int *lon2,
 
 #ifdef PPRO_NT
 med_int
- EDFNOML(med_int *fid,char *maa, unsigned int bidon1, med_int *lon1,
+ EDFNOML(med_idt *fid,char *maa, unsigned int bidon1, med_int *lon1,
                   char *nom , unsigned int bidon2, med_int *n, 
 	          med_int *type_ent, med_int *type_geo)
 
 #else
 med_int
-nedfnoml(med_int *fid,char *maa,med_int *lon1, char *nom,med_int *n, 
+nedfnoml(med_idt *fid,char *maa,med_int *lon1, char *nom,med_int *n, 
 	 med_int *type_ent,med_int *type_geo)
 #endif
 {
@@ -256,7 +256,7 @@ nedfnoml(med_int *fid,char *maa,med_int *lon1, char *nom,med_int *n,
   if ( !(fn1&&fs1) )
     return(-1);
 
-  ret = (med_int) MEDnomLire((med_idt) *fid, fn1, (char *) fs1, (med_int) *n, 
+  ret = (med_int) MEDnomLire(*fid, fn1, (char *) fs1, (med_int) *n, 
 			     (med_entite_maillage) *type_ent,
 			     (med_geometrie_element) *type_geo); 
 
@@ -272,12 +272,12 @@ nedfnoml(med_int *fid,char *maa,med_int *lon1, char *nom,med_int *n,
 
 #ifdef PPRO_NT
 med_int
- EDFNUME(med_int *fid,char *maa, unsigned int bidon1, med_int *lon1,
+ EDFNUME(med_idt *fid,char *maa, unsigned int bidon1, med_int *lon1,
                   med_int *num, med_int *n, med_int *type_ent,
                   med_int *type_geo)
 #else
 med_int
-nedfnume(med_int *fid,char *maa, med_int *lon1, med_int *num, med_int *n, 
+nedfnume(med_idt *fid,char *maa, med_int *lon1, med_int *num, med_int *n, 
 	 med_int *type_ent,med_int *type_geo)
 #endif
 {
@@ -289,7 +289,7 @@ nedfnume(med_int *fid,char *maa, med_int *lon1, med_int *num, med_int *n,
   if (!fn1 )
     return(-1);
 
-  ret = (med_int) MEDnumEcr((med_idt) *fid, fn1, (med_int *) num, (med_int)*n, 
+  ret = (med_int) MEDnumEcr(*fid, fn1, (med_int *) num, (med_int)*n, 
 			    (med_entite_maillage) *type_ent,
 			    (med_geometrie_element) *type_geo);
 
@@ -301,12 +301,12 @@ nedfnume(med_int *fid,char *maa, med_int *lon1, med_int *num, med_int *n,
 
 #ifdef PPRO_NT
 int
- EDFNUML(med_int *fid,char *maa, unsigned int bidon1, med_int *lon1,
+ EDFNUML(med_idt *fid,char *maa, unsigned int bidon1, med_int *lon1,
                   med_int *num , med_int *n, med_int *type_ent,
                   med_int *type_geo)
 #else
 med_int
-nedfnuml(med_int *fid,char *maa, med_int *lon1, med_int *num , med_int *n, 
+nedfnuml(med_idt *fid,char *maa, med_int *lon1, med_int *num , med_int *n, 
 	 med_int *type_ent,med_int *type_geo)
 #endif
 {
@@ -318,7 +318,7 @@ nedfnuml(med_int *fid,char *maa, med_int *lon1, med_int *num , med_int *n,
   if (!fn1 )
     return(-1);
 
-  ret = (med_int) MEDnumLire((med_idt) *fid, fn1, (med_int *) num,(med_int)*n, 
+  ret = (med_int) MEDnumLire(*fid, fn1, (med_int *) num,(med_int)*n, 
 			     (med_entite_maillage) *type_ent,
 			     (med_geometrie_element) *type_geo); 
 
@@ -329,12 +329,12 @@ nedfnuml(med_int *fid,char *maa, med_int *lon1, med_int *num , med_int *n,
 
 #ifdef PPRO_NT
 med_int 
- EDFNEMA (med_int *fid, char *maa, unsigned int bidon, med_int *lon,
+ EDFNEMA (med_idt *fid, char *maa, unsigned int bidon, med_int *lon,
                    med_int *quoi, med_int *typ_ent, med_int *typ_geo,
                    med_int *typ_conn)
 #else
 med_int 
-nedfnema(med_int *fid, char *maa, med_int *lon, med_int *quoi, 
+nedfnema(med_idt *fid, char *maa, med_int *lon, med_int *quoi, 
 	 med_int *typ_ent, med_int *typ_geo,med_int *typ_conn)
 #endif
 {
@@ -346,7 +346,7 @@ nedfnema(med_int *fid, char *maa, med_int *lon, med_int *quoi,
   if (!fn1 )
     return(-1);
 
-  ret = (med_int) MEDnEntMaa((med_idt) *fid, fn1, (med_table) *quoi, 
+  ret = (med_int) MEDnEntMaa(*fid, fn1, (med_table) *quoi, 
 			     (med_entite_maillage) *typ_ent, 
 			     (med_geometrie_element) *typ_geo,
 			     (med_connectivite) *typ_conn); 
@@ -359,12 +359,12 @@ nedfnema(med_int *fid, char *maa, med_int *lon, med_int *quoi,
 
 #ifdef PPRO_NT
 med_int 
- EDFPGCE(med_int *fid, char *maa, unsigned int bidon,med_int *lon, 
+ EDFPGCE(med_idt *fid, char *maa, unsigned int bidon,med_int *lon, 
 		  med_int *index, med_int *ni, med_int *con,
 	          med_int *type_ent,med_int *type_con)
 #else
 med_int
-nedfpgce(med_int *fid, char *maa, med_int *lon,
+nedfpgce(med_idt *fid, char *maa, med_int *lon,
 	 med_int *index, med_int *ni, med_int *con,
 	 med_int *type_ent,med_int *type_con)
 #endif
@@ -377,7 +377,7 @@ nedfpgce(med_int *fid, char *maa, med_int *lon,
   if (!fn)
     return(-1); 
   
-  ret = (med_int) MEDpolygoneConnEcr((med_idt) *fid,fn,(med_int *) index,(med_int) *ni,
+  ret = (med_int) MEDpolygoneConnEcr(*fid,fn,(med_int *) index,(med_int) *ni,
 				     (med_int *)con,(med_entite_maillage)*type_ent,
 				     (med_connectivite) *type_con);
 
@@ -389,12 +389,12 @@ nedfpgce(med_int *fid, char *maa, med_int *lon,
 
 #ifdef PPRO_NT
 med_int 
- EDFPGCL(med_int *fid, char *maa, unsigned int bidon,med_int *lon, 
+ EDFPGCL(med_idt *fid, char *maa, unsigned int bidon,med_int *lon, 
 		  med_int *index, med_int *ni, med_int *con,
 	          med_int *type_ent,med_int *type_con)
 #else
 med_int
-nedfpgcl(med_int *fid, char *maa, med_int *lon,
+nedfpgcl(med_idt *fid, char *maa, med_int *lon,
 	 med_int *index, med_int *ni, med_int *con,
 	 med_int *type_ent,med_int *type_con)
 #endif
@@ -407,7 +407,7 @@ nedfpgcl(med_int *fid, char *maa, med_int *lon,
   if (!fn)
     return(-1); 
 
-  ret = (med_int) MEDpolygoneConnLire((med_idt) *fid, fn,
+  ret = (med_int) MEDpolygoneConnLire(*fid, fn,
 				      (med_int *) index,(med_int) *ni,(med_int *) con, 
 				      (med_entite_maillage) *type_ent,
 				      (med_connectivite) *type_con); 
@@ -419,11 +419,11 @@ nedfpgcl(med_int *fid, char *maa, med_int *lon,
 
 #ifdef PPRO_NT
 med_int 
- EDFPYGI(med_int *fid, char *maa, unsigned int bidon,med_int *lon, 
+ EDFPYGI(med_idt *fid, char *maa, unsigned int bidon,med_int *lon, 
 	          med_int *type_ent,med_int *type_con,med_int *consize)
 #else
 med_int
-nedfpygi(med_int *fid, char *maa, med_int *lon,
+nedfpygi(med_idt *fid, char *maa, med_int *lon,
 	 med_int *type_ent,med_int *type_con,med_int *consize)
 #endif
 {
@@ -435,7 +435,7 @@ nedfpygi(med_int *fid, char *maa, med_int *lon,
   if (!fn)
     return(-1); 
 
-  ret = (med_int) MEDpolygoneInfo((med_idt) *fid, fn,
+  ret = (med_int) MEDpolygoneInfo(*fid, fn,
 				  (med_entite_maillage) *type_ent,
 				  (med_connectivite) *type_con,
 				  (med_int *) consize); 
@@ -448,12 +448,12 @@ nedfpygi(med_int *fid, char *maa, med_int *lon,
 
 #ifdef PPRO_NT
 med_int 
- EDFPECE(med_int *fid, char *maa, unsigned int bidon,med_int *lon, 
+ EDFPECE(med_idt *fid, char *maa, unsigned int bidon,med_int *lon, 
 		  med_int *indexp, med_int *np,med_int *indexf, med_int *nf, 
 		  med_int *con,med_int *type_con)
 #else
 med_int
-nedfpece(med_int *fid, char *maa, med_int *lon,
+nedfpece(med_idt *fid, char *maa, med_int *lon,
 	 med_int *indexp, med_int *np,med_int *indexf, med_int *nf, 
 	 med_int *con,med_int *type_con)
 #endif
@@ -466,7 +466,7 @@ nedfpece(med_int *fid, char *maa, med_int *lon,
   if (!fn)
     return(-1); 
   
-  ret = (med_int) MEDpolyedreConnEcr((med_idt) *fid,fn,(med_int *)indexp,(med_int) *np,
+  ret = (med_int) MEDpolyedreConnEcr(*fid,fn,(med_int *)indexp,(med_int) *np,
 				     (med_int *)indexf,(med_int) *nf,(med_int *)con,
 				     (med_connectivite) *type_con);
 
@@ -478,13 +478,13 @@ nedfpece(med_int *fid, char *maa, med_int *lon,
 
 #ifdef PPRO_NT
 med_int 
- EDFPECL(med_int *fid, char *maa, unsigned int bidon,med_int *lon, 
+ EDFPECL(med_idt *fid, char *maa, unsigned int bidon,med_int *lon, 
 		  med_int *indexp, med_int *np, 
 		  med_int * indexf,med_int *nf,
 		  med_int *con,med_int *type_con)
 #else
 med_int
-nedfpecl(med_int *fid, char *maa, med_int *lon,
+nedfpecl(med_idt *fid, char *maa, med_int *lon,
 	 med_int *indexp, med_int *np, 
 	 med_int *indexf,med_int *nf,
 	 med_int *con,med_int *type_con)
@@ -498,7 +498,7 @@ nedfpecl(med_int *fid, char *maa, med_int *lon,
   if (!fn)
     return(-1); 
 
-  ret = (med_int) MEDpolyedreConnLire((med_idt) *fid, fn,
+  ret = (med_int) MEDpolyedreConnLire(*fid, fn,
 				      (med_int *) indexp,(med_int) *np,
 				      (med_int *) indexf,(med_int) *nf,
 				      (med_int *) con, 
@@ -511,11 +511,11 @@ nedfpecl(med_int *fid, char *maa, med_int *lon,
 
 #ifdef PPRO_NT
 med_int 
- EDFPYEI(med_int *fid, char *maa, unsigned int bidon,med_int *lon, 
+ EDFPYEI(med_idt *fid, char *maa, unsigned int bidon,med_int *lon, 
 	          med_int *type_con,med_int *nf,med_int *consize)
 #else
 med_int
-nedfpyei(med_int *fid, char *maa, med_int *lon,
+nedfpyei(med_idt *fid, char *maa, med_int *lon,
 	 med_int *type_con,med_int *nf,med_int *consize)
 #endif
 {
@@ -527,7 +527,7 @@ nedfpyei(med_int *fid, char *maa, med_int *lon,
   if (!fn)
     return(-1); 
 
-  ret = (med_int) MEDpolyedreInfo((med_idt) *fid, fn,
+  ret = (med_int) MEDpolyedreInfo(*fid, fn,
 				  (med_connectivite) *type_con,
 				  (med_int *) nf,
 				  (med_int *) consize); 
@@ -540,14 +540,14 @@ nedfpyei(med_int *fid, char *maa, med_int *lon,
 
 #ifdef PPRO_NT
 med_int
- EDFICOE(med_int *fid,char *maa,unsigned int bidon1,med_int *lon1,
+ EDFICOE(med_idt *fid,char *maa,unsigned int bidon1,med_int *lon1,
 		  med_int *mdim, med_float * indices,med_int *n, 
 	          med_int *axe, char *comp, 
                   unsigned int bidon2, med_int *lon2, 
 	          char *unit, unsigned int bidon3, med_int *lon3)
 #else
 med_int
-nedficoe(med_int *fid, char *maa, med_int *lon1, med_int *mdim,
+nedficoe(med_idt *fid, char *maa, med_int *lon1, med_int *mdim,
 	 med_float* indices,med_int *n, 
 	 med_int *axe, char *comp, med_int *lon2, 
 	 char *unit, med_int *lon3)
@@ -563,7 +563,7 @@ nedficoe(med_int *fid, char *maa, med_int *lon1, med_int *mdim,
   if (!fn1 || !fn2 || !fn3)
     return(-1);
  
-  ret = (med_int) MEDindicesCoordEcr((med_idt) *fid, fn1, (med_int) *mdim,
+  ret = (med_int) MEDindicesCoordEcr(*fid, fn1, (med_int) *mdim,
 				     (med_float *) indices,(med_int) *n,
 				     (med_int) *axe,fn2,fn3);
 
@@ -576,14 +576,14 @@ nedficoe(med_int *fid, char *maa, med_int *lon1, med_int *mdim,
 
 #ifdef PPRO_NT
 med_int
- EDFICOL(med_int *fid,char *maa,unsigned int bidon1,med_int *lon1,
+ EDFICOL(med_idt *fid,char *maa,unsigned int bidon1,med_int *lon1,
 		  med_int *mdim, med_float * indices,med_int *n, 
 	          med_int *axe, char *comp, 
                   unsigned int bidon2, med_int *lon2, 
 	          char *unit, unsigned int bidon3, med_int *lon3)
 #else
 med_int
-nedficol(med_int *fid, char *maa, med_int *lon1, med_int *mdim,
+nedficol(med_idt *fid, char *maa, med_int *lon1, med_int *mdim,
 	 med_float* indices,med_int *n, 
 	 med_int *axe, char *comp, med_int *lon2, 
 	 char *unit, med_int *lon3)
@@ -599,7 +599,7 @@ nedficol(med_int *fid, char *maa, med_int *lon1, med_int *mdim,
   if (!(fn1 && fs1 && fs2))
     return(-1); 
  
-  ret = (med_int) MEDindicesCoordLire((med_idt) *fid, fn1, (med_int) *mdim,
+  ret = (med_int) MEDindicesCoordLire(*fid, fn1, (med_int) *mdim,
 				      (med_float *) indices,(med_int) *n,
 				      (med_int) *axe,fs1,fs2);
 
@@ -617,11 +617,11 @@ nedficol(med_int *fid, char *maa, med_int *lon1, med_int *mdim,
 
 #ifdef PPRO_NT
 med_int
- EDFSCOE(med_int *fid,char *maa, unsigned int bidon1, med_int *lon1,
+ EDFSCOE(med_idt *fid,char *maa, unsigned int bidon1, med_int *lon1,
                   med_int * mdim,med_int *structure)
 #else
 med_int
-nedfscoe(med_int *fid,char *maa, med_int *lon1, med_int *mdim, med_int *structure)
+nedfscoe(med_idt *fid,char *maa, med_int *lon1, med_int *mdim, med_int *structure)
 #endif
 {
   med_int ret;
@@ -632,7 +632,7 @@ nedfscoe(med_int *fid,char *maa, med_int *lon1, med_int *mdim, med_int *structur
   if (!fn1 )
     return(-1);
 
-  ret = (med_int) MEDstructureCoordEcr((med_idt) *fid, fn1, (med_int) *mdim, (med_int *) structure);
+  ret = (med_int) MEDstructureCoordEcr(*fid, fn1, (med_int) *mdim, (med_int *) structure);
 
   _MEDcstringFree(fn1);
 
@@ -642,11 +642,11 @@ nedfscoe(med_int *fid,char *maa, med_int *lon1, med_int *mdim, med_int *structur
 
 #ifdef PPRO_NT
 med_int
- EDFSCOL(med_int *fid,char *maa, unsigned int bidon1, med_int *lon1,
+ EDFSCOL(med_idt *fid,char *maa, unsigned int bidon1, med_int *lon1,
                   med_int *mdim,med_int *structure)
 #else
 med_int
-nedfscol(med_int *fid,char *maa, med_int *lon1, med_int *mdim,med_int *structure)
+nedfscol(med_idt *fid,char *maa, med_int *lon1, med_int *mdim,med_int *structure)
 #endif
 {
   med_int ret;
@@ -657,7 +657,7 @@ nedfscol(med_int *fid,char *maa, med_int *lon1, med_int *mdim,med_int *structure
   if (!fn1 )
     return(-1);
 
-  ret = (med_int) MEDstructureCoordLire((med_idt) *fid, fn1, (med_int) *mdim, (med_int *) structure);
+  ret = (med_int) MEDstructureCoordLire(*fid, fn1, (med_int) *mdim, (med_int *) structure);
 
   _MEDcstringFree(fn1);
 

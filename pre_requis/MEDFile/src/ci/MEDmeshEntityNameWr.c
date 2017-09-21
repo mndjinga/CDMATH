@@ -61,7 +61,7 @@ med_err MEDmeshEntityNameWr(const med_idt              fid,
 			   _entitytype,
 			   geotype,
 			   MED_NODAL,
-			   MED_UNDEF_PFLMODE,
+			   MED_UNDEF_STMODE,
 			   MED_SAME_PROFILE_INTERNAL,
 			   MED_FULL_INTERLACE,  /*Pas d'utilité ici, car nconstituent==1*/
 			   MED_ALL_CONSTITUENT,

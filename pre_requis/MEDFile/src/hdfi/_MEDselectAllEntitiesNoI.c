@@ -100,7 +100,7 @@ med_err _MEDselectAllEntitiesNoI(const med_idt          fid,
 		     nvaluesperentity, nconstituentpervalue,
 		     constituentselect, MED_NO_INTERLACE,
 		     MED_NO_FILTER_SIZE, MED_NO_PROFILE_SIZE,
-		     MED_UNDEF_PFLMODE, MED_NO_PROFILE, filter ) <0) {
+		     MED_UNDEF_STMODE, MED_NO_PROFILE, filter ) <0) {
     MED_ERR_(_ret,MED_ERR_INIT,MED_ERR_FILTER,"");
     goto ERROR;
   }

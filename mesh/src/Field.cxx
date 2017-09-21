@@ -17,7 +17,7 @@
 
 #include <fstream>
 #include <sstream>
-using namespace ParaMEDMEM;
+using namespace MEDCoupling;
 using namespace std;
 
 
@@ -174,7 +174,7 @@ Field::Field( const std::string filename, TypeField type,
     readFieldMed(filename, type, fieldName, iteration, order);
 }
 
-ParaMEDMEM::DataArrayDouble * Field::getArray(){
+MEDCoupling::DataArrayDouble * Field::getArray(){
 	return _field->getArray();
 }
 
@@ -189,7 +189,7 @@ Field::readFieldMed( const std::string & fileNameRadical,
 	 * Reads the file fileNameRadical.med and creates a Field from it.
 	 */
   std::string completeFileName = fileNameRadical + ".med";
-  std::vector<std::string> fieldNames = MEDLoader::GetAllFieldNames(completeFileName);
+  std::vector<std::string> fieldNames = MEDCoupling::GetAllFieldNames(completeFileName);
   size_t iField = 0;
   std::string attributedFieldName;
   _field = NULL;
@@ -219,7 +219,7 @@ Field::readFieldMed( const std::string & fileNameRadical,
  
   // Get the name of the right mesh that we will attribute to the Field.
   std::vector<std::string> meshNames
-    = MEDLoader::GetMeshNamesOnField(completeFileName, attributedFieldName);
+    = MEDCoupling::GetMeshNamesOnField(completeFileName, attributedFieldName);
   if (meshNames.size() == 0) {
     std::ostringstream message;
     message << "No mesh associated to " << fieldName
@@ -229,20 +229,20 @@ Field::readFieldMed( const std::string & fileNameRadical,
   std::string attributedMeshName = meshNames[0];
 
   // Create Field.
-  ParaMEDMEM::TypeOfField medFieldType[3] = { ON_CELLS, ON_NODES, ON_CELLS };
+  MEDCoupling::TypeOfField medFieldType[3] = { ON_CELLS, ON_NODES, ON_CELLS };
   switch (type) {
   case CELLS:
-    _field = MEDLoader::ReadField(medFieldType[type], completeFileName,
+    _field = MEDCoupling::ReadField(medFieldType[type], completeFileName,
     		attributedMeshName, 0,
             attributedFieldName, iteration, order);
     break;
   case NODES:
-    _field = MEDLoader::ReadField(medFieldType[type], completeFileName,
+    _field = MEDCoupling::ReadField(medFieldType[type], completeFileName,
     		attributedMeshName, 0,
             attributedFieldName, iteration, order);
     break;
   case FACES:
-    _field = MEDLoader::ReadField(medFieldType[type], completeFileName,
+    _field = MEDCoupling::ReadField(medFieldType[type], completeFileName,
     		attributedMeshName, -1,
             attributedFieldName, iteration, order);
     break;
@@ -274,13 +274,13 @@ Field::Field( const Field & f )
 //----------------------------------------------------------------------
 {
     _mesh=f.getMesh() ;
-    MEDCouplingAutoRefCountObjectPtr<MEDCouplingFieldDouble> f1=f.getField()->deepCpy();
+    MCAuto<MEDCouplingFieldDouble> f1=f.getField()->deepCopy();
     _field=f1;
     _typeField=f.getTypeOfField();
 }
 
 //----------------------------------------------------------------------
-MEDCouplingAutoRefCountObjectPtr<MEDCouplingFieldDouble>
+MCAuto<MEDCouplingFieldDouble>
 Field::getField ( void )  const
 //----------------------------------------------------------------------
 {
@@ -292,7 +292,7 @@ void
 Field::setFieldByMEDCouplingFieldDouble ( const MEDCouplingFieldDouble* field )
 //----------------------------------------------------------------------
 {
-    MEDCouplingAutoRefCountObjectPtr<MEDCouplingFieldDouble> ff=field->deepCpy();
+    MCAuto<MEDCouplingFieldDouble> ff=field->deepCopy();
     _field=ff;
 }
 
@@ -478,7 +478,7 @@ Field::operator= ( const Field& f )
 {
     _mesh=f.getMesh() ;
     _typeField=f.getTypeOfField() ;
-    MEDCouplingAutoRefCountObjectPtr<MEDCouplingFieldDouble> f1=f.getField()->deepCpy();
+    MCAuto<MEDCouplingFieldDouble> f1=f.getField()->deepCopy();
     _field=f1;
     return *this;
 }
@@ -698,9 +698,9 @@ Field::writeMED ( const std::string fileName, bool fromScratch) const
 {
     string fname=fileName+".med";
     if (fromScratch)
-        MEDLoader::WriteField(fname.c_str(),_field,fromScratch);
+        MEDCoupling::WriteField(fname.c_str(),_field,fromScratch);
     else
-        MEDLoader::WriteFieldUsingAlreadyWrittenMesh(fname.c_str(),_field);
+        MEDCoupling::WriteFieldUsingAlreadyWrittenMesh(fname.c_str(),_field);
 }
 
 Field

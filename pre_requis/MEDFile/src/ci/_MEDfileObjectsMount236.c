@@ -135,11 +135,11 @@ void _MEDfileObjectsMount236(int dummy,...) {
   switch(medclass) {
 
   case MED_MESH :
-    strcpy(_link,MED_MAA);
+    strcpy(_link,MED_MESH_GRP);
     break;
 
   case MED_FIELD :
-    strcpy(_link,MED_CHA);
+    strcpy(_link,MED_FIELD_GRP);
     break;
 
   default :

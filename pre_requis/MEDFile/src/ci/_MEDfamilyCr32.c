@@ -28,7 +28,7 @@ _MEDfamilyCr32(int dummy, ...) {
   med_access_mode       _MED_ACCESS_MODE;
   med_err               _ret=-1;
   med_idt               _root=0,_famid=0, _datagroup=0,_datagroup2=0,_datagroup3=0;
-  char                  _fampath         [MED_TAILLE_FAS+MED_NAME_SIZE+1]=MED_FAS;
+  char                  _fampath         [MED_FAMILY_GRP_SIZE+MED_NAME_SIZE+1]=MED_FAMILY_GRP;
   const char*           _datagroupname2="";
   med_filter            _filter        = MED_FILTER_INIT;
   const char * const    _MED_FAS_NOEUD_NOM = MED_FAS_NOEUD_NOM;
@@ -102,7 +102,7 @@ _MEDfamilyCr32(int dummy, ...) {
  if ((_datagroup2 = _MEDdatagroupOuvrir(_famid,_datagroupname2)) < 0)
     if ((_datagroup2 = _MEDdatagroupCrOrderCr(_famid,_datagroupname2)) < 0 ) {
       MED_ERR_(_ret,MED_ERR_CREATE,MED_ERR_DATAGROUP,MED_ERR_FAMILY_MSG);
-      SSCRUTE(_datagroupname2);SSCRUTE(_fampath);SSCRUTE(MED_FAS);
+      SSCRUTE(_datagroupname2);SSCRUTE(_fampath);SSCRUTE(MED_FAMILY_GRP);
       goto ERROR;
   }
 
@@ -110,7 +110,7 @@ _MEDfamilyCr32(int dummy, ...) {
 
    if ((_datagroup = _MEDdatagroupCreer(_datagroup2,familyname)) < 0 ) {
       MED_ERR_(_ret,MED_ERR_CREATE,MED_ERR_DATAGROUP,MED_ERR_FAMILY_MSG);
-      SSCRUTE(familyname);SSCRUTE(_fampath);SSCRUTE(MED_FAS);
+      SSCRUTE(familyname);SSCRUTE(_fampath);SSCRUTE(MED_FAMILY_GRP);
       goto ERROR;
    }
  } else {
@@ -121,7 +121,7 @@ _MEDfamilyCr32(int dummy, ...) {
  if ( _MEDattributeIntWr(_datagroup,MED_NOM_NUM,&familynumber) < 0) {
    MED_ERR_(_ret,MED_ERR_WRITE,MED_ERR_ATTRIBUTE,MED_ERR_FAMILY_MSG);
    SSCRUTE(familyname);SSCRUTE(MED_NOM_NUM);ISCRUTE(familynumber);
-   SSCRUTE(_fampath);SSCRUTE(MED_FAS);SSCRUTE(_datagroupname2);
+   SSCRUTE(_fampath);SSCRUTE(MED_FAMILY_GRP);SSCRUTE(_datagroupname2);
    goto ERROR;
  }
 
@@ -129,12 +129,12 @@ _MEDfamilyCr32(int dummy, ...) {
 
    if ((_datagroup3 = _MEDdatagroupCreer(_datagroup,MED_NOM_GRO)) < 0 ) {
      MED_ERR_(_ret,MED_ERR_CREATE,MED_ERR_DATAGROUP,MED_ERR_FAMILY_MSG);
-     SSCRUTE(familyname);SSCRUTE(_fampath);SSCRUTE(MED_FAS);SSCRUTE(_datagroupname2);SSCRUTE(MED_NOM_GRO);
+     SSCRUTE(familyname);SSCRUTE(_fampath);SSCRUTE(MED_FAMILY_GRP);SSCRUTE(_datagroupname2);SSCRUTE(MED_NOM_GRO);
      goto ERROR;
    }
 
    if ( MEDfilterEntityCr(fid, ngroup, 1, 1, MED_ALL_CONSTITUENT,
-			  MED_FULL_INTERLACE,MED_UNDEF_PFLMODE,
+			  MED_FULL_INTERLACE,MED_UNDEF_STMODE,
 			  MED_NO_PROFILE, MED_UNDEF_SIZE, NULL, &_filter) < 0 ) {
      MED_ERR_(_ret,MED_ERR_CREATE,MED_ERR_FILTER,MED_ERR_INTERNAL_MSG);
      goto ERROR;
@@ -142,19 +142,19 @@ _MEDfamilyCr32(int dummy, ...) {
 
    if ( _MEDdatasetWr(_datagroup3,MED_NOM_NOM,MED_INTERNAL_LNAME,&_filter, groupname) < 0) {
      MED_ERR_(_ret,MED_ERR_WRITE,MED_ERR_DATASET,MED_NOM_NOM);
-     SSCRUTE(_fampath);SSCRUTE(MED_FAS);SSCRUTE(_datagroupname2);SSCRUTE(MED_NOM_GRO);
+     SSCRUTE(_fampath);SSCRUTE(MED_FAMILY_GRP);SSCRUTE(_datagroupname2);SSCRUTE(MED_NOM_GRO);
      SSCRUTE(familyname);goto ERROR;
    }
 
    if ( MEDfilterClose(&_filter) < 0 ) {
      MED_ERR_(_ret,MED_ERR_CLOSE,MED_ERR_FILTER,MED_ERR_FAMILY_MSG);
-     SSCRUTE(familyname);SSCRUTE(_fampath);SSCRUTE(MED_FAS);SSCRUTE(_datagroupname2);SSCRUTE(MED_NOM_GRO);
+     SSCRUTE(familyname);SSCRUTE(_fampath);SSCRUTE(MED_FAMILY_GRP);SSCRUTE(_datagroupname2);SSCRUTE(MED_NOM_GRO);
      goto ERROR;
    }
 
    if ( _MEDattributeIntWr(_datagroup3,MED_NOM_NBR,&ngroup) < 0) {
      MED_ERR_(_ret,MED_ERR_WRITE,MED_ERR_ATTRIBUTE,MED_ERR_FAMILY_MSG);
-     SSCRUTE(familyname);SSCRUTE(_fampath);SSCRUTE(MED_FAS);SSCRUTE(_datagroupname2);SSCRUTE(MED_NOM_GRO);
+     SSCRUTE(familyname);SSCRUTE(_fampath);SSCRUTE(MED_FAMILY_GRP);SSCRUTE(_datagroupname2);SSCRUTE(MED_NOM_GRO);
      SSCRUTE(MED_NOM_NBR);
      goto ERROR;
    }
@@ -186,7 +186,7 @@ _MEDfamilyCr32(int dummy, ...) {
  }
 
  if (_root>0)            if (_MEDdatagroupFermer(_root) < 0) {
-   MED_ERR_(_ret,MED_ERR_CLOSE,MED_ERR_DATAGROUP,MED_FAS);
+   MED_ERR_(_ret,MED_ERR_CLOSE,MED_ERR_DATAGROUP,MED_FAMILY_GRP);
    ISCRUTE_id(_root);
  }
 

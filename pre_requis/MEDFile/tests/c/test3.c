@@ -36,6 +36,16 @@
 #define MODE_ACCES MED_ACC_CREAT
 #endif
 
+
+#define OBJEXIST(oname)\
+ if ( MEDfileObjectExist(fid,MED_MESH, #oname ,& oname##exist) < 0) {	\
+    MESSAGE("Erreur de test de présence du maillage "#oname);	\
+    return -1;							\
+  }								\
+  if ( oname##exist) { MESSAGE("Le maillage "#oname" existe.");  } else \
+                     { MESSAGE("Le maillage "#oname" n'existe pas.");}
+
+
 int main (int argc, char **argv)
 
 
@@ -58,7 +68,9 @@ int main (int argc, char **argv)
   med_err           inomu;
   med_sorting_type  sortingtype;
   med_axis_type     axistype;
-
+  med_bool          maa1exist=MED_FALSE,maa2exist=MED_FALSE;
+  med_bool          maa3exist=MED_FALSE,maa4exist=MED_FALSE;
+  
   /*Pour les outils de type memchecker */
   maa    = (char *) malloc(sizeof(char)*(MED_NAME_SIZE+1   ));
   nomu   = (char *) malloc(sizeof(char)*(MED_LNAME_SIZE+1  ));
@@ -72,6 +84,9 @@ int main (int argc, char **argv)
     return -1;
   }
 
+  /* Teste la présence des maillages */
+  OBJEXIST(maa1);  OBJEXIST(maa2);  OBJEXIST(maa3);  OBJEXIST(maa4);
+ 
   /* Lecture du nombre de maillage dans le fichier */
   nmaa = MEDnMesh(fid);
   if (nmaa < 0) {

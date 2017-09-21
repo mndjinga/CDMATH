@@ -81,7 +81,7 @@ if (_MEDcheckVersion30(fid) < 0) goto ERROR;
 			    entitype,
 			    geotype,
 			    cmode,
-			    MED_UNDEF_PFLMODE,
+			    MED_UNDEF_STMODE,
 			    MED_NO_PROFILE,
 			    MED_UNDEF_INTERLACE,
 			    MED_ALL_CONSTITUENT,

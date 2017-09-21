@@ -52,7 +52,7 @@ program test11
   integer nsmc, sgtype
 
   parameter (USER_INTERLACE = MED_FULL_INTERLACE)
-  parameter (USER_MODE = MED_COMPACT_PFLMODE)
+  parameter (USER_MODE = MED_COMPACT_STMODE)
 
   cret=0;ret=0;lret=0;retmem=0
   print *,"Indiquez le fichier med a decrire : "
@@ -353,7 +353,7 @@ integer function getFieldsOn(fid, nomcha, typcha, ncomp, entite, stockage, ncst)
        &  "MED_NODE            ", &
        &  "MED_NODE_ELEMENT    "/)
 
-  parameter (USER_MODE = MED_COMPACT_PFLMODE )
+  parameter (USER_MODE = MED_COMPACT_STMODE )
 
   !!  write (*,'(A0)')  FMED_GEOMETRIE_NOEUD_AFF(1)
   !!  write (*,'(A0)')  FMED_GEOMETRIE_MAILLE_AFF(1)

@@ -30,7 +30,7 @@ void _MEDmeshComputationStepInfo30(int dummy, ...) {
   med_err  _ret=-1;
   med_idt  _meshid=0,_datagroup1=0;
   int      _num;
-  char     _cstppath[MED_TAILLE_MAA+MED_NAME_SIZE+1+2*MED_MAX_PARA+1+1]=MED_MAA;
+  char     _cstppath[MED_MESH_GRP_SIZE+MED_NAME_SIZE+1+2*MED_MAX_PARA+1+1]=MED_MESH_GRP;
   char     _cstpname[2*MED_MAX_PARA+1]="";
 
 

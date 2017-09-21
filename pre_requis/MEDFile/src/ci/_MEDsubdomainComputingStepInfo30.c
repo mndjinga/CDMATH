@@ -29,7 +29,7 @@ void _MEDsubdomainComputingStepInfo30(int dummy, ...) {
   med_err  _ret=-1,_err=-1;
   med_idt  _eqid=0,_datagroup1=0;
   int      _num;
-  char     _cstppath[MED_TAILLE_JNT+2*MED_NAME_SIZE+2+2*MED_MAX_PARA+1]=MED_JNT;
+  char     _cstppath[MED_JOINT_GRP_SIZE+2*MED_NAME_SIZE+2+2*MED_MAX_PARA+1]=MED_JOINT_GRP;
   char     _cstpname[2*MED_MAX_PARA+1]="";
   med_size _ncorrespondence=0;
 

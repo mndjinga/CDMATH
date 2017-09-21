@@ -31,9 +31,15 @@ C
       integer fid
       character*200 des
       integer hdfok, medok
+      integer fexist, accok
       character*16 nomcoo(2)
       character*16 unicoo(2)
       data  nomcoo /"x","y"/, unicoo /"cm","cm"/
+
+
+C  ** verifie que le fichier test1.med existe et est accessible  **
+      call mfiexi('test1.med', MED_ACC_RDONLY, fexist, accok, cret)
+      print *,"fexistf :",fexist, " ; accok :", accok
 
 C  ** verifie que le fichier test1.med est au bon format **
       call mficom('test1.med',hdfok,medok,cret)
@@ -70,7 +76,10 @@ C  ** Fermeture du fichier test1.med
       endif      
 
       
-C  ** Ouverture en mode de creation du fichier test2.med
+      call mfiexi('test2.med', MED_ACC_RDWR, fexist, accok, cret)
+      print *,"fexistf :",fexist, " ; accok :", accok
+
+C     ** Ouverture en mode de creation du fichier test2.med
       call mfiope(fid,'test2.med',MED_ACC_RDWR, cret)
       print *,cret
       if (cret .ne. 0 ) then

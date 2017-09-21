@@ -43,7 +43,7 @@
 #define USER_INTERLACE MED_FULL_INTERLACE
 #endif
 
-#define USER_MODE MED_COMPACT_PFLMODE
+#define USER_MODE MED_COMPACT_STMODE
 
 int main (int argc, char **argv)
 
@@ -62,13 +62,13 @@ int main (int argc, char **argv)
   char maa3[MED_NAME_SIZE+1]= "maa3";
 
 
-  /* Caract�ristiques du champ n� 1 sur TRIA6 */
+  /* Caractéristiques du champ n° 1 sur TRIA6 */
   char nomcha1[MED_NAME_SIZE+1]  = "champ reel";
   char comp1[2*MED_SNAME_SIZE+1] = "comp1           comp2           ";
                                    /*12345678901234561234567890123456*/
   char unit1[2*MED_SNAME_SIZE+1] = "unit1           unit2           ";
   med_int ncomp1  = 2;
-  /* Caract�ristiques du model n� 1 de localisation des points de gauss pour le champ n�1*/
+  /* Caractéristiques du model n° 1 de localisation des points de gauss pour le champ n°1*/
   med_int ngauss1_1 = 6;
   char gauss1_1[MED_NAME_SIZE+1]  = "Model n1";
   med_float refcoo1[12] = { -1.0,1.0, -1.0,-1.0, 1.0,-1.0, -1.0,0.0, 0.0,-1.0, 0.0,0.0 };
@@ -82,7 +82,7 @@ int main (int argc, char **argv)
   med_int   nval1_1= 1*6; /*1 valeurs et 6 points de gauss par valeur */
   med_int   _nent1_1= 1; /*1 valeurs et 6 points de gauss par valeur */
   med_float valr1_1[1*6*2]  = {0.0,1.0, 2.0,3.0, 10.0,11.0, 12.0,13.0, 20.0,21.0, 22.0,23.0};  /* 2 composantes*/
-  /* Caract�ristiques du model n� 2 de localisation des points de gauss pour le champ n�1*/
+  /* Caractéristiques du model n° 2 de localisation des points de gauss pour le champ n°1*/
   med_int ngauss1_2 = 3;
   char gauss1_2[MED_NAME_SIZE+1]  = "Model n2";
   med_float gscoo1_2[6] = { -2.0/3,1.0/3, -2.0/3,-2.0/3, 1.0/3,-2.0/3  };
@@ -91,13 +91,13 @@ int main (int argc, char **argv)
   med_int   _nent1_2= 2; /*2 valeurs et 3 points de gauss par valeur */
   med_float valr1_2[2*3*2]  = {0.0,1.0, 2.0,3.0, 10.0,11.0,   12.0,13.0, 20.0,21.0, 22.0,23.0};  /* 2 composantes*/
   med_float valr1_2p[2*3*2]  = {                              12.0,13.0, 20.0,21.0, 22.0,23.0};  /* 2 composantes*/
- /* Caract�ristiques du model n� 3 sans points de gauss pour le champ n�1*/
+ /* Caractéristiques du model n° 3 sans points de gauss pour le champ n°1*/
   med_int   nval1_3= 6; /*6 valeurs et pas de points de gauss */
   med_int   _nent1_3= 6; /*6 valeurs et pas de points de gauss */
   med_float valr1_3[2*3*2]  = {0.0,1.0, 2.0,3.0, 10.0,11.0, 12.0,13.0, 20.0,21.0, 22.0,23.0};  /* 2 composantes*/
   med_float valr1_3p[2*2*2] = {         2.0,3.0, 10.0,11.0                                 };  /* 2 composantes profil1 */
 
-  /* Caract�ristiques du champ n� 2 */
+  /* Caractéristiques du champ n° 2 */
   char nomcha2[MED_NAME_SIZE+1]  = "champ entier";
   char comp2[3*MED_SNAME_SIZE+1] = "comp1           comp2           comp3           ";
                                    /*123456789012345612345678901234561234567890123456*/
@@ -107,7 +107,7 @@ int main (int argc, char **argv)
   med_int   valr2[5*3  ]  = {0,1,2, 10,11,12, 20,21,22, 30,31,32, 40,41,42};              /* 3 composantes*/
   med_int   valr2p[3*3  ] = {0,1,2,           20,21,22,           40,41,42};              /* 3 composantes*/
 
-  /* Profils utilis�s */
+  /* Profils utilisés */
   char nomprofil1[MED_NAME_SIZE+1]  = "PROFIL(champ(1))";
   char nomprofil1b[MED_NAME_SIZE+1] = "PROFIL(champ(1b))";
   char nomprofil2[MED_NAME_SIZE+1]  = "PROFIL(champ2)";
@@ -115,7 +115,7 @@ int main (int argc, char **argv)
   med_int profil2[3] = { 1, 3, 5 };
 
 
-  /* Caract�ristiques du champ n� 3 */
+  /* Caractéristiques du champ n° 3 */
   char nomcha3[MED_NAME_SIZE+1]  = "champ entier 3";
   char comp3[3*MED_SNAME_SIZE+1] = "comp1           comp2           ";
                                    /*123456789012345612345678901234561234567890123456*/
@@ -141,7 +141,7 @@ int main (int argc, char **argv)
 
 
   /* ouverture du fichier */
-  if ((fid = MEDfileOpen("test10.med",MODE_ACCES)) < 0){
+  if ((fid = MEDfileVersionOpen("test10.med",MODE_ACCES,MED_MAJOR_NUM,MED_MINOR_NUM,MED_RELEASE_NUM)) < 0){
     MESSAGE("Erreur à l'ouverture du fichier : ");
     return -1;
   }
@@ -164,13 +164,13 @@ int main (int argc, char **argv)
   }
 
 
-  /* creation du champ r�el n�1 */
+  /* creation du champ réel n°1 */
   if ( MEDfieldCr(fid,nomcha1,MED_FLOAT64,ncomp1,comp1,unit1,dtunit,maa1 ) < 0) {
     MESSAGE("Erreur à la création du champ : ");SSCRUTE(nomcha1);
     ret = -1;
   };
 
-  /* creation du champ entier n�2 */
+  /* creation du champ entier n°2 */
   if ( MEDfieldCr(fid,nomcha2,MED_INT32,ncomp2,comp2,unit2,dtunit,maa2 ) < 0) {
     MESSAGE("Erreur à la création du champ : ");SSCRUTE(nomcha2);
     ret = -1;
@@ -182,24 +182,24 @@ int main (int argc, char **argv)
     ret = -1;
   };
 
-  /* creation de la localisation des points de Gauss mod�le n�1 */
+  /* creation de la localisation des points de Gauss modèle n°1 */
   if (MEDlocalizationWr(fid, gauss1_1, MED_TRIA6, MED_TRIA6/100, refcoo1, USER_INTERLACE,
 			ngauss1_1, gscoo1_1, wg1_1,
 			MED_NO_INTERPOLATION, MED_NO_MESH_SUPPORT ) < 0) {
-    MESSAGE("Erreur à la création du mod�le n�1 : ");SSCRUTE(gauss1_1);
+    MESSAGE("Erreur à la création du modèle n°1 : ");SSCRUTE(gauss1_1);
     ret = -1;
   };
 
-   /* creation de la localisation des points de Gauss mod�le n�2 */
+   /* creation de la localisation des points de Gauss modèle n°2 */
   if (MEDlocalizationWr(fid, gauss1_2, MED_TRIA6, MED_TRIA6/100, refcoo1, USER_INTERLACE,
 			ngauss1_2, gscoo1_2, wg1_2,
 			MED_NO_INTERPOLATION, MED_NO_MESH_SUPPORT) < 0) {
-    MESSAGE("Erreur à la création du mod�le n�1 : ");SSCRUTE(gauss1_2);
+    MESSAGE("Erreur à la création du modèle n°1 : ");SSCRUTE(gauss1_2);
     ret = -1;
   };
  
-  /* ecriture du champ n�1*/
-  /* enregistre uniquement les composantes n�2 de valr1_1, et n'utilise ni pas de temps ni n� d'ordre*/
+  /* ecriture du champ n°1*/
+  /* enregistre uniquement les composantes n°2 de valr1_1, et n'utilise ni pas de temps ni n° d'ordre*/
 
   if ( MEDfieldValueWithProfileWr(fid, nomcha1,MED_NO_DT,MED_NO_IT,0.0,MED_CELL,MED_TRIA6,USER_MODE,MED_ALLENTITIES_PROFILE,
 		       gauss1_1,USER_INTERLACE, 2, _nent1_1, (unsigned char*)valr1_1 ) < 0) {
@@ -211,7 +211,7 @@ int main (int argc, char **argv)
 
   
 
-  /* enregistre uniquement les composantes n�1 de valr1_1, et n'utilise ni pas de temps ni n� d'ordre */
+  /* enregistre uniquement les composantes n°1 de valr1_1, et n'utilise ni pas de temps ni n° d'ordre */
 
   if ( MEDfieldValueWithProfileWr(fid, nomcha1,MED_NO_DT,MED_NO_IT,0.0,MED_CELL,MED_TRIA6,USER_MODE,MED_ALLENTITIES_PROFILE,
 		       gauss1_1,USER_INTERLACE, 1, _nent1_1, (unsigned char*)valr1_1 ) < 0) {
@@ -221,7 +221,7 @@ int main (int argc, char **argv)
     ret = -1;
   };
 
-  /* enregistre uniquement les composantes n�1 de valr1_2, au pas de temps n�1(5.5), n'utilise pas de n�d'ordre*/
+  /* enregistre uniquement les composantes n°1 de valr1_2, au pas de temps n°1(5.5), n'utilise pas de n°d'ordre*/
   /* ce champ repose sur le maillage maa2 qui est distant */
 
   if ( MEDfieldValueWithProfileWr(fid, nomcha1,1,MED_NO_IT,5.5,MED_CELL,MED_TRIA6,USER_MODE,MED_ALLENTITIES_PROFILE,
@@ -232,11 +232,11 @@ int main (int argc, char **argv)
     ret = -1;
   };
 
-/*Ce test utilise un deuxi�me maillag epour un m�me champ, ceci n'existe plus en 3.0*/
-  /* enregistre uniquement les composantes n�2 de valr1_2, au pas de temps n�1(5.5), n'utilise pas de n�d'ordre*/
+/*Ce test utilise un deuxième maillage pour un même champ, ceci n'existe plus en 3.0*/
+  /* enregistre uniquement les composantes n°2 de valr1_2, au pas de temps n°1(5.5), n'utilise pas de n°d'ordre*/
   /* ce champ repose sur le maillage maa1 qui est local */
 
-  /*Ce test utilise un deuxi�me maillag epour un m�me champ, ceci n'existe plus en 3.0*/
+  /*Ce test utilise un deuxième maillage pour un même champ, ceci n'existe plus en 3.0*/
   if ( MEDfieldValueWithProfileWr(fid, nomcha1,1,1,5.5,MED_CELL,MED_TRIA6,USER_MODE,MED_ALLENTITIES_PROFILE,
 		       gauss1_1,USER_INTERLACE, 2, _nent1_1, (unsigned char*)valr1_1 ) < 0) {
     MESSAGE("Erreur à l'écriture du champ : ");
@@ -246,7 +246,7 @@ int main (int argc, char **argv)
   };
 
 
-    /* enregistre uniquement les composantes n�1 de valr1_1, au pas de temps n�1(5.5), et n�d'it�ration n�2*/
+    /* enregistre uniquement les composantes n°1 de valr1_1, au pas de temps n°1(5.5), et n°d'itération n°2*/
     /* ce champ repose sur le maillage maa3 qui est local */
 
   if ( MEDfieldValueWithProfileWr(fid, nomcha1,1,2,5.5,MED_CELL,MED_TRIA6,USER_MODE,MED_ALLENTITIES_PROFILE,
@@ -257,8 +257,8 @@ int main (int argc, char **argv)
     ret = -1;
   };
 
-  /* Creation d'un profil (selection  du deuxieme �l�ment de valr1_1) */
-  /* On n'utilise que la premi�re valeur (2) du profil */
+  /* Creation d'un profil (selection  du deuxieme élément de valr1_1) */
+  /* On n'utilise que la première valeur (2) du profil */
   if ( MEDprofileWr(fid,nomprofil1,1,profil1) < 0) {
     MESSAGE("Erreur à l'écriture du profil : ");
     SSCRUTE(nomprofil1);
@@ -275,8 +275,8 @@ int main (int argc, char **argv)
 
 
 
-  /* enregistre toutes les composantes du deuxi�me �l�ment de valr1_1 (premier �l�ment en stockage compact de valr1p),
-     au pas de temps n�2(5.6), et n�d'it�ration n�2*/
+  /* enregistre toutes les composantes du deuxième élément de valr1_1 (premier élément en stockage compact de valr1p),
+     au pas de temps n°2(5.6), et n°d'itération n°2*/
   if ( MEDfieldValueWithProfileWr(fid, nomcha1,2,2,5.6,MED_CELL,MED_TRIA6,USER_MODE,nomprofil1,
 		       MED_NO_LOCALIZATION,USER_INTERLACE, MED_ALL_CONSTITUENT, nval1_3, (unsigned char*)valr1_3p ) < 0) {
     MESSAGE("Erreur à l'écriture du champ : ");
@@ -285,8 +285,8 @@ int main (int argc, char **argv)
     ret = -1;
   };
 
-  /* enregistre toutes les composantes du deuxi�me �l�ment de valr1_1 (premier �l�ment en stockage compact de valr1p),
-     au pas de temps n�2(5.6), et n�d'it�ration n�2 */
+  /* enregistre toutes les composantes du deuxième élément de valr1_1 (premier élément en stockage compact de valr1p),
+     au pas de temps n°2(5.6), et n°d'itération n°2 */
 
   if ( MEDfieldValueWithProfileWr(fid, nomcha1,2,2,5.6,MED_CELL,MED_TRIA6,USER_MODE,nomprofil1b,
 		       gauss1_2,USER_INTERLACE, MED_ALL_CONSTITUENT, _nent1_2, (unsigned char*)valr1_2p ) < 0) {
@@ -306,7 +306,7 @@ int main (int argc, char **argv)
   };
 
 
-  /* Ecriture du champ n� 2 */
+  /* Ecriture du champ n° 2 */
     
 
   if ( MEDfieldValueWr(fid, nomcha2,MED_NO_DT,MED_NO_IT,0,
@@ -336,7 +336,7 @@ int main (int argc, char **argv)
     ret = -1;
   };
 
-  /* Creation d'un profil (selection  des �l�ments 1,3,5 de valr2) */
+  /* Creation d'un profil (selection  des éléments 1,3,5 de valr2) */
   /* On utilise les trois valeurs du profil */
   if ( MEDprofileWr(fid,nomprofil2,3,profil2) < 0) {
     MESSAGE("Erreur à l'écriture du profil : ");
@@ -353,13 +353,13 @@ int main (int argc, char **argv)
     ret = -1;
   };
 
-  /* creation du champ entier n�3 */
+  /* creation du champ entier n°3 */
   if ( MEDfieldCr(fid,nomcha3,MED_INT32,ncomp3,comp3,unit3,dtunit,maa1) < 0) {
     MESSAGE("Erreur à la création du champ : ");SSCRUTE(nomcha3);
     ret = -1;
   };
   
-  /* Ecriture du champ n� 3 */
+  /* Ecriture du champ n° 3 */
 
   if ( MEDfieldValueWr(fid, nomcha3,MED_NO_DT,MED_NO_IT,0,MED_CELL,MED_QUAD4,
 				  USER_INTERLACE, 1, nval3, (unsigned char*)valr3 ) < 0) {

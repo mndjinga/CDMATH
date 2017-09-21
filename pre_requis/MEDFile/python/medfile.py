@@ -139,11 +139,17 @@ PACKAGE_TARNAME = _medfile.PACKAGE_TARNAME
 PACKAGE_URL = _medfile.PACKAGE_URL
 PACKAGE_VERSION = _medfile.PACKAGE_VERSION
 SIZEOF_FORTRAN_INTEGER = _medfile.SIZEOF_FORTRAN_INTEGER
+SIZEOF_FORTRAN_INTEGERp4 = _medfile.SIZEOF_FORTRAN_INTEGERp4
+SIZEOF_HID_T = _medfile.SIZEOF_HID_T
 SIZEOF_INT = _medfile.SIZEOF_INT
 SIZEOF_LONG = _medfile.SIZEOF_LONG
 STDC_HEADERS = _medfile.STDC_HEADERS
 TIME_WITH_SYS_TIME = _medfile.TIME_WITH_SYS_TIME
 VERSION = _medfile.VERSION
+HDF_VERSION_MAJOR_REF = _medfile.HDF_VERSION_MAJOR_REF
+HDF_VERSION_MINOR_REF = _medfile.HDF_VERSION_MINOR_REF
+HDF_VERSION_RELEASE_REF = _medfile.HDF_VERSION_RELEASE_REF
+HDF_VERSION_NUM_REF = _medfile.HDF_VERSION_NUM_REF
 H5F_LIBVER_18 = _medfile.H5F_LIBVER_18
 MED_MAJOR_NUM = _medfile.MED_MAJOR_NUM
 MED_MINOR_NUM = _medfile.MED_MINOR_NUM
@@ -719,6 +725,31 @@ def MEDfileOpen(*args, **kwargs):
     """
   return _medfile.MEDfileOpen(*args, **kwargs)
 
+def MEDfileVersionOpen(*args, **kwargs):
+  """
+    MEDfileVersionOpen(filename, accessmode, major, minor, release) -> med_idt
+
+    Parameters:
+        filename: char const *const
+        accessmode: enum med_access_mode const
+        major: med_int const
+        minor: med_int const
+        release: med_int const
+
+    """
+  return _medfile.MEDfileVersionOpen(*args, **kwargs)
+
+def MEDfileExist(*args, **kwargs):
+  """
+    MEDfileExist(filename, accessmode) -> med_err
+
+    Parameters:
+        filename: char const *const
+        accessmode: enum med_access_mode const
+
+    """
+  return _medfile.MEDfileExist(*args, **kwargs)
+
 def MEDfileName(*args, **kwargs):
   """MEDfileName(fid) -> string"""
   return _medfile.MEDfileName(*args, **kwargs)
@@ -820,6 +851,18 @@ def MEDfileObjectsUnmount(*args, **kwargs):
 
     """
   return _medfile.MEDfileObjectsUnmount(*args, **kwargs)
+
+def MEDfileObjectExist(*args, **kwargs):
+  """
+    MEDfileObjectExist(fid, medclass, objectname) -> med_err
+
+    Parameters:
+        fid: med_idt const
+        medclass: enum med_class const
+        objectname: char const *const
+
+    """
+  return _medfile.MEDfileObjectExist(*args, **kwargs)
 # This file is compatible with both classic and new-style classes.
 
 

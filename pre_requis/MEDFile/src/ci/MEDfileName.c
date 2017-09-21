@@ -27,6 +27,7 @@
   \param filenamesize \filenamesize
   \retval med_int \filenamesize \n \error
   \details \MEDfileNameDetails
+
   \par Remarques
   \MEDfileNameRem
 */

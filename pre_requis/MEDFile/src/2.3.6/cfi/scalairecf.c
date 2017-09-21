@@ -36,12 +36,12 @@
 
 #ifdef PPRO_NT
 med_int
- EDFSCAC(med_int *fid,char *scalaire, unsigned int bidon1, 
+ EDFSCAC(med_idt *fid,char *scalaire, unsigned int bidon1, 
                   med_int *lon1,med_int *data_type, char *desc, 
                   unsigned int bidon2, med_int *lon2)
 #else
   med_int
-nedfscac(med_int *fid,char *scalaire,med_int *lon1,med_int *data_type,
+nedfscac(med_idt *fid,char *scalaire,med_int *lon1,med_int *data_type,
 	 char *desc,med_int *lon2)
 #endif
 {
@@ -56,7 +56,7 @@ nedfscac(med_int *fid,char *scalaire,med_int *lon1,med_int *data_type,
     return(-1); 
 
   typechamp = (med_type_champ) *data_type;
-  ret = (med_int) MEDscalaireCr((med_idt) *fid, fn1, 
+  ret = (med_int) MEDscalaireCr( *fid, fn1, 
 				typechamp, (char *)fn2);
 
   _MEDcstringFree(fn1);
@@ -67,13 +67,13 @@ nedfscac(med_int *fid,char *scalaire,med_int *lon1,med_int *data_type,
 
 #ifdef PPRO_NT
 med_int
- EDFSCEE(med_int *fid, 
+ EDFSCEE(med_idt *fid, 
 		  char *scalaire, unsigned int bidon1, med_int *lon1, med_int *val,
 		  med_int *numdt, char *dt_unit, unsigned int bidon2, med_int *lon2, 
 		  med_float *dt, med_int *numo) 
 #else
   med_int
-nedfscee(med_int *fid, 
+nedfscee(med_idt *fid, 
 	 char *scalaire, med_int *lon1, med_int *val,
 	 med_int *numdt, char *dt_unit, med_int *lon2, 
 	 med_float *dt, med_int *numo) 
@@ -88,7 +88,7 @@ nedfscee(med_int *fid,
   if (!fn1 || !fn2)
     return(-1); 
     
-  ret = (int) MEDscalaireEntierEcr((med_idt) *fid,(char *)fn1,(med_int) *val,
+  ret = (int) MEDscalaireEntierEcr( *fid,(char *)fn1,(med_int) *val,
 				   (med_int) *numdt, (char *) fn2, (med_float) *dt, 
 				   (med_int) *numo );
 
@@ -101,13 +101,13 @@ nedfscee(med_int *fid,
 
 #ifdef PPRO_NT
 med_int
- EDFSCFE(med_int *fid, 
+ EDFSCFE(med_idt *fid, 
 		  char *scalaire, unsigned int bidon1, med_int *lon1, med_float *val,
 		  med_int *numdt, char *dt_unit, unsigned int bidon2, med_int *lon2, 
 		  med_float *dt, med_int *numo) 
 #else
   med_int
-nedfscfe(med_int *fid, 
+nedfscfe(med_idt *fid, 
 	 char *scalaire, med_int *lon1, med_float *val,
 	 med_int *numdt, char *dt_unit, med_int *lon2, 
 	 med_float *dt, med_int *numo) 
@@ -122,7 +122,7 @@ nedfscfe(med_int *fid,
   if (!fn1 || !fn2)
     return(-1); 
     
-  ret = (int) MEDscalaireFlottantEcr((med_idt) *fid,(char *)fn1,(med_float) *val,
+  ret = (int) MEDscalaireFlottantEcr( *fid,(char *)fn1,(med_float) *val,
 				     (med_int) *numdt, (char *) fn2, (med_float) *dt, 
 				     (med_int) *numo );
 
@@ -135,15 +135,15 @@ nedfscfe(med_int *fid,
 
 #ifdef PPRO_NT
 med_int 
- EDFNSCA(med_int *fid)
+ EDFNSCA(med_idt *fid)
 #else
   med_int 
-nedfnsca(med_int *fid)
+nedfnsca(med_idt *fid)
 #endif
 {
   med_int ret; 
 
-  ret = (med_int) MEDnScalaire((med_idt) *fid);
+  ret = (med_int) MEDnScalaire( *fid);
 
   return(ret);
 }  
@@ -151,11 +151,11 @@ nedfnsca(med_int *fid)
 
 #ifdef PPRO_NT
 med_int 
- EDFSCAI(med_int *fid, med_int *ind, char *scalaire, unsigned int bidon1,
+ EDFSCAI(med_idt *fid, med_int *ind, char *scalaire, unsigned int bidon1,
                   med_int *data_type, char *desc, unsigned int bidon2)
 #else
   med_int 
-nedfscai(med_int *fid,med_int *ind,char *scalaire,
+nedfscai(med_idt *fid,med_int *ind,char *scalaire,
 	 med_int *data_type,char *desc)
 #endif
 {
@@ -169,7 +169,7 @@ nedfscai(med_int *fid,med_int *ind,char *scalaire,
   if (!(fs1&&fs2))
     return -1;     
 
-  ret = (med_int) MEDscalaireInfo((med_idt) *fid, (int)*ind, (char *)fs1, 
+  ret = (med_int) MEDscalaireInfo( *fid, (int)*ind, (char *)fs1, 
 				  &typechamp ,(char *)fs2);
   *data_type = (med_int) typechamp;
    
@@ -186,10 +186,10 @@ nedfscai(med_int *fid,med_int *ind,char *scalaire,
 
 #ifdef PPRO_NT
 med_int
- EDFNSPD(med_int *fid,char *scalaire, unsigned int bidon1, med_int *lon1)
+ EDFNSPD(med_idt *fid,char *scalaire, unsigned int bidon1, med_int *lon1)
 #else
   med_int 
-nedfnspd(med_int *fid,char *scalaire, med_int *lon1)
+nedfnspd(med_idt *fid,char *scalaire, med_int *lon1)
 #endif
 {
   med_int ret;
@@ -200,7 +200,7 @@ nedfnspd(med_int *fid,char *scalaire, med_int *lon1)
   if (!fn1)
     return(-1); 
 
-  ret = (med_int) MEDnScalairePasdetemps((med_idt) *fid,(char *) fn1);
+  ret = (med_int) MEDnScalairePasdetemps( *fid,(char *) fn1);
 
   _MEDcstringFree(fn1);
 
@@ -210,12 +210,12 @@ nedfnspd(med_int *fid,char *scalaire, med_int *lon1)
 
 #ifdef PPRO_NT
 med_int
- EDFSPDI(med_int *fid, char *scalaire, unsigned int bidon1, med_int *lon1,
+ EDFSPDI(med_idt *fid, char *scalaire, unsigned int bidon1, med_int *lon1,
 		  med_int *indice,med_int *numdt, char *dt_unit, unsigned int bidon2,
 		  med_float *dt, med_int *numo)
 #else
   med_int 
-nedfspdi(med_int *fid,char *scalaire, med_int *lon1,med_int *indice,
+nedfspdi(med_idt *fid,char *scalaire, med_int *lon1,med_int *indice,
 	 med_int *numdt,char *dt_unit, med_float *dt, med_int *numo)
 #endif
 {
@@ -228,7 +228,7 @@ nedfspdi(med_int *fid,char *scalaire, med_int *lon1,med_int *indice,
   if (!fn1)
     return(-1); 
 
-  ret = (med_int) MEDscalairePasdetempsInfo((med_idt) *fid,(char *) fn1,(int) *indice, 
+  ret = (med_int) MEDscalairePasdetempsInfo( *fid,(char *) fn1,(int) *indice, 
 					    (med_int *) numdt, (char *) fs1, 
 					    (med_float *) dt, (med_int *) numo);
 
@@ -242,12 +242,12 @@ nedfspdi(med_int *fid,char *scalaire, med_int *lon1,med_int *indice,
 
 #ifdef PPRO_NT
 med_int
- EDFSCEL(med_int *fid, 
+ EDFSCEL(med_idt *fid, 
 		  char *scalaire, unsigned int bidon1, med_int *lon1, med_int *val,
 		  med_int *numdt,med_int *numo) 
 #else
   med_int
-nedfscel(med_int *fid, 
+nedfscel(med_idt *fid, 
 	 char *scalaire, med_int *lon1, med_int *val,
 	 med_int *numdt,med_int *numo) 
 #endif
@@ -260,7 +260,7 @@ nedfscel(med_int *fid,
   if (!fn1)
     return(-1); 
 
-  ret = (med_int) MEDscalaireEntierLire((med_idt) *fid,(char *)fn1,(med_int *) val,
+  ret = (med_int) MEDscalaireEntierLire( *fid,(char *)fn1,(med_int *) val,
 					(med_int) *numdt, (med_int ) *numo);
 
   _MEDcstringFree(fn1);
@@ -271,12 +271,12 @@ nedfscel(med_int *fid,
 
 #ifdef PPRO_NT
 med_int
- EDFSCFL(med_int *fid, 
+ EDFSCFL(med_idt *fid, 
 		  char *scalaire, unsigned int bidon1, med_int *lon1, med_float *val,
 		  med_int *numdt,med_int *numo) 
 #else
   med_int
-nedfscfl(med_int *fid, 
+nedfscfl(med_idt *fid, 
 	 char *scalaire, med_int *lon1, med_float *val,
 	 med_int *numdt, med_int *numo) 
 #endif
@@ -289,7 +289,7 @@ nedfscfl(med_int *fid,
   if (!fn1)
     return(-1); 
 
-  ret = (med_int) MEDscalaireFlottantLire((med_idt) *fid,(char *)fn1,(med_float *) val,
+  ret = (med_int) MEDscalaireFlottantLire( *fid,(char *)fn1,(med_float *) val,
 					  (med_int) *numdt, (med_int ) *numo);
 
   _MEDcstringFree(fn1);

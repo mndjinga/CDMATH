@@ -28,7 +28,7 @@ void _MEDnFamily30(int dummy, ...)
 
 
   med_int       _ret=-1;
-  char          _path[MED_TAILLE_FAS+MED_NAME_SIZE+MED_TAILLE_FAS_ENTITE+MED_NAME_SIZE+1]=MED_FAS;
+  char          _path[MED_FAMILY_GRP_SIZE+MED_NAME_SIZE+MED_TAILLE_FAS_ENTITE+MED_NAME_SIZE+1]=MED_FAMILY_GRP;
   int           _pathreflen=0;
   med_int       _n=0;
   med_size      _tmpn=0;

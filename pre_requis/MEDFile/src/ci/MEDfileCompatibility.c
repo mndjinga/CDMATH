@@ -38,21 +38,41 @@ MEDfileCompatibility(const char* const filename,
   med_err _ret = -1;
   med_idt _fid =  0;
   med_idt _id  =  0;
-  med_int _major;
-  med_int _minor;
+  med_int _major = 0;
+  med_int _minor = 0;
+  med_int _hmajeur=0, _hmineur=0, _hrelease=0;
+  med_int _hversionMMR = 0;
+  med_int _fversionMM  = 0;
 
+
+  
   _MEDmodeErreurVerrouiller();
 
-  /* compatibility with hdf5 */
-  if  ( H5Fis_hdf5(filename) > 0 )
-    *hdfok = MED_TRUE;
-  else
-    *hdfok = MED_FALSE;
+  *hdfok = MED_FALSE;
+  *medok = MED_FALSE;
 
+  /* Si le fichier n'est pas un fichier hdf retourne en indiquant hdfok=false et medok=false */
+  if  ( H5Fis_hdf5(filename) < 0 )  {_ret=0;goto ERROR;};
+
+  if (MEDlibraryHdfNumVersion(&_hmajeur, &_hmineur, &_hrelease) < 0) {
+    MED_ERR_(_ret,MED_ERR_CALL,MED_ERR_API,"MEDlibraryNumVersion");
+    goto ERROR;
+  }
+
+  /* TODO : Vérifier si la version mineur d'HDF du fichier est supérieur à la version d'HDF utilisée  */
+  /** Je n'ai pas trouvé de mécanisme HDF pour trouver la version du fichier */
+  
+  /* Si la bibliothèque HDF est conforme à la version HDF de référence de cette version de la bibliothèque MED renvoie hdfok=false et medok=false */
+  /* Il se peut tout de même que cette version d'HDF soit partiellement utilisable par la bibliothèque ... on test aussi la version du modèle med */
+  _hversionMMR=10000*_hmajeur+100*_hmineur+_hrelease;
+  /* ISCRUTE(_hversionMMR); */
+  /* ISCRUTE(HDF_VERSION_NUM_REF); */
+  if ( (_hversionMMR >= HDF_VERSION_NUM_REF) && (_hmineur == HDF_VERSION_MINOR_REF) ) *hdfok = MED_TRUE;
+  
   /* compatibility with med */
   if ((_fid = _MEDfileOpen((char *)filename,MED_ACC_RDONLY)) < 0) {
     MED_ERR_(_ret,MED_ERR_OPEN,MED_ERR_FILE,filename);
-    SSCRUTE(filename);
+    /* SSCRUTE(filename); */
     goto ERROR;
   }
 
@@ -71,11 +91,15 @@ MEDfileCompatibility(const char* const filename,
     goto ERROR;
   }
 
-  *medok = MED_FALSE;
-  if (*hdfok)
-    if ((_major > 2) || ((_major == 2) && (_minor > 1)))
-      *medok = MED_TRUE;
+  _fversionMM = 100*_major+10*_minor;
 
+  *medok= MED_TRUE;
+  /* if ( (_major > 2) || ((_major == 2) && (_minor > 1)) ) *medok = MED_TRUE; */
+  if ( _fversionMM <  220 ) *medok = MED_FALSE;
+  /* Si le mineur du fichier est plus récent que celui de la bibliothèque, la bibliothèque n'est pas
+   capable de relire le modèle.*/
+  if ( _fversionMM > 100*MED_NUM_MAJEUR+10*MED_NUM_MINEUR ) *medok = MED_FALSE;
+  
   _ret = 0;
  ERROR:
 

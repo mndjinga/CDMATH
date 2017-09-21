@@ -97,7 +97,7 @@ C
 C     initial nodes coordinates in a cartesian axis in full interlace mode 
 C     (X1,Y1, X2,Y2, X3,Y3, ...) with no iteration and computation step
       call mmhcpw(fid, mname, MED_NO_DT, MED_NO_IT, 0.0D0,
-     &            MED_COMPACT_PFLMODE, MED_NO_PROFILE,
+     &            MED_COMPACT_STMODE, MED_NO_PROFILE,
      &            MED_FULL_INTERLACE, MED_ALL_CONSTITUENT,
      &            nnodes, inicoo, cret)
       if (cret .ne. 0 ) then
@@ -109,7 +109,7 @@ C
 C     cells connectivity is defined in nodal mode
       call mmhypw(fid, mname, MED_NO_DT, MED_NO_IT, 0.0D0,
      &            MED_CELL, MED_TRIA3, MED_NODAL,
-     &            MED_COMPACT_PFLMODE, MED_NO_PROFILE,
+     &            MED_COMPACT_STMODE, MED_NO_PROFILE,
      &            MED_FULL_INTERLACE, MED_ALL_CONSTITUENT,
      &            ntria3, triacy, cret)
       if (cret .ne. 0 ) then
@@ -120,7 +120,7 @@ C
 C
       call mmhypw(fid, mname, MED_NO_DT, MED_NO_IT, 0.0D0,
      &            MED_CELL, MED_QUAD4, MED_NODAL,
-     &            MED_COMPACT_PFLMODE, MED_NO_PROFILE,
+     &            MED_COMPACT_STMODE, MED_NO_PROFILE,
      &            MED_FULL_INTERLACE, MED_ALL_CONSTITUENT,
      &            nquad4, quadcy, cret)
       if (cret .ne. 0 ) then

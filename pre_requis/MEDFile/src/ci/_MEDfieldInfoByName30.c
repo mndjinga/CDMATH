@@ -27,8 +27,8 @@ _MEDfieldInfoByName30(int dummy, ...) {
 
   med_err  _ret=-1,_err=-1;
   med_idt  _fieldgid=0,_meshgid=0,_linkgid=0;
-  char     _fieldpath[MED_TAILLE_CHA+MED_NAME_SIZE+1]=MED_CHA;
-  char     _meshpath [MED_TAILLE_MAA+MED_NAME_SIZE+1]=MED_MAA;
+  char     _fieldpath[MED_FIELD_GRP_SIZE+MED_NAME_SIZE+1]=MED_FIELD_GRP;
+  char     _meshpath [MED_MESH_GRP_SIZE+MED_NAME_SIZE+1]=MED_MESH_GRP;
   char     _linkpath [MED_TAILLE_LIENS+MED_NAME_SIZE+1]=MED_LIENS;
   med_size _ncstp=0;
   med_int  _n=0;

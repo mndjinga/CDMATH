@@ -27,7 +27,7 @@
 void _MEDnSubdomainJoint30(int dummy, ...) {
 
 
-  char             _path[MED_TAILLE_JNT+MED_NAME_SIZE+1]=MED_JNT;
+  char             _path[MED_JOINT_GRP_SIZE+MED_NAME_SIZE+1]=MED_JOINT_GRP;
   med_int          _ret=-1,_err=-1;
   med_size         _tmpn=0;
 

@@ -43,11 +43,11 @@ MACRO(MED_CREATE_CONFIG_FILES)
         STRING(LENGTH "${flag_name}" len)
         IF(${len} GREATER 0)
             STRING(STRIP "${flag_name}" flag_name)
-            IF("${flag_name}" MATCHES "^F77_FUNC.*")
+            IF(flag_name MATCHES "^F77_FUNC.*")
                SET(ln "#cmakedefine ${flag_name}@${flag_name}@")
-            ELSE("${flag_name}" MATCHES "^F77_FUNC.*")
+            ELSE()
                SET(ln "#cmakedefine ${flag_name} @${flag_name}@")
-            ENDIF("${flag_name}" MATCHES "^F77_FUNC.*")
+            ENDIF()
         ENDIF(${len} GREATER 0)
         SET(f_content_new "${f_content_new}${ln}\n")
     ENDFOREACH(ln ${list_f_content})
@@ -351,6 +351,15 @@ MACRO(MED_FIND_HDF5)
     MESSAGE(STATUS "Check for HDF5 ...")
     
     FIND_PACKAGE(MedfileHDF5 REQUIRED)
+
+    ##
+    ## Requires 1.8.x version
+    ##
+    IF (NOT HDF_VERSION_MAJOR_REF EQUAL 1 OR NOT HDF_VERSION_MINOR_REF EQUAL 8)
+        MESSAGE(FATAL_ERROR "HDF5 version is ${HDF_VERSION_REF}. Only 1.8.x versions are supported.")
+    ENDIF()
+    ##
+    ##
 
     ADD_DEFINITIONS(-DH5_USE_16_API)  
     IF(WIN32 AND MEDFILE_BUILD_SHARED_LIBS)

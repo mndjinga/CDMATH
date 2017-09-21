@@ -37,8 +37,8 @@ _MEDfieldComputingStepInfo236(int dummy,...)
   med_idt   _datagroup1=0;
   char      _datagroupname1[2*MED_MAX_PARA+1]         ="";
   char      _ent_geo       [2*MED_TAILLE_NOM_ENTITE+2]="";
-  char      _path          [(MED_TAILLE_CHA+MED_TAILLE_NOM+1)+
-			    (2*MED_TAILLE_NOM_ENTITE+1)+1+(2*MED_MAX_PARA)+1]=MED_CHA;
+  char      _path          [(MED_FIELD_GRP_SIZE+MED_TAILLE_NOM+1)+
+			    (2*MED_TAILLE_NOM_ENTITE+1)+1+(2*MED_MAX_PARA)+1]=MED_FIELD_GRP;
   med_size _ncpst=0;
   med_bool _checkmultiplemesh=MED_TRUE, _multiplemesh       =MED_FALSE;
   med_bool _checkmeshname    =MED_TRUE, _samedefaultmeshname=MED_FALSE;

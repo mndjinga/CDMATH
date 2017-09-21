@@ -41,7 +41,7 @@ MEDinterpBaseFunctionCoefSize( const med_idt          fid,
 {
   med_idt           _interpid=0,_bid=0;
   med_int           _ret=-1;
-  char              _path[MED_TAILLE_INTERP+MED_NAME_SIZE+1]=MED_INTERP;
+  char              _path[MED_INTERPOLATION_GRP_SIZE+MED_NAME_SIZE+1]=MED_INTERPOLATION_GRP;
   char              _basisfuncname[MED_MAX_PARA+1]="";
   med_int           _ncoef=0;
   /*

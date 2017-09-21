@@ -34,7 +34,7 @@ void _MEDmeshAdvancedRd236(int dummy, ...)
   med_err               _ret=-1;
   med_idt               _meshid=0;
   med_idt               _datagroup=0, _datagroup2=0,_datagroup3=0,_dataset=0;
-  char                  _meshpath         [MED_TAILLE_SUP_MAA+MED_NAME_SIZE+1]="";
+  char                  _meshpath         [MED_MESH_SUPPORT_GRP_SIZE+MED_NAME_SIZE+1]="";
   char                  _datagroupname2   [MED_TAILLE_NOM_ENTITE+1]="";
   char                  _datagroupname3   [MED_TAILLE_NOM_ENTITE+1]="";
   char                  _datasetname      [MED_TAILLE_NOM_ENTITE+1]="";
@@ -124,7 +124,7 @@ void _MEDmeshAdvancedRd236(int dummy, ...)
   }
 
   /*
-   * Si le DataGroup MED_MAA n'existe pas => erreur
+   * Si le DataGroup MED_MESH_GRP n'existe pas => erreur
    */
   NOFINALBLANK(meshname,ERROR);
 
