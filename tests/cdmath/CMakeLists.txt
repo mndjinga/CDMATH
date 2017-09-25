@@ -50,7 +50,8 @@ endif (CDMATH_WITH_PETSC)
 
 SET(MESH_MED
   mesh.med
-  )
+  Sphere106Cells.med
+	)
 
 file(COPY ${MESH_MED} DESTINATION ${CMAKE_BINARY_DIR}/tests) 
 

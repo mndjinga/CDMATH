@@ -158,4 +158,8 @@ MeshTests::testClassMesh( void )
     /*
     const MEDCouplingMesh* M1MEDMesh = M2.getMEDCouplingMesh();
     */
+    
+    //Lecture maillage 2D dans espace 3D
+    cout<<"Lecture maillage 2D dans espace 3D"<<endl;
+    Mesh M7("Sphere106Cells.med");
 }
