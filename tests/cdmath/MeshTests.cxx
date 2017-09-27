@@ -163,5 +163,4 @@ MeshTests::testClassMesh( void )
     cout<<"Testing M4 : mesh with spaceDim different from meshDim"<<endl;
      Mesh M4("Sphere106Cells.med");
     cout<<"Test M4 OK"<<endl;
-
 }
