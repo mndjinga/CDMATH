@@ -1,19 +1,11 @@
-![logo](logo/cdmath_logo.png) CDMATH
-====================================
+CDMATH
+======
 
-CDMATH is a CFD toolbox designed for numerical analysts who work on the representation of thermal-hydraulics and who would prefer to focus on high-level computation. The software is maintained and used by [CDMATH](http://cdmath.jimdo.com), a collaborative workgroup with the same name. The software is easiest to install on Ubuntu 14.04 LTS, 16.04 LTS, on Debian Jessie, as well as on Fedora 20, 21, 22, 23 and 24.
-
-
-Download binary CDMATH from repositories
-----------------------------------------
-If you are on Ubuntu 14.04, you can simply add our [Ubuntu repository](https://launchpad.net/~cdmath/+archive/ubuntu/cdmath) to your system.
-
-Similarly, if you are on Fedora 20, 21 or 22, then you can also simply download an RPM package from our [Fedora repository](https://build.opensuse.org/project/repositories/home:ArthurTalpaert).
+CDMATH is a geometrical and numerical toolbox designed for numerical analysts who work on the discretisation of partial differential equations on general shapes and meshes and who would rather focus on high-level scripting. The library originates from [CDMATH](http://cdmath.jimdo.com), a collaborative workgroup with the same name. It is based on the [MEDcoupling](http://docs.salome-platform.org/latest/dev/MEDCoupling/index.html) library of the [SALOME](http://www.salome-platform.org/) project for the handling of meshes and fields, and on the library [PETSC](https://www.mcs.anl.gov/petsc/) for the handling of matrices and linear solvers. The library currently developed for linux distributions and is maintained on Ubuntu 14.04 LTS, 16.04 LTS, as well as on Fedora 20, 21, 22, 23, 24, 25 and 26.
 
 
 Download CDMATH sources to compile
 ----------------------------------
-If you are on another system, or if you prefer to compile the latest sources to benefit from our continuous improvement, please follow the instructions hereunder.
 
 Create your source directory. For instance:
 * `mkdir ~/workspace/cdmath`
@@ -30,7 +22,7 @@ Dependencies. The following packages list is sufficient on Ubuntu 14.04, Ubuntu 
  - `g++` or another C++ compiler
  - `libhdf5-dev`
  - `libopenmpi-dev`, in particular if you need to use the compilation option `-DMEDFILE_USE_MPI=ON`.
- - `petsc-dev`, if you want to compile a CDMATH-based linear solver. The version of PETSc should be 3.4 or more recent (3.5, 3.6 or 3.7 currently available). The version 3.4.2 of PETSc (released on 02 July 2013) is easily installable from Ubuntu 14.04 repositories (package libpetsc3.4.2-dev) whereas the version 3.6.2 of PETSc (released on 02 October 2015), is easily installable from Ubuntu 16.04 repositories (package libpetsc3.6.2-dev). Use the compilation option `-DCDMATH_WITH_PETSC=ON`.
+ - `petsc-dev`, if you want to compile a CDMATH-based linear solver. The version of PETSc should be 3.4 or more recent (3.5, 3.6, 3.7, 3.8 currently available). Use the compilation option `-DCDMATH_WITH_PETSC=ON`.
  - `python-dev`, `python-numpy` and `swig`, if you want to generate Python executables and libraries of CDMATH. Use the compilation option `-DCDMATH_WITH_PYTHON=ON`.
  - `libcppunit-dev`, if you want to generate unit tests. Use the compilation option `-DCDMATH_WITH_TESTS=ON`.
  - `doxygen`, `graphviz` and `mscgen`, if you want to generate a nice documentation in `~/workspace/cdmath/cdmath_install/doc/`. Use the compilation option `-DCDMATH_WITH_DOCUMENTATION=ON`.
