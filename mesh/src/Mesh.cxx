@@ -156,9 +156,9 @@ Mesh::readMeshMed( const std::string filename)
     MEDFileUMesh *m=MEDFileUMesh::New(filename.c_str());
     _mesh=m->getMeshAtLevel(0);
     _mesh->setName(m->getName());
-    cout<< "mesh name= "<<m->getName()<<endl;
     _meshDim=_mesh->getMeshDimension();
     _spaceDim=_mesh->getSpaceDimension();
+    cout<< "Loaded file "<< filename<<", mesh name= "<<m->getName()<<", _meshDim="<< _meshDim<< ", _spaceDim="<< _spaceDim<<endl;
     setMesh();
     setGroups(m);
     m->decrRef();
@@ -339,7 +339,7 @@ Mesh::setMesh( void )
     DataArrayInt *revDesc=DataArrayInt::New();
     DataArrayInt *revDescI=DataArrayInt::New();
     MEDCouplingUMesh* mu=_mesh->buildUnstructured();
-    MEDCouplingUMesh *m2=mu->buildDescendingConnectivity(desc,descI,revDesc,revDescI);
+    MEDCouplingUMesh* m2=mu->buildDescendingConnectivity(desc,descI,revDesc,revDescI);
     m2->setName(mu->getName());
 
 	const int *tmp=desc->getConstPointer();
@@ -457,7 +457,15 @@ Mesh::setMesh( void )
 
 		DataArrayDouble *baryCellF = m2->computeCellCenterOfMass() ;
 
-		MEDCouplingFieldDouble* fieldn = m2->buildOrthogonalField();
+		MEDCouplingFieldDouble* fieldn;
+		if(_spaceDim==_meshDim)
+			fieldn = m2->buildOrthogonalField();
+		else
+		{
+			cout<<"Call to buildOrthogonalField() may lead to failure since spaceDim!=meshDim"<<endl;
+			fieldn = m2->buildOrthogonalField();
+			cout<<"fieldn = m2->buildOrthogonalField() done"<<endl;
+		}
 		DataArrayDouble *normal = fieldn->getArray();
 		const double *tmpNormal = normal->getConstPointer();
 
@@ -526,8 +534,16 @@ Mesh::setMesh( void )
 
 		DataArrayDouble *barySeg = m2->computeCellCenterOfMass() ;
 		const double *coorBarySeg=barySeg->getConstPointer();
-		//DataArrayDouble *normalFaces1 = m2->buildOrthogonalField()->getArray() ;
-		MEDCouplingFieldDouble * orthoField = m2->buildOrthogonalField();
+
+		MEDCouplingFieldDouble * orthoField;
+		if(_spaceDim==_meshDim)
+			orthoField = m2->buildOrthogonalField();
+		else
+		{
+			cout<<"Call to buildOrthogonalField() may lead to failure since spaceDim!=meshDim"<<endl;
+			orthoField = m2->buildOrthogonalField();
+			cout<<"orthoField = m2->buildOrthogonalField() done"<<endl;
+		}
 		const DataArrayDouble *normalFaces1 = orthoField->getArray() ;
 		const double *normalFaces2=normalFaces1->getConstPointer();
 

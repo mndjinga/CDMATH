@@ -158,4 +158,10 @@ MeshTests::testClassMesh( void )
     /*
     const MEDCouplingMesh* M1MEDMesh = M2.getMEDCouplingMesh();
     */
+    
+    //Test of a mesh with spaceDim different from meshDim
+    cout<<"Testing M4 : mesh with spaceDim different from meshDim"<<endl;
+     Mesh M4("Sphere106Cells.med");
+    cout<<"Test M4 OK"<<endl;
+
 }
