@@ -39,14 +39,63 @@ find_package (HDF5 REQUIRED)
 set (CPACK_DEBIAN_PACKAGE_DEPENDS "libhdf5-dev")
 set (CPACK_RPM_PACKAGE_REQUIRES "hdf5-devel")
 
+# PETSc
 if (CDMATH_WITH_PETSC)
-  find_package (PETSc 3.4 REQUIRED)
-  petsc_get_version ()
+
+  if ( IS_DIRECTORY "$ENV{PETSC_DIR}")
+
+    find_package (PETSc 3.4 REQUIRED)
+    petsc_get_version ()
+
+  else ()
+    message ( STATUS "PETSC_DIR not set, searching petsc in the system" )
+
+    if ( IS_DIRECTORY "/usr/lib/petsc/") #Case ubuntu/debian system install
+      message ( STATUS "PETSC found in /usr/lib/petsc/" )
+      set(PETSC_DIR /usr/lib/petsc/)
+
+      find_package (PETSc 3.4 REQUIRED)
+      petsc_get_version ()
+
+    elseif ( IS_DIRECTORY "/usr/include/petsc/")  #Case fedora/redhat system install
+      message ( STATUS "PETSC found in /usr/include/petsc/" )
+      set(PETSC_DIR /usr/lib/)
+      set(PETSC_INCLUDES  /usr/include/petsc)
+      set(PETSC_LIBRARIES /usr/lib/)
+
+      #find_package (PETSc 3.4 REQUIRED)
+      #petsc_get_version ()
+      set(PETSC_VERSION "3.7")  
+
+    else ()  # No petsc in system, do compile petsc
+      message ( "########## PETSC not found in the system, installing petsc 3.8.0 ##########" )
+      set(PETSC_SRC ${CDMATH_SOURCE_DIR}/pre_requis/PETSc)
+      set(PETSC_DIR ${CMAKE_INSTALL_PREFIX}/share/petsc-3.8.0) # Location of the final install 
+      set(PETSC_INCLUDES  ${PETSC_DIR}/include/  ${PETSC_DIR}/include/petsc/mpiuni)
+      set(PETSC_LIBRARIES ${PETSC_DIR}/lib/libpetsc.so)
+      set(PETSC_VERSION "3.8.0")  
+
+      message (STATUS "PETSC_LIBRARIES will be located at ${PETSC_LIBRARIES}")
+
+      execute_process(COMMAND tar xzf ${PETSC_SRC}/petsc-lite-3.8.0.tar.gz  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/pre_requis)
+      execute_process(COMMAND ./configure --prefix=${PETSC_DIR} --with-debugging=0 --with-mpi=0 --download-fblaslapack=${PETSC_SRC}/fblaslapack-3.4.2.tar.gz WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/petsc-3.8.0)
+      execute_process(COMMAND make all WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/petsc-3.8.0)
+
+
+      execute_process(COMMAND make install WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/petsc-3.8.0)
+
+      message ( "########## end PETSC install ##########" )
+
+    endif ()
+  endif ()
+
   if (${PETSC_VERSION} VERSION_GREATER 3.5)
     add_definitions(-DPETSC_VERSION_GREATER_3_5)
   endif ()
-  set (CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, petsc-dev (>= 3.4)")
-  set (CPACK_RPM_PACKAGE_REQUIRES "${CPACK_RPM_PACKAGE_REQUIRES}, petsc >= 3.4") # This is not fully working yet.
+
+  set (CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, petsc-dev   (>= 3.4)")
+  set (CPACK_RPM_PACKAGE_REQUIRES   "${CPACK_RPM_PACKAGE_REQUIRES}, petsc-devel (>= 3.4)") # This is not fully working yet. 
+
 endif ()
 
 # Swig interface
