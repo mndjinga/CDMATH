@@ -15,7 +15,7 @@ BuildRequires: 	cmake, gcc-c++, hdf5-devel, petsc-devel, openmpi-devel
 Requires: 		hdf5, petsc, openmpi
 
 %description
-CDMATH is a geometrical and numerical toolbox designed for numerical analysts who work on the discretisation of partial differential equations on general shapes and meshes and who would rather focus on high-level scripting. The library originates from [CDMATH](http://cdmath.jimdo.com), a collaborative workgroup with the same name. It is based on the [MEDcoupling](http://docs.salome-platform.org/latest/dev/MEDCoupling/index.html) library of the [SALOME](http://www.salome-platform.org/) project for the handling of meshes and fields, and on the library [PETSC](https://www.mcs.anl.gov/petsc/) for the handling of matrices and linear solvers.
+CDMATH is a geometrical and numerical toolbox designed for numerical analysts who work on the discretisation of partial differential equations on general shapes and meshes and who would rather focus on high-level scripting of finite elements and finite volume methods. The library originates from [CDMATH](http://cdmath.jimdo.com), a collaborative workgroup with the same name. It is based on the [MEDcoupling](http://docs.salome-platform.org/latest/dev/MEDCoupling/index.html) library of the [SALOME](http://www.salome-platform.org/) project for the handling of meshes and fields, and on the library [PETSC](https://www.mcs.anl.gov/petsc/) for the handling of matrices and linear solvers.
 
 %prep
 %setup -q
