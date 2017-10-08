@@ -1,4 +1,5 @@
-# nom du projet base
 PROJECT(PETSc)
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
+
+
 
