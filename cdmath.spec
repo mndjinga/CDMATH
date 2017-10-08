@@ -1,21 +1,21 @@
 # -*- rpm-spec -*-
 BuildRoot:      /tmp
-Summary:        CFD toolbox
+Summary:        Numerical Analysis toolbox
 Name:           cdmath
-Version:        0.3
+Version:        0.4
 Release:        1
 License:        Open Source
 Group:          Development/Science
-Vendor:         CDMATH workgroup
-Packager:       Arthur Talpaert <firstname.lastname_cdmath@m4x.org>
+Vendor:         CEA Saclay
+Packager:       Michael Ndjinga <firstname.lastname@cea.fr>
 Source:         cdmath-%{version}.tar.gz
-URL:            https://github.com/PROJECT-CDMATH/CDMATH/archive/master.zip
+URL:            https://github.com/mndjinga/CDMATH/archive/master.zip
 
-BuildRequires: 	cmake, gcc-c++, hdf5-devel, openmpi-devel
-Requires: 		hdf5, openmpi
+BuildRequires: 	cmake, gcc-c++, hdf5-devel, petsc-devel, openmpi-devel
+Requires: 		hdf5, petsc, openmpi
 
 %description
-CDMATH is a CFD toolbox designed for numerical analysts who work on the representation of thermal-hydraulics and who would prefer to focus on high-level computation. The software is maintained and used by CDMATH (http://cdmath.jimdo.com), a collaborative workgroup with the same name.
+CDMATH is a geometrical and numerical toolbox designed for numerical analysts who work on the discretisation of partial differential equations on general shapes and meshes and who would rather focus on high-level scripting. The library originates from [CDMATH](http://cdmath.jimdo.com), a collaborative workgroup with the same name. It is based on the [MEDcoupling](http://docs.salome-platform.org/latest/dev/MEDCoupling/index.html) library of the [SALOME](http://www.salome-platform.org/) project for the handling of meshes and fields, and on the library [PETSC](https://www.mcs.anl.gov/petsc/) for the handling of matrices and linear solvers.
 
 %prep
 %setup -q
