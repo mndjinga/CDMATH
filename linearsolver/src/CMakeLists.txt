@@ -8,7 +8,7 @@ ${INTERP_KERNEL_DIR}/Bases
 )
 
 IF (CMAKE_CDMATH_TESTS)
-SET(CMAKE_CXX_FLAGS "-fprofile-arcs -ftest-coverage")
+  SET(CMAKE_CXX_FLAGS "-fprofile-arcs -ftest-coverage")
 ENDIF (CMAKE_CDMATH_TESTS)
 
 FILE(GLOB src_linearsolver_CXX . *.cxx)
