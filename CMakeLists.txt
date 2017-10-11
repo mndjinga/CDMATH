@@ -57,15 +57,14 @@ if (CDMATH_WITH_PETSC)
       find_package (PETSc 3.4 REQUIRED)
       petsc_get_version ()
 
-    elseif ( IS_DIRECTORY "/usr/include/petsc/")  #Case fedora/redhat system install
-      message ( STATUS "PETSC found in /usr/include/petsc/" )
-      set(PETSC_DIR /usr/lib/)
-      set(PETSC_INCLUDES  /usr/include/petsc)
-      set(PETSC_LIBRARIES /usr/lib/)
+    elseif ( IS_DIRECTORY "/usr/include/petsc/" AND EXISTS "/usr/lib64/libpetsc.so")  #Case fedora/redhat system install
+      message ( STATUS "PETSC includes found in /usr/include/petsc/" )
+      message ( STATUS "PETSC library found in /usr/lib64" )
+      set(PETSC_DIR /usr/)
+      set(PETSC_INCLUDES  /usr/include/petsc /usr/include/petsc/petsc/mpiuni)
+      set(PETSC_LIBRARIES /usr/lib64/libpetsc.so)
 
-      #find_package (PETSc 3.4 REQUIRED)
-      #petsc_get_version ()
-      set(PETSC_VERSION "3.7")  
+      set(PETSC_VERSION "3.7") #value for fedora 25/26 
 
     else ()  # No petsc in system, do compile petsc
       message (STATUS "PETSC not found in the system, petsc 3.8.0 will be installed" )
