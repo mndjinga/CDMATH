@@ -12,12 +12,13 @@ Create your source directory. For instance:
 * `cd ~/workspace/cdmath`
 
 Download from GitHub. For instance:
-* `git clone https://github.com/PROJECT-CDMATH/CDMATH.git cdmath_src`
+* `git clone https://github.com/mndjinga/CDMATH.git cdmath_src`
 
 
 Set environment for the compilation of CDMATH
 ---------------------------------------------
-Dependencies. The following packages list is sufficient on Ubuntu 14.04, Ubuntu 14.10 and Debian Jessie:
+Dependencies. The following packages list is sufficient on Ubuntu 14.04, Ubuntu 16.04 :
+
  - `cmake`
  - `g++` or another C++ compiler
  - `libhdf5-dev`
