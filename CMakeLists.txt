@@ -68,7 +68,7 @@ if (CDMATH_WITH_PETSC)
       set(PETSC_VERSION "3.7")  
 
     else ()  # No petsc in system, do compile petsc
-      message (STATUS "PETSC not found in the system, installing petsc 3.8.0" )
+      message (STATUS "PETSC not found in the system, petsc 3.8.0 will be installed" )
       set(PETSC_SRC ${CDMATH_SOURCE_DIR}/pre_requis/PETSc)
       set(PETSC_DIR ${CMAKE_INSTALL_PREFIX}/share/petsc-3.8.0) # Location of the final install 
       set(PETSC_INCLUDES  ${PETSC_DIR}/include/  ${PETSC_DIR}/include/petsc/mpiuni)
@@ -93,8 +93,6 @@ if (CDMATH_WITH_PETSC)
       LOG_TEST          TRUE           # Wrap test in script to log output
       LOG_INSTALL       TRUE           # Wrap install in script to log output
        )
-
-      message (STATUS " end PETSC install" )
 
     endif ()
   endif ()

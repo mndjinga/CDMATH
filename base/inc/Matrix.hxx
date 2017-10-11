@@ -10,9 +10,10 @@
 
 
 /**
- * Cell class is defined by
+ * Matrix class is defined by
  * - number of rows
  * - number of columns
+ * - values array
  */
 
 #include <iostream>
