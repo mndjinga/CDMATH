@@ -12,6 +12,6 @@ IF (CMAKE_CDMATH_TESTS)
 ENDIF (CMAKE_CDMATH_TESTS)
 
 FILE(GLOB src_linearsolver_CXX . *.cxx)
-ADD_LIBRARY(linearsolver SHARED ${src_linearsolver_CXX} ${PETSC_LIBRARIES} ${MPI_CXX_LIBRARIES})
+ADD_LIBRARY(linearsolver SHARED ${src_linearsolver_CXX} ${MPI_CXX_LIBRARIES})
 
 INSTALL(TARGETS linearsolver DESTINATION lib)

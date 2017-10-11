@@ -68,23 +68,33 @@ if (CDMATH_WITH_PETSC)
       set(PETSC_VERSION "3.7")  
 
     else ()  # No petsc in system, do compile petsc
-      message ( "########## PETSC not found in the system, installing petsc 3.8.0 ##########" )
+      message (STATUS "PETSC not found in the system, installing petsc 3.8.0" )
       set(PETSC_SRC ${CDMATH_SOURCE_DIR}/pre_requis/PETSc)
       set(PETSC_DIR ${CMAKE_INSTALL_PREFIX}/share/petsc-3.8.0) # Location of the final install 
       set(PETSC_INCLUDES  ${PETSC_DIR}/include/  ${PETSC_DIR}/include/petsc/mpiuni)
       set(PETSC_LIBRARIES ${PETSC_DIR}/lib/libpetsc.so)
       set(PETSC_VERSION "3.8.0")  
 
-      message (STATUS "PETSC_LIBRARIES will be located at ${PETSC_LIBRARIES}")
+      include(ExternalProject)
 
-      execute_process(COMMAND tar xzf ${PETSC_SRC}/petsc-lite-3.8.0.tar.gz  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/pre_requis)
-      execute_process(COMMAND ./configure --prefix=${PETSC_DIR} --with-debugging=0 --with-mpi=0 --download-fblaslapack=${PETSC_SRC}/fblaslapack-3.4.2.tar.gz WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/petsc-3.8.0)
-      execute_process(COMMAND make all WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/petsc-3.8.0)
+      ExternalProject_Add (PETSc
+      URL               ${PETSC_SRC}/petsc-lite-3.8.0.tar.gz   
+      SOURCE_DIR        ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/petsc-3.8.0
+      BUILD_IN_SOURCE   TRUE
+      CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=${PETSC_DIR} --with-debugging=0 --with-mpi=0 --download-fblaslapack=${PETSC_SRC}/fblaslapack-3.4.2.tar.gz
+      BUILD_COMMAND     make all
+      TEST_COMMAND      make test
+      INSTALL_COMMAND   make install
+      INSTALL_DIR       ${PETSC_DIR}
+      LOG_DOWNLOAD      TRUE           # Wrap download in script to log output
+      LOG_UPDATE        TRUE           # Wrap update in script to log output
+      LOG_CONFIGURE     TRUE           # Wrap configure in script to log output
+      LOG_BUILD         TRUE           # Wrap build in script to log output
+      LOG_TEST          TRUE           # Wrap test in script to log output
+      LOG_INSTALL       TRUE           # Wrap install in script to log output
+       )
 
-
-      execute_process(COMMAND make install WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/petsc-3.8.0)
-
-      message ( "########## end PETSC install ##########" )
+      message (STATUS " end PETSC install" )
 
     endif ()
   endif ()
