@@ -152,3 +152,12 @@ add_subdirectory (${examples_dir})
 if (CDMATH_WITH_PACKAGE)
   include (CPackLists.txt)
 endif ()
+
+# Configuration file
+configure_file(
+    ${PROJECT_SOURCE_DIR}/env_CDMATH.sh
+    ${CMAKE_INSTALL_PREFIX}/env_CDMATH.sh
+    @ONLY
+)
+													    
+
