@@ -536,15 +536,17 @@ Mesh::setMesh( void )
 		const double *coorBarySeg=barySeg->getConstPointer();
 
 		const double *normalFaces2;
+		MEDCouplingFieldDouble * orthoField;
 		if(_spaceDim==_meshDim)
 		{
-			MEDCouplingFieldDouble * orthoField = m2->buildOrthogonalField();
+			orthoField = m2->buildOrthogonalField();
 			const DataArrayDouble *normalFaces1 = orthoField->getArray() ;
 			normalFaces2=normalFaces1->getConstPointer();
 		}
 		else
 		{
 			/* Since spaceDim!=meshDim, don't build normal to faces */
+			orthoField=NULL;
 			normalFaces2=NULL;
 		}
 
@@ -560,10 +562,11 @@ Mesh::setMesh( void )
 			int nbCells=tmpAI[id+1]-tmpAI[id];
 
 			const int *workv=tmpNE+tmpNEI[id]+1;
+			Face fi;
 			if(_spaceDim==_meshDim)
-				Face fi( 2, nbCells, lon[id], p, normalFaces2[k], normalFaces2[k+1], 0.0) ;
+				fi=Face( 2, nbCells, lon[id], p, normalFaces2[k], normalFaces2[k+1], 0.0) ;
 			else
-				Face fi( 2, nbCells, lon[id], p, 0.0, 0.0, 0.0) ;//Since spaceDim!=meshDim, normal to faces is not defined
+				fi=Face( 2, nbCells, lon[id], p, 0.0, 0.0, 0.0) ;//Since spaceDim!=meshDim, normal to faces is not defined
 				
 			fi.addNodeId(0,workv[0]) ;
 			fi.addNodeId(1,workv[1]) ;
