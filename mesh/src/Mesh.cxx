@@ -562,14 +562,15 @@ Mesh::setMesh( void )
 			int nbCells=tmpAI[id+1]-tmpAI[id];
 
 			const int *workv=tmpNE+tmpNEI[id]+1;
+			int nbNodes= tmpNEI[id+1]-tmpNEI[id]-1;
 			Face fi;
 			if(_spaceDim==_meshDim)
 				fi=Face( 2, nbCells, lon[id], p, normalFaces2[k], normalFaces2[k+1], 0.0) ;
 			else
 				fi=Face( 2, nbCells, lon[id], p, 0.0, 0.0, 0.0) ;//Since spaceDim!=meshDim, normal to faces is not defined
 				
-			fi.addNodeId(0,workv[0]) ;
-			fi.addNodeId(1,workv[1]) ;
+			for(int node_id=0; node_id<nbNodes;node_id++)
+				fi.addNodeId(node_id,workv[node_id]) ;
 
 			fi.addCellId(0,workc[0]) ;
 			if (nbCells==2)
@@ -614,6 +615,7 @@ Mesh::Mesh( double xinf, double xsup, int nx )
     double dx = (xsup - xinf)/nx ;
 
     _spaceDim = 1 ;
+    _meshDim  = 1 ;
     _xMin=xinf;
     _xSup=xsup;
     _yMin=0.;
@@ -756,6 +758,7 @@ Mesh::Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny)
     double dy = (ysup - yinf)/ny ;
 
     _spaceDim = 2 ;
+    _meshDim  = 2 ;
     _nxyz.resize(_spaceDim);
     _nxyz[0]=nx;
     _nxyz[1]=ny;
@@ -802,7 +805,9 @@ Mesh::Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny, 
 		throw CdmathException("Mesh::Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny, double zinf, double zsup, int nz) : yinf >= ysup");
     if(zinf>=zsup)
 		throw CdmathException("Mesh::Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny, double zinf, double zsup, int nz) : zinf >= zsup");
-    _spaceDim=3;
+
+    _spaceDim = 3;
+    _meshDim  = 3;
     _xMin=xinf;
     _xSup=xsup;
     _yMin=yinf;
