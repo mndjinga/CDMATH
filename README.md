@@ -50,9 +50,9 @@ Compile and install:
 
 Notes for compilation options:
 * Eclipse: The Cmake options `-G"Eclipse CDT4 - Unix Makefiles" -D_ECLIPSE_VERSION=4.3` create project files if you want to develop CDMATH with Eclipse Kepler or higher.
-* HDF5: On some systems (not Ubuntu 14.04), you may have to use the compilation option `-DHDF5_ROOT_DIR=/path/to/hdf5/library` too.
-* MPI: On some systems (not Ubuntu 14.04), you may have to use the compilation option `-DMPI_ROOT_DIR=/path/to/mpi/library` too. You may also have to set the environment variable `export MPI_ROOT_DIR=/path/to/mpi/library`. Moreover, on some systems (not Ubuntu 14.04), the compilation option `-DMEDFILE_USE_MPI=ON` may be mandatory and be set to `ON`.
-* PETSc: On some systems (not Ubuntu 14.04), you may have to use the compilation options `-DPETSC_DIR=/path/to/petsc/installation/petsc-3.4.5/ -DPETSC_ARCH=arch-linux2-c-opt`. Adapt according to your system, as it can also be `-DPETSC_DIR=/path/to/petsc/installation/petsc-3.4.5_install/` for instance. You may also have to use `export PETSC_DIR=/path/to/compiled/source/petsc-3.4.5/bin/` if you compiled PETSc from the sources as explained on [the official documentation](http://www.mcs.anl.gov/petsc/documentation/installation.html).
+* HDF5: On some systems (not Ubuntu 14.04 nor Ubuntu 16.04), you may have to use the compilation option `-DHDF5_ROOT_DIR=/path/to/hdf5/library` too.
+* MPI: On some systems (not Ubuntu 14.04, nor Ubuntu 16.04), you may have to use the compilation option `-DMPI_ROOT_DIR=/path/to/mpi/library` too. You may also have to set the environment variable `export MPI_ROOT_DIR=/path/to/mpi/library`. Moreover, on some systems (not Ubuntu 14.04, nor Ubuntu 16.04), the compilation option `-DMEDFILE_USE_MPI=ON` may be mandatory and be set to `ON`.
+* PETSc: On some systems (not Ubuntu 14.04, nor Ubuntu 16.04), you may have to use the compilation options `-DPETSC_DIR=/path/to/petsc/installation/petsc-3.8.0/ -DPETSC_ARCH=arch-linux2-c-opt`. Adapt according to your system, as it can also be `-DPETSC_DIR=/path/to/petsc/installation/petsc-3.8.0_install/` for instance. You may also have to use `export PETSC_DIR=/path/to/compiled/source/petsc-3.8.0/bin/` if you compiled PETSc from the sources as explained on [the official documentation](http://www.mcs.anl.gov/petsc/documentation/installation.html).
 
 
 Use CDMATH
@@ -61,20 +61,22 @@ To use CDMATH with your C++ code `main.cxx`:
  * C++ libraries: `export LD_LIBRARY_PATH=~/workspace/cdmath/cdmath_install/lib`
  * To know how to include the right libraries for compilation, see the makefiles of the examples. They include the list `-linterpkernel -lmedC -lmedloader -lmedcoupling -lbase -lmesh -llinearsolver`.
 
-To use CDMATH with your Python code `main.py`:
+To use CDMATH with your Python code `main.py`, you can load the CDMATH environment in your terminal using the command
+ * source `~/workspace/cdmath/cdmath_install/env_CDMATH.sh`
+
+The CDMATH environment variables consist in :
  * C++ libraries: `export LD_LIBRARY_PATH=~/workspace/cdmath/cdmath_install/lib`
  * Python libraries: `export PYTHONPATH=~/workspace/cdmath/cdmath_install/lib/cdmath:~/workspace/cdmath/cdmath_install/bin/cdmath`
 
-
 Create Linux installation packages for CDMATH
 ---------------------------------------------
-After popular request, here is how you can create packages for Ubuntu 14.04 and Red Hat-based Linux distributions:
+After popular request, here is how you can create packages for Ubuntu 14.04 and Ubuntu 16.04 and Red Hat-based Linux distributions:
 
 1. Download CDMATH as explained hereabove.
 2. Set the environment as explained hereabove (in particular, make sure you have `rpm` installed).
 3. Generate a makefile with `cmake -DCMAKE_INSTALL_PREFIX=../cdmath_install -DCMAKE_BUILD_TYPE=Release -DCDMATH_WITH_PACKAGE=ON ../cdmath_src/` and eventually other options (documentation, tests, swig, etc).
 4. Compile with `make package`.
 
-You will then find a Debian package in the build directory; you may install it on Ubuntu 14.04. You will also find an RPM package, which you may install on Red Hat-based distributions. This way, the packages you generate may include all the compilation options you want.
+You will then find a Debian package in the build directory; you may install it on Ubuntu 14.04 or Ubuntu 16.04. You will also find an RPM package, which you may install on Red Hat-based distributions. This way, the packages you generate may include all the compilation options you want.
 
 Unfortunately, the Debian package may be said to be of “bad quality” for Debian standards as far as ownership is concerned. This is true and due to limitations in CMake/CPack. The package should still install nonetheless.
