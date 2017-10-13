@@ -535,17 +535,18 @@ Mesh::setMesh( void )
 		DataArrayDouble *barySeg = m2->computeCellCenterOfMass() ;
 		const double *coorBarySeg=barySeg->getConstPointer();
 
-		MEDCouplingFieldDouble * orthoField;
+		const double *normalFaces2;
 		if(_spaceDim==_meshDim)
-			orthoField = m2->buildOrthogonalField();
+		{
+			MEDCouplingFieldDouble * orthoField = m2->buildOrthogonalField();
+			const DataArrayDouble *normalFaces1 = orthoField->getArray() ;
+			normalFaces2=normalFaces1->getConstPointer();
+		}
 		else
 		{
-			cout<<"Call to buildOrthogonalField() may lead to failure since spaceDim!=meshDim"<<endl;
-			orthoField = m2->buildOrthogonalField();
-			cout<<"orthoField = m2->buildOrthogonalField() done"<<endl;
+			/* Since spaceDim!=meshDim, don't build normal to faces */
+			normalFaces2=NULL;
 		}
-		const DataArrayDouble *normalFaces1 = orthoField->getArray() ;
-		const double *normalFaces2=normalFaces1->getConstPointer();
 
 		for(int id(0), k(0); id<_numberOfFaces; id++, k+=_spaceDim)
 		{
@@ -559,7 +560,11 @@ Mesh::setMesh( void )
 			int nbCells=tmpAI[id+1]-tmpAI[id];
 
 			const int *workv=tmpNE+tmpNEI[id]+1;
-			Face fi( 2, nbCells, lon[id], p, normalFaces2[k], normalFaces2[k+1], 0.0) ;
+			if(_spaceDim==_meshDim)
+				Face fi( 2, nbCells, lon[id], p, normalFaces2[k], normalFaces2[k+1], 0.0) ;
+			else
+				Face fi( 2, nbCells, lon[id], p, 0.0, 0.0, 0.0) ;//Since spaceDim!=meshDim, normal to faces is not defined
+				
 			fi.addNodeId(0,workv[0]) ;
 			fi.addNodeId(1,workv[1]) ;
 
