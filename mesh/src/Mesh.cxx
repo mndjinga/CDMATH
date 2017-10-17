@@ -473,6 +473,7 @@ Mesh::setMesh( void )
 		DataArrayDouble *normal = fieldn->getArray();
 		const double *tmpNormal = normal->getConstPointer();
 
+		/*Building mesh cells */
 		for(int id(0), k(0); id<_numberOfCells; id++, k+=_spaceDim)
 		{
 			const int *work=tmp+tmpI[id];
@@ -487,6 +488,14 @@ Mesh::setMesh( void )
 			for (int d=0; d<_spaceDim; d++)
 				coorBaryXyz[d] = coorBary[k+d];
 
+			/* Filling cell nodes */
+			std::vector<int> nodeIdsOfCell ;
+			mu->getNodeIdsOfCell(id,nodeIdsOfCell) ;
+			for( int el=0;el<nbVertices;el++ )
+				ci.addNodeId(el,nodeIdsOfCell[el]) ;
+			_cells[id] = ci ;
+
+			/* Filling cell faces */
 			Point p(coorBaryXyz[0],coorBaryXyz[1],coorBaryXyz[2]) ;
 			Cell ci( nbVertices, nbFaces, surf[id], p ) ;
 			for( int el=0;el<nbFaces;el++ )
@@ -503,13 +512,9 @@ Mesh::setMesh( void )
 				ci.addNormalVector(el,xyzn[0],xyzn[1],xyzn[2]) ;
 				ci.addFaceId(el,work[el]) ;
 			}
-			std::vector<int> nodeIdsOfCell ;
-			mu->getNodeIdsOfCell(id,nodeIdsOfCell) ;
-			for( int el=0;el<nbVertices;el++ )
-				ci.addNodeId(el,nodeIdsOfCell[el]) ;
-			_cells[id] = ci ;
 		}
 
+		/*Building mesh nodes */
 		for(int id(0), k(0); id<_numberOfNodes; id++, k+=_spaceDim)
 		{
 			vector<double> coorP(3);
@@ -554,6 +559,7 @@ Mesh::setMesh( void )
 			normalFaces2=NULL;
 		}
 
+		/*Building mesh faces */
 		for(int id(0), k(0); id<_numberOfFaces; id++, k+=_spaceDim)
 		{
 			vector<double> coorBarySegXyz(3);
