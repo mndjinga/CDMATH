@@ -488,6 +488,9 @@ Mesh::setMesh( void )
 			for (int d=0; d<_spaceDim; d++)
 				coorBaryXyz[d] = coorBary[k+d];
 
+			Point p(coorBaryXyz[0],coorBaryXyz[1],coorBaryXyz[2]) ;
+			Cell ci( nbVertices, nbFaces, surf[id], p ) ;
+
 			/* Filling cell nodes */
 			std::vector<int> nodeIdsOfCell ;
 			mu->getNodeIdsOfCell(id,nodeIdsOfCell) ;
@@ -496,8 +499,6 @@ Mesh::setMesh( void )
 			_cells[id] = ci ;
 
 			/* Filling cell faces */
-			Point p(coorBaryXyz[0],coorBaryXyz[1],coorBaryXyz[2]) ;
-			Cell ci( nbVertices, nbFaces, surf[id], p ) ;
 			for( int el=0;el<nbFaces;el++ )
 			{
 				vector<double> xyzn(3);
