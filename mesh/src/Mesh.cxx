@@ -150,7 +150,7 @@ Mesh::Mesh( const std::string filename )
 
 //----------------------------------------------------------------------
 void
-Mesh::readMeshMed( const std::string filename, const meshLevel)
+Mesh::readMeshMed( const std::string filename, const int meshLevel)
 //----------------------------------------------------------------------
 {
     MEDFileUMesh *m=MEDFileUMesh::New(filename.c_str());//reads the first mesh encountered in the file, otherwise call New (const char *fileName, const char *mName, int dt=-1, int it=-1)
@@ -341,6 +341,23 @@ Mesh::setMesh( void )
     MEDCouplingUMesh* mu=_mesh->buildUnstructured();
     MEDCouplingUMesh* m2=mu->buildDescendingConnectivity(desc,descI,revDesc,revDescI);
     m2->setName(mu->getName());
+
+	//Test du type d'éléments contenus dans le maillage afin d'éviter les éléments contenant des points de gauss
+	vector< INTERP_KERNEL::NormalizedCellType > eltsTypes=mu->getAllGeoTypesSorted();
+	for(int i=0; i<eltsTypes.size();i++)
+	{
+		if(
+		   eltsTypes[i]!= INTERP_KERNEL::NORM_POINT1 && eltsTypes[i]!= INTERP_KERNEL::NORM_SEG2 
+		&& eltsTypes[i]!= INTERP_KERNEL::NORM_TRI3   && eltsTypes[i]!= INTERP_KERNEL::NORM_QUAD4
+		&& eltsTypes[i]!= INTERP_KERNEL::NORM_TETRA4 && eltsTypes[i]!= INTERP_KERNEL::NORM_PYRA5
+		&& eltsTypes[i]!= INTERP_KERNEL::NORM_PENTA6 && eltsTypes[i]!= INTERP_KERNEL::NORM_HEXA8
+		)
+		{
+			cout<< "Mesh " + mu->getName() + " contains an element of type " <<endl;
+			cout<< eltsTypes[i]<<endl;
+			throw CdmathException("Mesh::setMesh : in order to avoid gauss points, mesh should contain elements of type NORM_POINT1, NORM_SEG2, NORM_TRI3, NORM_QUAD4, NORM_TETRA4, NORM_PYRA5, NORM_PENTA6, NORM_HEXA8");
+		}
+	}
 
 	const int *tmp=desc->getConstPointer();
 	const int *tmpI=descI->getConstPointer();
