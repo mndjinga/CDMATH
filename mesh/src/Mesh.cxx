@@ -153,9 +153,9 @@ void
 Mesh::readMeshMed( const std::string filename, const meshLevel)
 //----------------------------------------------------------------------
 {
-    MEDFileUMesh *m=MEDFileUMesh::New(filename.c_str());
+    MEDFileUMesh *m=MEDFileUMesh::New(filename.c_str());//reads the first mesh encountered in the file, otherwise call New (const char *fileName, const char *mName, int dt=-1, int it=-1)
     _mesh=m->getMeshAtLevel(meshLevel);
-    _mesh->setName(m->getName());
+    _mesh->setName(_mesh->getName());
     _meshDim=_mesh->getMeshDimension();
     _spaceDim=_mesh->getSpaceDimension();
     cout<< "Loaded file "<< filename<<", mesh name= "<<m->getName()<<", _meshDim="<< _meshDim<< ", _spaceDim="<< _spaceDim<<endl;
