@@ -87,7 +87,7 @@ class Mesh
      * constructor with data
      * @param filename : file name of mesh med file
      */
-    void readMeshMed( const std::string filename ) ;
+    void readMeshMed( const std::string filename, int meshLevel=0 ) ;
 
     /**
      * constructor by copy

@@ -150,11 +150,11 @@ Mesh::Mesh( const std::string filename )
 
 //----------------------------------------------------------------------
 void
-Mesh::readMeshMed( const std::string filename)
+Mesh::readMeshMed( const std::string filename, const meshLevel)
 //----------------------------------------------------------------------
 {
     MEDFileUMesh *m=MEDFileUMesh::New(filename.c_str());
-    _mesh=m->getMeshAtLevel(0);
+    _mesh=m->getMeshAtLevel(meshLevel);
     _mesh->setName(m->getName());
     _meshDim=_mesh->getMeshDimension();
     _spaceDim=_mesh->getSpaceDimension();
@@ -576,9 +576,9 @@ Mesh::setMesh( void )
 			int nbNodes= tmpNEI[id+1]-tmpNEI[id]-1;
 			Face fi;
 			if(_spaceDim==_meshDim)
-				fi=Face( 2, nbCells, lon[id], p, normalFaces2[k], normalFaces2[k+1], 0.0) ;
+				fi=Face( nbNodes, nbCells, lon[id], p, normalFaces2[k], normalFaces2[k+1], 0.0) ;
 			else
-				fi=Face( 2, nbCells, lon[id], p, 0.0, 0.0, 0.0) ;//Since spaceDim!=meshDim, normal to faces is not defined
+				fi=Face( nbNodes, nbCells, lon[id], p, 0.0, 0.0, 0.0) ;//Since spaceDim!=meshDim, normal to faces is not defined
 				
 			for(int node_id=0; node_id<nbNodes;node_id++)
 				fi.addNodeId(node_id,workv[node_id]) ;
