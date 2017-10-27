@@ -670,7 +670,9 @@ Mesh::setMesh( void )
 		orthoField->decrRef();
 	}
 	else
-        throw CdmathException("Mesh::setMesh space dimension should be 1, 2 or 3");	desc->decrRef();
+        throw CdmathException("Mesh::setMesh space dimension should be 1, 2 or 3");
+
+	desc->decrRef();
 	descI->decrRef();
 	revDesc->decrRef();
 	revDescI->decrRef();

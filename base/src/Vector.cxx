@@ -1,4 +1,5 @@
 #include "Vector.hxx"
+#include "CdmathException.hxx"
 
 #include <cmath>
 
@@ -52,8 +53,10 @@ double
 Vector::operator* (const Vector& vector) const
 {
 	double res=0.;
-	int dim=getNumberOfRows();
-	for(int i=0; i<dim; i++)
+	int numberOfRows=getNumberOfRows();
+	if(numberOfRows!= vector.getNumberOfRows())
+		throw CdmathException("Vector::operator* vectors should have the same dimension for scalar product");
+	for(int i=0; i<numberOfRows; i++)
 	{
 		res=res+Matrix::operator()(i,0)*vector(i);
 	}
@@ -73,6 +76,8 @@ Vector
 operator+ (const Vector& vector1, const Vector& vector2)
 {
   int numberOfRows = vector1.getNumberOfRows();
+  if(numberOfRows!= vector2.getNumberOfRows())
+		throw CdmathException("Vector::operator+ vectors should have the same dimension for addition");
   Vector res(numberOfRows);
   for (int i=0; i<numberOfRows; i++)
 	  res(i) = vector1(i) + vector2(i);
@@ -83,6 +88,8 @@ Vector
 operator- (const Vector& vector1, const Vector& vector2)
 {
   int numberOfRows = vector1.getNumberOfRows();
+  if(numberOfRows!= vector2.getNumberOfRows())
+		throw CdmathException("Vector::operator+ vectors should have the same dimension for substraction");
   Vector res(numberOfRows);
   for (int i=0; i<numberOfRows; i++)
 	  res(i) = vector1(i) - vector2(i);
@@ -128,4 +135,20 @@ operator^(const Vector& vector1, const Vector& vector2)
 		for(int j=0;j<vector2.getNumberOfRows();j++)
 			res(i,j)=vector1(i)*vector1(j);
 	return res;
+}
+
+Vector
+operator% (const Vector& vector1, const Vector& vector2)
+{
+  int numberOfRows1 = vector1.getNumberOfRows();
+  int numberOfRows2 = vector2.getNumberOfRows();
+  if(numberOfRows1!= 3 || numberOfRows2!= 3 )
+		throw CdmathException("Vector::operator* vectors should have the dimension 3 for cross-product");
+
+  Vector res(3);
+  res(0) = vector1(1) * vector2(2) - vector1(2) * vector2(1);
+  res(1) = vector1(2) * vector2(0) - vector1(0) * vector2(2);
+  res(2) = vector1(0) * vector2(1) - vector1(1) * vector2(0);
+
+  return res;
 }

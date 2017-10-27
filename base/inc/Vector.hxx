@@ -42,6 +42,8 @@ class Vector: public Matrix
 
 	friend Vector operator* (const Vector& vector, double value ) ;
 
+	friend Vector operator% (const Vector& vector1, const Vector& vector2 ) ;//cross-product for vectors in dimension 3
+
 	friend Vector operator/ (const Vector& vector, double value) ;
 
 };
