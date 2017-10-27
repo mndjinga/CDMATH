@@ -580,9 +580,13 @@ Mesh::setMesh( void )
 						vecPB[i]=coo->getIJ(idNodeB,i) - coorBarySeg[_spaceDim*id+i];
 						vecPA[i]=coo->getIJ(idNodeA,i) - coorBarySeg[_spaceDim*id+i];
 						}
-						//Vector normal =
-						//normal/=normal.norm();
-
+						Vector normal =(vecPA % vecPB) % vecAB;
+						normal/=normal.norm();
+						
+						if(normal*vecPA<0)
+							ci.addNormalVector(el,normal[0],normal[1],normal[2]) ;	
+						else
+							ci.addNormalVector(el,-normal[0],-normal[1],-normal[2]) ;	
 						ci.addFaceId(el,work[el]) ;
 					}
 				}
