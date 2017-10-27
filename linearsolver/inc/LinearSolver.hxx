@@ -79,7 +79,8 @@ class LinearSolver
 
 	Mat getPetscMatrix() const ;
 	Vec getPetscVector() const ;
-
+	void viewPetscMatrix() const ;
+	
 	void kspDuplicate(const KSP source, const Mat mat, KSP* destination) const;
 
 	void precDuplicate(const PC source, const KSP ksp, PC* destination) const;

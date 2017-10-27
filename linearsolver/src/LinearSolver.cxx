@@ -354,6 +354,11 @@ LinearSolver::getPetscVector() const
     return (_smb);
 }
 
+void
+LinearSolver::viewPetscMatrix() const 
+{
+	MatView(_mat,PETSC_VIEWER_STDOUT_SELF);
+}
 PC
 LinearSolver::getPetscPc() const
 {
