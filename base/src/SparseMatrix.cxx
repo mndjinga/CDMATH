@@ -96,8 +96,8 @@ SparseMatrix::replaceValue(int i,int j,double value)
 			break;
 	if(k==nbreElts || _indexColumns[pos+k] > j+1)
 	{
-	cout<< "line i= "<<i<<"can't find column j= "<<j<<"reached column "<<_indexColumns[pos+k]<<endl	
-		 throw CdmathException("SparseMatrix::replaceValue unable to find sparse matrix (i,j) coefficient")
+		cout<< "line i= "<<i<<"can't find column j= "<<j<<"reached column "<<_indexColumns[pos+k]<<endl;	
+		throw CdmathException("SparseMatrix::replaceValue unable to find sparse matrix (i,j) coefficient");
 	}
 	double ind = pos+k;
 	_values[ind] = value;
@@ -471,12 +471,15 @@ SparseMatrix::determinant() const
 ostream&
 operator<<(ostream& out, const SparseMatrix& matrix)
 {
-	for (int i=0; i<_numberOfRows+1;i++)
+	IntTab indexRows=matrix.getIndexRows();
+	IntTab indexColumns=matrix.getIndexColumns();
+	DoubleTab values=matrix.getValues();
+	for (int i=0; i<matrix.getNumberOfRows()+1;i++)
 	{
-		int nbreElts = _indexRows[i+1] - _indexRows[i];
-		int pos = _indexRows[i];
+		int nbreElts = indexRows[i+1] - indexRows[i];
+		int pos = indexRows[i];
 		for(int k=0;k<nbreElts;k++)
-			out<<"(i= "<<i<<", j= "<<_indexColumns[pos+k]<<"), value= "<<_values[pos+k]<<endl;;
+			out<<"(i= "<<i<<", j= "<< indexColumns[pos+k] <<"), value= "<< values[pos+k]<<endl;;
 	}
 	
 	return (out);
