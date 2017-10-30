@@ -489,6 +489,8 @@ Mesh::setMesh( void )
 		{
 			//cout<<"Call to buildOrthogonalField() may lead to failure since spaceDim!=meshDim"<<endl;
 			fieldn = NULL;
+			tmpNormal = NULL;
+			normal = NULL;
 			//cout<<"fieldn = m2->buildOrthogonalField() done"<<endl;
 			// Todo dans MEDCoupling,  faire porter le champ des normales par la paire (cellule, face).
 			// Celà permettrait de construire une fonction définie en 1D et aussi lorsque spacedim!=meshdim.
@@ -556,11 +558,12 @@ Mesh::setMesh( void )
 					for( int el=0;el<nbFaces;el++ )
 					{
 						const int *workv=tmpNE+tmpNEI[work[el]]+1;
-						int nbNodes= tmpNEI[id+1]-tmpNEI[work[el]]-1;
+						int nbNodes= tmpNEI[work[el]+1]-tmpNEI[work[el]]-1;
 						if(nbNodes!=2)
 						{
-							cout<<"Mesh name "<< mu->getName()<< " space dim "<< _spaceDim <<" mesh dim "<< _meshDim <<endl;
-							throw CdmathException("Mesh::setMesh number of nodes around a face should be 2");	desc->decrRef();
+							cout<<"Mesh name "<< mu->getName()<< " space dim= "<< _spaceDim <<" mesh dim= "<< _meshDim <<endl;
+							cout<<"For cell id "<<id<<" and local face number "<<el<<", the number of nodes is "<< nbNodes<< ", total number of faces is "<< nbFaces <<endl;
+							throw CdmathException("Mesh::setMesh number of nodes around a face should be 2");
 						}
 
 						int idNodeA=workv[0];
@@ -672,10 +675,13 @@ Mesh::setMesh( void )
 		revDesc2->decrRef();
 		revDescI2->decrRef();
 		m3->decrRef();
-		fieldn->decrRef();
+		if(_spaceDim==_meshDim)
+		{
+			fieldn->decrRef();
+			orthoField->decrRef();
+		}
 		fieldl->decrRef();
 		barySeg->decrRef();
-		orthoField->decrRef();
 	}
 	else
         throw CdmathException("Mesh::setMesh space dimension should be 1, 2 or 3");
