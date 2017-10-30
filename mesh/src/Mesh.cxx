@@ -477,19 +477,23 @@ Mesh::setMesh( void )
 
 
 		MEDCouplingFieldDouble* fieldn;
+		DataArrayDouble *normal;
+		const double *tmpNormal;
 		if(_spaceDim==_meshDim)
+		{
 			fieldn = m2->buildOrthogonalField();
+			normal = fieldn->getArray();
+			tmpNormal = normal->getConstPointer();
+		}
 		else
 		{
-			cout<<"Call to buildOrthogonalField() may lead to failure since spaceDim!=meshDim"<<endl;
-			fieldn = m2->buildOrthogonalField();
-			cout<<"fieldn = m2->buildOrthogonalField() done"<<endl;
+			//cout<<"Call to buildOrthogonalField() may lead to failure since spaceDim!=meshDim"<<endl;
+			fieldn = NULL;
+			//cout<<"fieldn = m2->buildOrthogonalField() done"<<endl;
 			// Todo dans MEDCoupling,  faire porter le champ des normales par la paire (cellule, face).
 			// Celà permettrait de construire une fonction définie en 1D et aussi lorsque spacedim!=meshdim.
 			// En attendant qu'une telle fonction soit disponible dans MEDCoupling, dans CDMATH on va construire "à la main" les normales à chaque face.
 		}
-		DataArrayDouble *normal = fieldn->getArray();
-		const double *tmpNormal = normal->getConstPointer();
 
 		/*Building mesh cells */
 		for(int id(0), k(0); id<_numberOfCells; id++, k+=_spaceDim)
