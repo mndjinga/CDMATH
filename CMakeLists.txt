@@ -50,22 +50,7 @@ if (CDMATH_WITH_PETSC)
   else ()
     message ( STATUS "PETSC_DIR not set, searching petsc in the system" )
 
-    if ( IS_DIRECTORY "/usr/lib/petsc/") #Case ubuntu/debian system install
-      message ( STATUS "PETSC found in /usr/lib/petsc/" )
-      set(PETSC_DIR /usr/lib/petsc/)
-
-      find_package (PETSc 3.4 REQUIRED)
-      petsc_get_version ()
-
-    elseif ( IS_DIRECTORY "/usr/local/lib/python2.7/dist-packages/petsc") #Case ubuntu/debian system pip install
-      message ( STATUS "PETSC found in /usr/local/lib/python2.7/dist-packages/petsc" )
-      set(PETSC_DIR /usr/local/lib/python2.7/dist-packages/petsc)
-      set(PETSC_INCLUDES  /usr/local/lib/python2.7/dist-packages/petsc/include /usr/include/openmpi)
-      set(PETSC_LIBRARIES /usr/local/lib/python2.7/dist-packages/petsc/lib/libpetsc.so)
-
-      set(PETSC_VERSION "3.8") #value for Ubuntu 16.04 
-
-    elseif ( IS_DIRECTORY "/usr/include/petsc/" AND EXISTS "/usr/lib64/libpetsc.so")  #Case fedora/redhat system install
+    if ( IS_DIRECTORY "/usr/include/petsc/" AND EXISTS "/usr/lib64/libpetsc.so")  #Case fedora/redhat system install
       message ( STATUS "PETSC includes found in /usr/include/petsc/" )
       message ( STATUS "PETSC library found in /usr/lib64" )
       set(PETSC_DIR /usr/)
@@ -73,6 +58,21 @@ if (CDMATH_WITH_PETSC)
       set(PETSC_LIBRARIES /usr/lib64/libpetsc.so)
 
       set(PETSC_VERSION "3.7") #value for fedora 25/26 
+
+    #elseif ( IS_DIRECTORY "/usr/lib/petsc/") #Case ubuntu/debian system install
+    #  message ( STATUS "PETSC found in /usr/lib/petsc/" )
+    #  set(PETSC_DIR /usr/lib/petsc/)
+
+    #  find_package (PETSc 3.4 REQUIRED)
+    #  petsc_get_version ()
+
+    #elseif ( IS_DIRECTORY "/usr/local/lib/python2.7/dist-packages/petsc") #Case ubuntu/debian system pip install
+    #  message ( STATUS "PETSC found in /usr/local/lib/python2.7/dist-packages/petsc" )
+    #  set(PETSC_DIR /usr/local/lib/python2.7/dist-packages/petsc)
+    #  set(PETSC_INCLUDES  /usr/local/lib/python2.7/dist-packages/petsc/include /usr/include/openmpi)
+    #  set(PETSC_LIBRARIES /usr/local/lib/python2.7/dist-packages/petsc/lib/libpetsc.so)
+
+    #  set(PETSC_VERSION "3.8") #value for Ubuntu 16.04 
 
     else ()  # No petsc in system, do compile petsc
       message (STATUS "PETSC not found in the system, petsc 3.8.0 will be installed" )
