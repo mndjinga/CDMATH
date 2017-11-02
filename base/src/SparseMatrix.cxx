@@ -334,7 +334,7 @@ operator*(const SparseMatrix& matrix1, const SparseMatrix& matrix2)
 	  int numberOfRows2 = matrix2.getNumberOfRows();
 	  int numberOfColumns2 = matrix2.getNumberOfColumns();
 
-	  if(numberOfColumns!=numberOfRows2)
+	  if(numberOfColumns!=numberOfColumns2 || numberOfRows!=numberOfRows2)
 	  {
 			string msg="Matrix Matrix::operator()*(const Matrix& matrix1, const Matrix& matrix2): dimensions of the matrices are incompatible!";
 		    throw CdmathException(msg);
@@ -359,7 +359,7 @@ SparseMatrix::operator*= (const SparseMatrix& matrix)
 	  int numberOfRows2 = matrix.getNumberOfRows();
 	  int numberOfColumns2 = matrix.getNumberOfColumns();
 
-	  if(_numberOfColumns!=numberOfRows2)
+	  if(_numberOfColumns!=numberOfColumns2 || _numberOfRows!=numberOfRows2)
 	  {
 			string msg="SparseMatrix SparseMatrix::operator()*(const Matrix& matrix1, const Matrix& matrix2): dimensions of the matrices are incompatible!";
 		    throw CdmathException(msg);
@@ -479,8 +479,32 @@ operator<<(ostream& out, const SparseMatrix& matrix)
 		int nbreElts = indexRows[i+1] - indexRows[i];
 		int pos = indexRows[i];
 		for(int k=0;k<nbreElts;k++)
-			out<<"(i= "<<i<<", j= "<< indexColumns[pos+k] <<"), value= "<< values[pos+k]<<endl;;
+			out<<"(i= "<<i<<", j= "<< indexColumns[pos+k] -1 <<"), value= "<< values[pos+k]<<endl;
 	}
 	
 	return (out);
+}
+
+void
+SparseMatrix::viewMatrix() const 
+{
+	for (int i=0; i<_numberOfRows+1;i++)
+	{
+		cout<<"Row i= "<<i<<endl;
+		int nbreElts = _indexRows[i+1] - _indexRows[i];
+		int pos = _indexRows[i];
+		for(int k=0;k<nbreElts;k++)
+			cout<<"(j= "<< _indexColumns[pos+k] -1 <<", value= "<< _values[pos+k]<<"), ";
+		cout<<endl;
+	}
+}
+
+void
+SparseMatrix::viewRow(int i) const 
+{
+	int nbreElts = _indexRows[i+1] - _indexRows[i];
+	int pos = _indexRows[i];
+	for(int k=0;k<nbreElts;k++)
+		cout<<"(j= "<< _indexColumns[pos+k] -1 <<", value= "<< _values[pos+k]<<"), ";
+	cout<<endl;
 }

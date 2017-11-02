@@ -90,6 +90,9 @@ public:
     friend SparseMatrix operator*(const SparseMatrix& M, const SparseMatrix& N) ;
 
     friend std::ostream& operator<<(std::ostream& out, const SparseMatrix& matrix ) ;
+    
+    void viewMatrix() const ;
+    void viewRow(int i) const ;
 
 private:
     void replaceValue(int i,int j,double value) ;
