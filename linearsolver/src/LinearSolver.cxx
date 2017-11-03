@@ -241,11 +241,14 @@ LinearSolver::setMatrix(const GenericMatrix& matrix)
         {
             PetscInt    cols[nnz[i]];
             PetscScalar    vals[nnz[i]];
-            for (int j=0;j<nnz[i];j++)
+            //cout<< "i="<<i<<", nnz[i]= "<<nnz[i]<<", colonnes"<<endl;
+           for (int j=0;j<nnz[i];j++)
             {
                 cols[j]=iColumns[iRows[i]+j]-1;
                 vals[j]=values[iRows[i]+j];
+                //cout<<cols[j]<<", ";
             }
+            //cout<<endl;
             MatSetValues(_mat,1,
                         &i,
                         nnz[i],
@@ -358,6 +361,14 @@ void
 LinearSolver::viewPetscMatrix() const 
 {
 	MatView(_mat,PETSC_VIEWER_STDOUT_SELF);
+}
+double
+LinearSolver::getPetscMatValue(int i, int j) const 
+{
+	double res;
+	int idxm=i,idxn=j;
+	MatGetValues(_mat,1,&idxm,1, &idxn,&res);
+	return res;
 }
 PC
 LinearSolver::getPetscPc() const
