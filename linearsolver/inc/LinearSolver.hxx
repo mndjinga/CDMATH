@@ -80,6 +80,7 @@ class LinearSolver
 	Mat getPetscMatrix() const ;
 	Vec getPetscVector() const ;
 	void viewPetscMatrix() const ;
+	void viewPetscRHS() const;
 	double getPetscMatValue(int i, int j) const;
 	
 	void kspDuplicate(const KSP source, const Mat mat, KSP* destination) const;

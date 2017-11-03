@@ -362,6 +362,11 @@ LinearSolver::viewPetscMatrix() const
 {
 	MatView(_mat,PETSC_VIEWER_STDOUT_SELF);
 }
+void
+LinearSolver::viewPetscRHS() const 
+{
+	VecView(_smb,PETSC_VIEWER_STDOUT_SELF);
+}
 double
 LinearSolver::getPetscMatValue(int i, int j) const 
 {
