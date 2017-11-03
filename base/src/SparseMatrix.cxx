@@ -488,7 +488,7 @@ operator<<(ostream& out, const SparseMatrix& matrix)
 void
 SparseMatrix::viewMatrix() const 
 {
-	for (int i=0; i<_numberOfRows+1;i++)
+	for (int i=0; i<_numberOfRows;i++)
 	{
 		cout<<"Row i= "<<i<<endl;
 		int nbreElts = _indexRows[i+1] - _indexRows[i];
