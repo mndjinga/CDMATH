@@ -506,7 +506,7 @@ LinearSolver::vectorToVec(const Vector& myVector) const
     for (PetscInt i=0; i<numberOfRows; i++)
     {
         double value = myVector(i);
-        VecSetValues(X,1,&i,&value,ADD_VALUES);
+        VecSetValues(X,1,&i,&value,INSERT_VALUES);
     }
 
     VecAssemblyBegin(X);
