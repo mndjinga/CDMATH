@@ -31,7 +31,7 @@ public:
      * constructor with data
      * @param numberOfRows : The number of rows
      * @param numberOfColumns : The number of columns
-     * @param nnz : The number of nonzeros
+     * @param nnz : The number of nonzeros coefficients in the matrix or an upper bound
      */
 	SparseMatrix( int numberOfRows, int numberOfColumns, int nnz ) ;
 

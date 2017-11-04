@@ -63,10 +63,6 @@ class LinearSolver
 
 	Vector solve( void ) ;
 
-	Vec vectorToVec( const Vector& myVector ) const ;
-
-	Vector vecToVector(const Vec& vec) const ;
-
 	void setMatrix(const GenericMatrix& matrix) ;
 
 	void setSndMember(const Vector& secondMember) ;
@@ -93,6 +89,10 @@ class LinearSolver
 	void setLinearSolver(const GenericMatrix& matrix, const Vector& secondMember) ;
 	KSP getPetscKsp() const ;
 	PC getPetscPc() const ;
+
+	Vec vectorToVec( const Vector& myVector ) const ;
+
+	Vector vecToVector(const Vec& vec) const ;
 
 	double _tol;
 	int _numberMaxOfIter;

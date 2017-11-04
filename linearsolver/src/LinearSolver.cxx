@@ -158,7 +158,6 @@ LinearSolver::setMethod(string nameOfMethod)
         string msg="LinearSolver::LinearSolver: preconditioner "+_nameOfPc+" is not compatible with "+_nameOfMethod+".\n";
         throw CdmathException(msg);
     }
-
 }
 
 
@@ -287,6 +286,8 @@ void
 LinearSolver::setSndMember(const Vector& secondMember)
 {
     _secondMember=secondMember;
+    if(_smb!=NULL)
+		VecDestroy(&_smb);
     _smb=vectorToVec(secondMember);
 
 }
@@ -496,7 +497,6 @@ LinearSolver::solve( void )
 Vec
 LinearSolver::vectorToVec(const Vector& myVector) const
 {
-    PetscInitialize(0, (char ***)"", PETSC_NULL, PETSC_NULL);
     int numberOfRows=myVector.getNumberOfRows();
     Vec X;
 
@@ -518,7 +518,6 @@ LinearSolver::vectorToVec(const Vector& myVector) const
 Vector
 LinearSolver::vecToVector(const Vec& vec) const
 {
-    PetscInitialize(0,(char ***)"", PETSC_NULL, PETSC_NULL);
     PetscInt numberOfRows;
 
     VecGetSize(vec,&numberOfRows);
