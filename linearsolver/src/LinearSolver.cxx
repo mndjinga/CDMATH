@@ -376,6 +376,14 @@ LinearSolver::getPetscMatValue(int i, int j) const
 	MatGetValues(_mat,1,&idxm,1, &idxn,&res);
 	return res;
 }
+double
+LinearSolver::getPetscRHSValue(int i) const 
+{
+	double res;
+	int idxm=i;
+	VecGetValues(_smb,1,&idxm,&res);
+	return res;
+}
 PC
 LinearSolver::getPetscPc() const
 {
