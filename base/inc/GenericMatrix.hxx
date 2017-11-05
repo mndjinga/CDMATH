@@ -59,6 +59,8 @@ class GenericMatrix
 
     bool isSparseMatrix( void ) const ;
 
+    virtual  bool containsPetscMatrix() const { return false; };
+
     int coefficient(int index) const ;
 
     void view() const ;

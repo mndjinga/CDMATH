@@ -72,7 +72,7 @@ class LinearSolver
 	bool isSingular( void ) const;
 
     bool isSparseMatrix( void ) const ;
-
+    
 	Mat getPetscMatrix() const ;
 	Vec getPetscVector() const ;
 	void viewPetscMatrix() const ;

@@ -15,6 +15,7 @@
 #include "CdmathException.hxx"
 #include "LinearSolver.hxx"
 #include "SparseMatrix.hxx"
+#include "SparseMatrixPetsc.hxx"
 
 using namespace std;
 
@@ -227,8 +228,14 @@ LinearSolver::setMatrix(const GenericMatrix& matrix)
 
     if (matrix.isSparseMatrix())
     {
+		if(matrix.containsPetscMatrix())
+		{
+         const SparseMatrixPetsc& Smat = dynamic_cast<const SparseMatrixPetsc&>(matrix);
+		_mat=Smat.getPetscMatrix();
+		}
+		else
+		{
         const SparseMatrix& Smat = dynamic_cast<const SparseMatrix&>(matrix);
-        //int numberOfNonZeros=Smat.getNumberOfNonZeros();
         PetscInt nnz[numberOfRows];
         IntTab iRows=Smat.getIndexRows();
         IntTab iColumns=Smat.getIndexColumns();
@@ -240,21 +247,20 @@ LinearSolver::setMatrix(const GenericMatrix& matrix)
         {
             PetscInt    cols[nnz[i]];
             PetscScalar    vals[nnz[i]];
-            //cout<< "i="<<i<<", nnz[i]= "<<nnz[i]<<", colonnes"<<endl;
            for (int j=0;j<nnz[i];j++)
             {
                 cols[j]=iColumns[iRows[i]+j]-1;
                 vals[j]=values[iRows[i]+j];
-                //cout<<cols[j]<<", ";
             }
-            //cout<<endl;
             MatSetValues(_mat,1,
                         &i,
                         nnz[i],
                         cols,
                         vals,INSERT_VALUES);
         }
-    } else
+		}
+    } 
+    else
     {
         MatCreate(PETSC_COMM_WORLD, &_mat);
         MatSetSizes(_mat, PETSC_DECIDE, PETSC_DECIDE, numberOfRows, numberOfColumns);
