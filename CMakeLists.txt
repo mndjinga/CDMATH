@@ -58,6 +58,7 @@ if (CDMATH_WITH_PETSC)
       set(PETSC_LIBRARIES /usr/lib64/libpetsc.so)
 
       set(PETSC_VERSION "3.7") #value for fedora 25/26 
+      set (CPACK_RPM_PACKAGE_REQUIRES   "${CPACK_RPM_PACKAGE_REQUIRES}, petsc-devel (>= 3.4)") # This is not fully working yet. 
 
     #elseif ( IS_DIRECTORY "/usr/lib/petsc/") #Case ubuntu/debian system install
     #  message ( STATUS "PETSC found in /usr/lib/petsc/" )
@@ -65,6 +66,7 @@ if (CDMATH_WITH_PETSC)
 
     #  find_package (PETSc 3.4 REQUIRED)
     #  petsc_get_version ()
+    #  set (CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, petsc-dev   (>= 3.4)") # This is not fully working yet. 
 
     #elseif ( IS_DIRECTORY "/usr/local/lib/python2.7/dist-packages/petsc") #Case ubuntu/debian system pip install
     #  message ( STATUS "PETSC found in /usr/local/lib/python2.7/dist-packages/petsc" )
@@ -107,9 +109,6 @@ if (CDMATH_WITH_PETSC)
   if (${PETSC_VERSION} VERSION_GREATER 3.5)
     add_definitions(-DPETSC_VERSION_GREATER_3_5)
   endif ()
-
-  set (CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, petsc-dev   (>= 3.4)")
-  set (CPACK_RPM_PACKAGE_REQUIRES   "${CPACK_RPM_PACKAGE_REQUIRES}, petsc-devel (>= 3.4)") # This is not fully working yet. 
 
 endif ()
 
