@@ -41,8 +41,9 @@ set (CPACK_RPM_PACKAGE_REQUIRES "hdf5-devel")
 
 # PETSc
 if (CDMATH_WITH_PETSC)
+    message ( STATUS "Checking variable PETSC_DIR : " $ENV{PETSC_DIR} )
 
-  if ( IS_DIRECTORY "$ENV{PETSC_DIR}")
+  if ( DEFINED ENV{PETSC_DIR})
 
     find_package (PETSc 3.4 REQUIRED)
     petsc_get_version ()
