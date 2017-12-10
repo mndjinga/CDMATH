@@ -21,87 +21,88 @@ public:
 	virtual ~SparseMatrix();
 
 	/**
-     * constructor with data
-     * @param numberOfRows : The number of rows
-     * @param numberOfColumns : The number of columns
-     */
+	 * constructor with data
+	 * @param numberOfRows : The number of rows
+	 * @param numberOfColumns : The number of columns
+	 */
 	SparseMatrix( int numberOfRows, int numberOfColumns ) ;
 
 	/**
-     * constructor with data
-     * @param numberOfRows : The number of rows
-     * @param numberOfColumns : The number of columns
-     * @param nnz : The number of nonzeros coefficients in the matrix or an upper bound
-     */
+	 * constructor with data
+	 * @param numberOfRows : The number of rows
+	 * @param numberOfColumns : The number of columns
+	 * @param nnz : The number of nonzeros coefficients in the matrix or an upper bound
+	 */
 	SparseMatrix( int numberOfRows, int numberOfColumns, int nnz ) ;
 
-    /**
-     * constructor by copy
-     * @param SparseMatrix : The SparseMatrix object to be copied
-     */
-    SparseMatrix ( const SparseMatrix& SparseMatrix ) ;
+	/**
+	 * constructor by copy
+	 * @param SparseMatrix : The SparseMatrix object to be copied
+	 */
+	SparseMatrix ( const SparseMatrix& SparseMatrix ) ;
 
-    SparseMatrix transpose() const ;
+	SparseMatrix transpose() const ;
 
 	int getBlocNNZ() const ;
 	bool getFlagNNZ() const ;
 
 	double operator()( int i, int j ) const ;
 	void setValue( int i, int j, double value ) ;
+	void addValue( int i, int j, double value ) ;
 
-    SparseMatrix& operator+= (const SparseMatrix& SparseMatrix) ;
+	SparseMatrix& operator+= (const SparseMatrix& SparseMatrix) ;
 
-    SparseMatrix& operator-= (const SparseMatrix& SparseMatrix) ;
+	SparseMatrix& operator-= (const SparseMatrix& SparseMatrix) ;
 
-    SparseMatrix& operator*= (double value) ;
+	SparseMatrix& operator*= (double value) ;
 
-    SparseMatrix& operator/= (double value) ;
+	SparseMatrix& operator/= (double value) ;
 
-    SparseMatrix& operator*= (const SparseMatrix& matrix) ;
+	SparseMatrix& operator*= (const SparseMatrix& matrix) ;
 
 	Vector operator* (const Vector& vector) const ;
 
-    SparseMatrix partMatrix(int row, int column) const ;
+	SparseMatrix partMatrix(int row, int column) const ;
 
-    const IntTab& getIndexRows( void ) const ;
+	const IntTab& getIndexRows( void ) const ;
 	IntTab getIndexRows( void ) ;
 
 	const IntTab& getIndexColumns( void ) const ;
 	IntTab getIndexColumns( void ) ;
 
-    int getNumberOfNonZeros ( void ) const ;
+	int getNumberOfNonZeros ( void ) const ;
 
-    double determinant() const ;
+	double determinant() const ;
 
-    void setBlocNNZ(int blocNNZ) ;
+	void setBlocNNZ(int blocNNZ) ;
 
-    const SparseMatrix& operator= ( const SparseMatrix& SparseMatrix ) ;
+	const SparseMatrix& operator= ( const SparseMatrix& SparseMatrix ) ;
 
-    friend SparseMatrix operator+ (const SparseMatrix& SparseMatrix1, const SparseMatrix& SparseMatrix2);
+	friend SparseMatrix operator+ (const SparseMatrix& SparseMatrix1, const SparseMatrix& SparseMatrix2);
 
-    friend SparseMatrix operator- (const SparseMatrix& SparseMatrix1, const SparseMatrix& SparseMatrix2);
+	friend SparseMatrix operator- (const SparseMatrix& SparseMatrix1, const SparseMatrix& SparseMatrix2);
 
-    friend SparseMatrix operator* (double value , const SparseMatrix& SparseMatrix ) ;
+	friend SparseMatrix operator* (double value , const SparseMatrix& SparseMatrix ) ;
 
-    friend SparseMatrix operator* (const SparseMatrix& SparseMatrix, double value ) ;
+	friend SparseMatrix operator* (const SparseMatrix& SparseMatrix, double value ) ;
 
-    friend SparseMatrix operator/ (const SparseMatrix& SparseMatrix, double value) ;
+	friend SparseMatrix operator/ (const SparseMatrix& SparseMatrix, double value) ;
 
-    friend SparseMatrix operator*(const SparseMatrix& M, const SparseMatrix& N) ;
+	friend SparseMatrix operator*(const SparseMatrix& M, const SparseMatrix& N) ;
 
-    friend std::ostream& operator<<(std::ostream& out, const SparseMatrix& matrix ) ;
-    
-    void viewMatrix() const ;
-    void viewRow(int i) const ;
+	friend std::ostream& operator<<(std::ostream& out, const SparseMatrix& matrix ) ;
+
+	void viewMatrix() const ;
+	void viewRow(int i) const ;
 
 private:
-    void replaceValue(int i,int j,double value) ;
-    void insertValue(int i,int j,double value) ;
-    int _effectNumberOfNonZeros;
+	void replaceValue(int i,int j,double value) ;
+	void insertValue(int i,int j,double value) ;
+	int _effectNumberOfNonZeros;
 protected:
 	bool _flagNNZ;
 	int _blocNNZ;
-    int _numberOfNonZeros ;
+	int _numberOfNonZeros ;
 	IntTab _indexRows;
 	IntTab _indexColumns;
 };

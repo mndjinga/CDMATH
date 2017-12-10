@@ -21,73 +21,74 @@ public:
 	virtual ~SparseMatrixPetsc();
 
 	/**
-     * constructor with data
-     * @param numberOfRows : The number of rows
-     * @param numberOfColumns : The number of columns
-     */
+	 * constructor with data
+	 * @param numberOfRows : The number of rows
+	 * @param numberOfColumns : The number of columns
+	 */
 	SparseMatrixPetsc( int numberOfRows, int numberOfColumns ) ;
 
 	/**
-     * constructor with data
-     * @param numberOfRows : The number of rows
-     * @param numberOfColumns : The number of columns
-     * @param nnz : The number of nonzeros coefficients in the matrix or an upper bound
-     */
+	 * constructor with data
+	 * @param numberOfRows : The number of rows
+	 * @param numberOfColumns : The number of columns
+	 * @param nnz : The number of nonzeros coefficients in the matrix or an upper bound
+	 */
 	SparseMatrixPetsc( int numberOfRows, int numberOfColumns, int nnz ) ;
 
-    /**
-     * constructor by copy
-     * @param SparseMatrixPetsc : The SparseMatrixPetsc object to be copied
-     */
-    SparseMatrixPetsc ( const SparseMatrixPetsc& sparseMatrixPetsc ) ;
+	/**
+	 * constructor by copy
+	 * @param SparseMatrixPetsc : The SparseMatrixPetsc object to be copied
+	 */
+	SparseMatrixPetsc ( const SparseMatrixPetsc& sparseMatrixPetsc ) ;
 
 	/**
-     * constructor with data
-     * @param Petsc matris : mat
-     */
-    SparseMatrixPetsc(Mat mat);
+	 * constructor with data
+	 * @param Petsc matris : mat
+	 */
+	SparseMatrixPetsc(Mat mat);
 
-    SparseMatrixPetsc transpose() const ;
+	SparseMatrixPetsc transpose() const ;
 
-    double operator()( int i, int j ) const ;
-    void setValue( int i, int j, double value ) ;
+	double operator()( int i, int j ) const ;
+	void setValue( int i, int j, double value ) ;
+	void addValue( int i, int j, double value ) ;
 
-    SparseMatrixPetsc& operator+= (const SparseMatrixPetsc& SparseMatrixPetsc) ;
+	SparseMatrixPetsc& operator+= (const SparseMatrixPetsc& SparseMatrixPetsc) ;
 
-    SparseMatrixPetsc& operator-= (const SparseMatrixPetsc& SparseMatrixPetsc) ;
+	SparseMatrixPetsc& operator-= (const SparseMatrixPetsc& SparseMatrixPetsc) ;
 
-    SparseMatrixPetsc& operator*= (double value) ;
+	SparseMatrixPetsc& operator*= (double value) ;
 
-    SparseMatrixPetsc& operator/= (double value) ;
+	SparseMatrixPetsc& operator/= (double value) ;
 
-    SparseMatrixPetsc& operator*= (const SparseMatrixPetsc& matrix) ;
+	SparseMatrixPetsc& operator*= (const SparseMatrixPetsc& matrix) ;
 
-    Vector operator* (const Vector& vector) const ;
+	Vector operator* (const Vector& vector) const ;
 
-    const SparseMatrixPetsc& operator= ( const SparseMatrixPetsc& SparseMatrixPetsc ) ;
+	const SparseMatrixPetsc& operator= ( const SparseMatrixPetsc& SparseMatrixPetsc ) ;
 
-    friend SparseMatrixPetsc operator+ (const SparseMatrixPetsc& SparseMatrixPetsc1, const SparseMatrixPetsc& SparseMatrixPetsc2);
+	friend SparseMatrixPetsc operator+ (const SparseMatrixPetsc& SparseMatrixPetsc1, const SparseMatrixPetsc& SparseMatrixPetsc2);
 
-    friend SparseMatrixPetsc operator- (const SparseMatrixPetsc& SparseMatrixPetsc1, const SparseMatrixPetsc& SparseMatrixPetsc2);
+	friend SparseMatrixPetsc operator- (const SparseMatrixPetsc& SparseMatrixPetsc1, const SparseMatrixPetsc& SparseMatrixPetsc2);
 
-    friend SparseMatrixPetsc operator* (double value , const SparseMatrixPetsc& SparseMatrixPetsc ) ;
+	friend SparseMatrixPetsc operator* (double value , const SparseMatrixPetsc& SparseMatrixPetsc ) ;
 
-    friend SparseMatrixPetsc operator* (const SparseMatrixPetsc& SparseMatrixPetsc, double value ) ;
+	friend SparseMatrixPetsc operator* (const SparseMatrixPetsc& SparseMatrixPetsc, double value ) ;
 
-    friend SparseMatrixPetsc operator/ (const SparseMatrixPetsc& SparseMatrixPetsc, double value) ;
+	friend SparseMatrixPetsc operator/ (const SparseMatrixPetsc& SparseMatrixPetsc, double value) ;
 
-    friend SparseMatrixPetsc operator*(const SparseMatrixPetsc& M, const SparseMatrixPetsc& N) ;
-    
-    void viewMatrix() const ;
+	friend SparseMatrixPetsc operator*(const SparseMatrixPetsc& M, const SparseMatrixPetsc& N) ;
+
+	void viewMatrix() const ;
 	double getMatrixCoeff(int i, int j) const;    
-	
-    bool containsPetscMatrix() const;
-    Mat getPetscMatrix() const;
-    
-private:
-    Mat _mat;
 
-    int _numberOfNonZeros ;
+	bool containsPetscMatrix() const;
+	Mat getPetscMatrix() const;
+
+private:
+	Mat _mat;
+
+	int _numberOfNonZeros ;
 };
 
 

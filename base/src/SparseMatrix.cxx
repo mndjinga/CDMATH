@@ -63,7 +63,7 @@ SparseMatrix::transpose() const
 	for(int i=0; i<_numberOfRows; i++)
 		for(int j=0; j<_numberOfColumns; j++)
 			res.setValue(i,j,(*this)(j,i));
-   return (res);
+	return (res);
 }
 
 int
@@ -82,6 +82,13 @@ SparseMatrix::setValue( int i, int j, double value )
 		insertValue(i,j,value);
 	else
 		replaceValue(i,j,value);
+}
+
+void
+SparseMatrix::addValue( int i, int j, double value )
+{
+	double Val1 = (*this)(i,j) + value ;
+	setValue(i,j,value);
 }
 
 void
@@ -111,7 +118,7 @@ SparseMatrix::insertValue( int i, int j, double value )
 	if(i>=_numberOfRows || j>=_numberOfColumns || i<0 || j<0)
 	{
 		string msg="double SparseMatrix::operator()(int i, int j) : i>number of rows or j>number of columns !";
-	    throw CdmathException(msg);
+		throw CdmathException(msg);
 	}
 
 	if(!_flagNNZ)
@@ -155,7 +162,7 @@ SparseMatrix::operator()( int i, int j ) const
 	if(i>=_numberOfRows || j>=_numberOfColumns || i<0 || j<0)
 	{
 		string msg="double SparseMatrix::operator()(int i, int j) : i>number of rows or j>number of columns !";
-	    throw CdmathException(msg);
+		throw CdmathException(msg);
 	}
 	int nbreElts = _indexRows[i+1] - _indexRows[i];
 	int pos = _indexRows[i];
@@ -253,129 +260,129 @@ SparseMatrix::operator= ( const SparseMatrix& matrix )
 	_values = matrix.getValues();
 	_isSparseMatrix=matrix.isSparseMatrix();
 	_effectNumberOfNonZeros=matrix._effectNumberOfNonZeros;
-    return (*this);
+	return (*this);
 }
 
 SparseMatrix
 operator+ (const SparseMatrix& matrix1, const SparseMatrix& matrix2)
 {
-	  int numberOfRows = matrix1.getNumberOfRows();
-	  int numberOfColumns = matrix1.getNumberOfColumns();
-	  int numberOfRows2 = matrix2.getNumberOfRows();
-	  int numberOfColumns2 = matrix2.getNumberOfColumns();
+	int numberOfRows = matrix1.getNumberOfRows();
+	int numberOfColumns = matrix1.getNumberOfColumns();
+	int numberOfRows2 = matrix2.getNumberOfRows();
+	int numberOfColumns2 = matrix2.getNumberOfColumns();
 
-	  if(numberOfRows2!=numberOfRows || numberOfColumns2!=numberOfColumns)
-	  {
-			string msg="SparseMatrix::operator()+(const SparseMatrix& matrix1, const SparseMatrix& matrix2): number of rows or columns of the matrices is different!";
-		    throw CdmathException(msg);
-	  }
-	  SparseMatrix res(numberOfRows, numberOfColumns);
-	  for(int i=0;i<numberOfRows;i++)
-		  for(int j=0;j<numberOfColumns;j++)
-			  res.setValue(i,j,matrix1(i,j)+matrix2(i,j));
-	  return (res);
+	if(numberOfRows2!=numberOfRows || numberOfColumns2!=numberOfColumns)
+	{
+		string msg="SparseMatrix::operator()+(const SparseMatrix& matrix1, const SparseMatrix& matrix2): number of rows or columns of the matrices is different!";
+		throw CdmathException(msg);
+	}
+	SparseMatrix res(numberOfRows, numberOfColumns);
+	for(int i=0;i<numberOfRows;i++)
+		for(int j=0;j<numberOfColumns;j++)
+			res.setValue(i,j,matrix1(i,j)+matrix2(i,j));
+	return (res);
 }
 
 SparseMatrix
 operator- (const SparseMatrix& matrix1, const SparseMatrix& matrix2)
 {
-	  int numberOfRows = matrix1.getNumberOfRows();
-	  int numberOfColumns = matrix1.getNumberOfColumns();
-	  int numberOfRows2 = matrix2.getNumberOfRows();
-	  int numberOfColumns2 = matrix2.getNumberOfColumns();
+	int numberOfRows = matrix1.getNumberOfRows();
+	int numberOfColumns = matrix1.getNumberOfColumns();
+	int numberOfRows2 = matrix2.getNumberOfRows();
+	int numberOfColumns2 = matrix2.getNumberOfColumns();
 
-	  if(numberOfRows2!=numberOfRows || numberOfColumns2!=numberOfColumns)
-	  {
-			string msg="SparseMatrix::operator()-(const SparseMatrix& matrix1, const SparseMatrix& matrix2): number of rows or columns of the matrices is different!";
-		    throw CdmathException(msg);
-	  }
-	  SparseMatrix res(numberOfRows, numberOfColumns);
-	  for(int i=0;i<numberOfRows;i++)
-		  for(int j=0;j<numberOfColumns;j++)
-			  res.setValue(i,j,matrix1(i,j)-matrix2(i,j));
-	  return (res);
+	if(numberOfRows2!=numberOfRows || numberOfColumns2!=numberOfColumns)
+	{
+		string msg="SparseMatrix::operator()-(const SparseMatrix& matrix1, const SparseMatrix& matrix2): number of rows or columns of the matrices is different!";
+		throw CdmathException(msg);
+	}
+	SparseMatrix res(numberOfRows, numberOfColumns);
+	for(int i=0;i<numberOfRows;i++)
+		for(int j=0;j<numberOfColumns;j++)
+			res.setValue(i,j,matrix1(i,j)-matrix2(i,j));
+	return (res);
 }
 
 SparseMatrix
 operator* (double value , const SparseMatrix& matrix )
 {
-	  SparseMatrix res(matrix);
-	  DoubleTab t1=res.getValues();
-	  t1*=value;
-	  res.setValues(t1);
-	  return (res);
+	SparseMatrix res(matrix);
+	DoubleTab t1=res.getValues();
+	t1*=value;
+	res.setValues(t1);
+	return (res);
 }
 
 SparseMatrix
 operator* (const SparseMatrix& matrix, double value )
 {
-	  SparseMatrix res(matrix);
-	  DoubleTab t1=res.getValues();
-	  t1*=value;
-	  res.setValues(t1);
-	  return (res);
+	SparseMatrix res(matrix);
+	DoubleTab t1=res.getValues();
+	t1*=value;
+	res.setValues(t1);
+	return (res);
 }
 
 SparseMatrix
 operator/ (const SparseMatrix& matrix, double value)
 {
-	  SparseMatrix res(matrix);
-	  DoubleTab t1=res.getValues();
-	  t1/=value;
-	  res.setValues(t1);
-	  return (res);
+	SparseMatrix res(matrix);
+	DoubleTab t1=res.getValues();
+	t1/=value;
+	res.setValues(t1);
+	return (res);
 }
 
 SparseMatrix
 operator*(const SparseMatrix& matrix1, const SparseMatrix& matrix2)
 {
-	  int numberOfRows = matrix1.getNumberOfRows();
-	  int numberOfColumns = matrix1.getNumberOfColumns();
-	  int numberOfRows2 = matrix2.getNumberOfRows();
-	  int numberOfColumns2 = matrix2.getNumberOfColumns();
+	int numberOfRows = matrix1.getNumberOfRows();
+	int numberOfColumns = matrix1.getNumberOfColumns();
+	int numberOfRows2 = matrix2.getNumberOfRows();
+	int numberOfColumns2 = matrix2.getNumberOfColumns();
 
-	  if(numberOfColumns!=numberOfColumns2 || numberOfRows!=numberOfRows2)
-	  {
-			string msg="SparseMatrix::operator()*(const SparseMatrix& matrix1, const SparseMatrix& matrix2): dimensions of the matrices are incompatible!";
-		    throw CdmathException(msg);
-	  }
-	  SparseMatrix res(numberOfRows, numberOfColumns2);
-	  for(int i=0;i<numberOfRows;i++)
-	  {
-		  for(int j=0;j<numberOfColumns2;j++)
-		  {
-			  double som=0.;
-			  for(int k=0;k<numberOfColumns;k++)
-				  som+=matrix1(i,k)*matrix2(k,j);
-			  res.setValue(i,j,som);
-		  }
-	  }
-	  return (res);
+	if(numberOfColumns!=numberOfColumns2 || numberOfRows!=numberOfRows2)
+	{
+		string msg="SparseMatrix::operator()*(const SparseMatrix& matrix1, const SparseMatrix& matrix2): dimensions of the matrices are incompatible!";
+		throw CdmathException(msg);
+	}
+	SparseMatrix res(numberOfRows, numberOfColumns2);
+	for(int i=0;i<numberOfRows;i++)
+	{
+		for(int j=0;j<numberOfColumns2;j++)
+		{
+			double som=0.;
+			for(int k=0;k<numberOfColumns;k++)
+				som+=matrix1(i,k)*matrix2(k,j);
+			res.setValue(i,j,som);
+		}
+	}
+	return (res);
 }
 
 SparseMatrix&
 SparseMatrix::operator*= (const SparseMatrix& matrix)
 {
-	  int numberOfRows2 = matrix.getNumberOfRows();
-	  int numberOfColumns2 = matrix.getNumberOfColumns();
+	int numberOfRows2 = matrix.getNumberOfRows();
+	int numberOfColumns2 = matrix.getNumberOfColumns();
 
-	  if(_numberOfColumns!=numberOfColumns2 || _numberOfRows!=numberOfRows2)
-	  {
-			string msg="SparseMatrix::operator()*(const SparseMatrix& matrix1, const SparseMatrix& matrix2): dimensions of the matrices are incompatible!";
-		    throw CdmathException(msg);
-	  }
-	  SparseMatrix res(_numberOfRows, numberOfColumns2);
-	  for(int i=0;i<_numberOfRows;i++)
-	  {
-		  for(int j=0;j<numberOfColumns2;j++)
-		  {
-			  double som=0.;
-			  for(int k=0;k<_numberOfColumns;k++)
-				  som+=(*this)(i,k)*matrix(k,j);
-			  res.setValue(i,j,som);
-		  }
-	  }
-	  (*this)=res;
+	if(_numberOfColumns!=numberOfColumns2 || _numberOfRows!=numberOfRows2)
+	{
+		string msg="SparseMatrix::operator()*(const SparseMatrix& matrix1, const SparseMatrix& matrix2): dimensions of the matrices are incompatible!";
+		throw CdmathException(msg);
+	}
+	SparseMatrix res(_numberOfRows, numberOfColumns2);
+	for(int i=0;i<_numberOfRows;i++)
+	{
+		for(int j=0;j<numberOfColumns2;j++)
+		{
+			double som=0.;
+			for(int k=0;k<_numberOfColumns;k++)
+				som+=(*this)(i,k)*matrix(k,j);
+			res.setValue(i,j,som);
+		}
+	}
+	(*this)=res;
 	return (*this);
 }
 
@@ -424,22 +431,22 @@ SparseMatrix::operator/= (double value)
 SparseMatrix
 SparseMatrix::partMatrix(int row, int column) const
 {
-   int r = 0;
-   int c = 0;
-   SparseMatrix res(_numberOfRows-1, _numberOfColumns-1);
+	int r = 0;
+	int c = 0;
+	SparseMatrix res(_numberOfRows-1, _numberOfColumns-1);
 
-   for (int i=0; i<_numberOfRows; i++)
-   {
-      c = 0;
-      if(i != row)
-      {
-         for(int j=0; j<_numberOfColumns; j++)
-            if(j != column)
-            	res.setValue(r,c++,(*this)(i,j));
-         r++;
-      }
-   }
-   return (res);
+	for (int i=0; i<_numberOfRows; i++)
+	{
+		c = 0;
+		if(i != row)
+		{
+			for(int j=0; j<_numberOfColumns; j++)
+				if(j != column)
+					res.setValue(r,c++,(*this)(i,j));
+			r++;
+		}
+	}
+	return (res);
 }
 
 double
@@ -459,12 +466,12 @@ SparseMatrix::determinant() const
 		if (dim==1)
 			return ((*this)(0,0));
 
-	   for (int i=0; i<dim; i++)
-	   {
-		   matrix = this->partMatrix(i,0);
-		   res += ( coefficient(i)*(*this)(i,0)*(matrix.determinant() ) );
-	   }
-	   return (res);
+		for (int i=0; i<dim; i++)
+		{
+			matrix = this->partMatrix(i,0);
+			res += ( coefficient(i)*(*this)(i,0)*(matrix.determinant() ) );
+		}
+		return (res);
 	}
 }
 
@@ -481,7 +488,7 @@ operator<<(ostream& out, const SparseMatrix& matrix)
 		for(int k=0;k<nbreElts;k++)
 			out<<"(i= "<<i<<", j= "<< indexColumns[pos+k] -1 <<"), value= "<< values[pos+k]<<endl;
 	}
-	
+
 	return (out);
 }
 

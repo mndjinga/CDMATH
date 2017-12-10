@@ -55,20 +55,20 @@ for i in range(nbNodes):
 	else: # Détection des noeuds intérieurs
 		interiorNodes.append(i)
 		nbInteriorNodes=nbInteriorNodes+1
-		maxNbNeighbours= max(1+Ni.getNumberOfCells(),maxNbNeighbours) # need a function Ni.getNumberOfNeighbourNodes();
+		maxNbNeighbours= max(1+50*Ni.getNumberOfCells(),maxNbNeighbours) # need a function Ni.getNumberOfNeighbourNodes();
 
 # sauvegarde sur le disque dur du second membre discrétisé dans un fichier paraview
 my_RHSfield.writeVTK("FiniteElementsRHSField") 
 B.writeVTK("FiniteElementsEXSOLField") 
 
-print("Right hand sde discretidation done")
+print("Right hand side discretidation done")
 print("nb of interior nodes=", nbInteriorNodes)
 print("nb of boundary nodes=", nbBoundaryNodes)
 print("Max nb of neighbours=", maxNbNeighbours)
 
 # Construction de la matrice de rigidité et du vecteur second membre du système linéaire
 #=======================================================================================
-Rigidite=cdmath.SparseMatrixPetsc(nbInteriorNodes,nbInteriorNodes,nbInteriorNodes*maxNbNeighbours) 
+Rigidite=cdmath.SparseMatrix(nbInteriorNodes,nbInteriorNodes,nbInteriorNodes*maxNbNeighbours) 
 RHS=cdmath.Vector(nbInteriorNodes)
 
 # Vecteurs gradient de la fonction de forme associée à chaque noeud d'un hexaèdre
@@ -123,8 +123,7 @@ for i in range(nbCells):
  			for k in [nodeId0,nodeId1,nodeId2,nodeId3] :
 				if boundaryNodes.count(k)==0 : #seuls les noeuds intérieurs contribuent à la matrice du système linéaire
 					k_int=interiorNodes.index(k)#indice du noeud k en tant que noeud intérieur
-					coeff = Rigidite(j_int,k_int)+GradShapeFuncs[j]*GradShapeFuncs[k]/Ci.getMeasure()
-					Rigidite.setValue(j_int,k_int,coeff)
+					Rigidite.addValue(j_int,k_int,GradShapeFuncs[j]*GradShapeFuncs[k]/Ci.getMeasure())
 				#else: si condition limite non nulle au bord, ajouter la contribution du bord au second membre de la cellule j
 
 print("Linear system matrix building done")
