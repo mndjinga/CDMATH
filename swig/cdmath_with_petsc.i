@@ -66,6 +66,19 @@ def SparseMatrixIdiv(self,*args):
     import _cdmath
     return _cdmath.SparseMatrix____idiv___(self,self, *args)
 
+def SparseMatrixPetscIadd(self,*args):
+    import _cdmath
+    return _cdmath.SparseMatrixPetsc____iadd___(self,self, *args)
+def SparseMatrixPetscIsub(self,*args):
+    import _cdmath
+    return _cdmath.SparseMatrixPetsc____isub___(self,self, *args)
+def SparseMatrixPetscImul(self,*args):
+    import _cdmath
+    return _cdmath.SparseMatrixPetsc____imul___(self,self, *args)
+def SparseMatrixPetscIdiv(self,*args):
+    import _cdmath
+    return _cdmath.SparseMatrixPetsc____idiv___(self,self, *args)
+
 def VectorIadd(self,*args):
     import _cdmath
     return _cdmath.Vector____iadd___(self,self, *args)
@@ -93,6 +106,7 @@ def VectorIdiv(self,*args):
 #include "Mesh.hxx"
 #include "Field.hxx"
 #include "LinearSolver.hxx"
+#include "SparseMatrixPetsc.hxx"
 
 #include <sstream>
 
@@ -119,6 +133,7 @@ def VectorIdiv(self,*args):
 %include "Mesh.hxx"
 %include "Field.hxx"
 %include "LinearSolver.hxx"
+%include "SparseMatrixPetsc.hxx"
 
 %extend IntTab
 {
@@ -612,6 +627,111 @@ def VectorIdiv(self,*args):
   }
 }
 
+%extend SparseMatrixPetsc
+{
+  SparseMatrixPetsc __sub__(const SparseMatrixPetsc& f)
+  {
+    return (*self)-f;
+  }
+
+  SparseMatrixPetsc __add__(const SparseMatrixPetsc& f)
+  {
+    return (*self)+f;
+  }
+
+  SparseMatrixPetsc __mul__(const SparseMatrixPetsc& f)
+  {
+    return (*self)*f;
+  }
+
+  SparseMatrixPetsc __mul__(double value)
+  {
+    return (*self)*value;
+  }
+
+  SparseMatrixPetsc __mul__(int value)
+  {
+    return (*self)*value;
+  }
+
+  SparseMatrixPetsc __div__(double value)
+  {
+    return (*self)/value;
+  }
+
+  SparseMatrixPetsc __div__(int value)
+  {
+    return (*self)/value;
+  }
+
+  double __getitem__(PyObject* args)
+  {
+      int sz(PyTuple_Size(args));
+      if(sz!=2)
+         throw std::out_of_range("number of arguments!=2");
+      PyObject *pyI(PyTuple_GetItem(args,0)),*pyJ(PyTuple_GetItem(args,1));
+      int i(PyInt_AS_LONG(pyI)),j(PyInt_AS_LONG(pyJ));
+      const double& tmp=(*self)(i,j);
+      return double(tmp);
+  }
+
+  void __setitem__(PyObject* args, double val)
+  {
+    int sz(PyTuple_Size(args));
+    if(sz!=2)
+      throw std::out_of_range("number of arguments!=3");
+    PyObject *pyI(PyTuple_GetItem(args,0)),*pyJ(PyTuple_GetItem(args,1));
+    int i(PyInt_AS_LONG(pyI)),j(PyInt_AS_LONG(pyJ));
+    (*self).setValue(i,j,val);
+  }
+
+  PyObject *___iadd___(PyObject *trueSelf, const SparseMatrixPetsc& f)
+  {
+    (*self)+=f;
+    Py_XINCREF(trueSelf);
+    return trueSelf;
+  }
+
+  PyObject *___isub___(PyObject *trueSelf, const SparseMatrixPetsc& f)
+  {
+    (*self)-=f;
+    Py_XINCREF(trueSelf);
+    return trueSelf;
+  }
+
+  PyObject *___imul___(PyObject *trueSelf, double val)
+  {
+    (*self)*=val;
+    Py_XINCREF(trueSelf);
+    return trueSelf;
+  }
+
+  PyObject *___imul___(PyObject *trueSelf, const SparseMatrixPetsc& f)
+  {
+    (*self)*=f;
+    Py_XINCREF(trueSelf);
+    return trueSelf;
+  }
+
+  PyObject *___idiv___(PyObject *trueSelf, double val)
+  {
+    (*self)/=val;
+    Py_XINCREF(trueSelf);
+    return trueSelf;
+  }
+
+  std::string __repr__()
+  {
+     std::ostringstream oss;
+     oss << "Number of Values : " << (*self).getNumberOfRows() << std::endl;
+     oss << "Data content : " << std::endl;
+     for (int i=0;i<(*self).getNumberOfRows();i++)
+         for (int j=0;j<(*self).getNumberOfColumns();j++)
+         oss << "# (" << i << "," << j << ") : " << (*self)(i,j) << std::endl;
+     return oss.str();
+  }
+}
+
 %extend Point
 {
   double __getitem__(int i)
@@ -782,6 +902,11 @@ SparseMatrix.__iadd__=SparseMatrixIadd
 SparseMatrix.__isub__=SparseMatrixIsub
 SparseMatrix.__imul__=SparseMatrixImul
 SparseMatrix.__idiv__=SparseMatrixIdiv
+
+SparseMatrixPetsc.__iadd__=SparseMatrixPetscIadd
+SparseMatrixPetsc.__isub__=SparseMatrixPetscIsub
+SparseMatrixPetsc.__imul__=SparseMatrixPetscImul
+SparseMatrixPetsc.__idiv__=SparseMatrixPetscIdiv
 
 Vector.__iadd__=VectorIadd
 Vector.__isub__=VectorIsub
