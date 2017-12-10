@@ -27,6 +27,7 @@
 #include "IntTabTests.hxx"
 #ifdef CDMATH_WITH_PETSC
     #include "LinearSolverTests.hxx"
+	#include "SparseMatrixPetscTests.hxx"
 #endif
 
 #include <iostream>
@@ -59,6 +60,7 @@ int main( int argc, char* argv[] )
     runner.addTest( VectorTests::suite() );
     #ifdef CDMATH_WITH_PETSC
         runner.addTest( LinearSolverTests::suite() );
+        runner.addTest( SparseMatrixPetscTests::suite() );
     #endif
 
     runner.run( controller );

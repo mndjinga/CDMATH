@@ -81,7 +81,10 @@ SparseMatrixPetsc
 SparseMatrixPetsc::transpose() const
 {
 	Mat mattranspose;
-	MatCreateTranspose(_mat,&mattranspose);
+    MatAssemblyBegin(_mat, MAT_FINAL_ASSEMBLY);
+    MatAssemblyEnd(_mat, MAT_FINAL_ASSEMBLY);
+
+	MatTranspose(_mat,MAT_INITIAL_MATRIX, &mattranspose);
 	return SparseMatrixPetsc(mattranspose);
 }
 
@@ -99,6 +102,9 @@ SparseMatrixPetsc::operator()( int i, int j ) const
 {
 	double res;
 	int idxm=i,idxn=j;
+    MatAssemblyBegin(_mat, MAT_FINAL_ASSEMBLY);
+    MatAssemblyEnd(_mat, MAT_FINAL_ASSEMBLY);
+
 	MatGetValues(_mat,1,&idxm,1, &idxn,&res);
 	return res;
 }
@@ -276,7 +282,7 @@ SparseMatrixPetsc::operator* (const Vector& vec) const
     Vector result(numberOfRows);
     for (PetscInt i=0; i<numberOfRows; i++)
     {
-        VecGetValues(X,1,&i,&value);
+        VecGetValues(Y,1,&i,&value);
         result(i)=value;
     }
 	return result;
@@ -347,6 +353,9 @@ SparseMatrixPetsc::getMatrixCoeff(int i, int j) const
 {
 	double res;
 	int idxm=i,idxn=j;
+    MatAssemblyBegin(_mat, MAT_FINAL_ASSEMBLY);
+    MatAssemblyEnd(_mat, MAT_FINAL_ASSEMBLY);
+
 	MatGetValues(_mat,1,&idxm,1, &idxn,&res);
 	return res;
 }

@@ -164,7 +164,7 @@ def main():
     freqSortie = 10
 
     print("Building Cartesian mesh…")
-    my_mesh = cdmath.Mesh("MeshTri.med")
+    my_mesh = cdmath.Mesh("../../tests/ressources/MeshTri2600Cells.med")
     output_filename = "Exercie2PyTest"
     EquationTransport2D(tmax, VitesseX, VitesseY, cfl, freqSortie, my_mesh, output_filename)
     print("CDMATH calculation done.")

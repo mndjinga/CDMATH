@@ -183,8 +183,8 @@ int main()
     int freqSortie=10;
 
     cout << "Construction of Cartesian mesh…" << endl;
-    Mesh myMesh("MeshTri.med");
-    string fileOutPut="Exercie2";
+    Mesh myMesh("../../tests/ressources/MeshTri2600Cells.med");
+    string fileOutPut="Exercice2";
     EquationTransport2D(tmax,VitesseX,VitesseY,cfl,freqSortie,myMesh,fileOutPut);
     cout << "CDMATH calculation done." << endl;
 

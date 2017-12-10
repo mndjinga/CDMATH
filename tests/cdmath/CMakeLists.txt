@@ -1,50 +1,21 @@
+INCLUDE_DIRECTORIES(
+  ${CPPUNIT_INCLUDE_DIRS}
+  ${HDF5_INCLUDE_DIRS}
+  ${MED3_INCLUDE_DIRS}
+  ${PRE_REQUIS_DIR}/MEDLoader
+  ${PRE_REQUIS_DIR}/MEDCoupling
+  ${PRE_REQUIS_DIR}/INTERP_KERNEL
+  ${PRE_REQUIS_DIR}/INTERP_KERNEL/Bases
+  ${MESH_DIR}/inc 
+  ${BASE_DIR}/inc
+  )
+
 if (CDMATH_WITH_PETSC)
     INCLUDE_DIRECTORIES(
-      ${CPPUNIT_INCLUDE_DIRS}
-      ${HDF5_INCLUDE_DIRS}
-      ${MED3_INCLUDE_DIRS}
-      ${PRE_REQUIS_DIR}/MEDLoader
-      ${PRE_REQUIS_DIR}/MEDCoupling
-      ${PRE_REQUIS_DIR}/INTERP_KERNEL
-      ${PRE_REQUIS_DIR}/INTERP_KERNEL/Bases
-      ${MESH_DIR}/inc 
-      ${BASE_DIR}/inc 
       ${PETSC_INCLUDES}
       ${LINEARSOLVER_DIR}/inc
       )
-    SET(TestMesh_SOURCES
-        NodeTests.cxx
-        PointTests.cxx
-        CellTests.cxx
-        FaceTests.cxx
-        FieldTests.cxx
-        MeshTests.cxx
-        DoubleTabTests.cxx
-        IntTabTests.cxx
-        LinearSolver.cxx
-  )
 else (CDMATH_WITH_PETSC)
-    INCLUDE_DIRECTORIES(
-      ${CPPUNIT_INCLUDE_DIRS}
-      ${HDF5_INCLUDE_DIRS}
-      ${MED3_INCLUDE_DIRS}
-      ${PRE_REQUIS_DIR}/MEDLoader
-      ${PRE_REQUIS_DIR}/MEDCoupling
-      ${PRE_REQUIS_DIR}/INTERP_KERNEL
-      ${PRE_REQUIS_DIR}/INTERP_KERNEL/Bases
-      ${MESH_DIR}/inc 
-      ${BASE_DIR}/inc
-      )
-    SET(TestMesh_SOURCES
-        NodeTests.cxx
-        PointTests.cxx
-        CellTests.cxx
-        FaceTests.cxx
-        FieldTests.cxx
-        MeshTests.cxx
-        DoubleTabTests.cxx
-        IntTabTests.cxx
-  )
 endif (CDMATH_WITH_PETSC)
 
 

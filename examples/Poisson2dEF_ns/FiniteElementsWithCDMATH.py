@@ -4,7 +4,7 @@
 # Author      : Michaël Ndjinga
 # Copyright   : CEA Saclay 2016
 # Description : Utilisation de la méthode des éléménts finis P1 avec champs u et f discrétisés aux noeuds d'un maillage triangulaire
-#				Création et sauvegarde du champ résultant ainsi que du champ second membre en utilisant la librairie CDMATH
+#		Création et sauvegarde du champ résultant ainsi que du champ second membre en utilisant la librairie CDMATH
 #================================================================================================================================
 
 import cdmath
@@ -14,7 +14,7 @@ from math import sin, pi
 
 #Chargement du maillage triangulaire du domaine carré [0,1]x[0,1], définition des bords
 #=======================================================================================
-my_mesh = cdmath.Mesh("MeshTri2600Cells.med") #need a function isTriangular/isTetrahedric to check that the cells are triangular/tetrahedric
+my_mesh = cdmath.Mesh("../../tests/ressources/MeshTri2600Cells.med") #need a function isTriangular/isTetrahedric to check that the cells are triangular/tetrahedric
 eps=1e-6
 my_mesh.setGroupAtPlan(0.,0,eps,"DirichletBorder")#Bord GAUCHE
 my_mesh.setGroupAtPlan(1.,0,eps,"DirichletBorder")#Bord DROIT

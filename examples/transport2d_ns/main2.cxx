@@ -230,7 +230,7 @@ int main()
     p.outFile="res2D";
 
     cout << "Construction of Cartesian mesh…" << endl;
-    Mesh M("MeshTri.med");
+    Mesh M("../../tests/ressources/MeshTri2600Cells.med");
 
     double tmin = 0;
     double tmax = 0.1;
