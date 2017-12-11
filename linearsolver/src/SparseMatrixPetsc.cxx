@@ -124,7 +124,8 @@ SparseMatrixPetsc::operator()( int i, int j ) const
 SparseMatrixPetsc::~SparseMatrixPetsc()
 //----------------------------------------------------------------------
 {
-	MatDestroy(&_mat);
+	if(&_mat != NULL)
+		MatDestroy(&_mat);
 	//PetscFinalize();
 }
 

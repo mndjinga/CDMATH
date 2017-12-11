@@ -69,8 +69,10 @@ LinearSolver::precDuplicate(const PC source, const KSP ksp, PC* destination)  co
 
 LinearSolver::~LinearSolver ( void )
 {
-    MatDestroy(&_mat);
-    VecDestroy(&_smb);
+	//if(&_mat != NULL)
+	//	MatDestroy(&_mat);
+	if(&_smb != NULL)
+		VecDestroy(&_smb);
     KSPDestroy(&_ksp);
     //PetscFinalize();
 }
@@ -292,7 +294,7 @@ void
 LinearSolver::setSndMember(const Vector& secondMember)
 {
     _secondMember=secondMember;
-    if(_smb!=NULL)
+    if(&_smb!=NULL)
 		VecDestroy(&_smb);
     _smb=vectorToVec(secondMember);
 

@@ -9,6 +9,7 @@
 #include "Vector.hxx"
 #include "SparseMatrix.hxx"
 #include "LinearSolverTests.hxx"
+#include "SparseMatrixPetsc.hxx"
 
 using namespace std;
 
@@ -56,11 +57,11 @@ LinearSolverTests::testClassLinearSolver( void )
 	CPPUNIT_ASSERT_EQUAL(LS1.getNameOfPc(),(string)"LU");
 	
 	LinearSolver LS2(A,B,500,1.E-10,"CG");
-	Matrix A1(2,2);
-    A1(0,0)=1.;
-    A1(0,1)=-2.;
-    A1(1,0)=-2.;
-    A1(1,1)=4.;
+	SparseMatrix A1(2,2);
+    A1.setValue(0,0,1.);
+    A1.setValue(0,1,-2.);
+    A1.setValue(1,0,-2.);
+    A1.setValue(1,1,4.);
 	LS2.setMatrix(-1.*A1);
 	LS2.setSndMember(-1*B);
 	LS2.setTolerance(1.E-20);
@@ -133,7 +134,7 @@ LinearSolverTests::testClassLinearSolver( void )
 	CPPUNIT_ASSERT_EQUAL(LS10.getStatus(),true);
 	CPPUNIT_ASSERT_EQUAL(LS10.getNameOfMethod(),(string)"LU");
 
-	SparseMatrix A2(6,6,16);
+	SparseMatrixPetsc A2(6,6,16);
 //	SparseMatrix A2(6,6);
     A2.setValue(0,0,2.);
     A2.setValue(0,1,-1.);
