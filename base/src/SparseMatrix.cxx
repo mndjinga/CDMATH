@@ -88,7 +88,7 @@ void
 SparseMatrix::addValue( int i, int j, double value )
 {
 	double Val1 = (*this)(i,j) + value ;
-	setValue(i,j,value);
+	setValue(i,j,Val1);
 }
 
 void
