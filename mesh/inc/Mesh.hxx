@@ -18,12 +18,12 @@
 
 namespace MEDCoupling
 {
-  class MEDFileUMesh;
-  class MEDCouplingMesh;
-  class MEDCouplingIMesh;
+class MEDFileUMesh;
+class MEDCouplingMesh;
+class MEDCouplingIMesh;
 }
-
 #include <MCAuto.hxx>
+#include "NormalizedGeometricTypes"
 
 class Node;
 class Cell;
@@ -36,277 +36,284 @@ class IntTab;
 class Mesh
 {
 
-    public: //----------------------------------------------------------------
-    /**
-     * default constructor
-     */
-    Mesh ( void ) ;
+public: //----------------------------------------------------------------
+	/**
+	 * default constructor
+	 */
+	Mesh ( void ) ;
 
-    /**
-     * constructor with data
-     * @param filename name of mesh file
-     */
-    Mesh ( const std::string filename ) ;
+	/**
+	 * constructor with data
+	 * @param filename name of mesh file
+	 */
+	Mesh ( const std::string filename ) ;
 
-    /**
-     * constructor with data
-     * @param xinf : minimum x
-     * @param xsup : maximum x
-     * @param nx : Number of cell in x direction
-     */
-    Mesh( double xinf, double xsup, int nx ) ;
+	/**
+	 * constructor with data
+	 * @param xinf : minimum x
+	 * @param xsup : maximum x
+	 * @param nx : Number of cell in x direction
+	 */
+	Mesh( double xinf, double xsup, int nx ) ;
 
-    /**
-     * constructor with data
-     * @param xinf : minimum x
-     * @param xsup : maximum x
-     * @param yinf : minimum y
-     * @param ysup : maximum y
-     * @param nx : Number of cell in x direction
-     * @param ny : Number of cell in y direction
-     */
-    Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny) ;
+	/**
+	 * constructor with data
+	 * @param xinf : minimum x
+	 * @param xsup : maximum x
+	 * @param yinf : minimum y
+	 * @param ysup : maximum y
+	 * @param nx : Number of cell in x direction
+	 * @param ny : Number of cell in y direction
+	 */
+	Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny) ;
 
-    /**
-     * constructor with data
-     * @param xinf : minimum x
-     * @param xsup : maximum x
-     * @param yinf : minimum y
-     * @param ysup : maximum y
-     * @param zinf : minimum z
-     * @param zsup : maximum z
-     * @param nx : Number of cell in x direction
-     * @param ny : Number of cell in y direction
-     * @param nz : Number of cell in z direction
-     */
-    Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny, double zinf, double zsup, int nz) ;
+	/**
+	 * constructor with data
+	 * @param xinf : minimum x
+	 * @param xsup : maximum x
+	 * @param yinf : minimum y
+	 * @param ysup : maximum y
+	 * @param zinf : minimum z
+	 * @param zsup : maximum z
+	 * @param nx : Number of cell in x direction
+	 * @param ny : Number of cell in y direction
+	 * @param nz : Number of cell in z direction
+	 */
+	Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny, double zinf, double zsup, int nz) ;
 
-    Mesh( const MEDCoupling::MEDCouplingIMesh* mesh ) ;
+	Mesh( const MEDCoupling::MEDCouplingIMesh* mesh ) ;
 
-    /**
-     * constructor with data
-     * @param filename : file name of mesh med file
-     */
-    void readMeshMed( const std::string filename, int meshLevel=0 ) ;
+	/**
+	 * constructor with data
+	 * @param filename : file name of mesh med file
+	 * @param meshLevel : relative mesh dimension : 0->cells, 1->Faces etc
+	 */
+	void readMeshMed( const std::string filename, int meshLevel=0 ) ;
 
-    /**
-     * constructor by copy
-     * @param mesh : The Mesh object to be copied
-     */
-    Mesh ( const Mesh & mesh ) ;
+	/**
+	 * constructor by copy
+	 * @param mesh : The Mesh object to be copied
+	 */
+	Mesh ( const Mesh & mesh ) ;
 
-    /**
-    * destructor
-    */
-    ~Mesh( void ) ;
+	/**
+	 * destructor
+	 */
+	~Mesh( void ) ;
 
-    /**
-     * return Space dimension
-     * @return _spaceDim
-     */
-    int getSpaceDimension( void ) const ;
+	/**
+	 * return Space dimension
+	 * @return _spaceDim
+	 */
+	int getSpaceDimension( void ) const ;
 
-    /**
-     * return Mesh dimension
-     * @return _meshDim
-     */
-    int getMeshDimension( void ) const ;
+	/**
+	 * return Mesh dimension
+	 * @return _meshDim
+	 */
+	int getMeshDimension( void ) const ;
 
-    std::vector<double> getDXYZ() const ;
+	std::vector<double> getDXYZ() const ;
 
-    std::vector<int> getCellGridStructure() const;
-    /**
-     * return The nodes in this mesh
-     * @return _nodes
-    */
-    Node* getNodes ( void ) const ;
+	std::vector<int> getCellGridStructure() const;
+	/**
+	 * return The nodes in this mesh
+	 * @return _nodes
+	 */
+	Node* getNodes ( void ) const ;
 
-    /**
-     * return The cells in this mesh
-     * @return _vertices
-     */
-    Cell* getCells ( void ) const ;
+	/**
+	 * return The cells in this mesh
+	 * @return _vertices
+	 */
+	Cell* getCells ( void ) const ;
 
-    /**
-     * return The faces in this mesh
-     * @return _vertices
-     */
-    Face* getFaces ( void ) const ;
+	/**
+	 * return The faces in this mesh
+	 * @return _vertices
+	 */
+	Face* getFaces ( void ) const ;
 
-    /**
-     * return number of nodes in this mesh
-     * @return _numberOfNodes
-     */
-    int getNumberOfNodes ( void )  const ;
+	/**
+	 * return number of nodes in this mesh
+	 * @return _numberOfNodes
+	 */
+	int getNumberOfNodes ( void )  const ;
 
-    /**
-     * return number of faces in this mesh
-     * @return _numberOfFaces
-     */
-    int getNumberOfFaces ( void )  const ;
+	/**
+	 * return number of faces in this mesh
+	 * @return _numberOfFaces
+	 */
+	int getNumberOfFaces ( void )  const ;
 
-    /**
-     * return number of cells in this mesh
-     * @return _numberOfCells
-     */
-    int getNumberOfCells ( void )  const ;
+	/**
+	 * return number of cells in this mesh
+	 * @return _numberOfCells
+	 */
+	int getNumberOfCells ( void )  const ;
 
-    /**
-     * return The cell i in this mesh
-     * @return _cells[i]
-     */
-    Cell& getCell ( int i )  const ;
+	/**
+	 * return The cell i in this mesh
+	 * @return _cells[i]
+	 */
+	Cell& getCell ( int i )  const ;
 
-    /**
-     * return The face i in this mesh
-     * @return _faces[i]
-     */
-    Face& getFace ( int i )  const ;
+	/**
+	 * return The face i in this mesh
+	 * @return _faces[i]
+	 */
+	Face& getFace ( int i )  const ;
 
-    /**
-     * return The node i in this mesh
-     * @return _nodes[i]
-     */
-    Node& getNode ( int i )  const ;
+	/**
+	 * return The node i in this mesh
+	 * @return _nodes[i]
+	 */
+	Node& getNode ( int i )  const ;
 
-    /**
-     * return number of cell in x direction
-     * return _nX
-     */
-    int getNx( void )  const ;
+	/**
+	 * return number of cell in x direction
+	 * return _nX
+	 */
+	int getNx( void )  const ;
 
-    /**
-     * return number of cell in y direction
-     * return _nY
-     */
-    int getNy( void )  const ;
+	/**
+	 * return number of cell in y direction
+	 * return _nY
+	 */
+	int getNy( void )  const ;
 
-    /**
-     * return number of cell in z direction
-     * return _nZ
-     */
-    int getNz( void )  const ;
+	/**
+	 * return number of cell in z direction
+	 * return _nZ
+	 */
+	int getNz( void )  const ;
 
-    double getXMin( void )  const ;
+	double getXMin( void )  const ;
 
-    double getXSup( void )  const ;
+	double getXSup( void )  const ;
 
-    double getYMin( void )  const ;
+	double getYMin( void )  const ;
 
-    double getYSup( void )  const ;
+	double getYSup( void )  const ;
 
-    double getZMin( void )  const ;
+	double getZMin( void )  const ;
 
-    double getZSup( void )  const ;
+	double getZSup( void )  const ;
 
-    /**
-     * surcharge operator =
-     * @param mesh : The Mesh object to be copied
-     */
-    const Mesh& operator= ( const Mesh& mesh ) ;
+	/**
+	 * surcharge operator =
+	 * @param mesh : The Mesh object to be copied
+	 */
+	const Mesh& operator= ( const Mesh& mesh ) ;
 
-    /**
-     * return the mesh MEDCoupling
-     * return _mesh
-     */
-    MEDCoupling::MCAuto<MEDCoupling::MEDCouplingMesh> getMEDCouplingMesh ( void )  const ;
+	/**
+	 * return the mesh MEDCoupling
+	 * return _mesh
+	 */
+	MEDCoupling::MCAuto<MEDCoupling::MEDCouplingMesh> getMEDCouplingMesh ( void )  const ;
 
-    /**
-     * return the mesh MEDCoupling
-     * return _mesh
-     */
-    std::vector<std::string> getNamesOfGroups( void )  const ;
+	/**
+	 * return the mesh MEDCoupling
+	 * return _mesh
+	 */
+	std::vector<std::string> getNamesOfGroups( void )  const ;
 
-    /**
-     * write mesh in the VTK format
-     */
-    void writeVTK ( const std::string fileName ) const ;
+	/**
+	 * write mesh in the VTK format
+	 */
+	void writeVTK ( const std::string fileName ) const ;
 
-    /**
-     * write mesh in the MED format
-     */
-    void writeMED ( const std::string fileName ) const ;
+	/**
+	 * write mesh in the MED format
+	 */
+	void writeMED ( const std::string fileName ) const ;
 
-    void setGroupAtPlan(double value, int direction, double eps, std::string groupName) ;
+	void setGroupAtPlan(double value, int direction, double eps, std::string groupName) ;
 
-    void setGroupAtFaceByCoords(double x, double y, double z, double eps, std::string groupName) ;
+	void setGroupAtFaceByCoords(double x, double y, double z, double eps, std::string groupName) ;
 
-    int getIndexFacePeriodic(int indexFace) const ;
+	int getIndexFacePeriodic(int indexFace) const ;
 
-    IntTab getIndexFacePeriodic( void ) const ;
+	IntTab getIndexFacePeriodic( void ) const ;
 
-    bool isBorderNode(int nodeid) const ;
+	bool isBorderNode(int nodeid) const ;
 
-    private: //----------------------------------------------------------------
+	bool isTriangular() const ;
+	bool isTetrahedral() const ;
+	bool isQuadrangular() const ;
+	bool isHexahedral() const ;
 
-    void setMesh( void ) ;
+private: //----------------------------------------------------------------
 
-    void setGroups( const MEDCoupling::MEDFileUMesh* medmesh) ;
+	void setMesh( void ) ;
 
-    /**
-     * Space dimension
-     */
-    int _spaceDim ;
+	void setGroups( const MEDCoupling::MEDFileUMesh* medmesh) ;
 
-     /**
-     * Mesh dimension
-     */
-    int _meshDim ;
+	/**
+	 * Space dimension
+	 */
+	int _spaceDim ;
 
-    double _xMin;
+	/**
+	 * Mesh dimension
+	 */
+	int _meshDim ;
 
-    double _xSup;
+	double _xMin;
 
-    double _yMin;
+	double _xSup;
 
-    double _ySup;
+	double _yMin;
 
-    double _zMin;
+	double _ySup;
 
-    double _zSup;
+	double _zMin;
 
-    std::vector<int> _nxyz;
+	double _zSup;
 
-    std::vector<double> _dxyz;
-    /*
-     * The nodes in this mesh.
-     */
-    Node *_nodes;
+	std::vector<int> _nxyz;
 
-    /*
-     * The number of nodes in this mesh.
-     */
-    int _numberOfNodes;
+	std::vector<double> _dxyz;
+	/*
+	 * The nodes in this mesh.
+	 */
+	Node *_nodes;
 
-    /*
-    * The faces in this mesh.
-    */
-    Face *_faces;
+	/*
+	 * The number of nodes in this mesh.
+	 */
+	int _numberOfNodes;
 
-    /*
-     * The numbers of faces in this mesh.
-     */
-    int _numberOfFaces;
+	/*
+	 * The faces in this mesh.
+	 */
+	Face *_faces;
 
-    /*
-     * The cells in this mesh.
-     */
-    Cell *_cells;
+	/*
+	 * The numbers of faces in this mesh.
+	 */
+	int _numberOfFaces;
 
-    /*
-     * The number of cells in this mesh.
-     */
-    int _numberOfCells;
+	/*
+	 * The cells in this mesh.
+	 */
+	Cell *_cells;
 
-    /*
-     * The names of groups.
-     */
-    std::vector<std::string> _groups;
+	/*
+	 * The number of cells in this mesh.
+	 */
+	int _numberOfCells;
 
-    /*
-     * The mesh MEDCoupling
-     */
-    MEDCoupling::MCAuto<MEDCoupling::MEDCouplingMesh> _mesh;
+	/*
+	 * The names of groups.
+	 */
+	std::vector<std::string> _groups;
+
+	/*
+	 * The mesh MEDCoupling
+	 */
+	MEDCoupling::MCAuto<MEDCoupling::MEDCouplingMesh> _mesh;
+	std::vector< INTERP_KERNEL::NormalizedCellType > _eltsTypes;//List of cell types contained in the mesh
 };
 
 #endif /* MESH_HXX_ */

@@ -286,6 +286,27 @@ Mesh::isBorderNode(int nodeid) const
 		return false;
 }
 
+bool
+Mesh::isTriangular() const
+{
+	return _eltsTypes.size()==1 && _eltsTypes[0]==INTERP_KERNEL::NORM_TRI3;
+}
+bool
+Mesh::isTetrahedral() const
+{
+	return _eltsTypes.size()==1 && _eltsTypes[0]==INTERP_KERNEL::NORM_TETRA4;
+}
+bool
+Mesh::isQuadrangular() const
+{
+	return _eltsTypes.size()==1 && _eltsTypes[0]==INTERP_KERNEL::NORM_QUAD4;
+}
+bool
+Mesh::isHexahedral() const
+{
+	return _eltsTypes.size()==1 && _eltsTypes[0]==INTERP_KERNEL::NORM_HEXA8;
+}
+
 void
 Mesh::setGroups( const MEDFileUMesh* medmesh)
 {
@@ -344,18 +365,18 @@ Mesh::setMesh( void )
 	m2->setName(mu->getName());
 
 	//Test du type d'éléments contenus dans le maillage afin d'éviter les éléments contenant des points de gauss
-	vector< INTERP_KERNEL::NormalizedCellType > eltsTypes=mu->getAllGeoTypesSorted();
-	for(int i=0; i<eltsTypes.size();i++)
+	_eltsTypes=mu->getAllGeoTypesSorted();
+	for(int i=0; i<_eltsTypes.size();i++)
 	{
 		if(
-				eltsTypes[i]!= INTERP_KERNEL::NORM_POINT1 && eltsTypes[i]!= INTERP_KERNEL::NORM_SEG2
-				&& eltsTypes[i]!= INTERP_KERNEL::NORM_TRI3   && eltsTypes[i]!= INTERP_KERNEL::NORM_QUAD4
-				&& eltsTypes[i]!= INTERP_KERNEL::NORM_TETRA4 && eltsTypes[i]!= INTERP_KERNEL::NORM_PYRA5
-				&& eltsTypes[i]!= INTERP_KERNEL::NORM_PENTA6 && eltsTypes[i]!= INTERP_KERNEL::NORM_HEXA8
+				_eltsTypes[i]!= INTERP_KERNEL::NORM_POINT1 && _eltsTypes[i]!= INTERP_KERNEL::NORM_SEG2
+				&& _eltsTypes[i]!= INTERP_KERNEL::NORM_TRI3   && _eltsTypes[i]!= INTERP_KERNEL::NORM_QUAD4
+				&& _eltsTypes[i]!= INTERP_KERNEL::NORM_TETRA4 && _eltsTypes[i]!= INTERP_KERNEL::NORM_PYRA5
+				&& _eltsTypes[i]!= INTERP_KERNEL::NORM_PENTA6 && _eltsTypes[i]!= INTERP_KERNEL::NORM_HEXA8
 		)
 		{
 			cout<< "Mesh " + mu->getName() + " contains an element of type " <<endl;
-			cout<< eltsTypes[i]<<endl;
+			cout<< _eltsTypes[i]<<endl;
 			throw CdmathException("Mesh::setMesh : in order to avoid gauss points, mesh should contain elements of type NORM_POINT1, NORM_SEG2, NORM_TRI3, NORM_QUAD4, NORM_TETRA4, NORM_PYRA5, NORM_PENTA6, NORM_HEXA8");
 		}
 	}

@@ -17,4 +17,4 @@ ADD_LIBRARY(mesh SHARED ${src_mesh_CXX})
 TARGET_LINK_LIBRARIES(mesh base medcoupling medloader )
 
 INSTALL(TARGETS mesh DESTINATION lib)
-#INSTALL(TARGETS meshStatic DESTINATION lib)
+

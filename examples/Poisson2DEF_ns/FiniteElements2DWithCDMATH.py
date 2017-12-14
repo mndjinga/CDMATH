@@ -14,7 +14,9 @@ from math import sin, pi
 
 #Chargement du maillage triangulaire du domaine carré [0,1]x[0,1], définition des bords
 #=======================================================================================
-my_mesh = cdmath.Mesh("../../tests/ressources/MeshTri2600Cells.med") #need a function isTriangular/isTetrahedric to check that the cells are triangular/tetrahedric
+my_mesh = cdmath.Mesh("../../tests/ressources/MeshTri2600Cells.med")
+if(!my_mesh.isTriangular()) :
+	raise ValueError("Wrong cell types : mesh is not made of triangles")
 eps=1e-6
 my_mesh.setGroupAtPlan(0.,0,eps,"DirichletBorder")#Bord GAUCHE
 my_mesh.setGroupAtPlan(1.,0,eps,"DirichletBorder")#Bord DROIT
@@ -74,8 +76,6 @@ GradShapeFunc2=cdmath.Vector(2)
 for i in range(nbCells):
 
 	Ci=my_mesh.getCell(i)
-	if(Ci.getNumberOfNodes()!=3) :
-		raise ValueError("Wrong cell type : number of nodes different from 3")
 
 	#Contribution à la matrice de rigidité
 	nodeId0=Ci.getNodeId(0)

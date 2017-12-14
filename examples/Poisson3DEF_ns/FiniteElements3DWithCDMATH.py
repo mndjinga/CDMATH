@@ -15,6 +15,8 @@ from math import sin, pi
 #Chargement du maillage triangulaire du domaine carré [0,1]x[0,1], définition des bords
 #=======================================================================================
 my_mesh = cdmath.Mesh("Mesh_3D_5000.med") #need a function isTriangular/isTetrahedric to check that the cells are triangular/tetrahedric
+if(!my_mesh.isTetrahedral()) :
+	raise ValueError("Wrong cell types : mesh is not made of tetrahedra")
 eps=1e-6
 my_mesh.setGroupAtPlan(0.,0,eps,"DirichletBorder")#Bord GAUCHE
 my_mesh.setGroupAtPlan(1.,0,eps,"DirichletBorder")#Bord DROIT
