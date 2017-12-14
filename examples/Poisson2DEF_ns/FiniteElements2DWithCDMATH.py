@@ -20,8 +20,6 @@ my_mesh.setGroupAtPlan(0.,0,eps,"DirichletBorder")#Bord GAUCHE
 my_mesh.setGroupAtPlan(1.,0,eps,"DirichletBorder")#Bord DROIT
 my_mesh.setGroupAtPlan(0.,1,eps,"DirichletBorder")#Bord BAS
 my_mesh.setGroupAtPlan(1.,1,eps,"DirichletBorder")#Bord HAUT
-#my_mesh.setGroupAtPlan(0,2,eps,"DirichletBorder")#Bord AVANT si calcul 3D
-#my_mesh.setGroupAtPlan(1,2,eps,"DirichletBorder")#Bord ARRIERE si calcul 3D
 
 nbNodes = my_mesh.getNumberOfNodes()
 nbCells = my_mesh.getNumberOfCells()
@@ -44,7 +42,7 @@ for i in range(nbNodes):
 	Ni=my_mesh.getNode(i)
 	x = Ni.x()
 	y = Ni.y()
-	#z=Ni.z() si calcul 3D
+
 	my_RHSfield[i]=2*pi*pi*sin(pi*x)*sin(pi*y)#mettre la fonction definie au second membre de l'edp
 	if my_mesh.isBorderNode(i): # Détection des noeuds frontière
 		boundaryNodes.append(i)
@@ -68,24 +66,26 @@ Rigidite=cdmath.SparseMatrix(nbInteriorNodes,nbInteriorNodes,nbInteriorNodes*max
 RHS=cdmath.Vector(nbInteriorNodes)
 
 # Vecteurs gradient de la fonction de forme associée à chaque noeud d'un triangle (hypothèse 2D)
-GradShapeFunc0=cdmath.Vector(2)#en 3D GradShapeFunc0=cdmath.Vector(3)
-GradShapeFunc1=cdmath.Vector(2)#en 3D GradShapeFunc1=cdmath.Vector(3)
-GradShapeFunc2=cdmath.Vector(2)#en 3D GradShapeFunc2=cdmath.Vector(3)
-#GradShapeFunc3=cdmath.Vector(3) si calcul 3D
+GradShapeFunc0=cdmath.Vector(2)
+GradShapeFunc1=cdmath.Vector(2)
+GradShapeFunc2=cdmath.Vector(2)
 
 #On parcourt les triangles du domaine
 for i in range(nbCells):
 
 	Ci=my_mesh.getCell(i)
+	if(Ci.getNumberOfNodes()!=3) :
+		raise ValueError("Wrong cell type : number of nodes different from 3")
+
 	#Contribution à la matrice de rigidité
 	nodeId0=Ci.getNodeId(0)
 	nodeId1=Ci.getNodeId(1)
 	nodeId2=Ci.getNodeId(2)
-	#nodeId3=Ci.getNodeId(3) si calcul 3D
+
 	N0=my_mesh.getNode(nodeId0)
 	N1=my_mesh.getNode(nodeId1)
 	N2=my_mesh.getNode(nodeId2)
-	#N3=my_mesh.getNode(nodeId3) si calcul 3D
+
 	#Formule des gradients voir EF P1 -> calcul déterminants
 	GradShapeFunc0[0]= (N1.y()-N2.y())/2
 	GradShapeFunc0[1]=-(N1.x()-N2.x())/2
@@ -93,21 +93,21 @@ for i in range(nbCells):
 	GradShapeFunc1[1]= (N0.x()-N2.x())/2
 	GradShapeFunc2[0]= (N0.y()-N1.y())/2
 	GradShapeFunc2[1]=-(N0.x()-N1.x())/2
-	#En 3D l'expression du déterminant est plus complexe et il faut remplir le vecteur GradShapeFunc3
+
 	#Création d'un tableau (numéro du noeud, gradient de la fonction de forme
 	GradShapeFuncs={nodeId0 : GradShapeFunc0}
 	GradShapeFuncs[nodeId1]=GradShapeFunc1
 	GradShapeFuncs[nodeId2]=GradShapeFunc2
-	#GradShapeFuncs[nodeId3]=GradShapeFunc3 en 3D
+
 
 	# Remplissage de  la matrice de rigidité et du second membre
-	for j in [nodeId0,nodeId1,nodeId2] : #Ajouter nodeId3 en 3D
+	for j in [nodeId0,nodeId1,nodeId2] :
 		if boundaryNodes.count(j)==0 : #seuls les noeuds intérieurs contribuent au système linéaire (matrice de rigidité et second membre)
 			j_int=interiorNodes.index(j)#indice du noeud j en tant que noeud intérieur
 			#Ajout de la contribution de la cellule triangulaire i au second membre du noeud j 
 			RHS[j_int]=Ci.getMeasure()/3*my_RHSfield[j]+RHS[j_int] # intégrale dans le triangle du produit f x fonction de base
 			#Contribution de la cellule triangulaire i à la ligne j_int du système linéaire
- 			for k in [nodeId0,nodeId1,nodeId2] : #Ajouter nodeId3 en 3D
+ 			for k in [nodeId0,nodeId1,nodeId2] : 
 				if boundaryNodes.count(k)==0 : #seuls les noeuds intérieurs contribuent à la matrice du système linéaire
 					k_int=interiorNodes.index(k)#indice du noeud k en tant que noeud intérieur
 					coeff = Rigidite(j_int,k_int)+GradShapeFuncs[j]*GradShapeFuncs[k]/Ci.getMeasure()

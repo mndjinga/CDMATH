@@ -10,7 +10,6 @@
 import cdmath
 from math import sin, pi
 
-
 #Préprocessing optionnel: création du fichier my_mesh.med contenant la géométrie et le maillage du domaine de calcul à partir de commandes python (import salome)
 
 #Chargement du maillage triangulaire du domaine carré [0,1]x[0,1], définition des bords
@@ -47,6 +46,7 @@ for i in range(nbNodes):
 	x = Ni.x()
 	y = Ni.y()
 	z = Ni.z()
+
 	my_RHSfield[i]=3*pi*pi*sin(pi*x)*sin(pi*y)*sin(pi*z)#mettre la fonction definie au second membre de l'edp
 	B[i]=sin(pi*x)*sin(pi*y)*sin(pi*z)
 	if my_mesh.isBorderNode(i): # Détection des noeuds frontière
@@ -81,6 +81,8 @@ GradShapeFunc3=cdmath.Vector(3)
 for i in range(nbCells):
 
 	Ci=my_mesh.getCell(i)
+	if(Ci.getNumberOfNodes()!=4) :
+		raise ValueError("Wrong cell type : number of nodes different from 4")
 
 	#Contribution à la matrice de rigidité
 	nodeId0=Ci.getNodeId(0)
@@ -106,12 +108,11 @@ for i in range(nbCells):
 	GradShapeFunc3[1]=(N2.x()*N0.z()-N2.z()*N0.x()-N1.x()*N0.z()+N0.x()*N1.z()+N1.x()*N2.z()-N2.x()*N1.z())/6
 	GradShapeFunc3[2]=-(N2.x()*N0.y()-N2.y()*N0.x()-N1.x()*N0.y()+N0.x()*N1.y()+N1.x()*N2.y()-N2.x()*N1.y())/6
 	
-	#En 3D l'expression du déterminant est plus complexe
 	#Création d'un tableau (numéro du noeud, gradient de la fonction de forme)
 	GradShapeFuncs={nodeId0 : GradShapeFunc0}
 	GradShapeFuncs[nodeId1]=GradShapeFunc1
 	GradShapeFuncs[nodeId2]=GradShapeFunc2
-	GradShapeFuncs[nodeId3]=GradShapeFunc3 #en 3D
+	GradShapeFuncs[nodeId3]=GradShapeFunc3
 
 	# Remplissage de  la matrice de rigidité et du second membre
 	for j in [nodeId0,nodeId1,nodeId2,nodeId3] :
