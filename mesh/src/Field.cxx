@@ -305,6 +305,62 @@ Field::setFieldByDataArrayDouble ( const DataArrayDouble* array )
 }
 
 //----------------------------------------------------------------------
+Vector
+Field::integral ( ) const
+//----------------------------------------------------------------------
+{
+	int nbComp=_field->getNumberOfComponents();
+    double res[nbComp];//Pointer containing the inegral of each component
+    _field->integral(false,res);
+    Vector result(nbComp);//Vector containing the inegral of each component
+
+    for(int i=0; i<nbComp ; i++)
+    	result(i)=res[i];
+
+    return result;
+}
+
+//----------------------------------------------------------------------
+double
+Field::integral ( int compId ) const
+//----------------------------------------------------------------------
+{
+	return _field->integral(compId, false);
+}
+
+//----------------------------------------------------------------------
+Vector
+Field::normL1 ( ) const
+//----------------------------------------------------------------------
+{
+	int nbComp=_field->getNumberOfComponents();
+    double res[nbComp];//Pointer containing the inegral of each component
+    _field->normL1(res);
+    Vector result(nbComp);//Vector containing the inegral of each component
+
+    for(int i=0; i<nbComp ; i++)
+    	result(i)=res[i];
+
+    return result;
+}
+
+//----------------------------------------------------------------------
+Vector
+Field::normL2 ( ) const
+//----------------------------------------------------------------------
+{
+	int nbComp=_field->getNumberOfComponents();
+    double res[nbComp];//Pointer containing the inegral of each component
+    _field->normL2(res);
+    Vector result(nbComp);//Vector containing the inegral of each component
+
+    for(int i=0; i<nbComp ; i++)
+    	result(i)=res[i];
+
+    return result;
+}
+
+//----------------------------------------------------------------------
 double&
 Field::operator() ( int ielem )
 //----------------------------------------------------------------------

@@ -150,6 +150,34 @@ class Field
 
     std::string getInfoOnComponent(int icomp) const;
 
+    /**
+     * Computes all the components of the sum of values of the field multiplied by dual cell measures. In case of a field on cells, the dual mesh coincides with the underlying mesh
+     * The field may be multicomponent so the result of the integral should be a vector
+     * return the vector of numerical value of the integral of the field
+     */
+    Vector integral() const;
+
+    /**
+     * Computes the sum of values of a given component of the field multiplied by dual cell measures. In case of a field on cells, the dual mesh coincides with the underlying mesh
+     * @param the index of the component of interest
+     * return the numerical value of the integral of the field
+     */
+    double integral(int compId) const;
+
+    /**
+     * Computes for each component the sum of the absolute values of the field components multiplied by dual cell measures. In case of a field on cells, the dual mesh coincides with the underlying mesh.
+     * The field may be multicomponent so the result of the integral should be a vector
+     * return the vector of numerical value of the L1 norm of each component of the field
+     */
+    Vector normL1() const;
+
+    /**
+     * Computes all the components of the sum of squares of the values of the field components multiplied by dual cell measures. In case of a field on cells, the dual mesh coincides with the underlying mesh
+     * The field may be multicomponent so the result of the integral should be a vector
+     * return the vector of numerical value of the L2 norm of each component of the field
+     */
+    Vector normL2() const;
+
     const Field& operator= ( const Field& f ) ;
 
     Field operator+ ( const Field& f ) const ;
