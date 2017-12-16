@@ -30,6 +30,12 @@ class Vector: public Matrix
 
 	double norm() const ;
 
+	Vector innerProduct (const Vector& vector) const ;
+
+	Vector crossProduct (const Vector& vector) const ;
+
+	Matrix tensProduct ( const Vector& vector) const ;
+
 	double operator* (const Vector& vector) const ;
 
 	friend Matrix operator^(const Vector& vector1, const Vector& vector2);

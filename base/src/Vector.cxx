@@ -63,6 +63,44 @@ Vector::operator* (const Vector& vector) const
 	return res;
 }
 
+Vector
+Vector::innerProduct (const Vector& vector) const
+{
+	double res=0.;
+	int numberOfRows=getNumberOfRows();
+	if(numberOfRows!= vector.getNumberOfRows())
+		throw CdmathException("Vector::operator* vectors should have the same dimension for scalar product");
+	for(int i=0; i<numberOfRows; i++)
+	{
+		res=res+Matrix::operator()(i,0)*vector(i);
+	}
+	return res;
+}
+
+Vector
+Vector::crossProduct (const Vector& vector) const
+{
+	  int numberOfRows1 = getNumberOfRows();
+	  int numberOfRows2 = vector.getNumberOfRows();
+	  if(numberOfRows1!= 3 || numberOfRows2!= 3 )
+			throw CdmathException("Vector::operator* vectors should have the dimension 3 for cross-product");
+
+	  Vector res(3);
+	  res(0) = Matrix::operator()(1,0) * vector(2) - Matrix::operator()(2,0) * vector(1);
+	  res(1) = Matrix::operator()(2,0) * vector(0) - Matrix::operator()(0,0) * vector(2);
+	  res(2) = Matrix::operator()(0,0) * vector(1) - Matrix::operator()(1,0) * vector(0);
+
+	  return res;
+}
+
+Matrix Vector::tensProduct (const Vector& vector) const
+{
+	Matrix res(getNumberOfRows(),vector.getNumberOfRows());
+	for(int i=0;i<getNumberOfRows();i++)
+		for(int j=0;j<vector.getNumberOfRows();j++)
+			res(i,j)=Matrix::operator()(i,0)*vector(j);
+	return res;
+}
 double Vector::norm() const
 {
 	double norm = 0.0;
