@@ -15,7 +15,7 @@ from math import sin, pi
 #Chargement du maillage triangulaire du domaine carré [0,1]x[0,1], définition des bords
 #=======================================================================================
 my_mesh = cdmath.Mesh("../../tests/ressources/MeshTri2600Cells.med")
-if(!my_mesh.isTriangular()) :
+if(not my_mesh.isTriangular()) :
 	raise ValueError("Wrong cell types : mesh is not made of triangles")
 eps=1e-6
 my_mesh.setGroupAtPlan(0.,0,eps,"DirichletBorder")#Bord GAUCHE
@@ -34,8 +34,8 @@ print("nb of cells=", nbCells)
 #======================================================================
 my_RHSfield = cdmath.Field("RHS field", cdmath.NODES, my_mesh, 1)
 nbInteriorNodes = 0
-nbBoundaryNodes=0
-maxNbNeighbours=0#This is to determine the number of non zero coefficients in the sparse finite element rigidity matrix
+nbBoundaryNodes = 0
+maxNbNeighbours = 0#This is to determine the number of non zero coefficients in the sparse finite element rigidity matrix
 interiorNodes=[]
 boundaryNodes=[]
 
@@ -110,8 +110,7 @@ for i in range(nbCells):
  			for k in [nodeId0,nodeId1,nodeId2] : 
 				if boundaryNodes.count(k)==0 : #seuls les noeuds intérieurs contribuent à la matrice du système linéaire
 					k_int=interiorNodes.index(k)#indice du noeud k en tant que noeud intérieur
-					coeff = Rigidite(j_int,k_int)+GradShapeFuncs[j]*GradShapeFuncs[k]/Ci.getMeasure()
-					Rigidite.setValue(j_int,k_int,coeff)
+					Rigidite.addValue(j_int,k_int,GradShapeFuncs[j]*GradShapeFuncs[k]/Ci.getMeasure())
 				#else: si condition limite non nulle au bord, ajouter la contribution du bord au second membre de la cellule j
 
 print("Linear system matrix building done")

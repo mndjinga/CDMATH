@@ -2,7 +2,7 @@
 #===============================================================================================================================
 # Name        : Résolution EF de l'équation de Poisson 3D -\triangle u = f avec conditions aux limites de Dirichlet u=0
 # Author      : Michaël Ndjinga, Sédrick Kameni
-# Copyright   : CEA Saclay, AMMIS 2017
+# Copyright   : CEA Saclay 2017
 # Description : Utilisation de la méthode des éléménts finis P1 avec champs u et f discrétisés aux noeuds d'un maillage tétraédrique
 #		Création et sauvegarde du champ résultant ainsi que du champ second membre en utilisant la librairie CDMATH
 #================================================================================================================================
@@ -15,7 +15,7 @@ from math import sin, pi
 #Chargement du maillage triangulaire du domaine carré [0,1]x[0,1], définition des bords
 #=======================================================================================
 my_mesh = cdmath.Mesh("Mesh_3D_5000.med") #need a function isTriangular/isTetrahedric to check that the cells are triangular/tetrahedric
-if(!my_mesh.isTetrahedral()) :
+if(not my_mesh.isTetrahedral()) :
 	raise ValueError("Wrong cell types : mesh is not made of tetrahedra")
 eps=1e-6
 my_mesh.setGroupAtPlan(0.,0,eps,"DirichletBorder")#Bord GAUCHE
@@ -37,8 +37,8 @@ print("nb of cells=", nbCells)
 my_RHSfield = cdmath.Field("RHS field", cdmath.NODES, my_mesh, 1)
 B = cdmath.Field("EXA_SOL field", cdmath.NODES, my_mesh, 1)
 nbInteriorNodes = 0
-nbBoundaryNodes=0
-maxNbNeighbours=0#This is to determine the number of non zero coefficients in the sparse finite element rigidity matrix
+nbBoundaryNodes = 0
+maxNbNeighbours = 0#This is to determine the number of non zero coefficients in the sparse finite element rigidity matrix
 interiorNodes=[]
 boundaryNodes=[]
 
@@ -83,8 +83,6 @@ GradShapeFunc3=cdmath.Vector(3)
 for i in range(nbCells):
 
 	Ci=my_mesh.getCell(i)
-	if(Ci.getNumberOfNodes()!=4) :
-		raise ValueError("Wrong cell type : number of nodes different from 4")
 
 	#Contribution à la matrice de rigidité
 	nodeId0=Ci.getNodeId(0)
