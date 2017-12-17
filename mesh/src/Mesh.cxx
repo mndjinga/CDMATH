@@ -497,7 +497,6 @@ Mesh::setMesh( void )
 		DataArrayDouble *barySeg = m2->computeCellCenterOfMass() ;
 		const double *coorBarySeg=barySeg->getConstPointer();
 
-
 		MEDCouplingFieldDouble* fieldn;
 		DataArrayDouble *normal;
 		const double *tmpNormal;
@@ -574,7 +573,7 @@ Mesh::setMesh( void )
 					ci.addFaceId(0,work[0]) ;
 					ci.addFaceId(1,work[1]) ;	
 				}
-				else//_meshDim==2, nombre of faces around the cell id is variable, each face is composed of two nodes
+				else//_meshDim==2, number of faces around the cell id is variable, each face is composed of two nodes
 				{
 					for( int el=0;el<nbFaces;el++ )
 					{
@@ -597,16 +596,12 @@ Mesh::setMesh( void )
 						}
 						//To do : (PA^PB)^AB gives a normal vector to AB.
 						//Coordinates of the barycenter P of the cell id
-						vector<double> coorBarySegXyz(3);
-						for (int d=0; d<_spaceDim; d++)
-							coorBarySegXyz[d] = coorBarySeg[_spaceDim*id+d];
-
 						Vector vecAB(3), vecPA(3),vecPB(3);
 						for(int i=0;i<_spaceDim;i++)
 						{
 							vecAB[i]=coo->getIJ(idNodeB,i) - coo->getIJ(idNodeA,i);
-							vecPB[i]=coo->getIJ(idNodeB,i) - coorBarySeg[_spaceDim*id+i];
-							vecPA[i]=coo->getIJ(idNodeA,i) - coorBarySeg[_spaceDim*id+i];
+							vecPB[i]=coo->getIJ(idNodeB,i) - coorBary[_spaceDim*id+i];
+							vecPA[i]=coo->getIJ(idNodeA,i) - coorBary[_spaceDim*id+i];
 						}
 						Vector normal =(vecPA % vecPB) % vecAB;
 						normal/=normal.norm();
