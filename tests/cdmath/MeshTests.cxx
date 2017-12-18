@@ -154,7 +154,7 @@ MeshTests::testClassMesh( void )
     		CPPUNIT_ASSERT_EQUAL( 40, M22.getNumberOfFaces() );
 
     		//Testing a 2D unstructured mesh (triangles)
-    		Mesh M23("mesh.med");
+    		Mesh M23("meshSquare.med");
     		CPPUNIT_ASSERT(M23.getNamesOfGroups()[0].compare("BORD1")==0);
     		CPPUNIT_ASSERT(M23.getNamesOfGroups()[1].compare("BORD2")==0);
     		CPPUNIT_ASSERT(M23.getNamesOfGroups()[2].compare("BORD3")==0);
@@ -179,7 +179,7 @@ MeshTests::testClassMesh( void )
     		 */
 
     		//Test of a mesh with spaceDim=3 different from meshDim=2 (triangles)
-    		Mesh M4("Sphere106Cells.med");
+    		Mesh M4("meshSphere.med");
     		CPPUNIT_ASSERT(M4.isTriangular());
     		int nbCellsM4 = M4.getNumberOfCells();
     		double areaM4=0;
@@ -188,7 +188,7 @@ MeshTests::testClassMesh( void )
     		CPPUNIT_ASSERT_DOUBLES_EQUAL( 120000., areaM4, 2000 );//
 
     		//Testing a 3D unstructured mesh (tétraèdres)
-    		Mesh M5("Mesh_3D_5000.med");
+    		Mesh M5("meshCube.med");
     		CPPUNIT_ASSERT(M5.isTetrahedral());
     		int nbCellsM5 = M5.getNumberOfCells();
     		double volM5=0;
