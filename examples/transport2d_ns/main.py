@@ -127,7 +127,7 @@ def EquationTransport2D(tmax, VitesseX, VitesseY, cfl, freqSortie, my_mesh, outp
 
     # Time loop #
     print("Resolution of the transport equation with an UPWIND scheme…")
-    ntmax = 100000
+    ntmax = 3
     indexFacesPerio = my_mesh.getIndexFacePeriodic()
     dt = 0.
     while (it < ntmax and time <= tmax):
@@ -164,7 +164,7 @@ def main():
     freqSortie = 10
 
     print("Building Cartesian mesh…")
-    my_mesh = cdmath.Mesh("../../tests/ressources/MeshTri2600Cells.med")
+    my_mesh = cdmath.Mesh("../../tests/ressources/meshSquare.med")
     output_filename = "Exercie2PyTest"
     EquationTransport2D(tmax, VitesseX, VitesseY, cfl, freqSortie, my_mesh, output_filename)
     print("CDMATH calculation done.")

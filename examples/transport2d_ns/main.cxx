@@ -142,7 +142,7 @@ void EquationTransport2D(double tmax, double VitesseX, double VitesseY, double c
 
     /* Time loop */
     cout << "Resolution of the transport equation with an UPWIND scheme…" << endl;
-    int ntmax=100000;
+    int ntmax=3;
     double dt;
     IntTab indexFacesPerio=myMesh.getIndexFacePeriodic();
     while (iter<ntmax && time <= tmax )
@@ -183,7 +183,7 @@ int main()
     int freqSortie=10;
 
     cout << "Construction of Cartesian mesh…" << endl;
-    Mesh myMesh("../../tests/ressources/MeshTri2600Cells.med");
+    Mesh myMesh("../../tests/ressources/meshSquare.med");
     string fileOutPut="Exercice2";
     EquationTransport2D(tmax,VitesseX,VitesseY,cfl,freqSortie,myMesh,fileOutPut);
     cout << "CDMATH calculation done." << endl;

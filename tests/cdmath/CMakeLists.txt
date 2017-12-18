@@ -20,9 +20,9 @@ endif (CDMATH_WITH_PETSC)
 
 
 SET(MESH_MED
-  ../ressources/mesh.med
-  ../ressources/Sphere106Cells.med
-  ../ressources/Mesh_3D_5000.med
+  ../ressources/meshSquare.med
+  ../ressources/meshSphere.med
+  ../ressources/meshCube.med
 	)
 
 file(COPY ${MESH_MED} DESTINATION ${CMAKE_BINARY_DIR}/tests) 

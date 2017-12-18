@@ -258,7 +258,7 @@ int Equation_Transport()
     double VitesseX=1.0;
     double tmax=100.;
     int freqSortie=1;
-    int ntmax=100;
+    int ntmax=3;
     int nx=50;
     double xinf=0.0;
     double xsup=10.;

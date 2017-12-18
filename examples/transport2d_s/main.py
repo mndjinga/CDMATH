@@ -127,7 +127,7 @@ def EquationTransport2D(tmax, VitesseX, VitesseY, cfl, output_freq, my_mesh, fil
 
     # Time loop #
     print("Resolution of the transport equation with an UPWIND scheme…")
-    ntmax = 100000
+    ntmax = 3
     indexFacesPerio = my_mesh.getIndexFacePeriodic()
     dt = 0.
     while (iteration < ntmax and time <= tmax):

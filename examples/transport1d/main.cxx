@@ -19,7 +19,7 @@ int main( void )
   double a=-5.0;
   double b=5.0;
   int nx=1000;
-  int ntmax=1000;
+  int ntmax=3;
   double dx = (b-a)/nx;
   double pi=3.1415927;
   // Transport velocity

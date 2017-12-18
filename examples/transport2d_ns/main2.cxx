@@ -146,7 +146,7 @@ void EquationTransport2D(int &iter, double tmin, double & tmax,
 
     /* Time loop */
     cout << "Resolution of the transport equation with an UPWIND scheme…" << endl;
-    int ntmax=100000 + iter;
+    int ntmax=3 + iter;
     double dt;
     IntTab indexFacesPerio=myMesh.getIndexFacePeriodic();
     while (iter<ntmax && time <= tmax )
@@ -230,7 +230,7 @@ int main()
     p.outFile="res2D";
 
     cout << "Construction of Cartesian mesh…" << endl;
-    Mesh M("../../tests/ressources/MeshTri2600Cells.med");
+    Mesh M("../../tests/ressources/meshSquare.med");
 
     double tmin = 0;
     double tmax = 0.1;

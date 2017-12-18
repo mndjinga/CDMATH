@@ -1,7 +1,8 @@
 
 SET(MESH_MED
-  ../ressources/mesh.med
-  ../ressources/Sphere106Cells.med
+  ../ressources/meshSquare.med
+  ../ressources/meshSphere.med
+  ../ressources/meshCube.med
   )
 
 file(COPY ${MESH_MED} DESTINATION ${CMAKE_BINARY_DIR}/tests/swig)

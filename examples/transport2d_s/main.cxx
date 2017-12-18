@@ -142,7 +142,7 @@ void EquationTransport2D(double tmax, double VitesseX, double VitesseY, double c
 
     /* Time loop */
     cout << "Resolution of the transport equation with an UPWIND scheme…" << endl;
-    int ntmax=10000;
+    int ntmax=3;
     double dt;
     IntTab indexFacesPerio=myMesh.getIndexFacePeriodic();
     while (iter<ntmax && time <= tmax )
