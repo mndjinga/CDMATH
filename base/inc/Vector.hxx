@@ -20,7 +20,7 @@ class Vector: public Matrix
 
 	~Vector ( void ) ;
 
-	int size();
+	int size() const ;
 
 	double& operator () ( int i ) ;
 
