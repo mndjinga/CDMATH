@@ -25,7 +25,10 @@ Matrix(numberOfRows,1)
 
 }
 
-
+int Vector::size()
+{
+	return getNumberOfRows();
+}
 double&
 Vector::operator()(int i)
 {
