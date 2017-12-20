@@ -1,0 +1,16 @@
+
+SET(MESH_MED
+  ../../tests/ressources/meshSphere.med
+  )
+
+file(COPY ${MESH_MED} DESTINATION ${CMAKE_BINARY_DIR}/examples/PoissonCurvedSurfaceEF_ns)
+
+if (CDMATH_WITH_PYTHON AND CDMATH_WITH_PETSC)
+    ADD_TEST(PoissonCurvedSurfaceEF_ns ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/FiniteElementsOnCurvedSurface.py)
+    SET_PROPERTY(TEST PoissonCurvedSurfaceEF_ns PROPERTY ENVIRONMENT "LD_LIBRARY_PATH=${CMAKE_INSTALL_PREFIX}/lib:${CMAKE_INSTALL_PREFIX}/lib/cdmath:${PETSC_DIR}/${PETSC_ARCH}/lib")
+    SET_PROPERTY(TEST PoissonCurvedSurfaceEF_ns APPEND PROPERTY ENVIRONMENT "PYTHONPATH=${CMAKE_INSTALL_PREFIX}/lib/cdmath:${CMAKE_INSTALL_PREFIX}/bin/cdmath")
+    INSTALL(FILES ${MESH_MED} DESTINATION share/examples/PoissonCurvedSurfaceEF_ns)
+
+endif (CDMATH_WITH_PYTHON AND CDMATH_WITH_PETSC)
+
+

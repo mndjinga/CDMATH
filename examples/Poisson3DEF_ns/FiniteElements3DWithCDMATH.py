@@ -14,7 +14,7 @@ from math import sin, pi
 
 #Chargement du maillage triangulaire du domaine carré [0,1]x[0,1], définition des bords
 #=======================================================================================
-my_mesh = cdmath.Mesh("../../tests/ressources/meshCube.med")
+my_mesh = cdmath.Mesh("meshCube.med")
 if(not my_mesh.isTetrahedral()) :
 	raise ValueError("Wrong cell types : mesh is not made of tetrahedra")
 eps=1e-6
