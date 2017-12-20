@@ -25,7 +25,7 @@ Matrix(numberOfRows,1)
 
 }
 
-int Vector::size()
+int Vector::size() const
 {
 	return getNumberOfRows();
 }
