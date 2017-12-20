@@ -185,7 +185,7 @@ MeshTests::testClassMesh( void )
     		double areaM4=0;
     		for(int i=0; i<nbCellsM4; i++)
     			areaM4+=M4.getCell(i).getMeasure();
-    		CPPUNIT_ASSERT_DOUBLES_EQUAL( 120000., areaM4, 2000 );//
+    		CPPUNIT_ASSERT_DOUBLES_EQUAL( 4*3.14, areaM4, 1 );
 
     		//Testing a 3D unstructured mesh (tétraèdres)
     		Mesh M5("meshCube.med");
