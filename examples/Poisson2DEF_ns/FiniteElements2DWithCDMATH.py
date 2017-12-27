@@ -55,7 +55,7 @@ for i in range(nbNodes):
 		maxNbNeighbours= max(1+Ni.getNumberOfCells(),maxNbNeighbours) #true only in 2D, need a function Ni.getNumberOfNeighbourNodes()
 
 # sauvegarde sur le disque dur du second membre discrétisé dans un fichier paraview
-my_RHSfield.writeVTK("FiniteElementsRHSField") 
+my_RHSfield.writeVTK("FiniteElements2DRHSField") 
 
 print("Right hand sde discretidation done")
 print("nb of interior nodes=", nbInteriorNodes)
@@ -130,7 +130,7 @@ for j in range(nbInteriorNodes):
 for j in range(nbBoundaryNodes):
     my_ResultField[boundaryNodes[j]]=0;#remplissage des valeurs pour les noeuds frontière (condition limite)
 #sauvegarde sur le disque dur du résultat dans un fichier paraview
-my_ResultField.writeVTK("FiniteElementsResultField")
+my_ResultField.writeVTK("FiniteElements2DResultField")
 
 print("Numerical solution of 2D poisson equation using finite elements done")
 

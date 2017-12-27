@@ -48,7 +48,7 @@ for i in range(nbNodes):
 		maxNbNeighbours = max(1+Ni.getNumberOfCells(),maxNbNeighbours)
 
 # sauvegarde sur le disque dur du second membre discrétisé dans un fichier paraview
-my_RHSfield.writeVTK("FiniteElementsRHSField") 
+my_RHSfield.writeVTK("FiniteElements2DSurfaceRHSField") 
 
 print("Right hand side discretisation done")
 print("Max nb of neighbours=", maxNbNeighbours)
@@ -152,7 +152,7 @@ my_ResultField = cdmath.Field("Result field", cdmath.NODES, my_mesh, 1)
 for j in range(nbNodes):
     my_ResultField[j]=SolSyst[j];#remplissage des valeurs pour les noeuds intérieurs
 #sauvegarde sur le disque dur du résultat dans un fichier paraview
-my_ResultField.writeVTK("FiniteElementsResultField")
+my_ResultField.writeVTK("FiniteElements2DSurfaceResultField")
 
 print("Integral of the numerical solution", my_ResultField.integral(0))
 print("Numerical solution of 2D poisson equation using finite elements done")
