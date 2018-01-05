@@ -39,3 +39,4 @@ SWIG_LINK_LIBRARIES(cdmath ${PYTHON_LIBS} base mesh medcoupling medloader ${_ext
 
 INSTALL(TARGETS _cdmath DESTINATION lib/cdmath)
 INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/cdmath.py DESTINATION bin/cdmath)
+
