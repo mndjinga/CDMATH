@@ -542,8 +542,8 @@ PyObject *ToNumPyArray(MCData *self, int npyObjectType, const char *MCDataStr)
   return ToNumPyArrayUnderground<MCData,T>(self,npyObjectType,MCDataStr,self->getNumberOfTuples(),self->getNumberOfComponents());
 }
 
-SWIGINTERN PyObject *MEDCoupling_DataArrayInt_toNumPyArray(MEDCoupling::DataArrayInt *self);
-SWIGINTERN PyObject *MEDCoupling_DataArrayDouble_toNumPyArray(MEDCoupling::DataArrayDouble *self);
+SWIGINTERN PyObject *MEDCoupling_DataArrayInt_toNumPyArray(MEDCoupling::DataArrayInt *self){};
+SWIGINTERN PyObject *MEDCoupling_DataArrayDouble_toNumPyArray(MEDCoupling::DataArrayDouble *self){};
 
 PyObject *ToCSRMatrix(const std::vector<std::map<int,double> >& m, int nbCols) throw(INTERP_KERNEL::Exception)
 {
