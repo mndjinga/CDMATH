@@ -50,7 +50,7 @@ IF(MEDFILE_BUILD_SHARED_LIBS)
   ENDIF()
   TARGET_LINK_LIBRARIES(medimportengine medC)
   SET_TARGET_PROPERTIES(medimportengine PROPERTIES OUTPUT_NAME medimport)
-  INSTALL(TARGETS medimportengine DESTINATION lib)
+  INSTALL(TARGETS medimportengine DESTINATION ${INSTALL_LIBRARIES_DIR})
   SET(_lib_to_link "medimportengine")
 ENDIF()
 
@@ -60,7 +60,7 @@ IF(MEDFILE_BUILD_STATIC_LIBS)
   TARGET_LINK_LIBRARIES(medimportengine_static medC_static)
   MED_SET_DEFINITIONS(medimportengine_static MED3_USESTATIC)
   SET_TARGET_PROPERTIES(medimportengine_static PROPERTIES OUTPUT_NAME medimport)
-  INSTALL(TARGETS medimportengine_static DESTINATION lib)
+  INSTALL(TARGETS medimportengine_static DESTINATION ${INSTALL_LIBRARIES_DIR})
   # Give precendence to the shared object for the linking of 
   # the executable medimport:
   IF(NOT _lib_to_link)
@@ -78,7 +78,7 @@ IF(NOT (WIN32 AND MEDFILE_BUILD_STATIC_LIBS))
   TARGET_LINK_LIBRARIES(medimport ${_lib_to_link})
     
   # Installation
-  INSTALL(TARGETS medimport DESTINATION bin )  
+  INSTALL(TARGETS medimport DESTINATION ${INSTALL_BINARIES_DIR} )  
 ENDIF()
 
-INSTALL(FILES include/medimport_win_dll.h include/MEDimport.h include/MEDimport.hxx include/medimportcxx_win_dll.h DESTINATION include)
+INSTALL(FILES include/medimport_win_dll.h include/MEDimport.h include/MEDimport.hxx include/medimportcxx_win_dll.h DESTINATION ${INSTALL_INCLUDE_DIR})

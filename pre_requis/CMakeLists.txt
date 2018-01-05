@@ -22,25 +22,25 @@
 # Directories have to be given after prerequisites (to be able to use
 # Python version string for example).
 # ===========
-SET(MEDCOUPLING_INSTALL_BINS bin/cdmath CACHE PATH "Install path: MEDCoupling binaries")
-SET(MEDCOUPLING_INSTALL_LIBS lib CACHE PATH "Install path: MEDCoupling libs")
-SET(MEDCOUPLING_INSTALL_HEADERS include CACHE PATH "Install path: MEDCoupling headers")
-SET(MEDCOUPLING_INSTALL_SCRIPT_SCRIPTS ${MEDCOUPLING_INSTALL_BINS} CACHE PATH "Install path: MEDCoupling scripts")
-SET(MEDCOUPLING_INSTALL_TESTS tests CACHE PATH "Install path: MEDCoupling tests")
+SET(MEDCOUPLING_INSTALL_BINS bin/medcoupling CACHE PATH "Install path: MEDCoupling binaries")
+SET(MEDCOUPLING_INSTALL_LIBS lib/medcoupling CACHE PATH "Install path: MEDCoupling libs")
+SET(MEDCOUPLING_INSTALL_HEADERS include/medcoupling CACHE PATH "Install path: MEDCoupling headers")
+SET(MEDCOUPLING_INSTALL_SCRIPT_SCRIPTS ${MEDCOUPLING_INSTALL_TESTS} CACHE PATH "Install path: MEDCoupling scripts")
+SET(MEDCOUPLING_INSTALL_TESTS bin/tests/medcoupling CACHE PATH "Install path: MEDCoupling tests")
 # SET(MEDCOUPLING_INSTALL_SCRIPT_DATA ${MEDCOUPLING_INSTALL_BINS} CACHE PATH "Install path: MEDCoupling script data")
-SET(MEDCOUPLING_INSTALL_SCRIPT_PYTHON ${MEDCOUPLING_INSTALL_BINS} CACHE PATH "Install path: MEDCoupling Python scripts")
+SET(MEDCOUPLING_INSTALL_SCRIPT_PYTHON ${MEDCOUPLING_INSTALL_TESTS} CACHE PATH "Install path: MEDCoupling Python scripts")
 SET(MEDCOUPLING_INSTALL_CMAKE_LOCAL cmake_files CACHE PATH "Install path: local MEDCoupling CMake files")
 
-IF (CMAKE_CDMATH_SWIG)
+IF (CDMATH_WITH_PYTHON)
   SET(MEDCOUPLING_ENABLE_PYTHON ON)
-  SET(_pydir lib/python${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}/site-packages)
+  SET(_pydir lib/medcoupling/python${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}/site-packages)
   SET(MEDCOUPLING_INSTALL_PYTHON ${_pydir} CACHE PATH "Install path: MEDCoupling Python stuff")
   SET(MEDCOUPLING_INSTALL_PYTHON_SHARED ${MEDCOUPLING_INSTALL_PYTHON}/shared_modules CACHE PATH
     "Install path: MEDCoupling Python shared modules")
-ENDIF (CMAKE_CDMATH_SWIG)
+ENDIF (CDMATH_WITH_PYTHON)
 
-SET(MEDCOUPLING_INSTALL_RES share/resources CACHE PATH "Install path: MEDCoupling resources")
-SET(MEDCOUPLING_INSTALL_DOC share/doc CACHE PATH "Install path: MEDCoupling documentation")
+SET(MEDCOUPLING_INSTALL_RES share/medcoupling/resources CACHE PATH "Install path: MEDCoupling resources")
+SET(MEDCOUPLING_INSTALL_DOC share/medcoupling/doc CACHE PATH "Install path: MEDCoupling documentation")
 
 SET ( BUILD_SHARED_LIBS ON )
 

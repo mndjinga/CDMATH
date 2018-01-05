@@ -79,7 +79,10 @@ IF(WIN32 AND NOT CYGWIN)
 ELSE()
    SET(INSTALL_CMAKE_CONFIG_DIR share/cmake/${PROJECT_NAME})
 ENDIF()
-SET(INSTALL_INCLUDE_DIR include)
+SET(INSTALL_INCLUDE_DIR include/med)
+SET(INSTALL_BINARIES_DIR bin/med)
+SET(INSTALL_LIBRARIES_DIR lib/med)
+SET(INSTALL_TESTS_DIR bin/tests/med)
 
 ## Pre-requisites detection
 # Detect HDF5 first to potentially retrieve MPI automatically:
