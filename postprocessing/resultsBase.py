@@ -213,9 +213,9 @@ class DataView():
             plt.ylim(self.y_range[0], self.y_range[1])
 
         for probe in self.probes:
-            logging.debug(probe.field_result.root_name
+            logging.debug(probe.file_name
                           + " "
-                          + probe.field_result.variable)
+                          + probe.variable_name)
             x, var = probe.data
             # TODO : can we write this if-then in a more pythonist way?
             if build_label == None:
