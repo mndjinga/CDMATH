@@ -37,6 +37,7 @@ IF (CDMATH_WITH_PYTHON)
   SET(MEDCOUPLING_INSTALL_PYTHON ${_pydir} CACHE PATH "Install path: MEDCoupling Python stuff")
   SET(MEDCOUPLING_INSTALL_PYTHON_SHARED ${MEDCOUPLING_INSTALL_PYTHON}/shared_modules CACHE PATH
     "Install path: MEDCoupling Python shared modules")
+  INCLUDE(SalomeMacros)
 ENDIF (CDMATH_WITH_PYTHON)
 
 SET(MEDCOUPLING_INSTALL_RES share/medcoupling/resources CACHE PATH "Install path: MEDCoupling resources")
