@@ -1,9 +1,9 @@
-# Copyright (C) 2012-2013  CEA/DEN, EDF R&D, OPEN CASCADE
+# Copyright (C) 2012-2016  CEA/DEN, EDF R&D, OPEN CASCADE
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
 # License as published by the Free Software Foundation; either
-# version 2.1 of the License.
+# version 2.1 of the License, or (at your option) any later version.
 #
 # This library is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -109,45 +109,68 @@ MACRO(SALOME_INSTALL_SCRIPTS file_list path)
   IF(NOT SALOME_INSTALL_SCRIPTS_DEF_PERMS)
     SET(PERMS ${PERMS} OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE)
   ENDIF(NOT SALOME_INSTALL_SCRIPTS_DEF_PERMS)
+  SET(_all_pyc)
+  SET(_all_pyo)
+  SET(_all_subdirs)
   FOREACH(file ${file_list})
     SET(PREFIX "")
-    IF(IS_ABSOLUTE ${file})
-      GET_FILENAME_COMPONENT(file_name ${file} NAME)
-    ELSE()
-      SET(file_name ${file})
+    SET(_source_prefix "")
+    GET_FILENAME_COMPONENT(file_name ${file} NAME)
+    IF(NOT IS_ABSOLUTE ${file})
       IF(SALOME_INSTALL_SCRIPTS_WORKING_DIRECTORY)
-	SET(PREFIX "${SALOME_INSTALL_SCRIPTS_WORKING_DIRECTORY}/")
+	    SET(PREFIX "${SALOME_INSTALL_SCRIPTS_WORKING_DIRECTORY}/")
       ENDIF(SALOME_INSTALL_SCRIPTS_WORKING_DIRECTORY)
-    ENDIF(IS_ABSOLUTE ${file})
+      SET(_source_prefix "${CMAKE_CURRENT_SOURCE_DIR}/")
+    ENDIF(NOT IS_ABSOLUTE ${file})
     INSTALL(FILES ${PREFIX}${file} DESTINATION ${path} PERMISSIONS ${PERMS})
     GET_FILENAME_COMPONENT(ext ${file} EXT)
-    IF(ext STREQUAL .py)
-      INSTALL(CODE "MESSAGE(STATUS \"py compiling ${file_name}\")")
-      INSTALL(CODE "SET(CMD \"import py_compile ; py_compile.compile('${file_name}')\")")
-      INSTALL(CODE "EXECUTE_PROCESS(COMMAND ${PYTHON_EXECUTABLE} -c \"\${CMD}\")")
-      INSTALL(CODE "EXECUTE_PROCESS(COMMAND ${PYTHON_EXECUTABLE} -O -c \"\${CMD}\")")
-    ENDIF(ext STREQUAL .py)
-  ENDFOREACH(file ${file_list})
-ENDMACRO(SALOME_INSTALL_SCRIPTS)
+    GET_FILENAME_COMPONENT(we_ext ${file} NAME_WE)
 
-#----------------------------------------------------------------------------
-# SALOME_INSTALL_SCRIPTS is a macro useful for installing executable scripts.
-# ARGUMENTS:
-# PYFILE2COMPINST: IN : list of python files to be installed.
-# PYFILELOC: IN : full pathname for installing.
-# Permissions of installed files: OWNER_WRITE, OWNER_READ, GROUP_READ, and WORLD_READ
-#----------------------------------------------------------------------------
-MACRO(INSTALL_AND_COMPILE_PYTHON_FILE PYFILE2COMPINST PYFILELOC)
-  INSTALL(CODE "SET(PYTHON_FILE ${f})")
-  FOREACH(input ${PYFILE2COMPINST})
-    GET_FILENAME_COMPONENT(inputname ${input} NAME)
-    INSTALL(FILES ${input} DESTINATION ${PYFILELOC})
-    INSTALL(CODE "MESSAGE(STATUS \"py compiling ${PYFILELOC}/${inputname}\")")
-    INSTALL(CODE "SET(CMD \"import py_compile ; py_compile.compile('${PYFILELOC}/${inputname}')\")")
-    INSTALL(CODE "EXECUTE_PROCESS(COMMAND ${PYTHON_EXECUTABLE} -c \"\${CMD}\")")
-    INSTALL(CODE "EXECUTE_PROCESS(COMMAND ${PYTHON_EXECUTABLE} -O -c \"\${CMD}\")")
-  ENDFOREACH(input ${PYFILE2COMPINST})
-ENDMACRO(INSTALL_AND_COMPILE_PYTHON_FILE PYFILE2COMPINST PYFILELOC)
+    IF(ext STREQUAL .py)    
+      # Generate and install the pyc and pyo
+      # [ABN] Important: we avoid references or usage of CMAKE_INSTALL_PREFIX which is not correctly set 
+      # when using CPack.       
+      SET(_pyc_file "${CMAKE_CURRENT_BINARY_DIR}/${we_ext}.pyc")
+      SET(_pyo_file "${CMAKE_CURRENT_BINARY_DIR}/${we_ext}.pyo")
+      LIST(APPEND _all_pyc ${_pyc_file})
+      LIST(APPEND _all_pyo ${_pyo_file})
+      ADD_CUSTOM_COMMAND(
+           OUTPUT ${_pyc_file}
+           COMMAND ${PYTHON_EXECUTABLE} -c "import py_compile ; py_compile.compile('${_source_prefix}${file}', '${_pyc_file}', doraise=True )"
+           DEPENDS ${PREFIX}${file}
+           VERBATIM
+       )
+      ADD_CUSTOM_COMMAND(
+           OUTPUT ${_pyo_file}
+           COMMAND ${PYTHON_EXECUTABLE} -O -c "import py_compile ; py_compile.compile('${_source_prefix}${file}', '${_pyo_file}', doraise=True )"
+           DEPENDS ${PREFIX}${file}
+           VERBATIM
+       )
+      # Install the .pyo and the .pyc
+      INSTALL(FILES ${_pyc_file} DESTINATION ${path} PERMISSIONS ${PERMS})
+      INSTALL(FILES ${_pyo_file} DESTINATION ${path} PERMISSIONS ${PERMS})
+    ENDIF(ext STREQUAL .py)
+
+  # get relativa path (from CMAKE_SOURCE_DIR to CMAKE_CURRENT_SOURCE_DIR)
+  STRING(REGEX REPLACE ${CMAKE_SOURCE_DIR} "" rel_dir ${CMAKE_CURRENT_SOURCE_DIR})
+  # convert "/" to "_"
+  IF(rel_dir)
+    STRING(REGEX REPLACE "/" "_" unique_name ${rel_dir})
+  ELSE(rel_dir)
+    SET(unique_name _)
+  ENDIF(rel_dir)
+
+  ENDFOREACH(file ${file_list})
+  # Generate only one target for all requested Python script compilation.
+  # Make sure that the target name is unique too. 
+  IF(_all_pyc)
+     SET(_cnt 0)
+     WHILE(TARGET "PYCOMPILE${unique_name}_${_cnt}")
+       MATH(EXPR _cnt ${_cnt}+1)
+     ENDWHILE()
+     ADD_CUSTOM_TARGET("PYCOMPILE${unique_name}_${_cnt}" ALL DEPENDS ${_all_pyc} ${_all_pyo})
+  ENDIF()
+ENDMACRO(SALOME_INSTALL_SCRIPTS)
 
 #----------------------------------------------------------------------------
 # SALOME_CONFIGURE_FILE is a macro useful for copying a file to another location 
@@ -381,13 +404,13 @@ MACRO(SALOME_FIND_PACKAGE englobPkg stdPkg mode)
       IF(${englobPkg}_FIND_COMPONENTS)
         FIND_PACKAGE(${stdPkg} ${${englobPkg}_FIND_VERSION} ${_tmp_exact} 
               NO_MODULE ${_tmp_quiet} ${_tmp_req} COMPONENTS ${${englobPkg}_FIND_COMPONENTS}
-              PATH_SUFFIXES "salome_adm/cmake_files" "adm_local/cmake_files"
+              PATH_SUFFIXES "salome_adm/cmake_files" "adm_local/cmake_files" "adm/cmake"
               NO_CMAKE_BUILDS_PATH NO_CMAKE_PACKAGE_REGISTRY NO_CMAKE_SYSTEM_PACKAGE_REGISTRY NO_CMAKE_SYSTEM_PATH
                 NO_SYSTEM_ENVIRONMENT_PATH)
       ELSE()
         FIND_PACKAGE(${stdPkg} ${${englobPkg}_FIND_VERSION} ${_tmp_exact} 
               NO_MODULE ${_tmp_quiet} ${_tmp_req}
-              PATH_SUFFIXES "salome_adm/cmake_files" "adm_local/cmake_files"
+              PATH_SUFFIXES "salome_adm/cmake_files" "adm_local/cmake_files" "adm/cmake"
               NO_CMAKE_BUILDS_PATH NO_CMAKE_PACKAGE_REGISTRY NO_CMAKE_SYSTEM_PACKAGE_REGISTRY NO_CMAKE_SYSTEM_PATH
                  NO_SYSTEM_ENVIRONMENT_PATH)
       ENDIF()
@@ -421,8 +444,12 @@ ENDMACRO()
 # retrieve the package root directory (xxx_ROOT_DIR)
 #    upCount          : number of times we have to go up from the path <referenceVariable>
 # to obtain the package root directory.
+# If this is a path to a file, going up one time gives the directory containing the file
+# going up 2 times gives the parent directory.
 #   
-# For example:  SALOME_FIND_PACKAGE_DETECT_CONFLICTS(SWIG SWIG_EXECUTABLE 2) 
+# For example:  SALOME_FIND_PACKAGE_DETECT_CONFLICTS(SWIG SWIG_EXECUTABLE 2)
+#     with SWIG_EXECUTABLE set to '/usr/bin/swig'
+#     will produce '/usr' 
 #
 # Generic detection (and conflict check) procedure for package XYZ:
 # 1. Load a potential env variable XYZ_ROOT_DIR as a default choice for the cache entry XYZ_ROOT_DIR
@@ -446,6 +473,7 @@ MACRO(SALOME_FIND_PACKAGE_AND_DETECT_CONFLICTS pkg referenceVariable upCount)
   ##
   ## 0. Initialization
   ##
+  PARSE_ARGUMENTS(SALOME_FIND_PACKAGE_AND_DETECT_CONFLICTS "ENVVAR" "" ${ARGN})
   
   # Package name, upper case
   STRING(TOUPPER ${pkg} pkg_UC)
@@ -453,22 +481,25 @@ MACRO(SALOME_FIND_PACKAGE_AND_DETECT_CONFLICTS pkg referenceVariable upCount)
   ##
   ## 1. Load environment or any previously detected root dir for the package
   ##
-  IF(DEFINED ENV{${pkg_UC}_ROOT_DIR})
-    FILE(TO_CMAKE_PATH "$ENV{${pkg_UC}_ROOT_DIR}" _${pkg_UC}_ROOT_DIR_ENV)
+  SET(_envvar ${pkg_UC}_ROOT_DIR)
+  IF(SALOME_FIND_PACKAGE_AND_DETECT_CONFLICTS_ENVVAR)
+    SET(_envvar "${SALOME_FIND_PACKAGE_AND_DETECT_CONFLICTS_ENVVAR}")
+  ENDIF()
+  IF(DEFINED ENV{${_envvar}})
+    FILE(TO_CMAKE_PATH "$ENV{${_envvar}}" _${pkg_UC}_ROOT_DIR_ENV)
     SET(_dflt_value "${_${pkg_UC}_ROOT_DIR_ENV}")
   ELSE()
     # will be blank if no package was previously loaded:
     SET(_dflt_value "${${pkg_UC}_ROOT_DIR_EXP}")
   ENDIF()
-
   # Detect if the variable has been set on the command line or elsewhere:
-  IF(DEFINED ${pkg_UC}_ROOT_DIR)
+  IF(DEFINED ${_envvar})
      SET(_var_already_there TRUE)
   ELSE()
      SET(_var_already_there FALSE)
   ENDIF()
   #   Make cache entry 
-  SET(${pkg_UC}_ROOT_DIR "${_dflt_value}" CACHE PATH "Path to ${pkg_UC} directory")
+  SET(${_envvar} "${_dflt_value}" CACHE PATH "Path to ${pkg_UC} directory")
 
   ##
   ## 2. Find package - try CONFIG mode first (i.e. looking for XYZ-config.cmake)
@@ -476,7 +507,9 @@ MACRO(SALOME_FIND_PACKAGE_AND_DETECT_CONFLICTS pkg referenceVariable upCount)
   
   # Override the variable - don't append to it, as it would give precedence
   # to what was stored there before!  
-  SET(CMAKE_PREFIX_PATH "${${pkg_UC}_ROOT_DIR}")
+  IF(DEFINED ${_envvar})
+    SET(CMAKE_PREFIX_PATH "${${_envvar}}")
+  ENDIF()
     
   # Try find_package in config mode. This has the priority, but is 
   # performed QUIET and not REQUIRED:
@@ -502,11 +535,11 @@ MACRO(SALOME_FIND_PACKAGE_AND_DETECT_CONFLICTS pkg referenceVariable upCount)
     IF(NOT Salome${pkg}_FIND_QUIETLY)
       IF(Salome${pkg}_FIND_REQUIRED)
          MESSAGE(FATAL_ERROR "Package ${pkg} couldn't be found - did you set the corresponing root dir correctly? "
-         "It currently contains ${pkg_UC}_ROOT_DIR=${${pkg_UC}_ROOT_DIR}  "
+         "It currently contains ${_envvar}=${${_envvar}}  "
          "Append -DSALOME_CMAKE_DEBUG=ON on the command line if you want to see the original CMake error.")
       ELSE()
          MESSAGE(WARNING "Package ${pkg} couldn't be found - did you set the corresponing root dir correctly? "
-         "It currently contains ${pkg_UC}_ROOT_DIR=${${pkg_UC}_ROOT_DIR}  "
+         "It currently contains ${_envvar}=${${_envvar}}  "
          "Append -DSALOME_CMAKE_DEBUG=ON on the command line if you want to see the original CMake error.")
       ENDIF()
     ENDIF()
@@ -530,8 +563,13 @@ MACRO(SALOME_FIND_PACKAGE_AND_DETECT_CONFLICTS pkg referenceVariable upCount)
        #  Note the double de-reference of "referenceVariable":
        SET(_tmp_ROOT_DIR "${${referenceVariable}}")
     ENDIF()
-    IF(${upCount}) 
-      FOREACH(_unused RANGE 1 ${upCount})        
+    # Up cound can be reset by detection procedure
+    SET(_upCount ${upCount})
+    IF(DEFINED ${pkg_UC}_UPCOUNT)
+      SET(_upCount ${${pkg_UC}_UPCOUNT})
+    ENDIF()
+    IF(${_upCount}) 
+      FOREACH(_unused RANGE 1 ${_upCount})        
         GET_FILENAME_COMPONENT(_tmp_ROOT_DIR "${_tmp_ROOT_DIR}" PATH)
       ENDFOREACH()
     ENDIF()
@@ -539,19 +577,19 @@ MACRO(SALOME_FIND_PACKAGE_AND_DETECT_CONFLICTS pkg referenceVariable upCount)
     ##
     ## 4. Warn if CMake found something not located under ENV(XYZ_ROOT_DIR)
     ##
-    IF(DEFINED ENV{${pkg_UC}_ROOT_DIR})
+    IF(DEFINED ENV{${_envvar}})
       SALOME_CHECK_EQUAL_PATHS(_res "${_tmp_ROOT_DIR}" "${_${pkg_UC}_ROOT_DIR_ENV}")
       IF(NOT _res)
         MESSAGE(WARNING "${pkg} was found, but not at the path given by the "
-            "environment ${pkg_UC}_ROOT_DIR! Is the variable correctly set? "
+            "environment ${_envvar}! Is the variable correctly set? "
             "The two paths are: ${_tmp_ROOT_DIR} and: ${_${pkg_UC}_ROOT_DIR_ENV}")
         
       ELSE()
-        MESSAGE(STATUS "${pkg} found directory matches what was specified in the ${pkg_UC}_ROOT_DIR variable, all good!")    
+        MESSAGE(STATUS "${pkg} found directory matches what was specified in the ${_envvar} variable, all good!")    
       ENDIF()
     ELSE()
         IF(NOT _var_already_there) 
-          MESSAGE(STATUS "Variable ${pkg_UC}_ROOT_DIR was not explicitly defined. "
+          MESSAGE(STATUS "Variable ${_envvar} was not explicitly defined. "
           "An installation was found anyway: ${_tmp_ROOT_DIR}")
         ENDIF()
     ENDIF()
@@ -573,7 +611,7 @@ MACRO(SALOME_FIND_PACKAGE_AND_DETECT_CONFLICTS pkg referenceVariable upCount)
     ##
     ## 6. Save the detected installation
     ##
-    SET(${pkg_UC}_ROOT_DIR "${_tmp_ROOT_DIR}")
+    SET(${_envvar} "${_tmp_ROOT_DIR}")
      
   ELSE()
     MESSAGE(STATUS "${pkg} was not found.")  
@@ -725,7 +763,8 @@ MACRO(SALOME_ACCUMULATE_ENVIRONMENT envvar)
   ENDIF()
   SET(_${PROJECT_NAME}_EXTRA_ENV_FULL "SET\(${PROJECT_NAME}_EXTRA_ENV ${_${PROJECT_NAME}_EXTRA_ENV}\)")
   FOREACH(_res ${_${PROJECT_NAME}_EXTRA_ENV})
-    SET(_${PROJECT_NAME}_EXTRA_ENV_FULL "${_${PROJECT_NAME}_EXTRA_ENV_FULL}\nSET\(${PROJECT_NAME}_EXTRA_ENV_${_res} ${_${PROJECT_NAME}_EXTRA_ENV_${_res}}\)")
+    STRING(REPLACE "${CMAKE_INSTALL_PREFIX}" "\${PACKAGE_PREFIX_DIR}" _res_path "${_${PROJECT_NAME}_EXTRA_ENV_${_res}}")
+    SET(_${PROJECT_NAME}_EXTRA_ENV_FULL "${_${PROJECT_NAME}_EXTRA_ENV_FULL}\nSET\(${PROJECT_NAME}_EXTRA_ENV_${_res} ${_res_path}\)")
   ENDFOREACH()
 ENDMACRO(SALOME_ACCUMULATE_ENVIRONMENT)
 
@@ -773,9 +812,15 @@ MACRO(SALOME_GENERATE_ENVIRONMENT_SCRIPT output script cmd opts)
           SET(_item PATH)
         ENDIF()
         STRING(REPLACE "/" "\\" _env "${_env} @SET ${_item}=${_val};%${_item}%\n")        
-      ELSE(WIN32)
+      ELSEIF(APPLE)
+        IF(${_item} STREQUAL "LD_LIBRARY_PATH")
+          SET(_env "${_env} export DYLD_LIBRARY_PATH=${_val}:\${DYLD_LIBRARY_PATH}\n")
+        ELSE()
+          SET(_env "${_env} export ${_item}=${_val}:\${${_item}}\n")
+        ENDIF()
+      ELSE()
         SET(_env "${_env} export ${_item}=${_val}:\${${_item}}\n")
-      ENDIF(WIN32)
+      ENDIF()
     ENDFOREACH()
   ENDFOREACH()
   
@@ -834,13 +879,19 @@ MACRO(SALOME_GENERATE_TESTS_ENVIRONMENT output)
        SET(_env "${_item}=$ENV{${_item}};${_env_${_item}}${sep}${_env}")
      ENDIF()
    ELSE()
-     SET(_env "${_item}=$ENV{${_item}}:${_env_${_item}}${sep}${_env}")
+     STRING(REPLACE ";" ":" _iii "$ENV{${_item}}")
+     SET(_env "${_item}=${_iii}:${_env_${_item}}${sep}${_env}")
    ENDIF()
  ENDFOREACH()
 
  # Get module name as substring of "Salome<ModuleName>"
- STRING(SUBSTRING "${PROJECT_NAME}" 6 -1 PRNAME) 
- SET(_env "${PRNAME}_ROOT_DIR=${sep}${_env}")
+ STRING(REGEX MATCH "^Salome" _is_salome_project ${PROJECT_NAME})
+ IF(_is_salome_project)
+   STRING(SUBSTRING "${PROJECT_NAME}" 6 -1 PRNAME) 
+ ELSE()
+   SET(PRNAME ${PROJECT_NAME})
+ ENDIF()
+ SET(_env "${PRNAME}_ROOT_DIR=${CMAKE_INSTALL_PREFIX}${sep}${_env}")
   
  # Creating follow string for Windows environement:
  # "VAR1_ENV=1\;2\;3\;...\;...\;...;VAR2_ENV=1\;2\;3\;...\;...\;...;VAR3_ENV=1\;2\;3\;...\;...\;...;..."
@@ -904,8 +955,27 @@ MACRO(SALOME_CONFIGURE_PREPARE)
   FOREACH(_prereq IN LISTS _tmp_prereq)
     IF(${_prereq}_DIR)
       SET(_PREREQ_LIST "${_PREREQ_LIST} ${_prereq}")
-      SET(_PREREQ_DIR_LIST "${_PREREQ_DIR_LIST} \"${${_prereq}_DIR}\"")
+      FILE(TO_CMAKE_PATH ${${_prereq}_DIR} CURR_DIR)
+      SET(_PREREQ_DIR_LIST "${_PREREQ_DIR_LIST} \"${CURR_DIR}\"")
       SALOME_APPEND_LIST_OF_LIST(_PREREQ_COMPO_LIST Salome${_prereq}_COMPONENTS)
     ENDIF()
   ENDFOREACH()
 ENDMACRO(SALOME_CONFIGURE_PREPARE)
+
+#######################################################################
+#
+# From a version string like "2.7.12+" extract the major, minor and patch number
+# taking ONLY the numerical part.
+# This macro was created to treat Ubuntu Python version number where the libs are
+# version 2.7.12+ and the interp is 2.7.12 ...
+#
+MACRO(SALOME_EXTRACT_VERSION version_string major minor patch)
+  IF(${version_string} MATCHES "[0-9]+[^0-9]*\\.[0-9]+[^0-9]*\\.[0-9]+[^0-9]*")
+    STRING(REGEX REPLACE "^([0-9]+)[^0-9]*\\.[0-9]+[^0-9]*\\.[0-9]+[^0-9]*" "\\1" ${major} "${version_string}")
+    STRING(REGEX REPLACE "^[0-9]+[^0-9]*\\.([0-9]+)[^0-9]*\\.[0-9]+[^0-9]*" "\\1" ${minor} "${version_string}")
+    STRING(REGEX REPLACE "^[0-9]+[^0-9]*\\.[0-9]+[^0-9]*\\.([0-9]+)[^0-9]*" "\\1" ${patch} "${version_string}")
+  ELSE()
+    MESSAGE("MACRO(SALOME_EXTRACT_VERSION ${version_string} ${major} ${minor} ${patch}")
+    MESSAGE(FATAL_ERROR "Problem parsing version string, I can't parse it properly.")
+  ENDIF()
+ENDMACRO(SALOME_EXTRACT_VERSION)

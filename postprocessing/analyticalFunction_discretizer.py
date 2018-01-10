@@ -81,3 +81,7 @@ class analyticalFunction_discretizer:
     def save_all_variablesMED(self):
         for var in self.var_list:
             self.get_variable(var).writeMED(var)
+
+    def save_all_variablesCSV(self):
+        for var in self.var_list:
+            self.get_variable(var).writeCSV(var)
