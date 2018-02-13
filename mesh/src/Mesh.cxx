@@ -361,7 +361,7 @@ Mesh::setMesh( void )
 	DataArrayInt *revDescI=DataArrayInt::New();
 	MEDCouplingUMesh* mu=_mesh->buildUnstructured();
 	mu->unPolyze();
-	MEDCouplingUMesh* m2=mu->buildDescendingConnectivity(desc,descI,revDesc,revDescI);
+	MEDCouplingUMesh* m2=mu->buildDescendingConnectivity(desc,descI,revDesc,revDescI);//mesh of dimension N-1 containing the cell interfaces
 	m2->setName(mu->getName());
 
 	//Test du type d'éléments contenus dans le maillage afin d'éviter les éléments contenant des points de gauss
@@ -373,14 +373,15 @@ Mesh::setMesh( void )
 				&& _eltsTypes[i]!= INTERP_KERNEL::NORM_TRI3   && _eltsTypes[i]!= INTERP_KERNEL::NORM_QUAD4
 				&& _eltsTypes[i]!= INTERP_KERNEL::NORM_TETRA4 && _eltsTypes[i]!= INTERP_KERNEL::NORM_PYRA5
 				&& _eltsTypes[i]!= INTERP_KERNEL::NORM_PENTA6 && _eltsTypes[i]!= INTERP_KERNEL::NORM_HEXA8
+				&& _eltsTypes[i]!= INTERP_KERNEL::NORM_POLYGON
 		)
 		{
 			cout<< "Mesh " + mu->getName() + " contains an element of type " <<endl;
 			cout<< _eltsTypes[i]<<endl;
-			throw CdmathException("Mesh::setMesh : in order to avoid gauss points, mesh should contain elements of type NORM_POINT1, NORM_SEG2, NORM_TRI3, NORM_QUAD4, NORM_TETRA4, NORM_PYRA5, NORM_PENTA6, NORM_HEXA8");
+			throw CdmathException("Mesh::setMesh : in order to avoid gauss points, mesh should contain elements of type NORM_POINT1, NORM_SEG2, NORM_TRI3, NORM_QUAD4, NORM_TETRA4, NORM_PYRA5, NORM_PENTA6, NORM_HEXA8, NORM_POLYGON");
 		}
 	}
-
+	
 	const int *tmp=desc->getConstPointer();
 	const int *tmpI=descI->getConstPointer();
 
@@ -500,23 +501,19 @@ Mesh::setMesh( void )
 		MEDCouplingFieldDouble* fieldn;
 		DataArrayDouble *normal;
 		const double *tmpNormal;
+
 		if(_spaceDim==_meshDim)
-		{
-			fieldn = m2->buildOrthogonalField();
-			normal = fieldn->getArray();
-			tmpNormal = normal->getConstPointer();
-		}
+			fieldn = m2->buildOrthogonalField();//Compute the normal to each cell interface
 		else
 		{
-			//cout<<"Call to buildOrthogonalField() may lead to failure since spaceDim!=meshDim"<<endl;
-			fieldn = NULL;
-			tmpNormal = NULL;
-			normal = NULL;
-			//cout<<"fieldn = m2->buildOrthogonalField() done"<<endl;
+			//compute the 3D normal vector to the 2D cell
+			fieldn = mu->buildOrthogonalField();
 			// Todo dans MEDCoupling,  faire porter le champ des normales par la paire (cellule, face).
-			// Celà permettrait de construire une fonction définie en 1D et aussi lorsque spacedim!=meshdim.
+			// Cela permettrait de construire une fonction définie en 1D et aussi lorsque spacedim!=meshdim.
 			// En attendant qu'une telle fonction soit disponible dans MEDCoupling, dans CDMATH on va construire "à la main" les normales à chaque face.
 		}
+		normal = fieldn->getArray();
+		tmpNormal = normal->getConstPointer();
 
 		/*Building mesh cells */
 		for(int id(0), k(0); id<_numberOfCells; id++, k+=_spaceDim)
@@ -579,7 +576,7 @@ Mesh::setMesh( void )
 					{
 						const int *workv=tmpNE+tmpNEI[work[el]]+1;
 						int nbNodes= tmpNEI[work[el]+1]-tmpNEI[work[el]]-1;
-						if(nbNodes!=2)
+						if(nbNodes!=2)//We want to compute the normal to a straight line, not a curved interface composed of more thant 2 points
 						{
 							cout<<"Mesh name "<< mu->getName()<< " space dim= "<< _spaceDim <<" mesh dim= "<< _meshDim <<endl;
 							cout<<"For cell id "<<id<<" and local face number "<<el<<", the number of nodes is "<< nbNodes<< ", total number of faces is "<< nbFaces <<endl;
@@ -594,22 +591,25 @@ Mesh::setMesh( void )
 							nodeA[i]=coo->getIJ(idNodeA,i);
 							nodeB[i]=coo->getIJ(idNodeB,i);
 						}
-						//To do : (PA^PB)^AB gives a normal vector to AB.
-						//Coordinates of the barycenter P of the cell id
-						Vector vecAB(3), vecPA(3),vecPB(3);
+						//Let P be the barycenter of the cell id
+						//Let M be the barycenter of the face AB
+						Vector vecAB(3), vecPM(3);
 						for(int i=0;i<_spaceDim;i++)
 						{
-							vecAB[i]=coo->getIJ(idNodeB,i) - coo->getIJ(idNodeA,i);
-							vecPB[i]=coo->getIJ(idNodeB,i) - coorBary[_spaceDim*id+i];
-							vecPA[i]=coo->getIJ(idNodeA,i) - coorBary[_spaceDim*id+i];
+							vecAB[i]=coo->getIJ(idNodeB,i)       - coo->getIJ(idNodeA,i);
+							vecPM[i]=coorBarySeg[_spaceDim*el+i] - coorBary[_spaceDim*id+i];
 						}
-						Vector normal =(vecPA % vecPB) % vecAB;
-						normal/=normal.norm();
 
-						if(normal*vecPA<0)
-							ci.addNormalVector(el,normal[0],normal[1],normal[2]) ;	
+						Vector xyzn(3);//Normal to the cell
+						for (int d=0; d<_spaceDim; d++)
+							xyzn[d] = tmpNormal[_spaceDim*work[el]+d];
+						Vector normale = xyzn % vecAB;//Normal to the edge
+						normale/=normale.norm();
+
+						if(normale*vecPM<0)
+							ci.addNormalVector(el,normale[0],normale[1],normale[2]) ;	
 						else
-							ci.addNormalVector(el,-normal[0],-normal[1],-normal[2]) ;	
+							ci.addNormalVector(el,-normale[0],-normale[1],-normale[2]) ;	
 						ci.addFaceId(el,work[el]) ;
 					}
 				}
