@@ -7,8 +7,9 @@ set (CDMATH_VERSION_MINOR 0)
 
 # Project options
 option (CDMATH_WITH_PETSC "Compile CDMATH with PETSc linking." OFF)
-option (CDMATH_WITH_DOCUMENTATION "Generate documentation for CDMATH use." OFF)
+option (CDMATH_WITH_DOCUMENTATION "Generate documentation with doxygen." OFF)
 option (CDMATH_WITH_PYTHON "Compile Python interface for CDMATH." OFF)
+option (CDMATH_WITH_POSTPRO "Install postprocessing Python modules." OFF)
 option (CDMATH_WITH_PACKAGE "Generate RPM, Debian and tarball packages." OFF)
 option (CDMATH_WITH_TESTS "Compile unit testing." OFF)
 
@@ -160,6 +161,10 @@ add_subdirectory (${examples_dir})
 # Packaging
 if (CDMATH_WITH_PACKAGE)
   include (CPackLists.txt)
+endif ()
+
+if (CDMATH_WITH_POSTPRO)
+  add_subdirectory (postprocessing)
 endif ()
 
 # Configuration file
