@@ -126,9 +126,9 @@ def Clip_VTK_data_to_VTK(inputFileName,
     writer.Write()
 
 def Save_VTK_data_to_picture_file(inputFileName,
-                             outputFileName,
+                             outputFileName
                              ):
-    data_vtu = vtk.vtkUnstructuredGridReader(FileName=[inputFileName])
+    data_vtu = vtk.vtkUnstructuredGridReader(inputFileName)
     writer = vtk.vtkPNGWriter()
     writer.SetInputConnection(cdata_vtu.GetOutput())
     writer.SetFileName(outputFileName+".png")

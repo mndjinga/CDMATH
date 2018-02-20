@@ -63,10 +63,26 @@ resolution=100
 
 outputFileName="Extract_VTK_over_line_"+fileNameVTK1+".csv"
 Extract_VTK_data_over_line_to_csv_file(fileNameVTK1, outputFileName, point1, point2, resolution)
+print "Extract_VTK_over_line ok"
 
-outputFileName="Extract_field_over_line_"+fileNameVTK1+".csv"
+outputFileName="Extract_field_over_line_"+fileNameVTK2+".csv"
 Extract_field_data_over_line_to_csv_file(field2, point1, point2, resolution, outputFileName)
+print "Extract_field_over_line ok"
 
 point=[0.5,0.5,0]
 normal=[1,1,0]
+outputFileName="Slice_VTK_data_to_csv_file"+fileNameVTK3
 Slice_VTK_data_to_csv_file(fileNameVTK3, outputFileName, point, normal,resolution )
+print "Slice_VTK_data_to_csv_file ok"
+
+outputFileName="Slice_field_data_to_csv_file"+fileNameVTK4
+Slice_field_data_over_line_to_csv_file(field4, outputFileName, point, normal,resolution)
+print "Slice_field_data_to_csv_file ok"
+
+outputFileName="Clip_VTK_data_to_VTK"+fileNameVTK5
+Clip_VTK_data_to_VTK(fileNameVTK5,outputFileName,point, normal,resolution )
+print "Clip_VTK_data_to_VTK ok"
+
+outputFileName="Save_VTK_data_to_picture_file"+fileNameVTK5
+Save_VTK_data_to_picture_file(inputFileName,outputFileName)
+print "Save_VTK_data_to_picture_file ok"
