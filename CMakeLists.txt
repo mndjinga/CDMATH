@@ -163,7 +163,7 @@ if (CDMATH_WITH_PACKAGE)
   include (CPackLists.txt)
 endif ()
 
-if (CDMATH_WITH_POSTPRO)
+if (CDMATH_WITH_PYTHON AND CDMATH_WITH_POSTPRO)
   add_subdirectory (postprocessing)
 endif ()
 

@@ -1,6 +1,5 @@
-file(COPY VTK_routines.py DESTINATION ${CMAKE_BINARY_DIR})
+cmake_minimum_required (VERSION 2.8)
+PROJECT(postprocessing)
 
-INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/analyticalFunction_discretizer.py DESTINATION bin/)
-INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/VTK_routines.py DESTINATION bin/)
-INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/MED_routines.py DESTINATION bin/)
-INSTALL(FILES ${MED_LOADER_DIR}/swig/VTKReader.py DESTINATION bin/)
+INSTALL(FILES analyticalFunction_discretizer.py VTK_routines.py MED_routines.py DESTINATION bin/cdmath/postprocessing)
+

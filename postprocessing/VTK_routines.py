@@ -6,7 +6,7 @@ from vtk.util import numpy_support as npvtk
 
 def Extract_VTK_data_over_line_to_numpyArray(inputFileName, point1, point2, resolution):
 
-    data_vtu = vtk.vtkUnstructuredGridReader(FileName=[inputFileName])
+    data_vtu = vtk.vtkUnstructuredGridReader(inputFileName)
 
     probeLine = vtk.vtkLineSource()
     probeLine.SetPoint1(point1)
