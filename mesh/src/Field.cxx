@@ -22,11 +22,12 @@ using namespace std;
 
 
 //----------------------------------------------------------------------
-Field::Field( void )
+Field::Field( TypeField typeField )
 //----------------------------------------------------------------------
 {
     _field=NULL;
-    _typeField=CELLS;
+    _typeField=typeField;
+    _numberOfComponents=0;
 }
 
 //----------------------------------------------------------------------
@@ -40,67 +41,33 @@ Field::~Field( void )
  
 Field::Field(const std::string fieldName, TypeField type, const Mesh& mesh, int numberOfComponents, double time)
 {
-    _mesh=mesh ;
-    MEDCouplingUMesh* mu=mesh.getMEDCouplingMesh()->buildUnstructured();
-    DataArrayDouble *array=DataArrayDouble::New();
-    _typeField=type;
     _field = NULL;
-    if (type==CELLS)
-    {
-        _field=MEDCouplingFieldDouble::New(ON_CELLS);
-        array->alloc(mesh.getNumberOfCells(),numberOfComponents);
-        _field->setMesh(mu);
-    }else if(type==NODES)
-    {
-        _field=MEDCouplingFieldDouble::New(ON_NODES);
-        array->alloc(mesh.getNumberOfNodes(),numberOfComponents);
-        _field->setMesh(mu);
-    }else if(type==FACES)
-    {
-        _field=MEDCouplingFieldDouble::New(ON_CELLS);
-        array->alloc(mesh.getNumberOfFaces(),numberOfComponents);
-        DataArrayInt *desc=DataArrayInt::New();
-        DataArrayInt *descI=DataArrayInt::New();
-        DataArrayInt *revDesc=DataArrayInt::New();
-        DataArrayInt *revDescI=DataArrayInt::New();
-        MEDCouplingUMesh *m3=mu->buildDescendingConnectivity(desc,descI,revDesc,revDescI);
-        _field->setMesh(m3);
-        desc->decrRef();
-        descI->decrRef();
-        revDesc->decrRef();
-        revDescI->decrRef();
-        m3->decrRef();
-    }else
-        throw CdmathException("Type of Field::Field() is not compatible");
+    _mesh=Mesh(mesh);
+	_typeField=type;
+	_numberOfComponents=numberOfComponents;
+	_time=time;
+	_fieldName=fieldName;
 
-    _field->setName(fieldName.c_str()) ;
-    _field->setArray(array);
-    _field->setTime(time,0,0);
-    array->decrRef();
-    mu->decrRef();
+	buildFieldMemoryStructure();
 }
-
-Field::Field(const std::string fieldName, TypeField type, const Mesh& mesh, int numberOfComponents)
+void Field::buildFieldMemoryStructure()
 {
-    _mesh=mesh ;
-    _field = NULL;
-   MEDCouplingUMesh* mu=mesh.getMEDCouplingMesh()->buildUnstructured();
+    MEDCouplingUMesh* mu=_mesh.getMEDCouplingMesh()->buildUnstructured();
     DataArrayDouble *array=DataArrayDouble::New();
-    _typeField=type;
-    if (type==CELLS)
+    if (_typeField==CELLS)
     {
         _field=MEDCouplingFieldDouble::New(ON_CELLS);
-        array->alloc(mesh.getNumberOfCells(),numberOfComponents);
+        array->alloc(_mesh.getNumberOfCells(),_numberOfComponents);
         _field->setMesh(mu);
-    }else if(type==NODES)
+    }else if(_typeField==NODES)
     {
         _field=MEDCouplingFieldDouble::New(ON_NODES);
-        array->alloc(mesh.getNumberOfNodes(),numberOfComponents);
+        array->alloc(_mesh.getNumberOfNodes(),_numberOfComponents);
         _field->setMesh(mu);
-    }else if(type==FACES)
+    }else if(_typeField==FACES)
     {
         _field=MEDCouplingFieldDouble::New(ON_CELLS);
-        array->alloc(mesh.getNumberOfFaces(),numberOfComponents);
+        array->alloc(_mesh.getNumberOfFaces(),_numberOfComponents);
         DataArrayInt *desc=DataArrayInt::New();
         DataArrayInt *descI=DataArrayInt::New();
         DataArrayInt *revDesc=DataArrayInt::New();
@@ -115,63 +82,244 @@ Field::Field(const std::string fieldName, TypeField type, const Mesh& mesh, int 
     }else
         throw CdmathException("Type of Field::Field() is not compatible");
 
-    _field->setName(fieldName.c_str()) ;
+    _field->setName(_fieldName.c_str()) ;
     _field->setArray(array);
-    _field->setTime(0.0,0,0);
+    _field->setTime(_time,0,0);
     array->decrRef();
     mu->decrRef();
 }
-
-Field::Field(const std::string fieldName, TypeField type, const Mesh& mesh)
-{
-    _mesh=mesh ;
-    _field = NULL;
-    MEDCouplingUMesh* mu=mesh.getMEDCouplingMesh()->buildUnstructured();
-    DataArrayDouble *array=DataArrayDouble::New();
-    _typeField=type;
-    if (type==CELLS)
-    {
-        _field=MEDCouplingFieldDouble::New(ON_CELLS);
-        array->alloc(mesh.getNumberOfCells(),1);
-        _field->setMesh(mu);
-    }else if(type==NODES)
-    {
-        _field=MEDCouplingFieldDouble::New(ON_NODES);
-        array->alloc(mesh.getNumberOfNodes(),1);
-        _field->setMesh(mu);
-    }else if(type==FACES)
-    {
-        _field=MEDCouplingFieldDouble::New(ON_CELLS);
-        array->alloc(mesh.getNumberOfFaces(),1);
-        DataArrayInt *desc=DataArrayInt::New();
-        DataArrayInt *descI=DataArrayInt::New();
-        DataArrayInt *revDesc=DataArrayInt::New();
-        DataArrayInt *revDescI=DataArrayInt::New();
-        MEDCouplingUMesh *m3=mu->buildDescendingConnectivity(desc,descI,revDesc,revDescI);
-        _field->setMesh(m3);
-        desc->decrRef();
-        descI->decrRef();
-        revDesc->decrRef();
-        revDescI->decrRef();
-        m3->decrRef();
-    }else
-        throw CdmathException("Type of Field::Field() is not compatible");
-
-    _field->setName(fieldName.c_str()) ;
-    _field->setArray(array);
-    _field->setTime(0.0,0,0);
-    array->decrRef();
-    mu->decrRef();
-}
-
 
 Field::Field( const std::string filename, TypeField type,
               const std::string & fieldName,
-              int iteration, int order) : _mesh(filename + ".med"), _typeField(type)
- 
+              int iteration, int order, int meshLevel, 
+              int numberOfComponents, double time) 
 {
     _field = NULL;
+    _mesh=Mesh(filename + ".med", meshLevel);
+    _typeField=type;
+	_numberOfComponents=numberOfComponents;
+	_time=time;
+	_fieldName=fieldName;
+
     readFieldMed(filename, type, fieldName, iteration, order);
+}
+
+Field::Field(const std::string meshFileName, TypeField type, const std::vector<double> Vconstant, 
+			 const std::string & fieldName, int meshLevel, double time )
+{
+    _field = NULL;
+    _mesh=Mesh(meshFileName + ".med", meshLevel);
+    _typeField=type;
+	_numberOfComponents=Vconstant.size();
+	_time=time;
+	_fieldName=fieldName;
+
+	buildFieldMemoryStructure();
+    
+    int nbelem=_field->getNumberOfTuples();
+    int nbcomp=_field->getNumberOfComponents() ;
+    
+    for (int ielem=0 ; ielem<nbelem; ielem++)
+        for (int jcomp=0 ; jcomp<nbcomp ; jcomp++)
+            _field->getArray()->getPointer()[jcomp+ielem*_field->getNumberOfComponents()]=Vconstant[jcomp];
+}
+Field::Field(const Mesh& M, TypeField type, const Vector Vconstant, const std::string & fieldName, double time)
+{
+    _field = NULL;
+    _mesh=Mesh(M);
+    _typeField=type;
+	_numberOfComponents=Vconstant.size();
+	_time=time;
+	_fieldName=fieldName;
+
+	buildFieldMemoryStructure();
+    
+    int nbelem=_field->getNumberOfTuples();
+    int nbcomp=_field->getNumberOfComponents() ;
+    
+    for (int ielem=0 ; ielem<nbelem; ielem++)
+        for (int jcomp=0 ; jcomp<nbcomp ; jcomp++)
+            _field->getArray()->getPointer()[jcomp+ielem*_field->getNumberOfComponents()]=Vconstant[jcomp];
+}
+Field::Field(const Mesh& M, TypeField type, const vector<double> Vconstant, const std::string & fieldName, double time) 
+{
+    _field = NULL;
+	_mesh=Mesh(M);
+    _typeField=type;
+	_numberOfComponents=Vconstant.size();
+	_time=time;
+	_fieldName=fieldName;
+
+	buildFieldMemoryStructure();
+    
+    int nbelem=_field->getNumberOfTuples();
+    int nbcomp=_field->getNumberOfComponents() ;
+    
+    for (int ielem=0 ; ielem<nbelem; ielem++)
+        for (int jcomp=0 ; jcomp<nbcomp ; jcomp++)
+            _field->getArray()->getPointer()[jcomp+ielem*_field->getNumberOfComponents()]=Vconstant[jcomp];
+}
+Field::Field( int nDim, const vector<double> Vconstant, TypeField type, 
+		double xmin, double xmax, int nx, string leftSide, string rightSide,
+		double ymin, double ymax, int ny, string backSide, string frontSide,
+		double zmin, double zmax, int nz, string bottomSide, string topSide, 
+		const std::string & fieldName, double time,double epsilon)
+{
+    _field = NULL;
+    _typeField=type;
+	_numberOfComponents=Vconstant.size();
+	_time=time;
+	_fieldName=fieldName;
+
+	//Build mesh
+	if(nDim==1){
+		_mesh=Mesh(xmin,xmax,nx);
+	}
+	else if(nDim==2)
+		_mesh=Mesh(xmin,xmax,nx,ymin,ymax,ny);
+	else if(nDim==3)
+		_mesh=Mesh(xmin,xmax,nx,ymin,ymax,ny,zmin,zmax,nz);
+	else{
+		cout<<"Field::Field: Space dimension nDim should be between 1 and 3"<<endl;
+		throw CdmathException("Space dimension nDim should be between 1 and 3");
+	}
+
+	_mesh.setGroupAtPlan(xmax,0,epsilon,rightSide);
+	_mesh.setGroupAtPlan(xmin,0,epsilon,leftSide);
+	if(nDim>=2){
+		_mesh.setGroupAtPlan(ymax,1,epsilon,frontSide);
+		_mesh.setGroupAtPlan(ymin,1,epsilon,backSide);
+	}
+	if(nDim==3){
+		_mesh.setGroupAtPlan(zmax,2,epsilon,topSide);
+		_mesh.setGroupAtPlan(zmin,2,epsilon,bottomSide);
+	}
+
+	// Build field
+	buildFieldMemoryStructure();
+    
+    int nbelem=_field->getNumberOfTuples();
+    int nbcomp=_field->getNumberOfComponents() ;
+    
+    for (int ielem=0 ; ielem<nbelem; ielem++)
+        for (int jcomp=0 ; jcomp<nbcomp ; jcomp++)
+            _field->getArray()->getPointer()[jcomp+ielem*_field->getNumberOfComponents()]=Vconstant[jcomp];
+}
+Field::Field(const Mesh M, const Vector VV_Left, const Vector VV_Right, double disc_pos,
+			TypeField type, int direction, const std::string & fieldName, double time)
+{
+	if  (VV_Right.getNumberOfRows()!=VV_Left.getNumberOfRows())
+		throw CdmathException( "Field::Field: Vectors VV_Left and VV_Right have different sizes");
+
+    _field = NULL;
+    _mesh=Mesh(M);
+    _typeField=type;
+	_numberOfComponents=VV_Left.getNumberOfRows();
+	_time=time;
+	_fieldName=fieldName;
+
+	// Build field
+	buildFieldMemoryStructure();
+    
+    int nbelem=_field->getNumberOfTuples();
+    int nbcomp=_field->getNumberOfComponents() ;
+	double component_value;
+
+	for (int j = 0; j < nbelem; j++) {
+		if(direction==0)
+			component_value=M.getCell(j).x();
+		else if(direction==1)
+			component_value=M.getCell(j).y();
+		else if(direction==2)
+			component_value=M.getCell(j).z();
+		else
+			throw CdmathException( "Field::Field: direction should be an integer between 0 and 2");
+
+		for (int i=0; i< nbcomp; i++)
+			if (component_value< disc_pos )
+				_field->getArray()->getPointer()[j+i*_field->getNumberOfComponents()] = VV_Left[i];
+			else
+				_field->getArray()->getPointer()[j+i*_field->getNumberOfComponents()] = VV_Right[i];
+	}
+}
+Field::Field( int nDim, const vector<double> VV_Left, vector<double> VV_Right, 
+				double xstep, TypeField type,
+		double xmin, double xmax, int nx, string leftSide, string rightSide,
+		double ymin, double ymax, int ny, string backSide, string frontSide,
+		double zmin, double zmax, int nz, string bottomSide, string topSide,
+		int direction, const std::string & fieldName, double time, double epsilon)
+{
+	if  (VV_Right.size()!=VV_Left.size())
+		throw CdmathException( "Field::Field: Vectors VV_Left and VV_Right have different sizes");
+	Mesh M;
+	if(nDim==1)
+		M=Mesh(xmin,xmax,nx);
+	else if(nDim==2)
+		M=Mesh(xmin,xmax,nx,ymin,ymax,ny);
+	else if(nDim==3)
+		M=Mesh(xmin,xmax,nx,ymin,ymax,ny,zmin,zmax,nz);
+	else
+		throw CdmathException("Field::Field : Space dimension nDim should be between 1 and 3");
+
+	M.setGroupAtPlan(xmax,0,epsilon,rightSide);
+	M.setGroupAtPlan(xmin,0,epsilon,leftSide);
+	if(nDim>=2){
+		M.setGroupAtPlan(ymax,1,epsilon,frontSide);
+		M.setGroupAtPlan(ymin,1,epsilon,backSide);
+	}
+	if(nDim==3){
+		M.setGroupAtPlan(zmax,2,epsilon,topSide);
+		M.setGroupAtPlan(zmin,2,epsilon,bottomSide);
+	}
+	Vector V_Left(VV_Left.size()), V_Right(VV_Right.size());
+	for(int i=0;i<VV_Left.size(); i++){
+		V_Left(i)=VV_Left[i];
+		V_Right(i)=VV_Right[i];
+	}
+	Field(M, V_Left, V_Right, xstep,  type, direction, fieldName, time);
+}
+
+Field::Field(const Mesh M, const Vector Vin, const Vector Vout, double radius, 
+			 const Vector Center, TypeField type, const std::string & fieldName, double time)
+{
+	if((Center.size()!=M.getSpaceDimension()) || (Vout.size() != Vin.size()) )
+	{
+		cout<< "Vout.size()= "<<Vout.size() << ", Vin.size()= "<<Vin.size()<<", Center.size()="<<Center.size()<<", M.getSpaceDim= "<< M.getSpaceDimension()<<endl;
+		throw CdmathException("Field::Field : Vector size error");
+	}
+
+    _field = NULL;
+    _mesh=Mesh(M);
+    _typeField=type;
+	_numberOfComponents=Vout.size();
+	_time=time;
+	_fieldName=fieldName;
+
+	// Build field
+	buildFieldMemoryStructure();
+    
+    int nbelem=_field->getNumberOfTuples();
+    int nbcomp=_field->getNumberOfComponents() ;
+
+	int spaceDim=M.getSpaceDimension();
+	Vector currentPoint(spaceDim);
+
+	for(int i=0;i<nbelem;i++)
+	{
+		currentPoint(0)=M.getCell(i).x();
+		if(spaceDim>1)
+		{
+			currentPoint(1)=M.getCell(i).y();
+			if(spaceDim>2)
+				currentPoint(2)=M.getCell(i).z();
+		}
+		if((currentPoint-Center).norm()<radius)
+			for(int j=0;j<nbcomp;j++)
+				_field->getArray()->getPointer()[j+i*_field->getNumberOfComponents()]=Vin[j];
+		else
+			for(int j=0;j<nbcomp;j++)
+				_field->getArray()->getPointer()[j+i*_field->getNumberOfComponents()]=Vout[j];
+	}
 }
 
 MEDCoupling::DataArrayDouble * Field::getArray(){
@@ -504,6 +652,14 @@ Field
 Field::operator+ ( const Field& f ) const
 //----------------------------------------------------------------------
 {
+	//if(f.getMesh().getMEDCouplingMesh() != _mesh.getMEDCouplingMesh())
+		//throw CdmathException("Field::operator+ : Field addition requires identical meshes");
+	_mesh.getMEDCouplingMesh()->checkFastEquivalWith(f.getMesh().getMEDCouplingMesh(),1e-6);
+	if(f.getTypeOfField() != getTypeOfField())
+		throw CdmathException("Field::operator+ : Field addition requires identical field types (CELLS, NODES or FACES");
+	if(f.getNumberOfComponents() != getNumberOfComponents())
+		throw CdmathException("Field::operator+ : Field addition requires identical number of components");
+
     Field fres(getName(),f.getTypeOfField(),f.getMesh(),f.getNumberOfComponents(),f.getTime());
     int nbComp=f.getNumberOfComponents();
     int nbElem=f.getNumberOfElements();
@@ -518,6 +674,14 @@ Field
 Field::operator- ( const Field& f ) const
 //----------------------------------------------------------------------
 {
+	//if(f.getMesh().getMEDCouplingMesh() != _mesh.getMEDCouplingMesh())
+		//throw CdmathException("Field::operator- : Field subtraction requires identical meshes");
+	_mesh.getMEDCouplingMesh()->checkFastEquivalWith(f.getMesh().getMEDCouplingMesh(),1e-6);
+	if(f.getTypeOfField() != getTypeOfField())
+		throw CdmathException("Field::operator- : Field subtraction requires identical field types (CELLS, NODES or FACES");
+	if(f.getNumberOfComponents() != getNumberOfComponents())
+		throw CdmathException("Field::operator- : Field subtraction requires identical number of components");
+
     Field fres(getName(),f.getTypeOfField(),f.getMesh(),f.getNumberOfComponents(),f.getTime());
     int nbComp=f.getNumberOfComponents();
     int nbElem=f.getNumberOfElements();
@@ -534,6 +698,9 @@ Field::operator= ( const Field& f )
 {
     _mesh=f.getMesh() ;
     _typeField=f.getTypeOfField() ;
+    _numberOfComponents=f.getNumberOfComponents();
+    _time=f.getTime();
+    _fieldName=f.getName();
     MCAuto<MEDCouplingFieldDouble> f1=f.getField()->deepCopy();
     _field=f1;
     return *this;
@@ -544,6 +711,14 @@ const Field&
 Field::operator+= ( const Field& f )
 //----------------------------------------------------------------------
 {
+	//if(f.getMesh().getMEDCouplingMesh() != _mesh.getMEDCouplingMesh())
+		//throw CdmathException("Field::operator+= : Field addition requires identical meshes");
+	_mesh.getMEDCouplingMesh()->checkFastEquivalWith(f.getMesh().getMEDCouplingMesh(),1e-6);
+	if(f.getTypeOfField() != getTypeOfField())
+		throw CdmathException("Field::operator+= : Field addition requires identical field types (CELLS, NODES or FACES");
+	if(f.getNumberOfComponents() != getNumberOfComponents())
+		throw CdmathException("Field::operator+= : Field addition requires identical number of components");
+
     _field->setMesh(f.getField()->getMesh());
       (*_field)+=(*f.getField());
     return *this;
@@ -554,6 +729,14 @@ const Field&
 Field::operator-= ( const Field& f )
 //----------------------------------------------------------------------
 {
+	//if(f.getMesh().getMEDCouplingMesh() != _mesh.getMEDCouplingMesh())
+		//throw CdmathException("Field::operator-= : Field subtraction requires identical meshes");
+	_mesh.getMEDCouplingMesh()->checkFastEquivalWith(f.getMesh().getMEDCouplingMesh(),1e-6);
+	if(f.getTypeOfField() != getTypeOfField())
+		throw CdmathException("Field::operator-= : Field subtraction requires identical field types (CELLS, NODES or FACES");
+	if(f.getNumberOfComponents() != getNumberOfComponents())
+		throw CdmathException("Field::operator-= : Field subtraction requires identical number of components");
+
     _field->setMesh(f.getField()->getMesh());
       (*_field)-=(*f.getField());
     return *this;

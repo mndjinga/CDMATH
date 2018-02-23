@@ -45,8 +45,9 @@ public: //----------------------------------------------------------------
 	/**
 	 * constructor with data
 	 * @param filename name of mesh file
+	 * @param meshLevel : relative mesh dimension : 0->cells, 1->Faces etc
 	 */
-	Mesh ( const std::string filename ) ;
+	Mesh ( const std::string filename, int meshLevel=0 ) ;
 
 	/**
 	 * constructor with data

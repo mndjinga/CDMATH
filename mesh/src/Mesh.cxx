@@ -142,10 +142,10 @@ Mesh::Mesh( const Mesh& m )
 }
 
 //----------------------------------------------------------------------
-Mesh::Mesh( const std::string filename )
+Mesh::Mesh( const std::string filename, int meshLevel )
 //----------------------------------------------------------------------
 {
-	readMeshMed(filename);
+	readMeshMed(filename, meshLevel);
 }
 
 //----------------------------------------------------------------------
