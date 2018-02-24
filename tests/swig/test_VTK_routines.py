@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*-coding:utf-8 -*-
+
 from VTK_routines import *
 import cdmath
 
@@ -57,12 +60,30 @@ field5.writeVTK(fileNameVTK5)
 
 #2D tests
 #===========================================
-point1=[1,0,0]
-point2=[0,1,0]
+point1=[1.,0.,0.]
+point2=[0.,1.,0.]
 resolution=100
 
+print fileNameVTK1
+outputFileName="Extract_VTK_over_line_"+fileNameVTK1+".csv"#"./"+fileNameVTK1+"_0.vtu"
+data_vtu = vtk.vtkXMLUnstructuredGridReader()
+data_vtu.SetFileName('/home/ndjinga/Logiciels/CDMATH/BUILD/tests/2D_structured_cell_field_0.vtu')
+data_vtu.Update()
+probeLine = vtk.vtkLineSource()
+probeLine.SetPoint1(1.,0.,0.)
+probeLine.SetPoint2(0.,1.,0.)
+probeLine.SetResolution(resolution)
+probe = vtk.vtkProbeFilter()
+probe.SetInputConnection(probeLine.GetOutputPort())
+probe.SetSourceData(data_vtu.GetOutput())
+probe.Update()
+vtkarray = probe.GetOutput().GetPointData().GetArray(0) # or Slice1.GetCellData() # or Clip1.GetCellData()
+numpy_array = npvtk.vtk_to_numpy(vtkarray)
+np.savetxt(outputFileName, numpy_array, delimiter=" ")
+print "Extract_VTK_over_line ok"
+
 outputFileName="Extract_VTK_over_line_"+fileNameVTK1+".csv"
-Extract_VTK_data_over_line_to_csv_file(fileNameVTK1, outputFileName, point1, point2, resolution)
+Extract_VTK_data_over_line_to_csv_file('/home/ndjinga/Logiciels/CDMATH/BUILD/tests/2D_structured_cell_field_0.vtu', outputFileName, point1, point2, resolution)
 print "Extract_VTK_over_line ok"
 
 outputFileName="Extract_field_over_line_"+fileNameVTK2+".csv"
@@ -82,6 +103,10 @@ print "Slice_field_data_to_csv_file ok"
 outputFileName="Clip_VTK_data_to_VTK"+fileNameVTK5
 Clip_VTK_data_to_VTK(fileNameVTK5,outputFileName,point, normal,resolution )
 print "Clip_VTK_data_to_VTK ok"
+
+inputFileName="Clip_VTK_data_to_VTK"+fileNameVTK5
+Save_VTK_data_to_picture_file(inputFileName,outputFileName)
+print "Save_VTK_data_to_picture_file ok"
 
 outputFileName="Save_VTK_data_to_picture_file"+fileNameVTK5
 Save_VTK_data_to_picture_file(inputFileName,outputFileName)
