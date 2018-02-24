@@ -55,7 +55,7 @@ public: //----------------------------------------------------------------
 	 * @param xsup : maximum x
 	 * @param nx : Number of cell in x direction
 	 */
-	Mesh( double xinf, double xsup, int nx ) ;
+	Mesh( double xinf, double xsup, int nx, std::string meshName="MESH1D" ) ;
 
 	/**
 	 * constructor with data
@@ -66,7 +66,7 @@ public: //----------------------------------------------------------------
 	 * @param nx : Number of cell in x direction
 	 * @param ny : Number of cell in y direction
 	 */
-	Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny) ;
+	Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny, std::string meshName="MESH2D") ;
 
 	/**
 	 * constructor with data
@@ -80,7 +80,7 @@ public: //----------------------------------------------------------------
 	 * @param ny : Number of cell in y direction
 	 * @param nz : Number of cell in z direction
 	 */
-	Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny, double zinf, double zsup, int nz) ;
+	Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny, double zinf, double zsup, int nz, std::string meshName="MESH3D") ;
 
 	Mesh( const MEDCoupling::MEDCouplingIMesh* mesh ) ;
 

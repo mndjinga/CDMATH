@@ -718,7 +718,7 @@ Mesh::setMesh( void )
 }
 
 //----------------------------------------------------------------------
-Mesh::Mesh( double xinf, double xsup, int nx )
+Mesh::Mesh( double xinf, double xsup, int nx, std::string meshName )
 //----------------------------------------------------------------------
 {
 	if(nx<=0)
@@ -751,7 +751,7 @@ Mesh::Mesh( double xinf, double xsup, int nx )
 	dxyzPtr[0]=dx;
 
 
-	_mesh=MEDCouplingIMesh::New("MESH1D",
+	_mesh=MEDCouplingIMesh::New(meshName,
 			_spaceDim,
 			nodeStrctPtr,
 			nodeStrctPtr+_spaceDim,
@@ -851,7 +851,7 @@ Mesh::Mesh( double xinf, double xsup, int nx )
 }
 
 //----------------------------------------------------------------------
-Mesh::Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny)
+Mesh::Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny, std::string meshName)
 //----------------------------------------------------------------------
 {
 	if(nx<=0 || ny<=0)
@@ -893,7 +893,7 @@ Mesh::Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny)
 	dxyzPtr[1]=dy;
 
 
-	_mesh=MEDCouplingIMesh::New("MESH2D",
+	_mesh=MEDCouplingIMesh::New(meshName,
 			_spaceDim,
 			nodeStrctPtr,
 			nodeStrctPtr+_spaceDim,
@@ -908,7 +908,7 @@ Mesh::Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny)
 }
 
 //----------------------------------------------------------------------
-Mesh::Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny, double zinf, double zsup, int nz)
+Mesh::Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny, double zinf, double zsup, int nz, std::string meshName)
 //----------------------------------------------------------------------
 {
 	if(nx<=0 || ny<=0 || nz<=0)
@@ -958,7 +958,7 @@ Mesh::Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny, 
 	dxyzPtr[2]=dz;
 
 
-	_mesh=MEDCouplingIMesh::New("MESH3D",
+	_mesh=MEDCouplingIMesh::New(meshName,
 			_spaceDim,
 			nodeStrctPtr,
 			nodeStrctPtr+_spaceDim,

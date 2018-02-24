@@ -636,10 +636,10 @@ class TestsCDMATHSwig(unittest.TestCase):
         self.assertTrue(40 == M22.getNumberOfFaces())
 
         M23 = Mesh("meshSquare.med")
-        self.assertTrue(M23.getNamesOfGroups()[0] == "BORD1")
-        self.assertTrue(M23.getNamesOfGroups()[1] == "BORD2")
-        self.assertTrue(M23.getNamesOfGroups()[2] == "BORD3")
-        self.assertTrue(M23.getNamesOfGroups()[3] == "BORD4")
+        self.assertTrue(M23.getNamesOfGroups()[0] == "Bottom")
+        self.assertTrue(M23.getNamesOfGroups()[1] == "Left")
+        self.assertTrue(M23.getNamesOfGroups()[2] == "Right")
+        self.assertTrue(M23.getNamesOfGroups()[3] == "Top")
 
         M3 = M1
         self.assertTrue(1 == M3.getSpaceDimension())
