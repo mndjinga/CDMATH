@@ -23,33 +23,31 @@ def Extract_VTK_data_over_line_to_numpyArray(inputFileName, point1, point2, reso
     probe.SetSourceData(reader.GetOutput())
     probe.Update()
 
-    vtkarray = probe.GetOutput().GetCellData().GetArray(0) # or Slice1.GetCellData() # or Clip1.GetCellData()
+    vtkarray = probe.GetOutput().GetPointData().GetArray(0) # or Slice1.GetCellData() # or Clip1.GetCellData()
     numpy_array = npvtk.vtk_to_numpy(vtkarray)
 
     return numpy_array
     
-def Extract_VTK_data_over_line_to_csv_file(inputFileName, outputFileName, point1, point2, resolution):
+def Extract_VTK_data_over_line_to_txt_file(inputFileName, outputFileName, point1, point2, resolution):
 
     numpy_array = Extract_VTK_data_over_line_to_numpyArray(inputFileName, point1, point2, resolution)
 
     np.savetxt(outputFileName, numpy_array, delimiter=" ")
    
 def Extract_field_data_over_line_to_numpyArray(field, point1, point2, resolution):
-    field.writeVTK(field.get_name())
-    inputFileName = os.getcwd()+field.get_name()+"_0.vtu"
 
-    numpy_array = Extract_VTK_data_over_line_to_numpyArray(inputFileName, point1, point2, resolution)
+    inputFileName = field.getName()#os.getcwd()+field.get_name()
+    field.writeVTK(inputFileName)
 
-    os.remove(inputFileName)
+    numpy_array = Extract_VTK_data_over_line_to_numpyArray(inputFileName+"_0.vtu", point1, point2, resolution)
+
+    os.remove(inputFileName+"_0.vtu")
     return numpy_array
 
-def Extract_field_data_over_line_to_csv_file(field, point1, point2, resolution, outputFileName):
-    field.writeVTK(field.get_name())
-    inputFileName = os.getcwd()+field.get_name()+"_0.vtu"
+def Extract_field_data_over_line_to_txt_file(field, point1, point2, resolution, outputFileName):
 
-    numpy_array = Extract_VTK_data_over_line_to_numpyArray(inputFileName, point1, point2, resolution)
+    numpy_array = Extract_field_data_over_line_to_numpyArray(field, point1, point2, resolution)
 
-    os.remove(inputFileName)
     np.savetxt(outputFileName, numpy_array, delimiter=" ")
 
 def Slice_VTK_data_to_numpyArray(inputFileName,
@@ -69,13 +67,13 @@ def Slice_VTK_data_to_numpyArray(inputFileName,
     cutter.SetInputConnection(reader.GetOutputPort())
     cutter.Update()
 
-    vtkarray = cutter.GetOutput().GetCellData().GetArray(0)
+    vtkarray = cutter.GetOutput().GetPointData().GetArray(0)
     numpy_array = npvtk.vtk_to_numpy(vtkarray)
     
     return numpy_array
 
     
-def Slice_VTK_data_to_csv_file(inputFileName, outputFileName,
+def Slice_VTK_data_to_txt_file(inputFileName, outputFileName,
                                            point, normal,
                                            resolution
                                            ):
@@ -84,27 +82,23 @@ def Slice_VTK_data_to_csv_file(inputFileName, outputFileName,
     np.savetxt(outputFileName, numpy_array, delimiter=" ")
     
      
-def Slice_field_data_over_line_to_numpyArray(field,
-                                           point, normal,
-                                           resolution
-                                           ):
-    field.writeVTK(field.get_name())
-    inputFileName = os.getcwd()+field.get_name()+"_0.vtu"
+def Slice_field_data_to_numpyArray(field,
+                                   point, normal,
+                                   resolution
+                                   ):
+    inputFileName = field.getName()
+    field.writeVTK(inputFileName)
  
-    numpy_array = Slice_VTK_to_numpyArray(inputFileName, point, normal, resolution)
+    numpy_array = Slice_VTK_data_to_numpyArray(inputFileName+"_0.vtu", point, normal, resolution)
 
-    os.remove(inputFileName)
+    os.remove(inputFileName+"_0.vtu")
     return numpy_array
 
-def Slice_field_data_over_line_to_csv_file(field, outputFileName,
+def Slice_field_data_to_txt_file(field, outputFileName,
                                         point, normal,
                                         resolution):
-    field.writeVTK(field.get_name())
-    inputFileName = os.getcwd()+field.get_name()+"_0.vtu"
- 
-    numpy_array = Slice_VTK_to_numpyArray(inputFileName, point, normal, resolution)
+    numpy_array = Slice_field_data_to_numpyArray(field, point, normal, resolution)
 
-    os.remove(inputFileName)
     np.savetxt(outputFileName, numpy_array, delimiter=" ")
 
 def Clip_VTK_data_to_VTK(inputFileName,
@@ -137,8 +131,38 @@ def Save_VTK_data_to_picture_file(inputFileName,
     reader = vtk.vtkXMLUnstructuredGridReader()
     reader.SetFileName(inputFileName)
     reader.Update()
+
+#-------------------------------------------------------------------------------
+    renwin = vtk.vtkRenderWindow()
+    renderer = vtk.vtkRenderer() 
+    renwin.AddRenderer(renderer) 
+    renwin.Render() 
+    #mapper = vtk.vtkUnstructuredGridVolumeRayCastMapper() 
+    mapper = vtk.vtkDataSetMapper() 
+    mapper.SetInputConnection(reader.GetOutputPort())
+    #mapper.SetInput(id)
+    
+    actor = vtk.vtkActor() 
+    actor.SetMapper(mapper) 
+    renderer.AddViewProp(actor) 
+    renwin.Render() 
+
+    #mapper2D = vtk.vtkImageMapper()
+    #actor2D = vtk.vtkActor2D()
+    #actor2D.SetMapper(mapper2D)
+    #renwin.AddActor2D(actor2D)
+    
+    wif = vtk.vtkWindowToImageFilter()
+    wif.SetInput(renwin)
+    wif.Update()
+    
+
+#--------------------------------------------------------------------------------
+    
     
     writer = vtk.vtkPNGWriter()
-    writer.SetInputConnection(cdata_vtu.GetOutput())
+    #writer.SetInputConnection(reader.GetOutputPort())
+    #writer.SetInputData(reader.GetOutput().GetPointData())
+    writer.SetInputConnection(wif.GetOutputPort())
     writer.SetFileName(outputFileName+".png")
     writer.Write()
