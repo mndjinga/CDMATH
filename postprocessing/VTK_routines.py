@@ -157,6 +157,8 @@ def Save_VTK_data_to_picture_file(inputFileName,
     # assign actor to the renderer
     ren.AddActor(actor)
     
+    renWin.Render()
+    
     wif = vtk.vtkWindowToImageFilter()
     wif.SetInput(renWin)
     wif.Update()
@@ -165,7 +167,7 @@ def Save_VTK_data_to_picture_file(inputFileName,
     #writer.SetInputConnection(reader.GetOutputPort())
     #writer.SetInputData(reader.GetOutput().GetPointData())
     writer.SetInputConnection(wif.GetOutputPort())
-    writer.SetFileName(outputFileName+".png")
+    writer.SetFileName(outputFileName+"bis.png")
     writer.Write()
 
 #-------------------------------------------------------------------------------------------------------
