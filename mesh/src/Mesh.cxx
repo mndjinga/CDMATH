@@ -315,7 +315,7 @@ Mesh::setGroups( const MEDFileUMesh* medmesh)
 	{
 		string groupName=groups[i];
 		vector<int> nonEmptyGrp(medmesh->getGrpNonEmptyLevels(groupName));
-		//We verify that the group has a relative dimension equal to -1 before calling the function getGroup(-1,groupName.c_str())
+		//We check if the group has a relative dimension equal to -1 before calling the function getGroup(-1,groupName.c_str())
 		vector<int>::iterator it = find(nonEmptyGrp.begin(), nonEmptyGrp.end(), -1);
 		if (it != nonEmptyGrp.end()){
 			_groups.push_back(groupName);
@@ -341,10 +341,42 @@ Mesh::setGroups( const MEDFileUMesh* medmesh)
 					}
 				}
 				if (flag==0)
-					assert("face non trouve");
+					assert("face not found");
 				k+=2;
 			}
 			baryCell->decrRef();
+			m->decrRef();
+		}
+		//We check if the group has a relative dimension equal to -meshDim before calling the function getGroup(-meshDim,groupName.c_str())
+		it = find(nonEmptyGrp.begin(), nonEmptyGrp.end(), -_meshDim);
+		if (it != nonEmptyGrp.end()){
+			_groups.push_back(groupName);
+			MEDCouplingUMesh *m=medmesh->getGroup(-_meshDim,groupName.c_str());
+			DataArrayDouble *coo = m->getCoords() ;
+			const double *cood=coo->getConstPointer();
+
+			int nb=m->getNumberOfNodes();
+			int k=0;
+			for (int ic=0;ic<nb;ic++)
+			{
+				double xb=cood[ic*_spaceDim+k];
+				double yb=cood[ic*_spaceDim+k+1];
+				int flag=0;
+				for (int inode=0;inode<_numberOfNodes;inode++ )
+				{
+					double xx=_nodes[inode].x();
+					double yy=_nodes[inode].y();
+					if(abs(xx-xb)<1.E-10 && abs(yy-yb)<1.E-10)
+					{
+						_nodes[inode].setGroupName(groupName);
+						flag=1;
+						break;
+					}
+				}
+				if (flag==0)
+					assert("node not found");
+				k+=2;
+			}
 			m->decrRef();
 		}
 	}
