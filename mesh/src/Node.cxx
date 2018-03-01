@@ -14,6 +14,7 @@ Node::Node( void )
 {
 	_numberOfCells = 0 ;
 	_numberOfFaces = 0 ;
+	_groupName="";
 }
 
 //----------------------------------------------------------------------
@@ -31,6 +32,7 @@ Node::Node( const Node& node )
 	_facesId = node.getFacesId() ;
 	_numberOfCells = node.getNumberOfCells() ;
 	_numberOfFaces = node.getNumberOfFaces() ;
+	_groupName=node.getGroupName();
 }
 
 //----------------------------------------------------------------------
@@ -43,6 +45,7 @@ Node::Node( const int numberOfCells, const int numberOfFaces, const Point p )
 	_numberOfFaces = numberOfFaces ;
 	_cellsId = IntTab(_numberOfCells,0);
 	_facesId = IntTab(_numberOfFaces,0);
+	_groupName="";
 }
 
 //----------------------------------------------------------------------
@@ -109,6 +112,19 @@ Node::z( void ) const
 	return _point.z() ;
 }
 
+std::string
+Node::getGroupName(void) const
+{
+	return _groupName;
+}
+
+void
+Node::setGroupName(const std::string groupName)
+{
+	_groupName=groupName;
+}
+
+
 //----------------------------------------------------------------------
 void
 Node::addFaceId (const int numFace, const int faceId )
@@ -135,17 +151,6 @@ Node::distance( const Node& n ) const
 }
 
 //----------------------------------------------------------------------
-const Node&
-Node::operator= ( const Node& node )
-//----------------------------------------------------------------------
-{
-	_point = node.getPoint() ;
-	_cellsId = node.getCellsId() ;
-	_facesId = node.getFacesId() ;
-	_numberOfCells = node.getNumberOfCells() ;
-	_numberOfFaces = node.getNumberOfFaces() ;
-	return *this;
-}
 int
 //----------------------------------------------------------------------
 Node::getFaceId(int localId) const
@@ -154,3 +159,15 @@ Node::getFaceId(int localId) const
 	return _facesId[localId];
 }
 
+const Node& 
+Node::operator= ( const Node& node )
+//----------------------------------------------------------------------
+{
+   _point = node.getPoint()  ;
+   _cellsId = node.getCellsId() ;
+   _facesId = node.getFacesId() ;
+   _numberOfCells = node.getNumberOfCells() ;
+   _numberOfFaces = node.getNumberOfFaces() ;
+   _groupName = node.getGroupName();	
+	return *this;
+}

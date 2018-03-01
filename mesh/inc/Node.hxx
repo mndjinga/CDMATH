@@ -69,10 +69,6 @@ class Node
      */
     int getNumberOfFaces ( void ) const ;
 
-      /**
-       * return The coordinate of the Node
-       * @return _point
-       */
     /**
      * return The coordinate of the Node
      * @return _point
@@ -80,19 +76,30 @@ class Node
     Point getPoint ( void ) const ;
 
     /**
-     * return cordinate x of the barycenter in this face
+     * return cordinate x of this node
      */
     double x ( void ) const ;
 
     /**
-     * return cordinate x of the barycenter in this face
+     * return cordinate x of this node
      */
     double y ( void ) const ;
 
     /**
-     * return cordinate x of the barycenter in this face
+     * return cordinate x of this node
      */
     double z ( void ) const ;
+
+    /**
+     * return groupe name of this node
+     */
+    std::string getGroupName(void) const;
+
+    /**
+     * @param groupName : groupe name to set of this node
+     */
+    void setGroupName(const std::string groupName);
+
 
     /**
      * @param numFace : index local of face to add in this node
@@ -148,6 +155,10 @@ class Node
      */
     int _numberOfFaces ;
 
+    /*
+     * The group name of the Node.
+     */
+    std::string _groupName ;
 };
 
 #endif /* NODe_HXX_ */
