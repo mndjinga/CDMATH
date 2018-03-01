@@ -9,8 +9,8 @@ import cdmath
 
 #cell field on 2D structured mesh
 M1 = cdmath.Mesh(0.0, 1.0, 10, 0., 1., 5)
-
-field1 = cdmath.Field("test field 1", cdmath.CELLS, M1, 1)
+fieldName1="test field 1"
+field1 = cdmath.Field(fieldName1, cdmath.CELLS, M1, 1)
 for j in range(field1.getNumberOfComponents()):
     for i in range(field1.getNumberOfElements()):
         field1[i, j] = i + j
@@ -20,7 +20,8 @@ field1.writeVTK(fileNameVTK1)
 
 #node field on 2D unstructured mesh
 M2 = cdmath.Mesh("meshSquare.med")
-field2 = cdmath.Field("test field 2", cdmath.NODES, M2, 1)
+fieldName2="test field 2"
+field2 = cdmath.Field(fieldName2, cdmath.NODES, M2, 1)
 for j in range(field2.getNumberOfComponents()):
     for i in range(field2.getNumberOfElements()):
         field2[i, j] = i + j
@@ -30,7 +31,8 @@ field2.writeVTK(fileNameVTK2)
 
 #node field on 3D unstructured mesh
 M3 = cdmath.Mesh("meshCube.med")
-field3 = cdmath.Field("test field 3", cdmath.NODES, M3, 1)
+fieldName3="test field 3"
+field3 = cdmath.Field(fieldName3, cdmath.NODES, M3, 1)
 for j in range(field3.getNumberOfComponents()):
     for i in range(field3.getNumberOfElements()):
         field3[i, j] = i + j
@@ -40,7 +42,8 @@ field3.writeVTK(fileNameVTK3)
 
 #node field on sphere with unstructured mesh
 M4 = cdmath.Mesh("meshSphere.med")
-field4 = cdmath.Field("test field 4", cdmath.NODES, M4, 1)
+fieldName4="test field 4"
+field4 = cdmath.Field(fieldName4, cdmath.NODES, M4, 1)
 for j in range(field4.getNumberOfComponents()):
     for i in range(field4.getNumberOfElements()):
         field4[i, j] = i + j
@@ -50,7 +53,8 @@ field4.writeVTK(fileNameVTK4)
 
 #cell field on 3D structured mesh
 M5 = cdmath.Mesh(0.0, 1.0, 4, 0.0, 1.0, 4, 0.0, 1.0, 4)
-field5 = cdmath.Field("test field 5", cdmath.CELLS, M5, 1)
+fieldName5="test field 5"
+field5 = cdmath.Field(fieldName5, cdmath.CELLS, M5, 1)
 for j in range(field5.getNumberOfComponents()):
     for i in range(field5.getNumberOfElements()):
         field5[i, j] = i + j
@@ -74,18 +78,18 @@ outputFileName="Slice_PV_data_to_txt_file"+fileNameVTK3+".csv"
 Slice_PV_data_to_txt_file('/home/ndjinga/Logiciels/CDMATH/BUILD/tests/'+fileNameVTK3+'_0.vtu', outputFileName, point, normal,resolution )
 print "Slice_PV_data_to_txt_file ok"
 
-outputFileName="Slice_field_data_to_txt_file"+fileNameVTK4+".csv"
-Slice_field_data_to_txt_file(field4, outputFileName, point, normal,resolution)
-print "Slice_field_data_to_txt_file ok"
+#outputFileName="Slice_field_data_to_txt_file"+fileNameVTK4+".csv"
+#Slice_PV_field_data_to_txt_file(field4, outputFileName, point, normal,resolution)
+#print "Slice_field_data_to_txt_file ok"
 
 outputFileName="Clip_PV_data_to_VTK"+fileNameVTK5+'_0.vtu'
-Clip_PV_data_to_VTK('/home/ndjinga/Logiciels/CDMATH/BUILD/tests/'+fileNameVTK5+'_0.vtu',outputFileName,point, normal,resolution )
+Clip_PV_data_to_VTK('/home/ndjinga/Logiciels/CDMATH/BUILD/tests/'+fileNameVTK5+'_0.vtu',fieldName5, 'POINTS',outputFileName,point, normal,resolution )
 print "Clip_PV_data_to_VTK ok"
 
 inputFileName="Clip_PV_data_to_VTK"+fileNameVTK5
-Save_PV_data_to_picture_file('/home/ndjinga/Logiciels/CDMATH/BUILD/tests/'+inputFileName+'_0.vtu',outputFileName)
+Save_PV_data_to_picture_file('/home/ndjinga/Logiciels/CDMATH/BUILD/tests/'+inputFileName+'_0.vtu',fieldName5,'POINTS',outputFileName)
 print "Save_PV_Clip_data_to_picture_file ok"
 
 outputFileName="Save_PV_data_to_picture_file"+fileNameVTK5
-Save_PV_data_to_picture_file('/home/ndjinga/Logiciels/CDMATH/BUILD/tests/'+fileNameVTK5+'_0.vtu',outputFileName)
+Save_PV_data_to_picture_file('/home/ndjinga/Logiciels/CDMATH/BUILD/tests/'+fileNameVTK5+'_0.vtu',fieldName5,'POINTS',outputFileName)
 print "Save_PV_data_to_picture_file ok"

@@ -33,19 +33,19 @@ def Extract_PV_data_over_line_to_numpyArray(inputFileName, point1, point2, resol
 # should be rewritten in ordre to skip the tmp file
 # and directly convert the Slide vtk field elt to a numpy array
 # 
-def Slice_PV_data_to_numpyArray(inputFileName, point, normal):
+def Slice_PV_data_to_numpyArray(inputFileName, point, normal, resolution):
     dirName = os.path.dirname(inputFileName)
     outputFileName = os.path.join(dirName, "tmp." + str(os.getpid()) + str(time.clock()) + ".csv")
-    Slice_PV_data_over_line_to_txt_file(inputFileName, outputFileName, point, normal)
-    var, x1, x2, x3 = np.loadtxt(outputFileName, delimiter=',',
-                                skiprows=1, usecols=(0, 1, 2, 3), unpack=True)
+    Slice_PV_data_to_txt_file(inputFileName, outputFileName, point, normal, resolution)
+    var = np.loadtxt(outputFileName, delimiter=',',
+                                skiprows=1, usecols=(0), unpack=True)
     os.remove(outputFileName)
-    return x1, x2, x3, var
+    return var
 
-def Slice_PV_data_over_line_to_txt_file(inputFileName,
+def Slice_PV_data_to_txt_file(inputFileName,
                                         outputFileName,
                                         point,
-                                        normal):
+                                        normal,resolution):
     pvs._DisableFirstRenderCameraReset()
     data_vtu = pvs.XMLUnstructuredGridReader(FileName=[inputFileName])
     Slice1 = pvs.Slice(SliceType="Plane")
@@ -54,7 +54,7 @@ def Slice_PV_data_over_line_to_txt_file(inputFileName,
     Slice1.SliceType.Normal = normal
     CellCenters1 = pvs.CellCenters()    
     writer = pvs.CreateWriter(outputFileName, CellCenters1)
-    writer.Precision=30
+    writer.Precision=resolution
     writer.FieldAssociation = "Points"  # or "Cells"
     writer.UpdatePipeline()
  
@@ -77,24 +77,24 @@ def Slice_PV_field_data_to_txt_file(field, outputFileName,
 
     np.savetxt(outputFileName, numpy_array, delimiter=" ")
 
-def Clip_VTK_data_to_VTK(inputFileName,field_name,POINTS_or_CELLS,
+def Clip_PV_data_to_VTK(inputFileName,field_name,POINTS_or_CELLS,
                              outputFileName,
                                  point, normal,
                                  resolution
                                            ):
-    paraview.simple._DisableFirstRenderCameraReset()
+    pvs._DisableFirstRenderCameraReset()
 
     # create a new 'XML Unstructured Grid Reader'
-    reader = XMLUnstructuredGridReader(FileName=[inputFileName])
+    reader = pvs.XMLUnstructuredGridReader(FileName=[inputFileName])
     reader.PointArrayStatus = [field_name]
 
     # get active view
-    renderView1 = GetActiveViewOrCreate('RenderView')
+    renderView1 = pvs.GetActiveViewOrCreate('RenderView')
     # uncomment following to set a specific view size
-    # renderView1.ViewSize = [1057, 499]
+    #renderView1.ViewSize = [1057, 499]
 
     # show data in view
-    display = Show(finiteElementsResultField_3D0vtu, renderView1)
+    display = pvs.Show(reader, renderView1)
     # trace defaults for the display properties.
     display.ColorArrayName = [None, '']
     display.GlyphType = 'Arrow'
@@ -104,22 +104,22 @@ def Clip_VTK_data_to_VTK(inputFileName,field_name,POINTS_or_CELLS,
     renderView1.ResetCamera()
 
     # set scalar coloring
-    ColorBy(display, (POINTS_or_CELLS, field_name))
+    pvs.ColorBy(display, (POINTS_or_CELLS, field_name))
 
     # rescale color and/or opacity maps used to include current data range
-    finiteElementsResultField_3D0vtuDisplay.RescaleTransferFunctionToDataRange(True)
+    display.RescaleTransferFunctionToDataRange(True)
 
     # show color bar/color legend
-    finiteElementsResultField_3D0vtuDisplay.SetScalarBarVisibility(renderView1, True)
+    display.SetScalarBarVisibility(renderView1, True)
 
     # get color transfer function/color map for 'Resultfield'
-    resultfieldLUT = GetColorTransferFunction(field_name)
+    resultfieldLUT = pvs.GetColorTransferFunction(field_name)
 
     # get opacity transfer function/opacity map for 'Resultfield'
-    resultfieldPWF = GetOpacityTransferFunction(field_name)
+    resultfieldPWF = pvs.GetOpacityTransferFunction(field_name)
 
     # create a new 'Clip'
-    clip1 = Clip(Input=reader)
+    clip1 = pvs.Clip(Input=reader)
     clip1.ClipType = 'Plane'
     clip1.Scalars = [POINTS_or_CELLS, field_name]
     clip1.Value = 0.5000234246253967
@@ -128,10 +128,10 @@ def Clip_VTK_data_to_VTK(inputFileName,field_name,POINTS_or_CELLS,
     clip1.ClipType.Origin = [0.5, 0.5, 0.5]
 
     # toggle 3D widget visibility (only when running from the GUI)
-    Hide3DWidgets(proxy=clip1)
+    pvs.Hide3DWidgets(proxy=clip1)
 
     # show data in view
-    clip1Display = Show(clip1, renderView1)
+    clip1Display = pvs.Show(clip1, renderView1)
     # trace defaults for the display properties.
     clip1Display.ColorArrayName = [POINTS_or_CELLS, field_name]
     clip1Display.LookupTable = resultfieldLUT
@@ -139,13 +139,13 @@ def Clip_VTK_data_to_VTK(inputFileName,field_name,POINTS_or_CELLS,
     clip1Display.ScalarOpacityUnitDistance = 0.02440176703101865
 
     # hide data in view
-    Hide(reader, renderView1)
+    pvs.Hide(reader, renderView1)
 
     # show color bar/color legend
     clip1Display.SetScalarBarVisibility(renderView1, True)
 
     # save animation geometry from a view
-    WriteAnimationGeometry(outputFileName, view=renderView1)
+    pvs.WriteAnimationGeometry(outputFileName, view=renderView1)
 
     #### saving camera placements for all active views
 
@@ -159,22 +159,22 @@ def Clip_VTK_data_to_VTK(inputFileName,field_name,POINTS_or_CELLS,
     # RenderAllViews()
     # alternatively, if you want to write images, you can use SaveScreenshot(...).
 
-def Save_VTK_data_to_picture_file(inputFileName, field_name,POINTS_or_CELLS,
+def Save_PV_data_to_picture_file(inputFileName, field_name,POINTS_or_CELLS,
                              outputFileName
                              ):
     pvs._DisableFirstRenderCameraReset()
 
     # create a new 'XML Unstructured Grid Reader'
-    reader = XMLUnstructuredGridReader(FileName=[inputFileName])
+    reader = pvs.XMLUnstructuredGridReader(FileName=[inputFileName])
     reader.PointArrayStatus = [field_name]
 
     # get active view
-    renderView1 = GetActiveViewOrCreate('RenderView')
+    renderView1 = pvs.GetActiveViewOrCreate('RenderView')
     # uncomment following to set a specific view size
     # renderView1.ViewSize = [1057, 499]
 
     # show data in view
-    display = Show(reader, renderView1)
+    display = pvs.Show(reader, renderView1)
     # trace defaults for the display properties.
     display.ColorArrayName = [None, '']
     display.GlyphType = 'Arrow'
@@ -184,7 +184,7 @@ def Save_VTK_data_to_picture_file(inputFileName, field_name,POINTS_or_CELLS,
     renderView1.ResetCamera()
 
     # set scalar coloring
-    ColorBy(display, (POINTS_or_CELLS, field_name))
+    pvs.ColorBy(display, (POINTS_or_CELLS, field_name))
 
     # rescale color and/or opacity maps used to include current data range
     display.RescaleTransferFunctionToDataRange(True)
@@ -192,14 +192,14 @@ def Save_VTK_data_to_picture_file(inputFileName, field_name,POINTS_or_CELLS,
     # show color bar/color legend
     display.SetScalarBarVisibility(renderView1, True)
 
-    resultfieldLUT = GetColorTransferFunction(field_name)
+    resultfieldLUT = pvs.GetColorTransferFunction(field_name)
 
-    resultfieldPWF = GetOpacityTransferFunction(field_name)
+    resultfieldPWF = pvs.GetOpacityTransferFunction(field_name)
 
     renderView1.CameraPosition = [0.5, 0.5, 3.8460652149512318]
     renderView1.CameraFocalPoint = [0.5, 0.5, 0.5]
     renderView1.CameraParallelScale = 0.8660254037844386
 
-    SaveScreenshot(outputFileName, magnification=1, quality=100, view=renderView1)
+    pvs.SaveScreenshot(outputFileName, magnification=1, quality=100, view=renderView1)
     
 
