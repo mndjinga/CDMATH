@@ -15,6 +15,7 @@ Node::Node( void )
 	_numberOfCells = 0 ;
 	_numberOfFaces = 0 ;
 	_groupName="";
+	_region=-1;
 }
 
 //----------------------------------------------------------------------
@@ -33,6 +34,7 @@ Node::Node( const Node& node )
 	_numberOfCells = node.getNumberOfCells() ;
 	_numberOfFaces = node.getNumberOfFaces() ;
 	_groupName=node.getGroupName();
+	_region=node.getRegion();
 }
 
 //----------------------------------------------------------------------
@@ -46,6 +48,7 @@ Node::Node( const int numberOfCells, const int numberOfFaces, const Point p )
 	_cellsId = IntTab(_numberOfCells,0);
 	_facesId = IntTab(_numberOfFaces,0);
 	_groupName="";
+	_region=-1;
 }
 
 //----------------------------------------------------------------------
@@ -122,8 +125,23 @@ void
 Node::setGroupName(const std::string groupName)
 {
 	_groupName=groupName;
+	_region=0;
 }
 
+bool
+Node::isBorder(void)
+{
+	if (_region==0)
+		return true;
+	else
+		return false;
+}
+
+int
+Node::getRegion(void) const
+{
+	return _region;
+}
 
 //----------------------------------------------------------------------
 void

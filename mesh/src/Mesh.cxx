@@ -275,6 +275,8 @@ Mesh::getIndexFacePeriodic(int indexFace) const
 bool
 Mesh::isBorderNode(int nodeid) const
 {
+	return getNode(nodeid).isBorder();
+	/*
 	Node N=getNode(nodeid);
 	int nbFaces=N.getNumberOfFaces();
 	int i=0;
@@ -284,6 +286,7 @@ Mesh::isBorderNode(int nodeid) const
 		return true;
 	else
 		return false;
+	*/
 }
 
 bool

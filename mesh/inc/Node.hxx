@@ -102,6 +102,18 @@ class Node
 
 
     /**
+     * return 0 if the node is on the border of domain
+     * else -1
+     */
+    int getRegion(void) const ;
+
+    /**
+     * return True if the node is on the border of domain
+     * else False
+     */
+    bool isBorder(void) ;
+
+    /**
      * @param numFace : index local of face to add in this node
      * @param faceId : index global of face to add in this node
      */
@@ -154,6 +166,11 @@ class Node
      * The number of faces allocated for this Node.
      */
     int _numberOfFaces ;
+
+    /*
+     * The region of this face. -1 internal or number of edge that this face belongs to
+     */
+    int _region ;
 
     /*
      * The group name of the Node.
