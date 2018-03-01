@@ -287,6 +287,12 @@ Mesh::isBorderNode(int nodeid) const
 }
 
 bool
+Mesh::isBorderFace(int faceid) const
+{
+	return getFace(faceid).isBorder();
+}
+
+bool
 Mesh::isTriangular() const
 {
 	return _eltsTypes.size()==1 && _eltsTypes[0]==INTERP_KERNEL::NORM_TRI3;

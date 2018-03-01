@@ -238,7 +238,8 @@ public: //----------------------------------------------------------------
 	IntTab getIndexFacePeriodic( void ) const ;
 
 	bool isBorderNode(int nodeid) const ;
-
+	bool isBorderFace(int faceid) const ;
+	
 	bool isTriangular() const ;
 	bool isTetrahedral() const ;
 	bool isQuadrangular() const ;
