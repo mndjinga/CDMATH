@@ -162,11 +162,11 @@ def Clip_VTK_data_to_VTK(inputFileName,field_name,POINTS_or_CELLS,
 def Save_VTK_data_to_picture_file(inputFileName, field_name,POINTS_or_CELLS,
                              outputFileName
                              ):
-    paraview.simple._DisableFirstRenderCameraReset()
+    pvs._DisableFirstRenderCameraReset()
 
     # create a new 'XML Unstructured Grid Reader'
-    finiteElementsResultField_3D0vtu = XMLUnstructuredGridReader(FileName=[inputFileName])
-    finiteElementsResultField_3D0vtu.PointArrayStatus = [field_name]
+    reader = XMLUnstructuredGridReader(FileName=[inputFileName])
+    reader.PointArrayStatus = [field_name]
 
     # get active view
     renderView1 = GetActiveViewOrCreate('RenderView')
@@ -174,7 +174,7 @@ def Save_VTK_data_to_picture_file(inputFileName, field_name,POINTS_or_CELLS,
     # renderView1.ViewSize = [1057, 499]
 
     # show data in view
-    display = Show(finiteElementsResultField_3D0vtu, renderView1)
+    display = Show(reader, renderView1)
     # trace defaults for the display properties.
     display.ColorArrayName = [None, '']
     display.GlyphType = 'Arrow'
@@ -190,7 +190,7 @@ def Save_VTK_data_to_picture_file(inputFileName, field_name,POINTS_or_CELLS,
     display.RescaleTransferFunctionToDataRange(True)
 
     # show color bar/color legend
-    finiteElementsResultField_3D0vtuDisplay.SetScalarBarVisibility(renderView1, True)
+    display.SetScalarBarVisibility(renderView1, True)
 
     resultfieldLUT = GetColorTransferFunction(field_name)
 

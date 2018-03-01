@@ -1,4 +1,5 @@
-import paraview.simple as pvs
+import pvsimple as pvs
+from pvsimple import *
 import os
 import time
 import numpy as np
@@ -86,10 +87,39 @@ def Slice_field_data_over_line_to_numpyArray(field,
     os.remove(inputFileName)
     return result
 
-def Save_MED_to_picture_file(inputFileName,
+def Save_MED_to_picture_file(inputFileName, field_name,POINTS_or_CELLS,
                              outputFileName,
                              ):
-    data_vtu = MEDReader.Reader(FileName=[inputFileName])
-    Show(data_vtu)
-    Render()
+    data_med = MEDReader.Reader(FileName=[inputFileName])
+    # get active view
+    renderView1 = GetActiveViewOrCreate('RenderView')
+    # uncomment following to set a specific view size
+    # renderView1.ViewSize = [1052, 476]
+
+    # show data in view
+    display = Show(data_med, renderView1)
+
+    # reset view to fit data
+    renderView1.ResetCamera()
+
+    #changing interaction mode based on data extents
+    renderView1.InteractionMode = '2D'
+    renderView1.CameraPosition = [0.5, 0.5, 10000.0]
+    renderView1.CameraFocalPoint = [0.5, 0.5, 0.0]
+
+    # set scalar coloring
+    ColorBy(display, (POINTS_or_CELLS, field_name))
+
+    # rescale color and/or opacity maps used to include current data range
+    display.RescaleTransferFunctionToDataRange(True, False)
+
+    # show color bar/color legend
+    display.SetScalarBarVisibility(renderView1, True)
+
+    # get color transfer function/color map for 'Initialvariablesforsphericalexplosion'
+    resultfieldLUT = GetColorTransferFunction(field_name)
+
+    # get opacity transfer function/opacity map for 'Initialvariablesforsphericalexplosion'
+    resultfieldPWF = GetOpacityTransferFunction(field_name)
+
     SaveScreenshot(outputFileName) 
