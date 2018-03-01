@@ -5,7 +5,7 @@ import numpy as np
 import vtk.util.numpy_support as vn
 # do I need to kill the pipeline?
 
-def Extract_PV_data_over_line_to_csv_file(inputFileName, outputFileName,
+def Extract_PV_data_over_line_to_txt_file(inputFileName, outputFileName,
                                            point1, point2,
                                            resolution
                                            ):
@@ -23,7 +23,7 @@ def Extract_PV_data_over_line_to_csv_file(inputFileName, outputFileName,
 def Extract_PV_data_over_line_to_numpyArray(inputFileName, point1, point2, resolution):
     dirName = os.path.dirname(inputFileName)
     outputFileName = os.path.join(dirName, "tmp." + str(os.getpid()) + str(time.clock()) + ".csv")
-    Extract_PV_data_over_line_to_csv_file(inputFileName, outputFileName, point1, point2, resolution)
+    Extract_PV_data_over_line_to_txt_file(inputFileName, outputFileName, point1, point2, resolution)
     var, x1, x2, x3 = np.loadtxt(outputFileName, delimiter=',',
                                 skiprows=1, usecols=(0, 3, 4, 5), unpack=True)
     os.remove(outputFileName)
@@ -33,16 +33,16 @@ def Extract_PV_data_over_line_to_numpyArray(inputFileName, point1, point2, resol
 # should be rewritten in ordre to skip the tmp file
 # and directly convert the Slide vtk field elt to a numpy array
 # 
-def Slice_PV_data_over_line_to_numpyArray(inputFileName, point, normal):
+def Slice_PV_data_to_numpyArray(inputFileName, point, normal):
     dirName = os.path.dirname(inputFileName)
     outputFileName = os.path.join(dirName, "tmp." + str(os.getpid()) + str(time.clock()) + ".csv")
-    Slice_PV_data_over_line_to_csv_file(inputFileName, outputFileName, point, normal)
+    Slice_PV_data_over_line_to_txt_file(inputFileName, outputFileName, point, normal)
     var, x1, x2, x3 = np.loadtxt(outputFileName, delimiter=',',
                                 skiprows=1, usecols=(0, 1, 2, 3), unpack=True)
     os.remove(outputFileName)
     return x1, x2, x3, var
 
-def Slice_PV_data_over_line_to_csv_file(inputFileName,
+def Slice_PV_data_over_line_to_txt_file(inputFileName,
                                         outputFileName,
                                         point,
                                         normal):
@@ -58,7 +58,7 @@ def Slice_PV_data_over_line_to_csv_file(inputFileName,
     writer.FieldAssociation = "Points"  # or "Cells"
     writer.UpdatePipeline()
  
- def Slice_PV_field_data_to_numpyArray(field,
+def Slice_PV_field_data_to_numpyArray(field,
                                    point, normal,
                                    resolution
                                    ):
