@@ -144,7 +144,6 @@ SolSyst=LS.solve()
 print LS.getNameOfPc()
 print LS.getNumberOfIter()
 print("Linear system solved")
-#To do : check that the solution has mean zero
 
 # Création du champ résultat
 #===========================
@@ -163,5 +162,7 @@ print("Numerical solution of 2D poisson equation using finite elements done")
 max_sol_exacte=(my_RHSfield.getNormEuclidean()).max()/12
 erreur_max=(my_RHSfield/12 - my_ResultField).getNormEuclidean().max()
 print("max(| exact solution - numerical solution |)/max(| exact solution |) = ",erreur_max/max_sol_exacte)
+
+print("max sol exact=",my_RHSfield.getNormEuclidean().max()/12, "min sol exact=",my_RHSfield.getNormEuclidean().min()/12)
 
 #Postprocessing optionnel: ouverture du fichier FiniteElementsResultField.pvd contenant le résultat numérique à partir de commandes python (import paraview)
