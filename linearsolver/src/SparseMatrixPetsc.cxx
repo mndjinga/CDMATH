@@ -91,18 +91,12 @@ SparseMatrixPetsc::transpose() const
 void
 SparseMatrixPetsc::setValue( int i, int j, double value )
 {
-	MatAssemblyBegin(_mat, MAT_FLUSH_ASSEMBLY);
-	MatAssemblyEnd(_mat, MAT_FLUSH_ASSEMBLY);
-
 	MatSetValues(_mat,1, &i, 1, &j, &value, INSERT_VALUES);
 }
 
 void
 SparseMatrixPetsc::addValue( int i, int j, double value )
 {
-	MatAssemblyBegin(_mat, MAT_FLUSH_ASSEMBLY);
-	MatAssemblyEnd(_mat, MAT_FLUSH_ASSEMBLY);
-
 	MatSetValues(_mat,1, &i, 1, &j, &value, ADD_VALUES);
 }
 
