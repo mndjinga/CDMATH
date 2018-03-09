@@ -56,7 +56,7 @@ print("Integral of the RHS", my_RHSfield.integral(0))
 
 # Construction de la matrice de rigidité et du vecteur second membre du système linéaire
 #=======================================================================================
-Rigidite=cdmath.SparseMatrix(nbNodes,nbNodes,nbNodes*maxNbNeighbours)
+Rigidite=cdmath.SparseMatrixPetsc(nbNodes,nbNodes,maxNbNeighbours)# warning : third argument is number of non zero coefficients per line
 RHS=cdmath.Vector(nbNodes)
 
 # Vecteurs gradient de la fonction de forme associée à chaque noeud d'un triangle

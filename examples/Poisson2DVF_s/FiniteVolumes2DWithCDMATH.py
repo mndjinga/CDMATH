@@ -57,7 +57,7 @@ print("Max nb of neighbours=", maxNbNeighbours)
 
 # Construction de la matrice et du vecteur second membre du système linéaire
 #===========================================================================
-Rigidite=cdmath.SparseMatrix(nbCells,nbCells,nbCells*maxNbNeighbours)
+Rigidite=cdmath.SparseMatrix(nbCells,nbCells,nbCells*maxNbNeighbours)# warning : third argument is total number of non zero coefficients in the matrix
 RHS=cdmath.Vector(nbCells)
 #Parcours des cellules du domaine
 for i in range(nbCells):
@@ -75,8 +75,7 @@ for i in range(nbCells):
 			Rigidite.setValue(i,k,-coeff) # terme extradiagonal
 		else:
 			coeff=Fj.getMeasure()/Ci.getMeasure()/Ci.getBarryCenter().distance(Fj.getBarryCenter())
-		coeff = coeff + Rigidite(i,i)
-		Rigidite.setValue(i,i,coeff) # terme diagonal
+		Rigidite.addValue(i,i,coeff) # terme diagonal
 
 print("Linear system matrix building done")
 
