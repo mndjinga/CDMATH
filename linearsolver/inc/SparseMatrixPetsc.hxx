@@ -31,7 +31,7 @@ public:
 	 * constructor with data
 	 * @param numberOfRows : The number of rows
 	 * @param numberOfColumns : The number of columns
-	 * @param nnz : The number of nonzeros coefficients in the matrix or an upper bound
+	 * @param nnz : The maximum number of nonzeros coefficients per line (or an upper bound)
 	 */
 	SparseMatrixPetsc( int numberOfRows, int numberOfColumns, int nnz ) ;
 
@@ -88,7 +88,7 @@ public:
 private:
 	Mat _mat;
 
-	int _numberOfNonZeros ;
+	int _numberOfNonZeros ;//The maximum number of nonzeros coefficients per line (or an upper bound)
 };
 
 

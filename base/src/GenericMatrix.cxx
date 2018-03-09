@@ -108,6 +108,6 @@ GenericMatrix::view() const
 			cout.precision(6);
 			cout<<(*this)(i,j);
 		}
-	cout<<endl;
+		cout<<endl;
 	}
 }

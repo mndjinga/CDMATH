@@ -276,7 +276,7 @@ bool
 Mesh::isBorderNode(int nodeid) const
 {
 	//return getNode(nodeid).isBorder();
-	
+
 	Node N=getNode(nodeid);
 	int nbFaces=N.getNumberOfFaces();
 	int i=0;
@@ -286,7 +286,7 @@ Mesh::isBorderNode(int nodeid) const
 		return true;
 	else
 		return false;
-	
+
 }
 
 bool
@@ -422,7 +422,7 @@ Mesh::setMesh( void )
 			throw CdmathException("Mesh::setMesh : in order to avoid gauss points, mesh should contain elements of type NORM_POINT1, NORM_SEG2, NORM_TRI3, NORM_QUAD4, NORM_TETRA4, NORM_PYRA5, NORM_PENTA6, NORM_HEXA8, NORM_POLYGON");
 		}
 	}
-	
+
 	const int *tmp=desc->getConstPointer();
 	const int *tmpI=descI->getConstPointer();
 

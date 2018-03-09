@@ -31,7 +31,7 @@ public:
 	 * constructor with data
 	 * @param numberOfRows : The number of rows
 	 * @param numberOfColumns : The number of columns
-	 * @param nnz : The number of nonzeros coefficients in the matrix or an upper bound
+	 * @param nnz : The total number of nonzeros coefficients in the matrix or an upper bound
 	 */
 	SparseMatrix( int numberOfRows, int numberOfColumns, int nnz ) ;
 
@@ -102,7 +102,7 @@ private:
 protected:
 	bool _flagNNZ;
 	int _blocNNZ;
-	int _numberOfNonZeros ;
+	int _numberOfNonZeros ;//Total number of non zero coefficients in the matrix
 	IntTab _indexRows;
 	IntTab _indexColumns;
 };

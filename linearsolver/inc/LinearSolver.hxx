@@ -18,7 +18,7 @@
 
 class LinearSolver
 {
-    public: //----------------------------------------------------------------
+public: //----------------------------------------------------------------
 
 	LinearSolver ( void ) ;
 
@@ -35,12 +35,12 @@ class LinearSolver
 
 	LinearSolver ( const LinearSolver& LS ) ;
 
-    void setMethod(std::string nameOfMethod) ;
+	void setMethod(std::string nameOfMethod) ;
 
-    void setPreconditioner(std::string pc) ;
+	void setPreconditioner(std::string pc) ;
 
 	void setDisplayConditionNumber(bool display=false);
-	
+
 	int getNumberOfIter( void ) const ;
 
 	bool getStatus( void ) const ;
@@ -71,21 +71,21 @@ class LinearSolver
 
 	bool isSingular( void ) const;
 
-    bool isSparseMatrix( void ) const ;
-    
+	bool isSparseMatrix( void ) const ;
+
 	Mat getPetscMatrix() const ;
 	Vec getPetscVector() const ;
 	void viewPetscMatrix() const ;
 	void viewPetscRHS() const;
 	double getPetscMatValue(int i, int j) const;
 	double getPetscRHSValue(int i) const 	;
-	
+
 	void kspDuplicate(const KSP source, const Mat mat, KSP* destination) const;
 
 	void precDuplicate(const PC source, const KSP ksp, PC* destination) const;
 
 
-    private: //----------------------------------------------------------------
+private: //----------------------------------------------------------------
 
 	void setLinearSolver(const GenericMatrix& matrix, const Vector& secondMember) ;
 	KSP getPetscKsp() const ;
