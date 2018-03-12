@@ -549,9 +549,6 @@ Mesh::setMesh( void )
 		{
 			//compute the 3D normal vector to the 2D cell
 			fieldn = mu->buildOrthogonalField();
-			// Todo dans MEDCoupling,  faire porter le champ des normales par la paire (cellule, face).
-			// Cela permettrait de construire une fonction définie en 1D et aussi lorsque spacedim!=meshdim.
-			// En attendant qu'une telle fonction soit disponible dans MEDCoupling, dans CDMATH on va construire "à la main" les normales à chaque face.
 		}
 		normal = fieldn->getArray();
 		tmpNormal = normal->getConstPointer();
@@ -613,6 +610,9 @@ Mesh::setMesh( void )
 				}
 				else//_meshDim==2, number of faces around the cell id is variable, each face is composed of two nodes
 				{
+						Vector xyzn(3);//Normal to the cell
+						for (int d=0; d<_spaceDim; d++)
+							xyzn[d] = tmpNormal[_spaceDim*id+d];
 					for( int el=0;el<nbFaces;el++ )
 					{
 						const int *workv=tmpNE+tmpNEI[work[el]]+1;
@@ -641,9 +641,6 @@ Mesh::setMesh( void )
 							vecPM[i]=coorBarySeg[_spaceDim*el+i] - coorBary[_spaceDim*id+i];
 						}
 
-						Vector xyzn(3);//Normal to the cell
-						for (int d=0; d<_spaceDim; d++)
-							xyzn[d] = tmpNormal[_spaceDim*work[el]+d];
 						Vector normale = xyzn % vecAB;//Normal to the edge
 						normale/=normale.norm();
 
