@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2016  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -26,6 +26,8 @@
 #define MESGERR 1
 #include "med_utils.h"
 #include <string.h>
+
+#include <assert.h>
 
 #ifdef DEF_LECT_ECR
 #define MODE_ACCES MED_ACC_RDWR
@@ -303,15 +305,16 @@ med_err getFieldsOn(med_idt fid, char * nomcha, med_field_type typcha, med_int n
 		    med_entity_type entite, med_switch_mode stockage, med_int ncstp) {
 
   int j,k,l,m,n,nb_geo=0;
-  med_int nbpdtnor=0,pflsize,*pflval,ngauss=0,ngroup,*vale=NULL,nval;
-  med_int numdt=0,numo=0,_nprofile;
-  med_float *valr=NULL,dt=0.0;
+  med_int  nbpdtnor=0,pflsize,*pflval,ngauss=0,ngroup,nval;
+  med_int  numdt=0,numo=0,_nprofile;
+  med_size medtype_size=0;
+  med_float dt=0.0;
+  unsigned char *val = NULL; 
   med_err ret=0;
   char pflname [MED_NAME_SIZE+1]="";
   char locname [MED_NAME_SIZE+1]="";
   char * lien = NULL;
   char dt_unit [MED_SNAME_SIZE+1]="unknown";
-
 
   med_geometry_type * type_geo;
 
@@ -384,36 +387,28 @@ med_err getFieldsOn(med_idt fid, char * nomcha, med_field_type typcha, med_int n
 	       nval,USER_MODE,AFF_ENT[(int)entite],AFF[k],pflname,ngauss);
 
 	/*Lecture des valeurs du champ */
-	if (typcha == MED_FLOAT64) {
+	switch(typcha)  {
+	case MED_FLOAT64: medtype_size=sizeof(med_float64); break;
+	case MED_FLOAT32: medtype_size=sizeof(med_float32); break;
+	case MED_INT32  : medtype_size=sizeof(med_int32  ); break;
+	case MED_INT64  : medtype_size=sizeof(med_int64  );
+	  break;
+	case MED_INT    : medtype_size=sizeof(med_int)    ; break;
+	default:
+	  MESSAGE("Erreur a la lecture du type de champ : ");
+	  ISCRUTE_int(typcha);
+          EXIT_IF(NULL == NULL,NULL,NULL);
+	}
 
-
-	  valr = (med_float*) calloc(ncomp*nval*ngauss,sizeof(med_float));
-	  EXIT_IF(valr == NULL,NULL,NULL);
-
-	  if (MEDfieldValueWithProfileRd(fid, nomcha, numdt,numo, entite,type_geo[k],
-					 USER_MODE, pflname, stockage,MED_ALL_CONSTITUENT,
-					 (unsigned char*) valr) < 0 ) {
-	    MESSAGE("Erreur a la lecture des valeurs du champ : ");
-	    SSCRUTE(nomcha);ISCRUTE_int(entite);ISCRUTE_int(type_geo[k]);
-	    ISCRUTE(numdt);ISCRUTE(numo);
-	    ret = -1;
-	  }
-
-	} else {
-
-	  vale = (med_int*) calloc(ncomp*nval*ngauss,sizeof(med_int));
-	  EXIT_IF(vale == NULL,NULL,NULL);
-
-	  if (MEDfieldValueWithProfileRd(fid, nomcha, numdt,numo, entite,type_geo[k],
-					 USER_MODE, pflname, stockage,MED_ALL_CONSTITUENT,
-					 (unsigned char*) vale) < 0 ) {
-	    MESSAGE("Erreur a la lecture des valeurs du champ : ");
-	    SSCRUTE(nomcha);ISCRUTE_int(entite);ISCRUTE_int(type_geo[k]);
-	    ISCRUTE(numdt);ISCRUTE(numo);
-	    ret = -1;
-	  };
-
-
+	val = (unsigned char*) calloc(ncomp*nval*ngauss,medtype_size);
+	EXIT_IF(val == NULL,NULL,NULL);
+	
+	if (MEDfieldValueWithProfileRd(fid, nomcha, numdt,numo, entite,type_geo[k],
+				       USER_MODE, pflname, stockage,MED_ALL_CONSTITUENT, val) < 0 ) {
+	  MESSAGE("Erreur a la lecture des valeurs du champ : ");
+	  SSCRUTE(nomcha);ISCRUTE_int(entite);ISCRUTE_int(type_geo[k]);
+	  ISCRUTE(numdt);ISCRUTE(numo);
+	  ret = -1;
 	}
 
 	if ( strlen(locname) )
@@ -425,39 +420,68 @@ med_err getFieldsOn(med_idt fid, char * nomcha, med_field_type typcha, med_int n
 	  ngroup = ngauss;
 
 	switch (stockage) {
-
+	  
 	case MED_FULL_INTERLACE :
 	  printf("\t- Valeurs :\n\t");
 	  for (m=0;m<(nval*ngauss)/ngroup;m++) {
 	    printf("|");
 	    for (n=0;n<ngroup*ncomp;n++)
-	      if (typcha == MED_FLOAT64)
-		printf(" %f ",*(valr+(m*ngroup*ncomp)+n));
-	      else
-		printf(" "IFORMAT" ",*(vale+(m*ngroup*ncomp)+n));
-
+	      switch(typcha)  {
+	      case MED_FLOAT64:
+		printf("  %f ",*(((med_double*)val)+(m*ngroup*ncomp)+n  ) );
+	      	/* printf("  %f ",  ((med_double*)val)[(m*ngroup*ncomp)+n]    ); */
+		/* printf("  %f ", *( val+medtype_size*((m*ngroup*ncomp)+n))  ); */
+		break;
+	      case MED_FLOAT32:
+	      	printf(" %f ",*(((med_float32*)val)+((m*ngroup*ncomp)+n)));
+	      	break;
+	      case MED_INT32  :
+	      	printf(" %d ",*(((med_int32*)val)+(m*ngroup*ncomp)+n));
+	      	break;
+	      case MED_INT64  :
+	      	printf(" %ld ",*(((med_int64*)val)+(m*ngroup*ncomp)+n));
+	      	break;
+	      case MED_INT    :
+	      	printf(" "IFORMAT" ",*(((med_int*)val)+(m*ngroup*ncomp)+n));
+	      	break;
+	      default:
+	      	break;
+	      }
 	  }
 	  break;
-
 	  /*Affichage en fonction du profil à traiter*/
 	case MED_NO_INTERLACE :
 	  printf("\t- Valeurs :\n\t");
 	  for (m=0;m<ncomp;m++) {
 	    printf("|");
 	    for (n=0;n<(nval*ngauss);n++)
-	      if (typcha == MED_FLOAT64)
-		printf(" %f ",*(valr+(m*nval)+n));
-	      else
-		printf(" "IFORMAT" ",*(vale+(m*nval)+n));
+	      switch(typcha)  {
+	      case MED_FLOAT64:
+		printf(" %f ",*(((med_double*)val)+(m*nval*ngauss)+n  ) );
+	      	/* printf("  %f ",  ((med_double*)val)[(m*nval)+n]    ); */
+		/* printf("  %f ", *( val+medtype_size*((m*nval)+n))  ); */
+		break;
+	      case MED_FLOAT32:
+	      	printf(" %f ",*(((med_float32*)val)+((m*nval*ngauss)+n)));
+	      	break;
+	      case MED_INT32  :
+	      	printf(" %d ",*(((med_int32*)val)+(m*nval*ngauss)+n));
+	      	break;
+	      case MED_INT64  :
+	      	printf(" %ld ",*(((med_int64*)val)+(m*nval*ngauss)+n));
+	      	break;
+	      case MED_INT    :
+	      	printf(" "IFORMAT" ",*(((med_int*)val)+(m*nval*ngauss)+n));
+	      	break;
+	      default:
+	      	break;
+	      }
 	  }
 	  break;
 	}
 
 	printf("|\n");
-	if (typcha == MED_FLOAT64) {
-	  if ( valr ) {free(valr);valr = NULL;}}
-	else
-	  if (vale) { free(vale);vale = NULL; }
+	if ( val ) {free(val);val = NULL;}
 
 	/*Lecture du profil associe */
 	if (strcmp(pflname,MED_NO_PROFILE) == 0 )

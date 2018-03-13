@@ -112,6 +112,7 @@ am__aclocal_m4_deps = $(top_srcdir)/config/ac_check_sizeof_fortran.m4 \
 	$(top_srcdir)/config/med_check_python.m4 \
 	$(top_srcdir)/config/med_check_swig.m4 \
 	$(top_srcdir)/config/med_check_typeof_hidt.m4 \
+	$(top_srcdir)/config/med_check_typeof_int64.m4 \
 	$(top_srcdir)/config/med_check_typeof_medint.m4 \
 	$(top_srcdir)/config/med_disable_api23.m4 \
 	$(top_srcdir)/config/med_enable_check23.m4 \
@@ -337,7 +338,10 @@ EXEEXT = @EXEEXT@
 F77 = @F77@
 FC = @FC@
 FCFLAGS = @FCFLAGS@
+FCFLAGS_F = @FCFLAGS_F@
+FCFLAGS_F90 = @FCFLAGS_F90@
 FCLIBS = @FCLIBS@
+FC_DEFINE = @FC_DEFINE@
 FFLAGS = @FFLAGS@
 FGREP = @FGREP@
 FLIBS = @FLIBS@
@@ -377,6 +381,8 @@ MANIFEST_TOOL = @MANIFEST_TOOL@
 MED_API_23 = @MED_API_23@
 MED_CHECK_23FORMAT = @MED_CHECK_23FORMAT@
 MED_DEFINE_MED_HAVE_MPI = @MED_DEFINE_MED_HAVE_MPI@
+MED_INT32 = @MED_INT32@
+MED_INT64 = @MED_INT64@
 MED_NUM_MAJEUR = @MED_NUM_MAJEUR@
 MED_NUM_MINEUR = @MED_NUM_MINEUR@
 MED_NUM_RELEASE = @MED_NUM_RELEASE@
@@ -503,12 +509,12 @@ DEFAULT_INCLUDES = -I. -I$(srcdir)
 AM_LIBTOOLFLAGS = --tag=F77
 test2_SOURCES = test2.f
 @WITHF90_TRUE@mycheckPROGRAMS = test5 test7 test9 test11 test13 test15 test17 test30
-@WITHF90_TRUE@myTESTS_LEC = ../test5.sh ../test7.sh ../test9.sh ./test11.sh ../test11b.sh ../test13.sh ../test15.sh ../test17.sh ../test30.sh
+@WITHF90_TRUE@myTESTS_LEC = ../test5_Rd.sh ../test7_Rd.sh ../test9_Rd.sh ./test11.sh ../test11b_Rd.sh ../test13_Rd.sh ../test15_Rd.sh ../test17_Rd.sh ../test30_Rd.sh
 @WITHF90_TRUE@test11_SOURCES = test11.f90
 TESTS_ENVIRONMENT = eval H5DUMP=@H5DUMP@ SRCDIR="$(abs_srcdir)" BUILDDIR="$(abs_builddir)" \
 		EXECDIR="$(abs_builddir)/../" CP=${CP} CPYMED="no" AWK=${AWK}
 
-TESTS_LEC = ./test2.sh ../test3.sh  ../test20.sh ../test22.sh ../test24.sh ../test26.sh ../test28.sh ../test32.sh ../test33.sh $(myTESTS_LEC)
+TESTS_LEC = ./test2.sh ../test3_Rd.sh  ../test20_Wr.sh ../test22_Rd.sh ../test24_Rd.sh ../test26_Rd.sh ../test28_Rd.sh ../test32_Rd.sh ../test33_Rd.sh $(myTESTS_LEC)
 TESTS = $(TESTS_LEC)
 EXTRA_DIST = test2.sh test11.sh
 LDADD = $(top_builddir)/src/libmed.la
@@ -549,7 +555,9 @@ CLEANFILES = \
 ./test31.med\
 ./test4.med\
 ./test6.med\
-./test8.med
+./test8.med\
+./test10-0.med\
+./test20-0.med
 
 SUBDIRS = dumps.ref .
 all: all-recursive
@@ -1008,6 +1016,7 @@ uninstall-am:
 
 .PRECIOUS: Makefile
 
+#AM_ETAGSFLAGS=
 #SWIG_PYTHON_OPT=
 
 all-local:

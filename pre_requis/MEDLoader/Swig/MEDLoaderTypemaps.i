@@ -16,7 +16,7 @@
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// Author : Anthony Geay (CEA/DEN)
+// Author : Anthony Geay (EDF R&D)
 
 #include <vector>
 
@@ -68,6 +68,8 @@ static PyObject *convertMEDFileField1TS(MEDCoupling::MEDFileAnyTypeField1TS *p, 
     ret=SWIG_NewPointerObj((void*)p,SWIGTYPE_p_MEDCoupling__MEDFileField1TS,owner);
   if(dynamic_cast<MEDFileIntField1TS *>(p))
     ret=SWIG_NewPointerObj((void*)p,SWIGTYPE_p_MEDCoupling__MEDFileIntField1TS,owner);
+  if(dynamic_cast<MEDFileFloatField1TS *>(p))
+    ret=SWIG_NewPointerObj((void*)p,SWIGTYPE_p_MEDCoupling__MEDFileFloatField1TS,owner);
   if(!ret)
     throw INTERP_KERNEL::Exception("Not recognized type of MEDFileAnyTypeField1TS on downcast !");
   return ret;
@@ -85,6 +87,8 @@ static PyObject *convertMEDFileFieldMultiTS(MEDCoupling::MEDFileAnyTypeFieldMult
     ret=SWIG_NewPointerObj((void*)p,SWIGTYPE_p_MEDCoupling__MEDFileFieldMultiTS,owner);
   if(dynamic_cast<MEDFileIntFieldMultiTS *>(p))
     ret=SWIG_NewPointerObj((void*)p,SWIGTYPE_p_MEDCoupling__MEDFileIntFieldMultiTS,owner);
+  if(dynamic_cast<MEDFileFloatFieldMultiTS *>(p))
+    ret=SWIG_NewPointerObj((void*)p,SWIGTYPE_p_MEDCoupling__MEDFileFloatFieldMultiTS,owner);
   if(!ret)
     throw INTERP_KERNEL::Exception("Not recognized type of MEDFileAnyTypeFieldMultiTS on downcast !");
   return ret;
@@ -146,8 +150,23 @@ static std::vector<std::pair<int,int> > convertTimePairIdsFromPy(PyObject *pyLi)
   return ret;
 }
 
+static std::vector< std::pair<TypeOfField,INTERP_KERNEL::NormalizedCellType> > convertVecPairIntToVecPairTOFCT(const std::vector<std::pair<int,int> >& tmp)
+{
+  std::size_t sz(tmp.size());
+  std::vector< std::pair<TypeOfField,INTERP_KERNEL::NormalizedCellType> > entitiesCpp(sz);
+  for(std::size_t i=0;i<sz;i++)
+    {
+      entitiesCpp[i].first=(TypeOfField)tmp[i].first;
+      entitiesCpp[i].second=(INTERP_KERNEL::NormalizedCellType)tmp[i].second;
+    }
+  return entitiesCpp;
+}
+
 static void converPyListToVecString(PyObject *pyLi, std::vector<std::string>& v)
 {
+  static const char msg0[]="In list passed in argument some elements are NOT strings ! Expected a list containing only strings !";
+  static const char msg1[]="In tuple passed in argument some elements are NOT strings ! Expected a list containing only strings !";
+  static const char msg2[]="Unrecognized python argument : expected a list of string or tuple of string or string !";
   if(PyList_Check(pyLi))
     {
       int size=PyList_Size(pyLi);
@@ -155,11 +174,9 @@ static void converPyListToVecString(PyObject *pyLi, std::vector<std::string>& v)
       for(int i=0;i<size;i++)
         {
           PyObject *o=PyList_GetItem(pyLi,i);
-          if(!PyString_Check(o))
-            throw INTERP_KERNEL::Exception("In list passed in argument some elements are NOT strings ! Expected a list containing only strings !");
-          const char *st=PyString_AsString(o);
-          v[i]=std::string(st);
+          v[i]=convertPyObjectToStr(o,msg0);
         }
+      return ;
     }
   else if(PyTuple_Check(pyLi))
     {
@@ -168,21 +185,12 @@ static void converPyListToVecString(PyObject *pyLi, std::vector<std::string>& v)
       for(int i=0;i<size;i++)
         {
           PyObject *o=PyTuple_GetItem(pyLi,i);
-          if(!PyString_Check(o))
-            throw INTERP_KERNEL::Exception("In tuple passed in argument some elements are NOT strings ! Expected a tuple containing only strings !");
-          const char *st=PyString_AsString(o);
-          v[i]=std::string(st);
+          v[i]=convertPyObjectToStr(o,msg1);
         }
+      return ;
     }
-  else if(PyString_Check(pyLi))
-    {
-      v.resize(1);
-      v[0]=std::string((const char *)PyString_AsString(pyLi));
-    }
-  else
-    {
-      throw INTERP_KERNEL::Exception("Unrecognized python argument : expected a list of string or tuple of string or string !");
-    }
+  v.resize(1);
+  v[0]=convertPyObjectToStr(pyLi,msg2);
 }
 
 static PyObject *convertFieldDoubleVecToPy(const std::vector<MEDCoupling::MEDCouplingFieldDouble *>& li)
@@ -261,15 +269,9 @@ std::vector< std::pair<std::string, std::string > > convertVecPairStStFromPy(PyO
               if(size2!=2)
                 throw INTERP_KERNEL::Exception(msg);
               PyObject *o0=PyTuple_GetItem(o,0);
-              if(PyString_Check(o0))
-                p.first=std::string(PyString_AsString(o0));
-              else
-                throw INTERP_KERNEL::Exception(msg);
+              p.first=convertPyObjectToStr(o0,msg);
               PyObject *o1=PyTuple_GetItem(o,1);
-              if(PyString_Check(o1))
-                p.second=std::string(PyString_AsString(o1));
-              else
-                throw INTERP_KERNEL::Exception(msg);
+              p.second=convertPyObjectToStr(o1,msg);
               ret[i]=p;
             }
           else
@@ -305,21 +307,13 @@ std::vector< std::pair<std::vector<std::string>, std::string > > convertVecPairV
                   for(int j=0;j<size3;j++)
                     {
                       PyObject *o0j=PyList_GetItem(o0,j);
-                      if(PyString_Check(o0j))
-                        {
-                          p.first[j]=std::string(PyString_AsString(o0j));
-                        }
-                      else
-                        throw INTERP_KERNEL::Exception(msg);
+                      p.first[j]=convertPyObjectToStr(o0j,msg);
                     }
                 }
               else
                 throw INTERP_KERNEL::Exception(msg);
               PyObject *o1=PyTuple_GetItem(o,1);
-              if(PyString_Check(o1))
-                p.second=std::string(PyString_AsString(o1));
-              else
-                throw INTERP_KERNEL::Exception(msg);
+              p.second=convertPyObjectToStr(o1,msg);
               ret[i]=p;
             }
           else
@@ -373,16 +367,12 @@ int MEDFileAnyTypeFieldMultiTSgetitemSingleTS__(const MEDFileAnyTypeFieldMultiTS
  */
 int MEDFileFieldsgetitemSingleTS__(const MEDFileFields *self, PyObject *obj) throw(INTERP_KERNEL::Exception)
 {
+  static const char msg[]="MEDFileFields::__getitem__ : only integer or string with fieldname supported !";
   if(PyInt_Check(obj))
     {
       return InterpreteNegativeInt((int)PyInt_AS_LONG(obj),self->getNumberOfFields());
     }
-  else if(PyString_Check(obj))
-    {
-      return self->getPosFromFieldName(PyString_AsString(obj));
-    }
-  else
-    throw INTERP_KERNEL::Exception("MEDFileFields::__getitem__ : only integer or string with fieldname supported !");
+  return self->getPosFromFieldName(convertPyObjectToStr(obj,msg));
 }
 
 void convertToMapIntDataArrayInt(PyObject *pyMap, std::map<int, MCAuto<DataArrayInt> >& cppMap)
@@ -410,5 +400,16 @@ void convertToMapIntDataArrayInt(PyObject *pyMap, std::map<int, MCAuto<DataArray
         arg->incrRef();
       cppMap[k]=arg2;
     }
+}
+
+template<class T>
+PyObject *MEDFileField1TS_getFieldWithProfile(const typename MLFieldTraits<T>::F1TSType *self, TypeOfField type, int meshDimRelToMax, const MEDFileMesh *mesh) 
+{
+  DataArrayInt *ret1(NULL);
+  typename MEDCoupling::Traits<T>::ArrayType *ret0(self->getFieldWithProfile(type,meshDimRelToMax,mesh,ret1));
+  PyObject *ret(PyTuple_New(2));
+  PyTuple_SetItem(ret,0,SWIG_NewPointerObj(SWIG_as_voidptr(ret0),SWIGTITraits<T>::TI, SWIG_POINTER_OWN | 0 ));
+  PyTuple_SetItem(ret,1,SWIG_NewPointerObj(SWIG_as_voidptr(ret1),SWIGTYPE_p_MEDCoupling__DataArrayInt, SWIG_POINTER_OWN | 0 ));
+  return ret;
 }
 

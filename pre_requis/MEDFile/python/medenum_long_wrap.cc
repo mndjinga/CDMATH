@@ -2970,32 +2970,35 @@ SWIG_Python_NonDynamicSetAttr(PyObject *obj, PyObject *name, PyObject *value) {
 #define SWIGTYPE_p_MED_SORTING_TYPE swig_types[7]
 #define SWIGTYPE_p_char swig_types[8]
 #define SWIGTYPE_p_double swig_types[9]
-#define SWIGTYPE_p_hssize_t swig_types[10]
-#define SWIGTYPE_p_int swig_types[11]
-#define SWIGTYPE_p_long swig_types[12]
-#define SWIGTYPE_p_med_access_mode swig_types[13]
-#define SWIGTYPE_p_med_attribute_type swig_types[14]
-#define SWIGTYPE_p_med_axis_type swig_types[15]
-#define SWIGTYPE_p_med_bool swig_types[16]
-#define SWIGTYPE_p_med_class swig_types[17]
-#define SWIGTYPE_p_med_connectivity_mode swig_types[18]
-#define SWIGTYPE_p_med_data_type swig_types[19]
-#define SWIGTYPE_p_med_entity_type swig_types[20]
-#define SWIGTYPE_p_med_field_type swig_types[21]
-#define SWIGTYPE_p_med_file_version swig_types[22]
-#define SWIGTYPE_p_med_filter swig_types[23]
-#define SWIGTYPE_p_med_grid_type swig_types[24]
-#define SWIGTYPE_p_med_internal_type swig_types[25]
-#define SWIGTYPE_p_med_memfile swig_types[26]
-#define SWIGTYPE_p_med_mesh_type swig_types[27]
-#define SWIGTYPE_p_med_sorting_type swig_types[28]
-#define SWIGTYPE_p_med_storage_mode swig_types[29]
-#define SWIGTYPE_p_med_switch_mode swig_types[30]
-#define SWIGTYPE_p_p_char swig_types[31]
-#define SWIGTYPE_p_unsigned_long_long swig_types[32]
-#define SWIGTYPE_p_void swig_types[33]
-static swig_type_info *swig_types[35];
-static swig_module_info swig_module = {swig_types, 34, 0, 0, 0, 0};
+#define SWIGTYPE_p_float swig_types[10]
+#define SWIGTYPE_p_hssize_t swig_types[11]
+#define SWIGTYPE_p_int swig_types[12]
+#define SWIGTYPE_p_int32_t swig_types[13]
+#define SWIGTYPE_p_int64_t swig_types[14]
+#define SWIGTYPE_p_long swig_types[15]
+#define SWIGTYPE_p_med_access_mode swig_types[16]
+#define SWIGTYPE_p_med_attribute_type swig_types[17]
+#define SWIGTYPE_p_med_axis_type swig_types[18]
+#define SWIGTYPE_p_med_bool swig_types[19]
+#define SWIGTYPE_p_med_class swig_types[20]
+#define SWIGTYPE_p_med_connectivity_mode swig_types[21]
+#define SWIGTYPE_p_med_data_type swig_types[22]
+#define SWIGTYPE_p_med_entity_type swig_types[23]
+#define SWIGTYPE_p_med_field_type swig_types[24]
+#define SWIGTYPE_p_med_file_version swig_types[25]
+#define SWIGTYPE_p_med_filter swig_types[26]
+#define SWIGTYPE_p_med_grid_type swig_types[27]
+#define SWIGTYPE_p_med_internal_type swig_types[28]
+#define SWIGTYPE_p_med_memfile swig_types[29]
+#define SWIGTYPE_p_med_mesh_type swig_types[30]
+#define SWIGTYPE_p_med_sorting_type swig_types[31]
+#define SWIGTYPE_p_med_storage_mode swig_types[32]
+#define SWIGTYPE_p_med_switch_mode swig_types[33]
+#define SWIGTYPE_p_p_char swig_types[34]
+#define SWIGTYPE_p_unsigned_long_long swig_types[35]
+#define SWIGTYPE_p_void swig_types[36]
+static swig_type_info *swig_types[38];
+static swig_module_info swig_module = {swig_types, 37, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -3093,6 +3096,7 @@ namespace swig {
 
 
 #include "med.h"
+#include <utility>
 
 
 SWIGINTERN swig_type_info*
@@ -3477,7 +3481,8 @@ SWIG_From_size_t  (size_t value)
 #include <Python.h>
 #include <iostream>
 #include <map>
-
+#include <exception>
+  
   class MED_MESH_TYPE {
   public:
     int _val;
@@ -3488,9 +3493,13 @@ SWIG_From_size_t  (size_t value)
   MED_MESH_TYPE():_val(0) {
       // std::cout << "MED_MESH_TYPE Constructor (1) : " << this << " [_val:"<<_val<<"]" <<std::endl;
   }
+    
   MED_MESH_TYPE(int val):_val(val) {
       //std::cout << "MED_MESH_TYPE Constructor (2) : " << this << " [_val:"<<_val<<"]"<< std::endl;
-  }
+        Get__str__::iterator it = _get__str__.find( val );
+	if ( it == _get__str__.end() ) throw std::range_error(std::string("MED_MESH_TYPE constructor value out of range"));
+  };
+				    
   MED_MESH_TYPE(const MED_MESH_TYPE & foo):_val(foo._val) {
       //std::cout << "MED_MESH_TYPE Copy Constructor " << this << " [_val:"<<_val<<"]" << std::endl;
   }
@@ -3501,9 +3510,9 @@ SWIG_From_size_t  (size_t value)
     //std::cout << "MED_MESH_TYPE Operator = :"<<this<< " [_val:"<<_val<<"]" <<std::endl; return *this;
   }
 
-};
+  };
 
-
+  // Création De L'objet MED_MESH_TYPE initialisé avec le tableau de pairs Type_init
   MED_MESH_TYPE::Get__str__ MED_MESH_TYPE::_get__str__(MED_MESH_TYPE_init, MED_MESH_TYPE_init + sizeof(MED_MESH_TYPE_init)/ sizeof(*MED_MESH_TYPE_init));
 
 
@@ -3527,7 +3536,8 @@ SWIGINTERN char *MED_MESH_TYPE___str__(MED_MESH_TYPE *self){
 #include <Python.h>
 #include <iostream>
 #include <map>
-
+#include <exception>
+  
   class MED_SORTING_TYPE {
   public:
     int _val;
@@ -3538,9 +3548,13 @@ SWIGINTERN char *MED_MESH_TYPE___str__(MED_MESH_TYPE *self){
   MED_SORTING_TYPE():_val(0) {
       // std::cout << "MED_SORTING_TYPE Constructor (1) : " << this << " [_val:"<<_val<<"]" <<std::endl;
   }
+    
   MED_SORTING_TYPE(int val):_val(val) {
       //std::cout << "MED_SORTING_TYPE Constructor (2) : " << this << " [_val:"<<_val<<"]"<< std::endl;
-  }
+        Get__str__::iterator it = _get__str__.find( val );
+	if ( it == _get__str__.end() ) throw std::range_error(std::string("MED_SORTING_TYPE constructor value out of range"));
+  };
+				    
   MED_SORTING_TYPE(const MED_SORTING_TYPE & foo):_val(foo._val) {
       //std::cout << "MED_SORTING_TYPE Copy Constructor " << this << " [_val:"<<_val<<"]" << std::endl;
   }
@@ -3551,9 +3565,9 @@ SWIGINTERN char *MED_MESH_TYPE___str__(MED_MESH_TYPE *self){
     //std::cout << "MED_SORTING_TYPE Operator = :"<<this<< " [_val:"<<_val<<"]" <<std::endl; return *this;
   }
 
-};
+  };
 
-
+  // Création De L'objet MED_SORTING_TYPE initialisé avec le tableau de pairs Type_init
   MED_SORTING_TYPE::Get__str__ MED_SORTING_TYPE::_get__str__(MED_SORTING_TYPE_init, MED_SORTING_TYPE_init + sizeof(MED_SORTING_TYPE_init)/ sizeof(*MED_SORTING_TYPE_init));
 
 
@@ -3578,7 +3592,8 @@ SWIGINTERN char *MED_SORTING_TYPE___str__(MED_SORTING_TYPE *self){
 #include <Python.h>
 #include <iostream>
 #include <map>
-
+#include <exception>
+  
   class MED_GRID_TYPE {
   public:
     int _val;
@@ -3589,9 +3604,13 @@ SWIGINTERN char *MED_SORTING_TYPE___str__(MED_SORTING_TYPE *self){
   MED_GRID_TYPE():_val(0) {
       // std::cout << "MED_GRID_TYPE Constructor (1) : " << this << " [_val:"<<_val<<"]" <<std::endl;
   }
+    
   MED_GRID_TYPE(int val):_val(val) {
       //std::cout << "MED_GRID_TYPE Constructor (2) : " << this << " [_val:"<<_val<<"]"<< std::endl;
-  }
+        Get__str__::iterator it = _get__str__.find( val );
+	if ( it == _get__str__.end() ) throw std::range_error(std::string("MED_GRID_TYPE constructor value out of range"));
+  };
+				    
   MED_GRID_TYPE(const MED_GRID_TYPE & foo):_val(foo._val) {
       //std::cout << "MED_GRID_TYPE Copy Constructor " << this << " [_val:"<<_val<<"]" << std::endl;
   }
@@ -3602,9 +3621,9 @@ SWIGINTERN char *MED_SORTING_TYPE___str__(MED_SORTING_TYPE *self){
     //std::cout << "MED_GRID_TYPE Operator = :"<<this<< " [_val:"<<_val<<"]" <<std::endl; return *this;
   }
 
-};
+  };
 
-
+  // Création De L'objet MED_GRID_TYPE initialisé avec le tableau de pairs Type_init
   MED_GRID_TYPE::Get__str__ MED_GRID_TYPE::_get__str__(MED_GRID_TYPE_init, MED_GRID_TYPE_init + sizeof(MED_GRID_TYPE_init)/ sizeof(*MED_GRID_TYPE_init));
 
 
@@ -3633,7 +3652,8 @@ SWIGINTERN char *MED_GRID_TYPE___str__(MED_GRID_TYPE *self){
 #include <Python.h>
 #include <iostream>
 #include <map>
-
+#include <exception>
+  
   class MED_ENTITY_TYPE {
   public:
     int _val;
@@ -3644,9 +3664,13 @@ SWIGINTERN char *MED_GRID_TYPE___str__(MED_GRID_TYPE *self){
   MED_ENTITY_TYPE():_val(0) {
       // std::cout << "MED_ENTITY_TYPE Constructor (1) : " << this << " [_val:"<<_val<<"]" <<std::endl;
   }
+    
   MED_ENTITY_TYPE(int val):_val(val) {
       //std::cout << "MED_ENTITY_TYPE Constructor (2) : " << this << " [_val:"<<_val<<"]"<< std::endl;
-  }
+        Get__str__::iterator it = _get__str__.find( val );
+	if ( it == _get__str__.end() ) throw std::range_error(std::string("MED_ENTITY_TYPE constructor value out of range"));
+  };
+				    
   MED_ENTITY_TYPE(const MED_ENTITY_TYPE & foo):_val(foo._val) {
       //std::cout << "MED_ENTITY_TYPE Copy Constructor " << this << " [_val:"<<_val<<"]" << std::endl;
   }
@@ -3657,9 +3681,9 @@ SWIGINTERN char *MED_GRID_TYPE___str__(MED_GRID_TYPE *self){
     //std::cout << "MED_ENTITY_TYPE Operator = :"<<this<< " [_val:"<<_val<<"]" <<std::endl; return *this;
   }
 
-};
+  };
 
-
+  // Création De L'objet MED_ENTITY_TYPE initialisé avec le tableau de pairs Type_init
   MED_ENTITY_TYPE::Get__str__ MED_ENTITY_TYPE::_get__str__(MED_ENTITY_TYPE_init, MED_ENTITY_TYPE_init + sizeof(MED_ENTITY_TYPE_init)/ sizeof(*MED_ENTITY_TYPE_init));
 
 
@@ -3673,7 +3697,9 @@ SWIGINTERN char *MED_ENTITY_TYPE___str__(MED_ENTITY_TYPE *self){
    }
 
   const enum_ MED_FIELD_TYPE_init[] = {
+    enum_(4,"MED_FLOAT32"),
     enum_(6,"MED_FLOAT64"),
+    /* enum_(6,"MED_DOUBLE"), */
     enum_(24,"MED_INT32"),
     enum_(26,"MED_INT64"),
     enum_(28,"MED_INT")
@@ -3684,7 +3710,8 @@ SWIGINTERN char *MED_ENTITY_TYPE___str__(MED_ENTITY_TYPE *self){
 #include <Python.h>
 #include <iostream>
 #include <map>
-
+#include <exception>
+  
   class MED_FIELD_TYPE {
   public:
     int _val;
@@ -3695,9 +3722,13 @@ SWIGINTERN char *MED_ENTITY_TYPE___str__(MED_ENTITY_TYPE *self){
   MED_FIELD_TYPE():_val(0) {
       // std::cout << "MED_FIELD_TYPE Constructor (1) : " << this << " [_val:"<<_val<<"]" <<std::endl;
   }
+    
   MED_FIELD_TYPE(int val):_val(val) {
       //std::cout << "MED_FIELD_TYPE Constructor (2) : " << this << " [_val:"<<_val<<"]"<< std::endl;
-  }
+        Get__str__::iterator it = _get__str__.find( val );
+	if ( it == _get__str__.end() ) throw std::range_error(std::string("MED_FIELD_TYPE constructor value out of range"));
+  };
+				    
   MED_FIELD_TYPE(const MED_FIELD_TYPE & foo):_val(foo._val) {
       //std::cout << "MED_FIELD_TYPE Copy Constructor " << this << " [_val:"<<_val<<"]" << std::endl;
   }
@@ -3708,9 +3739,9 @@ SWIGINTERN char *MED_ENTITY_TYPE___str__(MED_ENTITY_TYPE *self){
     //std::cout << "MED_FIELD_TYPE Operator = :"<<this<< " [_val:"<<_val<<"]" <<std::endl; return *this;
   }
 
-};
+  };
 
-
+  // Création De L'objet MED_FIELD_TYPE initialisé avec le tableau de pairs Type_init
   MED_FIELD_TYPE::Get__str__ MED_FIELD_TYPE::_get__str__(MED_FIELD_TYPE_init, MED_FIELD_TYPE_init + sizeof(MED_FIELD_TYPE_init)/ sizeof(*MED_FIELD_TYPE_init));
 
 
@@ -3735,7 +3766,8 @@ SWIGINTERN char *MED_FIELD_TYPE___str__(MED_FIELD_TYPE *self){
 #include <Python.h>
 #include <iostream>
 #include <map>
-
+#include <exception>
+  
   class MED_ATTRIBUTE_TYPE {
   public:
     int _val;
@@ -3746,9 +3778,13 @@ SWIGINTERN char *MED_FIELD_TYPE___str__(MED_FIELD_TYPE *self){
   MED_ATTRIBUTE_TYPE():_val(0) {
       // std::cout << "MED_ATTRIBUTE_TYPE Constructor (1) : " << this << " [_val:"<<_val<<"]" <<std::endl;
   }
+    
   MED_ATTRIBUTE_TYPE(int val):_val(val) {
       //std::cout << "MED_ATTRIBUTE_TYPE Constructor (2) : " << this << " [_val:"<<_val<<"]"<< std::endl;
-  }
+        Get__str__::iterator it = _get__str__.find( val );
+	if ( it == _get__str__.end() ) throw std::range_error(std::string("MED_ATTRIBUTE_TYPE constructor value out of range"));
+  };
+				    
   MED_ATTRIBUTE_TYPE(const MED_ATTRIBUTE_TYPE & foo):_val(foo._val) {
       //std::cout << "MED_ATTRIBUTE_TYPE Copy Constructor " << this << " [_val:"<<_val<<"]" << std::endl;
   }
@@ -3759,9 +3795,9 @@ SWIGINTERN char *MED_FIELD_TYPE___str__(MED_FIELD_TYPE *self){
     //std::cout << "MED_ATTRIBUTE_TYPE Operator = :"<<this<< " [_val:"<<_val<<"]" <<std::endl; return *this;
   }
 
-};
+  };
 
-
+  // Création De L'objet MED_ATTRIBUTE_TYPE initialisé avec le tableau de pairs Type_init
   MED_ATTRIBUTE_TYPE::Get__str__ MED_ATTRIBUTE_TYPE::_get__str__(MED_ATTRIBUTE_TYPE_init, MED_ATTRIBUTE_TYPE_init + sizeof(MED_ATTRIBUTE_TYPE_init)/ sizeof(*MED_ATTRIBUTE_TYPE_init));
 
 
@@ -3786,7 +3822,8 @@ SWIGINTERN char *MED_ATTRIBUTE_TYPE___str__(MED_ATTRIBUTE_TYPE *self){
 #include <Python.h>
 #include <iostream>
 #include <map>
-
+#include <exception>
+  
   class MED_AXIS_TYPE {
   public:
     int _val;
@@ -3797,9 +3834,13 @@ SWIGINTERN char *MED_ATTRIBUTE_TYPE___str__(MED_ATTRIBUTE_TYPE *self){
   MED_AXIS_TYPE():_val(0) {
       // std::cout << "MED_AXIS_TYPE Constructor (1) : " << this << " [_val:"<<_val<<"]" <<std::endl;
   }
+    
   MED_AXIS_TYPE(int val):_val(val) {
       //std::cout << "MED_AXIS_TYPE Constructor (2) : " << this << " [_val:"<<_val<<"]"<< std::endl;
-  }
+        Get__str__::iterator it = _get__str__.find( val );
+	if ( it == _get__str__.end() ) throw std::range_error(std::string("MED_AXIS_TYPE constructor value out of range"));
+  };
+				    
   MED_AXIS_TYPE(const MED_AXIS_TYPE & foo):_val(foo._val) {
       //std::cout << "MED_AXIS_TYPE Copy Constructor " << this << " [_val:"<<_val<<"]" << std::endl;
   }
@@ -3810,9 +3851,9 @@ SWIGINTERN char *MED_ATTRIBUTE_TYPE___str__(MED_ATTRIBUTE_TYPE *self){
     //std::cout << "MED_AXIS_TYPE Operator = :"<<this<< " [_val:"<<_val<<"]" <<std::endl; return *this;
   }
 
-};
+  };
 
-
+  // Création De L'objet MED_AXIS_TYPE initialisé avec le tableau de pairs Type_init
   MED_AXIS_TYPE::Get__str__ MED_AXIS_TYPE::_get__str__(MED_AXIS_TYPE_init, MED_AXIS_TYPE_init + sizeof(MED_AXIS_TYPE_init)/ sizeof(*MED_AXIS_TYPE_init));
 
 
@@ -5363,12 +5404,12 @@ SWIGINTERN int Swig_var_MED_GET_CELL_GEOMETRY_TYPE_set(PyObject *_val) {
     med_geometry_type *inp = 0;
     int res = SWIG_ConvertPtr(_val, SWIG_as_voidptrptr(&inp), SWIGTYPE_p_int,  0 );
     if (!SWIG_IsOK(res)) {
-      SWIG_exception_fail(SWIG_ArgError(res), "in variable '""MED_GET_CELL_GEOMETRY_TYPE""' of type '""med_geometry_type [23+2]""'");
+      SWIG_exception_fail(SWIG_ArgError(res), "in variable '""MED_GET_CELL_GEOMETRY_TYPE""' of type '""med_geometry_type [24+2]""'");
     } else if (inp) {
       size_t ii = 0;
-      for (; ii < (size_t)23+2; ++ii) MED_GET_CELL_GEOMETRY_TYPE[ii] = inp[ii];
+      for (; ii < (size_t)24+2; ++ii) MED_GET_CELL_GEOMETRY_TYPE[ii] = inp[ii];
     } else {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in variable '""MED_GET_CELL_GEOMETRY_TYPE""' of type '""med_geometry_type [23+2]""'");
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in variable '""MED_GET_CELL_GEOMETRY_TYPE""' of type '""med_geometry_type [24+2]""'");
     }
   }
   return 0;
@@ -5605,7 +5646,15 @@ SWIGINTERN PyObject *_wrap_new_MED_MESH_TYPE__SWIG_0(PyObject *SWIGUNUSEDPARM(se
   MED_MESH_TYPE *result = 0 ;
   
   if (!PyArg_ParseTuple(args,(char *)":new_MED_MESH_TYPE")) SWIG_fail;
-  result = (MED_MESH_TYPE *)new MED_MESH_TYPE();
+  {
+    try {
+      result = (MED_MESH_TYPE *)new MED_MESH_TYPE();
+    } catch(std::range_error& ex) {
+      SWIG_exception_fail(SWIG_ValueError, ex.what());
+    } catch(...) {
+      SWIG_exception_fail(SWIG_RuntimeError,"Unknown exception");
+    }
+  }
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_MED_MESH_TYPE, SWIG_POINTER_NEW |  0 );
   return resultobj;
 fail:
@@ -5627,7 +5676,15 @@ SWIGINTERN PyObject *_wrap_new_MED_MESH_TYPE__SWIG_1(PyObject *SWIGUNUSEDPARM(se
     SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "new_MED_MESH_TYPE" "', argument " "1"" of type '" "int""'");
   } 
   arg1 = static_cast< int >(val1);
-  result = (MED_MESH_TYPE *)new MED_MESH_TYPE(arg1);
+  {
+    try {
+      result = (MED_MESH_TYPE *)new MED_MESH_TYPE(arg1);
+    } catch(std::range_error& ex) {
+      SWIG_exception_fail(SWIG_ValueError, ex.what());
+    } catch(...) {
+      SWIG_exception_fail(SWIG_RuntimeError,"Unknown exception");
+    }
+  }
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_MED_MESH_TYPE, SWIG_POINTER_NEW |  0 );
   return resultobj;
 fail:
@@ -5652,7 +5709,15 @@ SWIGINTERN PyObject *_wrap_new_MED_MESH_TYPE__SWIG_2(PyObject *SWIGUNUSEDPARM(se
     SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "new_MED_MESH_TYPE" "', argument " "1"" of type '" "MED_MESH_TYPE const &""'"); 
   }
   arg1 = reinterpret_cast< MED_MESH_TYPE * >(argp1);
-  result = (MED_MESH_TYPE *)new MED_MESH_TYPE((MED_MESH_TYPE const &)*arg1);
+  {
+    try {
+      result = (MED_MESH_TYPE *)new MED_MESH_TYPE((MED_MESH_TYPE const &)*arg1);
+    } catch(std::range_error& ex) {
+      SWIG_exception_fail(SWIG_ValueError, ex.what());
+    } catch(...) {
+      SWIG_exception_fail(SWIG_RuntimeError,"Unknown exception");
+    }
+  }
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_MED_MESH_TYPE, SWIG_POINTER_NEW |  0 );
   return resultobj;
 fail:
@@ -5809,7 +5874,15 @@ SWIGINTERN PyObject *_wrap_new_MED_SORTING_TYPE__SWIG_0(PyObject *SWIGUNUSEDPARM
   MED_SORTING_TYPE *result = 0 ;
   
   if (!PyArg_ParseTuple(args,(char *)":new_MED_SORTING_TYPE")) SWIG_fail;
-  result = (MED_SORTING_TYPE *)new MED_SORTING_TYPE();
+  {
+    try {
+      result = (MED_SORTING_TYPE *)new MED_SORTING_TYPE();
+    } catch(std::range_error& ex) {
+      SWIG_exception_fail(SWIG_ValueError, ex.what());
+    } catch(...) {
+      SWIG_exception_fail(SWIG_RuntimeError,"Unknown exception");
+    }
+  }
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_MED_SORTING_TYPE, SWIG_POINTER_NEW |  0 );
   return resultobj;
 fail:
@@ -5831,7 +5904,15 @@ SWIGINTERN PyObject *_wrap_new_MED_SORTING_TYPE__SWIG_1(PyObject *SWIGUNUSEDPARM
     SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "new_MED_SORTING_TYPE" "', argument " "1"" of type '" "int""'");
   } 
   arg1 = static_cast< int >(val1);
-  result = (MED_SORTING_TYPE *)new MED_SORTING_TYPE(arg1);
+  {
+    try {
+      result = (MED_SORTING_TYPE *)new MED_SORTING_TYPE(arg1);
+    } catch(std::range_error& ex) {
+      SWIG_exception_fail(SWIG_ValueError, ex.what());
+    } catch(...) {
+      SWIG_exception_fail(SWIG_RuntimeError,"Unknown exception");
+    }
+  }
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_MED_SORTING_TYPE, SWIG_POINTER_NEW |  0 );
   return resultobj;
 fail:
@@ -5856,7 +5937,15 @@ SWIGINTERN PyObject *_wrap_new_MED_SORTING_TYPE__SWIG_2(PyObject *SWIGUNUSEDPARM
     SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "new_MED_SORTING_TYPE" "', argument " "1"" of type '" "MED_SORTING_TYPE const &""'"); 
   }
   arg1 = reinterpret_cast< MED_SORTING_TYPE * >(argp1);
-  result = (MED_SORTING_TYPE *)new MED_SORTING_TYPE((MED_SORTING_TYPE const &)*arg1);
+  {
+    try {
+      result = (MED_SORTING_TYPE *)new MED_SORTING_TYPE((MED_SORTING_TYPE const &)*arg1);
+    } catch(std::range_error& ex) {
+      SWIG_exception_fail(SWIG_ValueError, ex.what());
+    } catch(...) {
+      SWIG_exception_fail(SWIG_RuntimeError,"Unknown exception");
+    }
+  }
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_MED_SORTING_TYPE, SWIG_POINTER_NEW |  0 );
   return resultobj;
 fail:
@@ -6013,7 +6102,15 @@ SWIGINTERN PyObject *_wrap_new_MED_GRID_TYPE__SWIG_0(PyObject *SWIGUNUSEDPARM(se
   MED_GRID_TYPE *result = 0 ;
   
   if (!PyArg_ParseTuple(args,(char *)":new_MED_GRID_TYPE")) SWIG_fail;
-  result = (MED_GRID_TYPE *)new MED_GRID_TYPE();
+  {
+    try {
+      result = (MED_GRID_TYPE *)new MED_GRID_TYPE();
+    } catch(std::range_error& ex) {
+      SWIG_exception_fail(SWIG_ValueError, ex.what());
+    } catch(...) {
+      SWIG_exception_fail(SWIG_RuntimeError,"Unknown exception");
+    }
+  }
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_MED_GRID_TYPE, SWIG_POINTER_NEW |  0 );
   return resultobj;
 fail:
@@ -6035,7 +6132,15 @@ SWIGINTERN PyObject *_wrap_new_MED_GRID_TYPE__SWIG_1(PyObject *SWIGUNUSEDPARM(se
     SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "new_MED_GRID_TYPE" "', argument " "1"" of type '" "int""'");
   } 
   arg1 = static_cast< int >(val1);
-  result = (MED_GRID_TYPE *)new MED_GRID_TYPE(arg1);
+  {
+    try {
+      result = (MED_GRID_TYPE *)new MED_GRID_TYPE(arg1);
+    } catch(std::range_error& ex) {
+      SWIG_exception_fail(SWIG_ValueError, ex.what());
+    } catch(...) {
+      SWIG_exception_fail(SWIG_RuntimeError,"Unknown exception");
+    }
+  }
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_MED_GRID_TYPE, SWIG_POINTER_NEW |  0 );
   return resultobj;
 fail:
@@ -6060,7 +6165,15 @@ SWIGINTERN PyObject *_wrap_new_MED_GRID_TYPE__SWIG_2(PyObject *SWIGUNUSEDPARM(se
     SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "new_MED_GRID_TYPE" "', argument " "1"" of type '" "MED_GRID_TYPE const &""'"); 
   }
   arg1 = reinterpret_cast< MED_GRID_TYPE * >(argp1);
-  result = (MED_GRID_TYPE *)new MED_GRID_TYPE((MED_GRID_TYPE const &)*arg1);
+  {
+    try {
+      result = (MED_GRID_TYPE *)new MED_GRID_TYPE((MED_GRID_TYPE const &)*arg1);
+    } catch(std::range_error& ex) {
+      SWIG_exception_fail(SWIG_ValueError, ex.what());
+    } catch(...) {
+      SWIG_exception_fail(SWIG_RuntimeError,"Unknown exception");
+    }
+  }
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_MED_GRID_TYPE, SWIG_POINTER_NEW |  0 );
   return resultobj;
 fail:
@@ -6217,7 +6330,15 @@ SWIGINTERN PyObject *_wrap_new_MED_ENTITY_TYPE__SWIG_0(PyObject *SWIGUNUSEDPARM(
   MED_ENTITY_TYPE *result = 0 ;
   
   if (!PyArg_ParseTuple(args,(char *)":new_MED_ENTITY_TYPE")) SWIG_fail;
-  result = (MED_ENTITY_TYPE *)new MED_ENTITY_TYPE();
+  {
+    try {
+      result = (MED_ENTITY_TYPE *)new MED_ENTITY_TYPE();
+    } catch(std::range_error& ex) {
+      SWIG_exception_fail(SWIG_ValueError, ex.what());
+    } catch(...) {
+      SWIG_exception_fail(SWIG_RuntimeError,"Unknown exception");
+    }
+  }
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_MED_ENTITY_TYPE, SWIG_POINTER_NEW |  0 );
   return resultobj;
 fail:
@@ -6239,7 +6360,15 @@ SWIGINTERN PyObject *_wrap_new_MED_ENTITY_TYPE__SWIG_1(PyObject *SWIGUNUSEDPARM(
     SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "new_MED_ENTITY_TYPE" "', argument " "1"" of type '" "int""'");
   } 
   arg1 = static_cast< int >(val1);
-  result = (MED_ENTITY_TYPE *)new MED_ENTITY_TYPE(arg1);
+  {
+    try {
+      result = (MED_ENTITY_TYPE *)new MED_ENTITY_TYPE(arg1);
+    } catch(std::range_error& ex) {
+      SWIG_exception_fail(SWIG_ValueError, ex.what());
+    } catch(...) {
+      SWIG_exception_fail(SWIG_RuntimeError,"Unknown exception");
+    }
+  }
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_MED_ENTITY_TYPE, SWIG_POINTER_NEW |  0 );
   return resultobj;
 fail:
@@ -6264,7 +6393,15 @@ SWIGINTERN PyObject *_wrap_new_MED_ENTITY_TYPE__SWIG_2(PyObject *SWIGUNUSEDPARM(
     SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "new_MED_ENTITY_TYPE" "', argument " "1"" of type '" "MED_ENTITY_TYPE const &""'"); 
   }
   arg1 = reinterpret_cast< MED_ENTITY_TYPE * >(argp1);
-  result = (MED_ENTITY_TYPE *)new MED_ENTITY_TYPE((MED_ENTITY_TYPE const &)*arg1);
+  {
+    try {
+      result = (MED_ENTITY_TYPE *)new MED_ENTITY_TYPE((MED_ENTITY_TYPE const &)*arg1);
+    } catch(std::range_error& ex) {
+      SWIG_exception_fail(SWIG_ValueError, ex.what());
+    } catch(...) {
+      SWIG_exception_fail(SWIG_RuntimeError,"Unknown exception");
+    }
+  }
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_MED_ENTITY_TYPE, SWIG_POINTER_NEW |  0 );
   return resultobj;
 fail:
@@ -6421,7 +6558,15 @@ SWIGINTERN PyObject *_wrap_new_MED_FIELD_TYPE__SWIG_0(PyObject *SWIGUNUSEDPARM(s
   MED_FIELD_TYPE *result = 0 ;
   
   if (!PyArg_ParseTuple(args,(char *)":new_MED_FIELD_TYPE")) SWIG_fail;
-  result = (MED_FIELD_TYPE *)new MED_FIELD_TYPE();
+  {
+    try {
+      result = (MED_FIELD_TYPE *)new MED_FIELD_TYPE();
+    } catch(std::range_error& ex) {
+      SWIG_exception_fail(SWIG_ValueError, ex.what());
+    } catch(...) {
+      SWIG_exception_fail(SWIG_RuntimeError,"Unknown exception");
+    }
+  }
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_MED_FIELD_TYPE, SWIG_POINTER_NEW |  0 );
   return resultobj;
 fail:
@@ -6443,7 +6588,15 @@ SWIGINTERN PyObject *_wrap_new_MED_FIELD_TYPE__SWIG_1(PyObject *SWIGUNUSEDPARM(s
     SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "new_MED_FIELD_TYPE" "', argument " "1"" of type '" "int""'");
   } 
   arg1 = static_cast< int >(val1);
-  result = (MED_FIELD_TYPE *)new MED_FIELD_TYPE(arg1);
+  {
+    try {
+      result = (MED_FIELD_TYPE *)new MED_FIELD_TYPE(arg1);
+    } catch(std::range_error& ex) {
+      SWIG_exception_fail(SWIG_ValueError, ex.what());
+    } catch(...) {
+      SWIG_exception_fail(SWIG_RuntimeError,"Unknown exception");
+    }
+  }
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_MED_FIELD_TYPE, SWIG_POINTER_NEW |  0 );
   return resultobj;
 fail:
@@ -6468,7 +6621,15 @@ SWIGINTERN PyObject *_wrap_new_MED_FIELD_TYPE__SWIG_2(PyObject *SWIGUNUSEDPARM(s
     SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "new_MED_FIELD_TYPE" "', argument " "1"" of type '" "MED_FIELD_TYPE const &""'"); 
   }
   arg1 = reinterpret_cast< MED_FIELD_TYPE * >(argp1);
-  result = (MED_FIELD_TYPE *)new MED_FIELD_TYPE((MED_FIELD_TYPE const &)*arg1);
+  {
+    try {
+      result = (MED_FIELD_TYPE *)new MED_FIELD_TYPE((MED_FIELD_TYPE const &)*arg1);
+    } catch(std::range_error& ex) {
+      SWIG_exception_fail(SWIG_ValueError, ex.what());
+    } catch(...) {
+      SWIG_exception_fail(SWIG_RuntimeError,"Unknown exception");
+    }
+  }
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_MED_FIELD_TYPE, SWIG_POINTER_NEW |  0 );
   return resultobj;
 fail:
@@ -6625,7 +6786,15 @@ SWIGINTERN PyObject *_wrap_new_MED_ATTRIBUTE_TYPE__SWIG_0(PyObject *SWIGUNUSEDPA
   MED_ATTRIBUTE_TYPE *result = 0 ;
   
   if (!PyArg_ParseTuple(args,(char *)":new_MED_ATTRIBUTE_TYPE")) SWIG_fail;
-  result = (MED_ATTRIBUTE_TYPE *)new MED_ATTRIBUTE_TYPE();
+  {
+    try {
+      result = (MED_ATTRIBUTE_TYPE *)new MED_ATTRIBUTE_TYPE();
+    } catch(std::range_error& ex) {
+      SWIG_exception_fail(SWIG_ValueError, ex.what());
+    } catch(...) {
+      SWIG_exception_fail(SWIG_RuntimeError,"Unknown exception");
+    }
+  }
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_MED_ATTRIBUTE_TYPE, SWIG_POINTER_NEW |  0 );
   return resultobj;
 fail:
@@ -6647,7 +6816,15 @@ SWIGINTERN PyObject *_wrap_new_MED_ATTRIBUTE_TYPE__SWIG_1(PyObject *SWIGUNUSEDPA
     SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "new_MED_ATTRIBUTE_TYPE" "', argument " "1"" of type '" "int""'");
   } 
   arg1 = static_cast< int >(val1);
-  result = (MED_ATTRIBUTE_TYPE *)new MED_ATTRIBUTE_TYPE(arg1);
+  {
+    try {
+      result = (MED_ATTRIBUTE_TYPE *)new MED_ATTRIBUTE_TYPE(arg1);
+    } catch(std::range_error& ex) {
+      SWIG_exception_fail(SWIG_ValueError, ex.what());
+    } catch(...) {
+      SWIG_exception_fail(SWIG_RuntimeError,"Unknown exception");
+    }
+  }
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_MED_ATTRIBUTE_TYPE, SWIG_POINTER_NEW |  0 );
   return resultobj;
 fail:
@@ -6672,7 +6849,15 @@ SWIGINTERN PyObject *_wrap_new_MED_ATTRIBUTE_TYPE__SWIG_2(PyObject *SWIGUNUSEDPA
     SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "new_MED_ATTRIBUTE_TYPE" "', argument " "1"" of type '" "MED_ATTRIBUTE_TYPE const &""'"); 
   }
   arg1 = reinterpret_cast< MED_ATTRIBUTE_TYPE * >(argp1);
-  result = (MED_ATTRIBUTE_TYPE *)new MED_ATTRIBUTE_TYPE((MED_ATTRIBUTE_TYPE const &)*arg1);
+  {
+    try {
+      result = (MED_ATTRIBUTE_TYPE *)new MED_ATTRIBUTE_TYPE((MED_ATTRIBUTE_TYPE const &)*arg1);
+    } catch(std::range_error& ex) {
+      SWIG_exception_fail(SWIG_ValueError, ex.what());
+    } catch(...) {
+      SWIG_exception_fail(SWIG_RuntimeError,"Unknown exception");
+    }
+  }
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_MED_ATTRIBUTE_TYPE, SWIG_POINTER_NEW |  0 );
   return resultobj;
 fail:
@@ -6829,7 +7014,15 @@ SWIGINTERN PyObject *_wrap_new_MED_AXIS_TYPE__SWIG_0(PyObject *SWIGUNUSEDPARM(se
   MED_AXIS_TYPE *result = 0 ;
   
   if (!PyArg_ParseTuple(args,(char *)":new_MED_AXIS_TYPE")) SWIG_fail;
-  result = (MED_AXIS_TYPE *)new MED_AXIS_TYPE();
+  {
+    try {
+      result = (MED_AXIS_TYPE *)new MED_AXIS_TYPE();
+    } catch(std::range_error& ex) {
+      SWIG_exception_fail(SWIG_ValueError, ex.what());
+    } catch(...) {
+      SWIG_exception_fail(SWIG_RuntimeError,"Unknown exception");
+    }
+  }
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_MED_AXIS_TYPE, SWIG_POINTER_NEW |  0 );
   return resultobj;
 fail:
@@ -6851,7 +7044,15 @@ SWIGINTERN PyObject *_wrap_new_MED_AXIS_TYPE__SWIG_1(PyObject *SWIGUNUSEDPARM(se
     SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "new_MED_AXIS_TYPE" "', argument " "1"" of type '" "int""'");
   } 
   arg1 = static_cast< int >(val1);
-  result = (MED_AXIS_TYPE *)new MED_AXIS_TYPE(arg1);
+  {
+    try {
+      result = (MED_AXIS_TYPE *)new MED_AXIS_TYPE(arg1);
+    } catch(std::range_error& ex) {
+      SWIG_exception_fail(SWIG_ValueError, ex.what());
+    } catch(...) {
+      SWIG_exception_fail(SWIG_RuntimeError,"Unknown exception");
+    }
+  }
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_MED_AXIS_TYPE, SWIG_POINTER_NEW |  0 );
   return resultobj;
 fail:
@@ -6876,7 +7077,15 @@ SWIGINTERN PyObject *_wrap_new_MED_AXIS_TYPE__SWIG_2(PyObject *SWIGUNUSEDPARM(se
     SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "new_MED_AXIS_TYPE" "', argument " "1"" of type '" "MED_AXIS_TYPE const &""'"); 
   }
   arg1 = reinterpret_cast< MED_AXIS_TYPE * >(argp1);
-  result = (MED_AXIS_TYPE *)new MED_AXIS_TYPE((MED_AXIS_TYPE const &)*arg1);
+  {
+    try {
+      result = (MED_AXIS_TYPE *)new MED_AXIS_TYPE((MED_AXIS_TYPE const &)*arg1);
+    } catch(std::range_error& ex) {
+      SWIG_exception_fail(SWIG_ValueError, ex.what());
+    } catch(...) {
+      SWIG_exception_fail(SWIG_RuntimeError,"Unknown exception");
+    }
+  }
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_MED_AXIS_TYPE, SWIG_POINTER_NEW |  0 );
   return resultobj;
 fail:
@@ -7096,9 +7305,12 @@ static swig_type_info _swigt__p_MED_GRID_TYPE = {"_p_MED_GRID_TYPE", "MED_GRID_T
 static swig_type_info _swigt__p_MED_MESH_TYPE = {"_p_MED_MESH_TYPE", "MED_MESH_TYPE *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_MED_SORTING_TYPE = {"_p_MED_SORTING_TYPE", "MED_SORTING_TYPE *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_char = {"_p_char", "char *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_double = {"_p_double", "med_float *|double *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_double = {"_p_double", "med_float *|med_float64 *|double *|med_double *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_float = {"_p_float", "float *|med_float32 *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_hssize_t = {"_p_hssize_t", "med_ssize *|hssize_t *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_int = {"_p_int", "med_geometry_type *|int *|herr_t *|med_idt *|med_err *|hid_t *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_int32_t = {"_p_int32_t", "int32_t *|med_int32 *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_int64_t = {"_p_int64_t", "int64_t *|med_int64 *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_long = {"_p_long", "med_int *|long *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_med_access_mode = {"_p_med_access_mode", "enum med_access_mode *|med_access_mode *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_med_attribute_type = {"_p_med_attribute_type", "enum med_attribute_type *|med_attribute_type *", 0, 0, (void*)0, 0};
@@ -7133,8 +7345,11 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_MED_SORTING_TYPE,
   &_swigt__p_char,
   &_swigt__p_double,
+  &_swigt__p_float,
   &_swigt__p_hssize_t,
   &_swigt__p_int,
+  &_swigt__p_int32_t,
+  &_swigt__p_int64_t,
   &_swigt__p_long,
   &_swigt__p_med_access_mode,
   &_swigt__p_med_attribute_type,
@@ -7169,8 +7384,11 @@ static swig_cast_info _swigc__p_MED_MESH_TYPE[] = {  {&_swigt__p_MED_MESH_TYPE, 
 static swig_cast_info _swigc__p_MED_SORTING_TYPE[] = {  {&_swigt__p_MED_SORTING_TYPE, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_char[] = {  {&_swigt__p_char, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_double[] = {  {&_swigt__p_double, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_float[] = {  {&_swigt__p_float, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_hssize_t[] = {  {&_swigt__p_hssize_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_int[] = {  {&_swigt__p_int, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_int32_t[] = {  {&_swigt__p_int32_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_int64_t[] = {  {&_swigt__p_int64_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_long[] = {  {&_swigt__p_long, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_med_access_mode[] = {  {&_swigt__p_med_access_mode, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_med_attribute_type[] = {  {&_swigt__p_med_attribute_type, 0, 0, 0},{0, 0, 0, 0}};
@@ -7205,8 +7423,11 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_MED_SORTING_TYPE,
   _swigc__p_char,
   _swigc__p_double,
+  _swigc__p_float,
   _swigc__p_hssize_t,
   _swigc__p_int,
+  _swigc__p_int32_t,
+  _swigc__p_int64_t,
   _swigc__p_long,
   _swigc__p_med_access_mode,
   _swigc__p_med_attribute_type,
@@ -7950,30 +8171,31 @@ SWIG_init(void) {
   SWIG_Python_SetConstant(d, "PACKAGE",SWIG_FromCharPtr("med"));
   SWIG_Python_SetConstant(d, "PACKAGE_BUGREPORT",SWIG_FromCharPtr("eric.fayolle@edf.fr"));
   SWIG_Python_SetConstant(d, "PACKAGE_NAME",SWIG_FromCharPtr("MED Fichier"));
-  SWIG_Python_SetConstant(d, "PACKAGE_STRING",SWIG_FromCharPtr("MED Fichier 3.2.1"));
+  SWIG_Python_SetConstant(d, "PACKAGE_STRING",SWIG_FromCharPtr("MED Fichier 3.3.1"));
   SWIG_Python_SetConstant(d, "PACKAGE_TARNAME",SWIG_FromCharPtr("med"));
   SWIG_Python_SetConstant(d, "PACKAGE_URL",SWIG_FromCharPtr(""));
-  SWIG_Python_SetConstant(d, "PACKAGE_VERSION",SWIG_FromCharPtr("3.2.1"));
+  SWIG_Python_SetConstant(d, "PACKAGE_VERSION",SWIG_FromCharPtr("3.3.1"));
   SWIG_Python_SetConstant(d, "SIZEOF_FORTRAN_INTEGER",SWIG_From_int(static_cast< int >(8)));
   SWIG_Python_SetConstant(d, "SIZEOF_FORTRAN_INTEGERp4",SWIG_From_int(static_cast< int >(4)));
   SWIG_Python_SetConstant(d, "SIZEOF_HID_T",SWIG_From_int(static_cast< int >(4)));
   SWIG_Python_SetConstant(d, "SIZEOF_INT",SWIG_From_int(static_cast< int >(4)));
   SWIG_Python_SetConstant(d, "SIZEOF_LONG",SWIG_From_int(static_cast< int >(8)));
+  SWIG_Python_SetConstant(d, "SIZEOF_LONG_LONG",SWIG_From_int(static_cast< int >(8)));
   SWIG_Python_SetConstant(d, "STDC_HEADERS",SWIG_From_int(static_cast< int >(1)));
   SWIG_Python_SetConstant(d, "TIME_WITH_SYS_TIME",SWIG_From_int(static_cast< int >(1)));
-  SWIG_Python_SetConstant(d, "VERSION",SWIG_FromCharPtr("3.2.1"));
+  SWIG_Python_SetConstant(d, "VERSION",SWIG_FromCharPtr("3.3.1"));
   SWIG_Python_SetConstant(d, "HDF_VERSION_MAJOR_REF",SWIG_From_int(static_cast< int >(1)));
   SWIG_Python_SetConstant(d, "HDF_VERSION_MINOR_REF",SWIG_From_int(static_cast< int >(8)));
   SWIG_Python_SetConstant(d, "HDF_VERSION_RELEASE_REF",SWIG_From_int(static_cast< int >(11)));
   SWIG_Python_SetConstant(d, "HDF_VERSION_NUM_REF",SWIG_From_int(static_cast< int >((1*10000+8*100+11))));
   SWIG_Python_SetConstant(d, "H5F_LIBVER_18",SWIG_From_int(static_cast< int >(1)));
   SWIG_Python_SetConstant(d, "MED_MAJOR_NUM",SWIG_From_int(static_cast< int >(3)));
-  SWIG_Python_SetConstant(d, "MED_MINOR_NUM",SWIG_From_int(static_cast< int >(2)));
+  SWIG_Python_SetConstant(d, "MED_MINOR_NUM",SWIG_From_int(static_cast< int >(3)));
   SWIG_Python_SetConstant(d, "MED_RELEASE_NUM",SWIG_From_int(static_cast< int >(1)));
   SWIG_Python_SetConstant(d, "MED_NUM_MAJEUR",SWIG_From_int(static_cast< int >(3)));
-  SWIG_Python_SetConstant(d, "MED_NUM_MINEUR",SWIG_From_int(static_cast< int >(2)));
+  SWIG_Python_SetConstant(d, "MED_NUM_MINEUR",SWIG_From_int(static_cast< int >(3)));
   SWIG_Python_SetConstant(d, "MED_NUM_RELEASE",SWIG_From_int(static_cast< int >(1)));
-  SWIG_Python_SetConstant(d, "MED_VERSION_STR",SWIG_FromCharPtr("3.2.1"));
+  SWIG_Python_SetConstant(d, "MED_VERSION_STR",SWIG_FromCharPtr("3.3.1"));
   SWIG_Python_SetConstant(d, "MED_MAX_PARA",SWIG_From_int(static_cast< int >(20)));
   SWIG_Python_SetConstant(d, "MED_COMMENT_SIZE",SWIG_From_int(static_cast< int >(200)));
   SWIG_Python_SetConstant(d, "MED_IDENT_SIZE",SWIG_From_int(static_cast< int >(8)));
@@ -8028,6 +8250,7 @@ SWIG_init(void) {
   SWIG_Python_SetConstant(d, "MED_VARIABLE_ATTRIBUTE",SWIG_From_int(static_cast< int >(MED_VARIABLE_ATTRIBUTE)));
   SWIG_Python_SetConstant(d, "MED_COORDINATE_TRSF",SWIG_From_int(static_cast< int >(MED_COORDINATE_TRSF)));
   SWIG_Python_SetConstant(d, "MED_UNDEF_DATATYPE",SWIG_From_int(static_cast< int >(MED_UNDEF_DATATYPE)));
+  SWIG_Python_SetConstant(d, "MED_INTERNAL_FLOAT32",SWIG_From_int(static_cast< int >(MED_INTERNAL_FLOAT32)));
   SWIG_Python_SetConstant(d, "MED_INTERNAL_FLOAT64",SWIG_From_int(static_cast< int >(MED_INTERNAL_FLOAT64)));
   SWIG_Python_SetConstant(d, "MED_INTERNAL_INT32",SWIG_From_int(static_cast< int >(MED_INTERNAL_INT32)));
   SWIG_Python_SetConstant(d, "MED_INTERNAL_INT64",SWIG_From_int(static_cast< int >(MED_INTERNAL_INT64)));
@@ -8038,7 +8261,9 @@ SWIG_init(void) {
   SWIG_Python_SetConstant(d, "MED_INTERNAL_IDENT",SWIG_From_int(static_cast< int >(MED_INTERNAL_IDENT)));
   SWIG_Python_SetConstant(d, "MED_INTERNAL_CHAR",SWIG_From_int(static_cast< int >(MED_INTERNAL_CHAR)));
   SWIG_Python_SetConstant(d, "MED_INTERNAL_UNDEF",SWIG_From_int(static_cast< int >(MED_INTERNAL_UNDEF)));
+  SWIG_Python_SetConstant(d, "MED_DOUBLE",SWIG_From_int(static_cast< int >(MED_DOUBLE)));
   SWIG_Python_SetConstant(d, "MED_FLOAT64",SWIG_From_int(static_cast< int >(MED_FLOAT64)));
+  SWIG_Python_SetConstant(d, "MED_FLOAT32",SWIG_From_int(static_cast< int >(MED_FLOAT32)));
   SWIG_Python_SetConstant(d, "MED_INT32",SWIG_From_int(static_cast< int >(MED_INT32)));
   SWIG_Python_SetConstant(d, "MED_INT64",SWIG_From_int(static_cast< int >(MED_INT64)));
   SWIG_Python_SetConstant(d, "MED_INT",SWIG_From_int(static_cast< int >(MED_INT)));
@@ -8082,6 +8307,7 @@ SWIG_init(void) {
   SWIG_Python_SetConstant(d, "MED_OCTA12",SWIG_From_int(static_cast< int >(312)));
   SWIG_Python_SetConstant(d, "MED_PYRA13",SWIG_From_int(static_cast< int >(313)));
   SWIG_Python_SetConstant(d, "MED_PENTA15",SWIG_From_int(static_cast< int >(315)));
+  SWIG_Python_SetConstant(d, "MED_PENTA18",SWIG_From_int(static_cast< int >(318)));
   SWIG_Python_SetConstant(d, "MED_HEXA20",SWIG_From_int(static_cast< int >(320)));
   SWIG_Python_SetConstant(d, "MED_HEXA27",SWIG_From_int(static_cast< int >(327)));
   SWIG_Python_SetConstant(d, "MED_POLYGON",SWIG_From_int(static_cast< int >(400)));
@@ -8095,9 +8321,9 @@ SWIG_init(void) {
   SWIG_Python_SetConstant(d, "MED_UNDEF_GEOMETRY_TYPE",SWIG_From_int(static_cast< int >(0)));
   SWIG_Python_SetConstant(d, "MED_ALL_GEOTYPE",SWIG_From_int(static_cast< int >(-1)));
   SWIG_Python_SetConstant(d, "MED_GEO_ALL",SWIG_From_int(static_cast< int >(-1)));
-  SWIG_Python_SetConstant(d, "MED_N_CELL_GEO",SWIG_From_int(static_cast< int >(24)));
-  SWIG_Python_SetConstant(d, "MED_N_CELL_FIXED_GEO",SWIG_From_int(static_cast< int >(23)));
-  SWIG_Python_SetConstant(d, "MED_N_CELL_GEO_FIXED_CON",SWIG_From_int(static_cast< int >(20)));
+  SWIG_Python_SetConstant(d, "MED_N_CELL_GEO",SWIG_From_int(static_cast< int >(25)));
+  SWIG_Python_SetConstant(d, "MED_N_CELL_FIXED_GEO",SWIG_From_int(static_cast< int >(24)));
+  SWIG_Python_SetConstant(d, "MED_N_CELL_GEO_FIXED_CON",SWIG_From_int(static_cast< int >(21)));
   SWIG_Python_SetConstant(d, "MED_N_FACE_GEO",SWIG_From_int(static_cast< int >(8)));
   SWIG_Python_SetConstant(d, "MED_N_FACE_FIXED_GEO",SWIG_From_int(static_cast< int >(8)));
   SWIG_Python_SetConstant(d, "MED_N_FACE_GEO_FIXED_CON",SWIG_From_int(static_cast< int >(6)));

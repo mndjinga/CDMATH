@@ -2,7 +2,7 @@
 # -*- coding:utf-8 -*-
 # /*  This file is part of MED.
 #  *
-#  *  COPYRIGHT (C) 1999 - 2016  EDF R&D, CEA/DEN
+#  *  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
 #  *  MED is free software: you can redistribute it and/or modify
 #  *  it under the terms of the GNU Lesser General Public License as published by
 #  *  the Free Software Foundation, either version 3 of the License, or
@@ -23,6 +23,9 @@
 #  * - Description : lecture de champs de resultats MED
 #  *
 #  *****************************************************************************/
+import os
+import sys
+
 from med.medfile import *
 from med.medmesh import *
 from med.medfield import *
@@ -31,8 +34,16 @@ from med.medprofile import *
 from med.medlocalization import *
 from med.medlink import *
 
-USER_MODE=MED_COMPACT_STMODE
-USER_INTERLACE=MED_FULL_INTERLACE
+
+execfile(os.path.join(os.path.dirname(__file__)+'/tests_params.py'),locals(),globals())
+# filename='test10'+PARAM_ID+'.med'
+if (len(sys.argv) > 1): filename=sys.argv[1]
+# else: filename=""
+# if ( filename == ""): filename='test10.med'
+
+
+# USER_MODE=MED_COMPACT_STMODE
+# USER_INTERLACE=MED_FULL_INTERLACE
 MODE_ACCES=MED_ACC_RDONLY
 IFORMAT="%d"
 
@@ -64,8 +75,12 @@ def getFieldsOn(fid,nomcha,typcha, ncomp, entite, stockage,ncstp):
 
                     #TODO : les API renvoient des objets enum et non des int
                     #TODO: c'est une source d'erreur pour la comparaison .val
-                    if (typcha.val == MED_FLOAT64): val=MEDFLOAT(ncomp*nval*ngauss)
-                    else:                           val=MEDINT  (ncomp*nval*ngauss)
+                    #ex: MED_FIELD_TYPE
+                    if   (typcha.val == MED_FLOAT64): val=MEDFLOAT64(ncomp*nval*ngauss)
+                    elif (typcha.val == MED_FLOAT32): val=MEDFLOAT32(ncomp*nval*ngauss)
+                    elif (typcha.val == MED_INT32  ): val=MEDINT32(ncomp*nval*ngauss)
+                    elif (typcha.val == MED_INT64  ): val=MEDINT64(ncomp*nval*ngauss)
+                    else:                             val=MEDINT  (ncomp*nval*ngauss)
                     MEDfieldValueWithProfileRd(fid, nomcha, numdt,numo, entite,type_geo,
 					 USER_MODE, pflname, stockage, MED_ALL_CONSTITUENT, val)
           
@@ -85,7 +100,7 @@ def getFieldsOn(fid,nomcha,typcha, ncomp, entite, stockage,ncstp):
                         print "\t";print pflval;print "\n"
 
 # /* ouverture du fichier */
-fid=MEDfileOpen("test10.med",MODE_ACCES)
+fid=MEDfileOpen(filename,MODE_ACCES)
 
 maa, sdim, mdim, meshtype, desc, dtunit, sort, nstep,  repere, axisname, axisunit = MEDmeshInfo(fid, 1)
 

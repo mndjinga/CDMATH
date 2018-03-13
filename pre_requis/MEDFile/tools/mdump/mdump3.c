@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2016  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -108,6 +108,17 @@ extern const char * MED23FIELD_GET_EDGE_GEOMETRY_TYPENAME[MED_N_EDGE_FIXED_GEO+2
 extern med_geometry_type MED23FIELD_GET_NODE_GEOMETRY_TYPE[MED_N_NODE_FIXED_GEO+2];
 extern const char * MED23FIELD_GET_NODE_GEOMETRY_TYPENAME[MED_N_NODE_FIXED_GEO+2];
 
+/* Stockage des fids des fichiers ouverts dans le cas où le montage des fichiers
+   distants est demandé (variable mountage) 
+*/
+#define MDUMP_MAX_FILE_OPEN 200
+#define MDUMP_MAX_FILE_OPEN_INIT  {INIT2X(INIT10X(INIT10X(0))) }
+
+typedef struct {
+  int    n;
+  med_idt array[MDUMP_MAX_FILE_OPEN];
+} FIDS_t;
+FIDS_t FIDS ={1, MDUMP_MAX_FILE_OPEN_INIT};
 
 /* Indique si on vérifie seulement la structure
    Lecture complète du fichier mais pas d'affichage des données volumineuses
@@ -136,15 +147,16 @@ const char * const *nomare = MED23MESH_GET_EDGE_GEOMETRY_TYPENAME+1;
 
 #define MAXBANNERLEN 255
 
+/*Afficheurs pour la fonction polymorphique : MEDstructPrintFunction*/
 void affd(const void *pva)
 {
-	const double *pa = pva;
+  const double *pa = (const double *) pva;
 	printf(" %f ",*pa);
 }
 
 void affi(const void *pva)
 {
-	const med_int *pa = pva;
+	const med_int *pa = (const med_int *) pva;
 /* La ligne suivante ne fonctionne pas à cause du % contenu dans IFORMAT*/
 /* 	printf(" %9"IFORMAT" " ,*pa); */
  	printf(" "IFORMAT" " ,*pa);
@@ -152,7 +164,7 @@ void affi(const void *pva)
 
 void affs(const void *pva)
 {
-	const char *pa = pva;
+  const char *pa = (const char *) pva;
         printf(" %.*s ",MED_NAME_SIZE,pa);
 }
 
@@ -471,7 +483,8 @@ void lecture_joint_maillage(med_idt fid,const char * const nommaa,med_int njnt)
   med_int i,k;
   char des[MED_COMMENT_SIZE+1];
   med_int ndom,nent;
-  med_int typ_ent_local,typ_geo_local,typ_ent_distant,typ_geo_distant;
+  med_entity_type  typ_ent_local,typ_ent_distant;
+  med_int          typ_geo_local,typ_geo_distant;
 /*   med_int geo_ent_local,geo_ent_distant; */
 
   char jn                  [MED_NAME_SIZE+1]="";
@@ -528,10 +541,10 @@ void lecture_joint_maillage(med_idt fid,const char * const nommaa,med_int njnt)
 		NULL);
 	if (nent > 0) {
 	  if (typ_ent_local == MED_NODE) strcpy(nom_geo_ent_local,"MED_NOEUD");
-	  else  ret = _MEDgetInternalGeometryTypeName(nom_geo_ent_local,typ_geo_local);
+	  else  ret = _MEDgetInternalGeometryTypeName(fid,nom_geo_ent_local,typ_geo_local);
 	  EXIT_IF(ret < 0,"Erreur à l'appel de _MEDgetInternalGeometryTypeName", NULL);
 	  if (typ_ent_distant == MED_NODE) strcpy(nom_geo_ent_distant,"MED_NOEUD");
-	  else ret = _MEDgetInternalGeometryTypeName(nom_geo_ent_distant,typ_geo_distant);
+	  else ret = _MEDgetInternalGeometryTypeName(fid,nom_geo_ent_distant,typ_geo_distant);
 	  EXIT_IF(ret < 0,"Erreur à l'appel de _MEDgetInternalGeometryTypeName", NULL);
 	  fprintf(stdout,"\n\t\t- nb de couples d'entites en regard (local,distant)=(%s,%s) : "IFORMAT" \n",
 		  nom_geo_ent_local,nom_geo_ent_distant,  nent);
@@ -776,9 +789,9 @@ void lecture_mailles_elstruct(const med_idt fid,
   med_entity_type   _entitytype=MED_UNDEF_ENTITY_TYPE;
   med_int           _nnode=0;
   med_int           _ncell=0;
-  med_entity_type   _geocelltype=MED_NONE;
+  med_geometry_type _geocelltype=MED_NONE;
   med_int           _nconstantatribute=0;
-  med_bool          _anyprofile=0;
+  med_bool          _anyprofile=MED_FALSE;
   med_int           _nvariableattribute=0;
 
   char               _attname[MED_NAME_SIZE+1]="";
@@ -1706,7 +1719,7 @@ void lecture_maillage_non_structure(med_idt fid,
 
   /* Combien de types d'éléments de structure utilisés dans le maillage */
   _nmodels = MEDmeshnEntity(fid,nommaa,numdt,numit,
-			      MED_STRUCT_ELEMENT,MED_GEO_ALL,MED_CONNECTIVITY,MED_GLOBAL_STMODE,
+			      MED_STRUCT_ELEMENT,MED_GEO_ALL,MED_UNDEF_DATATYPE,MED_UNDEF_CONNECTIVITY_MODE,
 			      &chgt,&trsf);
   EXIT_IF(_nmodels<0,
 	  "Erreur à la lecture du nombre de type géométrique pour le type d'entités MED_STRUCT_ELEMENT",NULL);
@@ -2287,11 +2300,13 @@ med_err getFieldsOn(const med_idt fid,
 		    const med_int ncstp) {
 
   int i,j,k,l,m,n,nb_geo=0;
-  med_int nbpdtnor=0,pflsize,*pflval,ngauss=0,ngroup,*vale=NULL,nval;
+  med_int nbpdtnor=0,pflsize,*pflval,ngauss=0,ngroup,nval;
+  unsigned char *val = NULL; 
   med_int numdt=0,numo=0,_nprofile;
   med_int meshnumdt=0,meshnumit=0;
-  med_float *valr=NULL,dt=0.0;
-  med_err ret=0;
+  med_size medtype_size=0;
+  med_float dt=0.0;
+  med_err   ret=0;
   char pflname [MED_NAME_SIZE+1]="";
   char locname [MED_NAME_SIZE+1]="";
   char meshname [MED_NAME_SIZE+1]="";
@@ -2345,6 +2360,27 @@ med_err getFieldsOn(const med_idt fid,
     break;
   }
 
+  /*On itère sur les types géométriques ds la boucle externe à cause de la compatibilité 23 :
+    En V2.3.6 :
+    /CHA/<fieldname>/<entitytype>[.<geotype>]/" ....<numdt> ...<numit>"/<meshname>/MED_NOM_CO
+        {MED_NOM_TYP,                        {MED_NOM_NDT,MED_NOM_PDT,  {MED_NOM_NBR,
+         MED_NOM_NCO                          MED_NOM_NOR,MED_NOM_MAI    MED_NOM_PFL,
+         MED_NOM_NOM,                         MED_NOM_UNI}               MED_NOM_GAU,
+         MED_NOM_UNI}                                                    MED_NOM_NGA}
+   V3.0 :
+    /CHA/<fieldname>/" ....<numdt> ...<numit>"/<entitytype>[.<geotype>]/<pflname>/MED_NOM_CO
+        {MED_NOM_TYP, {MED_NOM_PDT,                   {MED_NOM_PFL(2),   {MED_NOM_NBR(1),
+        MED_NOM_MAI,   MED_NOM_NDT,MED_NOM_NOR,        MED_NOM_GAUSS(2)}  MED_NOM_GAU(2),
+        MED_NOM_NCO,   MED_NOM_RDT,MED_NOM_ROR}        MED_NOM_NGA}
+        MED_NOM_NOM,
+        MED_NOM_UNI,
+        MED_NOM_UNT}
+
+   */
+  /*
+    TODO : Versionner getFieldsOn en 3.0 pour rendre l'algorithme plus efficace en fonction de la version de fichier lu.
+  */
+  
   for (k=1;k<=nb_geo;k++) {
 
     /* Combien de (PDT,NOR) a lire */
@@ -2384,7 +2420,12 @@ med_err getFieldsOn(const med_idt fid,
 	    ret = -1; continue;
 	  };
 
-	  if ( (!strcmp(meshname,maillage)) && (meshnumdt == mnumdt) && (meshnumit == mnumit) ) {
+	  /* Affiche uniquement les informations du champ pour le maillage demandé <maillage,numit,nmumdt> 
+	    Si le maillage demandé n'est pas précisé maillage == "", affiche les informations du champ 
+	    pour tous les maillages */
+	  if ( ( (!strcmp(meshname,maillage)) && (meshnumdt == mnumdt) && (meshnumit == mnumit)) ||
+	       (  !strlen(maillage) )
+	     ) {
 
 	    /*4 caractères spéciaux*/
 	    _bannerstr1 = "(* CHAMP |%s| A L'ÉTAPE DE CALCUL (n°dt,n°it)="
@@ -2455,32 +2496,29 @@ med_err getFieldsOn(const med_idt fid,
 	    }
 
 	    /*Lecture des valeurs du champ */
-	    if (typcha == MED_FLOAT64) {
+	    switch(typcha)  {
+	    case MED_FLOAT64: medtype_size=sizeof(med_float64); break;
+	    case MED_FLOAT32: medtype_size=sizeof(med_float32); break;
+	    case MED_INT32  : medtype_size=sizeof(med_int32  ); break;
+	    case MED_INT64  : medtype_size=sizeof(med_int64  ); break;
+	    case MED_INT    : medtype_size=sizeof(med_int)    ; break;
+	    default:
+	      MESSAGE("Erreur a la lecture du type de champ : ");
+	      ISCRUTE_int(typcha);
+              EXIT_IF(NULL == NULL,NULL,NULL);
+	    }
+	    
+	    val = (unsigned char*) calloc(ncomp*nval*ngauss,medtype_size);
+	    EXIT_IF(val == NULL,NULL,NULL);
+	     
 
-	      valr = (med_float*) calloc(ncomp*nval*ngauss,sizeof(med_float));
-	      EXIT_IF(valr == NULL,NULL,NULL);
-
-	      if (MEDfield23ValueWithProfileRd(fid, nomcha, numdt,numo, entite,type_geo[k],meshname,
+	    if (MEDfield23ValueWithProfileRd(fid, nomcha, numdt,numo, entite,type_geo[k],meshname,
 					       USER_MODE, pflname, stockage,MED_ALL_CONSTITUENT,
-					       (unsigned char*) valr) < 0 ) {
-		MESSAGE("Erreur a la lecture des valeurs du champ : ");
-		SSCRUTE(nomcha);ISCRUTE_int(entite);ISCRUTE_int(type_geo[k]);
-		ISCRUTE(numdt);ISCRUTE(numo);
-		ret = -1;
-	      }
-	    } else {
-
-	      vale = (med_int*) calloc(ncomp*nval*ngauss,sizeof(med_int));
-	      EXIT_IF(vale == NULL,NULL,NULL);
-
-	      if (MEDfield23ValueWithProfileRd(fid, nomcha, numdt,numo, entite,type_geo[k],meshname,
-					       USER_MODE, pflname, stockage,MED_ALL_CONSTITUENT,
-					       (unsigned char*) vale) < 0 ) {
-		MESSAGE("Erreur a la lecture des valeurs du champ : ");
-		SSCRUTE(nomcha);ISCRUTE_int(entite);ISCRUTE_int(type_geo[k]);
-		ISCRUTE(numdt);ISCRUTE(numo);
-		ret = -1;
-	      }
+					     (unsigned char*) val) < 0 ) {
+	      MESSAGE("Erreur a la lecture des valeurs du champ : ");
+	      SSCRUTE(nomcha);ISCRUTE_int(entite);ISCRUTE_int(type_geo[k]);
+	      ISCRUTE(numdt);ISCRUTE(numo);
+	      ret = -1;
 	    }
 
 	    if ( strlen(locname) && (_nprofile > 1) )
@@ -2492,32 +2530,67 @@ med_err getFieldsOn(const med_idt fid,
 	      ngroup = ngauss;
 
 	    switch (stockage) {
-
+      
 	    case MED_FULL_INTERLACE :
 	      if (!structure) {
 		printf("\t- Valeurs :\n\t");
 		for (m=0;m<(nval*ngauss)/ngroup;m++) {
 		  printf("|");
 		  for (n=0;n<ngroup*ncomp;n++)
-		    if (typcha == MED_FLOAT64)
-		      printf(" %f ",*(valr+(m*ngroup*ncomp)+n));
-		    else
-		      printf(" "IFORMAT" ",*(vale+(m*ngroup*ncomp)+n));
+		    switch(typcha)  {
+		    case MED_FLOAT64:
+		      printf(" %f ",*(((med_double*)val)+(m*ngroup*ncomp)+n  ) );
+		      /* printf(" %f ",  ((med_double*)val)[(m*ngroup*ncomp)+n]    ); */
+		      /* printf(" %f ", *( val+medtype_size*((m*ngroup*ncomp)+n))  ); */
+		      break;
+		    case MED_FLOAT32:
+		      printf(" %f ",*(((med_float32*)val)+((m*ngroup*ncomp)+n)));
+		      break;
+		    case MED_INT32  :
+		      printf(" %d ",*(((med_int32*)val)+(m*ngroup*ncomp)+n));
+		      break;
+		    case MED_INT64  :
+		      printf(" %ld ",*(((med_int64*)val)+(m*ngroup*ncomp)+n));
+		      break;
+		    case MED_INT    :
+		      printf(" "IFORMAT" ",*(((med_int*)val)+(m*ngroup*ncomp)+n));
+		      break;
+		    default:
+		      break;
+		    }
 		}
 	      }
 	      break;
 
+	      
 	      /*??? Affichage en fonction du profil à traiter ???*/
-	    case MED_NO_INTERLACE :
+            case MED_NO_INTERLACE :
 	      if (!structure) {
 		printf("\t- Valeurs :\n\t");
 		for (m=0;m<ncomp;m++) {
 		  printf("|");
 		  for (n=0;n<(nval*ngauss);n++)
-		    if (typcha == MED_FLOAT64)
-		      printf(" %f ",*(valr+(m*nval)+n));
-		    else
-		      printf(" "IFORMAT" ",*(vale+(m*nval)+n));
+		    switch(typcha)  {
+		    case MED_FLOAT64:
+		      printf(" %f ",*(((med_double*)val)+(m*nval*ngauss)+n  ) );
+		      /* printf("  %f ",  ((med_double*)val)[(m*nval)+n]    ); */
+		      /* printf("  %f ", *( val+medtype_size*((m*nval)+n))  ); */
+		      break;
+		    case MED_FLOAT32:
+		      printf(" %f ",*(((med_float32*)val)+((m*nval*ngauss)+n)));
+		      break;
+		    case MED_INT32  :
+		      printf(" %d ",*(((med_int32*)val)+(m*nval*ngauss)+n));
+		      break;
+		    case MED_INT64  :
+		      printf(" %ld ",*(((med_int64*)val)+(m*nval*ngauss)+n));
+		      break;
+		    case MED_INT    :
+		      printf(" "IFORMAT" ",*(((med_int*)val)+(m*nval*ngauss)+n));
+		      break;
+		    default:
+		      break;
+		    }
 		}
 	      }
 	      break;
@@ -2527,11 +2600,8 @@ med_err getFieldsOn(const med_idt fid,
 	      printf("|\n");
 	    }
 
-	    if (typcha == MED_FLOAT64) {
-	      if ( valr ) {free(valr);valr = NULL;}}
-	    else
-	      if (vale) { free(vale);vale = NULL; }
-
+	    if ( val ) {free(val);val = NULL;}
+	   
 	    /*Lecture du profil associe */
 	    if (strcmp(pflname,MED_NO_PROFILE) == 0 ) {
 	      printf("\t- Profil : MED_NOPFL\n");
@@ -2611,7 +2681,7 @@ void lecture_resultats(const med_idt fid,
 
   if ( !strlen(maillage) || lecture_en_tete_seulement ) {
     fprintf(stdout,"\n(************************)\n");
-    fprintf(stdout,"(* CHAMPS DU MAILLAGE : *)\n");
+    fprintf(stdout,"(* CHAMPS RESULTATS   : *)\n");
     fprintf(stdout,"(************************)\n");
     fprintf(stdout,"- Nombre de champs : "IFORMAT" \n",ncha);
   }
@@ -2621,7 +2691,7 @@ void lecture_resultats(const med_idt fid,
   ****************************************************************************/
   ret = 0;
 
-  /* lecture de tous les champs  pour le maillage selectionne */
+  /* lecture de tous les champs pour le maillage selectionne */
   for (i =0;i<ncha;i++) {
     lret = 0;
 
@@ -2876,7 +2946,7 @@ void lecture_modeles_elstruct(med_idt fid,
   med_geometry_type _geocelltype=MED_NONE;
   char              _geocelltypename[MED_SNAME_SIZE+1]="";
   med_int           _nconstantattribute=0;
-  med_bool          _anyprofile=0;
+  med_bool          _anyprofile=MED_FALSE;
   med_int           _nvariableattribute=0;
 
   char               _constattname[MED_NAME_SIZE+1]="";
@@ -2944,10 +3014,10 @@ void lecture_modeles_elstruct(med_idt fid,
 	  _nvalue = _profilesize;
 	}
 	_n     = _ncomponent*_nvalue;
-	if ( _attentitytype == MED_ATT_NAME) ++_n;
+	if ( _constatttype == MED_ATT_NAME) ++_n;
         _atttypesize = MEDstructElementAttSizeof(_constatttype);
 	_value = (unsigned char *) malloc(_n*_atttypesize);
-	if ( _attentitytype == MED_ATT_NAME) --_n;
+	if ( _constatttype == MED_ATT_NAME) --_n;
 
         _ret= MEDstructElementConstAttRd(fid, _elementname,_constattname, _value );
         if (_ret < 0 ) free(_value);
@@ -3116,10 +3186,10 @@ void lecture_fonctions_interpolation(med_idt fid,
  *
  ******************************************************************************/
 
-void lecture_liens(med_idt fid,
+void lecture_liens(med_idt fid,med_bool montage,
 		   int lecture_en_tete_seulement)
 {
-  med_err ret;
+  med_err ret=0;
   char nomlien[MED_NAME_SIZE+1]="";
   char *lien = NULL;
   med_int nln=0,nval=0;
@@ -3151,8 +3221,16 @@ void lecture_liens(med_idt fid,
       SSCRUTE(nomlien);SSCRUTE(lien);
       ret = -1;
     } else {
-      lien[nval] = '\0';
+      lien[nval] = '\0'; /*On s'assure qu'il y a un terminateur de chaîne */
       printf("\t\t|%s|\n\n",lien);
+
+      /*Si le montage des liens est demandé : montage les liens */
+      if (montage)
+	if (( FIDS.array[FIDS.n++]=MEDfileObjectsMount(fid,  lien,MED_MESH)) < 0 ) {
+	  printf("Erreur au montage du lien : |%s|\n",lien);
+	  FIDS.array[FIDS.n--]=0;
+	  ret=-1;
+	}
     }
     free(lien);
   }
@@ -3315,6 +3393,7 @@ med_idt ouverture_fichier_MED(char *fichier)
 	  majeur,mineur,release);
 
   /* Ouverture du fichier MED en lecture seule */
+  /* Le mode lecture seul ne permet pas le montage de fichier distants*/
   fid = MEDfileOpen(fichier,MED_ACC_RDONLY);
   EXIT_IF( fid < 0,"Ouverture du du fichier ",fichier);
 
@@ -3446,29 +3525,31 @@ int main (int argc, char **argv)
 {
   med_err ret = 0;
   med_idt fid;
-  int i=0,numero=0,firstmesh=0,lastmesh=0,meshit=0;
+  int     i=0,numero=0,firstmesh=0,lastmesh=0,meshit=0;
   med_switch_mode       mode_coo = MED_UNDEF_INTERLACE;
   med_connectivity_mode typ_con  = MED_UNDEF_CONNECTIVITY_MODE;
-  int     lecture_en_tete_seulement = 0;
-  med_int mdim=0,nmaa=0,nmaasup=0;
-  char    nommaa[MED_NAME_SIZE+1];
-  char    maillage_description[MED_COMMENT_SIZE+1];
+  int           lecture_en_tete_seulement = 0;
+  med_int       mdim=0,nmaa=0,nmaasup=0;
+  char          nommaa[MED_NAME_SIZE+1];
+  char          maillage_description[MED_COMMENT_SIZE+1];
   med_mesh_type type_maillage;
-  med_int edim;
-  int     decalage;
-  char nomcoo[3*MED_SNAME_SIZE+1]="";
-  char unicoo[3*MED_SNAME_SIZE+1]="";
-  char dtunit[MED_SNAME_SIZE+1]="";
-  med_int   nstep=0,numdt=MED_NO_DT,numit=MED_NO_IT;
-  int       csit=0;
-  med_float dt=0.0;
-  med_axis_type  rep;
+  med_int       edim;
+  int           decalage;
+  char          nomcoo[3*MED_SNAME_SIZE+1]="";
+  char          unicoo[3*MED_SNAME_SIZE+1]="";
+  char          dtunit[MED_SNAME_SIZE+1]="";
+  med_int       nstep=0,numdt=MED_NO_DT,numit=MED_NO_IT;
+  int           csit=0;
+  med_float     dt=0.0;
+  med_axis_type rep;
 
   /*Gestion des paramètres de la ligne de commande*/
-  char      *filename=NULL,*typ_con_param=NULL,*mode_coo_param=NULL;
-        size_t _bannerlen=0;
-  char         _temp[MAXBANNERLEN+1]="";
-  char *       _bannerstr=NULL;
+  char          *filename=NULL,*typ_con_param=NULL,*mode_coo_param=NULL;
+  size_t        _bannerlen=0;
+  char          _temp[MAXBANNERLEN+1]="";
+  char *        _bannerstr=NULL;
+  /* Focntionnalité non encore activée.*/
+  med_bool      _montage=MED_FALSE;
 
   /*Modèles d'élements de structure utilisés par le maillage spécifié*/
   /*Celà permet de demander les champs uniquement sur ces modèles*/
@@ -3479,20 +3560,32 @@ int main (int argc, char **argv)
 
   /****************************************************************************
   *                  TEST DU NOMBRE D'ARGUMENTS                               *
-  *                  argument 1 = nom du fichier MED                          *
   ****************************************************************************/
 
   structure = 0;
   decalage  = 0;
+  
   if (argc > 2 && strcmp(argv[1], "--structure") == 0) {
     --argc;++decalage;
     structure = 1;
   }
 
-  if ( (argc !=  2) && (argc !=  5) )
+  /*S'il y a deux arguments nous sommes en interactif, sinon il en faut 5*/
+  if ( (argc !=  2) && (argc !=  5) ) {
 /*     fprintf(stderr,"Utilisation mdump [--structure] monfichier.med\n"); */
     fprintf(stderr,"Utilisation mdump [--structure] monfichier.med [ NODALE|DESCENDANTE "
 	    "NO_INTERLACE|FULL_INTERLACE|LECTURE_EN_TETE_SEULEMENT N°MAILLAGE|0 pour tous ] \n");
+    fprintf(stderr,
+	    "\t--structure               : Lis l'ensemble des données sans afficher les données volumineuses\n"
+	    "\tNODALE                    : Scrute la connectivité nodale      des maillages\n"
+	    "\tDESCENDANTE               : Scrute la connectivité descendante des maillages\n"
+            "\tFULL_INTERLACE            : Affiche les connectivités en mode      entrelacé x1y1x2y2\n"
+            "\tNO_INTERLACE              : Affiche les connectivités en mode  non entrelacé x1x2y1y2\n"
+            "\tLECTURE_EN_TETE_SEULEMENT : Affiche uniquement les entêtes, désactive la lecture et l'affichage des données volumineuses\n"
+	    "\tN°MAILLAGE ==  i          : Affiche le maillage n°i et ses champs associés\n"
+	    "\tN°MAILLAGE ==  0          : Affiche l'ensemble des maillages et leurs champs associés\n"
+	    "\tN°MAILLAGE == -1          : Affiche l'ensemble des champs qu'ils soient associés ou non à un maillage local\n");
+  }
   EXIT_IF( (argc !=  2) && (argc !=  5),"nombre de parametres incorrect\n",NULL);
 
 
@@ -3534,6 +3627,17 @@ int main (int argc, char **argv)
   }
 
 
+   /****************************************************************************
+   *                       LIENS                                      *
+   ****************************************************************************/
+  
+  /*On s'informe sur les liens avant de vérifier les paramètres de la ligne de commande
+    afin de proposer le montage des maillages distants et de les comptabiliser dans les maillages disponibles */
+  /* Cette option n'est pas encore activée */
+  lecture_liens(fid, _montage, lecture_en_tete_seulement);
+/*   _MEDobjetsOuverts(fid); */
+
+
   /****************************************************************************
    *                      QUEL MAILLAGE LIRE ?                                *
    ***************************************************************************/
@@ -3543,24 +3647,24 @@ int main (int argc, char **argv)
   /* Quel maillage lire ? */
   if (argc == 2) {
     if (nmaa >0) {
-      fprintf(stdout,"- Il y a "IFORMAT" maillages dans ce fichier \n",nmaa);
+      fprintf(stdout,"- Il y a "IFORMAT" maillage(s) de type local dans ce fichier \n",nmaa);
       fprintf(stdout,"  Lequel voulez-vous lire (0 pour tous|1|2|3|...|n) ?\n");
       do {
 	fprintf(stdout,"  Reponse : ");
 	if (!scanf("%d",&numero)) fgets(_temp, 256, stdin) ;
-      } while ( (numero > nmaa) || (numero < 0) );
+      } while ( (numero > nmaa) || (numero < -1) );
     } else {
-      fprintf(stdout,"- Il n'y a pas de maillage dans ce fichier \n");
+      fprintf(stdout,"- Il n'y a pas de maillage local dans ce fichier \n");
     }
   } else {
       if ( argc == 5 ) {
       numero = atoi(argv[4 + decalage]);
-      EXIT_IF(numero > nmaa || numero < 0,"ce numero de maillage n'existe pas", NULL);
+      EXIT_IF(numero > nmaa || numero < -1,"ce numero de maillage n'existe pas", NULL);
     }
   }
 
   /****************************************************************************
-   *                       MAILLAGES SUPPORTS                               *
+   *                       MAILLAGES SUPPORTS                                 *
    ****************************************************************************/
 
     nmaasup= MEDnSupportMesh(fid);
@@ -3623,76 +3727,103 @@ int main (int argc, char **argv)
     lecture_fonctions_interpolation( fid, lecture_en_tete_seulement);
 /*   _MEDobjetsOuverts(fid); */
 
-  /****************************************************************************
-   *                       LIENS                                      *
-   ****************************************************************************/
-  lecture_liens(fid,lecture_en_tete_seulement);
-/*   _MEDobjetsOuverts(fid); */
 
-  /****************************************************************************
-   *                       INFOS GENERALES SUR LE MAILLAGE                    *
-   ****************************************************************************/
-  if (numero) {
+    /**********************************************************************************
+   *            INFOS GENERALES SUR LE MAILLAGE, PUIS MAILLAGE+CHAMPS SUR CE MAILLAGE *
+   ***********************************************************************************/
+  if (numero > 0) {
    firstmesh=numero;lastmesh=numero;
-  } else {
+  } else if (numero == 0) {
    firstmesh=1;lastmesh=nmaa;
+  } else {
+    firstmesh = nmaa +1;
   }
 
   for (meshit=firstmesh;meshit<=lastmesh;++meshit) {
 
     lecture_information_maillage(fid,meshit,nommaa,&mdim,&edim,&type_maillage,
 				 maillage_description,&nstep,dtunit,nomcoo,unicoo,&rep);
-/*   _MEDobjetsOuverts(fid); */
+    /*   _MEDobjetsOuverts(fid); */
 
-    for (csit=1; csit <= nstep; ++csit) {
+    if ( nstep == 0 ) {
+      fprintf(stderr,"Warning : Ce maillage n'a aucune étape de calcul, ceci est anormal..."
+	      "\n\t  Recherche des champs résultats associés à ce maillage.\n");
+      csit=0;}
+    else csit =1;
+    for (; csit <= nstep; ++csit) {
 
-      ret = MEDmeshComputationStepInfo(fid, nommaa, csit, &numdt, &numit, &dt);
-      EXIT_IF(ret < 0,"lors de l'appel à MEDmeshComputationStepInfo",NULL);
+      if (csit) {
+	
+	ret = MEDmeshComputationStepInfo(fid, nommaa, csit, &numdt, &numit, &dt);
+	EXIT_IF(ret < 0,"lors de l'appel à MEDmeshComputationStepInfo",NULL);
 
-/*       fprintf(stdout,"\n(*********************************************************************************)\n"); */
-/*       fprintf(stdout,  "(* MAILLAGE DE CALCUL |%s| N°%2.2d À L'ÉTAPE DE CALCUL (n°dt,n°it)=" */
-/* 	      "(% 2.2"MED_IFORMAT",% 2.2"MED_IFORMAT"): *)\n",nommaa,meshit,numdt,numit); */
-/*       fprintf(stdout,  "(*********************************************************************************)\n\n"); */
+	/*       fprintf(stdout,"\n(*********************************************************************************)\n"); */
+	/*       fprintf(stdout,  "(* MAILLAGE DE CALCUL |%s| N°%2.2d À L'ÉTAPE DE CALCUL (n°dt,n°it)=" */
+	/* 	      "(% 2.2"MED_IFORMAT",% 2.2"MED_IFORMAT"): *)\n",nommaa,meshit,numdt,numit); */
+	/*       fprintf(stdout,  "(*********************************************************************************)\n\n"); */
 
-      /*les caractères ° sont comptabilisés comme deux caractères en locale "C" ? */
-      _bannerstr ="(* MAILLAGE DE CALCUL |%s| n°%2.2d A L'ETAPE DE CALCUL (n°dt,n°it)="
-	"(% 2.2"MED_IFORMAT",% 2.2"MED_IFORMAT"): %.*s*)\n";
-      snprintf(_temp,MAXBANNERLEN+1,_bannerstr,nommaa,meshit,numdt,numit,0,"");
-      _bannerlen =strlen(_temp);
-      fprintf(stdout,"\n(");
-      for (i=0;i< _bannerlen-6; i++) fprintf(stdout,"*");
-      fprintf(stdout,")\n%s(",_temp);
-      for (i=0;i< _bannerlen-6; i++) fprintf(stdout,"*");
-      fprintf(stdout,")\n");
+	/*les caractères ° sont comptabilisés comme deux caractères en locale "C" ? */
+	_bannerstr ="(* MAILLAGE DE CALCUL |%s| n°%2.2d A L'ETAPE DE CALCUL (n°dt,n°it)="
+	  "(% 2.2"MED_IFORMAT",% 2.2"MED_IFORMAT"): %.*s*)\n";
+	snprintf(_temp,MAXBANNERLEN+1,_bannerstr,nommaa,meshit,numdt,numit,0,"");
+	_bannerlen =strlen(_temp);
+	fprintf(stdout,"\n(");
+	for (i=0;i< _bannerlen-6; i++) fprintf(stdout,"*");
+	fprintf(stdout,")\n%s(",_temp);
+	for (i=0;i< _bannerlen-6; i++) fprintf(stdout,"*");
+	fprintf(stdout,")\n");
 
- /****************************************************************************
-  *                      LECTURE DU MAILLAGE ET DES RESULTATS ASSOCIES        *
-  ****************************************************************************/
-/*   _MEDobjetsOuverts(fid); */
+	/****************************************************************************
+	 *                      LECTURE DU MAILLAGE ET DES RESULTATS ASSOCIES        *
+	 ****************************************************************************/
+	/*   _MEDobjetsOuverts(fid); */
 
-        if (type_maillage == MED_UNSTRUCTURED_MESH)
-          lecture_maillage_non_structure(fid,nommaa,numdt,numit,mdim,edim,mode_coo,typ_con,
+	if (type_maillage == MED_UNSTRUCTURED_MESH)
+	  lecture_maillage_non_structure(fid,nommaa,numdt,numit,mdim,edim,mode_coo,typ_con,
 					 nomcoo,unicoo,&rep,
 					 &_nmodels,&_geotype_elst,&_geotypename_elst,
 					 lecture_en_tete_seulement);
-        else {
+	else {
 	  lecture_maillage_structure(fid,nommaa,numdt,numit,mdim,edim,mode_coo,
 				     nomcoo,unicoo,lecture_en_tete_seulement);
+	}
+	/*   _MEDobjetsOuverts(fid); */
+
       }
-/*   _MEDobjetsOuverts(fid); */
-        /* on lit ensuite les resultats associes au maillage selectionne */
-        lecture_resultats(fid,nommaa,numdt,numit,mode_coo,
-			  _nmodels,_geotype_elst,_geotypename_elst,
-			  lecture_en_tete_seulement);
-/*   _MEDobjetsOuverts(fid); */
-        free(_geotype_elst);
-        free(_geotypename_elst);
+      /* on lit ensuite les resultats associes au 
+	 maillage selectionné à une étape de calcul de maillage donnée */
+      lecture_resultats(fid,nommaa,numdt,numit,mode_coo,
+			_nmodels,_geotype_elst,_geotypename_elst,
+			lecture_en_tete_seulement);
+
+      free(_geotype_elst);
+      free(_geotypename_elst);
     }
   }
 
+
  /****************************************************************************
+  *          LECTURE DES CHAMPS RESULTATS QLQ SOIENT LES MAILLAGES           *
+  ****************************************************************************/
+
+  if (numero == -1) {
+    lecture_resultats(fid,"",numdt,numit,mode_coo,
+		      _nmodels,_geotype_elst,_geotypename_elst,
+		      lecture_en_tete_seulement);
+    
+    free(_geotype_elst);
+    free(_geotypename_elst);
+  }
+  
+  /****************************************************************************
  *                      FERMETURE DU FICHIER                                 *
  ****************************************************************************/
+  for (i=1;i < FIDS.n ; ++i)
+    if ( MEDfileObjectsUnmount(fid, FIDS.array[i], MED_MESH) < 0 ) {
+      printf("Erreur de démontage du fichier n°%d\n",i);
+    }
+
+
  ret = MEDfileClose(fid);
  EXIT_IF(ret < 0,"lors de la fermeture du fichier",argv[1 + decalage]);
 

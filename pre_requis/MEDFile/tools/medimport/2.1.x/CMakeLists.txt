@@ -1,24 +1,14 @@
 SET(medimport21x_SOURCES
   MAJ_21_22_chaine.c
-  #MAJ_21_22_noeuds_maillagebuilt.cxx
-  MAJ_21_22_maillages.c
-  #MAJ_21_22_elements_maillagebuilt.cxx
-  MAJ_21_22_profilsbuilt.cxx
-  #MAJ_21_22_familles_maillagebuilt.cxx
-  MAJ_21_22_chainebuilt.cxx
-  MAJ_21_22_localisation_Gaussbuilt.cxx
-  MAJ_21_22_elements_maillage.c
-  MAJ_21_22_noeuds_maillage.c
-  MED21datasetNumLirebuilt.cxx
-  MED21attrNumLire.c
   MAJ_21_22_champs.c
-  #MAJ_21_22_champsbuilt.cxx
-  MAJ_21_22_profils.c
-  MED21datasetNumLire.c
+  MAJ_21_22_elements_maillage.c
   MAJ_21_22_familles_maillage.c
-  MED21attrNumLirebuilt.cxx
   MAJ_21_22_localisation_Gauss.c
-  #MAJ_21_22_maillagesbuilt.cxx
+  MAJ_21_22_maillages.c
+  MAJ_21_22_noeuds_maillage.c
+  MAJ_21_22_profils.c
+  MED21attrNumLire.c
+  MED21datasetNumLire.c
 )
 
 # Include are specific for the 2.3.6 version - make sure they get incl first:

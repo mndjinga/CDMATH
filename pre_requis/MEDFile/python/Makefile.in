@@ -89,44 +89,58 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
+@MED_SWIG_INT64_TRUE@am__append_1 = -DSWIGWORDSIZE64
+@WITH_PYTHON_TRUE@am__append_2 = __init__.py
 
 ########################################
-@WITH_PYTHON_TRUE@am__append_1 = __init__.py medlibrary.py medfile.py \
-@WITH_PYTHON_TRUE@	medenum.py medmesh.py medfield.py \
-@WITH_PYTHON_TRUE@	medfamily.py medequivalence.py \
-@WITH_PYTHON_TRUE@	medenumtest.py medprofile.py \
-@WITH_PYTHON_TRUE@	medlocalization.py medlink.py \
+@WITH_PYTHON_TRUE@am__append_3 = medlibrary.py medfile.py medenum.py \
+@WITH_PYTHON_TRUE@	medmesh.py medfield.py medfamily.py \
+@WITH_PYTHON_TRUE@	medequivalence.py medenumtest.py \
+@WITH_PYTHON_TRUE@	medprofile.py medlocalization.py medlink.py \
 @WITH_PYTHON_TRUE@	medparameter.py medfilter.py medsubdomain.py \
 @WITH_PYTHON_TRUE@	medinterp.py
-@WITH_PYTHON_TRUE@am__append_2 = _medlibrary.la _medfile.la \
+@WITH_PYTHON_TRUE@am__append_4 = _medlibrary.la _medfile.la \
 @WITH_PYTHON_TRUE@	_medenum.la _medmesh.la _medfield.la \
 @WITH_PYTHON_TRUE@	_medfamily.la _medequivalence.la \
 @WITH_PYTHON_TRUE@	_medenumtest.la _medprofile.la \
 @WITH_PYTHON_TRUE@	_medlocalization.la _medlink.la \
 @WITH_PYTHON_TRUE@	_medparameter.la _medfilter.la \
 @WITH_PYTHON_TRUE@	_medsubdomain.la _medinterp.la
-@WITH_PYTHON_TRUE@am__append_3 = medlibrary.py \
+@WITH_PYTHON_TRUE@am__append_5 = medlibrary.py \
+@WITH_PYTHON_TRUE@	medlibrary_@LONG_OR_INT@.py \
 @WITH_PYTHON_TRUE@	medlibrary_@LONG_OR_INT@_wrap.cc medfile.py \
+@WITH_PYTHON_TRUE@	medfile_@LONG_OR_INT@.py \
 @WITH_PYTHON_TRUE@	medfile_@LONG_OR_INT@_wrap.cc medenum.py \
+@WITH_PYTHON_TRUE@	medenum_@LONG_OR_INT@.py \
 @WITH_PYTHON_TRUE@	medenum_@LONG_OR_INT@_wrap.cc medmesh.py \
+@WITH_PYTHON_TRUE@	medmesh_@LONG_OR_INT@.py \
 @WITH_PYTHON_TRUE@	medmesh_@LONG_OR_INT@_wrap.cc medfield.py \
+@WITH_PYTHON_TRUE@	medfield_@LONG_OR_INT@.py \
 @WITH_PYTHON_TRUE@	medfield_@LONG_OR_INT@_wrap.cc medfamily.py \
+@WITH_PYTHON_TRUE@	medfamily_@LONG_OR_INT@.py \
 @WITH_PYTHON_TRUE@	medfamily_@LONG_OR_INT@_wrap.cc \
 @WITH_PYTHON_TRUE@	medequivalence.py \
+@WITH_PYTHON_TRUE@	medequivalence_@LONG_OR_INT@.py \
 @WITH_PYTHON_TRUE@	medequivalence_@LONG_OR_INT@_wrap.cc \
-@WITH_PYTHON_TRUE@	medenumtest.py \
+@WITH_PYTHON_TRUE@	medenumtest.py medenumtest_@LONG_OR_INT@.py \
 @WITH_PYTHON_TRUE@	medenumtest_@LONG_OR_INT@_wrap.cc \
-@WITH_PYTHON_TRUE@	medprofile.py \
+@WITH_PYTHON_TRUE@	medprofile.py medprofile_@LONG_OR_INT@.py \
 @WITH_PYTHON_TRUE@	medprofile_@LONG_OR_INT@_wrap.cc \
 @WITH_PYTHON_TRUE@	medlocalization.py \
+@WITH_PYTHON_TRUE@	medlocalization_@LONG_OR_INT@.py \
 @WITH_PYTHON_TRUE@	medlocalization_@LONG_OR_INT@_wrap.cc \
-@WITH_PYTHON_TRUE@	medlink.py medlink_@LONG_OR_INT@_wrap.cc \
+@WITH_PYTHON_TRUE@	medlink.py medlink_@LONG_OR_INT@.py \
+@WITH_PYTHON_TRUE@	medlink_@LONG_OR_INT@_wrap.cc \
 @WITH_PYTHON_TRUE@	medparameter.py \
+@WITH_PYTHON_TRUE@	medparameter_@LONG_OR_INT@.py \
 @WITH_PYTHON_TRUE@	medparameter_@LONG_OR_INT@_wrap.cc \
-@WITH_PYTHON_TRUE@	medfilter.py medfilter_@LONG_OR_INT@_wrap.cc \
+@WITH_PYTHON_TRUE@	medfilter.py medfilter_@LONG_OR_INT@.py \
+@WITH_PYTHON_TRUE@	medfilter_@LONG_OR_INT@_wrap.cc \
 @WITH_PYTHON_TRUE@	medsubdomain.py \
+@WITH_PYTHON_TRUE@	medsubdomain_@LONG_OR_INT@.py \
 @WITH_PYTHON_TRUE@	medsubdomain_@LONG_OR_INT@_wrap.cc \
-@WITH_PYTHON_TRUE@	medinterp.py medinterp_@LONG_OR_INT@_wrap.cc
+@WITH_PYTHON_TRUE@	medinterp.py medinterp_@LONG_OR_INT@.py \
+@WITH_PYTHON_TRUE@	medinterp_@LONG_OR_INT@_wrap.cc
 subdir = python
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/config/ac_check_sizeof_fortran.m4 \
@@ -150,6 +164,7 @@ am__aclocal_m4_deps = $(top_srcdir)/config/ac_check_sizeof_fortran.m4 \
 	$(top_srcdir)/config/med_check_python.m4 \
 	$(top_srcdir)/config/med_check_swig.m4 \
 	$(top_srcdir)/config/med_check_typeof_hidt.m4 \
+	$(top_srcdir)/config/med_check_typeof_int64.m4 \
 	$(top_srcdir)/config/med_check_typeof_medint.m4 \
 	$(top_srcdir)/config/med_disable_api23.m4 \
 	$(top_srcdir)/config/med_enable_check23.m4 \
@@ -452,11 +467,7 @@ am__can_run_installinfo = \
 am__py_compile = PYTHON=$(PYTHON) $(SHELL) $(py_compile)
 am__pep3147_tweak = \
   sed -e 's|\.py$$||' -e 's|[^/]*$$|__pycache__/&.*.py|'
-am__pkgpyexec_PYTHON_DIST = __init__.py medlibrary.py medfile.py \
-	medenum.py medmesh.py medfield.py medfamily.py \
-	medequivalence.py medenumtest.py medprofile.py \
-	medlocalization.py medlink.py medparameter.py medfilter.py \
-	medsubdomain.py medinterp.py
+am__pkgpyexec_PYTHON_DIST = __init__.py
 py_compile = $(top_srcdir)/config/py-compile
 DATA = $(pyexec_DATA) $(swig_DATA)
 am__tagged_files = $(HEADERS) $(SOURCES) $(TAGS_FILES) $(LISP)
@@ -527,7 +538,10 @@ EXEEXT = @EXEEXT@
 F77 = @F77@
 FC = @FC@
 FCFLAGS = @FCFLAGS@
+FCFLAGS_F = @FCFLAGS_F@
+FCFLAGS_F90 = @FCFLAGS_F90@
 FCLIBS = @FCLIBS@
+FC_DEFINE = @FC_DEFINE@
 FFLAGS = @FFLAGS@
 FGREP = @FGREP@
 FLIBS = @FLIBS@
@@ -567,6 +581,8 @@ MANIFEST_TOOL = @MANIFEST_TOOL@
 MED_API_23 = @MED_API_23@
 MED_CHECK_23FORMAT = @MED_CHECK_23FORMAT@
 MED_DEFINE_MED_HAVE_MPI = @MED_DEFINE_MED_HAVE_MPI@
+MED_INT32 = @MED_INT32@
+MED_INT64 = @MED_INT64@
 MED_NUM_MAJEUR = @MED_NUM_MAJEUR@
 MED_NUM_MINEUR = @MED_NUM_MINEUR@
 MED_NUM_RELEASE = @MED_NUM_RELEASE@
@@ -682,20 +698,20 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-MAINTAINERCLEANFILES = Makefile.in $(am__append_3)
+MAINTAINERCLEANFILES = Makefile.in $(am__append_5)
 AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_builddir)/include \
-	@HDF5_CPPFLAGS@ -DSWIG_TYPE_TABLE=medtable
+	@HDF5_CPPFLAGS@ -DSWIG_TYPE_TABLE=medtable $(am__append_1)
 AM_FFLAGS = -I$(top_srcdir)/include  -I$(top_builddir)/include
 AM_FCFLAGS = -I$(top_srcdir)/include  -I$(top_builddir)/include
 AM_LDFLAGS = @HDF5_LDFLAGS@
 #-debug-module 4 -debug-tmsearch -debug-tmused
 swigdir = $(includedir)/swig
 BUILT_SOURCES = swig_runtime.h
-pkgpyexec_PYTHON = $(am__append_1)
-nodist_pkgpyexec_PYTHON = 
+pkgpyexec_PYTHON = $(am__append_2)
+nodist_pkgpyexec_PYTHON = $(am__append_3)
 pyexec_LTLIBRARIES = 
-pkgpyexec_LTLIBRARIES = $(am__append_2)
-CLEANFILES = 
+pkgpyexec_LTLIBRARIES = $(am__append_4)
+CLEANFILES = medenum.py medenumtest.py medequivalence.py medfamily.py medfield.py medfile.py medfilter.py medinterp.py medlibrary.py medlink.py medlocalization.py medmesh.py medparameter.py medprofile.py medsubdomain.py 
 DISTCLEANFILES = 
 #DISTCLEANFILES          = $(BUILT_SOURCES) $(pkgpyexec_PYTHON)
 EXTRA_DIST = pyiterators_881.i med_881.i med_common.i \
@@ -714,7 +730,17 @@ EXTRA_DIST = pyiterators_881.i med_881.i med_common.i \
 	medinterp_long_wrap.cc medlocalization_long_wrap.cc \
 	medprofile_long_wrap.cc medequivalence_long_wrap.cc \
 	medfile_long_wrap.cc medlibrary_long_wrap.cc \
-	medmesh_long_wrap.cc medsubdomain_long_wrap.cc CMakeLists.txt
+	medmesh_long_wrap.cc medsubdomain_long_wrap.cc medenum_int.py \
+	medfamily_int.py medfilter_int.py medlink_int.py \
+	medparameter_int.py medenumtest_int.py medfield_int.py \
+	medinterp_int.py medlocalization_int.py medprofile_int.py \
+	medequivalence_int.py medfile_int.py medlibrary_int.py \
+	medmesh_int.py medsubdomain_int.py medenum_long.py \
+	medfamily_long.py medfilter_long.py medlink_long.py \
+	medparameter_long.py medenumtest_long.py medfield_long.py \
+	medinterp_long.py medlocalization_long.py medprofile_long.py \
+	medequivalence_long.py medfile_long.py medlibrary_long.py \
+	medmesh_long.py medsubdomain_long.py CMakeLists.txt
 @WITH_PYTHON_TRUE@swig_DATA = pyiterators_881.i med_881.i med_common.i \
 @WITH_PYTHON_TRUE@	med_array_typemap.i med_bool_typemap.i \
 @WITH_PYTHON_TRUE@	med_char_typemap.i med_enumtest_typemap.i \
@@ -730,12 +756,17 @@ AM_LDLFLAGS = -shared
 AM_CFLAGS = -shared
 
 # Rules to build *.py, *_wrap.c  and *_module.i.dep from a *_module.i file
-SUFFIXES = _int_wrap.cc _long_wrap.cc _module.i .py
+SUFFIXES = _int_wrap.cc _long_wrap.cc _module.i .py _int.py _long.py
 
 # Crée une dépendance de reconstruction des wrappers si SWIG est activé
 # Crée aussi une dépendance au Makefile (inconvénients à voir)
 @WITH_SWIG_TRUE@MED_SWIG_SRC = Makefile
 @WITH_SWIG_TRUE@STARBASENAME = `expr $* : '.*/\(.*\)' '|' $*`
+
+# _int_wrap.cc.py:
+# 	@:
+# _long_wrap.cc.py:
+# 	@:
 @WITH_PYTHON_TRUE@pyexec_DATA = 
 @WITH_PYTHON_TRUE@_medlibrary_la_LDFLAGS = -module -no-undefined
 #_medlibrary_la_LDFLAGS = -avoid-version -module
@@ -860,7 +891,7 @@ all: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 
 .SUFFIXES:
-.SUFFIXES: _int_wrap.cc _long_wrap.cc _module.i .py .cc .lo .o .obj
+.SUFFIXES: _int_wrap.cc _long_wrap.cc _module.i .py _int.py _long.py .cc .lo .o .obj
 $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am $(top_srcdir)/config/automake.common $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
@@ -1525,6 +1556,7 @@ uninstall-am: uninstall-nodist_pkgpyexecPYTHON \
 
 .PRECIOUS: Makefile
 
+#AM_ETAGSFLAGS=
 #SWIG_PYTHON_OPT=
 
 swig_runtime.h:
@@ -1534,19 +1566,20 @@ swig_runtime.h:
 @AMDEP_TRUE@@WITH_SWIG_TRUE@	$(SWIG) $(SWIG_PYTHON_OPT) $(DEFS) $(AM_CPPFLAGS) $(SWIGFLAGS) -MT $@ -MM $< > $(DEPDIR)/$(STARBASENAME)_module.i.dep.tmp
 @AMDEP_TRUE@@WITH_SWIG_TRUE@	mv $(DEPDIR)/$(STARBASENAME)_module.i.dep.tmp $(DEPDIR)/$(STARBASENAME)_module.i.dep
 @WITH_SWIG_TRUE@	$(SWIG) $(SWIG_PYTHON_OPT) $(DEFS) $(AM_CPPFLAGS) $(SWIGFLAGS) -o $@.tmp $<
+@WITH_SWIG_TRUE@	mv $*.py $*_int.py
 @WITH_SWIG_TRUE@	mv $@.tmp $@
 
 @WITH_SWIG_TRUE@_module.i_long_wrap.cc:
 @AMDEP_TRUE@@WITH_SWIG_TRUE@	$(SWIG) $(SWIG_PYTHON_OPT) $(DEFS) $(AM_CPPFLAGS) $(SWIGFLAGS) -MT $@ -MM $< > $(DEPDIR)/$(STARBASENAME)_module.i.dep.tmp
 @AMDEP_TRUE@@WITH_SWIG_TRUE@	mv $(DEPDIR)/$(STARBASENAME)_module.i.dep.tmp $(DEPDIR)/$(STARBASENAME)_module.i.dep
 @WITH_SWIG_TRUE@	$(SWIG) $(SWIG_PYTHON_OPT) $(DEFS) $(AM_CPPFLAGS) $(SWIGFLAGS) -o ${@}.tmp $<
+@WITH_SWIG_TRUE@	mv $*.py $*_long.py
 @WITH_SWIG_TRUE@	mv ${@}.tmp ${@}
 
-_int_wrap.cc.py:
-	@:
-
-_long_wrap.cc.py:
-	@:
+#_int.py  -> .py:
+#_long.py -> _long.py:
+_@LONG_OR_INT@.py.py:
+	${CP} -f $< $@
 @WITH_PYTHON_TRUE@medlibrary_@LONG_OR_INT@_wrap.cc : $(MED_SWIG_SRC)
 
 @WITH_PYTHON_TRUE@@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/medlibrary_module.i.dep@am__quote@

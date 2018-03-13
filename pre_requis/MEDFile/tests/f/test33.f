@@ -1,6 +1,6 @@
 C*  This file is part of MED.
 C*
-C*  COPYRIGHT (C) 1999 - 2016  EDF R&D, CEA/DEN
+C*  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
 C*  MED is free software: you can redistribute it and/or modify
 C*  it under the terms of the GNU Lesser General Public License as published by
 C*  the Free Software Foundation, either version 3 of the License, or
@@ -59,8 +59,8 @@ C ** lecture des infos pour le premier maillage
 	endif      
 
 
-         print '(A,I1,A,A4,A,I1,A,I4)','maillage '
-     &        ,0,' de nom ','maa1',' et de dimension ',mdim,
+         print '(A,I1,A,A4,A,I4)','maillage '
+     &        ,0,' de nom ','maa1',
      &        ' comportant le nombre d''arretes ',narr
 
 

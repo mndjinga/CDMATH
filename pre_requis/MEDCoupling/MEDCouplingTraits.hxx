@@ -22,6 +22,7 @@
 #define __MEDCOUPLINGTRAITS_HXX__
 
 #include "MEDCoupling.hxx"
+#include "MCType.hxx"
 
 namespace MEDCoupling
 {
@@ -31,31 +32,69 @@ namespace MEDCoupling
     typedef T EltType;
   };
 
-  class DataArrayInt;
+  class DataArrayInt32;
+  class DataArrayFloat;
   class DataArrayDouble;
   class DataArrayChar;
   class DataArrayByte;
+  class DataArrayInt64;
   class MEDCouplingFieldDouble;
+  class MEDCouplingFieldFloat;
   class MEDCouplingFieldInt;
+  class DataArrayInt32Tuple;
+  class DataArrayFloatTuple;
+  class DataArrayDoubleTuple;
   
   template<>
   struct MEDCOUPLING_EXPORT Traits<double>
   {
     static const char ArrayTypeName[];
     static const char FieldTypeName[];
+    static const char NPYStr[];
+    static const char ReprStr[];
     typedef DataArrayDouble ArrayType;
     typedef DataArrayDouble ArrayTypeCh;
     typedef MEDCouplingFieldDouble FieldType;
+    typedef DataArrayDoubleTuple ArrayTuple;
   };
-  
+
   template<>
-  struct MEDCOUPLING_EXPORT Traits<int>
+  struct MEDCOUPLING_EXPORT Traits<float>
   {
     static const char ArrayTypeName[];
     static const char FieldTypeName[];
-    typedef DataArrayInt ArrayType;
-    typedef DataArrayInt ArrayTypeCh;
+    static const char NPYStr[];
+    static const char ReprStr[];
+    typedef DataArrayFloat ArrayType;
+    typedef DataArrayFloat ArrayTypeCh;
+    typedef MEDCouplingFieldFloat FieldType;
+    typedef DataArrayFloatTuple ArrayTuple;
+  };
+  
+  template<>
+  struct MEDCOUPLING_EXPORT Traits<Int32>
+  {
+    static const char ArrayTypeName[];
+    static const char FieldTypeName[];
+    static const char NPYStr[];
+    static const char ReprStr[];
+    typedef DataArrayInt32 ArrayType;
+    typedef DataArrayInt32 ArrayTypeCh;
     typedef MEDCouplingFieldInt FieldType;
+    typedef DataArrayInt32Tuple ArrayTuple;
+  };
+
+  template<>
+  struct MEDCOUPLING_EXPORT Traits<Int64>
+  {
+    static const char ArrayTypeName[];
+    static const char FieldTypeName[];
+    static const char NPYStr[];
+    static const char ReprStr[];
+    typedef DataArrayInt64 ArrayType;
+    typedef DataArrayInt64 ArrayTypeCh;
+    //typedef MEDCouplingFieldInt64 FieldType;
+    //typedef DataArrayInt64Tuple ArrayTuple;
   };
 
   template<>

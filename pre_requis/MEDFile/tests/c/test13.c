@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2016  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -95,7 +95,8 @@ int main (int argc, char **argv)
   }
 
   /* Lecture du nombre d'equivalence */
-  if ((nequ = MEDnEquivalence(fid,maa)) < 0) {
+  if ((nequ = MEDnEquivalence(fid,maa)) < 0)
+    {
     MESSAGE("Erreur a la lecture du nombre d'equivalence");
     return -1;
   }
@@ -103,15 +104,17 @@ int main (int argc, char **argv)
 
   /* Lecture de toutes les equivalences du maillage */
   if (nequ > 0)
-    for (i = 0;i<nequ;i++) {
+    for (i = 0;i<nequ;i++)
+      {
       printf("Equivalence numero : %d \n",i+1);
 
       /* Lecture des infos sur l'equivalence */
-      if (MEDequivalenceInfo(fid,maa,i+1,equ,des,&nstep,&nocstpncor) < 0) {
-	MESSAGE("Erreur a la lecture de l'equivalence d'indice");
-	ISCRUTE_int(i+1);
-	return -1;
-      }
+      if (MEDequivalenceInfo(fid,maa,i+1,equ,des,&nstep,&nocstpncor) < 0)
+	{
+	  MESSAGE("Erreur a la lecture de l'equivalence d'indice");
+	  ISCRUTE_int(i+1);
+	  return -1;
+	}
       printf("Nom de l'equivalence: |%s| \n",equ);
       printf("Description de l'equivalence : |%s| \n",des);
       printf("Nombre d'étapes de calcul : "IFORMAT" \n",nstep);

@@ -21,6 +21,7 @@
 #include "MEDCouplingFieldTemplate.hxx"
 #include "MEDCouplingMesh.hxx"
 #include "MEDCouplingFieldInt.hxx"
+#include "MEDCouplingFieldFloat.hxx"
 #include "MEDCouplingFieldDouble.hxx"
 #include "MEDCouplingFieldDiscretization.hxx"
 
@@ -30,12 +31,48 @@ using namespace MEDCoupling;
 
 MEDCouplingFieldTemplate *MEDCouplingFieldTemplate::New(const MEDCouplingFieldDouble& f)
 {
-  return new MEDCouplingFieldTemplate(f);
+  return new MEDCouplingFieldTemplate(f,true);
+}
+
+MEDCouplingFieldTemplate *MEDCouplingFieldTemplate::New(const MEDCouplingFieldFloat& f)
+{
+  return new MEDCouplingFieldTemplate(f,true);
 }
 
 MEDCouplingFieldTemplate *MEDCouplingFieldTemplate::New(const MEDCouplingFieldInt& f)
 {
-  return new MEDCouplingFieldTemplate(f);
+  return new MEDCouplingFieldTemplate(f,true);
+}
+
+MEDCouplingFieldTemplate *MEDCouplingFieldTemplate::NewWithoutCheck(const MEDCouplingFieldDouble& f)
+{
+  return new MEDCouplingFieldTemplate(f,false);
+}
+
+MEDCouplingFieldTemplate *MEDCouplingFieldTemplate::NewWithoutCheck(const MEDCouplingFieldFloat& f)
+{
+  return new MEDCouplingFieldTemplate(f,false);
+}
+
+MEDCouplingFieldTemplate *MEDCouplingFieldTemplate::NewWithoutCheck(const MEDCouplingFieldInt& f)
+{
+  return new MEDCouplingFieldTemplate(f,false);
+}
+
+bool MEDCouplingFieldTemplate::isEqualIfNotWhy(const MEDCouplingFieldTemplate *other, double meshPrec, std::string& reason) const
+{
+  return isEqualIfNotWhyProtected(other,meshPrec,reason);
+}
+
+bool MEDCouplingFieldTemplate::isEqual(const MEDCouplingFieldTemplate *other, double meshPrec) const
+{
+  std::string tmp;
+  return isEqualIfNotWhyProtected(other,meshPrec,tmp);
+}
+
+bool MEDCouplingFieldTemplate::isEqualWithoutConsideringStr(const MEDCouplingFieldTemplate *other, double meshPrec) const
+{
+  return isEqualWithoutConsideringStrProtected(other,meshPrec);
 }
 
 /*!
@@ -46,19 +83,32 @@ MEDCouplingFieldTemplate *MEDCouplingFieldTemplate::New(TypeOfField type)
   return new MEDCouplingFieldTemplate(type);
 }
 
-MEDCouplingFieldTemplate::MEDCouplingFieldTemplate(const MEDCouplingFieldDouble& f):MEDCouplingField(f,false) 
+MEDCouplingFieldTemplate::MEDCouplingFieldTemplate(const MEDCouplingFieldDouble& f, bool isChecked):MEDCouplingField(f,false) 
 {
   forceTimeOfThis(f);
-  checkConsistencyLight();
+  if(isChecked)
+    checkConsistencyLight();
 }
 
-MEDCouplingFieldTemplate::MEDCouplingFieldTemplate(const MEDCouplingFieldInt& f):MEDCouplingField(f,false) 
+MEDCouplingFieldTemplate::MEDCouplingFieldTemplate(const MEDCouplingFieldFloat& f, bool isChecked):MEDCouplingField(f,false) 
 {
   forceTimeOfThis(f);
-  checkConsistencyLight();
+  if(isChecked)
+    checkConsistencyLight();
+}
+
+MEDCouplingFieldTemplate::MEDCouplingFieldTemplate(const MEDCouplingFieldInt& f, bool isChecked):MEDCouplingField(f,false) 
+{
+  forceTimeOfThis(f);
+  if(isChecked)
+    checkConsistencyLight();
 }
 
 MEDCouplingFieldTemplate::MEDCouplingFieldTemplate(TypeOfField type):MEDCouplingField(type)
+{
+}
+
+MEDCouplingFieldTemplate::MEDCouplingFieldTemplate(const MEDCouplingFieldTemplate& other, bool deepCopy):MEDCouplingField(other,deepCopy)
 {
 }
 
@@ -168,4 +218,10 @@ void MEDCouplingFieldTemplate::reprQuickOverview(std::ostream& stream) const
       std::string tmp(oss.str());
       stream << "\nMesh info : " << tmp.substr(0,tmp.find('\n'));
     }
+}
+
+MCAuto<MEDCouplingFieldTemplate> MEDCouplingFieldTemplate::clone(bool recDeepCpy) const
+{
+  MCAuto<MEDCouplingFieldTemplate> ret(new MEDCouplingFieldTemplate(*this,recDeepCpy));
+  return ret;
 }

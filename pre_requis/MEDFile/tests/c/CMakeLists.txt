@@ -6,7 +6,9 @@ INCLUDE_DIRECTORIES(
 )
 
 SET(testc_SOURCES test1.c test2.c test3.c test4.c test5.c 
-    test6.c test7.c test8.c test9.c test10.c test10_mem.c test11.c test11b.c 
+    test6.c test7.c test8.c test9.c test10.c test10_mem.c
+    test10_f32_i32.c test10_f32_i64.c test10_f32.c test10_i32.c test10_i64.c
+    test11.c test11b.c 
     test12.c test13.c test14.c test15.c test16.c test17.c test18.c 
     test20.c test21.c test22.c test23.c test24.c test25.c test26.c test27.c 
     test28.c test29.c test30.c test31.c test32.c test33.c)
@@ -27,7 +29,7 @@ FOREACH(testc_SOURCE ${testc_SOURCES})
     TARGET_LINK_LIBRARIES(${testc_SHARED_BIN} medC)
     SET_TARGET_PROPERTIES(${testc_SHARED_BIN} PROPERTIES OUTPUT_NAME ${testc_BASE})
     GET_TARGET_PROPERTY(TMP ${testc_SHARED_BIN} OUTPUT_NAME)
-    INSTALL(TARGETS ${testc_SHARED_BIN} DESTINATION ${INSTALL_TESTS_DIR}/testc)
+    INSTALL(TARGETS ${testc_SHARED_BIN} DESTINATION bin/testc)
     IF(${IS_STDALONE_TEST} EQUAL -1)
       ADD_TEST("Test${testc_SHARED_BIN}" ${TMP})
     ENDIF(${IS_STDALONE_TEST} EQUAL -1)
@@ -41,7 +43,7 @@ FOREACH(testc_SOURCE ${testc_SOURCES})
     MED_SET_DEFINITIONS(${testc_STATIC_BIN} MED3_USESTATIC)
     SET_TARGET_PROPERTIES(${testc_STATIC_BIN} PROPERTIES OUTPUT_NAME "${testc_BASE}_static")
     GET_TARGET_PROPERTY(TMP ${testc_STATIC_BIN} OUTPUT_NAME)
-    INSTALL(TARGETS ${testc_STATIC_BIN} DESTINATION ${INSTALL_TESTS_DIR}/testc)
+    INSTALL(TARGETS ${testc_STATIC_BIN} DESTINATION bin/testc)
   ENDIF()
   
   # Other

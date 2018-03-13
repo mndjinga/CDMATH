@@ -1,26 +1,15 @@
 SET(medimport236_SOURCES
-  MED30linkWrbuilt.cxx
-  MAJ_236_300_chainebuilt.cxx
-  _MEDconvertStringDatasets.c
-  MAJ_236_300_string_datasets.c
-  MAJ_236_300_champs.c
-  MAJ_236_300_fieldOnEntity.c
-  MAJ_236_300_equivalence.c
-  #MAJ_236_300_entitesbuilt.cxx
-  MAJ_236_300_mesh_datasets.c
-  MAJ_236_300_maillages.c
-  MAJ_236_300_joint.c
-  MED30linkWr.c
-  #MAJ_236_300_equivalencebuilt.cxx
-  #MAJ_236_300_jointbuilt.cxx
-  #MAJ_236_300_maillagesbuilt.cxx
-  #MAJ_236_300_fieldOnEntitybuilt.cxx
-  #MAJ_236_300_champsbuilt.cxx
-  MAJ_236_300_entites.c
-  #MAJ_236_300_string_datasetsbuilt.cxx
-  #_MEDconvertStringDatasetsbuilt.cxx
-  #MAJ_236_300_mesh_datasetsbuilt.cxx
-  MAJ_236_300_chaine.c
+    MAJ_236_300_chaine.c
+    MAJ_236_300_champs.c
+    MAJ_236_300_entites.c
+    MAJ_236_300_equivalence.c
+    MAJ_236_300_fieldOnEntity.c
+    MAJ_236_300_joint.c
+    MAJ_236_300_maillages.c
+    MAJ_236_300_mesh_datasets.c
+    MAJ_236_300_string_datasets.c
+    MED30linkWr.c
+    _MEDconvertStringDatasets.c
 )
 
 # On Win platform, we need to make sure symbols are properly exported in

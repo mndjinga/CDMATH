@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2016  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -181,7 +181,7 @@ int main (int argc, char **argv)
     free(comp);
     free(unit);
     
-    /*TODO : Créer les API30 spécifiques pour la lecture de champs multi-maillages*/
+    /*Les API30 spécifiques pour la lecture de champs multi-maillages ont été crées après ce test : cf ../test11b.c*/
     if (strcmp(nomcha,"champ entier")) {
       MESSAGE("There is no API yest for reading field on multiple meshes"); continue;
     }

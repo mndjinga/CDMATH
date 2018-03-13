@@ -20,21 +20,21 @@ MAJ_236_300_champs.c \
 MAJ_236_300_fieldOnEntity.c \
 MED30linkWr.c
 
-buildCxxFile =  \
-MAJ_236_300_maillagesbuilt.cxx\
-MAJ_236_300_equivalencebuilt.cxx\
-MAJ_236_300_jointbuilt.cxx \
-MAJ_236_300_entitesbuilt.cxx\
-MAJ_236_300_mesh_datasetsbuilt.cxx\
-MAJ_236_300_string_datasetsbuilt.cxx\
-MAJ_236_300_chainebuilt.cxx \
-_MEDconvertStringDatasetsbuilt.cxx \
-MAJ_236_300_champsbuilt.cxx \
-MAJ_236_300_fieldOnEntitybuilt.cxx \
-MED30linkWrbuilt.cxx
+# buildCxxFile =  \
+# MAJ_236_300_maillagesbuilt.cxx\
+# MAJ_236_300_equivalencebuilt.cxx\
+# MAJ_236_300_jointbuilt.cxx \
+# MAJ_236_300_entitesbuilt.cxx\
+# MAJ_236_300_mesh_datasetsbuilt.cxx\
+# MAJ_236_300_string_datasetsbuilt.cxx\
+# MAJ_236_300_chainebuilt.cxx \
+# _MEDconvertStringDatasetsbuilt.cxx \
+# MAJ_236_300_champsbuilt.cxx \
+# MAJ_236_300_fieldOnEntitybuilt.cxx \
+# MED30linkWrbuilt.cxx
 
-noinst_LTLIBRARIES += libMaj236To300cxx.la
-libMaj236To300cxx_la_SOURCES   = $(buildCxxFile)
+# noinst_LTLIBRARIES += libMaj236To300cxx.la
+# libMaj236To300cxx_la_SOURCES   = $(buildCxxFile)
 
-CLEANFILES = $(buildCxxFile)
+# CLEANFILES = $(buildCxxFile)
 EXTRA_DIST = CMakeLists.txt

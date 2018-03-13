@@ -47,7 +47,7 @@ namespace MEDCoupling
                                                             DataArrayInt *&cellCor) const;
     MEDCOUPLING_EXPORT void checkConsistencyLight() const;
     MEDCOUPLING_EXPORT void checkConsistency(double eps=1e-12) const;
-    MEDCOUPLING_EXPORT int getNumberOfCells() const;
+    MEDCOUPLING_EXPORT std::size_t getNumberOfCells() const;
     MEDCOUPLING_EXPORT int getNumberOfNodes() const;
     MEDCOUPLING_EXPORT int getSpaceDimension() const;
     MEDCOUPLING_EXPORT void getCoordinatesOfNode(int nodeId, std::vector<double>& coo) const;
@@ -94,7 +94,7 @@ namespace MEDCoupling
     void getBarycenterAndOwnerMeshDim1(DataArrayDouble *bary) const;
   private:
     MEDCouplingCurveLinearMesh();
-    MEDCouplingCurveLinearMesh(const MEDCouplingCurveLinearMesh& other, bool deepCopy);
+    MEDCouplingCurveLinearMesh(const MEDCouplingCurveLinearMesh& other, bool deepCpy);
     ~MEDCouplingCurveLinearMesh();
     void writeVTKLL(std::ostream& ofs, const std::string& cellData, const std::string& pointData, DataArrayByte *byteData) const;
     std::string getVTKDataSetType() const;

@@ -1,22 +1,13 @@
 SET(medimport231_SOURCES
-  MED231datasetNumEcrire.c
-  MED231champLireEtUnlink.c
-  MAJ_231_232_maillagesbuilt.cxx
-  MAJ_231_232_chaine.c
-  MED231datasetNumEcrirebuilt.cxx
-  MED231champNormaliserbuilt.cxx
-  MAJ_231_232_chainebuilt.cxx
-  MED231champLireEtUnlinkbuilt.cxx
+  MAJ_231_232_chaine.c  
   MAJ_231_232_champs.c
-  MAJ_231_232_champsbuilt.cxx
-  MED231datasetNumLire.c
   MAJ_231_232_maillages.c
-  MED231champRefInfoEtRenMaa.c
   MED231champInfoEtRen.c
-  MED231champInfoEtRenbuilt.cxx
-  MED231datasetNumLirebuilt.cxx
+  MED231champLireEtUnlink.c
   MED231champNormaliser.c
-  MED231champRefInfoEtRenMaabuilt.cxx
+  MED231champRefInfoEtRenMaa.c
+  MED231datasetNumEcrire.c
+  MED231datasetNumLire.c
 )
 
 # Include are specific for the 2.3.6 version - make sure they get incl first:

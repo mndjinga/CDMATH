@@ -208,6 +208,18 @@ Type.__repr__= lambda self: #Type +"("+str([x for x in self])+")"
     if (SWIG_IsOK(res)) $1 =( unsigned char *  ) ( & ( (*reinterpret_cast< const std::vector<med_int> * >(argp))[0]) );
   }
   if (!SWIG_IsOK(res)) {
+    res = SWIG_ConvertPtr($input, &argp,$descriptor(std::vector<med_int32> *), 0 |  0 );
+    if (SWIG_IsOK(res)) $1 =( unsigned char *  ) ( & ( (*reinterpret_cast< const std::vector<med_int32> * >(argp))[0]) );
+  }
+  if (!SWIG_IsOK(res)) {
+    res = SWIG_ConvertPtr($input, &argp,$descriptor(std::vector<med_int64> *), 0 |  0 );
+    if (SWIG_IsOK(res)) $1 =( unsigned char *  ) ( & ( (*reinterpret_cast< const std::vector<med_int64> * >(argp))[0]) );
+  }
+  if (!SWIG_IsOK(res)) {
+    res = SWIG_ConvertPtr($input, &argp,$descriptor(std::vector<med_float32> *), 0 |  0 );
+    if (SWIG_IsOK(res)) $1 =( unsigned char *  ) ( & ( (*reinterpret_cast< const std::vector<med_float32> * >(argp))[0]) );
+  }
+  if (!SWIG_IsOK(res)) {
     res = SWIG_ConvertPtr($input, &argp,$descriptor(std::vector<long> *), 0 |  0 );
     if (SWIG_IsOK(res)) $1 =( unsigned char *  ) ( & ( (*reinterpret_cast< const std::vector<long> * >(argp))[0]) );
   }
@@ -249,6 +261,18 @@ Type.__repr__= lambda self: #Type +"("+str([x for x in self])+")"
   if (!SWIG_IsOK(res)) {
     res = SWIG_ConvertPtr(o, &argp,$descriptor(std::vector<med_int> *), 0 |  0 );
     if (SWIG_IsOK(res)) $1 =( unsigned char *  ) ( & ( (*reinterpret_cast< const std::vector<med_int> * >(argp))[0]) );
+  }
+  if (!SWIG_IsOK(res)) {
+    res = SWIG_ConvertPtr(o, &argp,$descriptor(std::vector<med_int32> *), 0 |  0 );
+    if (SWIG_IsOK(res)) $1 =( unsigned char *  ) ( & ( (*reinterpret_cast< const std::vector<med_int32> * >(argp))[0]) );
+  }
+  if (!SWIG_IsOK(res)) {
+    res = SWIG_ConvertPtr(o, &argp,$descriptor(std::vector<med_int64> *), 0 |  0 );
+    if (SWIG_IsOK(res)) $1 =( unsigned char *  ) ( & ( (*reinterpret_cast< const std::vector<med_int64> * >(argp))[0]) );
+  }
+  if (!SWIG_IsOK(res)) {
+    res = SWIG_ConvertPtr(o, &argp,$descriptor(std::vector<med_float32> *), 0 |  0 );
+    if (SWIG_IsOK(res)) $1 =( unsigned char *  ) ( & ( (*reinterpret_cast< const std::vector<med_float32> * >(argp))[0]) );
   }
   if (!SWIG_IsOK(res)) {
     res = SWIG_ConvertPtr(o, &argp,$descriptor(std::vector<long> *), 0 |  0 );

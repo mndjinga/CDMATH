@@ -38,5 +38,5 @@ FOREACH(_s IN LISTS _tst_scripts)
            COMMAND "/usr/bin/env" "PYTHONPATH=${PROJECT_BINARY_DIR}/python" "${PYTHON_EXECUTABLE}" "${CMAKE_CURRENT_BINARY_DIR}/${_s}")
 ENDFOREACH()
 
-INSTALL(FILES ${_to_install} DESTINATION ${INSTALL_TESTS_DIR}/testpy)
+INSTALL(FILES ${_to_install} DESTINATION bin/testpy)
 

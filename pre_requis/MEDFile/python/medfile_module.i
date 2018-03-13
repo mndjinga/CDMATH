@@ -43,7 +43,7 @@
 }
 %typemap(out,noblock=1) med_int MEDfileName {}
   
-%feature("autodoc", "MEDfileName(fid) -> string") MEDfileName;
+%feature("autodoc", "MEDfileName(fid) -> str") MEDfileName;
 // FIN SPECIFIQUE MEDfileName
 
 

@@ -34,6 +34,11 @@
 %include "medC_win_dll.h"
 %include "med.h"
 
+/*Il faut avoir inclu med_config.h pour définir HAVE_SDTINT_H */
+#ifdef HAVE_STDINT_H
+%include "stdint.i"
+#endif
+
 %import  "medenum_module.i"
 
 /* Inclusion du std_vector.i pour éviter le message : */
@@ -53,13 +58,38 @@
 %include "med_array_typemap.i"
 %include "med_char_typemap.i"
 
-// Par défaut demande à swig de considérer les med_float * et med_int *
-// comme des MEDARRAY, chacun des module devra définir ses types
-// scalaires.
+// Par défaut demande à swig de considérer les types C med_float * et med_int *
+// comme des MEDARRAY, chacun des modules devra définir spécifiquement ses types scalaires.
 // A définir avant les définitions d'un typemap med_float * scalaire
 %med_array_typemaps(med_float,MEDFLOAT, \  )
+%pythoncode{
+MEDFLOAT64=MEDFLOAT
+MEDDOUBLE=MEDFLOAT
+}
+
+// A définir avant les définitions d'un typemap med_float32 * scalaire
+%med_array_typemaps(med_float32,MEDFLOAT32, \  )
+
 // A définir avant les définitions d'un typemap med_int * scalaire
 %med_array_typemaps(med_int,MEDINT, \   )
+#if defined(HAVE_F77INT64)
+%pythoncode{
+MEDINT64=MEDINT
+}
+%med_array_typemaps(med_int32,MEDINT32, \   )
+#else
+%pythoncode{
+MEDINT32=MEDINT
+}
+#if defined(MED_SWIG_INT64)
+%med_array_typemaps(med_int64,MEDINT64, \   )
+#else
+%pythoncode{
+MEDINT64=None
+}
+#endif
+#endif
+// A définir avant les définitions d'un typemap med_int * scalaire
 
 // Définir les MEDCHAR avant les définitions d'un typemap char *
 // STRING ARRAY OUT :

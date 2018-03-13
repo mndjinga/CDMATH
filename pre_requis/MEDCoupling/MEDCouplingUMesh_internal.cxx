@@ -348,7 +348,7 @@ void MEDCouplingUMesh::tessellate2DCurveInternal(double eps)
   double epsa=fabs(eps);
   if(epsa<std::numeric_limits<double>::min())
     throw INTERP_KERNEL::Exception("MEDCouplingUMesh::tessellate2DCurveInternal : epsilon is null ! Please specify a higher epsilon. If too tiny it can lead to a huge amount of nodes and memory !");
-  INTERP_KERNEL::QUADRATIC_PLANAR::_arc_detection_precision=1.e-10;
+  INTERP_KERNEL::QuadraticPlanarArcDetectionPrecision arcPrec(1.e-10);  // RAII
   int nbCells=getNumberOfCells();
   int nbNodes=getNumberOfNodes();
   const int *conn=_nodal_connec->begin();
@@ -395,7 +395,7 @@ void MEDCouplingUMesh::tessellate2DCurveInternal(double eps)
           newConnIPtr[1]=newConnIPtr[0]+3;
         }
     }
-  if(addCoo.empty() && ((int)newConn.size())==_nodal_connec->getNumberOfTuples())//nothing happens during tessellation : no update needed
+  if(addCoo.empty() && newConn.size()==_nodal_connec->getNumberOfTuples())//nothing happens during tessellation : no update needed
     return ;
   _types=types;
   DataArrayInt::SetArrayIn(newConnI,_nodal_connec_index);

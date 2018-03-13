@@ -16,7 +16,7 @@ ENDIF()
 
 ## Version number 
 SET(MED_NUM_MAJEUR  3)
-SET(MED_NUM_MINEUR  2)
+SET(MED_NUM_MINEUR  3)
 SET(MED_NUM_RELEASE 1)
 
 SET(MED_STR_VERSION "${MED_NUM_MAJEUR}.${MED_NUM_MINEUR}.${MED_NUM_RELEASE}")
@@ -63,11 +63,15 @@ IF(WIN32)
   ADD_DEFINITIONS(-D_SCL_SECURE_NO_WARNINGS)  # To disable windows warnings std::copy, std::transform, ...
   ADD_DEFINITIONS(-DWNT -DWIN32)
   ADD_DEFINITIONS(-D_WIN32_WINNT=0x0500) # Windows 2000 or later API is required
-  ADD_DEFINITIONS(-DPPRO_NT) # For medfile
-  
-  # Needed to avoid a seg fault at runtime!
-  # The variable is not very well documented but seems to exist
-  SET(CMAKE_Fortran_FLAGS  "/iface:mixed_str_len_arg ${CMAKE_Fortran_FLAGS}")
+  ADD_DEFINITIONS(-DPPRO_NT_CALL) # For windows system functions call
+
+  IF(NOT MINGW)
+    # Needed to avoid a seg fault at runtime!
+    # The variable is not very well documented but seems to exist
+    SET(CMAKE_Fortran_FLAGS  "/iface:mixed_str_len_arg ${CMAKE_Fortran_FLAGS}")
+    ADD_DEFINITIONS(-DPPRO_NT) # For windows medfile function nammes
+  ENDIF()
+
 ELSE()
   # Ensure intermediate OBJECT libraries and static libs are built with -fPIC:
   SET(CMAKE_POSITION_INDEPENDENT_CODE ON)
@@ -79,10 +83,7 @@ IF(WIN32 AND NOT CYGWIN)
 ELSE()
    SET(INSTALL_CMAKE_CONFIG_DIR share/cmake/${PROJECT_NAME})
 ENDIF()
-SET(INSTALL_INCLUDE_DIR include/med)
-SET(INSTALL_BINARIES_DIR bin/med)
-SET(INSTALL_LIBRARIES_DIR lib/med)
-SET(INSTALL_TESTS_DIR bin/tests/med)
+SET(INSTALL_INCLUDE_DIR include)
 
 ## Pre-requisites detection
 # Detect HDF5 first to potentially retrieve MPI automatically:

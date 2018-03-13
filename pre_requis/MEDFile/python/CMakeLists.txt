@@ -26,12 +26,16 @@ SET(_swig_files
   medsubdomain_module.i
 )
 
+IF(APPLE)
+  SET(PYTHON_LIBRARIES "-undefined dynamic_lookup")
+ENDIF(APPLE)
+
 SET(_link_libs
-  med
+  medC
   ${PYTHON_LIBRARIES}
   )
 
-SET(_install_dir ${INSTALL_LIBRARIES_DIR}/python${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}/site-packages/med)
+SET(_install_dir lib/python${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}/site-packages/med)
 
 # Ensure we will be able to run the Python tests from the build tree by outputing
 # files into the package folder:

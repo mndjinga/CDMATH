@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2016  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -63,17 +63,20 @@ int main (int argc, char **argv)
   }
 
   /* Creation de l'equivalence */
-  if (MEDequivalenceCr(fid,maa,equ,des) < 0) {
-    MESSAGE("Erreur a la creation de l'equivalence");
-    return -1;
-  }
+  if (MEDequivalenceCr(fid,maa,equ,des) < 0)
+    {
+      MESSAGE("Erreur a la creation de l'equivalence");
+      return -1;
+    }
 
   /* Ecriture des sur les mailles MED_TRIA3 */
   if (MEDequivalenceCorrespondenceWr(fid,maa,equ,MED_NO_DT,MED_NO_IT,
-				     MED_CELL,MED_TRIA3,ncor,cor) < 0) {
-    MESSAGE("Erreur a l'ecriture du tableau des correspondances");
-    return -1;
-  }
+				     MED_CELL,MED_TRIA3,ncor,cor) < 0)
+    {
+      MESSAGE("Erreur a l'ecriture du tableau des correspondances");
+      return -1;
+    }
+  
   /* Fermeture du fichier */
   if (MEDfileClose(fid) < 0) {
     MESSAGE("Erreur a la fermeture du fichier");

@@ -21,7 +21,7 @@ TESTS_ENVIRONMENT = eval H5DUMP=@H5DUMP@ SRCDIR="$(abs_srcdir)" BUILDDIR="$(abs_
 #TESTS_ENVIRONMENT += OUTPUT="yes" CHECKER="libtool\ --mode=execute\ valgrind"
 
 
-TESTS_LEC = ./test2.sh ../test3.sh ../test5.sh ../test7.sh ../test9.sh ./test11.sh ../test11b.sh ../test13.sh ../test15.sh ../test17.sh ../test20.sh ../test22.sh ../test24.sh ../test26.sh ../test28.sh ../test30.sh ../test32.sh ../test33.sh 
+TESTS_LEC = ./test2.sh ../test3_Rd.sh ../test5_Rd.sh ../test7_Rd.sh ../test9_Rd.sh ./test11.sh ../test11b_Rd.sh ../test13_Rd.sh ../test15_Rd.sh ../test17_Rd.sh ../test20_Wr.sh ../test22_Rd.sh ../test24_Rd.sh ../test26_Rd.sh ../test28_Rd.sh ../test30_Rd.sh ../test32_Rd.sh ../test33_Rd.sh 
 
 TESTS = $(TESTS_LEC)
 

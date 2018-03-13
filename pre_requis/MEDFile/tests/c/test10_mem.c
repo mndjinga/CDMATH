@@ -157,12 +157,12 @@ int main (int argc, char **argv)
   med_memfile memfile[1]    = MED_MEMFILE_INIT;
 
   /* On décide de pré-allouer suffisement de mémoire : 10MB */
-  /* med-fichier utilisera l'espace réserver sans réallocation.*/
+  /* med-fichier utilisera l'espace réservé sans réallocation.*/
   /* memfile[0].app_image_size = 10*1024*1024; */
   /* memfile[0].app_image_ptr      = calloc(memfile[0].app_image_size,sizeof(char)); */
 
   /* On décide de pré-allouer insuffisement de mémoire : 1KB */
-  /* med-fichier utilisera l'espace réserver puis effectuera une réallocation.*/
+  /* med-fichier utilisera l'espace réservé puis effectuera une réallocation.*/
   /* memfile[0].app_image_size = 1024; */
   /* memfile[0].app_image_ptr  = calloc(memfile[0].app_image_size,sizeof(char)); */
 
@@ -171,7 +171,7 @@ int main (int argc, char **argv)
   /* Ouverture du fichier */
   /* mode RDWR uniquement si le fichier test10.med a préalablement été généré par test10
      ou par le sync de test10_mem (en CREATE). 
-     Si test10.med n'esiste pas et demande le mode RDWR 
+     Si test10.med n'existe pas et demande le mode RDWR 
          -> erreur car nous n'avons pas initialisé une image mémoire valide ! 
   */
   _accessmode = MED_ACC_CREAT;

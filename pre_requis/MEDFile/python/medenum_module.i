@@ -6,6 +6,7 @@
 
 %{
 #include "med.h"
+#include <utility>
 %}
 
 %include "H5public_extract.h"
@@ -69,7 +70,9 @@
 
 %{
   const enum_ MED_FIELD_TYPE_init[] = {
+    enum_(4,"MED_FLOAT32"),
     enum_(6,"MED_FLOAT64"),
+    /* enum_(6,"MED_DOUBLE"), */
     enum_(24,"MED_INT32"),
     enum_(26,"MED_INT64"),
     enum_(28,"MED_INT")
@@ -178,6 +181,7 @@ MED_GET_CELL_GEOMETRY_TYPE=[
  (MED_OCTA12,     "MED_OCTA12"),
  (MED_PYRA13,     "MED_PYRA13"),
  (MED_PENTA15,    "MED_PENTA15"),
+ (MED_PENTA18,    "MED_PENTA18"),
  (MED_HEXA20,     "MED_HEXA20"),
  (MED_HEXA27,     "MED_HEXA27"),
  (MED_POLYGON,    "MED_POLYGON"),

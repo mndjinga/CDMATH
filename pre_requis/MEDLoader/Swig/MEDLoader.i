@@ -57,9 +57,30 @@ def MEDCouplingFieldDoubleIdiv(self,*args):
 def MEDCouplingFieldDoubleIpow(self,*args):
     import _MEDLoader
     return _MEDLoader.MEDCouplingFieldDouble____ipow___(self, self, *args)
+def MEDCouplingFieldIntnew(cls,*args):
+    import _MEDLoader
+    return _MEDLoader.MEDCouplingFieldInt____new___(cls,args)
+def MEDCouplingFieldFloatnew(cls,*args):
+    import _MEDLoader
+    return _MEDLoader.MEDCouplingFieldFloat____new___(cls,args)
 def MEDCouplingDataArrayBytenew(cls,*args):
     import _MEDLoader
     return _MEDLoader.DataArrayByte____new___(cls,args)
+def MEDCouplingDataArrayFloatnew(cls,*args):
+    import _MEDLoader
+    return _MEDLoader.DataArrayFloat____new___(cls,args)
+def MEDCouplingDataArrayFloatIadd(self,*args):
+    import _MEDLoader
+    return _MEDLoader.DataArrayFloat____iadd___(self, self, *args)
+def MEDCouplingDataArrayFloatIsub(self,*args):
+    import _MEDLoader
+    return _MEDLoader.DataArrayFloat____isub___(self, self, *args)
+def MEDCouplingDataArrayFloatImul(self,*args):
+    import _MEDLoader
+    return _MEDLoader.DataArrayFloat____imul___(self, self, *args)
+def MEDCouplingDataArrayFloatIdiv(self,*args):
+    import _MEDLoader
+    return _MEDLoader.DataArrayFloat____idiv___(self, self, *args)
 def MEDCouplingDataArrayIntnew(cls,*args):
     import _MEDLoader
     return _MEDLoader.DataArrayInt____new___(cls,args)
@@ -168,12 +189,24 @@ def MEDCouplingMEDFileIntField1TSnew(cls,*args):
 def MEDCouplingMEDFileIntFieldMultiTSnew(cls,*args):
     import _MEDLoader
     return _MEDLoader.MEDFileIntFieldMultiTS____new___(cls,args)
+def MEDCouplingMEDFileFloatField1TSnew(cls,*args):
+    import _MEDLoader
+    return _MEDLoader.MEDFileFloatField1TS____new___(cls,args)
+def MEDCouplingMEDFileFloatFieldMultiTSnew(cls,*args):
+    import _MEDLoader
+    return _MEDLoader.MEDFileFloatFieldMultiTS____new___(cls,args)
 def MEDCouplingMEDFileParametersnew(cls,*args):
     import _MEDLoader
     return _MEDLoader.MEDFileParameters____new___(cls,args)
 %}
 
 %include "MEDCouplingFinalize.i"
+
+%pythoncode %{
+MEDFileMeshesIterator.__next__ = MEDFileMeshesIterator.next
+MEDFileAnyTypeFieldMultiTSIterator.__next__ = MEDFileAnyTypeFieldMultiTSIterator.next
+MEDFileFieldsIterator.__next__ = MEDFileFieldsIterator.next
+%}
 
 %pythoncode %{
 MEDFileUMesh.__new__=classmethod(MEDCouplingMEDFileUMeshnew)
@@ -196,6 +229,10 @@ MEDFileIntField1TS.__new__=classmethod(MEDCouplingMEDFileIntField1TSnew)
 del MEDCouplingMEDFileIntField1TSnew
 MEDFileIntFieldMultiTS.__new__=classmethod(MEDCouplingMEDFileIntFieldMultiTSnew)
 del MEDCouplingMEDFileIntFieldMultiTSnew
+MEDFileFloatField1TS.__new__=classmethod(MEDCouplingMEDFileFloatField1TSnew)
+del MEDCouplingMEDFileFloatField1TSnew
+MEDFileFloatFieldMultiTS.__new__=classmethod(MEDCouplingMEDFileFloatFieldMultiTSnew)
+del MEDCouplingMEDFileFloatFieldMultiTSnew
 MEDFileParameters.__new__=classmethod(MEDCouplingMEDFileParametersnew)
 del MEDCouplingMEDFileParametersnew
 %}

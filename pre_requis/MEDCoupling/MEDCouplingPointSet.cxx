@@ -40,10 +40,10 @@ MEDCouplingPointSet::MEDCouplingPointSet():_coords(0)
 {
 }
 
-MEDCouplingPointSet::MEDCouplingPointSet(const MEDCouplingPointSet& other, bool deepCopy):MEDCouplingMesh(other),_coords(0)
+MEDCouplingPointSet::MEDCouplingPointSet(const MEDCouplingPointSet& other, bool deepCpy):MEDCouplingMesh(other),_coords(0)
 {
   if(other._coords)
-    _coords=other._coords->performCopyOrIncrRef(deepCopy);
+    _coords=other._coords->performCopyOrIncrRef(deepCpy);
 }
 
 MEDCouplingPointSet::~MEDCouplingPointSet()
@@ -1042,7 +1042,7 @@ DataArrayInt *MEDCouplingPointSet::ComputeNbOfInteractionsWithSrcCells(const MED
 {
   if(!srcMesh || !trgMesh)
     throw INTERP_KERNEL::Exception("MEDCouplingPointSet::ComputeNbOfInteractionsWithSrcCells : the input meshes must be not NULL !");
-  MCAuto<DataArrayDouble> sbbox(srcMesh->getBoundingBoxForBBTree()),tbbox(trgMesh->getBoundingBoxForBBTree());
+  MCAuto<DataArrayDouble> sbbox(srcMesh->getBoundingBoxForBBTree(eps)),tbbox(trgMesh->getBoundingBoxForBBTree(eps));
   return tbbox->computeNbOfInteractionsWith(sbbox,eps);
 }
 
@@ -1181,6 +1181,9 @@ void MEDCouplingPointSet::project2DCellOnXY(const int *startConn, const int *end
  */
 bool MEDCouplingPointSet::isButterfly2DCell(const std::vector<double>& res, bool isQuad, double eps)
 {
+  INTERP_KERNEL::QuadraticPlanarPrecision prec(eps);
+  INTERP_KERNEL::QuadraticPlanarArcDetectionPrecision arcPrec(eps);
+
   std::size_t nbOfNodes(res.size()/2);
   std::vector<INTERP_KERNEL::Node *> nodes(nbOfNodes);
   for(std::size_t i=0;i<nbOfNodes;i++)
@@ -1188,8 +1191,6 @@ bool MEDCouplingPointSet::isButterfly2DCell(const std::vector<double>& res, bool
       INTERP_KERNEL::Node *tmp=new INTERP_KERNEL::Node(res[2*i],res[2*i+1]);
       nodes[i]=tmp;
     }
-  INTERP_KERNEL::QUADRATIC_PLANAR::_precision=eps;
-  INTERP_KERNEL::QUADRATIC_PLANAR::_arc_detection_precision=eps;
   INTERP_KERNEL::QuadraticPolygon *pol=0;
   if(isQuad)
     pol=INTERP_KERNEL::QuadraticPolygon::BuildArcCirclePolygon(nodes);

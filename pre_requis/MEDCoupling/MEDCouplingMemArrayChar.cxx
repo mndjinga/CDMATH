@@ -94,16 +94,6 @@ bool DataArrayChar::isEqualWithoutConsideringStr(const DataArrayChar& other) con
 }
 
 /*!
- * Assign zero to all values in \a this array. To know more on filling arrays see
- * \ref MEDCouplingArrayFill.
- * \throw If \a this is not allocated.
- */
-void DataArrayChar::fillWithZero()
-{
-  fillWithValue(0);
-}
-
-/*!
  * Returns a textual and human readable representation of \a this instance of
  * DataArrayChar. This text is shown when a DataArrayChar is printed in Python.
  *  \return std::string - text describing \a this DataArrayChar.
@@ -453,7 +443,7 @@ DataArrayChar *DataArrayChar::Aggregate(const std::vector<const DataArrayChar *>
   if(a.empty())
     throw INTERP_KERNEL::Exception("DataArrayChar::Aggregate : input list must be NON EMPTY !");
   std::vector<const DataArrayChar *>::const_iterator it=a.begin();
-  int nbOfComp=(*it)->getNumberOfComponents();
+  std::size_t nbOfComp((*it)->getNumberOfComponents());
   int nbt=(*it++)->getNumberOfTuples();
   for(int i=1;it!=a.end();it++,i++)
     {

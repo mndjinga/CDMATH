@@ -16,7 +16,7 @@
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// Author : Anthony Geay (CEA/DEN)
+// Author : Anthony Geay (EDF R&D)
 
 #ifndef __PARAMEDMEM_MEDCOUPLINGMEMARRAY_TXX__
 #define __PARAMEDMEM_MEDCOUPLINGMEMARRAY_TXX__
@@ -31,6 +31,7 @@
 
 #include <sstream>
 #include <cstdlib>
+#include <numeric>
 #include <algorithm>
 
 namespace MEDCoupling
@@ -481,6 +482,76 @@ namespace MEDCoupling
   //////////////////////////////////
 
   template<class T>
+  DataArrayIterator<T>::DataArrayIterator(typename Traits<T>::ArrayType *da):_da(da),_tuple_id(0),_nb_comp(0),_nb_tuple(0)
+  {
+    if(_da)
+      {
+        _da->incrRef();
+        if(_da->isAllocated())
+          {
+            _nb_comp=da->getNumberOfComponents();
+            _nb_tuple=da->getNumberOfTuples();
+            _pt=da->getPointer();
+          }
+      }
+  }
+  
+  template<class T>
+  DataArrayIterator<T>::~DataArrayIterator()
+  {
+    if(_da)
+      _da->decrRef();
+  }
+
+  template<class T>
+  typename Traits<T>::ArrayTuple *DataArrayIterator<T>::nextt()
+  {
+    if(_tuple_id<_nb_tuple)
+      {
+        _tuple_id++;
+        typename Traits<T>::ArrayTuple *ret=new typename Traits<T>::ArrayTuple(_pt,_nb_comp);
+        _pt+=_nb_comp;
+        return ret;
+      }
+    else
+      return 0;
+  }
+
+  //////////////////////////////////
+
+  template<class T>
+  DataArrayTuple<T>::DataArrayTuple(T *pt, int nbOfComp):_pt(pt),_nb_of_compo(nbOfComp)
+  {
+  }
+  
+  template<class T>
+  T DataArrayTuple<T>::zeValue() const
+  {
+    if(_nb_of_compo==1)
+      return *_pt;
+    throw INTERP_KERNEL::Exception("DataArrayTuple<T>::zeValue : DataArrayTuple instance has not exactly 1 component -> Not possible to convert it into a single value !");
+  }
+  
+  template<class T>
+  typename Traits<T>::ArrayType *DataArrayTuple<T>::buildDA(int nbOfTuples, int nbOfCompo) const
+  {
+    if((_nb_of_compo==nbOfCompo && nbOfTuples==1) || (_nb_of_compo==nbOfTuples && nbOfCompo==1))
+    {
+      typename Traits<T>::ArrayType *ret=Traits<T>::ArrayType::New();
+      ret->useExternalArrayWithRWAccess(_pt,nbOfTuples,nbOfCompo);
+      return ret;
+    }
+  else
+    {
+      std::ostringstream oss; oss << "DataArrayTuple<T>::buildDA : unable to build a requested DataArrayDouble instance with nbofTuple=" << nbOfTuples << " and nbOfCompo=" << nbOfCompo;
+      oss << ".\nBecause the number of elements in this is " << _nb_of_compo << " !";
+      throw INTERP_KERNEL::Exception(oss.str().c_str());
+    }
+  }
+  
+  //////////////////////////////////
+
+  template<class T>
   MCAuto< typename Traits<T>::ArrayTypeCh > DataArrayTemplate<T>::NewFromStdVector(const typename std::vector<T>& v)
   {
     std::size_t sz(v.size());
@@ -588,7 +659,7 @@ namespace MEDCoupling
         std::ostringstream oss; oss << Traits<T>::ArrayTypeName << "::getIJSafe : request for tupleId " << tupleId << " should be in [0," << getNumberOfTuples() << ") !";
         throw INTERP_KERNEL::Exception(oss.str().c_str());
       }
-    if(compoId<0 || compoId>=getNumberOfComponents())
+    if(compoId<0 || compoId>=(int)getNumberOfComponents())
       {
         std::ostringstream oss; oss << Traits<T>::ArrayTypeName << "::getIJSafe : request for compoId " << compoId << " should be in [0," << getNumberOfComponents() << ") !";
         throw INTERP_KERNEL::Exception(oss.str().c_str());
@@ -754,7 +825,7 @@ namespace MEDCoupling
   {
     if(isAllocated())
       {
-        if(nbOfTuple!=getNumberOfTuples() || nbOfCompo!=getNumberOfComponents())
+        if(nbOfTuple!=getNumberOfTuples() || nbOfCompo!=(int)getNumberOfComponents())
           alloc(nbOfTuple,nbOfCompo);
       }
     else
@@ -1061,25 +1132,25 @@ namespace MEDCoupling
       {
         int a,b,c;
         spd->getSlice(a,b,c);
-        if(a==0 && b==getNumberOfTuples() && c==1)
+        if(a==0 && b==(int)getNumberOfTuples() && c==1)
           {
             DataArrayTemplate<T> *directRet(const_cast<DataArrayTemplate<T> *>(this));
             directRet->incrRef();
-            MCAuto<DataArrayTemplate<T> > ret(directRet);
-            return DynamicCastSafe<DataArrayTemplate<T>,typename Traits<T>::ArrayTypeCh>(ret);
+            MCAuto<DataArrayTemplate<T> > ret2(directRet);
+            return DynamicCastSafe<DataArrayTemplate<T>,typename Traits<T>::ArrayTypeCh>(ret2);
           }
         else
           {
-            MCAuto<DataArray> ret(selectByTupleIdSafeSlice(a,b,c));
-            return DynamicCastSafe<DataArray,typename Traits<T>::ArrayTypeCh>(ret);
+            MCAuto<DataArray> ret2(selectByTupleIdSafeSlice(a,b,c));
+            return DynamicCastSafe<DataArray,typename Traits<T>::ArrayTypeCh>(ret2);
           }
       }
     const DataArrayPartDefinition *dpd(dynamic_cast<const DataArrayPartDefinition *>(pd));
     if(dpd)
       {
         MCAuto<DataArrayInt> arr(dpd->toDAI());
-        MCAuto<DataArray> ret(selectByTupleIdSafe(arr->begin(),arr->end()));
-        return DynamicCastSafe<DataArray,typename Traits<T>::ArrayTypeCh>(ret);
+        MCAuto<DataArray> ret2(selectByTupleIdSafe(arr->begin(),arr->end()));
+        return DynamicCastSafe<DataArray,typename Traits<T>::ArrayTypeCh>(ret2);
         
       }
     throw INTERP_KERNEL::Exception("DataArrayTemplate<T>::selectPartDef : unrecognized part def !");
@@ -1857,7 +1928,7 @@ namespace MEDCoupling
     checkAllocated();
     a->checkAllocated();
     tuplesSelec->checkAllocated();
-    int nbOfComp=getNumberOfComponents();
+    std::size_t nbOfComp(getNumberOfComponents());
     if(nbOfComp!=a->getNumberOfComponents())
       throw INTERP_KERNEL::Exception("DataArrayTemplate::setPartOfValuesAdv : This and a do not have the same number of components !");
     if(tuplesSelec->getNumberOfComponents()!=2)
@@ -1922,7 +1993,7 @@ namespace MEDCoupling
     checkAllocated();
     a->checkAllocated();
     tuplesSelec->checkAllocated();
-    int nbOfComp(getNumberOfComponents());
+    std::size_t nbOfComp(getNumberOfComponents());
     if(nbOfComp!=a->getNumberOfComponents())
       throw INTERP_KERNEL::Exception("DataArrayTemplate::setContigPartOfSelectedValues : This and a do not have the same number of components !");
     if(tuplesSelec->getNumberOfComponents()!=1)
@@ -1987,7 +2058,7 @@ namespace MEDCoupling
       throw INTERP_KERNEL::Exception("DataArrayTemplate::setContigPartOfSelectedValuesSlice : input DataArray aBase is not a DataArrayDouble !");
     checkAllocated();
     a->checkAllocated();
-    int nbOfComp(getNumberOfComponents());
+    std::size_t nbOfComp(getNumberOfComponents());
     const char msg[]="DataArrayDouble::setContigPartOfSelectedValuesSlice";
     int nbOfTupleToWrite(DataArray::GetNumberOfItemGivenBES(bg,end2,step,msg));
     if(nbOfComp!=a->getNumberOfComponents())
@@ -2251,6 +2322,1395 @@ namespace MEDCoupling
     for(int i=0;i<nbTuples;i++,work+=nbOfCompo)
       std::reverse(work,work+nbOfCompo);
     std::reverse(_info_on_compo.begin(),_info_on_compo.end());
+  }
+
+  /*!
+   * Assign pointer to one array to a pointer to another appay. Reference counter of
+   * \a arrayToSet is incremented / decremented.
+   *  \param [in] newArray - the pointer to array to assign to \a arrayToSet.
+   *  \param [in,out] arrayToSet - the pointer to array to assign to.
+   */
+  template<class T>
+  void DataArrayTemplate<T>::SetArrayIn(typename Traits<T>::ArrayType *newArray, typename Traits<T>::ArrayType* &arrayToSet)
+  {
+    if(newArray!=arrayToSet)
+      {
+        if(arrayToSet)
+          arrayToSet->decrRef();
+        arrayToSet=newArray;
+        if(arrayToSet)
+          arrayToSet->incrRef();
+      }
+  }
+
+    /*!
+   * Assign zero to all values in \a this array. To know more on filling arrays see
+   * \ref MEDCouplingArrayFill.
+   * \throw If \a this is not allocated.
+   */
+  template<class T>
+  void DataArrayTemplate<T>::fillWithZero()
+  {
+    fillWithValue((T)0);
+  }
+
+  //////////////////////////////
+
+  template<class T>
+  template<class U>
+  MCAuto< typename Traits<U>::ArrayType > DataArrayTemplateClassic<T>::convertToOtherTypeOfArr() const
+  {
+    this->checkAllocated();
+    MCAuto<typename Traits<U>::ArrayType> ret(Traits<U>::ArrayType::New());
+    ret->alloc(this->getNumberOfTuples(),this->getNumberOfComponents());
+    std::size_t nbOfVals(this->getNbOfElems());
+    const T *src(this->begin());
+    U *dest(ret->getPointer());
+    // to make Visual C++ happy : instead of std::size_t nbOfVals=getNbOfElems(); std::copy(src,src+nbOfVals,dest);
+    //for(const T *src=this->begin();src!=this->end();src++,dest++)
+    //  *dest=(int)*src;
+    std::copy(src,src+nbOfVals,dest);
+    ret->copyStringInfoFrom(*this);
+    return ret;
+  }
+  
+  /*!
+   * Creates a new DataArrayDouble and assigns all (textual and numerical) data of \a this
+   * array to the new one.
+   *  \return DataArrayDouble * - the new instance of DataArrayInt.
+   */
+  template<class T>
+  MCAuto<DataArrayDouble> DataArrayTemplateClassic<T>::convertToDblArr() const
+  {
+    return convertToOtherTypeOfArr<double>();
+  }
+
+  /*!
+   * Creates a new DataArrayInt and assigns all (textual and numerical) data of \a this
+   * array to the new one.
+   *  \return DataArrayInt * - the new instance of DataArrayInt.
+   */
+  template<class T>
+  MCAuto<DataArrayInt> DataArrayTemplateClassic<T>::convertToIntArr() const
+  {
+    return convertToOtherTypeOfArr<int>();
+  }
+
+  /*!
+   * Creates a new DataArrayFloat and assigns all (textual and numerical) data of \a this
+   * array to the new one.
+   *  \return DataArrayFloat * - the new instance of DataArrayInt.
+   */
+  template<class T>
+  MCAuto<DataArrayFloat> DataArrayTemplateClassic<T>::convertToFloatArr() const
+  {
+    return convertToOtherTypeOfArr<float>();
+  }
+
+  /*!
+   * Apply a linear function to a given component of \a this array, so that
+   * an array element <em>(x)</em> becomes \f$ a * x + b \f$.
+   *  \param [in] a - the first coefficient of the function.
+   *  \param [in] b - the second coefficient of the function.
+   *  \param [in] compoId - the index of component to modify.
+   *  \throw If \a this is not allocated, or \a compoId is not in [0,\c this->getNumberOfComponents() ).
+   */
+  template<class T>
+  void DataArrayTemplateClassic<T>::applyLin(T a, T b, int compoId)
+  {
+    this->checkAllocated();
+    T *ptr(this->getPointer()+compoId);
+    int nbOfComp(this->getNumberOfComponents()),nbOfTuple(this->getNumberOfTuples());
+    if(compoId<0 || compoId>=nbOfComp)
+      {
+        std::ostringstream oss; oss << "DataArrayDouble::applyLin : The compoId requested (" << compoId << ") is not valid ! Must be in [0," << nbOfComp << ") !";
+        throw INTERP_KERNEL::Exception(oss.str().c_str());
+      }
+    for(int i=0;i<nbOfTuple;i++,ptr+=nbOfComp)
+      *ptr=a*(*ptr)+b;
+    this->declareAsNew();
+  }
+
+  /*!
+   * Apply a linear function to all elements of \a this array, so that
+   * an element _x_ becomes \f$ a * x + b \f$.
+   *  \param [in] a - the first coefficient of the function.
+   *  \param [in] b - the second coefficient of the function.
+   *  \throw If \a this is not allocated.
+   */
+  template<class T>
+  void DataArrayTemplateClassic<T>::applyLin(T a, T b)
+  {
+    this->checkAllocated();
+    T *ptr(this->getPointer());
+    std::size_t nbOfElems(this->getNbOfElems());
+    for(std::size_t i=0;i<nbOfElems;i++,ptr++)
+      *ptr=a*(*ptr)+b;
+    this->declareAsNew();
+  }
+  
+  /*!
+   * Returns a full copy of \a this array except that sign of all elements is reversed.
+   *  \return DataArrayDouble * - the new instance of DataArrayDouble containing the
+   *          same number of tuples and component as \a this array.
+   *          The caller is to delete this result array using decrRef() as it is no more
+   *          needed.
+   *  \throw If \a this is not allocated.
+   */
+  template<class T>
+  typename Traits<T>::ArrayType *DataArrayTemplateClassic<T>::negate() const
+  {
+    this->checkAllocated();
+    MCAuto<typename Traits<T>::ArrayType> newArr(Traits<T>::ArrayType::New());
+    int nbOfTuples(this->getNumberOfTuples()),nbOfComp(this->getNumberOfComponents());
+    newArr->alloc(nbOfTuples,nbOfComp);
+    const T *cptr(this->begin());
+    std::transform(cptr,cptr+nbOfTuples*nbOfComp,newArr->getPointer(),std::negate<T>());
+    newArr->copyStringInfoFrom(*this);
+    return newArr.retn();
+  }
+
+  template<class T>
+  template<class FCT>
+  void DataArrayTemplateClassic<T>::somethingEqual(const typename Traits<T>::ArrayType *other)
+  {
+    if(!other)
+      throw INTERP_KERNEL::Exception("DataArray<T>::SomethingEqual : input DataArray<T> instance is NULL !");
+    const char *msg="Nb of tuples mismatch for DataArrayDouble::multiplyEqual !";
+    this->checkAllocated();
+    other->checkAllocated();
+    int nbOfTuple(this->getNumberOfTuples()),nbOfTuple2(other->getNumberOfTuples());
+    int nbOfComp(this->getNumberOfComponents()),nbOfComp2(other->getNumberOfComponents());
+    if(nbOfTuple==nbOfTuple2)
+      {
+        if(nbOfComp==nbOfComp2)
+          {
+            std::transform(this->begin(),this->end(),other->begin(),this->getPointer(),FCT());
+          }
+        else if(nbOfComp2==1)
+          {
+            T *ptr(this->getPointer());
+            const T *ptrc(other->begin());
+            for(int i=0;i<nbOfTuple;i++)
+              std::transform(ptr+i*nbOfComp,ptr+(i+1)*nbOfComp,ptr+i*nbOfComp,std::bind2nd(FCT(),*ptrc++));
+          }
+        else
+          throw INTERP_KERNEL::Exception(msg);
+      }
+    else if(nbOfTuple2==1)
+      {
+        if(nbOfComp2==nbOfComp)
+          {
+            T *ptr(this->getPointer());
+            const T *ptrc(other->begin());
+            for(int i=0;i<nbOfTuple;i++)
+              std::transform(ptr+i*nbOfComp,ptr+(i+1)*nbOfComp,ptrc,ptr+i*nbOfComp,FCT());
+          }
+        else
+          throw INTERP_KERNEL::Exception(msg);
+      }
+    else
+      throw INTERP_KERNEL::Exception(msg);
+    this->declareAsNew();
+  }
+  
+  /*!
+   * Adds values of another DataArrayDouble to values of \a this one. There are 3
+   * valid cases.
+   * 1.  The arrays have same number of tuples and components. Then each value of
+   *   \a other array is added to the corresponding value of \a this array, i.e.:
+   *   _a_ [ i, j ] += _other_ [ i, j ].
+   * 2.  The arrays have same number of tuples and \a other array has one component. Then
+   *   _a_ [ i, j ] += _other_ [ i, 0 ].
+   * 3.  The arrays have same number of components and \a other array has one tuple. Then
+   *   _a_ [ i, j ] += _a2_ [ 0, j ].
+   *
+   *  \param [in] other - an array to add to \a this one.
+   *  \throw If \a other is NULL.
+   *  \throw If \a this->getNumberOfTuples() != \a other->getNumberOfTuples() and
+   *         \a this->getNumberOfComponents() != \a other->getNumberOfComponents() and
+   *         \a other has number of both tuples and components not equal to 1.
+   */
+  template<class T>
+  void DataArrayTemplateClassic<T>::addEqual(const typename Traits<T>::ArrayType *other)
+  {
+    this->somethingEqual< std::plus<T> >(other);
+  }
+
+  /*!
+   * Subtract values of another DataArrayDouble from values of \a this one. There are 3
+   * valid cases.
+   * 1.  The arrays have same number of tuples and components. Then each value of
+   *   \a other array is subtracted from the corresponding value of \a this array, i.e.:
+   *   _a_ [ i, j ] -= _other_ [ i, j ].
+   * 2.  The arrays have same number of tuples and \a other array has one component. Then
+   *   _a_ [ i, j ] -= _other_ [ i, 0 ].
+   * 3.  The arrays have same number of components and \a other array has one tuple. Then
+   *   _a_ [ i, j ] -= _a2_ [ 0, j ].
+   *
+   *  \param [in] other - an array to subtract from \a this one.
+   *  \throw If \a other is NULL.
+   *  \throw If \a this->getNumberOfTuples() != \a other->getNumberOfTuples() and
+   *         \a this->getNumberOfComponents() != \a other->getNumberOfComponents() and
+   *         \a other has number of both tuples and components not equal to 1.
+   */
+  template<class T>
+  void DataArrayTemplateClassic<T>::substractEqual(const typename Traits<T>::ArrayType *other)
+  {
+    this->somethingEqual< std::minus<T> >(other);
+  }
+  
+  /*!
+   * Multiply values of another DataArrayDouble to values of \a this one. There are 3
+   * valid cases.
+   * 1.  The arrays have same number of tuples and components. Then each value of
+   *   \a other array is multiplied to the corresponding value of \a this array, i.e.
+   *   _this_ [ i, j ] *= _other_ [ i, j ].
+   * 2.  The arrays have same number of tuples and \a other array has one component. Then
+   *   _this_ [ i, j ] *= _other_ [ i, 0 ].
+   * 3.  The arrays have same number of components and \a other array has one tuple. Then
+   *   _this_ [ i, j ] *= _a2_ [ 0, j ].
+   *
+   *  \param [in] other - an array to multiply to \a this one.
+   *  \throw If \a other is NULL.
+   *  \throw If \a this->getNumberOfTuples() != \a other->getNumberOfTuples() and
+   *         \a this->getNumberOfComponents() != \a other->getNumberOfComponents() and
+   *         \a other has number of both tuples and components not equal to 1.
+   */
+  template<class T>
+  void DataArrayTemplateClassic<T>::multiplyEqual(const typename Traits<T>::ArrayType *other)
+  {
+    this->somethingEqual< std::multiplies<T> >(other);
+  }
+
+  /*!
+   * Divide values of \a this array by values of another DataArrayDouble. There are 3
+   * valid cases.
+   * 1.  The arrays have same number of tuples and components. Then each value of
+   *    \a this array is divided by the corresponding value of \a other one, i.e.:
+   *   _a_ [ i, j ] /= _other_ [ i, j ].
+   * 2.  The arrays have same number of tuples and \a other array has one component. Then
+   *   _a_ [ i, j ] /= _other_ [ i, 0 ].
+   * 3.  The arrays have same number of components and \a other array has one tuple. Then
+   *   _a_ [ i, j ] /= _a2_ [ 0, j ].
+   *
+   *  \warning No check of division by zero is performed!
+   *  \param [in] other - an array to divide \a this one by.
+   *  \throw If \a other is NULL.
+   *  \throw If \a this->getNumberOfTuples() != \a other->getNumberOfTuples() and
+   *         \a this->getNumberOfComponents() != \a other->getNumberOfComponents() and
+   *         \a other has number of both tuples and components not equal to 1.
+   */
+  template<class T>
+  void DataArrayTemplateClassic<T>::divideEqual(const typename Traits<T>::ArrayType *other)
+  {
+    this->somethingEqual< std::divides<T> >(other);
+  }
+  
+  template<class T, class FCT>
+  typename Traits<T>::ArrayType *DivSub(const typename Traits<T>::ArrayType *a1, const typename Traits<T>::ArrayType *a2)
+  {
+    if(!a1 || !a2)
+      throw INTERP_KERNEL::Exception("DivSub : input DataArrayDouble instance is NULL !");
+    int nbOfTuple1(a1->getNumberOfTuples()),nbOfTuple2(a2->getNumberOfTuples());
+    int nbOfComp1(a1->getNumberOfComponents()),nbOfComp2(a2->getNumberOfComponents());
+    if(nbOfTuple2==nbOfTuple1)
+      {
+        if(nbOfComp1==nbOfComp2)
+          {
+            MCAuto<typename Traits<T>::ArrayType> ret(Traits<T>::ArrayType::New());
+            ret->alloc(nbOfTuple2,nbOfComp1);
+            std::transform(a1->begin(),a1->end(),a2->begin(),ret->getPointer(),FCT());
+            ret->copyStringInfoFrom(*a1);
+            return ret.retn();
+          }
+        else if(nbOfComp2==1)
+          {
+            MCAuto<typename Traits<T>::ArrayType> ret(Traits<T>::ArrayType::New());
+            ret->alloc(nbOfTuple1,nbOfComp1);
+            const T *a2Ptr(a2->begin()),*a1Ptr(a1->begin());
+            T *res(ret->getPointer());
+            for(int i=0;i<nbOfTuple1;i++)
+              res=std::transform(a1Ptr+i*nbOfComp1,a1Ptr+(i+1)*nbOfComp1,res,std::bind2nd(FCT(),a2Ptr[i]));
+            ret->copyStringInfoFrom(*a1);
+            return ret.retn();
+          }
+        else
+          {
+            a1->checkNbOfComps(nbOfComp2,"Nb of components mismatch for array Divide !");
+            return 0;
+          }
+      }
+    else if(nbOfTuple2==1)
+      {
+        a1->checkNbOfComps(nbOfComp2,"Nb of components mismatch for array Divide !");
+        MCAuto<typename Traits<T>::ArrayType> ret(Traits<T>::ArrayType::New());
+        ret->alloc(nbOfTuple1,nbOfComp1);
+        const T *a1ptr=a1->begin(),*a2ptr(a2->begin());
+        T *pt(ret->getPointer());
+        for(int i=0;i<nbOfTuple1;i++)
+          pt=std::transform(a1ptr+i*nbOfComp1,a1ptr+(i+1)*nbOfComp1,a2ptr,pt,FCT());
+        ret->copyStringInfoFrom(*a1);
+        return ret.retn();
+      }
+    else
+      {
+        a1->checkNbOfTuples(nbOfTuple2,"Nb of tuples mismatch for array Divide !");//will always throw an exception
+        return 0;
+      }
+  }
+  
+  /*!
+   * Returns a new DataArrayDouble that is a subtraction of two given arrays. There are 3
+   * valid cases.
+   * 1.  The arrays have same number of tuples and components. Then each value of
+   *   the result array (_a_) is a subtraction of the corresponding values of \a a1 and
+   *   \a a2, i.e.: _a_ [ i, j ] = _a1_ [ i, j ] - _a2_ [ i, j ].
+   * 2.  The arrays have same number of tuples and one array, say _a2_, has one
+   *   component. Then
+   *   _a_ [ i, j ] = _a1_ [ i, j ] - _a2_ [ i, 0 ].
+   * 3.  The arrays have same number of components and one array, say _a2_, has one
+   *   tuple. Then
+   *   _a_ [ i, j ] = _a1_ [ i, j ] - _a2_ [ 0, j ].
+   *
+   * Info on components is copied either from the first array (in the first case) or from
+   * the array with maximal number of elements (getNbOfElems()).
+   *  \param [in] a1 - an array to subtract from.
+   *  \param [in] a2 - an array to subtract.
+   *  \return DataArrayDouble * - the new instance of DataArrayDouble.
+   *          The caller is to delete this result array using decrRef() as it is no more
+   *          needed.
+   *  \throw If either \a a1 or \a a2 is NULL.
+   *  \throw If \a a1->getNumberOfTuples() != \a a2->getNumberOfTuples() and
+   *         \a a1->getNumberOfComponents() != \a a2->getNumberOfComponents() and
+   *         none of them has number of tuples or components equal to 1.
+   */
+  template<class T>
+  typename Traits<T>::ArrayType *DataArrayTemplateClassic<T>::Substract(const typename Traits<T>::ArrayType *a1, const typename Traits<T>::ArrayType *a2)
+  {
+    return DivSub< T,std::minus<T> >(a1,a2);
+  }
+  
+  /*!
+   * Returns a new DataArrayDouble that is a division of two given arrays. There are 3
+   * valid cases.
+   * 1.  The arrays have same number of tuples and components. Then each value of
+   *   the result array (_a_) is a division of the corresponding values of \a a1 and
+   *   \a a2, i.e.: _a_ [ i, j ] = _a1_ [ i, j ] / _a2_ [ i, j ].
+   * 2.  The arrays have same number of tuples and one array, say _a2_, has one
+   *   component. Then
+   *   _a_ [ i, j ] = _a1_ [ i, j ] / _a2_ [ i, 0 ].
+   * 3.  The arrays have same number of components and one array, say _a2_, has one
+   *   tuple. Then
+   *   _a_ [ i, j ] = _a1_ [ i, j ] / _a2_ [ 0, j ].
+   *
+   * Info on components is copied either from the first array (in the first case) or from
+   * the array with maximal number of elements (getNbOfElems()).
+   *  \warning No check of division by zero is performed!
+   *  \param [in] a1 - a numerator array.
+   *  \param [in] a2 - a denominator array.
+   *  \return DataArrayDouble * - the new instance of DataArrayDouble.
+   *          The caller is to delete this result array using decrRef() as it is no more
+   *          needed.
+   *  \throw If either \a a1 or \a a2 is NULL.
+   *  \throw If \a a1->getNumberOfTuples() != \a a2->getNumberOfTuples() and
+   *         \a a1->getNumberOfComponents() != \a a2->getNumberOfComponents() and
+   *         none of them has number of tuples or components equal to 1.
+   */
+  template<class T>
+  typename Traits<T>::ArrayType *DataArrayTemplateClassic<T>::Divide(const typename Traits<T>::ArrayType *a1, const typename Traits<T>::ArrayType *a2)
+  {
+    return DivSub< T,std::divides<T> >(a1,a2);
+  }
+
+  template<class T, class FCT>
+  typename Traits<T>::ArrayType *MulAdd(const typename Traits<T>::ArrayType *a1, const typename Traits<T>::ArrayType *a2)
+  {
+    if(!a1 || !a2)
+      throw INTERP_KERNEL::Exception("DataArrayDouble::MulAdd : input DataArrayDouble instance is NULL !");
+    int nbOfTuple(a1->getNumberOfTuples()),nbOfTuple2(a2->getNumberOfTuples());
+    int nbOfComp(a1->getNumberOfComponents()),nbOfComp2(a2->getNumberOfComponents());
+    MCAuto<typename Traits<T>::ArrayType> ret=0;
+    if(nbOfTuple==nbOfTuple2)
+      {
+        if(nbOfComp==nbOfComp2)
+          {
+            ret=Traits<T>::ArrayType::New();
+            ret->alloc(nbOfTuple,nbOfComp);
+            std::transform(a1->begin(),a1->end(),a2->begin(),ret->getPointer(),FCT());
+            ret->copyStringInfoFrom(*a1);
+          }
+        else
+          {
+            int nbOfCompMin,nbOfCompMax;
+            const typename Traits<T>::ArrayType *aMin, *aMax;
+            if(nbOfComp>nbOfComp2)
+              {
+                nbOfCompMin=nbOfComp2; nbOfCompMax=nbOfComp;
+                aMin=a2; aMax=a1;
+              }
+            else
+              {
+                nbOfCompMin=nbOfComp; nbOfCompMax=nbOfComp2;
+                aMin=a1; aMax=a2;
+              }
+            if(nbOfCompMin==1)
+              {
+                ret=Traits<T>::ArrayType::New();
+                ret->alloc(nbOfTuple,nbOfCompMax);
+                const T *aMinPtr(aMin->begin());
+                const T *aMaxPtr(aMax->begin());
+                T *res=ret->getPointer();
+                for(int i=0;i<nbOfTuple;i++)
+                  res=std::transform(aMaxPtr+i*nbOfCompMax,aMaxPtr+(i+1)*nbOfCompMax,res,std::bind2nd(FCT(),aMinPtr[i]));
+                ret->copyStringInfoFrom(*aMax);
+              }
+            else
+              throw INTERP_KERNEL::Exception("Nb of components mismatch for array MulAdd !");
+          }
+      }
+    else if((nbOfTuple==1 && nbOfTuple2>1) || (nbOfTuple>1 && nbOfTuple2==1))
+      {
+        if(nbOfComp==nbOfComp2)
+          {
+            int nbOfTupleMax=std::max(nbOfTuple,nbOfTuple2);
+            const typename Traits<T>::ArrayType *aMin(nbOfTuple>nbOfTuple2?a2:a1);
+            const typename Traits<T>::ArrayType *aMax(nbOfTuple>nbOfTuple2?a1:a2);
+            const T *aMinPtr(aMin->begin()),*aMaxPtr(aMax->begin());
+            ret=Traits<T>::ArrayType::New();
+            ret->alloc(nbOfTupleMax,nbOfComp);
+            T *res(ret->getPointer());
+            for(int i=0;i<nbOfTupleMax;i++)
+              res=std::transform(aMaxPtr+i*nbOfComp,aMaxPtr+(i+1)*nbOfComp,aMinPtr,res,FCT());
+            ret->copyStringInfoFrom(*aMax);
+          }
+        else
+          throw INTERP_KERNEL::Exception("Nb of components mismatch for array MulAdd !");
+      }
+    else
+      throw INTERP_KERNEL::Exception("Nb of tuples mismatch for array MulAdd !");
+    return ret.retn();
+  }
+  
+  /*!
+   * Returns a new DataArrayDouble that is a product of two given arrays. There are 3
+   * valid cases.
+   * 1.  The arrays have same number of tuples and components. Then each value of
+   *   the result array (_a_) is a product of the corresponding values of \a a1 and
+   *   \a a2, i.e. _a_ [ i, j ] = _a1_ [ i, j ] * _a2_ [ i, j ].
+   * 2.  The arrays have same number of tuples and one array, say _a2_, has one
+   *   component. Then
+   *   _a_ [ i, j ] = _a1_ [ i, j ] * _a2_ [ i, 0 ].
+   * 3.  The arrays have same number of components and one array, say _a2_, has one
+   *   tuple. Then
+   *   _a_ [ i, j ] = _a1_ [ i, j ] * _a2_ [ 0, j ].
+   *
+   * Info on components is copied either from the first array (in the first case) or from
+   * the array with maximal number of elements (getNbOfElems()).
+   *  \param [in] a1 - a factor array.
+   *  \param [in] a2 - another factor array.
+   *  \return DataArrayDouble * - the new instance of DataArrayDouble.
+   *          The caller is to delete this result array using decrRef() as it is no more
+   *          needed.
+   *  \throw If either \a a1 or \a a2 is NULL.
+   *  \throw If \a a1->getNumberOfTuples() != \a a2->getNumberOfTuples() and
+   *         \a a1->getNumberOfComponents() != \a a2->getNumberOfComponents() and
+   *         none of them has number of tuples or components equal to 1.
+   */
+  template<class T>
+  typename Traits<T>::ArrayType *DataArrayTemplateClassic<T>::Multiply(const typename Traits<T>::ArrayType *a1, const typename Traits<T>::ArrayType *a2)
+  {
+    return MulAdd< T , std::multiplies<T> >(a1,a2);
+  }
+  
+  /*!
+   * Returns a new DataArrayDouble that is a sum of two given arrays. There are 3
+   * valid cases.
+   * 1.  The arrays have same number of tuples and components. Then each value of
+   *   the result array (_a_) is a sum of the corresponding values of \a a1 and \a a2,
+   *   i.e.: _a_ [ i, j ] = _a1_ [ i, j ] + _a2_ [ i, j ].
+   * 2.  The arrays have same number of tuples and one array, say _a2_, has one
+   *   component. Then
+   *   _a_ [ i, j ] = _a1_ [ i, j ] + _a2_ [ i, 0 ].
+   * 3.  The arrays have same number of components and one array, say _a2_, has one
+   *   tuple. Then
+   *   _a_ [ i, j ] = _a1_ [ i, j ] + _a2_ [ 0, j ].
+   *
+   * Info on components is copied either from the first array (in the first case) or from
+   * the array with maximal number of elements (getNbOfElems()).
+   *  \param [in] a1 - an array to sum up.
+   *  \param [in] a2 - another array to sum up.
+   *  \return DataArrayDouble * - the new instance of DataArrayDouble.
+   *          The caller is to delete this result array using decrRef() as it is no more
+   *          needed.
+   *  \throw If either \a a1 or \a a2 is NULL.
+   *  \throw If \a a1->getNumberOfTuples() != \a a2->getNumberOfTuples() and
+   *         \a a1->getNumberOfComponents() != \a a2->getNumberOfComponents() and
+   *         none of them has number of tuples or components equal to 1.
+   */
+  template<class T>
+  typename Traits<T>::ArrayType *DataArrayTemplateClassic<T>::Add(const typename Traits<T>::ArrayType *a1, const typename Traits<T>::ArrayType *a2)
+  {
+    return MulAdd< T , std::plus<T> >(a1,a2);
+  }
+  
+  /*!
+   * Returns either a \a deep or \a shallow copy of this array. For more info see
+   * \ref MEDCouplingArrayBasicsCopyDeep and \ref MEDCouplingArrayBasicsCopyShallow.
+   *  \param [in] dCpy - if \a true, a deep copy is returned, else, a shallow one.
+   *  \return DataArrayDouble * - either a new instance of DataArrayDouble (if \a dCpy
+   *          == \a true) or \a this instance (if \a dCpy == \a false).
+   */
+  template<class T>
+  typename Traits<T>::ArrayType *DataArrayTemplateClassic<T>::PerformCopyOrIncrRef(bool dCpy, const typename Traits<T>::ArrayType& self)
+  {
+    if(dCpy)
+      return self.deepCopy();
+    else
+      {
+        self.incrRef();
+        return const_cast<typename Traits<T>::ArrayType *>(&self);
+      }
+  }
+
+  template<class T>
+  struct GreatEqual
+  {
+    GreatEqual(T v):_v(v) { }
+    bool operator()(T v) const { return v>=_v; }
+    T _v;
+  };
+  
+  template<class T>
+  struct GreaterThan
+  {
+    GreaterThan(T v):_v(v) { }
+    bool operator()(T v) const { return v>_v; }
+    T _v;
+  };
+  
+  template<class T>
+  struct LowerEqual
+  {
+    LowerEqual(T v):_v(v) { }
+    bool operator()(T v) const { return v<=_v; }
+    T _v;
+  };
+  
+  template<class T>
+  struct LowerThan
+  {
+    LowerThan(T v):_v(v) { }
+    bool operator()(T v) const { return v<_v; }
+    T _v;
+  };
+  
+  template<class T>
+  struct InRange
+  {
+    InRange(T a, T b):_a(a),_b(b) { }
+    bool operator()(T v) const { return v>=_a && v<_b; }
+    T _a,_b;
+  };
+
+template<class T>
+struct NotInRange
+{
+  NotInRange(T a, T b):_a(a),_b(b) { }
+  bool operator()(T v) const { return v<_a || v>=_b; }
+  T _a,_b;
+};
+
+  /*!
+   * This method works only on data array with one component. This method returns a newly allocated array storing stored ascendantly of tuple ids in \a this so that this[id]<0.
+   *
+   * \return a newly allocated data array that the caller should deal with.
+   * \sa DataArrayInt::findIdsInRange
+   */
+  template<class T>
+  DataArrayInt *DataArrayTemplateClassic<T>::findIdsStrictlyNegative() const
+  {
+    LowerThan<T> lt((T)0);
+    MCAuto<DataArrayInt> ret(findIdsAdv(lt));
+    return ret.retn();
+  }
+  
+  template<class T>
+  MCAuto<DataArrayInt> DataArrayTemplateClassic<T>::findIdsGreaterOrEqualTo(T val) const
+  {
+    GreatEqual<T> ge(val);
+    return findIdsAdv(ge);
+  }
+  
+  template<class T>
+  MCAuto<DataArrayInt> DataArrayTemplateClassic<T>::findIdsGreaterThan(T val) const
+  {
+    GreaterThan<T> gt(val);
+    return findIdsAdv(gt);
+  }
+  
+  template<class T>
+  MCAuto<DataArrayInt> DataArrayTemplateClassic<T>::findIdsLowerOrEqualTo(T val) const
+  {
+    LowerEqual<T> le(val);
+    return findIdsAdv(le);
+  }
+  
+  template<class T>
+  MCAuto<DataArrayInt> DataArrayTemplateClassic<T>::findIdsLowerThan(T val) const
+  {
+    LowerThan<T> lt(val);
+    return findIdsAdv(lt);
+  }
+
+  /*!
+   * Returns a new DataArrayDouble by aggregating two given arrays, so that (1) the number
+   * of components in the result array is a sum of the number of components of given arrays
+   * and (2) the number of tuples in the result array is same as that of each of given
+   * arrays. In other words the i-th tuple of result array includes all components of
+   * i-th tuples of all given arrays.
+   * Number of tuples in the given arrays must be  the same.
+   *  \param [in] a1 - an array to include in the result array.
+   *  \param [in] a2 - another array to include in the result array.
+   *  \return DataArrayDouble * - the new instance of DataArrayDouble.
+   *          The caller is to delete this result array using decrRef() as it is no more
+   *          needed.
+   *  \throw If both \a a1 and \a a2 are NULL.
+   *  \throw If any given array is not allocated.
+   *  \throw If \a a1->getNumberOfTuples() != \a a2->getNumberOfTuples()
+   */
+  template<class T>
+  typename Traits<T>::ArrayType *DataArrayTemplateClassic<T>::Meld(const typename Traits<T>::ArrayType *a1, const typename Traits<T>::ArrayType *a2)
+  {
+    std::vector<const typename Traits<T>::ArrayType *> arr(2);
+    arr[0]=a1; arr[1]=a2;
+    return Meld(arr);
+  }
+
+  /*!
+   * Returns a new DataArrayDouble by aggregating all given arrays, so that (1) the number
+   * of components in the result array is a sum of the number of components of given arrays
+   * and (2) the number of tuples in the result array is same as that of each of given
+   * arrays. In other words the i-th tuple of result array includes all components of
+   * i-th tuples of all given arrays.
+   * Number of tuples in the given arrays must be  the same.
+   *  \param [in] arr - a sequence of arrays to include in the result array.
+   *  \return DataArrayDouble * - the new instance of DataArrayDouble.
+   *          The caller is to delete this result array using decrRef() as it is no more
+   *          needed.
+   *  \throw If all arrays within \a arr are NULL.
+   *  \throw If any given array is not allocated.
+   *  \throw If getNumberOfTuples() of arrays within \a arr is different.
+   */
+  template<class T>
+  typename Traits<T>::ArrayType *DataArrayTemplateClassic<T>::Meld(const std::vector<const typename Traits<T>::ArrayType *>& arr)
+  {
+    std::vector<const typename Traits<T>::ArrayType *> a;
+    for(typename std::vector<const typename Traits<T>::ArrayType *>::const_iterator it4=arr.begin();it4!=arr.end();it4++)
+      if(*it4)
+        a.push_back(*it4);
+    if(a.empty())
+      throw INTERP_KERNEL::Exception("DataArrayDouble::Meld : input list must contain at least one NON EMPTY DataArrayDouble !");
+    typename std::vector<const typename Traits<T>::ArrayType *>::const_iterator it;
+    for(it=a.begin();it!=a.end();it++)
+      (*it)->checkAllocated();
+    it=a.begin();
+    std::size_t nbOfTuples((*it)->getNumberOfTuples());
+    std::vector<int> nbc(a.size());
+    std::vector<const T *> pts(a.size());
+    nbc[0]=(*it)->getNumberOfComponents();
+    pts[0]=(*it++)->getConstPointer();
+    for(int i=1;it!=a.end();it++,i++)
+      {
+        if(nbOfTuples!=(*it)->getNumberOfTuples())
+          throw INTERP_KERNEL::Exception("DataArrayDouble::Meld : mismatch of number of tuples !");
+        nbc[i]=(*it)->getNumberOfComponents();
+        pts[i]=(*it)->getConstPointer();
+      }
+    int totalNbOfComp=std::accumulate(nbc.begin(),nbc.end(),0);
+    typename Traits<T>::ArrayType *ret(Traits<T>::ArrayType::New());
+    ret->alloc(nbOfTuples,totalNbOfComp);
+    T *retPtr(ret->getPointer());
+    for(std::size_t i=0;i<nbOfTuples;i++)
+      for(std::size_t j=0;j<a.size();j++)
+        {
+          retPtr=std::copy(pts[j],pts[j]+nbc[j],retPtr);
+          pts[j]+=nbc[j];
+        }
+    int k=0;
+    for(int i=0;i<(int)a.size();i++)
+      for(int j=0;j<nbc[i];j++,k++)
+        ret->setInfoOnComponent(k,a[i]->getInfoOnComponent(j));
+    return ret;
+  }
+
+  /*!
+   * Returns a new DataArrayDouble holding the same values as \a this array but differently
+   * arranged in memory. If \a this array holds 2 components of 3 values:
+   * \f$ x_0,x_1,x_2,y_0,y_1,y_2 \f$, then the result array holds these values arranged
+   * as follows: \f$ x_0,y_0,x_1,y_1,x_2,y_2 \f$.
+   *  \warning Do not confuse this method with transpose()!
+   *  \return DataArrayDouble * - the new instance of DataArrayDouble that the caller
+   *          is to delete using decrRef() as it is no more needed.
+   *  \throw If \a this is not allocated.
+   */
+  template<class T>
+  typename Traits<T>::ArrayType *DataArrayTemplateClassic<T>::fromNoInterlace() const
+  {
+    if(this->_mem.isNull())
+      throw INTERP_KERNEL::Exception("DataArrayDouble::fromNoInterlace : Not defined array !");
+    T *tab(this->_mem.fromNoInterlace(this->getNumberOfComponents()));
+    MCAuto<typename Traits<T>::ArrayType> ret(Traits<T>::ArrayType::New());
+    ret->useArray(tab,true,C_DEALLOC,this->getNumberOfTuples(),this->getNumberOfComponents());
+    return ret.retn();
+  }
+
+  /*!
+   * Returns a new DataArrayDouble holding the same values as \a this array but differently
+   * arranged in memory. If \a this array holds 2 components of 3 values:
+   * \f$ x_0,y_0,x_1,y_1,x_2,y_2 \f$, then the result array holds these values arranged
+   * as follows: \f$ x_0,x_1,x_2,y_0,y_1,y_2 \f$.
+   *  \warning Do not confuse this method with transpose()!
+   *  \return DataArrayDouble * - the new instance of DataArrayDouble that the caller
+   *          is to delete using decrRef() as it is no more needed.
+   *  \throw If \a this is not allocated.
+   */
+  template<class T>
+  typename Traits<T>::ArrayType *DataArrayTemplateClassic<T>::toNoInterlace() const
+  {
+    if(this->_mem.isNull())
+      throw INTERP_KERNEL::Exception("DataArrayDouble::toNoInterlace : Not defined array !");
+    T *tab(this->_mem.toNoInterlace(this->getNumberOfComponents()));
+    MCAuto<typename Traits<T>::ArrayType> ret(Traits<T>::ArrayType::New());
+    ret->useArray(tab,true,C_DEALLOC,this->getNumberOfTuples(),this->getNumberOfComponents());
+    return ret.retn();
+  }
+  
+  /*!
+   * Appends components of another array to components of \a this one, tuple by tuple.
+   * So that the number of tuples of \a this array remains the same and the number of 
+   * components increases.
+   *  \param [in] other - the DataArrayDouble to append to \a this one.
+   *  \throw If \a this is not allocated.
+   *  \throw If \a this and \a other arrays have different number of tuples.
+   *
+   *  \if ENABLE_EXAMPLES
+   *  \ref cpp_mcdataarraydouble_meldwith "Here is a C++ example".
+   *
+   *  \ref py_mcdataarraydouble_meldwith "Here is a Python example".
+   *  \endif
+   */
+  template<class T>
+  void DataArrayTemplateClassic<T>::meldWith(const typename Traits<T>::ArrayType *other)
+  {
+    this->checkAllocated();
+    other->checkAllocated();
+    std::size_t nbOfTuples(this->getNumberOfTuples());
+    if(nbOfTuples!=other->getNumberOfTuples())
+      throw INTERP_KERNEL::Exception("DataArrayDouble::meldWith : mismatch of number of tuples !");
+    int nbOfComp1(this->getNumberOfComponents()),nbOfComp2(other->getNumberOfComponents());
+    T *newArr=(T *)malloc((nbOfTuples*(nbOfComp1+nbOfComp2))*sizeof(T));
+    T *w=newArr;
+    const T *inp1(this->begin()),*inp2(other->begin());
+    for(std::size_t i=0;i<nbOfTuples;i++,inp1+=nbOfComp1,inp2+=nbOfComp2)
+      {
+        w=std::copy(inp1,inp1+nbOfComp1,w);
+        w=std::copy(inp2,inp2+nbOfComp2,w);
+      }
+    this->useArray(newArr,true,C_DEALLOC,nbOfTuples,nbOfComp1+nbOfComp2);
+    std::vector<int> compIds(nbOfComp2);
+    for(int i=0;i<nbOfComp2;i++)
+      compIds[i]=nbOfComp1+i;
+    this->copyPartOfStringInfoFrom2(compIds,*other);
+  }
+
+  /*!
+   * 
+   * \param [in] nbTimes specifies the nb of times each tuples in \a this will be duplicated contiguouly in returned DataArrayDouble instance.
+   *             \a nbTimes  should be at least equal to 1.
+   * \return a newly allocated DataArrayDouble having one component and number of tuples equal to \a nbTimes * \c this->getNumberOfTuples.
+   * \throw if \a this is not allocated or if \a this has not number of components set to one or if \a nbTimes is lower than 1.
+   */
+  template<class T>
+  typename Traits<T>::ArrayType *DataArrayTemplateClassic<T>::duplicateEachTupleNTimes(int nbTimes) const
+  {
+    this->checkAllocated();
+    if(this->getNumberOfComponents()!=1)
+      throw INTERP_KERNEL::Exception("DataArrayDouble::duplicateEachTupleNTimes : this should have only one component !");
+    if(nbTimes<1)
+      throw INTERP_KERNEL::Exception("DataArrayDouble::duplicateEachTupleNTimes : nb times should be >= 1 !");
+    int nbTuples(this->getNumberOfTuples());
+    const T *inPtr(this->begin());
+    MCAuto<typename Traits<T>::ArrayType> ret(Traits<T>::ArrayType::New()); ret->alloc(nbTimes*nbTuples,1);
+    T *retPtr(ret->getPointer());
+    for(int i=0;i<nbTuples;i++,inPtr++)
+      {
+        T val(*inPtr);
+        for(int j=0;j<nbTimes;j++,retPtr++)
+          *retPtr=val;
+      }
+    ret->copyStringInfoFrom(*this);
+    return ret.retn();
+  }
+  
+  template<class T>
+  void DataArrayTemplateClassic<T>::aggregate(const typename Traits<T>::ArrayType *other)
+  {
+    if(!other)
+      throw INTERP_KERNEL::Exception("DataArrayDouble::aggregate : null pointer !");
+    if(this->getNumberOfComponents()!=other->getNumberOfComponents())
+      throw INTERP_KERNEL::Exception("DataArrayDouble::aggregate : mismatch number of components !");
+    this->_mem.insertAtTheEnd(other->begin(),other->end());
+  }
+
+  /*!
+   * Converts every value of \a this array to its absolute value.
+   * \b WARNING this method is non const. If a new DataArrayDouble instance should be built containing the result of abs DataArrayDouble::computeAbs
+   * should be called instead.
+   *
+   * \throw If \a this is not allocated.
+   * \sa DataArrayDouble::computeAbs
+   */
+  template<class T>
+  void DataArrayTemplateClassic<T>::abs()
+  {
+    this->checkAllocated();
+    T *ptr(this->getPointer());
+    std::size_t nbOfElems(this->getNbOfElems());
+    std::transform(ptr,ptr+nbOfElems,ptr,std::ptr_fun<T,T>(std::abs));
+    this->declareAsNew();
+  }
+
+  /*!
+   * This method builds a new instance of \a this object containing the result of std::abs applied of all elements in \a this.
+   * This method is a const method (that do not change any values in \a this) contrary to  DataArrayDouble::abs method.
+   *
+   * \return DataArrayDouble * - the new instance of DataArrayDouble containing the
+   *         same number of tuples and component as \a this array.
+   *         The caller is to delete this result array using decrRef() as it is no more
+   *         needed.
+   * \throw If \a this is not allocated.
+   * \sa DataArrayDouble::abs
+   */
+  template<class T>
+  typename Traits<T>::ArrayType *DataArrayTemplateClassic<T>::computeAbs() const
+  {
+    this->checkAllocated();
+    MCAuto<typename Traits<T>::ArrayType> newArr(Traits<T>::ArrayType::New());
+    int nbOfTuples(this->getNumberOfTuples());
+    int nbOfComp(this->getNumberOfComponents());
+    newArr->alloc(nbOfTuples,nbOfComp);
+    std::transform(this->begin(),this->end(),newArr->getPointer(),std::ptr_fun<T,T>(std::abs));
+    newArr->copyStringInfoFrom(*this);
+    return newArr.retn();
+  }
+
+  /*!
+   * Returns either a \a deep or \a shallow copy of this array. For more info see
+   * \ref MEDCouplingArrayBasicsCopyDeep and \ref MEDCouplingArrayBasicsCopyShallow.
+   *  \param [in] dCpy - if \a true, a deep copy is returned, else, a shallow one.
+   *  \return DataArrayDouble * - either a new instance of DataArrayDouble (if \a dCpy
+   *          == \a true) or \a this instance (if \a dCpy == \a false).
+   */
+  template<class T>
+  typename Traits<T>::ArrayType *DataArrayTemplateClassic<T>::performCopyOrIncrRef(bool dCpy) const
+  {
+    const typename Traits<T>::ArrayType *thisC(static_cast<const typename Traits<T>::ArrayType *>(this));
+    return DataArrayTemplateClassic<T>::PerformCopyOrIncrRef(dCpy,*thisC);
+  }
+
+  /*!
+   * Computes for each tuple the sum of number of components values in the tuple and return it.
+   * 
+   * \return DataArrayDouble * - the new instance of DataArrayDouble containing the
+   *          same number of tuples as \a this array and one component.
+   *          The caller is to delete this result array using decrRef() as it is no more
+   *          needed.
+   *  \throw If \a this is not allocated.
+   */
+  template<class T>
+  typename Traits<T>::ArrayType *DataArrayTemplateClassic<T>::sumPerTuple() const
+  {
+    this->checkAllocated();
+    std::size_t nbOfComp(this->getNumberOfComponents()),nbOfTuple(this->getNumberOfTuples());
+    MCAuto<typename Traits<T>::ArrayType> ret(Traits<T>::ArrayType::New());
+    ret->alloc(nbOfTuple,1);
+    const T *src(this->begin());
+    T *dest(ret->getPointer());
+    for(std::size_t i=0;i<nbOfTuple;i++,dest++,src+=nbOfComp)
+      *dest=std::accumulate(src,src+nbOfComp,(T)0);
+    return ret.retn();
+  }
+
+  /*!
+   * Set all values in \a this array so that the i-th element equals to \a init + i
+   * (i starts from zero). To know more on filling arrays see \ref MEDCouplingArrayFill.
+   *  \param [in] init - value to assign to the first element of array.
+   *  \throw If \a this->getNumberOfComponents() != 1
+   *  \throw If \a this is not allocated.
+   */
+  template<class T>
+  void DataArrayTemplateClassic<T>::iota(T init)
+  {
+    this->checkAllocated();
+    if(this->getNumberOfComponents()!=1)
+      throw INTERP_KERNEL::Exception("DataArrayDouble::iota : works only for arrays with only one component, you can call 'rearrange' method before !");
+    T *ptr(this->getPointer());
+    std::size_t ntuples(this->getNumberOfTuples());
+    for(std::size_t i=0;i<ntuples;i++)
+      ptr[i]=init+(T)i;
+    this->declareAsNew();
+  }
+
+  template<class T>
+  struct ImplReprTraits { static void SetPrecision(std::ostream& oss) { } };
+
+  template<>
+  struct ImplReprTraits<double> {  static void SetPrecision(std::ostream& oss) { oss.precision(17); } };
+  
+  template<>
+  struct ImplReprTraits<float> {  static void SetPrecision(std::ostream& oss) { oss.precision(7); } };
+  
+  template<class T>
+  void DataArrayTemplateClassic<T>::reprStream(std::ostream& stream) const
+  {
+    stream << "Name of " << Traits<T>::ReprStr << " array : \"" << this->_name << "\"\n";
+    reprWithoutNameStream(stream);
+  }
+
+  template<class T>
+  void DataArrayTemplateClassic<T>::reprZipStream(std::ostream& stream) const
+  {
+    stream << "Name of " << Traits<T>::ReprStr << " array : \"" << this->_name << "\"\n";
+    reprZipWithoutNameStream(stream);
+  }
+
+  template<class T>
+  void DataArrayTemplateClassic<T>::reprNotTooLongStream(std::ostream& stream) const
+  {
+    stream << "Name of "<< Traits<T>::ReprStr << " array : \"" << this->_name << "\"\n";
+    reprNotTooLongWithoutNameStream(stream);
+  }
+
+  template<class T>
+  void DataArrayTemplateClassic<T>::reprWithoutNameStream(std::ostream& stream) const
+  {
+    DataArray::reprWithoutNameStream(stream);
+    ImplReprTraits<T>::SetPrecision(stream);
+    this->_mem.repr(this->getNumberOfComponents(),stream);
+  }
+
+  template<class T>
+  void DataArrayTemplateClassic<T>::reprZipWithoutNameStream(std::ostream& stream) const
+  {
+    DataArray::reprWithoutNameStream(stream);
+    ImplReprTraits<T>::SetPrecision(stream);
+    this->_mem.reprZip(this->getNumberOfComponents(),stream);
+  }
+
+  template<class T>
+  void DataArrayTemplateClassic<T>::reprNotTooLongWithoutNameStream(std::ostream& stream) const
+  {
+    DataArray::reprWithoutNameStream(stream);
+    ImplReprTraits<T>::SetPrecision(stream);
+    this->_mem.reprNotTooLong(this->getNumberOfComponents(),stream);
+  }
+
+  /*!
+   * This method is close to repr method except that when \a this has more than 1000 tuples, all tuples are not
+   * printed out to avoid to consume too much space in interpretor.
+   * \sa repr
+   */
+  template<class T>
+  std::string DataArrayTemplateClassic<T>::reprNotTooLong() const
+  {
+    std::ostringstream ret;
+    reprNotTooLongStream(ret);
+    return ret.str();
+  }
+  
+  /////////////////////////////////
+  
+  /*!
+   * Checks if all values in \a this array are equal to \a val at precision \a eps.
+   *  \param [in] val - value to check equality of array values to.
+   *  \param [in] eps - precision to check the equality.
+   *  \return bool - \a true if all values are in range (_val_ - _eps_; _val_ + _eps_),
+   *                 \a false else.
+   *  \throw If \a this->getNumberOfComponents() != 1
+   *  \throw If \a this is not allocated.
+   */
+  template<class T>
+  bool DataArrayTemplateFP<T>::isUniform(T val, T eps) const
+  {
+    this->checkAllocated();
+    if(this->getNumberOfComponents()!=1)
+      throw INTERP_KERNEL::Exception("DataArrayDouble::isUniform : must be applied on DataArrayDouble with only one component, you can call 'rearrange' method before !");
+    const T *w(this->begin()),*end2(this->end());
+    const T vmin(val-eps),vmax(val+eps);
+    for(;w!=end2;w++)
+      if(*w<vmin || *w>vmax)
+        return false;
+    return true;
+  }
+
+  /*!
+   * Equivalent to DataArrayInt::isEqual except that if false the reason of
+   * mismatch is given.
+   * 
+   * \param [in] other the instance to be compared with \a this
+   * \param [out] reason In case of inequality returns the reason.
+   * \sa DataArrayInt::isEqual
+   */
+  template<class T>
+  bool DataArrayDiscrete<T>::isEqualIfNotWhy(const DataArrayDiscrete<T>& other, std::string& reason) const
+  {
+    if(!this->areInfoEqualsIfNotWhy(other,reason))
+      return false;
+    return this->_mem.isEqual(other._mem,0,reason);
+  }
+
+  /*!
+   * Checks if \a this and another DataArrayInt are fully equal. For more info see
+   * \ref MEDCouplingArrayBasicsCompare.
+   *  \param [in] other - an instance of DataArrayInt to compare with \a this one.
+   *  \return bool - \a true if the two arrays are equal, \a false else.
+   */
+  template<class T>
+  bool DataArrayDiscrete<T>::isEqual(const DataArrayDiscrete<T>& other) const
+  {
+    std::string tmp;
+    return isEqualIfNotWhy(other,tmp);
+  }
+
+  /*!
+   * Checks if values of \a this and another DataArrayInt are equal. For more info see
+   * \ref MEDCouplingArrayBasicsCompare.
+   *  \param [in] other - an instance of DataArrayInt to compare with \a this one.
+   *  \return bool - \a true if the values of two arrays are equal, \a false else.
+   */
+  template<class T>
+  bool DataArrayDiscrete<T>::isEqualWithoutConsideringStr(const DataArrayDiscrete<T>& other) const
+  {
+    std::string tmp;
+    return this->_mem.isEqual(other._mem,0,tmp);
+  }
+
+  /*!
+   * Checks if values of \a this and another DataArrayInt are equal. Comparison is
+   * performed on sorted value sequences.
+   * For more info see\ref MEDCouplingArrayBasicsCompare.
+   *  \param [in] other - an instance of DataArrayInt to compare with \a this one.
+   *  \return bool - \a true if the sorted values of two arrays are equal, \a false else.
+   */
+  template<class T>
+  bool DataArrayDiscrete<T>::isEqualWithoutConsideringStrAndOrder(const typename Traits<T>::ArrayType& other) const
+  {
+    MCAuto<DataArrayInt> a(static_cast<const typename Traits<T>::ArrayType *>(this)->deepCopy()),b(other.deepCopy());
+    a->sort();
+    b->sort();
+    return a->isEqualWithoutConsideringStr(*b);
+  }
+  
+  template<class T>
+  template<class ALG>
+  void DataArrayDiscrete<T>::switchOnTupleAlg(T val, std::vector<bool>& vec, ALG algo) const
+  {
+    this->checkAllocated();
+    if(this->getNumberOfComponents()!=1)
+      throw INTERP_KERNEL::Exception("DataArrayInt::switchOnTupleEqualTo : number of components of this should be equal to one !");
+    int nbOfTuples(this->getNumberOfTuples());
+    if(nbOfTuples!=(int)vec.size())
+      throw INTERP_KERNEL::Exception("DataArrayInt::switchOnTupleEqualTo : number of tuples of this should be equal to size of input vector of bool !");
+    const T *pt(this->begin());
+    for(int i=0;i<nbOfTuples;i++)
+      if(algo(pt[i],val))
+        vec[i]=true;
+  }
+  
+  /*!
+   * This method assumes that \a this has one component and is allocated. This method scans all tuples in \a this and for all tuple equal to \a val
+   * put True to the corresponding entry in \a vec.
+   * \a vec is expected to be with the same size than the number of tuples of \a this.
+   *
+   *  \sa DataArrayInt::switchOnTupleNotEqualTo.
+   */
+  template<class T>
+  void DataArrayDiscrete<T>::switchOnTupleEqualTo(T val, std::vector<bool>& vec) const
+  {
+    switchOnTupleAlg(val,vec,std::equal_to<T>());
+  }
+
+  /*!
+   * This method assumes that \a this has one component and is allocated. This method scans all tuples in \a this and for all tuple different from \a val
+   * put True to the corresponding entry in \a vec.
+   * \a vec is expected to be with the same size than the number of tuples of \a this.
+   * 
+   *  \sa DataArrayInt::switchOnTupleEqualTo.
+   */
+  template<class T>
+  void DataArrayDiscrete<T>::switchOnTupleNotEqualTo(T val, std::vector<bool>& vec) const
+  {
+    switchOnTupleAlg(val,vec,std::not_equal_to<T>());
+  }
+
+  /*!
+   * Creates a new one-dimensional DataArrayInt of the same size as \a this and a given
+   * one-dimensional arrays that must be of the same length. The result array describes
+   * correspondence between \a this and \a other arrays, so that 
+   * <em> other.getIJ(i,0) == this->getIJ(ret->getIJ(i),0)</em>. If such a permutation is
+   * not possible because some element in \a other is not in \a this, an exception is thrown.
+   *  \param [in] other - an array to compute permutation to.
+   *  \return DataArrayInt * - a new instance of DataArrayInt, which is a permutation array
+   * from \a this to \a other. The caller is to delete this array using decrRef() as it is
+   * no more needed.
+   *  \throw If \a this->getNumberOfComponents() != 1.
+   *  \throw If \a other->getNumberOfComponents() != 1.
+   *  \throw If \a this->getNumberOfTuples() != \a other->getNumberOfTuples().
+   *  \throw If \a other includes a value which is not in \a this array.
+   * 
+   *  \if ENABLE_EXAMPLES
+   *  \ref cpp_mcdataarrayint_buildpermutationarr "Here is a C++ example".
+   *
+   *  \ref py_mcdataarrayint_buildpermutationarr "Here is a Python example".
+   *  \endif
+   */
+  template<class T>
+  DataArrayIdType *DataArrayDiscrete<T>::buildPermutationArr(const DataArrayDiscrete<T>& other) const
+  {
+    this->checkAllocated();
+    if(this->getNumberOfComponents()!=1 || other.getNumberOfComponents()!=1)
+      throw INTERP_KERNEL::Exception("DataArrayInt::buildPermutationArr : 'this' and 'other' have to have exactly ONE component !");
+    std::size_t nbTuple(this->getNumberOfTuples());
+    other.checkAllocated();
+    if(nbTuple!=other.getNumberOfTuples())
+      throw INTERP_KERNEL::Exception("DataArrayInt::buildPermutationArr : 'this' and 'other' must have the same number of tuple !");
+    MCAuto<DataArrayIdType> ret(DataArrayIdType::New());
+    ret->alloc(nbTuple,1);
+    ret->fillWithValue(-1);
+    const T *pt(this->begin());
+    std::map<int,mcIdType> mm;
+    for(std::size_t i=0;i<nbTuple;i++)
+      mm[pt[i]]=(mcIdType)i;
+    pt=other.begin();
+    mcIdType *retToFill(ret->getPointer());
+    for(std::size_t i=0;i<nbTuple;i++)
+      {
+        std::map<int,int>::const_iterator it=mm.find(pt[i]);
+        if(it==mm.end())
+          {
+            std::ostringstream oss; oss << "DataArrayInt::buildPermutationArr : Arrays mismatch : element (" << pt[i] << ") in 'other' not findable in 'this' !";
+            throw INTERP_KERNEL::Exception(oss.str().c_str());
+          }
+        retToFill[i]=(*it).second;
+      }
+    return ret.retn();
+  }
+
+  /*!
+   * Elements of \a partOfThis are expected to be included in \a this.
+   * The returned array \a ret is so that this[ret]==partOfThis
+   *
+   * For example, if \a this array contents are [9,10,0,6,4,11,3,8] and if \a partOfThis contains [6,0,11,8]
+   * the return array will contain [3,2,5,7].
+   *
+   * \a this is expected to be a 1 compo allocated array.
+   * \param [in] partOfThis - A 1 compo allocated array
+   * \return - A newly allocated array to be dealed by caller having the same number of tuples than \a partOfThis.
+   * \throw if two same element is present twice in \a this
+   * \throw if an element in \a partOfThis is \b NOT in \a this.
+   */
+  template<class T>
+  DataArrayIdType *DataArrayDiscrete<T>::indicesOfSubPart(const DataArrayDiscrete<T>& partOfThis) const
+  {
+    if(this->getNumberOfComponents()!=1 || partOfThis.getNumberOfComponents()!=1)
+      throw INTERP_KERNEL::Exception("DataArrayInt::indicesOfSubPart : this and input array must be one component array !");
+    this->checkAllocated(); partOfThis.checkAllocated();
+    std::size_t thisNbTuples(this->getNumberOfTuples()),nbTuples(partOfThis.getNumberOfTuples());
+    const T *thisPt(this->begin()),*pt(partOfThis.begin());
+    MCAuto<DataArrayIdType> ret(DataArrayIdType::New());
+    ret->alloc(nbTuples,1);
+    T *retPt(ret->getPointer());
+    std::map<int,mcIdType> m;
+    for(std::size_t i=0;i<thisNbTuples;i++,thisPt++)
+      m[*thisPt]=(mcIdType)i;
+    if(m.size()!=thisNbTuples)
+      throw INTERP_KERNEL::Exception("DataArrayInt::indicesOfSubPart : some elements appears more than once !");
+    for(std::size_t i=0;i<nbTuples;i++,retPt++,pt++)
+      {
+        std::map<int,mcIdType>::const_iterator it(m.find(*pt));
+        if(it!=m.end())
+          *retPt=(*it).second;
+        else
+          {
+            std::ostringstream oss; oss << "DataArrayInt::indicesOfSubPart : At pos #" << i << " of input array value is " << *pt << " not in this !";
+            throw INTERP_KERNEL::Exception(oss.str());
+          }
+      }
+    return ret.retn();
+  }
+
+  /*!
+   * Checks that \a this array is consistently **increasing** or **decreasing** in value.
+   * If not an exception is thrown.
+   *  \param [in] increasing - if \a true, the array values should be increasing.
+   *  \throw If sequence of values is not strictly monotonic in agreement with \a
+   *         increasing arg.
+   *  \throw If \a this->getNumberOfComponents() != 1.
+   *  \throw If \a this is not allocated.
+   */
+  template<class T>
+  void DataArrayDiscrete<T>::checkMonotonic(bool increasing) const
+  {
+    if(!isMonotonic(increasing))
+      {
+        if (increasing)
+          throw INTERP_KERNEL::Exception("DataArrayInt::checkMonotonic : 'this' is not INCREASING monotonic !");
+        else
+          throw INTERP_KERNEL::Exception("DataArrayInt::checkMonotonic : 'this' is not DECREASING monotonic !");
+      }
+  }
+
+  /*!
+   * Checks that \a this array is consistently **increasing** or **decreasing** in value.
+   *  \param [in] increasing - if \a true, array values should be increasing.
+   *  \return bool - \a true if values change in accordance with \a increasing arg.
+   *  \throw If \a this->getNumberOfComponents() != 1.
+   *  \throw If \a this is not allocated.
+   */
+  template<class T>
+  bool DataArrayDiscrete<T>::isMonotonic(bool increasing) const
+  {
+    this->checkAllocated();
+    if(this->getNumberOfComponents()!=1)
+      throw INTERP_KERNEL::Exception("DataArrayInt::isMonotonic : only supported with 'this' array with ONE component !");
+    std::size_t nbOfElements(this->getNumberOfTuples());
+    const T *ptr(this->begin());
+    if(nbOfElements==0)
+      return true;
+    T ref(ptr[0]);
+    if(increasing)
+      {
+        for(std::size_t i=1;i<nbOfElements;i++)
+          {
+            if(ptr[i]>=ref)
+              ref=ptr[i];
+            else
+              return false;
+          }
+      }
+    else
+      {
+        for(std::size_t i=1;i<nbOfElements;i++)
+          {
+            if(ptr[i]<=ref)
+              ref=ptr[i];
+            else
+              return false;
+          }
+      }
+    return true;
+  }
+
+  /*!
+   * This method check that array consistently INCREASING or DECREASING in value.
+   */
+  template<class T>
+  bool DataArrayDiscrete<T>::isStrictlyMonotonic(bool increasing) const
+  {
+    this->checkAllocated();
+    if(this->getNumberOfComponents()!=1)
+      throw INTERP_KERNEL::Exception("DataArrayInt::isStrictlyMonotonic : only supported with 'this' array with ONE component !");
+    std::size_t nbOfElements(this->getNumberOfTuples());
+    const T *ptr(this->begin());
+    if(nbOfElements==0)
+      return true;
+    T ref(ptr[0]);
+    if(increasing)
+      {
+        for(std::size_t i=1;i<nbOfElements;i++)
+          {
+            if(ptr[i]>ref)
+              ref=ptr[i];
+            else
+              return false;
+          }
+      }
+    else
+      {
+        for(std::size_t i=1;i<nbOfElements;i++)
+          {
+            if(ptr[i]<ref)
+              ref=ptr[i];
+            else
+              return false;
+          }
+      }
+    return true;
+  }
+
+  /*!
+   * This method check that array consistently INCREASING or DECREASING in value.
+   */
+  template<class T>
+  void DataArrayDiscrete<T>::checkStrictlyMonotonic(bool increasing) const
+  {
+    if(!isStrictlyMonotonic(increasing))
+      {
+        if (increasing)
+          throw INTERP_KERNEL::Exception("DataArrayInt::checkStrictlyMonotonic : 'this' is not strictly INCREASING monotonic !");
+        else
+          throw INTERP_KERNEL::Exception("DataArrayInt::checkStrictlyMonotonic : 'this' is not strictly DECREASING monotonic !");
+      }
+  }
+
+  ////////////////////////////////////
+
+  /*!
+   * This method compares content of input vector \a v and \a this.
+   * If for each id in \a this v[id]==True and for all other ids id2 not in \a this v[id2]==False, true is returned.
+   * For performance reasons \a this is expected to be sorted ascendingly. If not an exception will be thrown.
+   *
+   * \param [in] v - the vector of 'flags' to be compared with \a this.
+   *
+   * \throw If \a this is not sorted ascendingly.
+   * \throw If \a this has not exactly one component.
+   * \throw If \a this is not allocated.
+   */
+  template<class T>
+  bool DataArrayDiscreteSigned<T>::isFittingWith(const std::vector<bool>& v) const
+  {
+    this->checkAllocated();
+    if(this->getNumberOfComponents()!=1)
+      throw INTERP_KERNEL::Exception("DataArrayInt::isFittingWith : number of components of this should be equal to one !");
+    const T *w(this->begin()),*end2(this->end());
+    T refVal=-std::numeric_limits<T>::max();
+    int i=0;
+    std::vector<bool>::const_iterator it(v.begin());
+    for(;it!=v.end();it++,i++)
+      {
+        if(*it)
+          {
+            if(w!=end2)
+              {
+                if(*w++==i)
+                  {
+                    if(i>refVal)
+                      refVal=i;
+                    else
+                      {
+                        std::ostringstream oss; oss << "DataArrayInt::isFittingWith : At pos #" << std::distance(this->begin(),w-1) << " this is not sorted ascendingly !";
+                        throw INTERP_KERNEL::Exception(oss.str().c_str());
+                      }
+                  }
+                else
+                  return false;
+              }
+            else
+              return false;
+          }
+      }
+    return w==end2;
   }
 }
 

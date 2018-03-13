@@ -17,19 +17,19 @@ MED231champNormaliser.c\
 MED231champRefInfoEtRenMaa.c\
 MED231champInfoEtRen.c
 
-buildCxxFile =  \
-MAJ_231_232_maillagesbuilt.cxx\
-MAJ_231_232_champsbuilt.cxx\
-MAJ_231_232_chainebuilt.cxx\
-MED231champLireEtUnlinkbuilt.cxx\
-MED231datasetNumEcrirebuilt.cxx\
-MED231datasetNumLirebuilt.cxx\
-MED231champNormaliserbuilt.cxx\
-MED231champRefInfoEtRenMaabuilt.cxx\
-MED231champInfoEtRenbuilt.cxx
+# buildCxxFile =  \
+# MAJ_231_232_maillagesbuilt.cxx\
+# MAJ_231_232_champsbuilt.cxx\
+# MAJ_231_232_chainebuilt.cxx\
+# MED231champLireEtUnlinkbuilt.cxx\
+# MED231datasetNumEcrirebuilt.cxx\
+# MED231datasetNumLirebuilt.cxx\
+# MED231champNormaliserbuilt.cxx\
+# MED231champRefInfoEtRenMaabuilt.cxx\
+# MED231champInfoEtRenbuilt.cxx
 
-noinst_LTLIBRARIES += libMaj231To232cxx.la
-libMaj231To232cxx_la_SOURCES   = $(buildCxxFile)
+# noinst_LTLIBRARIES += libMaj231To232cxx.la
+# libMaj231To232cxx_la_SOURCES   = $(buildCxxFile)
 
-CLEANFILES = $(buildCxxFile)
+# CLEANFILES = $(buildCxxFile)
 EXTRA_DIST = CMakeLists.txt

@@ -10,7 +10,19 @@ test2.dump: test2.med
 
 #BUILT_SOURCES = 
 
-check-local: ./test10.dump\
+check-local:\
+./test10_int.dump\
+./test10_long.dump\
+./test10_f32_int.dump\
+./test10_f32_long.dump\
+./test10_f32_i32_long.dump\
+./test10_f32_i64_long.dump\
+./test10_i32_long.dump\
+./test10_i64_long.dump\
+./test10_f32_i32_int.dump\
+./test10_f32_i64_int.dump\
+./test10_i32_int.dump\
+./test10_i64_int.dump\
 ./test12.dump\
 ./test14.dump\
 ./test16.dump\
@@ -30,9 +42,21 @@ check-local: ./test10.dump\
 ./test8.dump
 
 
+
 CLEANFILES = \
-./test10.dump\
 ./test12.dump\
+./test10_int.dump\
+./test10_long.dump\
+./test10_f32_int.dump\
+./test10_f32_long.dump\
+./test10_f32_i32_long.dump\
+./test10_f32_i64_long.dump\
+./test10_i32_long.dump\
+./test10_i64_long.dump\
+./test10_f32_i32_int.dump\
+./test10_f32_i64_int.dump\
+./test10_i32_int.dump\
+./test10_i64_int.dump\
 ./test14.dump\
 ./test16.dump\
 ./test18.dump\
@@ -51,8 +75,19 @@ CLEANFILES = \
 ./test8.dump
 
 EXTRA_DIST = \
-./test10.med\
 ./test12.med\
+./test10_int.med\
+./test10_long.med\
+./test10_f32_int.med\
+./test10_f32_long.med\
+./test10_f32_i32_long.med\
+./test10_f32_i64_long.med\
+./test10_i32_long.med\
+./test10_i64_long.med\
+./test10_f32_i32_int.med\
+./test10_f32_i64_int.med\
+./test10_i32_int.med\
+./test10_i64_int.med\
 ./test14.med\
 ./test16.med\
 ./test18.med\
@@ -71,4 +106,28 @@ EXTRA_DIST = \
 ./test8.med\
 ./test10-med.hdf\
 ./test2-med.hdf
+
+EXTRA_DIST+= \
+./test11b_.out\
+./test11_.out\
+./test11_test10_f32_i32.med.out\
+./test11_test10_f32_i64.med.out\
+./test11_test10_f32.med.out\
+./test11_test10_i32.med.out\
+./test11_test10_i64.med.out\
+./test13_test12.med.out\
+./test13b_test12.med.out\
+./test15_test14.med.out\
+./test17_.out\
+./test22_.out\
+./test24_.out\
+./test26_.out\
+./test28_.out\
+./test30_test29.med.out\
+./test32_test31.med.out\
+./test33_test31.med.out\
+./test3_.out\
+./test5_.out\
+./test7_.out\
+./test9_.out
 

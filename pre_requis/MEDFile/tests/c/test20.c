@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2016  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -182,7 +182,7 @@ int main (int argc, char **argv)
     MESSAGE("Echec du demontage de test20-0.med");
     return -1;
   }
-  printf("On demonte le fichier test20-0.med dans test20.med\n");
+  printf("On demonte le fichier test20-0.med du test20.med\n");
 
   /* Fermeture du fichier test20.med */
   if (MEDfileClose(fid) < 0) {

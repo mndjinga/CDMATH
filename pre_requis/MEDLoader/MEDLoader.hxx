@@ -35,6 +35,7 @@ namespace MEDCoupling
   class DataArrayInt;
   class MEDCouplingMesh;
   class MEDCouplingUMesh;
+  class MEDCouplingField;
   class MEDCouplingFieldDouble;
   class MEDFileWritable;
 
@@ -72,9 +73,9 @@ namespace MEDCoupling
   MEDLOADER_EXPORT MEDCoupling::MEDCouplingUMesh *ReadUMeshFromFile(const std::string& fileName, const std::string& meshName, int meshDimRelToMax=0);
   MEDLOADER_EXPORT MEDCoupling::MEDCouplingUMesh *ReadUMeshFromFile(const std::string& fileName, int meshDimRelToMax=0);
   MEDLOADER_EXPORT int ReadUMeshDimFromFile(const std::string& fileName, const std::string& meshName);
-  MEDLOADER_EXPORT MCAuto<MEDCoupling::MEDCouplingFieldDouble> ReadField(const std::string& fileName);
-  MEDLOADER_EXPORT MCAuto<MEDCoupling::MEDCouplingFieldDouble> ReadField(const std::string& fileName, const std::string& fieldName);
-  MEDLOADER_EXPORT MCAuto<MEDCoupling::MEDCouplingFieldDouble> ReadField(const std::string& fileName, const std::string& fieldName, int iteration, int order);
+  MEDLOADER_EXPORT MCAuto<MEDCoupling::MEDCouplingField> ReadField(const std::string& fileName);
+  MEDLOADER_EXPORT MCAuto<MEDCoupling::MEDCouplingField> ReadField(const std::string& fileName, const std::string& fieldName);
+  MEDLOADER_EXPORT MCAuto<MEDCoupling::MEDCouplingField> ReadField(const std::string& fileName, const std::string& fieldName, int iteration, int order);
   MEDLOADER_EXPORT MCAuto<MEDCoupling::MEDCouplingFieldDouble> ReadField(MEDCoupling::TypeOfField type, const std::string& fileName, const std::string& meshName, int meshDimRelToMax, const std::string& fieldName, int iteration, int order);
   MEDLOADER_EXPORT std::vector<MEDCoupling::MEDCouplingFieldDouble *> ReadFieldsOnSameMesh(MEDCoupling::TypeOfField type, const std::string& fileName, const std::string& meshName, int meshDimRelToMax, const std::string& fieldName,
                                                                                            const std::vector<std::pair<int,int> >& its);
@@ -96,9 +97,9 @@ namespace MEDCoupling
   MEDLOADER_EXPORT void WriteUMeshesPartition(const std::string& fileName, const std::string& meshName, const std::vector<const MEDCoupling::MEDCouplingUMesh *>& meshes, bool writeFromScratch);
   MEDLOADER_EXPORT void WriteUMeshesPartitionDep(const std::string& fileName, const std::string& meshName, const std::vector<const MEDCoupling::MEDCouplingUMesh *>& meshes, bool writeFromScratch);
   MEDLOADER_EXPORT void WriteUMeshes(const std::string& fileName, const std::vector<const MEDCoupling::MEDCouplingUMesh *>& meshes, bool writeFromScratch);
-  MEDLOADER_EXPORT void WriteField(const std::string& fileName, const MEDCoupling::MEDCouplingFieldDouble *f, bool writeFromScratch);
-  MEDLOADER_EXPORT void WriteFieldDep(const std::string& fileName, const MEDCoupling::MEDCouplingFieldDouble *f, bool writeFromScratch);
-  MEDLOADER_EXPORT void WriteFieldUsingAlreadyWrittenMesh(const std::string& fileName, const MEDCoupling::MEDCouplingFieldDouble *f);
+  MEDLOADER_EXPORT void WriteField(const std::string& fileName, const MEDCoupling::MEDCouplingField *f, bool writeFromScratch);
+  MEDLOADER_EXPORT void WriteFieldDep(const std::string& fileName, const MEDCoupling::MEDCouplingField *f, bool writeFromScratch);
+  MEDLOADER_EXPORT void WriteFieldUsingAlreadyWrittenMesh(const std::string& fileName, const MEDCoupling::MEDCouplingField *f);
 
   MEDLOADER_EXPORT void AssignStaticWritePropertiesTo(MEDCoupling::MEDFileWritable& obj);
 }

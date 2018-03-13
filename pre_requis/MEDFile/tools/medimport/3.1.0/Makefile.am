@@ -10,11 +10,11 @@ noinst_LTLIBRARIES = libMaj310To320.la
 libMaj310To320_la_SOURCES   = \
 MAJ_310_320_familles.c
 
-buildCxxFile =  \
-MAJ_310_320_famillesbuilt.cxx
+# buildCxxFile =  \
+# MAJ_310_320_famillesbuilt.cxx
 
-noinst_LTLIBRARIES += libMaj310To320cxx.la
-libMaj310To320cxx_la_SOURCES   = $(buildCxxFile)
+# noinst_LTLIBRARIES += libMaj310To320cxx.la
+# libMaj310To320cxx_la_SOURCES   = $(buildCxxFile)
 
-CLEANFILES = $(buildCxxFile)
+# CLEANFILES = $(buildCxxFile)
 EXTRA_DIST = CMakeLists.txt

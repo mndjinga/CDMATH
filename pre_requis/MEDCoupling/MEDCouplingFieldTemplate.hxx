@@ -16,7 +16,7 @@
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// Author : Anthony Geay (CEA/DEN)
+// Author : Anthony Geay (EDF R&D)
 
 #ifndef __PARAMEDMEM_MEDCOUPLINGFIELDTEMPLATE_HXX__
 #define __PARAMEDMEM_MEDCOUPLINGFIELDTEMPLATE_HXX__
@@ -26,6 +26,7 @@
 namespace MEDCoupling
 {
   class MEDCouplingFieldInt;
+  class MEDCouplingFieldFloat;
   class MEDCouplingFieldDouble;
   /*!
    * \brief A field template can be seen as a field without the array of values.
@@ -41,11 +42,19 @@ namespace MEDCoupling
   {
   public:
     MEDCOUPLING_EXPORT static MEDCouplingFieldTemplate *New(const MEDCouplingFieldDouble& f);
+    MEDCOUPLING_EXPORT static MEDCouplingFieldTemplate *New(const MEDCouplingFieldFloat& f);
     MEDCOUPLING_EXPORT static MEDCouplingFieldTemplate *New(const MEDCouplingFieldInt& f);
     MEDCOUPLING_EXPORT static MEDCouplingFieldTemplate *New(TypeOfField type);
+    MEDCOUPLING_EXPORT static MEDCouplingFieldTemplate *NewWithoutCheck(const MEDCouplingFieldDouble& f);
+    MEDCOUPLING_EXPORT static MEDCouplingFieldTemplate *NewWithoutCheck(const MEDCouplingFieldFloat& f);
+    MEDCOUPLING_EXPORT static MEDCouplingFieldTemplate *NewWithoutCheck(const MEDCouplingFieldInt& f);
+    MEDCOUPLING_EXPORT bool isEqualIfNotWhy(const MEDCouplingFieldTemplate *other, double meshPrec, std::string& reason) const;
+    MEDCOUPLING_EXPORT bool isEqual(const MEDCouplingFieldTemplate *other, double meshPrec) const;
+    MEDCOUPLING_EXPORT bool isEqualWithoutConsideringStr(const MEDCouplingFieldTemplate *other, double meshPrec) const;
     MEDCOUPLING_EXPORT std::string simpleRepr() const;
     MEDCOUPLING_EXPORT std::string advancedRepr() const;
     MEDCOUPLING_EXPORT void checkConsistencyLight() const;
+    MEDCOUPLING_EXPORT MCAuto<MEDCouplingFieldTemplate> clone(bool recDeepCpy) const;
     //
     MEDCOUPLING_EXPORT void getTinySerializationIntInformation(std::vector<int>& tinyInfo) const;
     MEDCOUPLING_EXPORT void getTinySerializationDbleInformation(std::vector<double>& tinyInfo) const;
@@ -56,9 +65,11 @@ namespace MEDCoupling
     //
     MEDCOUPLING_EXPORT void reprQuickOverview(std::ostream& stream) const;
   private:
-    MEDCouplingFieldTemplate(const MEDCouplingFieldDouble& f);
-    MEDCouplingFieldTemplate(const MEDCouplingFieldInt& f);
+    MEDCouplingFieldTemplate(const MEDCouplingFieldDouble& f, bool isChecked=true);
+    MEDCouplingFieldTemplate(const MEDCouplingFieldFloat& f, bool isChecked=true);
+    MEDCouplingFieldTemplate(const MEDCouplingFieldInt& f, bool isChecked=true);
     MEDCouplingFieldTemplate(TypeOfField type);
+    MEDCouplingFieldTemplate(const MEDCouplingFieldTemplate& other, bool deepCopy);
   };
 }
 

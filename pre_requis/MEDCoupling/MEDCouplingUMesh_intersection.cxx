@@ -865,7 +865,7 @@ public:
   VectorOfCellInfo(const std::vector<int>& edges, const std::vector< MCAuto<INTERP_KERNEL::Edge> >& edgesPtr);
   std::size_t size() const { return _pool.size(); }
   int getPositionOf(double eps, const MEDCouplingUMesh *mesh) const;
-  void setMeshAt(int pos, const MCAuto<MEDCouplingUMesh>& mesh, int istart, int iend, const MCAuto<MEDCouplingUMesh>& mesh1DInCase, const std::vector< std::vector<int> >& edges, const std::vector< std::vector< MCAuto<INTERP_KERNEL::Edge> > >& edgePtrs);
+  void setMeshAt(std::size_t pos, const MCAuto<MEDCouplingUMesh>& mesh, int istart, int iend, const MCAuto<MEDCouplingUMesh>& mesh1DInCase, const std::vector< std::vector<int> >& edges, const std::vector< std::vector< MCAuto<INTERP_KERNEL::Edge> > >& edgePtrs);
   const std::vector<int>& getConnOf(int pos) const { return get(pos)._edges; }
   const std::vector< MCAuto<INTERP_KERNEL::Edge> >& getEdgePtrOf(int pos) const { return get(pos)._edges_ptr; }
   MCAuto<MEDCouplingUMesh> getZeMesh() const { return _ze_mesh; }
@@ -900,7 +900,7 @@ int VectorOfCellInfo::getPositionOf(double eps, const MEDCouplingUMesh *mesh) co
   return zeMesh->getCellContainingPoint(barys->begin(),eps);
 }
 
-void VectorOfCellInfo::setMeshAt(int pos, const MCAuto<MEDCouplingUMesh>& mesh, int istart, int iend, const MCAuto<MEDCouplingUMesh>& mesh1DInCase, const std::vector< std::vector<int> >& edges, const std::vector< std::vector< MCAuto<INTERP_KERNEL::Edge> > >& edgePtrs)
+void VectorOfCellInfo::setMeshAt(std::size_t pos, const MCAuto<MEDCouplingUMesh>& mesh, int istart, int iend, const MCAuto<MEDCouplingUMesh>& mesh1DInCase, const std::vector< std::vector<int> >& edges, const std::vector< std::vector< MCAuto<INTERP_KERNEL::Edge> > >& edgePtrs)
 {
   get(pos);//to check pos
   bool isFast(pos==0 && _pool.size()==1);
@@ -912,7 +912,7 @@ void VectorOfCellInfo::setMeshAt(int pos, const MCAuto<MEDCouplingUMesh>& mesh, 
     _edge_info.push_back(EdgeInfo(istart,iend,pos,edgePtrs[0].back()));
   //
   std::vector<CellInfo> pool(_pool.size()-1+sz);
-  for(int i=0;i<pos;i++)
+  for(std::size_t i=0;i<pos;i++)
     pool[i]=_pool[i];
   for(std::size_t j=0;j<sz;j++)
     pool[pos+j]=CellInfo(edges[j],edgePtrs[j]);
@@ -1170,11 +1170,11 @@ void MEDCouplingUMesh::Intersect1DMeshes(const MEDCouplingUMesh *m1Desc, const M
                                          std::vector< std::vector<int> >& intersectEdge1, std::vector< std::vector<int> >& colinear2, std::vector< std::vector<int> >& subDiv2, std::vector<double>& addCoo, std::map<int,int>& mergedNodes)
 {
   static const int SPACEDIM=2;
-  INTERP_KERNEL::QUADRATIC_PLANAR::_precision=eps;
-  INTERP_KERNEL::QUADRATIC_PLANAR::_arc_detection_precision=eps;
+  INTERP_KERNEL::QuadraticPlanarPrecision prec(eps);
+  INTERP_KERNEL::QuadraticPlanarArcDetectionPrecision arcPrec(eps);
   const int *c1(m1Desc->getNodalConnectivity()->begin()),*ci1(m1Desc->getNodalConnectivityIndex()->begin());
   // Build BB tree of all edges in the tool mesh (second mesh)
-  MCAuto<DataArrayDouble> bbox1Arr(m1Desc->getBoundingBoxForBBTree()),bbox2Arr(m2Desc->getBoundingBoxForBBTree());
+  MCAuto<DataArrayDouble> bbox1Arr(m1Desc->getBoundingBoxForBBTree(eps)),bbox2Arr(m2Desc->getBoundingBoxForBBTree(eps));
   const double *bbox1(bbox1Arr->begin()),*bbox2(bbox2Arr->begin());
   int nDescCell1(m1Desc->getNumberOfCells()),nDescCell2(m2Desc->getNumberOfCells());
   intersectEdge1.resize(nDescCell1);
@@ -1269,7 +1269,7 @@ void MEDCouplingUMesh::BuildIntersecting2DCellsFromEdges(double eps, const MEDCo
   const int *conn2(m2->getNodalConnectivity()->begin()),*connI2(m2->getNodalConnectivityIndex()->begin());
   int offset2(offset1+m2->getNumberOfNodes());
   int offset3(offset2+((int)addCoords.size())/2);
-  MCAuto<DataArrayDouble> bbox1Arr(m1->getBoundingBoxForBBTree()),bbox2Arr(m2->getBoundingBoxForBBTree());
+  MCAuto<DataArrayDouble> bbox1Arr(m1->getBoundingBoxForBBTree(eps)),bbox2Arr(m2->getBoundingBoxForBBTree(eps));
   const double *bbox1(bbox1Arr->begin()),*bbox2(bbox2Arr->begin());
   // Here a BBTree on 2D-cells, not on segments:
   BBTree<SPACEDIM,int> myTree(bbox2,0,0,m2->getNumberOfCells(),eps);
@@ -1400,7 +1400,7 @@ void MEDCouplingUMesh::buildSubCellsFromCut(const std::vector< std::pair<int,int
     throw INTERP_KERNEL::Exception("MEDCouplingUMesh::buildSubCellsFromCut works only with single cell presently !");
   for(int i=0;i<nbOfCells;i++)
     {
-      int offset(descIndx[i]),nbOfFaces(descIndx[i+1]-offset),start(-1),end(-1);
+      int offset(descIndx[i]),nbOfFaces(descIndx[i+1]-offset);
       for(int j=0;j<nbOfFaces;j++)
         {
           const std::pair<int,int>& p=cut3DSurf[desc[offset+j]];
@@ -1567,6 +1567,8 @@ MEDCouplingUMesh *MEDCouplingUMesh::Intersect2DMeshes(const MEDCouplingUMesh *m1
     throw INTERP_KERNEL::Exception("MEDCouplingUMesh::Intersect2DMeshes : input meshes must be not NULL !");
   m1->checkFullyDefined();
   m2->checkFullyDefined();
+  INTERP_KERNEL::QuadraticPlanarPrecision prec(eps);
+  INTERP_KERNEL::QuadraticPlanarArcDetectionPrecision arcPrec(eps);
   if(m1->getMeshDimension()!=2 || m1->getSpaceDimension()!=2 || m2->getMeshDimension()!=2 || m2->getSpaceDimension()!=2)
     throw INTERP_KERNEL::Exception("MEDCouplingUMesh::Intersect2DMeshes works on umeshes m1 AND m2  with meshdim equal to 2 and spaceDim equal to 2 too!");
 
@@ -1647,8 +1649,8 @@ void MEDCouplingUMesh::Intersect2DMeshWith1DLine(const MEDCouplingUMesh *mesh2D,
   // Step 1: compute all edge intersections (new nodes)
   std::vector< std::vector<int> > intersectEdge1, colinear2, subDiv2;
   std::vector<double> addCoo,addCoordsQuadratic;  // coordinates of newly created nodes
-  INTERP_KERNEL::QUADRATIC_PLANAR::_precision=eps;
-  INTERP_KERNEL::QUADRATIC_PLANAR::_arc_detection_precision=eps;
+  INTERP_KERNEL::QuadraticPlanarPrecision prec(eps);
+  INTERP_KERNEL::QuadraticPlanarArcDetectionPrecision arcPrec(eps);
   //
   // Build desc connectivity
   DataArrayInt *desc1(DataArrayInt::New()),*descIndx1(DataArrayInt::New()),*revDesc1(DataArrayInt::New()),*revDescIndx1(DataArrayInt::New());
@@ -1702,7 +1704,9 @@ void MEDCouplingUMesh::Intersect2DMeshWith1DLine(const MEDCouplingUMesh *mesh2D,
   MCAuto<DataArrayDouble> baryRet1(ret1NonCol->computeCellCenterOfMass());
   MCAuto<DataArrayInt> elts,eltsIndex;
   mesh2D->getCellsContainingPoints(baryRet1->begin(),baryRet1->getNumberOfTuples(),eps,elts,eltsIndex);
-  MCAuto<DataArrayInt> eltsIndex2(eltsIndex->deltaShiftIndex());
+  MCAuto<DataArrayInt> eltsIndex2(DataArrayInt::New()); eltsIndex2->alloc(0,1);
+  if (eltsIndex->getNumberOfTuples() > 1)
+    eltsIndex2 = eltsIndex->deltaShiftIndex();
   MCAuto<DataArrayInt> eltsIndex3(eltsIndex2->findIdsEqual(1));
   if(eltsIndex2->count(0)+eltsIndex3->getNumberOfTuples()!=ret1NonCol->getNumberOfCells())
     throw INTERP_KERNEL::Exception("Intersect2DMeshWith1DLine : internal error 1 !");
@@ -1775,7 +1779,7 @@ void MEDCouplingUMesh::Intersect2DMeshWith1DLine(const MEDCouplingUMesh *mesh2D,
       MCAuto<MEDCouplingUMesh> splitOfOneCell(BuildMesh2DCutFrom(eps,*it,m1Desc,partOfMesh1CuttingCur2DCell,dd1->begin()+dd2->getIJ(*it,0),dd1->begin()+dd2->getIJ((*it)+1,0),intersectEdge1,ret2->getNumberOfTuples(),partOfRet3));
       ret3->setPartOfValues3(partOfRet3,idsNonColPerCell2->begin(),idsNonColPerCell2->end(),0,2,1,true);
       outMesh2DSplit.push_back(splitOfOneCell);
-      for(int i=0;i<splitOfOneCell->getNumberOfCells();i++)
+      for(std::size_t i=0;i<splitOfOneCell->getNumberOfCells();i++)
         ret2->pushBackSilent(*it);
     }
   //
@@ -1788,7 +1792,7 @@ void MEDCouplingUMesh::Intersect2DMeshWith1DLine(const MEDCouplingUMesh *mesh2D,
   MCAuto<MEDCouplingUMesh> ret2D(MEDCouplingUMesh::MergeUMeshesOnSameCoords(tmp));
   // To finish - filter ret3 - std::numeric_limits<int>::max() -> -1 - negate values must be resolved.
   ret3->rearrange(1);
-  MCAuto<DataArrayInt> edgesToDealWith(ret3->findIdsStricltyNegative());
+  MCAuto<DataArrayInt> edgesToDealWith(ret3->findIdsStrictlyNegative());
   for(const int *it=edgesToDealWith->begin();it!=edgesToDealWith->end();it++)
     {
       int old2DCellId(-ret3->getIJ(*it,0)-1);
@@ -1836,14 +1840,14 @@ DataArrayInt *MEDCouplingUMesh::conformize2D(double eps)
   MCAuto<DataArrayInt> desc1(DataArrayInt::New()),descIndx1(DataArrayInt::New()),revDesc1(DataArrayInt::New()),revDescIndx1(DataArrayInt::New());
   MCAuto<MEDCouplingUMesh> mDesc(buildDescendingConnectivity(desc1,descIndx1,revDesc1,revDescIndx1));
   const int *c(mDesc->getNodalConnectivity()->begin()),*ci(mDesc->getNodalConnectivityIndex()->begin()),*rd(revDesc1->begin()),*rdi(revDescIndx1->begin());
-  MCAuto<DataArrayDouble> bboxArr(mDesc->getBoundingBoxForBBTree());
+  MCAuto<DataArrayDouble> bboxArr(mDesc->getBoundingBoxForBBTree(eps));
   const double *bbox(bboxArr->begin()),*coords(getCoords()->begin());
   int nCell(getNumberOfCells()),nDescCell(mDesc->getNumberOfCells());
   std::vector< std::vector<int> > intersectEdge(nDescCell),overlapEdge(nDescCell);
   std::vector<double> addCoo;
   BBTree<SPACEDIM,int> myTree(bbox,0,0,nDescCell,-eps);
-  INTERP_KERNEL::QUADRATIC_PLANAR::_precision=eps;
-  INTERP_KERNEL::QUADRATIC_PLANAR::_arc_detection_precision=eps;
+  INTERP_KERNEL::QuadraticPlanarPrecision prec(eps);
+  INTERP_KERNEL::QuadraticPlanarArcDetectionPrecision arcPrec(eps);
   for(int i=0;i<nDescCell;i++)
     {
       std::vector<int> candidates;
@@ -1970,8 +1974,8 @@ DataArrayInt *MEDCouplingUMesh::colinearize2D(double eps)
   checkConsistencyLight();
   if(getSpaceDimension()!=2 || getMeshDimension()!=2)
     throw INTERP_KERNEL::Exception("MEDCouplingUMesh::colinearize2D : This method only works for meshes with spaceDim=2 and meshDim=2 !");
-  INTERP_KERNEL::QUADRATIC_PLANAR::_arc_detection_precision=eps;
-  INTERP_KERNEL::QUADRATIC_PLANAR::_precision=eps;
+  INTERP_KERNEL::QuadraticPlanarPrecision prec(eps);
+  INTERP_KERNEL::QuadraticPlanarArcDetectionPrecision arcPrec(eps);
   int nbOfCells(getNumberOfCells()),nbOfNodes(getNumberOfNodes());
   const int *cptr(_nodal_connec->begin()),*ciptr(_nodal_connec_index->begin());
   MCAuto<DataArrayInt> newc(DataArrayInt::New()),newci(DataArrayInt::New()); newci->alloc(nbOfCells+1,1); newc->alloc(0,1); newci->setIJ(0,0,0);
@@ -2123,7 +2127,6 @@ DataArrayInt *MEDCouplingUMesh::conformize3D(double eps)
   if(_types.size() != 1 || *(_types.begin()) != INTERP_KERNEL::NORM_POLYHED)
     throw INTERP_KERNEL::Exception("MEDCouplingUMesh::conformize3D : This method only works for polyhedrons! Call convertAllToPoly first.");
 
-  int *c(getNodalConnectivity()->getPointer()),*cI(getNodalConnectivityIndex()->getPointer());
   MCAuto<MEDCouplingSkyLineArray> connSla(MEDCouplingSkyLineArray::BuildFromPolyhedronConn(getNodalConnectivity(), getNodalConnectivityIndex()));
   const double * coo(_coords->begin());
   MCAuto<DataArrayInt> ret(DataArrayInt::New());
@@ -2139,9 +2142,9 @@ DataArrayInt *MEDCouplingUMesh::conformize3D(double eps)
     MCAuto<MEDCouplingSkyLineArray> connSlaDesc(MEDCouplingSkyLineArray::New(mDesc->getNodalConnectivityIndex(), mDesc->getNodalConnectivity()));
 
     // Build BBTree
-    MCAuto<DataArrayDouble> bboxArr(mDesc->getBoundingBoxForBBTree());
-    const double *bbox(bboxArr->begin()),*coords(getCoords()->begin());
-    int nCell=getNumberOfCells(), nDescCell=mDesc->getNumberOfCells();
+    MCAuto<DataArrayDouble> bboxArr(mDesc->getBoundingBoxForBBTree(eps));
+    const double *bbox(bboxArr->begin()); getCoords()->begin();
+    int nDescCell(mDesc->getNumberOfCells());
     BBTree<SPACEDIM,int> myTree(bbox,0,0,nDescCell,-eps);
     // Surfaces - handle biggest first
     MCAuto<MEDCouplingFieldDouble> surfF = mDesc->getMeasureField(true);
@@ -2152,11 +2155,12 @@ DataArrayInt *MEDCouplingUMesh::conformize3D(double eps)
     const double * normalsP = normals->getConstPointer();
 
     // Sort faces by decreasing surface:
-    vector<pair<double,int> > S;
-    for(int i=0;i < surfs->getNumberOfTuples();i++){
+    vector< pair<double,int> > S;
+    for(std::size_t i=0;i < surfs->getNumberOfTuples();i++)
+      {
         pair<double,int> p = make_pair(surfs->begin()[i], i);
         S.push_back(p);
-    }
+      }
     sort(S.rbegin(),S.rend()); // reverse sort
     vector<bool> hit(nDescCell);
     fill(hit.begin(), hit.end(), false);
@@ -2170,11 +2174,11 @@ DataArrayInt *MEDCouplingUMesh::conformize3D(double eps)
         vector<int> candidates, cands2;
         myTree.getIntersectingElems(bbox+faceIdx*2*SPACEDIM,candidates);
         // Keep only candidates whose normal matches the normal of current face
-        for(vector<int>::const_iterator it=candidates.begin();it!=candidates.end();it++)
+        for(vector<int>::const_iterator it2=candidates.begin();it2!=candidates.end();it2++)
           {
-            bool col = INTERP_KERNEL::isColinear3D(normalsP + faceIdx*SPACEDIM, normalsP + *(it)*SPACEDIM, eps);
-            if (*it != faceIdx && col)
-              cands2.push_back(*it);
+            bool col = INTERP_KERNEL::isColinear3D(normalsP + faceIdx*SPACEDIM, normalsP + *(it2)*SPACEDIM, eps);
+            if (*it2 != faceIdx && col)
+              cands2.push_back(*it2);
           }
         if (!cands2.size())
           continue;
@@ -2189,9 +2193,9 @@ DataArrayInt *MEDCouplingUMesh::conformize3D(double eps)
         MCAuto<MEDCouplingUMesh> mPartCand(mDesc->buildPartOfMySelf(&cands2[0], &cands2[0]+cands2.size(), false)); // false=zipCoords is called
         double * cooPartRef(mPartRef->_coords->getPointer());
         double * cooPartCand(mPartCand->_coords->getPointer());
-        for (int ii = 0; ii < mPartRef->_coords->getNumberOfTuples(); ii++)
+        for (std::size_t ii = 0; ii < mPartRef->_coords->getNumberOfTuples(); ii++)
           rotation.transform_vector(cooPartRef+SPACEDIM*ii);
-        for (int ii = 0; ii < mPartCand->_coords->getNumberOfTuples(); ii++)
+        for (std::size_t ii = 0; ii < mPartCand->_coords->getNumberOfTuples(); ii++)
           rotation.transform_vector(cooPartCand+SPACEDIM*ii);
 
         // Localize faces in 2D thanks to barycenters
@@ -2233,9 +2237,9 @@ DataArrayInt *MEDCouplingUMesh::conformize3D(double eps)
         const int * idsGoodPlaneP(idsGoodPlane->begin());
         for (const int * ii = ids->begin(); ii != ids->end(); ii++)
           {
-            int faceIdx = cands2[idsGoodPlaneP[*ii]];
-            hit[faceIdx] = true;
-            checkSurf += surfs->begin()[faceIdx];
+            int faceIdx2 = cands2[idsGoodPlaneP[*ii]];
+            hit[faceIdx2] = true;
+            checkSurf += surfs->begin()[faceIdx2];
           }
         if (fabs(checkSurf - surfs->begin()[faceIdx]) > eps)
           {
@@ -2256,7 +2260,7 @@ DataArrayInt *MEDCouplingUMesh::conformize3D(double eps)
         connSla->findPackIds(polyIndices, sIdxConn, sIdxConnE, packsIds);
         // Deletion of old faces
         int jj=0;
-        for (vector<int>::const_iterator it=polyIndices.begin(); it!=polyIndices.end(); ++it, ++jj)
+        for (vector<int>::const_iterator it2=polyIndices.begin(); it2!=polyIndices.end(); ++it2, ++jj)
           {
             if (packsIds[jj] == -1)
               // The below should never happen - if a face is used several times, with a different layout of the nodes
@@ -2264,18 +2268,18 @@ DataArrayInt *MEDCouplingUMesh::conformize3D(double eps)
               // faces which are actually used only once, by a single cell. This is different for edges below.
               throw INTERP_KERNEL::Exception("MEDCouplingUMesh::conformize3D: Could not find face in connectivity! Internal error.");
             else
-              connSla->deletePack(*it, packsIds[jj]);
+              connSla->deletePack(*it2, packsIds[jj]);
           }
         // Insertion of new faces:
         for (const int * ii = ids->begin(); ii != ids->end(); ii++)
           {
             // Build pack from the face to insert:
-            int faceIdx = cands2[idsGoodPlane->getIJ(*ii,0)];
+            int faceIdx2 = cands2[idsGoodPlane->getIJ(*ii,0)];
             int facePack2Sz;
-            const int * facePack2 = connSlaDesc->getSimplePackSafePtr(faceIdx, facePack2Sz); // contains the type!
+            const int * facePack2 = connSlaDesc->getSimplePackSafePtr(faceIdx2, facePack2Sz); // contains the type!
             // Insert it in all hit polyhedrons:
-            for (vector<int>::const_iterator it=polyIndices.begin(); it!=polyIndices.end(); ++it)
-              connSla->pushBackPack(*it, facePack2+1, facePack2+facePack2Sz);  // without the type
+            for (vector<int>::const_iterator it2=polyIndices.begin(); it2!=polyIndices.end(); ++it2)
+              connSla->pushBackPack(*it2, facePack2+1, facePack2+facePack2Sz);  // without the type
           }
       }
   }  // end step1
@@ -2288,7 +2292,7 @@ DataArrayInt *MEDCouplingUMesh::conformize3D(double eps)
   {
     /************************
      *  STEP 2 -- edges
-    /************************/
+     ************************/
     // Now we have a face-conform mesh.
 
     // Recompute descending
@@ -2308,7 +2312,7 @@ DataArrayInt *MEDCouplingUMesh::conformize3D(double eps)
 //    mDesc2->writeVTK("/tmp/toto_desc2_confInter.vtu");
     const int *revDescIP2(revDescI2->getConstPointer()), *revDescP2(revDesc2->getConstPointer());
     const int *cDesc2(mDesc2->getNodalConnectivity()->begin()),*cIDesc2(mDesc2->getNodalConnectivityIndex()->begin());
-    MCAuto<DataArrayDouble> bboxArr(mDesc2->getBoundingBoxForBBTree());
+    MCAuto<DataArrayDouble> bboxArr(mDesc2->getBoundingBoxForBBTree(eps));
     const double *bbox2(bboxArr->begin());
     int nDesc2Cell=mDesc2->getNumberOfCells();
     BBTree<SPACEDIM,int> myTree2(bbox2,0,0,nDesc2Cell,-eps);
@@ -2319,10 +2323,11 @@ DataArrayInt *MEDCouplingUMesh::conformize3D(double eps)
 
     // Sort edges by decreasing length:
     vector<pair<double,int> > S;
-    for(int i=0;i < lens->getNumberOfTuples();i++){
+    for(std::size_t i=0;i < lens->getNumberOfTuples();i++)
+      {
         pair<double,int> p = make_pair(lens->getIJ(i, 0), i);
         S.push_back(p);
-    }
+      }
     sort(S.rbegin(),S.rend()); // reverse sort
 
     vector<bool> hit(nDesc2Cell);
@@ -2341,17 +2346,17 @@ DataArrayInt *MEDCouplingUMesh::conformize3D(double eps)
         unsigned start = cDesc2[cIDesc2[eIdx]+1], end = cDesc2[cIDesc2[eIdx]+2];
         for (int i3=0; i3 < 3; i3++)  // TODO: use fillSonCellNodalConnectivity2 or similar?
           vCurr[i3] = coo[start*SPACEDIM+i3] - coo[end*SPACEDIM+i3];
-        for(vector<int>::const_iterator it=candidates.begin();it!=candidates.end();it++)
+        for(vector<int>::const_iterator it2=candidates.begin();it2!=candidates.end();it2++)
           {
             double vOther[3];
-            unsigned start2 = cDesc2[cIDesc2[*it]+1], end2 = cDesc2[cIDesc2[*it]+2];
+            unsigned start2 = cDesc2[cIDesc2[*it2]+1], end2 = cDesc2[cIDesc2[*it2]+2];
             for (int i3=0; i3 < 3; i3++)
               vOther[i3] = coo[start2*SPACEDIM+i3] - coo[end2*SPACEDIM+i3];
             bool col = INTERP_KERNEL::isColinear3D(vCurr, vOther, eps);
             // Warning: different from faces: we need to keep eIdx in the final list of candidates because we need
             // to have its nodes inside the sub mesh mPartCand below (needed in OrderPointsAlongLine())
             if (col)
-              cands2.push_back(*it);
+              cands2.push_back(*it2);
           }
         if (cands2.size() == 1 && cands2[0] == eIdx)  // see warning above
           continue;
@@ -2372,9 +2377,9 @@ DataArrayInt *MEDCouplingUMesh::conformize3D(double eps)
         MCAuto<DataArrayInt>  nodeMapInv = nodeMap->invertArrayO2N2N2O(nbElemsNotM1);
         double * cooPartRef(mPartRef->_coords->getPointer());
         double * cooPartCand(mPartCand->_coords->getPointer());
-        for (int ii = 0; ii < mPartRef->_coords->getNumberOfTuples(); ii++)
+        for (std::size_t ii = 0; ii < mPartRef->_coords->getNumberOfTuples(); ii++)
           rotation.transform_vector(cooPartRef+SPACEDIM*ii);
-        for (int ii = 0; ii < mPartCand->_coords->getNumberOfTuples(); ii++)
+        for (std::size_t ii = 0; ii < mPartCand->_coords->getNumberOfTuples(); ii++)
           rotation.transform_vector(cooPartCand+SPACEDIM*ii);
 
 
@@ -2432,7 +2437,7 @@ DataArrayInt *MEDCouplingUMesh::conformize3D(double eps)
     MCAuto<DataArrayInt> idx(DataArrayInt::New());       idx->alloc(1);                         idx->fillWithValue(0);
     MCAuto<DataArrayInt> vals(DataArrayInt::New());      vals->alloc(0);
     newConn->set3(superIdx, idx, vals);
-    for(int ii = 0; ii < getNumberOfCells(); ii++)
+    for(std::size_t ii = 0; ii < getNumberOfCells(); ii++)
       for (int jj=descIP[ii]; jj < descIP[ii+1]; jj++)
         {
           int sz, faceIdx = abs(descP[jj])-1;

@@ -12,6 +12,7 @@ MAJ_231_232.h \
 MAJ_236_300.h \
 MAJ_300_310.h \
 MAJ_310_320.h \
+MAJ_320_330.h \
 med21.h \
 med_hdfi21.h \
 med_hdfi231.h

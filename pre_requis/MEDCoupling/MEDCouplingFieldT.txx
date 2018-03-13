@@ -117,21 +117,22 @@ namespace MEDCoupling
       }
     return ret.retn();
   }
+
+  template<class T>
+  bool MEDCouplingFieldT<T>::isEqual(const MEDCouplingFieldT<T> *other, double meshPrec, T valsPrec) const
+  {
+    std::string tmp;
+    return isEqualIfNotWhy(other,meshPrec,valsPrec,tmp);
+  }
   
   template<class T>
-  bool MEDCouplingFieldT<T>::isEqualIfNotWhy(const MEDCouplingField *other, double meshPrec, double valsPrec, std::string& reason) const
+  bool MEDCouplingFieldT<T>::isEqualIfNotWhy(const MEDCouplingFieldT<T> *other, double meshPrec, T valsPrec, std::string& reason) const
   {
     if(!other)
       throw INTERP_KERNEL::Exception("MEDCouplingFieldT::isEqualIfNotWhy : other instance is NULL !");
-    const MEDCouplingFieldT<T> *otherC(dynamic_cast<const MEDCouplingFieldT<T> *>(other));
-    if(!otherC)
-      {
-        reason="field given in input is not castable in MEDCouplingFieldT !";
-        return false;
-      }
-    if(!MEDCouplingField::isEqualIfNotWhy(other,meshPrec,valsPrec,reason))
+    if(!isEqualIfNotWhyProtected(other,meshPrec,reason))
       return false;
-    if(!_time_discr->isEqualIfNotWhy(otherC->_time_discr,T(valsPrec),reason))
+    if(!_time_discr->isEqualIfNotWhy(other->_time_discr,T(valsPrec),reason))
       {
         reason.insert(0,"In FieldT time discretizations differ :");
         return false;
@@ -150,14 +151,13 @@ namespace MEDCoupling
    *  \throw If the spatial discretization of \a this field is NULL.
    */
   template<class T>
-  bool MEDCouplingFieldT<T>::isEqualWithoutConsideringStr(const MEDCouplingField *other, double meshPrec, double valsPrec) const
+  bool MEDCouplingFieldT<T>::isEqualWithoutConsideringStr(const MEDCouplingFieldT<T> *other, double meshPrec, T valsPrec) const
   {
-    const MEDCouplingFieldT<T> *otherC(dynamic_cast<const MEDCouplingFieldT<T> *>(other));
-    if(!otherC)
+    if(!other)
       return false;
-    if(!MEDCouplingField::isEqualWithoutConsideringStr(other,meshPrec,valsPrec))
+    if(!isEqualWithoutConsideringStrProtected(other,meshPrec))
       return false;
-    if(!_time_discr->isEqualWithoutConsideringStr(otherC->_time_discr,T(valsPrec)))
+    if(!_time_discr->isEqualWithoutConsideringStr(other->_time_discr,valsPrec))
       return false;
     return true;
   }
@@ -201,6 +201,78 @@ namespace MEDCoupling
   {
     copyTinyStringsFrom(other);
     copyTinyAttrFrom(other);
+  }
+  
+  /*!
+   * Permutes values of \a this field according to a given permutation array for cells
+   * renumbering. The underlying mesh is deeply copied and its cells are also permuted. 
+   * The number of cells remains the same; for that the permutation array \a old2NewBg
+   * should not contain equal ids.
+   * ** Warning, this method modifies the mesh aggreagated by \a this (by performing a deep copy ) **.
+   *
+   *  \param [in] old2NewBg - the permutation array in "Old to New" mode. Its length is
+   *         to be equal to \a this->getMesh()->getNumberOfCells().
+   *  \param [in] check - if \c true, \a old2NewBg is transformed to a new permutation
+   *         array, so that its maximal cell id to correspond to (be less than) the number
+   *         of cells in mesh. This new array is then used for the renumbering. If \a 
+   *         check == \c false, \a old2NewBg is used as is, that is less secure as validity 
+   *         of ids in \a old2NewBg is not checked.
+   *  \throw If the mesh is not set.
+   *  \throw If the spatial discretization of \a this field is NULL.
+   *  \throw If \a check == \c true and \a old2NewBg contains equal ids.
+   *  \throw If mesh nature does not allow renumbering (e.g. structured mesh).
+   * 
+   *  \if ENABLE_EXAMPLES
+   *  \ref cpp_mcfielddouble_renumberCells "Here is a C++ example".<br>
+   *  \ref  py_mcfielddouble_renumberCells "Here is a Python example".
+   *  \endif
+   */
+  template<class T>
+  void MEDCouplingFieldT<T>::renumberCells(const int *old2NewBg, bool check)
+  {
+    renumberCellsWithoutMesh(old2NewBg,check);
+    MCAuto<MEDCouplingMesh> m(_mesh->deepCopy());
+    m->renumberCells(old2NewBg,check);
+    setMesh(m);
+    updateTime();
+  }
+
+  /*!
+   * Permutes values of \a this field according to a given permutation array for cells
+   * renumbering. The underlying mesh is \b not permuted. 
+   * The number of cells remains the same; for that the permutation array \a old2NewBg
+   * should not contain equal ids.
+   * This method performs a part of job of renumberCells(). The reasonable use of this
+   * method is only for multi-field instances lying on the same mesh to avoid a
+   * systematic duplication and renumbering of _mesh attribute. 
+   * \warning Use this method with a lot of care!
+   *  \param [in] old2NewBg - the permutation array in "Old to New" mode. Its length is
+   *         to be equal to \a this->getMesh()->getNumberOfCells().
+   *  \param [in] check - if \c true, \a old2NewBg is transformed to a new permutation
+   *         array, so that its maximal cell id to correspond to (be less than) the number
+   *         of cells in mesh. This new array is then used for the renumbering. If \a 
+   *         check == \c false, \a old2NewBg is used as is, that is less secure as validity 
+   *         of ids in \a old2NewBg is not checked.
+   *  \throw If the mesh is not set.
+   *  \throw If the spatial discretization of \a this field is NULL.
+   *  \throw If \a check == \c true and \a old2NewBg contains equal ids.
+   *  \throw If mesh nature does not allow renumbering (e.g. structured mesh).
+   */
+  template<class T>
+  void MEDCouplingFieldT<T>::renumberCellsWithoutMesh(const int *old2NewBg, bool check)
+  {
+    if(!_mesh)
+      throw INTERP_KERNEL::Exception("Expecting a defined mesh to be able to operate a renumbering !");
+    if(_type.isNull())
+      throw INTERP_KERNEL::Exception("Expecting a spatial discretization to be able to operate a renumbering !");
+    //
+    _type->renumberCells(old2NewBg,check);
+    std::vector< typename MEDCoupling::Traits<T>::ArrayType *> arrays;
+    timeDiscrSafe()->getArrays(arrays);
+    std::vector<DataArray *> arrays2(arrays.size()); std::copy(arrays.begin(),arrays.end(),arrays2.begin());
+    _type->renumberArraysForCell(_mesh,arrays2,old2NewBg,check);
+    //
+    updateTime();
   }
   
   /*!
@@ -366,6 +438,296 @@ namespace MEDCoupling
   TypeOfTimeDiscretization MEDCouplingFieldT<T>::getTimeDiscretization() const
   {
     return _time_discr->getEnum();
+  }
+
+  /*!
+   * Builds a newly created field, that the caller will have the responsability to deal with.
+   * \n This method makes the assumption that \a this field is correctly defined when this method is called (\a this->checkConsistencyLight() returns without any exception thrown), **no check of this will be done**.
+   * \n This method returns a restriction of \a this so that only tuple ids specified in [ \a partBg , \a partEnd ) will be contained in the returned field.
+   * \n Parameter [\a partBg, \a partEnd ) specifies **cell ids whatever the spatial discretization** of \a this (
+   * \ref MEDCoupling::ON_CELLS "ON_CELLS", 
+   * \ref MEDCoupling::ON_NODES "ON_NODES",
+   * \ref MEDCoupling::ON_GAUSS_PT "ON_GAUSS_PT", 
+   * \ref MEDCoupling::ON_GAUSS_NE "ON_GAUSS_NE",
+   * \ref MEDCoupling::ON_NODES_KR "ON_NODES_KR").
+   *
+   * For example, \a this is a field on cells lying on a mesh that have 10 cells, \a partBg contains the following cell ids [3,7,6].
+   * Then the returned field will lie on mesh having 3 cells and will contain 3 tuples.
+   *- Tuple #0 of the result field will refer to the cell #0 of returned mesh. The cell #0 of returned mesh will be equal to the cell #3 of \a this->getMesh().
+   *- Tuple #1 of the result field will refer to the cell #1 of returned mesh. The cell #1 of returned mesh will be equal to the cell #7 of \a this->getMesh().
+   *- Tuple #2 of the result field will refer to the cell #2 of returned mesh. The cell #2 of returned mesh will be equal to the cell #6 of \a this->getMesh().
+   *
+   * Let, for example, \a this be a field on nodes lying on a mesh that have 10 cells and 11 nodes, and \a partBg contains following cellIds [3,7,6].
+   * Thus \a this currently contains 11 tuples. If the restriction of mesh to 3 cells leads to a mesh with 6 nodes, then the returned field
+   * will contain 6 tuples and \a this field will lie on this restricted mesh. 
+   *
+   * \param [in] partBg - start (included) of input range of cell ids to select [ \a partBg, \a partEnd )
+   * \param [in] partEnd - end (not included) of input range of cell ids to select [ \a partBg, \a partEnd )
+   * \return a newly allocated field the caller should deal with.
+   * 
+   * \throw if there is presence of an invalid cell id in [ \a partBg, \a partEnd ) regarding the number of cells of \a this->getMesh().
+   *
+   * \if ENABLE_EXAMPLES
+   * \ref cpp_mcfielddouble_subpart1 "Here a C++ example."<br>
+   * \ref py_mcfielddouble_subpart1 "Here a Python example."
+   * \endif
+   * \sa MEDCoupling::MEDCouplingFieldDouble::buildSubPart(const DataArrayInt *) const, MEDCouplingFieldDouble::buildSubPartRange
+   */
+  template<class T>
+  typename Traits<T>::FieldType *MEDCouplingFieldT<T>::buildSubPart(const int *partBg, const int *partEnd) const
+  {
+    if(_type.isNull())
+      throw INTERP_KERNEL::Exception("MEDCouplingFieldT::buildSubPart : Expecting a not NULL spatial discretization !");
+    DataArrayInt *arrSelect;
+    MCAuto<MEDCouplingMesh> m=_type->buildSubMeshData(_mesh,partBg,partEnd,arrSelect);
+    MCAuto<DataArrayInt> arrSelect2(arrSelect);
+    MCAuto< typename Traits<T>::FieldType > ret(clone(false));//quick shallow copy.
+    const MEDCouplingFieldDiscretization *disc=getDiscretization();
+    if(disc)
+      ret->setDiscretization(MCAuto<MEDCouplingFieldDiscretization>(disc->clonePart(partBg,partEnd)));
+    ret->setMesh(m);
+    std::vector<typename Traits<T>::ArrayType *> arrays;
+    timeDiscrSafe()->getArrays(arrays);
+    std::vector<typename Traits<T>::ArrayType *> arrs;
+    std::vector< MCAuto< typename Traits<T>::ArrayType > > arrsSafe;
+    const int *arrSelBg=arrSelect->begin();
+    const int *arrSelEnd=arrSelect->end();
+    for(typename std::vector<typename Traits<T>::ArrayType *>::const_iterator iter=arrays.begin();iter!=arrays.end();iter++)
+      {
+        typename Traits<T>::ArrayType *arr(0);
+        if(*iter)
+          arr=(*iter)->selectByTupleIdSafe(arrSelBg,arrSelEnd);
+        arrs.push_back(arr); arrsSafe.push_back(arr);
+      }
+    ret->timeDiscrSafe()->setArrays(arrs,0);
+    return ret.retn();
+  }
+
+  /*!
+   * Builds a newly created field, that the caller will have the responsability to deal with (decrRef()).
+   * This method makes the assumption that the field is correctly defined when this method is called, no check of this will be done.
+   * This method returns a restriction of \a this so that only tuples with ids specified in \a part will be contained in the returned field.
+   * Parameter \a part specifies **cell ids whatever the spatial discretization of this** (
+   * \ref MEDCoupling::ON_CELLS "ON_CELLS", 
+   * \ref MEDCoupling::ON_NODES "ON_NODES",
+   * \ref MEDCoupling::ON_GAUSS_PT "ON_GAUSS_PT", 
+   * \ref MEDCoupling::ON_GAUSS_NE "ON_GAUSS_NE",
+   * \ref MEDCoupling::ON_NODES_KR "ON_NODES_KR").
+   *
+   * For example, \a this is a field on cells lying on a mesh that have 10 cells, \a part contains following cell ids [3,7,6].
+   * Then the returned field will lie on mesh having 3 cells and the returned field will contain 3 tuples.<br>
+   * Tuple #0 of the result field will refer to the cell #0 of returned mesh. The cell #0 of returned mesh will be equal to the cell #3 of \a this->getMesh().<br>
+   * Tuple #1 of the result field will refer to the cell #1 of returned mesh. The cell #1 of returned mesh will be equal to the cell #7 of \a this->getMesh().<br>
+   * Tuple #2 of the result field will refer to the cell #2 of returned mesh. The cell #2 of returned mesh will be equal to the cell #6 of \a this->getMesh().
+   *
+   * Let, for example, \a this be a field on nodes lying on a mesh that have 10 cells and 11 nodes, and \a part contains following cellIds [3,7,6].
+   * Thus \a this currently contains 11 tuples. If the restriction of mesh to 3 cells leads to a mesh with 6 nodes, then the returned field
+   * will contain 6 tuples and \a this field will lie on this restricted mesh. 
+   *
+   *  \param [in] part - an array of cell ids to include to the result field.
+   *  \return MEDCouplingFieldDouble * - a new instance of MEDCouplingFieldDouble. The caller is to delete this field using decrRef() as it is no more needed.
+   *
+   *  \if ENABLE_EXAMPLES
+   *  \ref cpp_mcfielddouble_subpart1 "Here is a C++ example".<br>
+   *  \ref  py_mcfielddouble_subpart1 "Here is a Python example".
+   *  \endif
+   *  \sa MEDCouplingFieldDouble::buildSubPartRange
+   */
+  template<class T>
+  typename Traits<T>::FieldType *MEDCouplingFieldT<T>::buildSubPart(const DataArrayInt *part) const
+  {
+    if(part==0)
+      throw INTERP_KERNEL::Exception("MEDCouplingFieldT::buildSubPart : not empty array must be passed to this method !");
+    return buildSubPart(part->begin(),part->end());
+  }
+  
+  /*!
+   * This method is equivalent to MEDCouplingFieldDouble::buildSubPart, the only difference is that the input range of cell ids is
+   * given using a range given \a begin, \a end and \a step to optimize the part computation.
+   * 
+   * \sa MEDCouplingFieldDouble::buildSubPart
+   */
+  template<class T>
+  typename Traits<T>::FieldType *MEDCouplingFieldT<T>::buildSubPartRange(int begin, int end, int step) const
+  {
+    if(_type.isNull())
+      throw INTERP_KERNEL::Exception("MEDCouplingFieldDouble::buildSubPart : Expecting a not NULL spatial discretization !");
+    DataArrayInt *arrSelect;
+    int beginOut,endOut,stepOut;
+    MCAuto<MEDCouplingMesh> m(_type->buildSubMeshDataRange(_mesh,begin,end,step,beginOut,endOut,stepOut,arrSelect));
+    MCAuto<DataArrayInt> arrSelect2(arrSelect);
+    MCAuto< typename Traits<T>::FieldType > ret(clone(false));//quick shallow copy.
+    const MEDCouplingFieldDiscretization *disc=getDiscretization();
+    if(disc)
+      ret->setDiscretization(MCAuto<MEDCouplingFieldDiscretization>(disc->clonePartRange(begin,end,step)));
+    ret->setMesh(m);
+    std::vector<typename Traits<T>::ArrayType *> arrays;
+    timeDiscrSafe()->getArrays(arrays);
+    std::vector<typename Traits<T>::ArrayType *> arrs;
+    std::vector< MCAuto< typename Traits<T>::ArrayType > > arrsSafe;
+    for(typename std::vector<typename Traits<T>::ArrayType *>::const_iterator iter=arrays.begin();iter!=arrays.end();iter++)
+      {
+        typename Traits<T>::ArrayType *arr(0);
+        if(*iter)
+          {
+            if(arrSelect)
+              {
+                const int *arrSelBg=arrSelect->begin();
+                const int *arrSelEnd=arrSelect->end();
+                arr=(*iter)->selectByTupleIdSafe(arrSelBg,arrSelEnd);
+              }
+            else
+              arr=(*iter)->selectByTupleIdSafeSlice(beginOut,endOut,stepOut);
+          }
+        arrs.push_back(arr); arrsSafe.push_back(arr);
+      }
+    ret->timeDiscrSafe()->setArrays(arrs,0);
+    return ret.retn();
+  }
+  
+  template<class T>
+  const MEDCouplingTimeDiscretizationTemplate<T> *MEDCouplingFieldT<T>::timeDiscrSafe() const
+  {
+    const MEDCouplingTimeDiscretizationTemplate<T> *ret(_time_discr);
+    if(!ret)
+      throw INTERP_KERNEL::Exception("const FieldT : Null type of time discr !");
+    return ret;
+  }
+  
+  template<class T>
+  MEDCouplingTimeDiscretizationTemplate<T> *MEDCouplingFieldT<T>::timeDiscrSafe()
+  {
+    MEDCouplingTimeDiscretizationTemplate<T> *ret(_time_discr);
+    if(!ret)
+      throw INTERP_KERNEL::Exception("const FieldT : Null type of time discr !");
+    return ret;
+  }
+
+  template<class T>
+  void MEDCouplingFieldT<T>::getTinySerializationStrInformation(std::vector<std::string>& tinyInfo) const
+  {
+    tinyInfo.clear();
+    timeDiscrSafe()->getTinySerializationStrInformation(tinyInfo);
+    tinyInfo.push_back(_name);
+    tinyInfo.push_back(_desc);
+    tinyInfo.push_back(getTimeUnit());
+  }
+
+  /*!
+   * This method retrieves some critical values to resize and prepare remote instance.
+   * The first two elements returned in tinyInfo correspond to the parameters to give in constructor.
+   * @param tinyInfo out parameter resized correctly after the call. The length of this vector is tiny.
+   */
+  template<class T>
+  void MEDCouplingFieldT<T>::getTinySerializationIntInformation(std::vector<int>& tinyInfo) const
+  {
+    if(_type.isNull())
+      throw INTERP_KERNEL::Exception("No spatial discretization underlying this field to perform getTinySerializationIntInformation !");
+    tinyInfo.clear();
+    tinyInfo.push_back((int)_type->getEnum());
+    tinyInfo.push_back((int)timeDiscrSafe()->getEnum());
+    tinyInfo.push_back((int)_nature);
+    timeDiscrSafe()->getTinySerializationIntInformation(tinyInfo);
+    std::vector<int> tinyInfo2;
+    _type->getTinySerializationIntInformation(tinyInfo2);
+    tinyInfo.insert(tinyInfo.end(),tinyInfo2.begin(),tinyInfo2.end());
+    tinyInfo.push_back((int)tinyInfo2.size());
+  }
+
+  /*!
+   * This method retrieves some critical values to resize and prepare remote instance.
+   * @param tinyInfo out parameter resized correctly after the call. The length of this vector is tiny.
+   */
+  template<class T>
+  void MEDCouplingFieldT<T>::getTinySerializationDbleInformation(std::vector<double>& tinyInfo) const
+  {
+    if(_type.isNull())
+      throw INTERP_KERNEL::Exception("No spatial discretization underlying this field to perform getTinySerializationDbleInformation !");
+    tinyInfo.clear();
+    timeDiscrSafe()->getTinySerializationDbleInformation(tinyInfo);
+    std::vector<double> tinyInfo2;
+    _type->getTinySerializationDbleInformation(tinyInfo2);
+    tinyInfo.insert(tinyInfo.end(),tinyInfo2.begin(),tinyInfo2.end());
+    tinyInfo.push_back((int)tinyInfo2.size());//very bad, lack of time to improve it
+  }
+
+  /*!
+   * This method has to be called to the new instance filled by CORBA, MPI, File...
+   * @param tinyInfoI is the value retrieves from distant result of getTinySerializationIntInformation on source instance to be copied.
+   * @param dataInt out parameter. If not null the pointer is already owned by \a this after the call of this method. In this case no decrRef must be applied.
+   * @param arrays out parameter is a vector resized to the right size. The pointers in the vector is already owned by \a this after the call of this method.
+   *               No decrRef must be applied to every instances in returned vector.
+   * \sa checkForUnserialization
+   */
+  template<class T>
+  void MEDCouplingFieldT<T>::resizeForUnserialization(const std::vector<int>& tinyInfoI, DataArrayInt *&dataInt, std::vector<typename Traits<T>::ArrayType *>& arrays)
+  {
+    if(_type.isNull())
+      throw INTERP_KERNEL::Exception("No spatial discretization underlying this field to perform resizeForUnserialization !");
+    dataInt=0;
+    std::vector<int> tinyInfoITmp(tinyInfoI);
+    int sz=tinyInfoITmp.back();
+    tinyInfoITmp.pop_back();
+    std::vector<int> tinyInfoITmp2(tinyInfoITmp.begin(),tinyInfoITmp.end()-sz);
+    std::vector<int> tinyInfoI2(tinyInfoITmp2.begin()+3,tinyInfoITmp2.end());
+    timeDiscrSafe()->resizeForUnserialization(tinyInfoI2,arrays);
+    std::vector<int> tinyInfoITmp3(tinyInfoITmp.end()-sz,tinyInfoITmp.end());
+    _type->resizeForUnserialization(tinyInfoITmp3,dataInt);
+  }
+
+  /*!
+   * This method is extremely close to resizeForUnserialization except that here the arrays in \a dataInt and in \a arrays are attached in \a this
+   * after having checked that size is correct. This method is used in python pickeling context to avoid copy of data.
+   * \sa resizeForUnserialization
+   */
+  template<class T>
+  void MEDCouplingFieldT<T>::checkForUnserialization(const std::vector<int>& tinyInfoI, const DataArrayInt *dataInt, const std::vector<typename Traits<T>::ArrayType *>& arrays)
+  {
+    if(_type.isNull())
+      throw INTERP_KERNEL::Exception("No spatial discretization underlying this field to perform resizeForUnserialization !");
+    std::vector<int> tinyInfoITmp(tinyInfoI);
+    int sz=tinyInfoITmp.back();
+    tinyInfoITmp.pop_back();
+    std::vector<int> tinyInfoITmp2(tinyInfoITmp.begin(),tinyInfoITmp.end()-sz);
+    std::vector<int> tinyInfoI2(tinyInfoITmp2.begin()+3,tinyInfoITmp2.end());
+    timeDiscrSafe()->checkForUnserialization(tinyInfoI2,arrays);
+    std::vector<int> tinyInfoITmp3(tinyInfoITmp.end()-sz,tinyInfoITmp.end());
+    _type->checkForUnserialization(tinyInfoITmp3,dataInt);
+  }
+
+  template<class T>
+  void MEDCouplingFieldT<T>::finishUnserialization(const std::vector<int>& tinyInfoI, const std::vector<double>& tinyInfoD, const std::vector<std::string>& tinyInfoS)
+  {
+    if(_type.isNull())
+      throw INTERP_KERNEL::Exception("No spatial discretization underlying this field to perform finishUnserialization !");
+    std::vector<int> tinyInfoI2(tinyInfoI.begin()+3,tinyInfoI.end());
+    //
+    std::vector<double> tmp(tinyInfoD);
+    int sz=(int)tinyInfoD.back();//very bad, lack of time to improve it
+    tmp.pop_back();
+    std::vector<double> tmp1(tmp.begin(),tmp.end()-sz);
+    std::vector<double> tmp2(tmp.end()-sz,tmp.end());
+    //
+    timeDiscrSafe()->finishUnserialization(tinyInfoI2,tmp1,tinyInfoS);
+    _nature=(NatureOfField)tinyInfoI[2];
+    _type->finishUnserialization(tmp2);
+    int nbOfElemS=(int)tinyInfoS.size();
+    _name=tinyInfoS[nbOfElemS-3];
+    _desc=tinyInfoS[nbOfElemS-2];
+    setTimeUnit(tinyInfoS[nbOfElemS-1]);
+  }
+
+  /*!
+   * Contrary to MEDCouplingPointSet class the returned arrays are \b not the responsabilities of the caller.
+   * The values returned must be consulted only in readonly mode.
+   */
+  template<class T>
+  void MEDCouplingFieldT<T>::serialize(DataArrayInt *&dataInt, std::vector<typename Traits<T>::ArrayType *>& arrays) const
+  {
+    if(_type.isNull())
+      throw INTERP_KERNEL::Exception("No spatial discretization underlying this field to perform serialize !");
+    timeDiscrSafe()->getArrays(arrays);
+    _type->getSerializationIntArray(dataInt);
   }
 }
 

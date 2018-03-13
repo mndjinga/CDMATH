@@ -44,7 +44,7 @@ namespace MEDCoupling
     MEDCOUPLING_EXPORT std::size_t getHeapMemorySizeWithoutChildren() const;
     MEDCOUPLING_EXPORT std::vector<const BigMemoryObject *> getDirectChildrenWithNull() const;
     MEDCOUPLING_EXPORT void copyTinyStringsFrom(const MEDCouplingMesh *other);
-    MEDCOUPLING_EXPORT int getNumberOfCells() const;
+    MEDCOUPLING_EXPORT std::size_t getNumberOfCells() const;
     MEDCOUPLING_EXPORT int getNumberOfNodes() const;
     MEDCOUPLING_EXPORT int getSpaceDimension() const;
     MEDCOUPLING_EXPORT int getMeshDimension() const;
@@ -57,14 +57,14 @@ namespace MEDCoupling
                                                  DataArrayInt *&cellCor, DataArrayInt *&nodeCor) const;
     MEDCOUPLING_EXPORT void checkDeepEquivalOnSameNodesWith(const MEDCouplingMesh *other, int cellCompPol, double prec,
                                                             DataArrayInt *&cellCor) const;
-    MEDCOUPLING_EXPORT INTERP_KERNEL::NormalizedCellType getTypeOfCell(int cellId) const;
+    MEDCOUPLING_EXPORT INTERP_KERNEL::NormalizedCellType getTypeOfCell(std::size_t cellId) const;
     MEDCOUPLING_EXPORT std::set<INTERP_KERNEL::NormalizedCellType> getAllGeoTypes() const;
     MEDCOUPLING_EXPORT DataArrayInt *giveCellsWithType(INTERP_KERNEL::NormalizedCellType type) const;
     MEDCOUPLING_EXPORT DataArrayInt *computeNbOfNodesPerCell() const;
     MEDCOUPLING_EXPORT DataArrayInt *computeNbOfFacesPerCell() const;
     MEDCOUPLING_EXPORT DataArrayInt *computeEffectiveNbOfNodesPerCell() const;
-    MEDCOUPLING_EXPORT int getNumberOfCellsWithType(INTERP_KERNEL::NormalizedCellType type) const;
-    MEDCOUPLING_EXPORT void getNodeIdsOfCell(int cellId, std::vector<int>& conn) const;
+    MEDCOUPLING_EXPORT std::size_t getNumberOfCellsWithType(INTERP_KERNEL::NormalizedCellType type) const;
+    MEDCOUPLING_EXPORT void getNodeIdsOfCell(std::size_t cellId, std::vector<int>& conn) const;
     MEDCOUPLING_EXPORT void getCoordinatesOfNode(int nodeId, std::vector<double>& coo) const;
     MEDCOUPLING_EXPORT std::string simpleRepr() const;
     MEDCOUPLING_EXPORT std::string advancedRepr() const;
@@ -113,7 +113,7 @@ namespace MEDCoupling
   private:
     MEDCouplingMappedExtrudedMesh(const MEDCouplingUMesh *mesh3D, const MEDCouplingUMesh *mesh2D, int cell2DId);
     MEDCouplingMappedExtrudedMesh(const MEDCouplingCMesh *mesh3D);
-    MEDCouplingMappedExtrudedMesh(const MEDCouplingMappedExtrudedMesh& other, bool deepCopy);
+    MEDCouplingMappedExtrudedMesh(const MEDCouplingMappedExtrudedMesh& other, bool deepCpy);
     MEDCouplingMappedExtrudedMesh();
     void computeExtrusion(const MEDCouplingUMesh *mesh3D);
     void computeExtrusionAlg(const MEDCouplingUMesh *mesh3D);

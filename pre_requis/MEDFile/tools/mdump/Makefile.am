@@ -20,5 +20,4 @@ EXTRA_DIST += xmdump3.in
 bin_SCRIPTS += xmdump3
 
 install-exec-hook:
-	${LN_S} -f $(DESTDIR)$(bindir)/mdump3 $(DESTDIR)$(bindir)/mdump && ${LN_S} -f $(DESTDIR)$(bindir)/xmdump3 $(DESTDIR)$(bindir)/xmdump 
-
+	(cd $(DESTDIR)$(bindir) && $(LN_S) -f mdump3 mdump && $(LN_S) -f xmdump3 xmdump)

@@ -19,20 +19,20 @@ MAJ_21_22_familles_maillage.c\
 MAJ_21_22_noeuds_maillage.c\
 MED21datasetNumLire.c
 
-buildCxxFile =  \
-MAJ_21_22_chainebuilt.cxx \
-MAJ_21_22_champsbuilt.cxx            \
-MAJ_21_22_localisation_Gaussbuilt.cxx\
-MAJ_21_22_profilsbuilt.cxx\
-MAJ_21_22_elements_maillagebuilt.cxx\
-MAJ_21_22_maillagesbuilt.cxx\
-MED21attrNumLirebuilt.cxx\
-MAJ_21_22_familles_maillagebuilt.cxx\
-MAJ_21_22_noeuds_maillagebuilt.cxx\
-MED21datasetNumLirebuilt.cxx
+# buildCxxFile =  \
+# MAJ_21_22_chainebuilt.cxx \
+# MAJ_21_22_champsbuilt.cxx            \
+# MAJ_21_22_localisation_Gaussbuilt.cxx\
+# MAJ_21_22_profilsbuilt.cxx\
+# MAJ_21_22_elements_maillagebuilt.cxx\
+# MAJ_21_22_maillagesbuilt.cxx\
+# MED21attrNumLirebuilt.cxx\
+# MAJ_21_22_familles_maillagebuilt.cxx\
+# MAJ_21_22_noeuds_maillagebuilt.cxx\
+# MED21datasetNumLirebuilt.cxx
 
-noinst_LTLIBRARIES += libMaj21To22cxx.la
-libMaj21To22cxx_la_SOURCES   = $(buildCxxFile)
+# noinst_LTLIBRARIES += libMaj21To22cxx.la
+# libMaj21To22cxx_la_SOURCES   = $(buildCxxFile)
 
-CLEANFILES = $(buildCxxFile)
+# CLEANFILES = $(buildCxxFile)
 EXTRA_DIST = CMakeLists.txt

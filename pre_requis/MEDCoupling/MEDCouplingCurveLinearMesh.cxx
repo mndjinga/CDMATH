@@ -16,7 +16,7 @@
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// Author : Anthony Geay (CEA/DEN)
+// Author : Anthony Geay (EDF R&D)
 
 #include "MEDCouplingCurveLinearMesh.hxx"
 #include "MEDCouplingPointSet.hxx"
@@ -37,9 +37,9 @@ MEDCouplingCurveLinearMesh::MEDCouplingCurveLinearMesh():_coords(0),_structure(0
 {
 }
 
-MEDCouplingCurveLinearMesh::MEDCouplingCurveLinearMesh(const MEDCouplingCurveLinearMesh& other, bool deepCopy):MEDCouplingStructuredMesh(other,deepCopy),_structure(other._structure)
+MEDCouplingCurveLinearMesh::MEDCouplingCurveLinearMesh(const MEDCouplingCurveLinearMesh& other, bool deepCpy):MEDCouplingStructuredMesh(other,deepCpy),_structure(other._structure)
 {
-  if(deepCopy)
+  if(deepCpy)
     {
       if((const DataArrayDouble *)other._coords)
         _coords=other._coords->deepCopy();
@@ -205,7 +205,7 @@ void MEDCouplingCurveLinearMesh::checkConsistency(double eps) const
   checkConsistencyLight();
 }
 
-int MEDCouplingCurveLinearMesh::getNumberOfCells() const
+std::size_t MEDCouplingCurveLinearMesh::getNumberOfCells() const
 {
   checkConsistencyLight();
   return MEDCouplingStructuredMesh::getNumberOfCells();

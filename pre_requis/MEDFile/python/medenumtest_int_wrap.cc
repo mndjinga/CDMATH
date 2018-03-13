@@ -2962,31 +2962,34 @@ SWIG_Python_NonDynamicSetAttr(PyObject *obj, PyObject *name, PyObject *value) {
 
 #define SWIGTYPE_p_char swig_types[0]
 #define SWIGTYPE_p_double swig_types[1]
-#define SWIGTYPE_p_hssize_t swig_types[2]
-#define SWIGTYPE_p_int swig_types[3]
-#define SWIGTYPE_p_med_access_mode swig_types[4]
-#define SWIGTYPE_p_med_attribute_type swig_types[5]
-#define SWIGTYPE_p_med_axis_type swig_types[6]
-#define SWIGTYPE_p_med_bool swig_types[7]
-#define SWIGTYPE_p_med_class swig_types[8]
-#define SWIGTYPE_p_med_connectivity_mode swig_types[9]
-#define SWIGTYPE_p_med_data_type swig_types[10]
-#define SWIGTYPE_p_med_entity_type swig_types[11]
-#define SWIGTYPE_p_med_field_type swig_types[12]
-#define SWIGTYPE_p_med_file_version swig_types[13]
-#define SWIGTYPE_p_med_filter swig_types[14]
-#define SWIGTYPE_p_med_grid_type swig_types[15]
-#define SWIGTYPE_p_med_internal_type swig_types[16]
-#define SWIGTYPE_p_med_memfile swig_types[17]
-#define SWIGTYPE_p_med_mesh_type swig_types[18]
-#define SWIGTYPE_p_med_sorting_type swig_types[19]
-#define SWIGTYPE_p_med_storage_mode swig_types[20]
-#define SWIGTYPE_p_med_switch_mode swig_types[21]
-#define SWIGTYPE_p_p_char swig_types[22]
-#define SWIGTYPE_p_unsigned_long_long swig_types[23]
-#define SWIGTYPE_p_void swig_types[24]
-static swig_type_info *swig_types[26];
-static swig_module_info swig_module = {swig_types, 25, 0, 0, 0, 0};
+#define SWIGTYPE_p_float swig_types[2]
+#define SWIGTYPE_p_hssize_t swig_types[3]
+#define SWIGTYPE_p_int swig_types[4]
+#define SWIGTYPE_p_int32_t swig_types[5]
+#define SWIGTYPE_p_int64_t swig_types[6]
+#define SWIGTYPE_p_med_access_mode swig_types[7]
+#define SWIGTYPE_p_med_attribute_type swig_types[8]
+#define SWIGTYPE_p_med_axis_type swig_types[9]
+#define SWIGTYPE_p_med_bool swig_types[10]
+#define SWIGTYPE_p_med_class swig_types[11]
+#define SWIGTYPE_p_med_connectivity_mode swig_types[12]
+#define SWIGTYPE_p_med_data_type swig_types[13]
+#define SWIGTYPE_p_med_entity_type swig_types[14]
+#define SWIGTYPE_p_med_field_type swig_types[15]
+#define SWIGTYPE_p_med_file_version swig_types[16]
+#define SWIGTYPE_p_med_filter swig_types[17]
+#define SWIGTYPE_p_med_grid_type swig_types[18]
+#define SWIGTYPE_p_med_internal_type swig_types[19]
+#define SWIGTYPE_p_med_memfile swig_types[20]
+#define SWIGTYPE_p_med_mesh_type swig_types[21]
+#define SWIGTYPE_p_med_sorting_type swig_types[22]
+#define SWIGTYPE_p_med_storage_mode swig_types[23]
+#define SWIGTYPE_p_med_switch_mode swig_types[24]
+#define SWIGTYPE_p_p_char swig_types[25]
+#define SWIGTYPE_p_unsigned_long_long swig_types[26]
+#define SWIGTYPE_p_void swig_types[27]
+static swig_type_info *swig_types[29];
+static swig_module_info swig_module = {swig_types, 28, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -3084,6 +3087,7 @@ namespace swig {
 
 
 #include "med.h"
+#include <utility>
 
 
 SWIGINTERN swig_type_info*
@@ -4995,12 +4999,12 @@ SWIGINTERN int Swig_var_MED_GET_CELL_GEOMETRY_TYPE_set(PyObject *_val) {
     med_geometry_type *inp = 0;
     int res = SWIG_ConvertPtr(_val, SWIG_as_voidptrptr(&inp), SWIGTYPE_p_int,  0 );
     if (!SWIG_IsOK(res)) {
-      SWIG_exception_fail(SWIG_ArgError(res), "in variable '""MED_GET_CELL_GEOMETRY_TYPE""' of type '""med_geometry_type [23+2]""'");
+      SWIG_exception_fail(SWIG_ArgError(res), "in variable '""MED_GET_CELL_GEOMETRY_TYPE""' of type '""med_geometry_type [24+2]""'");
     } else if (inp) {
       size_t ii = 0;
-      for (; ii < (size_t)23+2; ++ii) MED_GET_CELL_GEOMETRY_TYPE[ii] = inp[ii];
+      for (; ii < (size_t)24+2; ++ii) MED_GET_CELL_GEOMETRY_TYPE[ii] = inp[ii];
     } else {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in variable '""MED_GET_CELL_GEOMETRY_TYPE""' of type '""med_geometry_type [23+2]""'");
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in variable '""MED_GET_CELL_GEOMETRY_TYPE""' of type '""med_geometry_type [24+2]""'");
     }
   }
   return 0;
@@ -5250,9 +5254,12 @@ static PyMethodDef SwigMethods[] = {
 /* -------- TYPE CONVERSION AND EQUIVALENCE RULES (BEGIN) -------- */
 
 static swig_type_info _swigt__p_char = {"_p_char", "char *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_double = {"_p_double", "med_float *|double *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_double = {"_p_double", "med_float *|med_float64 *|double *|med_double *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_float = {"_p_float", "float *|med_float32 *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_hssize_t = {"_p_hssize_t", "med_ssize *|hssize_t *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_int = {"_p_int", "med_geometry_type *|med_int *|int *|herr_t *|med_idt *|med_err *|hid_t *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_int32_t = {"_p_int32_t", "int32_t *|med_int32 *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_int64_t = {"_p_int64_t", "int64_t *|med_int64 *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_med_access_mode = {"_p_med_access_mode", "enum med_access_mode *|med_access_mode *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_med_attribute_type = {"_p_med_attribute_type", "enum med_attribute_type *|med_attribute_type *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_med_axis_type = {"_p_med_axis_type", "enum med_axis_type *|med_axis_type *", 0, 0, (void*)0, 0};
@@ -5278,8 +5285,11 @@ static swig_type_info _swigt__p_void = {"_p_void", "void *", 0, 0, (void*)0, 0};
 static swig_type_info *swig_type_initial[] = {
   &_swigt__p_char,
   &_swigt__p_double,
+  &_swigt__p_float,
   &_swigt__p_hssize_t,
   &_swigt__p_int,
+  &_swigt__p_int32_t,
+  &_swigt__p_int64_t,
   &_swigt__p_med_access_mode,
   &_swigt__p_med_attribute_type,
   &_swigt__p_med_axis_type,
@@ -5305,8 +5315,11 @@ static swig_type_info *swig_type_initial[] = {
 
 static swig_cast_info _swigc__p_char[] = {  {&_swigt__p_char, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_double[] = {  {&_swigt__p_double, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_float[] = {  {&_swigt__p_float, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_hssize_t[] = {  {&_swigt__p_hssize_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_int[] = {  {&_swigt__p_int, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_int32_t[] = {  {&_swigt__p_int32_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_int64_t[] = {  {&_swigt__p_int64_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_med_access_mode[] = {  {&_swigt__p_med_access_mode, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_med_attribute_type[] = {  {&_swigt__p_med_attribute_type, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_med_axis_type[] = {  {&_swigt__p_med_axis_type, 0, 0, 0},{0, 0, 0, 0}};
@@ -5332,8 +5345,11 @@ static swig_cast_info _swigc__p_void[] = {  {&_swigt__p_void, 0, 0, 0},{0, 0, 0,
 static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_char,
   _swigc__p_double,
+  _swigc__p_float,
   _swigc__p_hssize_t,
   _swigc__p_int,
+  _swigc__p_int32_t,
+  _swigc__p_int64_t,
   _swigc__p_med_access_mode,
   _swigc__p_med_attribute_type,
   _swigc__p_med_axis_type,
@@ -6076,30 +6092,31 @@ SWIG_init(void) {
   SWIG_Python_SetConstant(d, "PACKAGE",SWIG_FromCharPtr("med"));
   SWIG_Python_SetConstant(d, "PACKAGE_BUGREPORT",SWIG_FromCharPtr("eric.fayolle@edf.fr"));
   SWIG_Python_SetConstant(d, "PACKAGE_NAME",SWIG_FromCharPtr("MED Fichier"));
-  SWIG_Python_SetConstant(d, "PACKAGE_STRING",SWIG_FromCharPtr("MED Fichier 3.2.1"));
+  SWIG_Python_SetConstant(d, "PACKAGE_STRING",SWIG_FromCharPtr("MED Fichier 3.3.1"));
   SWIG_Python_SetConstant(d, "PACKAGE_TARNAME",SWIG_FromCharPtr("med"));
   SWIG_Python_SetConstant(d, "PACKAGE_URL",SWIG_FromCharPtr(""));
-  SWIG_Python_SetConstant(d, "PACKAGE_VERSION",SWIG_FromCharPtr("3.2.1"));
+  SWIG_Python_SetConstant(d, "PACKAGE_VERSION",SWIG_FromCharPtr("3.3.1"));
   SWIG_Python_SetConstant(d, "SIZEOF_FORTRAN_INTEGER",SWIG_From_int(static_cast< int >(4)));
   SWIG_Python_SetConstant(d, "SIZEOF_FORTRAN_INTEGERp4",SWIG_From_int(static_cast< int >(4)));
   SWIG_Python_SetConstant(d, "SIZEOF_HID_T",SWIG_From_int(static_cast< int >(4)));
   SWIG_Python_SetConstant(d, "SIZEOF_INT",SWIG_From_int(static_cast< int >(4)));
   SWIG_Python_SetConstant(d, "SIZEOF_LONG",SWIG_From_int(static_cast< int >(8)));
+  SWIG_Python_SetConstant(d, "SIZEOF_LONG_LONG",SWIG_From_int(static_cast< int >(8)));
   SWIG_Python_SetConstant(d, "STDC_HEADERS",SWIG_From_int(static_cast< int >(1)));
   SWIG_Python_SetConstant(d, "TIME_WITH_SYS_TIME",SWIG_From_int(static_cast< int >(1)));
-  SWIG_Python_SetConstant(d, "VERSION",SWIG_FromCharPtr("3.2.1"));
+  SWIG_Python_SetConstant(d, "VERSION",SWIG_FromCharPtr("3.3.1"));
   SWIG_Python_SetConstant(d, "HDF_VERSION_MAJOR_REF",SWIG_From_int(static_cast< int >(1)));
   SWIG_Python_SetConstant(d, "HDF_VERSION_MINOR_REF",SWIG_From_int(static_cast< int >(8)));
   SWIG_Python_SetConstant(d, "HDF_VERSION_RELEASE_REF",SWIG_From_int(static_cast< int >(11)));
   SWIG_Python_SetConstant(d, "HDF_VERSION_NUM_REF",SWIG_From_int(static_cast< int >((1*10000+8*100+11))));
   SWIG_Python_SetConstant(d, "H5F_LIBVER_18",SWIG_From_int(static_cast< int >(1)));
   SWIG_Python_SetConstant(d, "MED_MAJOR_NUM",SWIG_From_int(static_cast< int >(3)));
-  SWIG_Python_SetConstant(d, "MED_MINOR_NUM",SWIG_From_int(static_cast< int >(2)));
+  SWIG_Python_SetConstant(d, "MED_MINOR_NUM",SWIG_From_int(static_cast< int >(3)));
   SWIG_Python_SetConstant(d, "MED_RELEASE_NUM",SWIG_From_int(static_cast< int >(1)));
   SWIG_Python_SetConstant(d, "MED_NUM_MAJEUR",SWIG_From_int(static_cast< int >(3)));
-  SWIG_Python_SetConstant(d, "MED_NUM_MINEUR",SWIG_From_int(static_cast< int >(2)));
+  SWIG_Python_SetConstant(d, "MED_NUM_MINEUR",SWIG_From_int(static_cast< int >(3)));
   SWIG_Python_SetConstant(d, "MED_NUM_RELEASE",SWIG_From_int(static_cast< int >(1)));
-  SWIG_Python_SetConstant(d, "MED_VERSION_STR",SWIG_FromCharPtr("3.2.1"));
+  SWIG_Python_SetConstant(d, "MED_VERSION_STR",SWIG_FromCharPtr("3.3.1"));
   SWIG_Python_SetConstant(d, "MED_MAX_PARA",SWIG_From_int(static_cast< int >(20)));
   SWIG_Python_SetConstant(d, "MED_COMMENT_SIZE",SWIG_From_int(static_cast< int >(200)));
   SWIG_Python_SetConstant(d, "MED_IDENT_SIZE",SWIG_From_int(static_cast< int >(8)));
@@ -6154,6 +6171,7 @@ SWIG_init(void) {
   SWIG_Python_SetConstant(d, "MED_VARIABLE_ATTRIBUTE",SWIG_From_int(static_cast< int >(MED_VARIABLE_ATTRIBUTE)));
   SWIG_Python_SetConstant(d, "MED_COORDINATE_TRSF",SWIG_From_int(static_cast< int >(MED_COORDINATE_TRSF)));
   SWIG_Python_SetConstant(d, "MED_UNDEF_DATATYPE",SWIG_From_int(static_cast< int >(MED_UNDEF_DATATYPE)));
+  SWIG_Python_SetConstant(d, "MED_INTERNAL_FLOAT32",SWIG_From_int(static_cast< int >(MED_INTERNAL_FLOAT32)));
   SWIG_Python_SetConstant(d, "MED_INTERNAL_FLOAT64",SWIG_From_int(static_cast< int >(MED_INTERNAL_FLOAT64)));
   SWIG_Python_SetConstant(d, "MED_INTERNAL_INT32",SWIG_From_int(static_cast< int >(MED_INTERNAL_INT32)));
   SWIG_Python_SetConstant(d, "MED_INTERNAL_INT64",SWIG_From_int(static_cast< int >(MED_INTERNAL_INT64)));
@@ -6164,7 +6182,9 @@ SWIG_init(void) {
   SWIG_Python_SetConstant(d, "MED_INTERNAL_IDENT",SWIG_From_int(static_cast< int >(MED_INTERNAL_IDENT)));
   SWIG_Python_SetConstant(d, "MED_INTERNAL_CHAR",SWIG_From_int(static_cast< int >(MED_INTERNAL_CHAR)));
   SWIG_Python_SetConstant(d, "MED_INTERNAL_UNDEF",SWIG_From_int(static_cast< int >(MED_INTERNAL_UNDEF)));
+  SWIG_Python_SetConstant(d, "MED_DOUBLE",SWIG_From_int(static_cast< int >(MED_DOUBLE)));
   SWIG_Python_SetConstant(d, "MED_FLOAT64",SWIG_From_int(static_cast< int >(MED_FLOAT64)));
+  SWIG_Python_SetConstant(d, "MED_FLOAT32",SWIG_From_int(static_cast< int >(MED_FLOAT32)));
   SWIG_Python_SetConstant(d, "MED_INT32",SWIG_From_int(static_cast< int >(MED_INT32)));
   SWIG_Python_SetConstant(d, "MED_INT64",SWIG_From_int(static_cast< int >(MED_INT64)));
   SWIG_Python_SetConstant(d, "MED_INT",SWIG_From_int(static_cast< int >(MED_INT)));
@@ -6208,6 +6228,7 @@ SWIG_init(void) {
   SWIG_Python_SetConstant(d, "MED_OCTA12",SWIG_From_int(static_cast< int >(312)));
   SWIG_Python_SetConstant(d, "MED_PYRA13",SWIG_From_int(static_cast< int >(313)));
   SWIG_Python_SetConstant(d, "MED_PENTA15",SWIG_From_int(static_cast< int >(315)));
+  SWIG_Python_SetConstant(d, "MED_PENTA18",SWIG_From_int(static_cast< int >(318)));
   SWIG_Python_SetConstant(d, "MED_HEXA20",SWIG_From_int(static_cast< int >(320)));
   SWIG_Python_SetConstant(d, "MED_HEXA27",SWIG_From_int(static_cast< int >(327)));
   SWIG_Python_SetConstant(d, "MED_POLYGON",SWIG_From_int(static_cast< int >(400)));
@@ -6221,9 +6242,9 @@ SWIG_init(void) {
   SWIG_Python_SetConstant(d, "MED_UNDEF_GEOMETRY_TYPE",SWIG_From_int(static_cast< int >(0)));
   SWIG_Python_SetConstant(d, "MED_ALL_GEOTYPE",SWIG_From_int(static_cast< int >(-1)));
   SWIG_Python_SetConstant(d, "MED_GEO_ALL",SWIG_From_int(static_cast< int >(-1)));
-  SWIG_Python_SetConstant(d, "MED_N_CELL_GEO",SWIG_From_int(static_cast< int >(24)));
-  SWIG_Python_SetConstant(d, "MED_N_CELL_FIXED_GEO",SWIG_From_int(static_cast< int >(23)));
-  SWIG_Python_SetConstant(d, "MED_N_CELL_GEO_FIXED_CON",SWIG_From_int(static_cast< int >(20)));
+  SWIG_Python_SetConstant(d, "MED_N_CELL_GEO",SWIG_From_int(static_cast< int >(25)));
+  SWIG_Python_SetConstant(d, "MED_N_CELL_FIXED_GEO",SWIG_From_int(static_cast< int >(24)));
+  SWIG_Python_SetConstant(d, "MED_N_CELL_GEO_FIXED_CON",SWIG_From_int(static_cast< int >(21)));
   SWIG_Python_SetConstant(d, "MED_N_FACE_GEO",SWIG_From_int(static_cast< int >(8)));
   SWIG_Python_SetConstant(d, "MED_N_FACE_FIXED_GEO",SWIG_From_int(static_cast< int >(8)));
   SWIG_Python_SetConstant(d, "MED_N_FACE_GEO_FIXED_CON",SWIG_From_int(static_cast< int >(6)));

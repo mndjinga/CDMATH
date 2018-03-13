@@ -11,23 +11,23 @@ AM_LIBTOOLFLAGS = --tag=F77
 
 if WITHF90
 
-myTESTS_LEC = ../test5.sh ../test7.sh ../test9.sh \
-	../test11.sh ../test11b.sh ../test13.sh ../test15.sh ../test17.sh \
-	../test30.sh 
+myTESTS_LEC = ../test5_Rd.sh ../test7_Rd.sh ../test9_Rd.sh \
+	../test11_Rd.sh ../test11b_Rd.sh ../test13_Rd.sh ../test15_Rd.sh ../test17_Rd.sh \
+	../test30_Rd.sh 
 
 # test11_SOURCES  = test11.f90
 # PROG_LEC        = test11
 
 endif
-# EXTRA_LEC       = test11.sh 
+# EXTRA_LEC       = test11_Rd.sh 
 
-TESTS_LEC = ../test3.sh ../test22.sh ../test24.sh ../test26.sh ../test28.sh \
-	    ../test32.sh ../test33.sh $(myTESTS_LEC)
+TESTS_LEC = ../test3_Rd.sh ../test22_Rd.sh ../test24_Rd.sh ../test26_Rd.sh ../test28_Rd.sh \
+	    ../test32_Rd.sh ../test33_Rd.sh $(myTESTS_LEC)
 
-TESTS_ECR = ../test1.sh ../test2.sh ../test4.sh ../test6.sh \
-	../test8.sh ../test10.sh ../test12.sh ../test14.sh ../test16.sh \
-	../test18.sh ../test20.sh ../test21.sh ../test23.sh \
-	../test25.sh ../test27.sh ../test29.sh ../test31.sh
+TESTS_ECR = ../test1_Wr.sh ../test2_Wr.sh ../test4_Wr.sh ../test6_Wr.sh \
+	../test8_Wr.sh ./test10.sh ../test12_Wr.sh ../test14_Wr.sh ../test16_Wr.sh \
+	../test18_Wr.sh ../test20_Wr.sh ../test21_Wr.sh ../test23_Wr.sh \
+	../test25_Wr.sh ../test27_Wr.sh ../test29_Wr.sh ../test31_Wr.sh
 #  ../test19.sh
 
 # test10_SOURCES = test10.f
@@ -36,7 +36,7 @@ TESTS_ECR = ../test1.sh ../test2.sh ../test4.sh ../test6.sh \
 
 TESTS =  $(TESTS_ECR) $(TESTS_LEC) 
 
-EXTRA_DIST = test.med.ref 
+EXTRA_DIST = test.med.ref test10.sh 
 #$(EXTRA_LEC) $(EXTRA_ECR)
 
 check_PROGRAMS = $(PROG_ECR) $(PROG_LEC)
@@ -60,6 +60,8 @@ CLEANFILES = \
 ./test27.med\
 ./test29.med\
 ./test31.med\
+./test10-0.med\
+./test20-0.med\
 ./test10.dump\
 ./test12.dump\
 ./test14.dump\

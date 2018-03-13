@@ -1,8 +1,19 @@
 %include "typemaps.i"
+%include "exception.i"
 %include "cstring.i"
 
 //début de la définition de %med_enum_typemaps(Module,TypeEnum,Type)
 %define %med_enum_typemaps(Module,TypeEnum,Type)
+
+%exception Type::Type {
+  try {
+    $action
+  } catch(std::range_error& ex) {
+    SWIG_exception_fail(SWIG_ValueError, ex.what());
+  } catch(...) {
+        SWIG_exception_fail(SWIG_RuntimeError,"Unknown exception");
+  }
+}
 
 // définition de la classe C++ pour wrapper le type enum
 %{
@@ -10,7 +21,8 @@
 #include <Python.h>
 #include <iostream>
 #include <map>
-
+#include <exception>
+  
   class Type {
   public:
     int _val;
@@ -21,9 +33,13 @@
   Type():_val(0) {
       // std::cout << "Type Constructor (1) : " << this << " [_val:"<<_val<<"]" <<std::endl;
   }
+    
   Type(int val):_val(val) {
       //std::cout << "Type Constructor (2) : " << this << " [_val:"<<_val<<"]"<< std::endl;
-  }
+        Get__str__::iterator it = _get__str__.find( val );
+	if ( it == _get__str__.end() ) throw std::range_error(std::string("Type constructor value out of range"));
+  };
+				    
   Type(const Type & foo):_val(foo._val) {
       //std::cout << "Type Copy Constructor " << this << " [_val:"<<_val<<"]" << std::endl;
   }
@@ -34,9 +50,9 @@
     //std::cout << "Type Operator = :"<<this<< " [_val:"<<_val<<"]" <<std::endl; return *this;
   }
 
-};
+  };
 
-
+  // Création De L'objet Type initialisé avec le tableau de pairs Type_init
   Type::Get__str__ Type::_get__str__(Type ##_init, Type ##_init + sizeof(Type ##_init)/ sizeof(*Type ##_init));
 
 %}
@@ -56,6 +72,8 @@ public:
 //     Type & operator=(const Type & foo);
 //     friend std::ostream & operator <<(std::ostream & os, const Type & foo);
 };
+
+
 
 //Demande à SWIG d'ajouter une méthode pour afficher la valeur de l'enum sous forme de chaine de caractère en python.
 %extend Type {

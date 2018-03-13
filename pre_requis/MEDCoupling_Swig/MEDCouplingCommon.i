@@ -38,6 +38,7 @@
 #include "MEDCouplingField.hxx"
 #include "MEDCouplingFieldDouble.hxx"
 #include "MEDCouplingFieldInt.hxx"
+#include "MEDCouplingFieldFloat.hxx"
 #include "MEDCouplingFieldTemplate.hxx"
 #include "MEDCouplingGaussLocalization.hxx"
 #include "MCAuto.hxx"
@@ -146,6 +147,18 @@ using namespace INTERP_KERNEL;
 //$$$$$$$$$$$$$$$$$$
 
 ////////////////////
+%typemap(out) MEDCoupling::MEDCouplingField*
+{
+  $result=convertField($1,$owner);
+}
+
+%typemap(out) MEDCouplingField*
+{
+  $result=convertField($1,$owner);
+}
+//$$$$$$$$$$$$$$$$$$
+
+////////////////////
 %typemap(out) MEDCoupling::MEDCouplingMultiFields*
 {
   $result=convertMultiFields($1,$owner);
@@ -173,6 +186,8 @@ using namespace INTERP_KERNEL;
 %init %{ import_array(); %}
 #endif
 
+%init %{ initializeMe(); %}
+
 %feature("autodoc", "1");
 %feature("docstring");
 
@@ -185,6 +200,7 @@ using namespace INTERP_KERNEL;
 %newobject MEDCoupling::MEDCouplingFieldDouble::MergeFields;
 %newobject MEDCoupling::MEDCouplingFieldDouble::MeldFields;
 %newobject MEDCoupling::MEDCouplingFieldDouble::convertToIntField;
+%newobject MEDCoupling::MEDCouplingFieldDouble::convertToFloatField;
 %newobject MEDCoupling::MEDCouplingFieldDouble::doublyContractedProduct;
 %newobject MEDCoupling::MEDCouplingFieldDouble::determinant;
 %newobject MEDCoupling::MEDCouplingFieldDouble::eigenValues;
@@ -239,6 +255,18 @@ using namespace INTERP_KERNEL;
 %newobject MEDCoupling::MEDCouplingFieldInt::deepCopy;
 %newobject MEDCoupling::MEDCouplingFieldInt::clone;
 %newobject MEDCoupling::MEDCouplingFieldInt::cloneWithMesh;
+%newobject MEDCoupling::MEDCouplingFieldInt::buildSubPart;
+%newobject MEDCoupling::MEDCouplingFieldInt::buildSubPartRange;
+%newobject MEDCoupling::MEDCouplingFieldInt::__getitem__;
+%newobject MEDCoupling::MEDCouplingFieldFloat::New;
+%newobject MEDCoupling::MEDCouplingFieldFloat::convertToDblField;
+%newobject MEDCoupling::MEDCouplingFieldFloat::getArray;
+%newobject MEDCoupling::MEDCouplingFieldFloat::deepCopy;
+%newobject MEDCoupling::MEDCouplingFieldFloat::clone;
+%newobject MEDCoupling::MEDCouplingFieldFloat::cloneWithMesh;
+%newobject MEDCoupling::MEDCouplingFieldFloat::buildSubPart;
+%newobject MEDCoupling::MEDCouplingFieldFloat::buildSubPartRange;
+%newobject MEDCoupling::MEDCouplingFieldFloat::__getitem__;
 %newobject MEDCoupling::MEDCouplingFieldTemplate::New;
 %newobject MEDCoupling::MEDCouplingMesh::deepCopy;
 %newobject MEDCoupling::MEDCouplingMesh::clone;
@@ -412,6 +440,9 @@ using namespace INTERP_KERNEL;
 %newobject MEDCoupling::MEDCouplingGaussLocalization::localizePtsInRefCooForEachCell;
 %newobject MEDCoupling::MEDCouplingGaussLocalization::buildRefCell;
 %newobject MEDCoupling::MEDCouplingSkyLineArray::BuildFromPolyhedronConn;
+%newobject MEDCoupling::MEDCouplingSkyLineArray::getSuperIndexArray;
+%newobject MEDCoupling::MEDCouplingSkyLineArray::getIndexArray;
+%newobject MEDCoupling::MEDCouplingSkyLineArray::getValuesArray;
 
 %feature("unref") MEDCouplingPointSet "$this->decrRef();"
 %feature("unref") MEDCouplingMesh "$this->decrRef();"
@@ -456,6 +487,18 @@ using namespace INTERP_KERNEL;
 
 %include "MEDCouplingRefCountObject.i"
 %include "MEDCouplingMemArray.i"
+
+%{
+  void initializeMe()
+  {// AGY : here initialization of C++ traits in MEDCouplingDataArrayTypemaps.i for code factorization. Awful, I know, but no other solutions.
+    SWIGTITraits<double>::TI=SWIGTYPE_p_MEDCoupling__DataArrayDouble;
+    SWIGTITraits<float>::TI=SWIGTYPE_p_MEDCoupling__DataArrayFloat;
+    SWIGTITraits<int>::TI=SWIGTYPE_p_MEDCoupling__DataArrayInt;
+    SWIGTITraits<double>::TI_TUPLE=SWIGTYPE_p_MEDCoupling__DataArrayDoubleTuple;
+    SWIGTITraits<float>::TI_TUPLE=SWIGTYPE_p_MEDCoupling__DataArrayFloatTuple;
+    SWIGTITraits<int>::TI_TUPLE=SWIGTYPE_p_MEDCoupling__DataArrayIntTuple;
+  }
+%}
 
 namespace INTERP_KERNEL
 { 
@@ -739,7 +782,7 @@ namespace MEDCoupling
          {
            int sw,sz(-1);
            int v0; std::vector<int> v1;
-           const int *ids(convertObjToPossibleCpp1_Safe(li,sw,sz,v0,v1));
+           const int *ids(convertIntStarLikePyObjToCppIntStar(li,sw,sz,v0,v1));
            self->renumberCells(ids,check);
          }
 
@@ -821,7 +864,7 @@ namespace MEDCoupling
            int spaceDim=self->getSpaceDimension();
            INTERP_KERNEL::AutoPtr<double> tmp=new double[2*spaceDim];
            self->getBoundingBox(tmp);
-           PyObject *ret=convertDblArrToPyListOfTuple(tmp,2,spaceDim);
+           PyObject *ret=convertDblArrToPyListOfTuple<double>(tmp,2,spaceDim);
            return ret;
          }
 
@@ -841,7 +884,7 @@ namespace MEDCoupling
          {
            int szArr,sw,iTypppArr;
            std::vector<int> stdvecTyyppArr;
-           const int *tmp=convertObjToPossibleCpp1_Safe(li,sw,szArr,iTypppArr,stdvecTyyppArr);
+           const int *tmp=convertIntStarLikePyObjToCppIntStar(li,sw,szArr,iTypppArr,stdvecTyyppArr);
            MEDCouplingMesh *ret=self->buildPart(tmp,tmp+szArr);
            if(sw==3)//DataArrayInt
              { 
@@ -859,7 +902,7 @@ namespace MEDCoupling
            int szArr,sw,iTypppArr;
            std::vector<int> stdvecTyyppArr;
            DataArrayInt *arr=0;
-           const int *tmp=convertObjToPossibleCpp1_Safe(li,sw,szArr,iTypppArr,stdvecTyyppArr);
+           const int *tmp=convertIntStarLikePyObjToCppIntStar(li,sw,szArr,iTypppArr,stdvecTyyppArr);
            MEDCouplingMesh *ret=self->buildPartAndReduceNodes(tmp,tmp+szArr,arr);
            if(sw==3)//DataArrayInt
              { 
@@ -1189,10 +1232,6 @@ namespace MEDCoupling
     int getNumberOf() const;
     int getLength() const;
     
-    DataArrayInt* getSuperIndexArray() const;
-    DataArrayInt* getIndexArray() const;
-    DataArrayInt* getValuesArray() const;
-
     void deletePack(const int i, const int j) throw(INTERP_KERNEL::Exception);
     
     %extend 
@@ -1220,6 +1259,30 @@ namespace MEDCoupling
       std::string __str__() const throw(INTERP_KERNEL::Exception)
       {
         return self->simpleRepr();
+      }
+      
+      DataArrayInt *getSuperIndexArray() const
+      {
+        DataArrayInt *ret(self->getSuperIndexArray());
+        if(ret)
+          ret->incrRef();
+        return ret;
+      }
+      
+      DataArrayInt *getIndexArray() const
+      {
+        DataArrayInt *ret(self->getIndexArray());
+        if(ret)
+          ret->incrRef();
+        return ret;
+      }
+      
+      DataArrayInt *getValuesArray() const
+      {
+        DataArrayInt *ret(self->getValuesArray());
+        if(ret)
+          ret->incrRef();
+        return ret;
       }
      
       PyObject *getSimplePackSafe(int absolutePackId) const throw(INTERP_KERNEL::Exception)
@@ -1313,6 +1376,7 @@ namespace MEDCoupling
       virtual void renumberNodesWithOffsetInConn(int offset) throw(INTERP_KERNEL::Exception);
       virtual bool areAllNodesFetched() const throw(INTERP_KERNEL::Exception);
       virtual MEDCouplingFieldDouble *computeDiameterField() const throw(INTERP_KERNEL::Exception);
+      virtual void invertOrientationOfAllCells() throw(INTERP_KERNEL::Exception);
       %extend 
          {
            std::string __str__() const throw(INTERP_KERNEL::Exception)
@@ -1352,7 +1416,7 @@ namespace MEDCoupling
            {
              int szArr,sw,iTypppArr;
              std::vector<int> stdvecTyyppArr;
-             const int *tmp=convertObjToPossibleCpp1_Safe(li,sw,szArr,iTypppArr,stdvecTyyppArr);
+             const int *tmp=convertIntStarLikePyObjToCppIntStar(li,sw,szArr,iTypppArr,stdvecTyyppArr);
              MEDCouplingPointSet *ret=self->buildPartOfMySelf(tmp,tmp+szArr,keepCoords);
              if(sw==3)//DataArrayInt
                { 
@@ -1369,7 +1433,7 @@ namespace MEDCoupling
            {
              int szArr,sw,iTypppArr;
              std::vector<int> stdvecTyyppArr;
-             const int *tmp=convertObjToPossibleCpp1_Safe(li,sw,szArr,iTypppArr,stdvecTyyppArr);
+             const int *tmp=convertIntStarLikePyObjToCppIntStar(li,sw,szArr,iTypppArr,stdvecTyyppArr);
              MEDCouplingPointSet *ret=self->buildPartOfMySelfNode(tmp,tmp+szArr,fullyIn);
              if(sw==3)//DataArrayInt
                { 
@@ -1386,7 +1450,7 @@ namespace MEDCoupling
            {
              int szArr,sw,iTypppArr;
              std::vector<int> stdvecTyyppArr;
-             const int *tmp=convertObjToPossibleCpp1_Safe(li,sw,szArr,iTypppArr,stdvecTyyppArr);
+             const int *tmp=convertIntStarLikePyObjToCppIntStar(li,sw,szArr,iTypppArr,stdvecTyyppArr);
              MEDCouplingPointSet *ret=self->buildPartOfMySelfKeepCoords(tmp,tmp+szArr);
              if(sw==3)//DataArrayInt
                { 
@@ -1409,7 +1473,7 @@ namespace MEDCoupling
            {
              int szArr,sw,iTypppArr;
              std::vector<int> stdvecTyyppArr;
-             const int *tmp=convertObjToPossibleCpp1_Safe(li,sw,szArr,iTypppArr,stdvecTyyppArr);
+             const int *tmp=convertIntStarLikePyObjToCppIntStar(li,sw,szArr,iTypppArr,stdvecTyyppArr);
              MEDCouplingPointSet *ret=self->buildFacePartOfMySelfNode(tmp,tmp+szArr,fullyIn);
              if(sw==3)//DataArrayInt
                { 
@@ -1426,7 +1490,7 @@ namespace MEDCoupling
            {
              int szArr,sw,iTypppArr;
              std::vector<int> stdvecTyyppArr;
-             const int *tmp=convertObjToPossibleCpp1_Safe(li,sw,szArr,iTypppArr,stdvecTyyppArr);
+             const int *tmp=convertIntStarLikePyObjToCppIntStar(li,sw,szArr,iTypppArr,stdvecTyyppArr);
              self->renumberNodes(tmp,newNbOfNodes);
            }
 
@@ -1434,7 +1498,7 @@ namespace MEDCoupling
            {
              int szArr,sw,iTypppArr;
              std::vector<int> stdvecTyyppArr;
-             const int *tmp=convertObjToPossibleCpp1_Safe(li,sw,szArr,iTypppArr,stdvecTyyppArr);
+             const int *tmp=convertIntStarLikePyObjToCppIntStar(li,sw,szArr,iTypppArr,stdvecTyyppArr);
              self->renumberNodesCenter(tmp,newNbOfNodes);
            }
 
@@ -1551,7 +1615,7 @@ namespace MEDCoupling
              std::vector<int> multiVal;
              std::pair<int, std::pair<int,int> > slic;
              MEDCoupling::DataArrayInt *daIntTyypp=0;
-             convertObjToPossibleCpp2(li,self->getNumberOfNodes(),sw,singleVal,multiVal,slic,daIntTyypp);
+             convertIntStarOrSliceLikePyObjToCpp(li,self->getNumberOfNodes(),sw,singleVal,multiVal,slic,daIntTyypp);
              switch(sw)
                {
                case 1:
@@ -1612,7 +1676,7 @@ namespace MEDCoupling
              //
              int szArr,sw,iTypppArr;
              std::vector<int> stdvecTyyppArr;
-             const int *tmp=convertObjToPossibleCpp1_Safe(li,sw,szArr,iTypppArr,stdvecTyyppArr);
+             const int *tmp=convertIntStarLikePyObjToCppIntStar(li,sw,szArr,iTypppArr,stdvecTyyppArr);
              self->fillCellIdsToKeepFromNodeIds(tmp,tmp+szArr,fullyIn,ret);
              return ret;
            }
@@ -1669,7 +1733,7 @@ namespace MEDCoupling
              std::pair<int, std::pair<int,int> > slic;
              MEDCoupling::DataArrayInt *daIntTyypp=0;
              int nbc=self->getNumberOfCells();
-             convertObjToPossibleCpp2(listOrDataArrI,nbc,sw,singleVal,multiVal,slic,daIntTyypp);
+             convertIntStarOrSliceLikePyObjToCpp(listOrDataArrI,nbc,sw,singleVal,multiVal,slic,daIntTyypp);
              switch(sw)
                {
                case 1:
@@ -1990,7 +2054,7 @@ namespace MEDCoupling
         std::pair<int, std::pair<int,int> > slic;
         MEDCoupling::DataArrayInt *daIntTyypp=0;
         int nbc=self->getNumberOfCells();
-        convertObjToPossibleCpp2(li,nbc,sw,singleVal,multiVal,slic,daIntTyypp);
+        convertIntStarOrSliceLikePyObjToCpp(li,nbc,sw,singleVal,multiVal,slic,daIntTyypp);
         switch(sw)
           {
           case 1:
@@ -2048,7 +2112,7 @@ namespace MEDCoupling
         std::pair<int, std::pair<int,int> > slic;
         MEDCoupling::DataArrayInt *daIntTyypp=0;
         int nbc=self->getNumberOfCells();
-        convertObjToPossibleCpp2(li,nbc,sw,singleVal,multiVal,slic,daIntTyypp);
+        convertIntStarOrSliceLikePyObjToCpp(li,nbc,sw,singleVal,multiVal,slic,daIntTyypp);
         switch(sw)
           {
           case 1:
@@ -2107,7 +2171,7 @@ namespace MEDCoupling
       {
         int szArr,sw,iTypppArr;
         std::vector<int> stdvecTyyppArr;
-        const int *tmp=convertObjToPossibleCpp1_Safe(li,sw,szArr,iTypppArr,stdvecTyyppArr);
+        const int *tmp=convertIntStarLikePyObjToCppIntStar(li,sw,szArr,iTypppArr,stdvecTyyppArr);
         if(size>szArr)
           {
             std::ostringstream oss; oss << "Wrap of MEDCouplingUMesh::insertNextCell : request of connectivity with length " << size << " whereas the length of input is " << szArr << " !";
@@ -2120,7 +2184,7 @@ namespace MEDCoupling
       {
         int szArr,sw,iTypppArr;
         std::vector<int> stdvecTyyppArr;
-        const int *tmp=convertObjToPossibleCpp1_Safe(li,sw,szArr,iTypppArr,stdvecTyyppArr);
+        const int *tmp=convertIntStarLikePyObjToCppIntStar(li,sw,szArr,iTypppArr,stdvecTyyppArr);
         self->insertNextCell(type,szArr,tmp);
       }
       
@@ -2143,7 +2207,7 @@ namespace MEDCoupling
       {
         int szArr,sw,iTypppArr;
         std::vector<int> stdvecTyyppArr;
-        const int *seedPtr=convertObjToPossibleCpp1_Safe(seed,sw,szArr,iTypppArr,stdvecTyyppArr);
+        const int *seedPtr=convertIntStarLikePyObjToCppIntStar(seed,sw,szArr,iTypppArr,stdvecTyyppArr);
         int nbOfDepthPeelingPerformed=0;
         DataArrayInt *ret0=MEDCouplingUMesh::ComputeSpreadZoneGraduallyFromSeed(seedPtr,seedPtr+szArr,arrIn,arrIndxIn,nbOfDepthPeeling,nbOfDepthPeelingPerformed);
         PyObject *res=PyTuple_New(2);
@@ -2294,7 +2358,7 @@ namespace MEDCoupling
         std::vector<int> multiVal;
         std::pair<int, std::pair<int,int> > slic;
         MEDCoupling::DataArrayInt *daIntTyypp=0;
-        convertObjToPossibleCpp2(li,self->getNumberOfNodes(),sw,singleVal,multiVal,slic,daIntTyypp);
+        convertIntStarOrSliceLikePyObjToCpp(li,self->getNumberOfNodes(),sw,singleVal,multiVal,slic,daIntTyypp);
         switch(sw)
           {
           case 1:
@@ -2315,7 +2379,7 @@ namespace MEDCoupling
         std::vector<int> multiVal;
         std::pair<int, std::pair<int,int> > slic;
         MEDCoupling::DataArrayInt *daIntTyypp=0;
-        convertObjToPossibleCpp2(li,self->getNumberOfNodes(),sw,singleVal,multiVal,slic,daIntTyypp);
+        convertIntStarOrSliceLikePyObjToCpp(li,self->getNumberOfNodes(),sw,singleVal,multiVal,slic,daIntTyypp);
         switch(sw)
           {
           case 1:
@@ -2412,7 +2476,7 @@ namespace MEDCoupling
         MEDCoupling::DataArrayInt *daIntTyypp=0;
         if(!arrIndx)
           throw INTERP_KERNEL::Exception("MEDCouplingUMesh::RemoveIdsFromIndexedArrays : null pointer as arrIndex !");
-        convertObjToPossibleCpp2(li,arrIndx->getNumberOfTuples()-1,sw,singleVal,multiVal,slic,daIntTyypp);
+        convertIntStarOrSliceLikePyObjToCpp(li,arrIndx->getNumberOfTuples()-1,sw,singleVal,multiVal,slic,daIntTyypp);
         switch(sw)
           {
           case 1:
@@ -2436,7 +2500,7 @@ namespace MEDCoupling
         MEDCoupling::DataArrayInt *daIntTyypp=0;
         if(!arrIndxIn)
           throw INTERP_KERNEL::Exception("MEDCouplingUMesh::ExtractFromIndexedArrays : null pointer as arrIndxIn !");
-        convertObjToPossibleCpp2(li,arrIndxIn->getNumberOfTuples()-1,sw,singleVal,multiVal,slic,daIntTyypp);
+        convertIntStarOrSliceLikePyObjToCpp(li,arrIndxIn->getNumberOfTuples()-1,sw,singleVal,multiVal,slic,daIntTyypp);
         switch(sw)
           {
           case 1:
@@ -2478,13 +2542,12 @@ namespace MEDCoupling
         if(!PySlice_Check(slic))
           throw INTERP_KERNEL::Exception("ExtractFromIndexedArraysSlice (wrap) : the first param is not a pyslice !");
         Py_ssize_t strt=2,stp=2,step=2;
-        PySliceObject *sliC=reinterpret_cast<PySliceObject *>(slic);
         if(!arrIndxIn)
           throw INTERP_KERNEL::Exception("ExtractFromIndexedArraysSlice (wrap) : last array is null !");
         arrIndxIn->checkAllocated();
         if(arrIndxIn->getNumberOfComponents()!=1)
           throw INTERP_KERNEL::Exception("ExtractFromIndexedArraysSlice (wrap) : number of components of last argument must be equal to one !");
-        GetIndicesOfSlice(sliC,arrIndxIn->getNumberOfTuples(),&strt,&stp,&step,"ExtractFromIndexedArraysSlice (wrap) : Invalid slice regarding nb of elements !");
+        GetIndicesOfSlice(slic,arrIndxIn->getNumberOfTuples(),&strt,&stp,&step,"ExtractFromIndexedArraysSlice (wrap) : Invalid slice regarding nb of elements !");
         DataArrayInt *arrOut=0,*arrIndexOut=0;
         MEDCouplingUMesh::ExtractFromIndexedArraysSlice(strt,stp,step,arrIn,arrIndxIn,arrOut,arrIndexOut);
         PyObject *ret=PyTuple_New(2);
@@ -2505,7 +2568,7 @@ namespace MEDCoupling
         MEDCoupling::DataArrayInt *daIntTyypp=0;
         if(!arrIndxIn)
           throw INTERP_KERNEL::Exception("MEDCouplingUMesh::SetPartOfIndexedArrays : null pointer as arrIndex !");
-        convertObjToPossibleCpp2(li,arrIndxIn->getNumberOfTuples()-1,sw,singleVal,multiVal,slic,daIntTyypp);
+        convertIntStarOrSliceLikePyObjToCpp(li,arrIndxIn->getNumberOfTuples()-1,sw,singleVal,multiVal,slic,daIntTyypp);
         switch(sw)
           {
           case 1:
@@ -2542,7 +2605,7 @@ namespace MEDCoupling
         MEDCoupling::DataArrayInt *daIntTyypp=0;
         if(!arrIndxIn)
           throw INTERP_KERNEL::Exception("MEDCouplingUMesh::SetPartOfIndexedArraysSameIdx : null pointer as arrIndex !");
-        convertObjToPossibleCpp2(li,arrIndxIn->getNumberOfTuples()-1,sw,singleVal,multiVal,slic,daIntTyypp);
+        convertIntStarOrSliceLikePyObjToCpp(li,arrIndxIn->getNumberOfTuples()-1,sw,singleVal,multiVal,slic,daIntTyypp);
         switch(sw)
           {
           case 1:
@@ -2615,7 +2678,7 @@ namespace MEDCoupling
         double vals[6];
         std::copy(vec,vec+3,vals);
         std::copy(pos,pos+3,vals+3);
-        return convertDblArrToPyListOfTuple(vals,3,2);
+        return convertDblArrToPyListOfTuple<double>(vals,3,2);
       }
       
       static MEDCouplingUMesh *MergeUMeshes(PyObject *li) throw(INTERP_KERNEL::Exception)
@@ -2662,6 +2725,19 @@ namespace MEDCoupling
         PyTuple_SetItem(ret,2,SWIG_NewPointerObj(SWIG_as_voidptr(d1.retn()),SWIGTYPE_p_MEDCoupling__DataArrayInt, SWIG_POINTER_OWN | 0 ));
         PyTuple_SetItem(ret,3,SWIG_NewPointerObj(SWIG_as_voidptr(d2.retn()),SWIGTYPE_p_MEDCoupling__DataArrayInt, SWIG_POINTER_OWN | 0 ));
         PyTuple_SetItem(ret,4,SWIG_NewPointerObj(SWIG_as_voidptr(d3.retn()),SWIGTYPE_p_MEDCoupling__DataArrayInt, SWIG_POINTER_OWN | 0 ));
+        return ret;
+      }
+
+      PyObject *explodeIntoEdges() const throw(INTERP_KERNEL::Exception)
+      {
+        MCAuto<DataArrayInt> desc,descIndex,revDesc,revDescIndx;
+        MCAuto<MEDCouplingUMesh> m(self->explodeIntoEdges(desc,descIndex,revDesc,revDescIndx));
+        PyObject *ret=PyTuple_New(5);
+        PyTuple_SetItem(ret,0,SWIG_NewPointerObj(SWIG_as_voidptr(m.retn()),SWIGTYPE_p_MEDCoupling__MEDCouplingUMesh, SWIG_POINTER_OWN | 0 ));
+        PyTuple_SetItem(ret,1,SWIG_NewPointerObj(SWIG_as_voidptr(desc.retn()),SWIGTYPE_p_MEDCoupling__DataArrayInt, SWIG_POINTER_OWN | 0 ));
+        PyTuple_SetItem(ret,2,SWIG_NewPointerObj(SWIG_as_voidptr(descIndex.retn()),SWIGTYPE_p_MEDCoupling__DataArrayInt, SWIG_POINTER_OWN | 0 ));
+        PyTuple_SetItem(ret,3,SWIG_NewPointerObj(SWIG_as_voidptr(revDesc.retn()),SWIGTYPE_p_MEDCoupling__DataArrayInt, SWIG_POINTER_OWN | 0 ));
+        PyTuple_SetItem(ret,4,SWIG_NewPointerObj(SWIG_as_voidptr(revDescIndx.retn()),SWIGTYPE_p_MEDCoupling__DataArrayInt, SWIG_POINTER_OWN | 0 ));
         return ret;
       }
 
@@ -2730,6 +2806,16 @@ namespace MEDCoupling
         PyObject *ret=PyTuple_New(2);
         PyTuple_SetItem(ret,0,SWIG_NewPointerObj(SWIG_as_voidptr(neighbors),SWIGTYPE_p_MEDCoupling__DataArrayInt, SWIG_POINTER_OWN | 0 ));
         PyTuple_SetItem(ret,1,SWIG_NewPointerObj(SWIG_as_voidptr(neighborsIdx),SWIGTYPE_p_MEDCoupling__DataArrayInt, SWIG_POINTER_OWN | 0 ));
+        return ret;
+      }
+
+      PyObject *computeEnlargedNeighborsOfNodes() const throw(INTERP_KERNEL::Exception)
+      {
+        MCAuto<DataArrayInt> neighbors,neighborsIdx;
+        self->computeEnlargedNeighborsOfNodes(neighbors,neighborsIdx);
+        PyObject *ret=PyTuple_New(2);
+        PyTuple_SetItem(ret,0,SWIG_NewPointerObj(SWIG_as_voidptr(neighbors.retn()),SWIGTYPE_p_MEDCoupling__DataArrayInt, SWIG_POINTER_OWN | 0 ));
+        PyTuple_SetItem(ret,1,SWIG_NewPointerObj(SWIG_as_voidptr(neighborsIdx.retn()),SWIGTYPE_p_MEDCoupling__DataArrayInt, SWIG_POINTER_OWN | 0 ));
         return ret;
       }
       
@@ -2926,7 +3012,7 @@ namespace MEDCoupling
         std::vector<int> pos2;
         DataArrayInt *pos3=0;
         DataArrayIntTuple *pos4=0;
-        convertObjToPossibleCpp1(li,sw,pos1,pos2,pos3,pos4);
+        convertIntStarLikePyObjToCpp(li,sw,pos1,pos2,pos3,pos4);
         switch(sw)
           {
           case 1:
@@ -3044,7 +3130,7 @@ namespace MEDCoupling
       {
         int szArr,sw,iTypppArr;
         std::vector<int> stdvecTyyppArr;
-        const int *tmp=convertObjToPossibleCpp1_Safe(li,sw,szArr,iTypppArr,stdvecTyyppArr);
+        const int *tmp=convertIntStarLikePyObjToCppIntStar(li,sw,szArr,iTypppArr,stdvecTyyppArr);
         self->insertNextCell(tmp,tmp+szArr);
       }
 
@@ -3291,7 +3377,7 @@ namespace MEDCoupling
         //
         int szArr,sw,iTypppArr;
         std::vector<int> stdvecTyyppArr;
-        const int *tmp4=convertObjToPossibleCpp1_Safe(st,sw,szArr,iTypppArr,stdvecTyyppArr);
+        const int *tmp4=convertIntStarLikePyObjToCppIntStar(st,sw,szArr,iTypppArr,stdvecTyyppArr);
         std::vector<int> tmp5(tmp4,tmp4+szArr);
         //
         return MEDCouplingStructuredMesh::BuildExplicitIdsFrom(tmp5,inp);
@@ -3349,7 +3435,7 @@ namespace MEDCoupling
       {
         int szArr,sw,iTypppArr;
         std::vector<int> stdvecTyyppArr;
-        const int *tmp=convertObjToPossibleCpp1_Safe(li,sw,szArr,iTypppArr,stdvecTyyppArr);
+        const int *tmp=convertIntStarLikePyObjToCppIntStar(li,sw,szArr,iTypppArr,stdvecTyyppArr);
         return MEDCouplingStructuredMesh::Build1GTNodalConnectivity(tmp,tmp+szArr);
       }
 
@@ -3357,7 +3443,7 @@ namespace MEDCoupling
       {
         int szArr,sw,iTypppArr;
         std::vector<int> stdvecTyyppArr;
-        const int *tmp(convertObjToPossibleCpp1_Safe(li,sw,szArr,iTypppArr,stdvecTyyppArr));
+        const int *tmp(convertIntStarLikePyObjToCppIntStar(li,sw,szArr,iTypppArr,stdvecTyyppArr));
         return MEDCouplingStructuredMesh::Build1GTNodalConnectivityOfSubLevelMesh(tmp,tmp+szArr);
       }
 
@@ -3411,10 +3497,10 @@ namespace MEDCoupling
       {
         int szArr,sw,iTypppArr;
         std::vector<int> stdvecTyyppArr;
-        const int *tmp=convertObjToPossibleCpp1_Safe(li,sw,szArr,iTypppArr,stdvecTyyppArr);
+        const int *tmp=convertIntStarLikePyObjToCppIntStar(li,sw,szArr,iTypppArr,stdvecTyyppArr);
         int szArr2,sw2,iTypppArr2;
         std::vector<int> stdvecTyyppArr2;
-        const int *tmp2=convertObjToPossibleCpp1_Safe(st,sw2,szArr2,iTypppArr2,stdvecTyyppArr2);
+        const int *tmp2=convertIntStarLikePyObjToCppIntStar(st,sw2,szArr2,iTypppArr2,stdvecTyyppArr2);
         std::vector<int> tmp3(tmp2,tmp2+szArr2);
         std::vector< std::pair<int,int> > partCompactFormat;
         bool ret0=MEDCouplingStructuredMesh::IsPartStructured(tmp,tmp+szArr,tmp3,partCompactFormat);
@@ -3585,7 +3671,7 @@ namespace MEDCoupling
       {
         int szArr,sw,iTypppArr;
         std::vector<int> stdvecTyyppArr;
-        const int *tmp=convertObjToPossibleCpp1_Safe(gridStruct,sw,szArr,iTypppArr,stdvecTyyppArr);
+        const int *tmp=convertIntStarLikePyObjToCppIntStar(gridStruct,sw,szArr,iTypppArr,stdvecTyyppArr);
         self->setNodeGridStructure(tmp,tmp+szArr);
       }
     }
@@ -3625,7 +3711,7 @@ namespace MEDCoupling
         const double *originPtr(0),*dxyzPtr(0);
         int sw,sz,val0;
         std::vector<int> bb0;
-        nodeStrctPtr=convertObjToPossibleCpp1_Safe(nodeStrct,sw,sz,val0,bb0);
+        nodeStrctPtr=convertIntStarLikePyObjToCppIntStar(nodeStrct,sw,sz,val0,bb0);
         //
         double val,val2;
         std::vector<double> bb,bb2;
@@ -3650,7 +3736,7 @@ namespace MEDCoupling
       {
         int sw,sz,val0;
         std::vector<int> bb0;
-        const int *nodeStrctPtr(convertObjToPossibleCpp1_Safe(nodeStrct,sw,sz,val0,bb0));
+        const int *nodeStrctPtr(convertIntStarLikePyObjToCppIntStar(nodeStrct,sw,sz,val0,bb0));
         self->setNodeStruct(nodeStrctPtr,nodeStrctPtr+sz);
       }
 
@@ -3737,8 +3823,6 @@ namespace MEDCoupling
   public:
     virtual void checkConsistencyLight() const throw(INTERP_KERNEL::Exception);
     virtual bool areCompatibleForMerge(const MEDCouplingField *other) const throw(INTERP_KERNEL::Exception);
-    virtual bool isEqual(const MEDCouplingField *other, double meshPrec, double valsPrec) const throw(INTERP_KERNEL::Exception);
-    virtual bool isEqualWithoutConsideringStr(const MEDCouplingField *other, double meshPrec, double valsPrec) const throw(INTERP_KERNEL::Exception);
     virtual void copyTinyStringsFrom(const MEDCouplingField *other) throw(INTERP_KERNEL::Exception);
     void setMesh(const MEDCoupling::MEDCouplingMesh *mesh) throw(INTERP_KERNEL::Exception);
     void setName(const char *name) throw(INTERP_KERNEL::Exception);
@@ -3782,18 +3866,6 @@ namespace MEDCoupling
       {
         std::set<int> ret=self->getGaussLocalizationIdsOfOneType(type);
         return convertIntArrToPyList3(ret);
-      }
-
-      PyObject *isEqualIfNotWhy(const MEDCouplingField *other, double meshPrec, double valsPrec) const throw(INTERP_KERNEL::Exception)
-      {
-        std::string ret1;
-        bool ret0=self->isEqualIfNotWhy(other,meshPrec,valsPrec,ret1);
-        PyObject *ret=PyTuple_New(2);
-        PyObject *ret0Py=ret0?Py_True:Py_False;
-        Py_XINCREF(ret0Py);
-        PyTuple_SetItem(ret,0,ret0Py);
-        PyTuple_SetItem(ret,1,PyString_FromString(ret1.c_str()));
-        return ret;
       }
 
       PyObject *buildSubMeshData(PyObject *li) const throw(INTERP_KERNEL::Exception)
@@ -3843,7 +3915,7 @@ namespace MEDCoupling
       {
         int sw,sz(-1);
         int v0; std::vector<int> v1;
-        const int *cellIdsBg(convertObjToPossibleCpp1_Safe(cellIds,sw,sz,v0,v1));
+        const int *cellIdsBg(convertIntStarLikePyObjToCppIntStar(cellIds,sw,sz,v0,v1));
         return self->computeTupleIdsToSelectFromCellIds(cellIdsBg,cellIdsBg+sz);
       }
 
@@ -3893,10 +3965,13 @@ namespace MEDCoupling
   {
   public:
     static MEDCouplingFieldTemplate *New(const MEDCouplingFieldDouble& f) throw(INTERP_KERNEL::Exception);
+    static MEDCouplingFieldTemplate *New(const MEDCouplingFieldFloat& f) throw(INTERP_KERNEL::Exception);
     static MEDCouplingFieldTemplate *New(const MEDCouplingFieldInt& f) throw(INTERP_KERNEL::Exception);
     static MEDCouplingFieldTemplate *New(TypeOfField type);
     std::string simpleRepr() const throw(INTERP_KERNEL::Exception);
     std::string advancedRepr() const throw(INTERP_KERNEL::Exception);
+    bool isEqual(const MEDCouplingFieldTemplate *other, double meshPrec) const throw(INTERP_KERNEL::Exception);
+    bool isEqualWithoutConsideringStr(const MEDCouplingFieldTemplate *other, double meshPrec) const throw(INTERP_KERNEL::Exception);
     %extend
        {
          MEDCouplingFieldTemplate(const MEDCouplingFieldDouble& f) throw(INTERP_KERNEL::Exception)
@@ -3904,6 +3979,11 @@ namespace MEDCoupling
            return MEDCouplingFieldTemplate::New(f);
          }
 
+         MEDCouplingFieldTemplate(const MEDCouplingFieldFloat& f) throw(INTERP_KERNEL::Exception)
+         {
+           return MEDCouplingFieldTemplate::New(f);
+         }
+         
          MEDCouplingFieldTemplate(const MEDCouplingFieldInt& f) throw(INTERP_KERNEL::Exception)
          {
            return MEDCouplingFieldTemplate::New(f);
@@ -3925,16 +4005,31 @@ namespace MEDCoupling
            self->reprQuickOverview(oss);
            return oss.str();
          }
+
+         PyObject *isEqualIfNotWhy(const MEDCouplingFieldTemplate *other, double meshPrec) const throw(INTERP_KERNEL::Exception)
+         {
+           std::string ret1;
+           bool ret0=self->isEqualIfNotWhy(other,meshPrec,ret1);
+           PyObject *ret=PyTuple_New(2);
+           PyObject *ret0Py=ret0?Py_True:Py_False;
+           Py_XINCREF(ret0Py);
+           PyTuple_SetItem(ret,0,ret0Py);
+           PyTuple_SetItem(ret,1,PyString_FromString(ret1.c_str()));
+           return ret;
+         }
        }
   };
   
   class MEDCouplingFieldInt;
+  class MEDCouplingFieldFloat;
   
   class MEDCouplingFieldDouble : public MEDCoupling::MEDCouplingField
   {
   public:
     static MEDCouplingFieldDouble *New(TypeOfField type, TypeOfTimeDiscretization td=ONE_TIME);
     static MEDCouplingFieldDouble *New(const MEDCouplingFieldTemplate& ft, TypeOfTimeDiscretization td=ONE_TIME);
+    bool isEqual(const MEDCouplingFieldDouble *other, double meshPrec, double valsPrec) const throw(INTERP_KERNEL::Exception);
+    bool isEqualWithoutConsideringStr(const MEDCouplingFieldDouble *other, double meshPrec, double valsPrec) const throw(INTERP_KERNEL::Exception);
     void setTimeUnit(const std::string& unit);
     std::string getTimeUnit() const;
     void synchronizeTimeWithSupport() throw(INTERP_KERNEL::Exception);
@@ -3944,6 +4039,7 @@ namespace MEDCoupling
     std::string advancedRepr() const throw(INTERP_KERNEL::Exception);
     std::string  writeVTK(const std::string& fileName, bool isBinary=true) const throw(INTERP_KERNEL::Exception);
     MEDCouplingFieldInt *convertToIntField() const throw(INTERP_KERNEL::Exception);
+    MEDCouplingFieldFloat *convertToFloatField() const throw(INTERP_KERNEL::Exception);
     MEDCouplingFieldDouble *clone(bool recDeepCpy) const;
     MEDCouplingFieldDouble *cloneWithMesh(bool recDeepCpy) const;
     MEDCouplingFieldDouble *deepCopy() const;
@@ -4051,6 +4147,18 @@ namespace MEDCoupling
         self->reprQuickOverview(oss);
         return oss.str();
       }
+
+      PyObject *isEqualIfNotWhy(const MEDCouplingFieldDouble *other, double meshPrec, double valsPrec) const throw(INTERP_KERNEL::Exception)
+      {
+        std::string ret1;
+        bool ret0=self->isEqualIfNotWhy(other,meshPrec,valsPrec,ret1);
+        PyObject *ret=PyTuple_New(2);
+        PyObject *ret0Py=ret0?Py_True:Py_False;
+        Py_XINCREF(ret0Py);
+        PyTuple_SetItem(ret,0,ret0Py);
+        PyTuple_SetItem(ret,1,PyString_FromString(ret1.c_str()));
+        return ret;
+      }
       
       MEDCouplingFieldDouble *voronoize(double eps) const throw(INTERP_KERNEL::Exception)
       {
@@ -4139,7 +4247,7 @@ namespace MEDCoupling
         int sz=self->getNumberOfComponents();
         INTERP_KERNEL::AutoPtr<double> res=new double[sz];
         self->getValueOn(spaceLoc,res);
-        return convertDblArrToPyList(res,sz);
+        return convertDblArrToPyList<double>(res,sz);
       }
 
        PyObject *getValueOnPos(int i, int j, int k) const throw(INTERP_KERNEL::Exception)
@@ -4147,7 +4255,7 @@ namespace MEDCoupling
          int sz=self->getNumberOfComponents();
          INTERP_KERNEL::AutoPtr<double> res=new double[sz];
          self->getValueOnPos(i,j,k,res);
-         return convertDblArrToPyList(res,sz);
+         return convertDblArrToPyList<double>(res,sz);
        }
 
       DataArrayDouble *getValueOnMulti(PyObject *locs) const throw(INTERP_KERNEL::Exception)
@@ -4181,7 +4289,7 @@ namespace MEDCoupling
         int sz=self->getNumberOfComponents();
         INTERP_KERNEL::AutoPtr<double> res=new double[sz];
         self->getValueOn(spaceLoc,time,res);
-        return convertDblArrToPyList(res,sz);
+        return convertDblArrToPyList<double>(res,sz);
       }
 
       void setValues(PyObject *li, PyObject *nbOfTuples=0, PyObject *nbOfComp=0) throw(INTERP_KERNEL::Exception)
@@ -4233,41 +4341,41 @@ namespace MEDCoupling
         int sz=self->getNumberOfComponents();
         INTERP_KERNEL::AutoPtr<double> tmp=new double[sz];
         self->accumulate(tmp);
-        return convertDblArrToPyList(tmp,sz);
+        return convertDblArrToPyList<double>(tmp,sz);
       }
       PyObject *integral(bool isWAbs) const throw(INTERP_KERNEL::Exception)
       {
         int sz=self->getNumberOfComponents();
         INTERP_KERNEL::AutoPtr<double> tmp=new double[sz];
         self->integral(isWAbs,tmp);
-        return convertDblArrToPyList(tmp,sz);
+        return convertDblArrToPyList<double>(tmp,sz);
       }
       PyObject *getWeightedAverageValue(bool isWAbs=true) const throw(INTERP_KERNEL::Exception)
       {
         int sz=self->getNumberOfComponents();
         INTERP_KERNEL::AutoPtr<double> tmp=new double[sz];
         self->getWeightedAverageValue(tmp,isWAbs);
-        return convertDblArrToPyList(tmp,sz);
+        return convertDblArrToPyList<double>(tmp,sz);
       }
       PyObject *normL1() const throw(INTERP_KERNEL::Exception)
       {
         int sz=self->getNumberOfComponents();
         INTERP_KERNEL::AutoPtr<double> tmp=new double[sz];
         self->normL1(tmp);
-        return convertDblArrToPyList(tmp,sz);
+        return convertDblArrToPyList<double>(tmp,sz);
       }
       PyObject *normL2() const throw(INTERP_KERNEL::Exception)
       {
         int sz=self->getNumberOfComponents();
         INTERP_KERNEL::AutoPtr<double> tmp=new double[sz];
         self->normL2(tmp);
-        return convertDblArrToPyList(tmp,sz);
+        return convertDblArrToPyList<double>(tmp,sz);
       }
       void renumberCells(PyObject *li, bool check=true) throw(INTERP_KERNEL::Exception)
       {
         int szArr,sw,iTypppArr;
         std::vector<int> stdvecTyyppArr;
-        const int *tmp=convertObjToPossibleCpp1_Safe(li,sw,szArr,iTypppArr,stdvecTyyppArr);
+        const int *tmp=convertIntStarLikePyObjToCppIntStar(li,sw,szArr,iTypppArr,stdvecTyyppArr);
         self->renumberCells(tmp,check);
       }
       
@@ -4275,7 +4383,7 @@ namespace MEDCoupling
       {
         int szArr,sw,iTypppArr;
         std::vector<int> stdvecTyyppArr;
-        const int *tmp=convertObjToPossibleCpp1_Safe(li,sw,szArr,iTypppArr,stdvecTyyppArr);
+        const int *tmp=convertIntStarLikePyObjToCppIntStar(li,sw,szArr,iTypppArr,stdvecTyyppArr);
         self->renumberCellsWithoutMesh(tmp,check);
       }
       
@@ -4283,7 +4391,7 @@ namespace MEDCoupling
       {
         int szArr,sw,iTypppArr;
         std::vector<int> stdvecTyyppArr;
-        const int *tmp=convertObjToPossibleCpp1_Safe(li,sw,szArr,iTypppArr,stdvecTyyppArr);
+        const int *tmp=convertIntStarLikePyObjToCppIntStar(li,sw,szArr,iTypppArr,stdvecTyyppArr);
         self->renumberNodes(tmp,eps);
       }
 
@@ -4291,125 +4399,18 @@ namespace MEDCoupling
       {
         int szArr,sw,iTypppArr;
         std::vector<int> stdvecTyyppArr;
-        const int *tmp=convertObjToPossibleCpp1_Safe(li,sw,szArr,iTypppArr,stdvecTyyppArr);
+        const int *tmp=convertIntStarLikePyObjToCppIntStar(li,sw,szArr,iTypppArr,stdvecTyyppArr);
         self->renumberNodesWithoutMesh(tmp,newNbOfNodes,eps);
       }
 
       MEDCouplingFieldDouble *buildSubPart(PyObject *li) const throw(INTERP_KERNEL::Exception)
       {
-        int sw;
-        int singleVal;
-        std::vector<int> multiVal;
-        std::pair<int, std::pair<int,int> > slic;
-        MEDCoupling::DataArrayInt *daIntTyypp=0;
-        const MEDCouplingMesh *mesh=self->getMesh();
-        if(!mesh)
-          throw INTERP_KERNEL::Exception("MEDCouplingFieldDouble::buildSubPart : field lies on a null mesh !");
-        int nbc=mesh->getNumberOfCells();
-        convertObjToPossibleCpp2(li,nbc,sw,singleVal,multiVal,slic,daIntTyypp);
-        switch(sw)
-          {
-          case 1:
-            {
-              if(singleVal>=nbc)
-                {
-                  std::ostringstream oss;
-                  oss << "Requesting for cell id " << singleVal << " having only " << nbc << " cells !";
-                  throw INTERP_KERNEL::Exception(oss.str().c_str());
-                }
-              if(singleVal>=0)
-                return self->buildSubPart(&singleVal,&singleVal+1);
-              else
-                {
-                  if(nbc+singleVal>0)
-                    {
-                      int tmp=nbc+singleVal;
-                      return self->buildSubPart(&tmp,&tmp+1);
-                    }
-                  else
-                    {
-                      std::ostringstream oss;
-                      oss << "Requesting for cell id " << singleVal << " having only " << nbc << " cells !";
-                      throw INTERP_KERNEL::Exception(oss.str().c_str());
-                    }
-                }
-            }
-          case 2:
-            {
-              return self->buildSubPart(&multiVal[0],&multiVal[0]+multiVal.size());
-            }
-          case 3:
-            {
-              return self->buildSubPartRange(slic.first,slic.second.first,slic.second.second);
-            }
-          case 4:
-            {
-              if(!daIntTyypp)
-                throw INTERP_KERNEL::Exception("MEDCouplingFieldDouble::buildSubPart : null instance has been given in input !");
-              daIntTyypp->checkAllocated();
-              return self->buildSubPart(daIntTyypp->begin(),daIntTyypp->end());
-            }
-          default:
-            throw INTERP_KERNEL::Exception("MEDCouplingFieldDouble::buildSubPart : unrecognized type in input ! Possibilities are : int, list or tuple of int DataArrayInt instance !");
-          }
+        return fieldT_buildSubPart(self,li);
       }
 
       MEDCouplingFieldDouble *__getitem__(PyObject *li) const throw(INTERP_KERNEL::Exception)
       {
-        const char msg[]="MEDCouplingFieldDouble::__getitem__ : invalid call  Available API are : \n-myField[dataArrayInt]\n-myField[slice]\n-myField[pythonListOfCellIds]\n-myField[integer]\n-myField[dataArrayInt,1]\n-myField[slice,1]\n-myField[pythonListOfCellIds,1]\n-myField[integer,1]\n";
-        if(PyTuple_Check(li))
-          {
-            Py_ssize_t sz=PyTuple_Size(li);
-            if(sz!=2)
-              throw INTERP_KERNEL::Exception(msg);
-            PyObject *elt0=PyTuple_GetItem(li,0),*elt1=PyTuple_GetItem(li,1);
-            int sw;
-            int singleVal;
-            std::vector<int> multiVal;
-            std::pair<int, std::pair<int,int> > slic;
-            MEDCoupling::DataArrayInt *daIntTyypp=0;
-            if(!self->getArray())
-              throw INTERP_KERNEL::Exception("MEDCouplingFieldDouble::__getitem__ : no array set on field to deduce number of components !");
-            try
-              { convertObjToPossibleCpp2(elt1,self->getArray()->getNumberOfComponents(),sw,singleVal,multiVal,slic,daIntTyypp); }
-            catch(INTERP_KERNEL::Exception& e)
-              { std::ostringstream oss; oss << "MEDCouplingFieldDouble::__getitem__ : invalid type in 2nd parameter (compo) !" << e.what(); throw INTERP_KERNEL::Exception(oss.str().c_str()); }
-            MCAuto<MEDCouplingFieldDouble> ret0=MEDCoupling_MEDCouplingFieldDouble_buildSubPart(self,elt0);
-            DataArrayDouble *ret0Arr=ret0->getArray();
-            if(!ret0Arr)
-              throw INTERP_KERNEL::Exception("MEDCouplingFieldDouble::__getitem__ : no array exists to apply restriction on component on it !");
-            switch(sw)
-              {
-              case 1:
-                {
-                  std::vector<int> v2(1,singleVal);
-                  MCAuto<DataArrayDouble> aarr(ret0Arr->keepSelectedComponents(v2));
-                  ret0->setArray(aarr);
-                  return ret0.retn();
-                }
-              case 2:
-                {
-                  MCAuto<DataArrayDouble> aarr(ret0Arr->keepSelectedComponents(multiVal));
-                  ret0->setArray(aarr);
-                  return ret0.retn();
-                }
-              case 3:
-                {
-                  int nbOfComp=DataArray::GetNumberOfItemGivenBESRelative(slic.first,slic.second.first,slic.second.second,"MEDCouplingFieldDouble::__getitem__ : invalid range in 2nd parameter (components) !");
-                  std::vector<int> v2(nbOfComp);
-                  for(int i=0;i<nbOfComp;i++)
-                    v2[i]=slic.first+i*slic.second.second;
-                  MCAuto<DataArrayDouble> aarr(ret0Arr->keepSelectedComponents(v2));
-                  ret0->setArray(aarr);
-                  return ret0.retn();
-                }
-              default:
-                throw INTERP_KERNEL::Exception(msg);
-              }
-            
-          }
-        else
-          return MEDCoupling_MEDCouplingFieldDouble_buildSubPart(self,li);
+        return fieldT__getitem__(self,li);
       }
 
       PyObject *getMaxValue2() const throw(INTERP_KERNEL::Exception)
@@ -4492,7 +4493,7 @@ namespace MEDCoupling
         DataArrayDoubleTuple *aa;
         std::vector<double> bb;
         int sw;
-        convertObjToPossibleCpp5(obj,sw,val,a,aa,bb);
+        convertDoubleStarLikePyObjToCpp_2(obj,sw,val,a,aa,bb);
         switch(sw)
           {
           case 1:
@@ -4574,7 +4575,7 @@ namespace MEDCoupling
         DataArrayDoubleTuple *aa;
         std::vector<double> bb;
         int sw;
-        convertObjToPossibleCpp5(obj,sw,val,a,aa,bb);
+        convertDoubleStarLikePyObjToCpp_2(obj,sw,val,a,aa,bb);
         switch(sw)
           {
           case 1:
@@ -4648,7 +4649,7 @@ namespace MEDCoupling
         DataArrayDoubleTuple *aa;
         std::vector<double> bb;
         int sw;
-        convertObjToPossibleCpp5(obj,sw,val,a,aa,bb);
+        convertDoubleStarLikePyObjToCpp_2(obj,sw,val,a,aa,bb);
         switch(sw)
           {
           case 1:
@@ -4724,7 +4725,7 @@ namespace MEDCoupling
         DataArrayDoubleTuple *aa;
         std::vector<double> bb;
         int sw;
-        convertObjToPossibleCpp5(obj,sw,val,a,aa,bb);
+        convertDoubleStarLikePyObjToCpp_2(obj,sw,val,a,aa,bb);
         switch(sw)
           {
           case 1:
@@ -4790,7 +4791,7 @@ namespace MEDCoupling
         DataArrayDoubleTuple *aa;
         std::vector<double> bb;
         int sw;
-        convertObjToPossibleCpp5(obj,sw,val,a,aa,bb);
+        convertDoubleStarLikePyObjToCpp_2(obj,sw,val,a,aa,bb);
         switch(sw)
           {
           case 1:
@@ -4856,7 +4857,7 @@ namespace MEDCoupling
         DataArrayDoubleTuple *aa;
         std::vector<double> bb;
         int sw;
-        convertObjToPossibleCpp5(obj,sw,val,a,aa,bb);
+        convertDoubleStarLikePyObjToCpp_2(obj,sw,val,a,aa,bb);
         switch(sw)
           {
           case 1:
@@ -4922,7 +4923,7 @@ namespace MEDCoupling
         DataArrayDoubleTuple *aa;
         std::vector<double> bb;
         int sw;
-        convertObjToPossibleCpp5(obj,sw,val,a,aa,bb);
+        convertDoubleStarLikePyObjToCpp_2(obj,sw,val,a,aa,bb);
         switch(sw)
           {
           case 1:
@@ -4990,7 +4991,7 @@ namespace MEDCoupling
         DataArrayDoubleTuple *aa;
         std::vector<double> bb;
         int sw;
-        convertObjToPossibleCpp5(obj,sw,val,a,aa,bb);
+        convertDoubleStarLikePyObjToCpp_2(obj,sw,val,a,aa,bb);
         switch(sw)
           {
           case 1:
@@ -5048,156 +5049,32 @@ namespace MEDCoupling
 
       PyObject *getTinySerializationInformation() const throw(INTERP_KERNEL::Exception)
       {
-        std::vector<double> a0;
-        std::vector<int> a1;
-        std::vector<std::string> a2;
-        self->getTinySerializationDbleInformation(a0);
-        self->getTinySerializationIntInformation(a1);
-        self->getTinySerializationStrInformation(a2);
-        //
-        PyObject *ret(PyTuple_New(3));
-        PyTuple_SetItem(ret,0,convertDblArrToPyList2(a0));
-        PyTuple_SetItem(ret,1,convertIntArrToPyList2(a1));
-        int sz(a2.size());
-        PyObject *ret2(PyList_New(sz));
-        {
-          for(int i=0;i<sz;i++)
-            PyList_SetItem(ret2,i,PyString_FromString(a2[i].c_str()));
-        }
-        PyTuple_SetItem(ret,2,ret2);
-        return ret;
+        return field_getTinySerializationInformation<MEDCouplingFieldDouble>(self);
       }
       
       PyObject *serialize() const throw(INTERP_KERNEL::Exception)
       {
-        DataArrayInt *ret0(0);
-        std::vector<DataArrayDouble *> ret1;
-        self->serialize(ret0,ret1);
-        if(ret0)
-          ret0->incrRef();
-        std::size_t sz(ret1.size());
-        PyObject *ret(PyTuple_New(2));
-        PyTuple_SetItem(ret,0,SWIG_NewPointerObj(SWIG_as_voidptr(ret0),SWIGTYPE_p_MEDCoupling__DataArrayInt, SWIG_POINTER_OWN | 0 ));
-        PyObject *ret1Py(PyList_New(sz));
-        for(std::size_t i=0;i<sz;i++)
-          {
-            if(ret1[i])
-              ret1[i]->incrRef();
-            PyList_SetItem(ret1Py,i,SWIG_NewPointerObj(SWIG_as_voidptr(ret1[i]),SWIGTYPE_p_MEDCoupling__DataArrayDouble, SWIG_POINTER_OWN | 0 ));
-          }
-        PyTuple_SetItem(ret,1,ret1Py);
-        return ret;
+        return field_serialize<double>(self);
       }
 
       static PyObject *___new___(PyObject *cls, PyObject *args) throw(INTERP_KERNEL::Exception)
       {
-        static const char MSG[]="MEDCouplingFieldDouble.__new__ : the args in input is expected to be a tuple !";
-        if(!PyTuple_Check(args))
-          throw INTERP_KERNEL::Exception(MSG);
-        PyObject *builtinsd(PyEval_GetBuiltins());//borrowed
-        PyObject *obj(PyDict_GetItemString(builtinsd,"object"));//borrowed
-        PyObject *selfMeth(PyObject_GetAttrString(obj,"__new__"));
-        //
-        PyObject *tmp0(PyTuple_New(1));
-        PyTuple_SetItem(tmp0,0,cls); Py_XINCREF(cls);
-        PyObject *instance(PyObject_CallObject(selfMeth,tmp0));
-        Py_DECREF(tmp0);
-        Py_DECREF(selfMeth);
-        if(PyTuple_Size(args)==2 && PyDict_Check(PyTuple_GetItem(args,1)) && PyDict_Size(PyTuple_GetItem(args,1))==1 )
-          {// NOT general case. only true if in unpickeling context ! call __init__. Because for all other cases, __init__ is called right after __new__ !
-            PyObject *initMeth(PyObject_GetAttrString(instance,"__init__"));
-            ////
-            PyObject *a(PyInt_FromLong(0));
-            PyObject *uniqueElt(PyDict_GetItem(PyTuple_GetItem(args,1),a));
-            Py_DECREF(a);
-            if(!uniqueElt)
-              throw INTERP_KERNEL::Exception(MSG);
-            if(!PyTuple_Check(uniqueElt) || PyTuple_Size(uniqueElt)!=2)
-              throw INTERP_KERNEL::Exception(MSG);
-            PyObject *tmp2(PyObject_CallObject(initMeth,uniqueElt));
-            Py_XDECREF(tmp2);
-            ////
-            Py_DECREF(initMeth);
-          }
-        return instance;
+        return NewMethWrapCallInitOnlyIfDictWithSingleEltInInputGeneral<SinglePyObjExpectToBeAListOfSz2>(cls,args,"MEDCouplingFieldDouble");
       }
 
       PyObject *__getnewargs__() throw(INTERP_KERNEL::Exception)
       {// put an empty dict in input to say to __new__ to call __init__...
-        self->checkConsistencyLight();
-        PyObject *ret(PyTuple_New(1));
-        PyObject *ret0(PyDict_New());
-        {
-          PyObject *a(PyInt_FromLong(0)),*b(PyInt_FromLong(self->getTypeOfField())),*c(PyInt_FromLong(self->getTimeDiscretization()));
-          PyObject *d(PyTuple_New(2)); PyTuple_SetItem(d,0,b); PyTuple_SetItem(d,1,c);
-          PyDict_SetItem(ret0,a,d);
-          Py_DECREF(a); Py_DECREF(d);
-        }
-        PyTuple_SetItem(ret,0,ret0);
-        return ret;
+        return field__getnewargs__<MEDCouplingFieldDouble>(self);
       }
 
       PyObject *__getstate__() const throw(INTERP_KERNEL::Exception)
       {
-        self->checkConsistencyLight();
-        PyObject *ret0(MEDCoupling_MEDCouplingFieldDouble_getTinySerializationInformation(self));
-        PyObject *ret1(MEDCoupling_MEDCouplingFieldDouble_serialize(self));
-        const MEDCouplingMesh *mesh(self->getMesh());
-        if(mesh)
-          mesh->incrRef();
-        PyObject *ret(PyTuple_New(3));
-        PyTuple_SetItem(ret,0,ret0);
-        PyTuple_SetItem(ret,1,ret1);
-        PyTuple_SetItem(ret,2,convertMesh(const_cast<MEDCouplingMesh *>(mesh),SWIG_POINTER_OWN | 0 ));
-        return ret;
+        return field__getstate__<MEDCouplingFieldDouble>(self,MEDCoupling_MEDCouplingFieldDouble_getTinySerializationInformation,MEDCoupling_MEDCouplingFieldDouble_serialize);
       }
       
       void __setstate__(PyObject *inp) throw(INTERP_KERNEL::Exception)
       {
-        static const char MSG[]="MEDCouplingFieldDouble.__setstate__ : expected input is a tuple of size 3 !";
-        if(!PyTuple_Check(inp))
-          throw INTERP_KERNEL::Exception(MSG);
-        int sz(PyTuple_Size(inp));
-        if(sz!=3)
-          throw INTERP_KERNEL::Exception(MSG);
-        // mesh
-        PyObject *elt2(PyTuple_GetItem(inp,2));
-        void *argp=0;
-        int status(SWIG_ConvertPtr(elt2,&argp,SWIGTYPE_p_MEDCoupling__MEDCouplingMesh,0|0));
-        if(!SWIG_IsOK(status))
-          throw INTERP_KERNEL::Exception(MSG);
-        self->setMesh(reinterpret_cast< const MEDCouplingUMesh * >(argp));
-        //
-        PyObject *elt0(PyTuple_GetItem(inp,0));
-        PyObject *elt1(PyTuple_GetItem(inp,1));
-        std::vector<double> a0;
-        std::vector<int> a1;
-        std::vector<std::string> a2;
-        DataArrayInt *b0(0);
-        std::vector<DataArrayDouble *>b1;
-        {
-          if(!PyTuple_Check(elt0) && PyTuple_Size(elt0)!=3)
-            throw INTERP_KERNEL::Exception(MSG);
-          PyObject *a0py(PyTuple_GetItem(elt0,0)),*a1py(PyTuple_GetItem(elt0,1)),*a2py(PyTuple_GetItem(elt0,2));
-          int tmp(-1);
-          fillArrayWithPyListDbl3(a0py,tmp,a0);
-          convertPyToNewIntArr3(a1py,a1);
-          fillStringVector(a2py,a2);
-        }
-        {
-          if(!PyTuple_Check(elt1) && PyTuple_Size(elt1)!=2)
-            throw INTERP_KERNEL::Exception(MSG);
-          PyObject *b0py(PyTuple_GetItem(elt1,0)),*b1py(PyTuple_GetItem(elt1,1));
-          void *argp(0);
-          int status(SWIG_ConvertPtr(b0py,&argp,SWIGTYPE_p_MEDCoupling__DataArrayInt,0|0));
-          if(!SWIG_IsOK(status))
-            throw INTERP_KERNEL::Exception(MSG);
-          b0=reinterpret_cast<DataArrayInt *>(argp);
-          convertFromPyObjVectorOfObj<MEDCoupling::DataArrayDouble *>(b1py,SWIGTYPE_p_MEDCoupling__DataArrayDouble,"DataArrayDouble",b1);
-        }
-        self->checkForUnserialization(a1,b0,b1);
-        // useless here to call resizeForUnserialization because arrays are well resized.
-        self->finishUnserialization(a1,a0,a2);
+        field__setstate__<double>(self,inp);
       }
     }
   };
@@ -5364,6 +5241,8 @@ namespace MEDCoupling
   public:
     static MEDCouplingFieldInt *New(TypeOfField type, TypeOfTimeDiscretization td=ONE_TIME);
     static MEDCouplingFieldInt *New(const MEDCouplingFieldTemplate& ft, TypeOfTimeDiscretization td=ONE_TIME);
+    bool isEqual(const MEDCouplingFieldInt *other, double meshPrec, int valsPrec) const throw(INTERP_KERNEL::Exception);
+    bool isEqualWithoutConsideringStr(const MEDCouplingFieldInt *other, double meshPrec, int valsPrec) const throw(INTERP_KERNEL::Exception);
     void setTimeUnit(const std::string& unit) throw(INTERP_KERNEL::Exception);
     std::string getTimeUnit() const throw(INTERP_KERNEL::Exception);
     void setTime(double val, int iteration, int order) throw(INTERP_KERNEL::Exception);
@@ -5372,6 +5251,7 @@ namespace MEDCoupling
     MEDCouplingFieldInt *clone(bool recDeepCpy) const throw(INTERP_KERNEL::Exception);
     MEDCouplingFieldInt *cloneWithMesh(bool recDeepCpy) const throw(INTERP_KERNEL::Exception);
     MEDCouplingFieldDouble *convertToDblField() const throw(INTERP_KERNEL::Exception);
+    MEDCouplingFieldInt *buildSubPartRange(int begin, int end, int step) const throw(INTERP_KERNEL::Exception);
     %extend {
       MEDCouplingFieldInt(TypeOfField type, TypeOfTimeDiscretization td=ONE_TIME)
       {
@@ -5381,6 +5261,130 @@ namespace MEDCoupling
       MEDCouplingFieldInt(const MEDCouplingFieldTemplate& ft, TypeOfTimeDiscretization td=ONE_TIME)
       {
         return MEDCouplingFieldInt::New(ft,td);
+      }
+
+      PyObject *isEqualIfNotWhy(const MEDCouplingFieldInt *other, double meshPrec, int valsPrec) const throw(INTERP_KERNEL::Exception)
+      {
+        std::string ret1;
+        bool ret0=self->isEqualIfNotWhy(other,meshPrec,valsPrec,ret1);
+        PyObject *ret=PyTuple_New(2);
+        PyObject *ret0Py=ret0?Py_True:Py_False;
+        Py_XINCREF(ret0Py);
+        PyTuple_SetItem(ret,0,ret0Py);
+        PyTuple_SetItem(ret,1,PyString_FromString(ret1.c_str()));
+        return ret;
+      }
+      
+      std::string __str__() const throw(INTERP_KERNEL::Exception)
+      {
+        return self->simpleRepr();
+      }
+
+      std::string __repr__() const throw(INTERP_KERNEL::Exception)
+      {
+        std::ostringstream oss;
+        self->reprQuickOverview(oss);
+        return oss.str();
+      }
+
+      MEDCouplingFieldInt *buildSubPart(PyObject *li) const throw(INTERP_KERNEL::Exception)
+      {
+        return fieldT_buildSubPart(self,li);
+      }
+
+      MEDCouplingFieldInt *__getitem__(PyObject *li) const throw(INTERP_KERNEL::Exception)
+      {
+        return fieldT__getitem__(self,li);
+      }
+
+      DataArrayInt *getArray() throw(INTERP_KERNEL::Exception)
+      {
+        DataArrayInt *ret=self->getArray();
+        if(ret)
+          ret->incrRef();
+        return ret;
+      }
+      
+      PyObject *getTime() throw(INTERP_KERNEL::Exception)
+        {
+        int tmp1,tmp2;
+        double tmp0=self->getTime(tmp1,tmp2);
+        PyObject *res = PyList_New(3);
+        PyList_SetItem(res,0,SWIG_From_double(tmp0));
+        PyList_SetItem(res,1,SWIG_From_int(tmp1));
+        PyList_SetItem(res,2,SWIG_From_int(tmp2));
+        return res;
+        }
+
+      PyObject *getTinySerializationInformation() const throw(INTERP_KERNEL::Exception)
+      {
+        return field_getTinySerializationInformation<MEDCouplingFieldInt>(self);
+      }
+      
+      PyObject *serialize() const throw(INTERP_KERNEL::Exception)
+      {
+        return field_serialize<int>(self);
+      }
+
+      static PyObject *___new___(PyObject *cls, PyObject *args) throw(INTERP_KERNEL::Exception)
+      {
+        return NewMethWrapCallInitOnlyIfDictWithSingleEltInInputGeneral<SinglePyObjExpectToBeAListOfSz2>(cls,args,"MEDCouplingFieldInt");
+      }
+
+      PyObject *__getnewargs__() throw(INTERP_KERNEL::Exception)
+      {// put an empty dict in input to say to __new__ to call __init__...
+        return field__getnewargs__<MEDCouplingFieldInt>(self);
+      }
+
+      PyObject *__getstate__() const throw(INTERP_KERNEL::Exception)
+      {
+        return field__getstate__<MEDCouplingFieldInt>(self,MEDCoupling_MEDCouplingFieldInt_getTinySerializationInformation,MEDCoupling_MEDCouplingFieldInt_serialize);
+      }
+      
+      void __setstate__(PyObject *inp) throw(INTERP_KERNEL::Exception)
+      {
+        field__setstate__<int>(self,inp);
+      }
+    }
+  };
+
+  class MEDCouplingFieldFloat : public MEDCouplingField
+  {
+  public:
+    static MEDCouplingFieldFloat *New(TypeOfField type, TypeOfTimeDiscretization td=ONE_TIME);
+    static MEDCouplingFieldFloat *New(const MEDCouplingFieldTemplate& ft, TypeOfTimeDiscretization td=ONE_TIME);
+    bool isEqual(const MEDCouplingFieldFloat *other, double meshPrec, float valsPrec) const throw(INTERP_KERNEL::Exception);
+    bool isEqualWithoutConsideringStr(const MEDCouplingFieldFloat *other, double meshPrec, float valsPrec) const throw(INTERP_KERNEL::Exception);
+    void setTimeUnit(const std::string& unit) throw(INTERP_KERNEL::Exception);
+    std::string getTimeUnit() const throw(INTERP_KERNEL::Exception);
+    void setTime(double val, int iteration, int order) throw(INTERP_KERNEL::Exception);
+    void setArray(DataArrayFloat *array) throw(INTERP_KERNEL::Exception);
+    MEDCouplingFieldFloat *deepCopy() const throw(INTERP_KERNEL::Exception);
+    MEDCouplingFieldFloat *clone(bool recDeepCpy) const throw(INTERP_KERNEL::Exception);
+    MEDCouplingFieldFloat *cloneWithMesh(bool recDeepCpy) const throw(INTERP_KERNEL::Exception);
+    MEDCouplingFieldDouble *convertToDblField() const throw(INTERP_KERNEL::Exception);
+    MEDCouplingFieldFloat *buildSubPartRange(int begin, int end, int step) const throw(INTERP_KERNEL::Exception);
+    %extend {
+      MEDCouplingFieldFloat(TypeOfField type, TypeOfTimeDiscretization td=ONE_TIME)
+      {
+        return MEDCouplingFieldFloat::New(type,td);
+      }
+
+      MEDCouplingFieldFloat(const MEDCouplingFieldTemplate& ft, TypeOfTimeDiscretization td=ONE_TIME)
+      {
+        return MEDCouplingFieldFloat::New(ft,td);
+      }
+
+      PyObject *isEqualIfNotWhy(const MEDCouplingFieldFloat *other, double meshPrec, float valsPrec) const throw(INTERP_KERNEL::Exception)
+      {
+        std::string ret1;
+        bool ret0=self->isEqualIfNotWhy(other,meshPrec,valsPrec,ret1);
+        PyObject *ret=PyTuple_New(2);
+        PyObject *ret0Py=ret0?Py_True:Py_False;
+        Py_XINCREF(ret0Py);
+        PyTuple_SetItem(ret,0,ret0Py);
+        PyTuple_SetItem(ret,1,PyString_FromString(ret1.c_str()));
+        return ret;
       }
 
       std::string __str__() const throw(INTERP_KERNEL::Exception)
@@ -5395,16 +5399,26 @@ namespace MEDCoupling
         return oss.str();
       }
 
-      DataArrayInt *getArray() throw(INTERP_KERNEL::Exception)
-        {
-          DataArrayInt *ret=self->getArray();
-          if(ret)
-            ret->incrRef();
-          return ret;
-        }
+      MEDCouplingFieldFloat *buildSubPart(PyObject *li) const throw(INTERP_KERNEL::Exception)
+      {
+        return fieldT_buildSubPart(self,li);
+      }
+
+      MEDCouplingFieldFloat *__getitem__(PyObject *li) const throw(INTERP_KERNEL::Exception)
+      {
+        return fieldT__getitem__(self,li);
+      }
+
+      DataArrayFloat *getArray() throw(INTERP_KERNEL::Exception)
+      {
+        DataArrayFloat *ret=self->getArray();
+        if(ret)
+          ret->incrRef();
+        return ret;
+      }
       
       PyObject *getTime() throw(INTERP_KERNEL::Exception)
-        {
+      {
         int tmp1,tmp2;
         double tmp0=self->getTime(tmp1,tmp2);
         PyObject *res = PyList_New(3);
@@ -5412,7 +5426,37 @@ namespace MEDCoupling
         PyList_SetItem(res,1,SWIG_From_int(tmp1));
         PyList_SetItem(res,2,SWIG_From_int(tmp2));
         return res;
-        }
+      }
+
+      PyObject *getTinySerializationInformation() const throw(INTERP_KERNEL::Exception)
+      {
+        return field_getTinySerializationInformation<MEDCouplingFieldFloat>(self);
+      }
+      
+      PyObject *serialize() const throw(INTERP_KERNEL::Exception)
+      {
+        return field_serialize<float>(self);
+      }
+        
+      static PyObject *___new___(PyObject *cls, PyObject *args) throw(INTERP_KERNEL::Exception)
+      {
+        return NewMethWrapCallInitOnlyIfDictWithSingleEltInInputGeneral<SinglePyObjExpectToBeAListOfSz2>(cls,args,"MEDCouplingFieldFloat");
+      }
+      
+      PyObject *__getnewargs__() throw(INTERP_KERNEL::Exception)
+      {// put an empty dict in input to say to __new__ to call __init__...
+        return field__getnewargs__<MEDCouplingFieldFloat>(self);
+      }
+      
+      PyObject *__getstate__() const throw(INTERP_KERNEL::Exception)
+      {
+        return field__getstate__<MEDCouplingFieldFloat>(self,MEDCoupling_MEDCouplingFieldFloat_getTinySerializationInformation,MEDCoupling_MEDCouplingFieldFloat_serialize);
+      }
+        
+      void __setstate__(PyObject *inp) throw(INTERP_KERNEL::Exception)
+      {
+        field__setstate__<float>(self,inp);
+      }
     }
   };
   
@@ -5784,7 +5828,7 @@ namespace MEDCoupling
         const double *originPtr(0),*dxyzPtr(0);
         int sw,sz,val0;
         std::vector<int> bb0;
-        nodeStrctPtr=convertObjToPossibleCpp1_Safe(nodeStrct,sw,sz,val0,bb0);
+        nodeStrctPtr=convertIntStarLikePyObjToCppIntStar(nodeStrct,sw,sz,val0,bb0);
         //
         double val,val2;
         std::vector<double> bb,bb2;
@@ -6016,6 +6060,6 @@ namespace MEDCoupling
 import os
 __filename=os.environ.get('PYTHONSTARTUP')
 if __filename and os.path.isfile(__filename):
-  execfile(__filename)
+  exec(open(__filename).read())
   pass
 %}

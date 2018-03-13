@@ -30,9 +30,10 @@
 using namespace MEDCoupling;
 
 template class MEDCoupling::MEDCouplingTimeDiscretizationTemplate<double>;
+template class MEDCoupling::MEDCouplingTimeDiscretizationTemplate<float>;
+template class MEDCoupling::MEDCouplingTimeDiscretizationSimple<float>;
 template class MEDCoupling::MEDCouplingTimeDiscretizationTemplate<int>;
-
-const char MEDCouplingTimeDiscretizationInt::REPR[]="One time label.";
+template class MEDCoupling::MEDCouplingTimeDiscretizationSimple<int>;
 
 const char MEDCouplingNoTimeLabel::EXCEPTION_MSG[]="MEDCouplingNoTimeLabel::setTime : no time info attached.";
 
@@ -115,73 +116,6 @@ MEDCouplingTimeDiscretization *MEDCouplingTimeDiscretization::buildNewTimeReprFr
     arr=arrSrc->performCopyOrIncrRef(deepCopy);
   ret->setArray(arr,0);
   return ret;
-}
-
-void MEDCouplingTimeDiscretization::getTinySerializationIntInformation(std::vector<int>& tinyInfo) const
-{
-  if(_array)
-    {
-      tinyInfo.push_back(_array->getNumberOfTuples());
-      tinyInfo.push_back(_array->getNumberOfComponents());
-    }
-  else
-    {
-      tinyInfo.push_back(-1);
-      tinyInfo.push_back(-1);
-    }
-}
-
-void MEDCouplingTimeDiscretization::resizeForUnserialization(const std::vector<int>& tinyInfoI, std::vector<DataArrayDouble *>& arrays)
-{
-  arrays.resize(1);
-  if(_array!=0)
-    _array->decrRef();
-  DataArrayDouble *arr=0;
-  if(tinyInfoI[0]!=-1 && tinyInfoI[1]!=-1)
-    {
-      arr=DataArrayDouble::New();
-      arr->alloc(tinyInfoI[0],tinyInfoI[1]);
-    }
-  _array=arr;
-  arrays[0]=arr;
-}
-
-void MEDCouplingTimeDiscretization::checkForUnserialization(const std::vector<int>& tinyInfoI, const std::vector<DataArrayDouble *>& arrays)
-{
-  static const char MSG[]="MEDCouplingTimeDiscretization::checkForUnserialization : arrays in input is expected to have size one !";
-  if(arrays.size()!=1)
-    throw INTERP_KERNEL::Exception(MSG);
-  if(_array!=0)
-    _array->decrRef();
-  _array=0;
-  if(tinyInfoI[0]!=-1 && tinyInfoI[1]!=-1)
-    {
-      if(!arrays[0])
-        throw INTERP_KERNEL::Exception(MSG);
-      arrays[0]->checkNbOfTuplesAndComp(tinyInfoI[0],tinyInfoI[1],MSG);
-      _array=arrays[0];
-      _array->incrRef();
-    }
-}
-
-void MEDCouplingTimeDiscretization::finishUnserialization(const std::vector<int>& tinyInfoI, const std::vector<double>& tinyInfoD, const std::vector<std::string>& tinyInfoS)
-{
-  _time_tolerance=tinyInfoD[0];
-  int nbOfCompo=_array->getNumberOfComponents();
-  for(int i=0;i<nbOfCompo;i++)
-    _array->setInfoOnComponent(i,tinyInfoS[i]);
-}
-
-void MEDCouplingTimeDiscretization::getTinySerializationDbleInformation(std::vector<double>& tinyInfo) const
-{
-  tinyInfo.push_back(_time_tolerance);
-}
-
-void MEDCouplingTimeDiscretization::getTinySerializationStrInformation(std::vector<std::string>& tinyInfo) const
-{
-  int nbOfCompo=_array->getNumberOfComponents();
-  for(int i=0;i<nbOfCompo;i++)
-    tinyInfo.push_back(_array->getInfoOnComponent(i));
 }
 
 bool MEDCouplingTimeDiscretization::isBefore(const MEDCouplingTimeDiscretization *other) const
@@ -760,20 +694,8 @@ void MEDCouplingTimeKeeper::checkTimePresence(double time, double eps) const
 
 ////////////////////////
 
-MEDCouplingTimeDiscretizationInt::MEDCouplingTimeDiscretizationInt()
+MEDCouplingTimeDiscretizationInt::MEDCouplingTimeDiscretizationInt(const MEDCouplingTimeDiscretizationInt& other, bool deepCopy):MEDCouplingTimeDiscretizationSimple<int>(other,deepCopy)
 {
-}
-
-MEDCouplingTimeDiscretizationInt::MEDCouplingTimeDiscretizationInt(const MEDCouplingTimeDiscretizationInt& other, bool deepCopy):MEDCouplingTimeDiscretizationTemplate<int>(other,deepCopy),_tk(other._tk)
-{
-}
-
-std::string MEDCouplingTimeDiscretizationInt::getStringRepr() const
-{
-  std::ostringstream stream;
-  stream << REPR << " Time is defined by iteration=" << _tk.getIteration() << " order=" << _tk.getOrder() << " and time=" << _tk.getTimeValue() << ".";
-  stream << "\nTime unit is : \"" << _time_unit << "\"";
-  return stream.str();
 }
 
 MEDCouplingTimeDiscretizationInt *MEDCouplingTimeDiscretizationInt::performCopyOrIncrRef(bool deepCopy) const
@@ -831,29 +753,63 @@ bool MEDCouplingTimeDiscretizationInt::isEqualWithoutConsideringStr(const MEDCou
   return _array->isEqualWithoutConsideringStr(*(other->getArray()));
 }
 
-double MEDCouplingTimeDiscretizationInt::getEndTime(int& iteration, int& order) const
+////////////////////////
+
+MEDCouplingTimeDiscretizationFloat::MEDCouplingTimeDiscretizationFloat(const MEDCouplingTimeDiscretizationFloat& other, bool deepCopy):MEDCouplingTimeDiscretizationSimple<float>(other,deepCopy)
 {
-  throw INTERP_KERNEL::Exception("getEndTime : invalid for this type of time discr !");
 }
 
-void MEDCouplingTimeDiscretizationInt::setEndIteration(int it)
+MEDCouplingTimeDiscretizationFloat *MEDCouplingTimeDiscretizationFloat::performCopyOrIncrRef(bool deepCopy) const
 {
-  throw INTERP_KERNEL::Exception("setEndIteration : invalid for this type of time discr !");
+  return new MEDCouplingTimeDiscretizationFloat(*this,deepCopy);
 }
 
-void MEDCouplingTimeDiscretizationInt::setEndOrder(int order)
+MEDCouplingTimeDiscretizationFloat *MEDCouplingTimeDiscretizationFloat::New(TypeOfTimeDiscretization type)
 {
-  throw INTERP_KERNEL::Exception("setEndOrder : invalid for this type of time discr !");
+  switch(type)
+  {
+    case MEDCouplingTimeDiscretizationFloat::DISCRETIZATION:
+      return new MEDCouplingTimeDiscretizationFloat;
+    default:
+      throw INTERP_KERNEL::Exception("Time discretization not implemented yet for intergers !");
+  }
 }
 
-void MEDCouplingTimeDiscretizationInt::setEndTimeValue(double time)
+bool MEDCouplingTimeDiscretizationFloat::isEqualIfNotWhy(const MEDCouplingTimeDiscretizationTemplate<float> *other, float prec, std::string& reason) const
 {
-  throw INTERP_KERNEL::Exception("setEndTimeValue : invalid for this type of time discr !");
+  if(!other)
+    {
+      reason="Time discretization is NULL.";
+      return false;
+    }
+  const MEDCouplingTimeDiscretizationFloat *otherC(dynamic_cast<const MEDCouplingTimeDiscretizationFloat *>(other));
+  if(!otherC)
+    throw INTERP_KERNEL::Exception("isEqualIfNotWhy : other is not a MEDCouplingTimeDiscretizationFloat !");
+  if(!MEDCouplingTimeDiscretizationTemplate<float>::areStrictlyCompatible(other,reason))
+    return false;
+  if(!_tk.isEqualIfNotWhy(otherC->_tk,_time_tolerance,reason))
+    return false;
+  if(_array==other->getArray())
+    return true;
+  return _array->isEqualIfNotWhy(*other->getArray(),prec,reason);
 }
 
-void MEDCouplingTimeDiscretizationInt::setEndTime(double time, int iteration, int order)
+bool MEDCouplingTimeDiscretizationFloat::isEqualWithoutConsideringStr(const MEDCouplingTimeDiscretizationTemplate<float> *other, float prec) const
 {
-  throw INTERP_KERNEL::Exception("setEndTime : invalid for this type of time discr !");
+  if(prec!=0)
+    throw INTERP_KERNEL::Exception("MEDCouplingTimeDiscretizationFloat::isEqualWithoutConsideringStr : only precision 0 is supported !");
+  const MEDCouplingTimeDiscretizationFloat *otherC(dynamic_cast<const MEDCouplingTimeDiscretizationFloat *>(other));
+  if(!otherC)
+    throw INTERP_KERNEL::Exception("isEqualWithoutConsideringStr : other is not a MEDCouplingTimeDiscretizationFloat !");
+  std::string tmp;
+  if(!areStrictlyCompatible(other,tmp))
+    return false;
+  std::string reason;
+  if(!_tk.isEqualIfNotWhy(otherC->_tk,_time_tolerance,reason))
+    return false;
+  if(_array==other->getArray())
+    return true;
+  return _array->isEqualWithoutConsideringStr(*(other->getArray()),prec);
 }
 
 ////////////////////////
@@ -870,7 +826,7 @@ std::string MEDCouplingNoTimeLabel::getStringRepr() const
 {
   std::ostringstream stream;
   stream << REPR;
-  stream << "\nTime unit is : \"" << _time_unit << "\"";
+  stream << "\nTime unit is : \"" << getTimeUnit() << "\"";
   return stream.str();
 }
 
@@ -1259,7 +1215,7 @@ std::string MEDCouplingWithTimeStep::getStringRepr() const
 {
   std::ostringstream stream;
   stream << REPR << " Time is defined by iteration=" << _tk.getIteration() << " order=" << _tk.getOrder() << " and time=" << _tk.getTimeValue() << ".";
-  stream << "\nTime unit is : \"" << _time_unit << "\"";
+  stream << "\nTime unit is : \"" << getTimeUnit() << "\"";
   return stream.str();
 }
 
@@ -1270,8 +1226,8 @@ void MEDCouplingWithTimeStep::synchronizeTimeWith(const MEDCouplingMesh *mesh)
   int it=-1,order=-1;
   double val=mesh->getTime(it,order);
   _tk.setAllInfo(val,it,order);
-  std::string tUnit=mesh->getTimeUnit();
-  _time_unit=tUnit;
+  std::string tUnit(mesh->getTimeUnit());
+  setTimeUnit(tUnit);
 }
 
 void MEDCouplingWithTimeStep::getTinySerializationIntInformation(std::vector<int>& tinyInfo) const
@@ -1747,7 +1703,7 @@ std::string MEDCouplingConstOnTimeInterval::getStringRepr() const
   std::ostringstream stream;
   stream << REPR << " Time interval is defined by :\niteration_start=" << _start.getIteration() << " order_start=" << _start.getOrder() << " and time_start=" << _start.getTimeValue() << "\n";
   stream << "iteration_end=" << _end.getIteration() << " order_end=" << _end.getOrder() << " and end_time=" << _end.getTimeValue() << "\n";
-  stream << "\nTime unit is : \"" << _time_unit << "\"";
+  stream << "\nTime unit is : \"" << getTimeUnit() << "\"";
   return stream.str();
 }
 
@@ -1760,7 +1716,7 @@ void MEDCouplingConstOnTimeInterval::synchronizeTimeWith(const MEDCouplingMesh *
   _start.setAllInfo(val,it,order);
   _end.setAllInfo(val,it,order);
   std::string tUnit(mesh->getTimeUnit());
-  _time_unit=tUnit;
+  setTimeUnit(tUnit);
 }
 
 MEDCouplingTimeDiscretization *MEDCouplingConstOnTimeInterval::performCopyOrIncrRef(bool deepCopy) const
@@ -2132,8 +2088,8 @@ void MEDCouplingTwoTimeSteps::synchronizeTimeWith(const MEDCouplingMesh *mesh)
   double val=mesh->getTime(it,order);
   _start.setAllInfo(val,it,order);
   _end.setAllInfo(val,it,order);
-  std::string tUnit=mesh->getTimeUnit();
-  _time_unit=tUnit;
+  std::string tUnit(mesh->getTimeUnit());
+  setTimeUnit(tUnit);
 }
 
 std::size_t MEDCouplingTwoTimeSteps::getHeapMemorySizeWithoutChildren() const
@@ -2441,7 +2397,7 @@ std::string MEDCouplingLinearTime::getStringRepr() const
   std::ostringstream stream;
   stream << REPR << " Time interval is defined by :\niteration_start=" << _start.getIteration() << " order_start=" << _start.getOrder() << " and time_start=" << _start.getTimeValue() << "\n";
   stream << "iteration_end=" << _end.getIteration() << " order_end=" << _end.getOrder() << " and end_time=" << _end.getTimeValue() << "\n";
-  stream << "Time unit is : \"" << _time_unit << "\"";
+  stream << "Time unit is : \"" << getTimeUnit() << "\"";
   return stream.str();
 }
 

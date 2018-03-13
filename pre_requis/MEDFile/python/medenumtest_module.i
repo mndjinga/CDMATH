@@ -4,6 +4,7 @@
 
 %{
 #include "med.h"
+#include <utility>
 %}
 
 %include "H5public_extract.h"

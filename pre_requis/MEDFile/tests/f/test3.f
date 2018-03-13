@@ -1,6 +1,6 @@
 C*  This file is part of MED.
 C*
-C*  COPYRIGHT (C) 1999 - 2016  EDF R&D, CEA/DEN
+C*  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
 C*  MED is free software: you can redistribute it and/or modify
 C*  it under the terms of the GNU Lesser General Public License as published by
 C*  the Free Software Foundation, either version 3 of the License, or
@@ -34,7 +34,7 @@ C
       character*200 desc
       integer       nmaa,i,mdim,edim,nstep,stype,atype
 C  ** chgt de dim 2->3 car le fichier dump.ref/test2.med en 2.3.6 est utilisé comme référence
-C  ** (il constient un maillage de dimension 3 et un espace induit de dimension 3
+C  ** (il contient un maillage de dimension 3 et un espace induit de dimension 3
 C  **   car pas de coordonée stockée) 
 C  ** dans 2.3v3.0 qui utilise ce test3 en v3.0 qui défini nomcoo et unicoo en dimension 2
 C      character*16 nomcoo(2)
@@ -110,8 +110,8 @@ C ** - options : nom universel, dimension de l'espace
          print *,'sorting type =', stype
          print *,'number of computing step =', nstep
          print *,'coordinates axis type =', atype
-         print *,'coordinates axis name =', nomcoo(1:2)
-         print *,'coordinates axis units =', unicoo(1:2)
+         print *,'coordinates axis name =', nomcoo(1),nomcoo(2)
+         print *,'coordinates axis units =', unicoo(1),unicoo(2)
       enddo         
          
 C **  fermeture du fichier

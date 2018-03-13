@@ -1,4 +1,4 @@
-AT_SETUP([test python n1])
+AT_SETUP([test python test1])
 
 AT_KEYWORDS([python test1])
 

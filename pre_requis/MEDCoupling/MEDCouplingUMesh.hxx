@@ -71,17 +71,17 @@ namespace MEDCoupling
     MEDCOUPLING_EXPORT const DataArrayInt *getNodalConnectivityIndex() const { return _nodal_connec_index; }
     MEDCOUPLING_EXPORT DataArrayInt *getNodalConnectivity() { return _nodal_connec; }
     MEDCOUPLING_EXPORT DataArrayInt *getNodalConnectivityIndex() { return _nodal_connec_index; }
-    MEDCOUPLING_EXPORT INTERP_KERNEL::NormalizedCellType getTypeOfCell(int cellId) const;
+    MEDCOUPLING_EXPORT INTERP_KERNEL::NormalizedCellType getTypeOfCell(std::size_t cellId) const;
     MEDCOUPLING_EXPORT DataArrayInt *giveCellsWithType(INTERP_KERNEL::NormalizedCellType type) const;
-    MEDCOUPLING_EXPORT int getNumberOfCellsWithType(INTERP_KERNEL::NormalizedCellType type) const;
-    MEDCOUPLING_EXPORT void getNodeIdsOfCell(int cellId, std::vector<int>& conn) const;
+    MEDCOUPLING_EXPORT std::size_t getNumberOfCellsWithType(INTERP_KERNEL::NormalizedCellType type) const;
+    MEDCOUPLING_EXPORT void getNodeIdsOfCell(std::size_t cellId, std::vector<int>& conn) const;
     MEDCOUPLING_EXPORT std::string simpleRepr() const;
     MEDCOUPLING_EXPORT std::string advancedRepr() const;
     MEDCOUPLING_EXPORT std::string cppRepr() const;
     MEDCOUPLING_EXPORT std::string reprConnectivityOfThis() const;
     MEDCOUPLING_EXPORT MEDCouplingUMesh *buildSetInstanceFromThis(int spaceDim) const;
     MEDCOUPLING_EXPORT int getNumberOfNodesInCell(int cellId) const;
-    MEDCOUPLING_EXPORT int getNumberOfCells() const;
+    MEDCOUPLING_EXPORT std::size_t getNumberOfCells() const;
     MEDCOUPLING_EXPORT int getMeshDimension() const;
     MEDCOUPLING_EXPORT int getNodalConnectivityArrayLen() const;
     MEDCOUPLING_EXPORT void computeTypes();
@@ -120,6 +120,7 @@ namespace MEDCoupling
     MEDCOUPLING_EXPORT bool areCellsIncludedIn(const MEDCouplingUMesh *other, int compType, DataArrayInt *& arr) const;
     MEDCOUPLING_EXPORT bool areCellsIncludedInPolicy7(const MEDCouplingUMesh *other, DataArrayInt *& arr) const;
     MEDCOUPLING_EXPORT void getReverseNodalConnectivity(DataArrayInt *revNodal, DataArrayInt *revNodalIndx) const;
+    MEDCOUPLING_EXPORT MCAuto<MEDCouplingUMesh> explodeIntoEdges(MCAuto<DataArrayInt>& desc, MCAuto<DataArrayInt>& descIndex, MCAuto<DataArrayInt>& revDesc, MCAuto<DataArrayInt>& revDescIndx) const;
     MEDCOUPLING_EXPORT MEDCouplingUMesh *explode3DMeshTo1D(DataArrayInt *desc, DataArrayInt *descIndx, DataArrayInt *revDesc, DataArrayInt *revDescIndx) const;
     MEDCOUPLING_EXPORT MEDCouplingUMesh *buildDescendingConnectivity(DataArrayInt *desc, DataArrayInt *descIndx, DataArrayInt *revDesc, DataArrayInt *revDescIndx) const;
     MEDCOUPLING_EXPORT MEDCouplingUMesh *buildDescendingConnectivity2(DataArrayInt *desc, DataArrayInt *descIndx, DataArrayInt *revDesc, DataArrayInt *revDescIndx) const;
@@ -129,6 +130,7 @@ namespace MEDCoupling
     MEDCOUPLING_EXPORT static void ComputeNeighborsOfCellsAdv(const DataArrayInt *desc, const DataArrayInt *descI, const DataArrayInt *revDesc, const DataArrayInt *revDescI,
                                                               DataArrayInt *&neighbors, DataArrayInt *&neighborsIdx);
     MEDCOUPLING_EXPORT void computeNeighborsOfNodes(DataArrayInt *&neighbors, DataArrayInt *&neighborsIdx) const;
+    MEDCOUPLING_EXPORT void computeEnlargedNeighborsOfNodes(MCAuto<DataArrayInt> &neighbors, MCAuto<DataArrayInt>& neighborsIdx) const;
     MEDCOUPLING_EXPORT MEDCouplingUMesh *mergeMyselfWithOnSameCoords(const MEDCouplingPointSet *other) const;
     MEDCOUPLING_EXPORT MEDCouplingUMesh *buildPartOfMySelf(const int *begin, const int *end, bool keepCoords=true) const;
     MEDCOUPLING_EXPORT MEDCouplingUMesh *buildPartOfMySelfSlice(int start, int end, int step, bool keepCoords=true) const;
@@ -192,6 +194,7 @@ namespace MEDCoupling
     MEDCOUPLING_EXPORT void changeOrientationOfCells();
     MEDCOUPLING_EXPORT void arePolyhedronsNotCorrectlyOriented(std::vector<int>& cells) const;
     MEDCOUPLING_EXPORT void orientCorrectlyPolyhedrons();
+    MEDCOUPLING_EXPORT void invertOrientationOfAllCells();
     MEDCOUPLING_EXPORT void getFastAveragePlaneOfThis(double *vec, double *pos) const;
     //Mesh quality
     MEDCOUPLING_EXPORT MEDCouplingFieldDouble *getEdgeRatioField() const;
@@ -248,7 +251,8 @@ namespace MEDCoupling
     MEDCOUPLING_EXPORT static void CorrectExtrudedStaticCell(int *begin, int *end);
     MEDCOUPLING_EXPORT static bool IsTetra4WellOriented(const int *begin, const int *end, const double *coords);
     MEDCOUPLING_EXPORT static bool IsPyra5WellOriented(const int *begin, const int *end, const double *coords);
-    MEDCOUPLING_EXPORT static void SimplifyPolyhedronCell(double eps, const DataArrayDouble *coords, const int *begin, const int *end, DataArrayInt *res);
+    MEDCOUPLING_EXPORT static void SimplifyPolyhedronCell(double eps, const DataArrayDouble *coords, int index, DataArrayInt *res, MEDCouplingUMesh *faces,
+                                                          DataArrayInt *E_Fi, DataArrayInt *E_F, DataArrayInt *F_Ei, DataArrayInt *F_E);
     MEDCOUPLING_EXPORT static void ComputeVecAndPtOfFace(double eps, const double *coords, const int *begin, const int *end, double *v, double *p);
     MEDCOUPLING_EXPORT static void TryToCorrectPolyhedronOrientation(int *begin, int *end, const double *coords);
     MEDCOUPLING_EXPORT static MEDCouplingUMesh *Intersect2DMeshes(const MEDCouplingUMesh *m1, const MEDCouplingUMesh *m2, double eps, DataArrayInt *&cellNb1, DataArrayInt *&cellNb2);
@@ -282,7 +286,7 @@ namespace MEDCoupling
   private: // all private methods are impl in MEDCouplingUMesh_internal.cxx
 
     MEDCouplingUMesh();
-    MEDCouplingUMesh(const MEDCouplingUMesh& other, bool deepCopy);
+    MEDCouplingUMesh(const MEDCouplingUMesh& other, bool deepCpy);
     ~MEDCouplingUMesh();
     void checkFullyDefined() const;
     void checkConnectivityFullyDefined() const;
@@ -354,7 +358,7 @@ namespace MEDCoupling
                                       const std::vector<int>& insidePoints, std::vector<int>& modifiedFace);
   public:
     MEDCOUPLING_EXPORT static DataArrayInt *ComputeRangesFromTypeDistribution(const std::vector<int>& code);
-    MEDCOUPLING_EXPORT static const int N_MEDMEM_ORDER=24;
+    MEDCOUPLING_EXPORT static const int N_MEDMEM_ORDER=25;
     MEDCOUPLING_EXPORT static const INTERP_KERNEL::NormalizedCellType MEDMEM_ORDER[N_MEDMEM_ORDER];
     MEDCOUPLING_EXPORT static const int MEDCOUPLING2VTKTYPETRADUCER[INTERP_KERNEL::NORM_MAXTYPE+1];
     /// @endcond

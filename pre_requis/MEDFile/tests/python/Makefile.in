@@ -89,11 +89,26 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
+
+#Créer les fichiers de paramètres par test à partir des fichiers de référence précédents
+
+#Création des différents executables (ex: test10_f64_i32.py)
+@WITH_PYTHON_TRUE@am__append_1 = _params_f64_i32.py _params_f32_i32.py \
+@WITH_PYTHON_TRUE@	_params_f64_i64.py _params_f32_i64.py \
+@WITH_PYTHON_TRUE@	_f64_i32.py _f32_i32.py _f64_i64.py \
+@WITH_PYTHON_TRUE@	_f32_i64.py
 #test2.py test14.py test16.py test20.py test18.py test25.py test31.py
 
 # EXTRA_DIST = test1.py
-@WITH_PYTHON_TRUE@am__append_1 = BECAREFUL
-@WITH_PYTHON_TRUE@am__append_2 = $(CHECK_TESTS_LEC) $(CHECK_TESTS_ECR) 
+@WITH_PYTHON_TRUE@am__append_2 = BECAREFUL test11_f32_i32_int.expout \
+@WITH_PYTHON_TRUE@	test11_f32_i64_int.expout \
+@WITH_PYTHON_TRUE@	test11_f64_i32_int.expout \
+@WITH_PYTHON_TRUE@	test11_f64_i64_int.expout \
+@WITH_PYTHON_TRUE@	test11_f32_i32_long.expout \
+@WITH_PYTHON_TRUE@	test11_f32_i64_long.expout \
+@WITH_PYTHON_TRUE@	test11_f64_i32_long.expout \
+@WITH_PYTHON_TRUE@	test11_f64_i64_long.expout
+@WITH_PYTHON_TRUE@am__append_3 = $(CHECK_TESTS_LEC) $(CHECK_TESTS_ECR) 
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/config/ac_check_sizeof_fortran.m4 \
 	$(top_srcdir)/config/ax_absolute_header.m4 \
@@ -116,6 +131,7 @@ am__aclocal_m4_deps = $(top_srcdir)/config/ac_check_sizeof_fortran.m4 \
 	$(top_srcdir)/config/med_check_python.m4 \
 	$(top_srcdir)/config/med_check_swig.m4 \
 	$(top_srcdir)/config/med_check_typeof_hidt.m4 \
+	$(top_srcdir)/config/med_check_typeof_int64.m4 \
 	$(top_srcdir)/config/med_check_typeof_medint.m4 \
 	$(top_srcdir)/config/med_disable_api23.m4 \
 	$(top_srcdir)/config/med_enable_check23.m4 \
@@ -157,12 +173,17 @@ am__can_run_installinfo = \
     n|no|NO) false;; \
     *) (install-info --version) >/dev/null 2>&1;; \
   esac
-am__testpy_PYTHON_DIST = test1.py test2.py test4.py test6.py test8.py \
-	test10.py test12.py test21.py test23.py test27.py test29.py \
-	test_medfile.py test_medmesh.py UseCase_MEDinterp_1.py \
-	UseCase_MEDinterp_2.py UseCase_MEDinterp_3.py test3.py \
-	test5.py test7.py test9.py test11.py test13.py test22.py \
-	test24.py test28.py test30.py
+am__testpy_PYTHON_DIST = tests_params.py tests_params_f64_i32.py \
+	tests_params_f32_i32.py tests_params_f64_i64.py \
+	tests_params_f32_i64.py test10_params_f64_i32.py \
+	test10_params_f32_i32.py test10_params_f64_i64.py \
+	test10_params_f32_i64.py test1.py test2.py test4.py test6.py \
+	test8.py test10_f64_i32.py test10_f32_i32.py test10_f64_i64.py \
+	test10_f32_i64.py test12.py test21.py test23.py test27.py \
+	test29.py test_medfile.py test_medmesh.py \
+	UseCase_MEDinterp_1.py UseCase_MEDinterp_2.py \
+	UseCase_MEDinterp_3.py test3.py test5.py test7.py test9.py \
+	test11.py test13.py test22.py test24.py test28.py test30.py
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
     $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
@@ -297,7 +318,10 @@ EXEEXT = @EXEEXT@
 F77 = @F77@
 FC = @FC@
 FCFLAGS = @FCFLAGS@
+FCFLAGS_F = @FCFLAGS_F@
+FCFLAGS_F90 = @FCFLAGS_F90@
 FCLIBS = @FCLIBS@
+FC_DEFINE = @FC_DEFINE@
 FFLAGS = @FFLAGS@
 FGREP = @FGREP@
 FLIBS = @FLIBS@
@@ -337,6 +361,8 @@ MANIFEST_TOOL = @MANIFEST_TOOL@
 MED_API_23 = @MED_API_23@
 MED_CHECK_23FORMAT = @MED_CHECK_23FORMAT@
 MED_DEFINE_MED_HAVE_MPI = @MED_DEFINE_MED_HAVE_MPI@
+MED_INT32 = @MED_INT32@
+MED_INT64 = @MED_INT64@
 MED_NUM_MAJEUR = @MED_NUM_MAJEUR@
 MED_NUM_MINEUR = @MED_NUM_MINEUR@
 MED_NUM_RELEASE = @MED_NUM_RELEASE@
@@ -456,11 +482,11 @@ AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_builddir)/include \
 AM_FFLAGS = -I$(top_srcdir)/include  -I$(top_builddir)/include
 AM_FCFLAGS = -I$(top_srcdir)/include  -I$(top_builddir)/include
 AM_LDFLAGS = @HDF5_LDFLAGS@
-SUFFIXES = .at
+SUFFIXES = .at $(am__append_1)
 AUTOTEST = autom4te --language=autotest
 CHECK_TESTS = 
 INSTALLCHECK_TESTS = 
-PYTHONINSTALLCHECK_TESTS = $(am__append_2)
+PYTHONINSTALLCHECK_TESTS = $(am__append_3)
 CHECK_PROGS = 
 INSTALLCHECK_PROGS = 
 PYTHONINSTALLCHECK_PROGS = 
@@ -471,29 +497,38 @@ PYTHONINSTALLCHECKTESTSUITE = python_installcheck_testsuite
 EXTRA_DIST = $(PYTHONINSTALLCHECK_PROGS) \
 	$(srcdir)/python_installcheck_testsuite.at \
 	$(PYTHONINSTALLCHECK_TESTS) $(OUTFILES) atconfig.in \
-	$(am__append_1) CMakeLists.txt
+	$(am__append_2) CMakeLists.txt
 # PYTHONINSTALLCHECK_PROGS += $(CHECK_TESTS_LEC) $(CHECK_TESTS_ECR)
 CLEANFILES = *.log $(PYTHONINSTALLCHECKTESTSUITE) expout \
 	UsesCase_MEDinterp_1.med ./test1.med ./test2.med ./test4.med \
-	./test6.med ./test8.med ./test10.med ./test12.med ./test14.med \
-	./test16.med ./test18.med ./test20.med ./test21.med \
-	./test23.med ./test25.med ./test27.med ./test29.med \
-	./test31.med ./test10.dump ./test12.dump ./test14.dump \
-	./test16.dump ./test18.dump ./test19.dump ./test1.dump \
-	./test20.dump ./test2.dump ./test4.dump ./test6.dump \
-	./test8.dump ./test21.dump ./test23.dump ./test25.dump \
-	./test27.dump ./test28.dump ./test29.dump ./test31.dump
+	./test6.med ./test8.med ./test10.med ./test10_f32.med \
+	./test10_f64.med ./test12.med ./test14.med ./test16.med \
+	./test18.med ./test20.med ./test21.med ./test23.med \
+	./test25.med ./test27.med ./test29.med ./test31.med \
+	./test10.dump ./test12.dump ./test14.dump ./test16.dump \
+	./test18.dump ./test19.dump ./test1.dump ./test20.dump \
+	./test2.dump ./test4.dump ./test6.dump ./test8.dump \
+	./test21.dump ./test23.dump ./test25.dump ./test27.dump \
+	./test28.dump ./test29.dump ./test31.dump ${BUILT_SOURCES} \
+	tests_params*.py.tmp
 DISTCLEANFILES = atconfig
 subdir = tests/python
+@WITH_PYTHON_TRUE@TESTS_PARAMS = tests_params.py \
+@WITH_PYTHON_TRUE@tests_params_f64_i32.py tests_params_f32_i32.py \
+@WITH_PYTHON_TRUE@tests_params_f64_i64.py tests_params_f32_i64.py \
+@WITH_PYTHON_TRUE@test10_params_f64_i32.py test10_params_f32_i32.py \
+@WITH_PYTHON_TRUE@test10_params_f64_i64.py test10_params_f32_i64.py
 
-#TESTS_ENVIRONMENT = eval python -c "__file__='.libs'" <
-#TESTS_ENVIRONMENT = python -c '__file__=".libs" ' <
+@WITH_PYTHON_TRUE@BUILT_SOURCES = ${TESTS_PARAMS} \
+@WITH_PYTHON_TRUE@test10_f64_i32.py test10_f32_i64.py test10_f64_i64.py test10_f32_i64.py
 
-# TESTS_ENVIRONMENT = eval H5DUMP=@H5DUMP@ SRCDIR=$(srcdir) SRCDIR="$(abs_srcdir)" BUILDDIR="$(abs_builddir)" \
-# 		EXECDIR="$(abs_builddir)" CP=${CP} CPYMED="no"
-#TESTS_ENVIRONMENT += OUTPUT="yes" CHECKER="libtool\ --mode=execute\ valgrind\ --error-limit=no"
+
+#test11_f64.py test11_f32.py
+# test10_f32_i32.py test10_f32_i64.py test10_i32.py test10_i64.py
+
+# check-local: 
 @WITH_PYTHON_TRUE@testpydir = $(bindir)/testpy
-@WITH_PYTHON_TRUE@INSTALLCHECK_TESTS_ENVIRONMENT = AUTOTEST_PATH=$(testpydir) PYTHONPATH=$(pyexecdir) H5DUMP=@H5DUMP@ SRCDIR=$(srcdir) ABSSRCDIR="$(abs_srcdir)" BUILDDIR=$(abs_builddir) EXECDIR="$(abs_builddir)" CP=${CP} CPYMED="no"
+@WITH_PYTHON_TRUE@INSTALLCHECK_TESTS_ENVIRONMENT = AUTOTEST_PATH=$(testpydir) PYTHONPATH=$(pyexecdir) H5DUMP=@H5DUMP@ SRCDIR=$(srcdir) ABSSRCDIR="$(abs_srcdir)" BUILDDIR=$(abs_builddir) EXECDIR="$(abs_builddir)" CP=${CP} CPYMED="no" MEDINT="_@LONG_OR_INT@"
 
 # TESTS = test1.sh $(TESTS_ECR) $(TESTS_LEC)
 @WITH_PYTHON_TRUE@TESTS_LEC = test3.py test5.py test7.py test9.py \
@@ -501,7 +536,9 @@ subdir = tests/python
 
 #test3.py test15.py test17.py test26.py test32.py test33.py
 @WITH_PYTHON_TRUE@TESTS_ECR = test1.py test2.py test4.py test6.py test8.py \
-@WITH_PYTHON_TRUE@	test10.py test12.py test21.py test23.py test27.py test29.py \
+@WITH_PYTHON_TRUE@	test10_f64_i32.py test10_f32_i32.py  \
+@WITH_PYTHON_TRUE@	test10_f64_i64.py test10_f32_i64.py  \
+@WITH_PYTHON_TRUE@	test12.py test21.py test23.py test27.py test29.py \
 @WITH_PYTHON_TRUE@	test_medfile.py test_medmesh.py \
 @WITH_PYTHON_TRUE@	UseCase_MEDinterp_1.py \
 @WITH_PYTHON_TRUE@	UseCase_MEDinterp_2.py \
@@ -523,14 +560,15 @@ subdir = tests/python
 @WITH_PYTHON_TRUE@	$(srcdir)/UseCase_MEDinterp_2.atpy \
 @WITH_PYTHON_TRUE@	$(srcdir)/UseCase_MEDinterp_3.atpy
 
-@INSTALLTEST_TRUE@@WITH_PYTHON_TRUE@testpy_PYTHON = $(TESTS_ECR) $(TESTS_LEC)
+@INSTALLTEST_TRUE@@WITH_PYTHON_TRUE@testpy_PYTHON = ${TESTS_PARAMS} $(TESTS_ECR) $(TESTS_LEC)
 
 # SUBDIRS = dumps.ref .
 SUBDIRS = .
-all: all-recursive
+all: $(BUILT_SOURCES)
+	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
 .SUFFIXES:
-.SUFFIXES: .at
+.SUFFIXES: .at _params_f64_i32.py _params_f32_i32.py _params_f64_i64.py _params_f32_i64.py _f64_i32.py _f32_i32.py _f64_i64.py _f32_i64.py .py .py_f32_i32 .py_f32_i64 .py_f64_i32 .py_f64_i64 .py_params_f32_i32 .py_params_f32_i64 .py_params_f64_i32 .py_params_f64_i64
 $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am $(top_srcdir)/config/automake.common $(top_srcdir)/config/test.am $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
@@ -773,14 +811,16 @@ distdir: $(DISTFILES)
 	  fi; \
 	done
 check-am: all-am
-check: check-recursive
+check: $(BUILT_SOURCES)
+	$(MAKE) $(AM_MAKEFLAGS) check-recursive
 all-am: Makefile
 installdirs: installdirs-recursive
 installdirs-am:
 	for dir in "$(DESTDIR)$(testpydir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
-install: install-recursive
+install: $(BUILT_SOURCES)
+	$(MAKE) $(AM_MAKEFLAGS) install-recursive
 install-exec: install-exec-recursive
 install-data: install-data-recursive
 uninstall: uninstall-recursive
@@ -812,6 +852,7 @@ distclean-generic:
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
 	@echo "it deletes files that may require special tools to rebuild."
+	-test -z "$(BUILT_SOURCES)" || rm -f $(BUILT_SOURCES)
 	-test -z "$(MAINTAINERCLEANFILES)" || rm -f $(MAINTAINERCLEANFILES)
 @INSTALLTEST_FALSE@installcheck-local:
 @WITH_PYTHON_FALSE@installcheck-local:
@@ -881,7 +922,8 @@ ps-am:
 
 uninstall-am: uninstall-testpyPYTHON
 
-.MAKE: $(am__recursive_targets) install-am install-strip
+.MAKE: $(am__recursive_targets) all check install install-am \
+	install-strip
 
 .PHONY: $(am__recursive_targets) CTAGS GTAGS TAGS all all-am check \
 	check-am clean clean-generic clean-libtool clean-local \
@@ -900,6 +942,7 @@ uninstall-am: uninstall-testpyPYTHON
 
 .PRECIOUS: Makefile
 
+#AM_ETAGSFLAGS=
 #SWIG_PYTHON_OPT=
 
 $(CHECKTESTSUITE)	      : $(srcdir)/check_testsuite.at
@@ -940,6 +983,89 @@ installcheck-python: atconfig atlocal $(PYTHONINSTALLCHECKTESTSUITE)
 
 clean-local:
 	rm -rf *.dir
+
+#TESTS_ENVIRONMENT = eval python -c "__file__='.libs'" <
+#TESTS_ENVIRONMENT = python -c '__file__=".libs" ' <
+
+# TESTS_ENVIRONMENT = eval H5DUMP=@H5DUMP@ SRCDIR=$(srcdir) SRCDIR="$(abs_srcdir)" BUILDDIR="$(abs_builddir)" \
+# 		EXECDIR="$(abs_builddir)" CP=${CP} CPYMED="no"
+#TESTS_ENVIRONMENT += OUTPUT="yes" CHECKER="libtool\ --mode=execute\ valgrind\ --error-limit=no"
+
+@WITH_PYTHON_TRUE@tests_params.py: $(srcdir)/Makefile.am 
+@WITH_PYTHON_TRUE@	echo "USER_MODE=MED_COMPACT_STMODE" > $@.tmp ; \
+@WITH_PYTHON_TRUE@	echo "USER_INTERLACE=MED_FULL_INTERLACE" >> $@.tmp ; \
+@WITH_PYTHON_TRUE@	echo "MEDARRAY_TYPEF=MEDFLOAT" >> $@.tmp ; \
+@WITH_PYTHON_TRUE@	echo "MEDARRAY_TYPEI=MEDINT" >> $@.tmp ; \
+@WITH_PYTHON_TRUE@	echo "FIELD_TYPEF=MED_FLOAT64" >> $@.tmp ; \
+@WITH_PYTHON_TRUE@	echo "FIELD_TYPEI=MED_INT" >> $@.tmp ; \
+@WITH_PYTHON_TRUE@	echo "PARAM_ID=''" >> $@.tmp ; \
+@WITH_PYTHON_TRUE@	mv $@.tmp $@
+
+@WITH_PYTHON_TRUE@tests_params_f64_i32.py: $(srcdir)/Makefile.am 
+@WITH_PYTHON_TRUE@	echo "USER_MODE=MED_COMPACT_STMODE" > $@.tmp ; \
+@WITH_PYTHON_TRUE@	echo "USER_INTERLACE=MED_FULL_INTERLACE" >> $@.tmp ; \
+@WITH_PYTHON_TRUE@	echo "MEDARRAY_TYPEF=MEDFLOAT64" >> $@.tmp ; \
+@WITH_PYTHON_TRUE@	echo "MEDARRAY_TYPEI=MEDINT32" >> $@.tmp ; \
+@WITH_PYTHON_TRUE@	echo "FIELD_TYPEF=MED_FLOAT64" >> $@.tmp ; \
+@WITH_PYTHON_TRUE@	echo "FIELD_TYPEI=MED_INT32" >> $@.tmp ; \
+@WITH_PYTHON_TRUE@	echo "PARAM_ID='_f64_i32'" >> $@.tmp ; \
+@WITH_PYTHON_TRUE@	mv $@.tmp $@
+
+@WITH_PYTHON_TRUE@tests_params_f64_i64.py: $(srcdir)/Makefile.am 
+@WITH_PYTHON_TRUE@	echo "USER_MODE=MED_COMPACT_STMODE" > $@.tmp ; \
+@WITH_PYTHON_TRUE@	echo "USER_INTERLACE=MED_FULL_INTERLACE" >> $@.tmp ; \
+@WITH_PYTHON_TRUE@	echo "MEDARRAY_TYPEF=MEDFLOAT64" >> $@.tmp ; \
+@WITH_PYTHON_TRUE@	echo "MEDARRAY_TYPEI=MEDINT64" >> $@.tmp ; \
+@WITH_PYTHON_TRUE@	echo "FIELD_TYPEF=MED_FLOAT64" >> $@.tmp ; \
+@WITH_PYTHON_TRUE@	echo "FIELD_TYPEI=MED_INT64" >> $@.tmp ; \
+@WITH_PYTHON_TRUE@	echo "PARAM_ID='_f64_i64'" >> $@.tmp ; \
+@WITH_PYTHON_TRUE@	mv $@.tmp $@
+
+@WITH_PYTHON_TRUE@tests_params_f32_i32.py: $(srcdir)/Makefile.am
+@WITH_PYTHON_TRUE@	echo "USER_MODE=MED_COMPACT_STMODE" > $@.tmp ; \
+@WITH_PYTHON_TRUE@	echo "USER_INTERLACE=MED_FULL_INTERLACE" >> $@.tmp ; \
+@WITH_PYTHON_TRUE@	echo "MEDARRAY_TYPEF=MEDFLOAT32" >> $@.tmp ; \
+@WITH_PYTHON_TRUE@	echo "FIELD_TYPEF=MED_FLOAT32" >> $@.tmp ; \
+@WITH_PYTHON_TRUE@	echo "MEDARRAY_TYPEI=MEDINT32" >> $@.tmp ; \
+@WITH_PYTHON_TRUE@	echo "FIELD_TYPEI=MED_INT32" >> $@.tmp ; \
+@WITH_PYTHON_TRUE@	echo "PARAM_ID='_f32_i32'" >> $@.tmp ; \
+@WITH_PYTHON_TRUE@	mv $@.tmp $@
+
+@WITH_PYTHON_TRUE@tests_params_f32_i64.py: $(srcdir)/Makefile.am
+@WITH_PYTHON_TRUE@	echo "USER_MODE=MED_COMPACT_STMODE" > $@.tmp ; \
+@WITH_PYTHON_TRUE@	echo "USER_INTERLACE=MED_FULL_INTERLACE" >> $@.tmp ; \
+@WITH_PYTHON_TRUE@	echo "MEDARRAY_TYPEF=MEDFLOAT32" >> $@.tmp ; \
+@WITH_PYTHON_TRUE@	echo "FIELD_TYPEF=MED_FLOAT32" >> $@.tmp ; \
+@WITH_PYTHON_TRUE@	echo "MEDARRAY_TYPEI=MEDINT64" >> $@.tmp ; \
+@WITH_PYTHON_TRUE@	echo "FIELD_TYPEI=MED_INT64" >> $@.tmp ; \
+@WITH_PYTHON_TRUE@	echo "PARAM_ID='_f32_i64'" >> $@.tmp ; \
+@WITH_PYTHON_TRUE@	mv $@.tmp $@
+
+#Parceque les dépendances des règles double-suffixe n'utilisent pas les prérequis
+#à l'application des règles
+@WITH_PYTHON_TRUE@test10_params_f64_i32.py : tests_params_f64_i32.py
+@WITH_PYTHON_TRUE@test10_params_f32_i32.py : tests_params_f32_i32.py
+@WITH_PYTHON_TRUE@test10_params_f64_i64.py : tests_params_f64_i64.py
+
+@WITH_PYTHON_TRUE@.py_params_f64_i32.py:
+@WITH_PYTHON_TRUE@	${CP} -f tests_params_f64_i32.py $@
+@WITH_PYTHON_TRUE@.py_params_f32_i32.py:
+@WITH_PYTHON_TRUE@	${CP} -f tests_params_f32_i32.py $@
+@WITH_PYTHON_TRUE@.py_params_f64_i64.py:
+@WITH_PYTHON_TRUE@	${CP} -f tests_params_f64_i64.py $@
+@WITH_PYTHON_TRUE@.py_params_f32_i64.py:
+@WITH_PYTHON_TRUE@	${CP} -f tests_params_f32_i64.py $@
+
+@WITH_PYTHON_TRUE@test10_params_f32_i64.py : tests_params_f32_i64.py
+
+@WITH_PYTHON_TRUE@.py_f64_i32.py :
+@WITH_PYTHON_TRUE@	${SED} 's/_TEST_PARAMS_PY_/_params_f64_i32.py/g' $< > $@
+@WITH_PYTHON_TRUE@.py_f32_i32.py :
+@WITH_PYTHON_TRUE@	${SED} 's/_TEST_PARAMS_PY_/_params_f32_i32.py/g' $< > $@
+@WITH_PYTHON_TRUE@.py_f64_i64.py :
+@WITH_PYTHON_TRUE@	${SED} 's/_TEST_PARAMS_PY_/_params_f64_i64.py/g' $< > $@
+@WITH_PYTHON_TRUE@.py_f32_i64.py :
+@WITH_PYTHON_TRUE@	${SED} 's/_TEST_PARAMS_PY_/_params_f32_i64.py/g' $< > $@
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

@@ -25,6 +25,7 @@
 
 #include "SplitterTetra.hxx"
 #include "DiameterCalculator.hxx"
+#include "OrientationInverter.hxx"
 #include "InterpKernelAutoPtr.hxx"
 
 using namespace MEDCoupling;
@@ -107,7 +108,7 @@ DataArrayInt *MEDCoupling1GTUMesh::giveCellsWithType(INTERP_KERNEL::NormalizedCe
 /*!
  * Returns nb of cells having the geometric type \a type. No throw if no cells in \a this has the geometric type \a type.
  */
-int MEDCoupling1GTUMesh::getNumberOfCellsWithType(INTERP_KERNEL::NormalizedCellType type) const
+std::size_t MEDCoupling1GTUMesh::getNumberOfCellsWithType(INTERP_KERNEL::NormalizedCellType type) const
 {
   return type==getCellModelEnum()?getNumberOfCells():0;
 }
@@ -118,9 +119,9 @@ int MEDCoupling1GTUMesh::getNumberOfCellsWithType(INTERP_KERNEL::NormalizedCellT
  *  \return INTERP_KERNEL::NormalizedCellType - enumeration item describing the cell type.
  *  \throw If \a cellId is invalid. Valid range is [0, \a this->getNumberOfCells() ).
  */
-INTERP_KERNEL::NormalizedCellType MEDCoupling1GTUMesh::getTypeOfCell(int cellId) const
+INTERP_KERNEL::NormalizedCellType MEDCoupling1GTUMesh::getTypeOfCell(std::size_t cellId) const
 {
-  if(cellId>=0 && cellId<getNumberOfCells())
+  if(cellId<getNumberOfCells())
     return getCellModelEnum();
   std::ostringstream oss; oss << "MEDCoupling1GTUMesh::getTypeOfCell : Requesting type of cell #" << cellId << " but it should be in [0," << getNumberOfCells() << ") !";
   throw INTERP_KERNEL::Exception(oss.str().c_str());
@@ -386,7 +387,7 @@ void MEDCoupling1GTUMesh::findCommonCells(int compType, int startCellId, DataArr
   m->findCommonCells(compType,startCellId,commonCellsArr,commonCellsIArr);
 }
 
-int MEDCoupling1GTUMesh::getNodalConnectivityLength() const
+std::size_t MEDCoupling1GTUMesh::getNodalConnectivityLength() const
 {
   const DataArrayInt *c1(getNodalConnectivity());
   if(!c1)
@@ -699,10 +700,10 @@ void MEDCoupling1SGTUMesh::checkConsistency(double eps) const
       }
 }
 
-int MEDCoupling1SGTUMesh::getNumberOfCells() const
+std::size_t MEDCoupling1SGTUMesh::getNumberOfCells() const
 {
-  int nbOfTuples=getNodalConnectivityLength();
-  int nbOfNodesPerCell=getNumberOfNodesPerCell();
+  std::size_t nbOfTuples(getNodalConnectivityLength());
+  int nbOfNodesPerCell(getNumberOfNodesPerCell());
   if(nbOfTuples%nbOfNodesPerCell!=0)
     {
       std::ostringstream oss; oss << "MEDCoupling1SGTUMesh:getNumberOfCells: : the nb of tuples in conn is " << nbOfTuples << " and number of nodes per cell is " << nbOfNodesPerCell << ". But " << nbOfTuples << "%" << nbOfNodesPerCell << " !=0 !";
@@ -757,11 +758,11 @@ DataArrayInt *MEDCoupling1SGTUMesh::computeEffectiveNbOfNodesPerCell() const
   return ret.retn();
 }
 
-void MEDCoupling1SGTUMesh::getNodeIdsOfCell(int cellId, std::vector<int>& conn) const
+void MEDCoupling1SGTUMesh::getNodeIdsOfCell(std::size_t cellId, std::vector<int>& conn) const
 {
   int sz=getNumberOfNodesPerCell();
   conn.resize(sz);
-  if(cellId>=0 && cellId<getNumberOfCells())
+  if(cellId<getNumberOfCells())
     std::copy(_conn->begin()+cellId*sz,_conn->begin()+(cellId+1)*sz,conn.begin());
   else
     {
@@ -2138,6 +2139,22 @@ MEDCouplingFieldDouble *MEDCoupling1SGTUMesh::computeDiameterField() const
   return ret.retn();
 }
 
+/*!
+ * This method invert orientation of all cells in \a this. 
+ * After calling this method the absolute value of measure of cells in \a this are the same than before calling.
+ * This method only operates on the connectivity so coordinates are not touched at all.
+ */
+void MEDCoupling1SGTUMesh::invertOrientationOfAllCells()
+{
+  checkConsistencyOfConnectivity();
+  INTERP_KERNEL::AutoCppPtr<INTERP_KERNEL::OrientationInverter> oi(INTERP_KERNEL::OrientationInverter::BuildInstanceFrom(getCellModelEnum()));
+  int nbOfNodesPerCell((int)_cm->getNumberOfNodes()),nbCells(getNumberOfCells());
+  int *conn(_conn->getPointer());
+  for(int i=0;i<nbCells;i++)
+    oi->operate(conn+i*nbOfNodesPerCell,conn+(i+1)*nbOfNodesPerCell);
+  updateTime();
+}
+
 //== 
 
 MEDCoupling1DGTUMesh *MEDCoupling1DGTUMesh::New()
@@ -2424,7 +2441,7 @@ void MEDCoupling1DGTUMesh::checkConsistency(double eps) const
     }
 }
 
-int MEDCoupling1DGTUMesh::getNumberOfCells() const
+std::size_t MEDCoupling1DGTUMesh::getNumberOfCells() const
 {
   checkConsistencyOfConnectivity();//do not remove
   return _conn_indx->getNumberOfTuples()-1;
@@ -2519,10 +2536,10 @@ DataArrayInt *MEDCoupling1DGTUMesh::computeEffectiveNbOfNodesPerCell() const
   return ret.retn();
 }
 
-void MEDCoupling1DGTUMesh::getNodeIdsOfCell(int cellId, std::vector<int>& conn) const
+void MEDCoupling1DGTUMesh::getNodeIdsOfCell(std::size_t cellId, std::vector<int>& conn) const
 {
-  int nbOfCells(getNumberOfCells());//performs checks
-  if(cellId>=0 && cellId<nbOfCells)
+  std::size_t nbOfCells(getNumberOfCells());//performs checks
+  if(cellId<nbOfCells)
     {
       int strt=_conn_indx->getIJ(cellId,0),stp=_conn_indx->getIJ(cellId+1,0);
       int nbOfNodes=stp-strt;
@@ -3289,12 +3306,12 @@ void MEDCoupling1DGTUMesh::allocateCells(int nbOfCells)
  */
 void MEDCoupling1DGTUMesh::insertNextCell(const int *nodalConnOfCellBg, const int *nodalConnOfCellEnd)
 {
-  int sz=(int)std::distance(nodalConnOfCellBg,nodalConnOfCellEnd);
+  std::size_t sz(std::distance(nodalConnOfCellBg,nodalConnOfCellEnd));
   DataArrayInt *c(_conn),*c2(_conn_indx);
   if(c && c2)
     {
       int pos=c2->back();
-      if(pos==c->getNumberOfTuples())
+      if(pos==(int)c->getNumberOfTuples())
         {
           c->pushBackValsSilent(nodalConnOfCellBg,nodalConnOfCellEnd);
           c2->pushBackSilent(pos+sz);
@@ -3411,7 +3428,7 @@ bool MEDCoupling1DGTUMesh::retrievePackedNodalConnectivity(DataArrayInt *&nodalC
 bool MEDCoupling1DGTUMesh::isPacked() const
 {
   checkConsistencyLight();
-  return _conn_indx->front()==0 && _conn_indx->back()==_conn->getNumberOfTuples();
+  return _conn_indx->front()==0 && _conn_indx->back()==(int)_conn->getNumberOfTuples();
 }
 
 MEDCoupling1DGTUMesh *MEDCoupling1DGTUMesh::Merge1DGTUMeshes(const MEDCoupling1DGTUMesh *mesh1, const MEDCoupling1DGTUMesh *mesh2)
@@ -3645,6 +3662,23 @@ std::vector<int> MEDCoupling1DGTUMesh::BuildAPolygonFromParts(const std::vector<
   if(ret.back()==ret.front())
     ret.pop_back();
   return ret;
+}
+
+/*!
+ * This method invert orientation of all cells in \a this. 
+ * After calling this method the absolute value of measure of cells in \a this are the same than before calling.
+ * This method only operates on the connectivity so coordinates are not touched at all.
+ */
+void MEDCoupling1DGTUMesh::invertOrientationOfAllCells()
+{
+  checkConsistencyOfConnectivity();
+  INTERP_KERNEL::AutoCppPtr<INTERP_KERNEL::OrientationInverter> oi(INTERP_KERNEL::OrientationInverter::BuildInstanceFrom(getCellModelEnum()));
+  int nbCells(getNumberOfCells());
+  const int *connI(_conn_indx->begin());
+  int *conn(_conn->getPointer());
+  for(int i=0;i<nbCells;i++)
+    oi->operate(conn+connI[i],conn+connI[i+1]);
+  updateTime();
 }
 
 /*!

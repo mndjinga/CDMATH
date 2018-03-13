@@ -16,7 +16,7 @@
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// Author : Anthony Geay (CEA/DEN)
+// Author : Anthony Geay (EDF R&D)
 
 ////////////////////
 %typemap(out) MEDCoupling::DataArray*
@@ -40,6 +40,26 @@
 {
   $result=convertDataArrayChar($1,$owner);
 }
+
+%typemap(out) MCAuto<MEDCoupling::DataArrayInt>
+{
+  $result=SWIG_NewPointerObj(SWIG_as_voidptr($1.retn()),SWIGTYPE_p_MEDCoupling__DataArrayInt,SWIG_POINTER_OWN|0);
+}
+
+%typemap(out) MCAuto<MEDCoupling::DataArrayDouble>
+{
+  $result=SWIG_NewPointerObj(SWIG_as_voidptr($1.retn()),SWIGTYPE_p_MEDCoupling__DataArrayDouble,SWIG_POINTER_OWN|0);
+}
+
+%typemap(out) MCAuto<MEDCoupling::DataArrayFloat>
+{
+  $result=SWIG_NewPointerObj(SWIG_as_voidptr($1.retn()),SWIGTYPE_p_MEDCoupling__DataArrayFloat,SWIG_POINTER_OWN|0);
+}
+
+%typemap(out) MCAuto<MEDCoupling::MapII>
+{
+  $result=SWIG_NewPointerObj(SWIG_as_voidptr($1.retn()),SWIGTYPE_p_MEDCoupling__MapII,SWIG_POINTER_OWN|0);
+}
 //$$$$$$$$$$$$$$$$$$
 
 %newobject MEDCoupling::DataArray::deepCopy;
@@ -49,10 +69,13 @@
 %newobject MEDCoupling::DataArray::selectByTupleIdSafe;
 %newobject MEDCoupling::DataArray::selectByTupleIdSafeSlice;
 %newobject MEDCoupling::DataArray::Aggregate;
+%newobject MEDCoupling::DataArrayFloat::New;
+%newobject MEDCoupling::DataArrayFloat::iterator;
+%newobject MEDCoupling::DataArrayFloat::__iter__;
+%newobject MEDCoupling::DataArrayFloat::Meld;
+%newobject MEDCoupling::DataArrayFloat::__rmul__;
 %newobject MEDCoupling::DataArrayInt::New;
 %newobject MEDCoupling::DataArrayInt::__iter__;
-%newobject MEDCoupling::DataArrayInt::selectPartDef;
-%newobject MEDCoupling::DataArrayInt::convertToDblArr;
 %newobject MEDCoupling::DataArrayInt::performCopyOrIncrRef;
 %newobject MEDCoupling::DataArrayInt::subArray;
 %newobject MEDCoupling::DataArrayInt::changeNbOfComponents;
@@ -75,7 +98,7 @@
 %newobject MEDCoupling::DataArrayInt::computeAbs;
 %newobject MEDCoupling::DataArrayInt::findIdsInRange;
 %newobject MEDCoupling::DataArrayInt::findIdsNotInRange;
-%newobject MEDCoupling::DataArrayInt::findIdsStricltyNegative;
+%newobject MEDCoupling::DataArrayInt::findIdsStrictlyNegative;
 %newobject MEDCoupling::DataArrayInt::Aggregate;
 %newobject MEDCoupling::DataArrayInt::AggregateIndexes;
 %newobject MEDCoupling::DataArrayInt::Meld;
@@ -142,8 +165,6 @@
 %newobject MEDCoupling::DataArrayAsciiCharTuple::buildDAAsciiChar;
 %newobject MEDCoupling::DataArrayDouble::New;
 %newobject MEDCoupling::DataArrayDouble::__iter__;
-%newobject MEDCoupling::DataArrayDouble::selectPartDef;
-%newobject MEDCoupling::DataArrayDouble::convertToIntArr;
 %newobject MEDCoupling::DataArrayDouble::performCopyOrIncrRef;
 %newobject MEDCoupling::DataArrayDouble::Aggregate;
 %newobject MEDCoupling::DataArrayDouble::Meld;
@@ -160,6 +181,7 @@
 %newobject MEDCoupling::DataArrayDouble::accumulatePerChunck;
 %newobject MEDCoupling::DataArrayDouble::findIdsInRange;
 %newobject MEDCoupling::DataArrayDouble::findIdsNotInRange;
+%newobject MEDCoupling::DataArrayDouble::findIdsStrictlyNegative;
 %newobject MEDCoupling::DataArrayDouble::negate;
 %newobject MEDCoupling::DataArrayDouble::computeAbs;
 %newobject MEDCoupling::DataArrayDouble::applyFunc;
@@ -220,6 +242,7 @@
 %feature("unref") DataArrayAsciiChar "$this->decrRef();"
 %feature("unref") DataArrayByte "$this->decrRef();"
 
+%feature("unref") MapII "$this->decrRef();"
 %feature("unref") PartDefinition "$this->decrRef();"
 %feature("unref") DataArrayPartDefinition "$this->decrRef();"
 %feature("unref") SlicePartDefinition "$this->decrRef();"
@@ -234,6 +257,12 @@ namespace MEDCoupling
     } MEDCouplingAxisType;
 
   class DataArrayInt;
+
+  class MapII : public RefCountObject, public TimeLabel
+  {
+  public:
+    static MCAuto< MapII > New();
+  };
   
   class PartDefinition : public RefCountObject, public TimeLabel
   {
@@ -549,8 +578,7 @@ namespace MEDCoupling
         if(!PySlice_Check(slic))
           throw INTERP_KERNEL::Exception("DataArray::GetSlice (wrap) : expecting a pyslice as second (first) parameter !");
         Py_ssize_t strt=2,stp=2,step=2;
-        PySliceObject *sly=reinterpret_cast<PySliceObject *>(slic);
-        GetIndicesOfSliceExplicitely(sly,&strt,&stp,&step,"DataArray::GetSlice (wrap) : the input slice is invalid !");
+        GetIndicesOfSliceExplicitely(slic,&strt,&stp,&step,"DataArray::GetSlice (wrap) : the input slice is invalid !");
         int a,b;
         DataArray::GetSlice(strt,stp,step,sliceId,nbOfSlices,a,b);
         return PySlice_New(PyInt_FromLong(a),PyInt_FromLong(b),PyInt_FromLong(step));
@@ -561,8 +589,7 @@ namespace MEDCoupling
         if(!PySlice_Check(slic))
           throw INTERP_KERNEL::Exception("DataArray::getSlice (wrap) : expecting a pyslice as second (first) parameter !");
         Py_ssize_t strt=2,stp=2,step=2;
-        PySliceObject *sly=reinterpret_cast<PySliceObject *>(slic);
-        GetIndicesOfSlice(sly,self->getNumberOfTuples(),&strt,&stp,&step,"DataArray::getSlice (wrap) : the input slice is invalid !");
+        GetIndicesOfSlice(slic,self->getNumberOfTuples(),&strt,&stp,&step,"DataArray::getSlice (wrap) : the input slice is invalid !");
         int a,b;
         DataArray::GetSlice(strt,stp,step,sliceId,nbOfSlices,a,b);
         return PySlice_New(PyInt_FromLong(a),PyInt_FromLong(b),PyInt_FromLong(step));
@@ -573,8 +600,7 @@ namespace MEDCoupling
         if(!PySlice_Check(slic))
           throw INTERP_KERNEL::Exception("DataArray::GetNumberOfItemGivenBES (wrap) : expecting a pyslice as second (first) parameter !");
         Py_ssize_t strt=2,stp=2,step=2;
-        PySliceObject *sly=reinterpret_cast<PySliceObject *>(slic);
-        GetIndicesOfSliceExplicitely(sly,&strt,&stp,&step,"DataArray::GetNumberOfItemGivenBES (wrap) : the input slice is invalid !");
+        GetIndicesOfSliceExplicitely(slic,&strt,&stp,&step,"DataArray::GetNumberOfItemGivenBES (wrap) : the input slice is invalid !");
         return DataArray::GetNumberOfItemGivenBES(strt,stp,step,"");
       }
 
@@ -583,8 +609,7 @@ namespace MEDCoupling
         if(!PySlice_Check(slic))
           throw INTERP_KERNEL::Exception("DataArray::GetNumberOfItemGivenBESRelative (wrap) : expecting a pyslice as second (first) parameter !");
         Py_ssize_t strt=2,stp=2,step=2;
-        PySliceObject *sly=reinterpret_cast<PySliceObject *>(slic);
-        GetIndicesOfSliceExplicitely(sly,&strt,&stp,&step,"DataArray::GetNumberOfItemGivenBESRelative (wrap) : the input slice is invalid !");
+        GetIndicesOfSliceExplicitely(slic,&strt,&stp,&step,"DataArray::GetNumberOfItemGivenBESRelative (wrap) : the input slice is invalid !");
         return DataArray::GetNumberOfItemGivenBESRelative(strt,stp,step,"");
       }
       
@@ -600,8 +625,7 @@ namespace MEDCoupling
         if(!PySlice_Check(slic))
           throw INTERP_KERNEL::Exception("DataArray::getNumberOfItemGivenBES (wrap) : expecting a pyslice as second (first) parameter !");
         Py_ssize_t strt=2,stp=2,step=2;
-        PySliceObject *sly=reinterpret_cast<PySliceObject *>(slic);
-        GetIndicesOfSlice(sly,self->getNumberOfTuples(),&strt,&stp,&step,"DataArray::getNumberOfItemGivenBES (wrap) : the input slice is invalid !");
+        GetIndicesOfSlice(slic,self->getNumberOfTuples(),&strt,&stp,&step,"DataArray::getNumberOfItemGivenBES (wrap) : the input slice is invalid !");
         return DataArray::GetNumberOfItemGivenBES(strt,stp,step,"");
       }
 
@@ -610,8 +634,7 @@ namespace MEDCoupling
         if(!PySlice_Check(slic))
           throw INTERP_KERNEL::Exception("DataArray::getNumberOfItemGivenBESRelative (wrap) : expecting a pyslice as second (first) parameter !");
         Py_ssize_t strt=2,stp=2,step=2;
-        PySliceObject *sly=reinterpret_cast<PySliceObject *>(slic);
-        GetIndicesOfSlice(sly,self->getNumberOfTuples(),&strt,&stp,&step,"DataArray::getNumberOfItemGivenBESRelative (wrap) : the input slice is invalid !");
+        GetIndicesOfSlice(slic,self->getNumberOfTuples(),&strt,&stp,&step,"DataArray::getNumberOfItemGivenBESRelative (wrap) : the input slice is invalid !");
         return DataArray::GetNumberOfItemGivenBESRelative(strt,stp,step,"");
       }
 
@@ -640,14 +663,227 @@ namespace MEDCoupling
         if(sz!=2)
           throw INTERP_KERNEL::Exception("DataArrayDouble.__setstate__ : invalid tuple in input ! Should be of size 2 ! Invalid overwrite of __getstate__ ?");
         PyObject *a0(PyTuple_GetItem(inp,0));
-        if(!PyString_Check(a0))
-          throw INTERP_KERNEL::Exception(MSG);
+        self->setName(convertPyObjectToStr(a0,MSG));
         PyObject *a1(PyTuple_GetItem(inp,1));
         std::vector<std::string> a1cpp;
         if(!fillStringVector(a1,a1cpp))
           throw INTERP_KERNEL::Exception(MSG);
-        self->setName(PyString_AsString(a0));
         self->setInfoOnComponents(a1cpp);
+      }
+    }
+  };
+
+  class DataArrayDouble;
+
+  class DataArrayFloat : public DataArray
+  {
+  public:
+    static DataArrayFloat *New();
+    void fillWithValue(float val) throw(INTERP_KERNEL::Exception);
+    bool isEqual(const DataArrayFloat& other, float prec) const throw(INTERP_KERNEL::Exception);
+    bool isEqualWithoutConsideringStr(const DataArrayFloat& other, float prec) const throw(INTERP_KERNEL::Exception);
+    bool isUniform(float val, float eps) const throw(INTERP_KERNEL::Exception);
+    void pushBackSilent(float val) throw(INTERP_KERNEL::Exception);
+    void iota(float init=0.) throw(INTERP_KERNEL::Exception);
+    DataArrayFloatIterator *iterator() throw(INTERP_KERNEL::Exception);
+    MCAuto<DataArrayDouble> convertToDblArr() const throw(INTERP_KERNEL::Exception);
+    static DataArrayFloat *Meld(const DataArrayFloat *a1, const DataArrayFloat *a2) throw(INTERP_KERNEL::Exception);
+    %extend
+    {
+      DataArrayFloat() throw(INTERP_KERNEL::Exception)
+      {
+        return DataArrayFloat::New();
+      }
+
+      static DataArrayFloat *New(PyObject *elt0, PyObject *nbOfTuples=0, PyObject *elt2=0) throw(INTERP_KERNEL::Exception)
+      {
+        return DataArrayT_New<float>(elt0,nbOfTuples,elt2);
+      }
+   
+      DataArrayFloat(PyObject *elt0, PyObject *nbOfTuples=0, PyObject *elt2=0) throw(INTERP_KERNEL::Exception)
+      {
+        return MEDCoupling_DataArrayFloat_New__SWIG_1(elt0,nbOfTuples,elt2);
+      }
+
+      DataArrayFloatIterator *__iter__() throw(INTERP_KERNEL::Exception)
+      {
+        return self->iterator();
+      }
+
+      std::string __repr__() const throw(INTERP_KERNEL::Exception)
+      {
+        std::ostringstream oss;
+        self->reprQuickOverview(oss);
+        return oss.str();
+      }
+
+      std::string __str__() const throw(INTERP_KERNEL::Exception)
+      {
+        return self->reprNotTooLong();
+      }
+
+      int __len__() const throw(INTERP_KERNEL::Exception)
+      {
+        if(self->isAllocated())
+          {
+            return self->getNumberOfTuples();
+          }
+        else
+          {
+            throw INTERP_KERNEL::Exception("DataArrayFloat::__len__ : Instance is NOT allocated !");
+          }
+      }
+
+      PyObject *getValues() const throw(INTERP_KERNEL::Exception)
+      {
+        const float *vals(self->begin());
+        return convertDblArrToPyList<float>(vals,self->getNbOfElems());
+      }
+
+      PyObject *getValuesAsTuple() const throw(INTERP_KERNEL::Exception)
+      {
+        const float *vals(self->begin());
+        int nbOfComp(self->getNumberOfComponents()),nbOfTuples(self->getNumberOfTuples());
+        return convertDblArrToPyListOfTuple<float>(vals,nbOfComp,nbOfTuples);
+      }
+
+      PyObject *isEqualIfNotWhy(const DataArrayFloat& other, float prec) const throw(INTERP_KERNEL::Exception)
+      {
+        std::string ret1;
+        bool ret0=self->isEqualIfNotWhy(other,prec,ret1);
+        PyObject *ret=PyTuple_New(2);
+        PyObject *ret0Py=ret0?Py_True:Py_False;
+        Py_XINCREF(ret0Py);
+        PyTuple_SetItem(ret,0,ret0Py);
+        PyTuple_SetItem(ret,1,PyString_FromString(ret1.c_str()));
+        return ret;
+      }
+      
+      PyObject *__getitem__(PyObject *obj) throw(INTERP_KERNEL::Exception)
+      {
+        return DataArrayT__getitem<float>(self,obj);
+      }
+
+      DataArrayFloat *__setitem__(PyObject *obj, PyObject *value) throw(INTERP_KERNEL::Exception)
+      {
+        return DataArrayT__setitem__<float>(self,obj,value);
+      }
+      
+      PyObject *___iadd___(PyObject *trueSelf, PyObject *obj) throw(INTERP_KERNEL::Exception)
+      {
+        return DataArrayT_iadd<float>(trueSelf,obj,self);
+      }
+
+      PyObject *___isub___(PyObject *trueSelf, PyObject *obj) throw(INTERP_KERNEL::Exception)
+      {
+        return DataArrayT_isub<float>(trueSelf,obj,self);
+      }
+
+      PyObject *___imul___(PyObject *trueSelf, PyObject *obj) throw(INTERP_KERNEL::Exception)
+      {
+        return DataArrayT_imul<float>(trueSelf,obj,self);
+      }
+
+      DataArrayFloat *__rmul__(PyObject *obj) throw(INTERP_KERNEL::Exception)
+      {
+        return DataArrayFPT_rmul<float>(self,obj);
+      }
+
+      PyObject *___idiv___(PyObject *trueSelf, PyObject *obj) throw(INTERP_KERNEL::Exception)
+      {
+        return DataArrayT_idiv<float>(trueSelf,obj,self);
+      }
+      
+#ifdef WITH_NUMPY
+      PyObject *toNumPyArray() throw(INTERP_KERNEL::Exception) // not const. It is not a bug !
+      {
+        return ToNumPyArray<DataArrayFloat,float>(self,NPY_FLOAT,"DataArrayFloat");
+      }
+#endif
+
+      // serialization
+      static PyObject *___new___(PyObject *cls, PyObject *args) throw(INTERP_KERNEL::Exception)
+      {
+        return NewMethWrapCallInitOnlyIfDictWithSingleEltInInput(cls,args,"DataArrayFloat");
+      }
+      
+      PyObject *__getnewargs__() throw(INTERP_KERNEL::Exception)
+      {
+#ifdef WITH_NUMPY
+        if(!self->isAllocated())
+          throw INTERP_KERNEL::Exception("PyWrap of DataArrayFloat.__getnewargs__ : self is not allocated !");
+        PyObject *ret(PyTuple_New(1));
+        PyObject *ret0(PyDict_New());
+        PyObject *numpyArryObj(MEDCoupling_DataArrayFloat_toNumPyArray(self));
+        {// create a dict to discriminite in __new__ if __init__ should be called. Not beautiful but not idea ...
+          PyObject *tmp1(PyInt_FromLong(0));
+          PyDict_SetItem(ret0,tmp1,numpyArryObj); Py_DECREF(tmp1); Py_DECREF(numpyArryObj);
+          PyTuple_SetItem(ret,0,ret0);
+        }
+        return ret;
+#else
+        throw INTERP_KERNEL::Exception("PyWrap of DataArrayByte.__getnewargs__ : not implemented because numpy is not active in your configuration ! No serialization/unserialization available without numpy !");
+#endif
+      }
+    }
+  };
+
+  class DataArrayFloatTuple;
+
+  class DataArrayFloatIterator
+  {
+  public:
+    DataArrayFloatIterator(DataArrayFloat *da);
+    ~DataArrayFloatIterator();
+    %extend
+    {
+      PyObject *next()
+      {
+        DataArrayFloatTuple *ret=self->nextt();
+        if(ret)
+          return SWIG_NewPointerObj(SWIG_as_voidptr(ret),SWIGTYPE_p_MEDCoupling__DataArrayFloatTuple,SWIG_POINTER_OWN|0);
+        else
+          {
+            PyErr_SetString(PyExc_StopIteration,"No more data.");
+            return 0;
+          }
+      }
+    }
+  };
+
+  class DataArrayFloatTuple
+  {
+  public:
+    int getNumberOfCompo() const throw(INTERP_KERNEL::Exception);
+    DataArrayFloat *buildDAFloat(int nbOfTuples, int nbOfCompo) const throw(INTERP_KERNEL::Exception);
+    %extend
+    {
+      std::string __str__() const throw(INTERP_KERNEL::Exception)
+      {
+        return self->repr();
+      }
+
+      float __float__() const throw(INTERP_KERNEL::Exception)
+      {
+        return self->floatValue();
+      }
+
+      DataArrayFloat *buildDAFloat() throw(INTERP_KERNEL::Exception)
+      {
+        return self->buildDAFloat(1,self->getNumberOfCompo());
+      }
+  
+      /*PyObject *___imul___(PyObject *trueSelf, PyObject *obj) throw(INTERP_KERNEL::Exception)
+      {
+        MCAuto<DataArrayFloat> ret=self->buildDAFloat(1,self->getNumberOfCompo());
+        MEDCoupling_DataArrayFloat____imul___(ret,0,obj);
+        Py_XINCREF(trueSelf);
+        return trueSelf;
+        }*/
+
+      PyObject *__len__() throw(INTERP_KERNEL::Exception)
+      {
+        return PyInt_FromLong(self->getNumberOfCompo());
       }
     }
   };
@@ -682,7 +918,6 @@ namespace MEDCoupling
     std::string reprNotTooLong() const throw(INTERP_KERNEL::Exception);
     bool isEqual(const DataArrayDouble& other, double prec) const throw(INTERP_KERNEL::Exception);
     bool isEqualWithoutConsideringStr(const DataArrayDouble& other, double prec) const throw(INTERP_KERNEL::Exception);
-    DataArrayInt *convertToIntArr() const throw(INTERP_KERNEL::Exception);
     DataArrayDouble *fromNoInterlace() const throw(INTERP_KERNEL::Exception);
     DataArrayDouble *toNoInterlace() const throw(INTERP_KERNEL::Exception);
     DataArrayDouble *subArray(int tupleIdBg, int tupleIdEnd=-1) const throw(INTERP_KERNEL::Exception);
@@ -754,6 +989,7 @@ namespace MEDCoupling
     void applyFuncFast64(const std::string& func) throw(INTERP_KERNEL::Exception);
     DataArrayInt *findIdsInRange(double vmin, double vmax) const throw(INTERP_KERNEL::Exception);
     DataArrayInt *findIdsNotInRange(double vmin, double vmax) const throw(INTERP_KERNEL::Exception);
+    DataArrayInt *findIdsStrictlyNegative() const throw(INTERP_KERNEL::Exception);
     static DataArrayDouble *Aggregate(const DataArrayDouble *a1, const DataArrayDouble *a2) throw(INTERP_KERNEL::Exception);
     static DataArrayDouble *Meld(const DataArrayDouble *a1, const DataArrayDouble *a2) throw(INTERP_KERNEL::Exception);
     static DataArrayDouble *Dot(const DataArrayDouble *a1, const DataArrayDouble *a2) throw(INTERP_KERNEL::Exception);
@@ -770,117 +1006,29 @@ namespace MEDCoupling
     void divideEqual(const DataArrayDouble *other) throw(INTERP_KERNEL::Exception);
     static DataArrayDouble *Pow(const DataArrayDouble *a1, const DataArrayDouble *a2) throw(INTERP_KERNEL::Exception);
     void powEqual(const DataArrayDouble *other) throw(INTERP_KERNEL::Exception);
+    MCAuto<DataArrayInt> findIdsGreaterOrEqualTo(double val) const throw(INTERP_KERNEL::Exception);
+    MCAuto<DataArrayInt> findIdsGreaterThan(double val) const throw(INTERP_KERNEL::Exception);
+    MCAuto<DataArrayInt> findIdsLowerOrEqualTo(double val) const throw(INTERP_KERNEL::Exception);
+    MCAuto<DataArrayInt> findIdsLowerThan(double val) const throw(INTERP_KERNEL::Exception);
+    MCAuto<DataArrayInt> convertToIntArr() const throw(INTERP_KERNEL::Exception);
+    MCAuto<DataArrayDouble> selectPartDef(const PartDefinition* pd) const throw(INTERP_KERNEL::Exception);
+    MCAuto<DataArrayDouble> cumSum() const throw(INTERP_KERNEL::Exception);
+    MCAuto<DataArrayFloat> convertToFloatArr() const throw(INTERP_KERNEL::Exception);
     %extend
     {
       DataArrayDouble() throw(INTERP_KERNEL::Exception)
-        {
-          return DataArrayDouble::New();
-        }
+      {
+        return DataArrayDouble::New();
+      }
 
       static DataArrayDouble *New(PyObject *elt0, PyObject *nbOfTuples=0, PyObject *elt2=0) throw(INTERP_KERNEL::Exception)
       {
-        const char *msgBase="MEDCoupling::DataArrayDouble::New : Available API are : \n-DataArrayDouble.New()\n-DataArrayDouble.New([1.,3.,4.])\n-DataArrayDouble.New([1.,3.,4.],3)\n-DataArrayDouble.New([1.,3.,4.,5.],2,2)\n-DataArrayDouble.New([1.,3.,4.,5.,7,8.],3,2)\n-DataArrayDouble.New([(1.,3.),(4.,5.),(7,8.)])\n-DataArrayDouble.New(5)\n-DataArrayDouble.New(5,2)";
-        std::string msg(msgBase);
-#ifdef WITH_NUMPY
-        msg+="\n-DataArrayDouble.New(numpy array with dtype=float64)";
-#endif
-        msg+=" !";
-        if(PyList_Check(elt0) || PyTuple_Check(elt0))
-          {
-            if(nbOfTuples)
-              {
-                if(PyInt_Check(nbOfTuples))
-                  {
-                    int nbOfTuples1=PyInt_AS_LONG(nbOfTuples);
-                    if(nbOfTuples1<0)
-                      throw INTERP_KERNEL::Exception("DataArrayDouble::New : should be a positive set of allocated memory !");
-                    if(elt2)
-                      {
-                        if(PyInt_Check(elt2))
-                          {//DataArrayDouble.New([1.,3.,4.,5.],2,2)
-                            int nbOfCompo=PyInt_AS_LONG(elt2);
-                            if(nbOfCompo<0)
-                              throw INTERP_KERNEL::Exception("DataArrayDouble::New : should be a positive number of components !");
-                            MCAuto<DataArrayDouble> ret=DataArrayDouble::New();
-                            std::vector<double> tmp=fillArrayWithPyListDbl2(elt0,nbOfTuples1,nbOfCompo);
-                            ret->alloc(nbOfTuples1,nbOfCompo); std::copy(tmp.begin(),tmp.end(),ret->getPointer());
-                            return ret.retn();
-                          }
-                        else
-                          throw INTERP_KERNEL::Exception(msg.c_str());
-                      }
-                    else
-                      {//DataArrayDouble.New([1.,3.,4.],3)
-                        MCAuto<DataArrayDouble> ret=DataArrayDouble::New();
-                        int tmpp1=-1;
-                        std::vector<double> tmp=fillArrayWithPyListDbl2(elt0,nbOfTuples1,tmpp1);
-                        ret->alloc(nbOfTuples1,tmpp1); std::copy(tmp.begin(),tmp.end(),ret->getPointer());
-                        return ret.retn();
-                      }
-                  }
-                else
-                  throw INTERP_KERNEL::Exception(msg.c_str());
-              }
-            else
-              {// DataArrayDouble.New([1.,3.,4.])
-                MCAuto<DataArrayDouble> ret=DataArrayDouble::New();
-                int tmpp1=-1,tmpp2=-1;
-                std::vector<double> tmp=fillArrayWithPyListDbl2(elt0,tmpp1,tmpp2);
-                ret->alloc(tmpp1,tmpp2); std::copy(tmp.begin(),tmp.end(),ret->getPointer());
-                return ret.retn();
-              }
-          }
-        else if(PyInt_Check(elt0))
-          {
-            int nbOfTuples1=PyInt_AS_LONG(elt0);
-            if(nbOfTuples1<0)
-              throw INTERP_KERNEL::Exception("DataArrayDouble::New : should be a positive set of allocated memory !");
-            if(nbOfTuples)
-              {
-                if(!elt2)
-                  {
-                    if(PyInt_Check(nbOfTuples))
-                      {//DataArrayDouble.New(5,2)
-                        int nbOfCompo=PyInt_AS_LONG(nbOfTuples);
-                        if(nbOfCompo<0)
-                          throw INTERP_KERNEL::Exception("DataArrayDouble::New : should be a positive number of components !");
-                        MCAuto<DataArrayDouble> ret=DataArrayDouble::New();
-                        ret->alloc(nbOfTuples1,nbOfCompo);
-                        return ret.retn();
-                      }
-                    else
-                      throw INTERP_KERNEL::Exception(msg.c_str());
-                  }
-                else
-                  throw INTERP_KERNEL::Exception(msg.c_str());
-              }
-            else
-              {//DataArrayDouble.New(5)
-                MCAuto<DataArrayDouble> ret=DataArrayDouble::New();
-                ret->alloc(nbOfTuples1,1);
-                return ret.retn();
-              }
-          }
-#ifdef WITH_NUMPY
-        else if(PyArray_Check(elt0) && nbOfTuples==NULL && elt2==NULL)
-          {//DataArrayDouble.New(numpyArray)
-            return BuildNewInstance<DataArrayDouble,double>(elt0,NPY_DOUBLE,&PyCallBackDataArrayDouble_RefType,"FLOAT64");
-          }
-#endif
-        else
-          throw INTERP_KERNEL::Exception(msg.c_str());
-        throw INTERP_KERNEL::Exception(msg.c_str());//to make g++ happy
+        return DataArrayT_New<double>(elt0,nbOfTuples,elt2);
       }
    
       DataArrayDouble(PyObject *elt0, PyObject *nbOfTuples=0, PyObject *elt2=0) throw(INTERP_KERNEL::Exception)
-        {
-          return MEDCoupling_DataArrayDouble_New__SWIG_1(elt0,nbOfTuples,elt2);
-        }
-
-      DataArrayDouble *selectPartDef(const PartDefinition* pd) const throw(INTERP_KERNEL::Exception)
       {
-        MCAuto<DataArrayDouble> ret(self->selectPartDef(pd));
-        return ret.retn();
+        return MEDCoupling_DataArrayDouble_New__SWIG_1(elt0,nbOfTuples,elt2);
       }
 
       void pushBackValsSilent(PyObject *li) throw(INTERP_KERNEL::Exception)
@@ -975,8 +1123,8 @@ namespace MEDCoupling
 
       PyObject *getValues() const throw(INTERP_KERNEL::Exception)
       {
-        const double *vals=self->getConstPointer();
-        return convertDblArrToPyList(vals,self->getNbOfElems());
+        const double *vals(self->begin());
+        return convertDblArrToPyList<double>(vals,self->getNbOfElems());
       }
 
 #ifdef WITH_NUMPY
@@ -1000,10 +1148,9 @@ namespace MEDCoupling
 
       PyObject *getValuesAsTuple() const throw(INTERP_KERNEL::Exception)
       {
-        const double *vals=self->getConstPointer();
-        int nbOfComp=self->getNumberOfComponents();
-        int nbOfTuples=self->getNumberOfTuples();
-        return convertDblArrToPyListOfTuple(vals,nbOfComp,nbOfTuples);
+        const double *vals(self->begin());
+        int nbOfComp(self->getNumberOfComponents()),nbOfTuples(self->getNumberOfTuples());
+        return convertDblArrToPyListOfTuple<double>(vals,nbOfComp,nbOfTuples);
       }
 
       DataArrayDouble *symmetry3DPlane(PyObject *point, PyObject *normalVector) throw(INTERP_KERNEL::Exception)
@@ -1031,7 +1178,7 @@ namespace MEDCoupling
         const double *vectorPtr(convertObjToPossibleCpp5_Safe(normalVector,sw,val,a,aa,bb,msg,1,3,true));
         double res[9];
         DataArrayDouble::GiveBaseForPlane(vectorPtr,res);
-        return convertDblArrToPyListOfTuple(res,3,3);
+        return convertDblArrToPyListOfTuple<double>(res,3,3);
       }
 
       DataArrayDouble *fromCartToCylGiven(const DataArrayDouble *coords, PyObject *center, PyObject *vector) const
@@ -1187,10 +1334,10 @@ namespace MEDCoupling
 
       PyObject *getMinMaxPerComponent() const throw(INTERP_KERNEL::Exception)
       {
-        int nbOfCompo=self->getNumberOfComponents();
-        INTERP_KERNEL::AutoPtr<double> tmp=new double[2*nbOfCompo];
+        int nbOfCompo(self->getNumberOfComponents());
+        INTERP_KERNEL::AutoPtr<double> tmp(new double[2*nbOfCompo]);
         self->getMinMaxPerComponent(tmp);
-        PyObject *ret=convertDblArrToPyListOfTuple(tmp,2,nbOfCompo);
+        PyObject *ret=convertDblArrToPyListOfTuple<double>(tmp,2,nbOfCompo);
         return ret;
       }
 
@@ -1199,14 +1346,14 @@ namespace MEDCoupling
         int sz=self->getNumberOfComponents();
         INTERP_KERNEL::AutoPtr<double> tmp=new double[sz];
         self->accumulate(tmp);
-        return convertDblArrToPyList(tmp,sz);
+        return convertDblArrToPyList<double>(tmp,sz);
       }
 
       DataArrayDouble *accumulatePerChunck(PyObject *indexArr) const throw(INTERP_KERNEL::Exception)
       {
         int sw,sz,val;
         std::vector<int> val2;
-        const int *bg=convertObjToPossibleCpp1_Safe(indexArr,sw,sz,val,val2);
+        const int *bg=convertIntStarLikePyObjToCppIntStar(indexArr,sw,sz,val,val2);
         return self->accumulatePerChunck(bg,bg+sz);
       }
 
@@ -1259,7 +1406,7 @@ namespace MEDCoupling
         int sz=self->getNumberOfComponents();
         INTERP_KERNEL::AutoPtr<double> tmp=new double[sz];
         self->getTuple(tupleId,tmp);
-        return convertDblArrToPyList(tmp,sz);
+        return convertDblArrToPyList<double>(tmp,sz);
       }
 
       static DataArrayDouble *Aggregate(PyObject *li) throw(INTERP_KERNEL::Exception)
@@ -1309,454 +1456,12 @@ namespace MEDCoupling
 
       PyObject *__getitem__(PyObject *obj) throw(INTERP_KERNEL::Exception)
       {
-        const char msg[]="Unexpected situation in DataArrayDouble::__getitem__ !";
-        const char msg2[]="DataArrayDouble::__getitem__ : Mismatch of slice values in 2nd parameter (components) !";
-        self->checkAllocated();
-        int nbOfTuples=self->getNumberOfTuples();
-        int nbOfComponents=self->getNumberOfComponents();
-        int it1,ic1;
-        std::vector<int> vt1,vc1;
-        std::pair<int, std::pair<int,int> > pt1,pc1;
-        DataArrayInt *dt1=0,*dc1=0;
-        int sw;
-        convertObjToPossibleCpp3(obj,nbOfTuples,nbOfComponents,sw,it1,ic1,vt1,vc1,pt1,pc1,dt1,dc1);
-        MCAuto<DataArrayDouble> ret;
-        switch(sw)
-          {
-          case 1:
-            if(nbOfComponents==1)
-              return PyFloat_FromDouble(self->getIJSafe(it1,0));
-            return SWIG_NewPointerObj(SWIG_as_voidptr(self->selectByTupleIdSafe(&it1,&it1+1)),SWIGTYPE_p_MEDCoupling__DataArrayDouble, SWIG_POINTER_OWN | 0 );
-          case 2:
-            return SWIG_NewPointerObj(SWIG_as_voidptr(self->selectByTupleIdSafe(&vt1[0],&vt1[0]+vt1.size())),SWIGTYPE_p_MEDCoupling__DataArrayDouble, SWIG_POINTER_OWN | 0 );
-          case 3:
-            return SWIG_NewPointerObj(SWIG_as_voidptr(self->selectByTupleIdSafeSlice(pt1.first,pt1.second.first,pt1.second.second)),SWIGTYPE_p_MEDCoupling__DataArrayDouble, SWIG_POINTER_OWN | 0 );
-          case 4:
-            return SWIG_NewPointerObj(SWIG_as_voidptr(self->selectByTupleIdSafe(dt1->getConstPointer(),dt1->getConstPointer()+dt1->getNbOfElems())),SWIGTYPE_p_MEDCoupling__DataArrayDouble, SWIG_POINTER_OWN | 0 );
-          case 5:
-            return PyFloat_FromDouble(self->getIJSafe(it1,ic1));
-          case 6:
-            {
-              ret=self->selectByTupleIdSafe(&vt1[0],&vt1[0]+vt1.size());
-              std::vector<int> v2(1,ic1);
-              return SWIG_NewPointerObj(SWIG_as_voidptr(ret->keepSelectedComponents(v2)),SWIGTYPE_p_MEDCoupling__DataArrayDouble, SWIG_POINTER_OWN | 0 );
-            }
-          case 7:
-            {
-              ret=self->selectByTupleIdSafeSlice(pt1.first,pt1.second.first,pt1.second.second);
-              std::vector<int> v2(1,ic1);
-              return SWIG_NewPointerObj(SWIG_as_voidptr(ret->keepSelectedComponents(v2)),SWIGTYPE_p_MEDCoupling__DataArrayDouble, SWIG_POINTER_OWN | 0 );
-            }
-          case 8:
-            {
-              ret=self->selectByTupleIdSafe(dt1->getConstPointer(),dt1->getConstPointer()+dt1->getNbOfElems());
-              std::vector<int> v2(1,ic1);
-              return SWIG_NewPointerObj(SWIG_as_voidptr(ret->keepSelectedComponents(v2)),SWIGTYPE_p_MEDCoupling__DataArrayDouble, SWIG_POINTER_OWN | 0 );
-            }
-          case 9:
-            {
-              ret=self->selectByTupleIdSafe(&it1,&it1+1);
-              return SWIG_NewPointerObj(SWIG_as_voidptr(ret->keepSelectedComponents(vc1)),SWIGTYPE_p_MEDCoupling__DataArrayDouble, SWIG_POINTER_OWN | 0 );
-            }
-          case 10:
-            {
-              ret=self->selectByTupleIdSafe(&vt1[0],&vt1[0]+vt1.size());
-              return SWIG_NewPointerObj(SWIG_as_voidptr(ret->keepSelectedComponents(vc1)),SWIGTYPE_p_MEDCoupling__DataArrayDouble, SWIG_POINTER_OWN | 0 );
-            }
-          case 11:
-            {
-              ret=self->selectByTupleIdSafeSlice(pt1.first,pt1.second.first,pt1.second.second);
-              return SWIG_NewPointerObj(SWIG_as_voidptr(ret->keepSelectedComponents(vc1)),SWIGTYPE_p_MEDCoupling__DataArrayDouble, SWIG_POINTER_OWN | 0 );
-            }
-          case 12:
-            {
-              ret=self->selectByTupleIdSafe(dt1->getConstPointer(),dt1->getConstPointer()+dt1->getNbOfElems());
-              return SWIG_NewPointerObj(SWIG_as_voidptr(ret->keepSelectedComponents(vc1)),SWIGTYPE_p_MEDCoupling__DataArrayDouble, SWIG_POINTER_OWN | 0 );
-            }
-          case 13:
-            {
-              ret=self->selectByTupleIdSafe(&it1,&it1+1);
-              int nbOfComp=DataArray::GetNumberOfItemGivenBESRelative(pc1.first,pc1.second.first,pc1.second.second,msg2);
-              std::vector<int> v2(nbOfComp);
-              for(int i=0;i<nbOfComp;i++)
-                v2[i]=pc1.first+i*pc1.second.second;
-              return SWIG_NewPointerObj(SWIG_as_voidptr(ret->keepSelectedComponents(v2)),SWIGTYPE_p_MEDCoupling__DataArrayDouble, SWIG_POINTER_OWN | 0 );
-            }
-          case 14:
-            {
-              ret=self->selectByTupleIdSafe(&vt1[0],&vt1[0]+vt1.size());
-              int nbOfComp=DataArray::GetNumberOfItemGivenBESRelative(pc1.first,pc1.second.first,pc1.second.second,msg2);
-              std::vector<int> v2(nbOfComp);
-              for(int i=0;i<nbOfComp;i++)
-                v2[i]=pc1.first+i*pc1.second.second;
-              return SWIG_NewPointerObj(SWIG_as_voidptr(ret->keepSelectedComponents(v2)),SWIGTYPE_p_MEDCoupling__DataArrayDouble, SWIG_POINTER_OWN | 0 );
-            }
-          case 15:
-            {
-              ret=self->selectByTupleIdSafeSlice(pt1.first,pt1.second.first,pt1.second.second);
-              int nbOfComp=DataArray::GetNumberOfItemGivenBESRelative(pc1.first,pc1.second.first,pc1.second.second,msg2);
-              std::vector<int> v2(nbOfComp);
-              for(int i=0;i<nbOfComp;i++)
-                v2[i]=pc1.first+i*pc1.second.second;
-              return SWIG_NewPointerObj(SWIG_as_voidptr(ret->keepSelectedComponents(v2)),SWIGTYPE_p_MEDCoupling__DataArrayDouble, SWIG_POINTER_OWN | 0 );
-            }
-          case 16:
-            {
-              ret=self->selectByTupleIdSafe(dt1->getConstPointer(),dt1->getConstPointer()+dt1->getNbOfElems());
-              int nbOfComp=DataArray::GetNumberOfItemGivenBESRelative(pc1.first,pc1.second.first,pc1.second.second,msg2);
-              std::vector<int> v2(nbOfComp);
-              for(int i=0;i<nbOfComp;i++)
-                v2[i]=pc1.first+i*pc1.second.second;
-              return SWIG_NewPointerObj(SWIG_as_voidptr(ret->keepSelectedComponents(v2)),SWIGTYPE_p_MEDCoupling__DataArrayDouble, SWIG_POINTER_OWN | 0 );
-            }
-          default:
-            throw INTERP_KERNEL::Exception(msg);
-          }
+        return DataArrayT__getitem<double>(self,obj);
       }
 
       DataArrayDouble *__setitem__(PyObject *obj, PyObject *value) throw(INTERP_KERNEL::Exception)
       {
-        self->checkAllocated();
-        const char msg[]="Unexpected situation in DataArrayDouble::__setitem__ !";
-        int nbOfTuples=self->getNumberOfTuples();
-        int nbOfComponents=self->getNumberOfComponents();
-        int sw1,sw2;
-        double i1;
-        std::vector<double> v1;
-        DataArrayDouble *d1=0;
-        convertObjToPossibleCpp4(value,sw1,i1,v1,d1);
-        int it1,ic1;
-        std::vector<int> vt1,vc1;
-        std::pair<int, std::pair<int,int> > pt1,pc1;
-        DataArrayInt *dt1=0,*dc1=0;
-        convertObjToPossibleCpp3(obj,nbOfTuples,nbOfComponents,sw2,it1,ic1,vt1,vc1,pt1,pc1,dt1,dc1);
-        MCAuto<DataArrayDouble> tmp;
-        switch(sw2)
-          {
-          case 1:
-            {
-              switch(sw1)
-                {
-                case 1:
-                  self->setPartOfValuesSimple1(i1,it1,it1+1,1,0,nbOfComponents,1);
-                  return self;
-                case 2:
-                  tmp=DataArrayDouble::New();
-                  tmp->useArray(&v1[0],false,CPP_DEALLOC,1,v1.size());
-                  self->setPartOfValues1(tmp,it1,it1+1,1,0,nbOfComponents,1,false);
-                  return self;
-                case 3:
-                  self->setPartOfValues1(d1,it1,it1+1,1,0,nbOfComponents,1);
-                  return self;
-                default:
-                  throw INTERP_KERNEL::Exception(msg);
-                }
-              break;
-            }
-          case 2:
-            {
-              switch(sw1)
-                {
-                case 1:
-                  self->setPartOfValuesSimple3(i1,&vt1[0],&vt1[0]+vt1.size(),0,nbOfComponents,1);
-                  return self;
-                case 2:
-                  tmp=DataArrayDouble::New();
-                  tmp->useArray(&v1[0],false,CPP_DEALLOC,1,v1.size());
-                  self->setPartOfValues3(tmp,&vt1[0],&vt1[0]+vt1.size(),0,nbOfComponents,1,false);
-                  return self;
-                case 3:
-                  self->setPartOfValues3(d1,&vt1[0],&vt1[0]+vt1.size(),0,nbOfComponents,1);
-                  return self;
-                default:
-                  throw INTERP_KERNEL::Exception(msg);
-                }
-              break;
-            }
-          case 3:
-            {
-              switch(sw1)
-                {
-                case 1:
-                  self->setPartOfValuesSimple1(i1,pt1.first,pt1.second.first,pt1.second.second,0,nbOfComponents,1);
-                  return self;
-                case 2:
-                  tmp=DataArrayDouble::New();
-                  tmp->useArray(&v1[0],false,CPP_DEALLOC,1,v1.size());
-                  self->setPartOfValues1(tmp,pt1.first,pt1.second.first,pt1.second.second,0,nbOfComponents,1,false);
-                  return self;
-                case 3:
-                  self->setPartOfValues1(d1,pt1.first,pt1.second.first,pt1.second.second,0,nbOfComponents,1);
-                  return self;
-                default:
-                  throw INTERP_KERNEL::Exception(msg);
-                }
-              break;
-            }
-          case 4:
-            {
-              switch(sw1)
-                {
-                case 1:
-                  self->setPartOfValuesSimple3(i1,dt1->getConstPointer(),dt1->getConstPointer()+dt1->getNbOfElems(),0,nbOfComponents,1);
-                  return self;
-                case 2:
-                  tmp=DataArrayDouble::New();
-                  tmp->useArray(&v1[0],false,CPP_DEALLOC,1,v1.size());
-                  self->setPartOfValues3(tmp,dt1->getConstPointer(),dt1->getConstPointer()+dt1->getNbOfElems(),0,nbOfComponents,1,false);
-                  return self;
-                case 3:
-                  self->setPartOfValues3(d1,dt1->getConstPointer(),dt1->getConstPointer()+dt1->getNbOfElems(),0,nbOfComponents,1);
-                  return self;
-                default:
-                  throw INTERP_KERNEL::Exception(msg);
-                }
-              break;
-            }
-          case 5:
-            {
-              switch(sw1)
-                {
-                case 1:
-                  self->setPartOfValuesSimple1(i1,it1,it1+1,1,ic1,ic1+1,1);
-                  return self;
-                case 2:
-                  tmp=DataArrayDouble::New();
-                  tmp->useArray(&v1[0],false,CPP_DEALLOC,1,v1.size());
-                  self->setPartOfValues1(tmp,it1,it1+1,1,ic1,ic1+1,1,false);
-                  return self;
-                case 3:
-                  self->setPartOfValues1(d1,it1,it1+1,1,ic1,ic1+1,1);
-                  return self;
-                default:
-                  throw INTERP_KERNEL::Exception(msg);
-                }
-              break;
-            }
-          case 6:
-            {
-              switch(sw1)
-                {
-                case 1:
-                  self->setPartOfValuesSimple3(i1,&vt1[0],&vt1[0]+vt1.size(),ic1,ic1+1,1);
-                  return self;
-                case 2:
-                  tmp=DataArrayDouble::New();
-                  tmp->useArray(&v1[0],false,CPP_DEALLOC,1,v1.size());
-                  self->setPartOfValues3(tmp,&vt1[0],&vt1[0]+vt1.size(),ic1,ic1+1,1,false);
-                  return self;
-                case 3:
-                  self->setPartOfValues3(d1,&vt1[0],&vt1[0]+vt1.size(),ic1,ic1+1,1);
-                  return self;
-                default:
-                  throw INTERP_KERNEL::Exception(msg);
-                }
-              break;
-            }
-          case 7:
-            {
-              switch(sw1)
-                {
-                case 1:
-                  self->setPartOfValuesSimple1(i1,pt1.first,pt1.second.first,pt1.second.second,ic1,ic1+1,1);
-                  return self;
-                case 2:
-                  tmp=DataArrayDouble::New();
-                  tmp->useArray(&v1[0],false,CPP_DEALLOC,1,v1.size());
-                  self->setPartOfValues1(tmp,pt1.first,pt1.second.first,pt1.second.second,ic1,ic1+1,1,false);
-                  return self;
-                case 3:
-                  self->setPartOfValues1(d1,pt1.first,pt1.second.first,pt1.second.second,ic1,ic1+1,1);
-                  return self;
-                default:
-                  throw INTERP_KERNEL::Exception(msg);
-                }
-              break;
-            }
-          case 8:
-            {
-              switch(sw1)
-                {
-                case 1:
-                  self->setPartOfValuesSimple3(i1,dt1->getConstPointer(),dt1->getConstPointer()+dt1->getNbOfElems(),ic1,ic1+1,1);
-                  return self;
-                case 2:
-                  tmp=DataArrayDouble::New();
-                  tmp->useArray(&v1[0],false,CPP_DEALLOC,1,v1.size());
-                  self->setPartOfValues3(tmp,dt1->getConstPointer(),dt1->getConstPointer()+dt1->getNbOfElems(),ic1,ic1+1,1,false);
-                  return self;
-                case 3:
-                  self->setPartOfValues3(d1,dt1->getConstPointer(),dt1->getConstPointer()+dt1->getNbOfElems(),ic1,ic1+1,1);
-                  return self;
-                default:
-                  throw INTERP_KERNEL::Exception(msg);
-                }
-              break;
-            }
-          case 9:
-            {
-              switch(sw1)
-                {
-                case 1:
-                  self->setPartOfValuesSimple2(i1,&it1,&it1+1,&vc1[0],&vc1[0]+vc1.size());
-                  return self;
-                case 2:
-                  tmp=DataArrayDouble::New();
-                  tmp->useArray(&v1[0],false,CPP_DEALLOC,1,v1.size());
-                  self->setPartOfValues2(tmp,&it1,&it1+1,&vc1[0],&vc1[0]+vc1.size(),false);
-                  return self;
-                case 3:
-                  self->setPartOfValues2(d1,&it1,&it1+1,&vc1[0],&vc1[0]+vc1.size());
-                  return self;
-                default:
-                  throw INTERP_KERNEL::Exception(msg);
-                }
-              break;
-            }
-          case 10:
-            {
-              switch(sw1)
-                {
-                case 1:
-                  self->setPartOfValuesSimple2(i1,&vt1[0],&vt1[0]+vt1.size(),&vc1[0],&vc1[0]+vc1.size());
-                  return self;
-                case 2:
-                  tmp=DataArrayDouble::New();
-                  tmp->useArray(&v1[0],false,CPP_DEALLOC,1,v1.size());
-                  self->setPartOfValues2(tmp,&vt1[0],&vt1[0]+vt1.size(),&vc1[0],&vc1[0]+vc1.size(),false);
-                  return self;
-                case 3:
-                  self->setPartOfValues2(d1,&vt1[0],&vt1[0]+vt1.size(),&vc1[0],&vc1[0]+vc1.size());
-                  return self;
-                default:
-                  throw INTERP_KERNEL::Exception(msg);
-                }
-              break;
-            }
-          case 11:
-            {
-              switch(sw1)
-                {
-                case 1:
-                  self->setPartOfValuesSimple4(i1,pt1.first,pt1.second.first,pt1.second.second,&vc1[0],&vc1[0]+vc1.size());
-                  return self;
-                case 2:
-                  tmp=DataArrayDouble::New();
-                  tmp->useArray(&v1[0],false,CPP_DEALLOC,1,v1.size());
-                  self->setPartOfValues4(tmp,pt1.first,pt1.second.first,pt1.second.second,&vc1[0],&vc1[0]+vc1.size(),false);
-                  return self;
-                case 3:
-                  self->setPartOfValues4(d1,pt1.first,pt1.second.first,pt1.second.second,&vc1[0],&vc1[0]+vc1.size());
-                  return self;
-                default:
-                  throw INTERP_KERNEL::Exception(msg);
-                }
-              break;
-            }
-          case 12:
-            {
-              switch(sw1)
-                {
-                case 1:
-                  self->setPartOfValuesSimple2(i1,dt1->getConstPointer(),dt1->getConstPointer()+dt1->getNbOfElems(),&vc1[0],&vc1[0]+vc1.size());
-                  return self;
-                case 2:
-                  tmp=DataArrayDouble::New();
-                  tmp->useArray(&v1[0],false,CPP_DEALLOC,1,v1.size());
-                  self->setPartOfValues2(tmp,dt1->getConstPointer(),dt1->getConstPointer()+dt1->getNbOfElems(),&vc1[0],&vc1[0]+vc1.size(),false);
-                  return self;
-                case 3:
-                  self->setPartOfValues2(d1,dt1->getConstPointer(),dt1->getConstPointer()+dt1->getNbOfElems(),&vc1[0],&vc1[0]+vc1.size());
-                  return self;
-                default:
-                  throw INTERP_KERNEL::Exception(msg);
-                }
-              break;
-            }
-          case 13:
-            {
-              switch(sw1)
-                {
-                case 1:
-                  self->setPartOfValuesSimple1(i1,it1,it1+1,1,pc1.first,pc1.second.first,pc1.second.second);
-                  return self;
-                case 2:
-                  tmp=DataArrayDouble::New();
-                  tmp->useArray(&v1[0],false,CPP_DEALLOC,1,v1.size());
-                  self->setPartOfValues1(tmp,it1,it1+1,1,pc1.first,pc1.second.first,pc1.second.second,false);
-                  return self;
-                case 3:
-                  self->setPartOfValues1(d1,it1,it1+1,1,pc1.first,pc1.second.first,pc1.second.second);
-                  return self;
-                default:
-                  throw INTERP_KERNEL::Exception(msg);
-                }
-              break;
-            }
-          case 14:
-            {
-              switch(sw1)
-                {
-                case 1:
-                  self->setPartOfValuesSimple3(i1,&vt1[0],&vt1[0]+vt1.size(),pc1.first,pc1.second.first,pc1.second.second);
-                  return self;
-                case 2:
-                  tmp=DataArrayDouble::New();
-                  tmp->useArray(&v1[0],false,CPP_DEALLOC,1,v1.size());
-                  self->setPartOfValues3(tmp,&vt1[0],&vt1[0]+vt1.size(),pc1.first,pc1.second.first,pc1.second.second,false);
-                  return self;
-                case 3:
-                  self->setPartOfValues3(d1,&vt1[0],&vt1[0]+vt1.size(),pc1.first,pc1.second.first,pc1.second.second);
-                  return self;
-                default:
-                  throw INTERP_KERNEL::Exception(msg);
-                }
-              break;
-            }
-          case 15:
-            {
-              switch(sw1)
-                {
-                case 1:
-                  self->setPartOfValuesSimple1(i1,pt1.first,pt1.second.first,pt1.second.second,pc1.first,pc1.second.first,pc1.second.second);
-                  return self;
-                case 2:
-                  tmp=DataArrayDouble::New();
-                  tmp->useArray(&v1[0],false,CPP_DEALLOC,1,v1.size());
-                  self->setPartOfValues1(tmp,pt1.first,pt1.second.first,pt1.second.second,pc1.first,pc1.second.first,pc1.second.second,false);
-                  return self;
-                case 3:
-                  self->setPartOfValues1(d1,pt1.first,pt1.second.first,pt1.second.second,pc1.first,pc1.second.first,pc1.second.second);
-                  return self;
-                default:
-                  throw INTERP_KERNEL::Exception(msg);
-                }
-              break;
-            }
-          case 16:
-            {
-              switch(sw1)
-                {
-                case 1:
-                  self->setPartOfValuesSimple3(i1,dt1->getConstPointer(),dt1->getConstPointer()+dt1->getNbOfElems(),pc1.first,pc1.second.first,pc1.second.second);
-                  return self;
-                case 2:
-                  tmp=DataArrayDouble::New();
-                  tmp->useArray(&v1[0],false,CPP_DEALLOC,1,v1.size());
-                  self->setPartOfValues3(tmp,dt1->getConstPointer(),dt1->getConstPointer()+dt1->getNbOfElems(),pc1.first,pc1.second.first,pc1.second.second,false);
-                  return self;
-                case 3:
-                  self->setPartOfValues3(d1,dt1->getConstPointer(),dt1->getConstPointer()+dt1->getNbOfElems(),pc1.first,pc1.second.first,pc1.second.second);
-                  return self;
-                default:
-                  throw INTERP_KERNEL::Exception(msg);
-                }
-              break;
-            }
-          default:
-            throw INTERP_KERNEL::Exception(msg);
-          }
-        return self;
+        return DataArrayT__setitem__<double>(self,obj,value);
       }
 
       DataArrayDouble *__neg__() const throw(INTERP_KERNEL::Exception)
@@ -1790,7 +1495,7 @@ namespace MEDCoupling
           }
 #endif
         //
-        convertObjToPossibleCpp5(obj,sw,val,a,aa,bb);
+        convertDoubleStarLikePyObjToCpp_2(obj,sw,val,a,aa,bb);
         switch(sw)
           {
           case 1:
@@ -1826,7 +1531,7 @@ namespace MEDCoupling
         DataArrayDoubleTuple *aa;
         std::vector<double> bb;
         int sw;
-        convertObjToPossibleCpp5(obj,sw,val,a,aa,bb);
+        convertDoubleStarLikePyObjToCpp_2(obj,sw,val,a,aa,bb);
         switch(sw)
           {
           case 1:
@@ -1852,44 +1557,7 @@ namespace MEDCoupling
    
       PyObject *___iadd___(PyObject *trueSelf, PyObject *obj) throw(INTERP_KERNEL::Exception)
       {
-        const char msg[]="Unexpected situation in __iadd__ !";
-        double val;
-        DataArrayDouble *a;
-        DataArrayDoubleTuple *aa;
-        std::vector<double> bb;
-        int sw;
-        convertObjToPossibleCpp5(obj,sw,val,a,aa,bb);
-        switch(sw)
-          {
-          case 1:
-            {
-              self->applyLin(1.,val);
-              Py_XINCREF(trueSelf);
-              return trueSelf;
-            }
-          case 2:
-            {
-              self->addEqual(a);
-              Py_XINCREF(trueSelf);
-              return trueSelf;
-            }
-          case 3:
-            {
-              MCAuto<DataArrayDouble> aaa=aa->buildDADouble(1,self->getNumberOfComponents());
-              self->addEqual(aaa);
-              Py_XINCREF(trueSelf);
-              return trueSelf;
-            }
-          case 4:
-            {
-              MCAuto<DataArrayDouble> aaa=DataArrayDouble::New(); aaa->useArray(&bb[0],false,CPP_DEALLOC,1,(int)bb.size());
-              self->addEqual(aaa);
-              Py_XINCREF(trueSelf);
-              return trueSelf;
-            }
-          default:
-            throw INTERP_KERNEL::Exception(msg);
-          }
+        return DataArrayT_iadd<double>(trueSelf,obj,self);
       }
 
       PyObject *__sub__(PyObject *obj) throw(INTERP_KERNEL::Exception)
@@ -1918,7 +1586,7 @@ namespace MEDCoupling
           }
 #endif
         //
-        convertObjToPossibleCpp5(obj,sw,val,a,aa,bb);
+        convertDoubleStarLikePyObjToCpp_2(obj,sw,val,a,aa,bb);
         switch(sw)
           {
           case 1:
@@ -1954,7 +1622,7 @@ namespace MEDCoupling
         DataArrayDoubleTuple *aa;
         std::vector<double> bb;
         int sw;
-        convertObjToPossibleCpp5(obj,sw,val,a,aa,bb);
+        convertDoubleStarLikePyObjToCpp_2(obj,sw,val,a,aa,bb);
         switch(sw)
           {
           case 1:
@@ -1980,44 +1648,7 @@ namespace MEDCoupling
 
       PyObject *___isub___(PyObject *trueSelf, PyObject *obj) throw(INTERP_KERNEL::Exception)
       {
-        const char msg[]="Unexpected situation in __isub__ !";
-        double val;
-        DataArrayDouble *a;
-        DataArrayDoubleTuple *aa;
-        std::vector<double> bb;
-        int sw;
-        convertObjToPossibleCpp5(obj,sw,val,a,aa,bb);
-        switch(sw)
-          {
-          case 1:
-            {
-              self->applyLin(1,-val);
-              Py_XINCREF(trueSelf);
-              return trueSelf;
-            }
-          case 2:
-            {
-              self->substractEqual(a);
-              Py_XINCREF(trueSelf);
-              return trueSelf;
-            }
-          case 3:
-            {
-              MCAuto<DataArrayDouble> aaa=aa->buildDADouble(1,self->getNumberOfComponents());
-              self->substractEqual(aaa);
-              Py_XINCREF(trueSelf);
-              return trueSelf;
-            }
-          case 4:
-            {
-              MCAuto<DataArrayDouble> aaa=DataArrayDouble::New(); aaa->useArray(&bb[0],false,CPP_DEALLOC,1,(int)bb.size());
-              self->substractEqual(aaa);
-              Py_XINCREF(trueSelf);
-              return trueSelf;
-            }
-          default:
-            throw INTERP_KERNEL::Exception(msg);
-          }
+        return DataArrayT_isub<double>(trueSelf,obj,self);
       }
 
       PyObject *__mul__(PyObject *obj) throw(INTERP_KERNEL::Exception)
@@ -2046,7 +1677,7 @@ namespace MEDCoupling
           }
 #endif
         //
-        convertObjToPossibleCpp5(obj,sw,val,a,aa,bb);
+        convertDoubleStarLikePyObjToCpp_2(obj,sw,val,a,aa,bb);
         switch(sw)
           {
           case 1:
@@ -2076,76 +1707,12 @@ namespace MEDCoupling
 
       DataArrayDouble *__rmul__(PyObject *obj) throw(INTERP_KERNEL::Exception)
       {
-        const char msg[]="Unexpected situation in __rmul__ !";
-        double val;
-        DataArrayDouble *a;
-        DataArrayDoubleTuple *aa;
-        std::vector<double> bb;
-        int sw;
-        convertObjToPossibleCpp5(obj,sw,val,a,aa,bb);
-        switch(sw)
-          {
-          case 1:
-            {
-              MCAuto<DataArrayDouble> ret=self->deepCopy();
-              ret->applyLin(val,0.);
-              return ret.retn();
-            }
-          case 3:
-            {
-              MCAuto<DataArrayDouble> aaa=aa->buildDADouble(1,self->getNumberOfComponents());
-              return DataArrayDouble::Multiply(self,aaa);
-            }
-          case 4:
-            {
-              MCAuto<DataArrayDouble> aaa=DataArrayDouble::New(); aaa->useArray(&bb[0],false,CPP_DEALLOC,1,(int)bb.size());
-              return DataArrayDouble::Multiply(self,aaa);
-            }
-          default:
-            throw INTERP_KERNEL::Exception(msg);
-          }
+        return DataArrayFPT_rmul<double>(self,obj);
       }
 
       PyObject *___imul___(PyObject *trueSelf, PyObject *obj) throw(INTERP_KERNEL::Exception)
       {
-        const char msg[]="Unexpected situation in __imul__ !";
-        double val;
-        DataArrayDouble *a;
-        DataArrayDoubleTuple *aa;
-        std::vector<double> bb;
-        int sw;
-        convertObjToPossibleCpp5(obj,sw,val,a,aa,bb);
-        switch(sw)
-          {
-          case 1:
-            {
-              self->applyLin(val,0.);
-              Py_XINCREF(trueSelf);
-              return trueSelf;
-            }
-          case 2:
-            {
-              self->multiplyEqual(a);
-              Py_XINCREF(trueSelf);
-              return trueSelf;
-            }
-          case 3:
-            {
-              MCAuto<DataArrayDouble> aaa=aa->buildDADouble(1,self->getNumberOfComponents());
-              self->multiplyEqual(aaa);
-              Py_XINCREF(trueSelf);
-              return trueSelf;
-            }
-          case 4:
-            {
-              MCAuto<DataArrayDouble> aaa=DataArrayDouble::New(); aaa->useArray(&bb[0],false,CPP_DEALLOC,1,(int)bb.size());
-              self->multiplyEqual(aaa);
-              Py_XINCREF(trueSelf);
-              return trueSelf;
-            }
-          default:
-            throw INTERP_KERNEL::Exception(msg);
-          }
+        return DataArrayT_imul<double>(trueSelf,obj,self);
       }
 
       PyObject *__div__(PyObject *obj) throw(INTERP_KERNEL::Exception)
@@ -2174,7 +1741,7 @@ namespace MEDCoupling
           }
 #endif
         //
-        convertObjToPossibleCpp5(obj,sw,val,a,aa,bb);
+        convertDoubleStarLikePyObjToCpp_2(obj,sw,val,a,aa,bb);
         switch(sw)
           {
           case 1:
@@ -2212,7 +1779,7 @@ namespace MEDCoupling
         DataArrayDoubleTuple *aa;
         std::vector<double> bb;
         int sw;
-        convertObjToPossibleCpp5(obj,sw,val,a,aa,bb);
+        convertDoubleStarLikePyObjToCpp_2(obj,sw,val,a,aa,bb);
         switch(sw)
           {
           case 1:
@@ -2238,46 +1805,7 @@ namespace MEDCoupling
 
       PyObject *___idiv___(PyObject *trueSelf, PyObject *obj) throw(INTERP_KERNEL::Exception)
       {
-        const char msg[]="Unexpected situation in __idiv__ !";
-        double val;
-        DataArrayDouble *a;
-        DataArrayDoubleTuple *aa;
-        std::vector<double> bb;
-        int sw;
-        convertObjToPossibleCpp5(obj,sw,val,a,aa,bb);
-        switch(sw)
-          {
-          case 1:
-            {
-              if(val==0.)
-                throw INTERP_KERNEL::Exception("DataArrayDouble::__div__ : trying to divide by zero !");
-              self->applyLin(1./val,0.);
-              Py_XINCREF(trueSelf);
-              return trueSelf;
-            }
-          case 2:
-            {
-              self->divideEqual(a);
-              Py_XINCREF(trueSelf);
-              return trueSelf;
-            }
-          case 3:
-            {
-              MCAuto<DataArrayDouble> aaa=aa->buildDADouble(1,self->getNumberOfComponents());
-              self->divideEqual(aaa);
-              Py_XINCREF(trueSelf);
-              return trueSelf;
-            }
-          case 4:
-            {
-              MCAuto<DataArrayDouble> aaa=DataArrayDouble::New(); aaa->useArray(&bb[0],false,CPP_DEALLOC,1,(int)bb.size());
-              self->divideEqual(aaa);
-              Py_XINCREF(trueSelf);
-              return trueSelf;
-            }
-          default:
-            throw INTERP_KERNEL::Exception(msg);
-          }
+        return DataArrayT_idiv<double>(trueSelf,obj,self);
       }
    
       DataArrayDouble *__pow__(PyObject *obj) throw(INTERP_KERNEL::Exception)
@@ -2288,7 +1816,7 @@ namespace MEDCoupling
         DataArrayDoubleTuple *aa;
         std::vector<double> bb;
         int sw;
-        convertObjToPossibleCpp5(obj,sw,val,a,aa,bb);
+        convertDoubleStarLikePyObjToCpp_2(obj,sw,val,a,aa,bb);
         switch(sw)
           {
           case 1:
@@ -2324,7 +1852,7 @@ namespace MEDCoupling
         DataArrayDoubleTuple *aa;
         std::vector<double> bb;
         int sw;
-        convertObjToPossibleCpp5(obj,sw,val,a,aa,bb);
+        convertDoubleStarLikePyObjToCpp_2(obj,sw,val,a,aa,bb);
         switch(sw)
           {
           case 1:
@@ -2356,7 +1884,7 @@ namespace MEDCoupling
         DataArrayDoubleTuple *aa;
         std::vector<double> bb;
         int sw;
-        convertObjToPossibleCpp5(obj,sw,val,a,aa,bb);
+        convertDoubleStarLikePyObjToCpp_2(obj,sw,val,a,aa,bb);
         switch(sw)
           {
           case 1:
@@ -2530,7 +2058,7 @@ namespace MEDCoupling
         MEDCoupling::DataArrayInt *daIntTyypp=0;
         const double *pt=self->getConstPointer();
         int nbc=self->getNumberOfCompo();
-        convertObjToPossibleCpp2WithNegIntInterp(obj,nbc,sw,singleVal,multiVal,slic,daIntTyypp);
+        convertIntStarOrSliceLikePyObjToCppWithNegIntInterp(obj,nbc,sw,singleVal,multiVal,slic,daIntTyypp);
         switch(sw)
           {
           case 1:
@@ -2594,13 +2122,13 @@ namespace MEDCoupling
         std::vector<double> multiValV;
         MEDCoupling::DataArrayDoubleTuple *daIntTyyppV=0;
         int nbc=self->getNumberOfCompo();
-        convertObjToPossibleCpp44(value,sw1,singleValV,multiValV,daIntTyyppV);
+        convertDoubleStarLikePyObjToCpp(value,sw1,singleValV,multiValV,daIntTyyppV);
         int singleVal;
         std::vector<int> multiVal;
         std::pair<int, std::pair<int,int> > slic;
         MEDCoupling::DataArrayInt *daIntTyypp=0;
         double *pt=self->getPointer();
-        convertObjToPossibleCpp2WithNegIntInterp(obj,nbc,sw2,singleVal,multiVal,slic,daIntTyypp);
+        convertIntStarOrSliceLikePyObjToCppWithNegIntInterp(obj,nbc,sw2,singleVal,multiVal,slic,daIntTyypp);
         switch(sw2)
           {
           case 1:
@@ -2777,7 +2305,7 @@ namespace MEDCoupling
     DataArrayInt *invertArrayO2N2N2O(int newNbOfElem) const throw(INTERP_KERNEL::Exception);
     DataArrayInt *invertArrayN2O2O2N(int oldNbOfElem) const throw(INTERP_KERNEL::Exception);
     DataArrayInt *invertArrayO2N2N2OBis(int newNbOfElem) const throw(INTERP_KERNEL::Exception);
-    DataArrayDouble *convertToDblArr() const throw(INTERP_KERNEL::Exception);
+    MCAuto< MapII > invertArrayN2O2O2NOptimized() const throw(INTERP_KERNEL::Exception);
     DataArrayInt *indicesOfSubPart(const DataArrayInt& partOfThis) const throw(INTERP_KERNEL::Exception);
     DataArrayInt *fromNoInterlace() const throw(INTERP_KERNEL::Exception);
     DataArrayInt *toNoInterlace() const throw(INTERP_KERNEL::Exception);
@@ -2786,6 +2314,7 @@ namespace MEDCoupling
     DataArrayInt *buildPermArrPerLevel() const throw(INTERP_KERNEL::Exception);
     bool isIota(int sizeExpected) const throw(INTERP_KERNEL::Exception);
     bool isUniform(int val) const throw(INTERP_KERNEL::Exception);
+    int checkUniformAndGuess() const throw(INTERP_KERNEL::Exception);
     bool hasUniqueValues() const throw(INTERP_KERNEL::Exception);
     DataArrayInt *subArray(int tupleIdBg, int tupleIdEnd=-1) const throw(INTERP_KERNEL::Exception);
     void transpose() throw(INTERP_KERNEL::Exception);
@@ -2835,7 +2364,7 @@ namespace MEDCoupling
     void applyRPow(int val) throw(INTERP_KERNEL::Exception);
     DataArrayInt *findIdsInRange(int vmin, int vmax) const throw(INTERP_KERNEL::Exception);
     DataArrayInt *findIdsNotInRange(int vmin, int vmax) const throw(INTERP_KERNEL::Exception);
-    DataArrayInt *findIdsStricltyNegative() const throw(INTERP_KERNEL::Exception);
+    DataArrayInt *findIdsStrictlyNegative() const throw(INTERP_KERNEL::Exception);
     bool checkAllIdsInRange(int vmin, int vmax) const throw(INTERP_KERNEL::Exception);
     static DataArrayInt *Aggregate(const DataArrayInt *a1, const DataArrayInt *a2, int offsetA2) throw(INTERP_KERNEL::Exception);
     static DataArrayInt *Meld(const DataArrayInt *a1, const DataArrayInt *a2) throw(INTERP_KERNEL::Exception);
@@ -2871,6 +2400,14 @@ namespace MEDCoupling
     void modulusEqual(const DataArrayInt *other) throw(INTERP_KERNEL::Exception);
     static DataArrayInt *Pow(const DataArrayInt *a1, const DataArrayInt *a2) throw(INTERP_KERNEL::Exception);
     void powEqual(const DataArrayInt *other) throw(INTERP_KERNEL::Exception);
+    MCAuto<DataArrayInt> fromLinkedListOfPairToList() const throw(INTERP_KERNEL::Exception);
+    MCAuto<DataArrayInt> findIdsGreaterOrEqualTo(int val) const throw(INTERP_KERNEL::Exception);
+    MCAuto<DataArrayInt> findIdsGreaterThan(int val) const throw(INTERP_KERNEL::Exception);
+    MCAuto<DataArrayInt> findIdsLowerOrEqualTo(int val) const throw(INTERP_KERNEL::Exception);
+    MCAuto<DataArrayInt> findIdsLowerThan(int val) const throw(INTERP_KERNEL::Exception);
+    MCAuto<DataArrayInt> selectPartDef(const PartDefinition* pd) const throw(INTERP_KERNEL::Exception);
+    MCAuto<DataArrayDouble> convertToDblArr() const throw(INTERP_KERNEL::Exception);
+    MCAuto<DataArrayFloat> convertToFloatArr() const throw(INTERP_KERNEL::Exception);
   public:
     static DataArrayInt *Range(int begin, int end, int step) throw(INTERP_KERNEL::Exception);
     %extend
@@ -2979,7 +2516,7 @@ namespace MEDCoupling
         {
           return MEDCoupling_DataArrayInt_New__SWIG_1(elt0,nbOfTuples,nbOfComp);
         }
-
+      
       std::string __str__() const throw(INTERP_KERNEL::Exception)
       {
         return self->reprNotTooLong();
@@ -3006,12 +2543,6 @@ namespace MEDCoupling
       {
         return self->iterator();
       }
-
-      DataArrayInt *selectPartDef(const PartDefinition* pd) const throw(INTERP_KERNEL::Exception)
-      {
-        MCAuto<DataArrayInt> ret(self->selectPartDef(pd));
-        return ret.retn();
-      }
    
       PyObject *accumulate() const throw(INTERP_KERNEL::Exception)
       {
@@ -3025,7 +2556,7 @@ namespace MEDCoupling
       {
         int sw,sz,val;
         std::vector<int> val2;
-        const int *bg=convertObjToPossibleCpp1_Safe(indexArr,sw,sz,val,val2);
+        const int *bg=convertIntStarLikePyObjToCppIntStar(indexArr,sw,sz,val,val2);
         return self->accumulatePerChunck(bg,bg+sz);
       }
 
@@ -3033,7 +2564,7 @@ namespace MEDCoupling
       {
         int sw,sz,val;
         std::vector<int> val2;
-        const int *bg(convertObjToPossibleCpp1_Safe(inputTuple,sw,sz,val,val2));
+        const int *bg(convertIntStarLikePyObjToCppIntStar(inputTuple,sw,sz,val,val2));
         return self->findIdsEqualTuple(bg,bg+sz);
       }
 
@@ -3051,8 +2582,7 @@ namespace MEDCoupling
         if(!PySlice_Check(slic))
           throw INTERP_KERNEL::Exception("DataArrayInt::buildExplicitArrOfSliceOnScaledArr (wrap) : expecting a pyslice as second (first) parameter !");
         Py_ssize_t strt=2,stp=2,step=2;
-        PySliceObject *sly=reinterpret_cast<PySliceObject *>(slic);
-        GetIndicesOfSliceExplicitely(sly,&strt,&stp,&step,"DataArrayInt::buildExplicitArrOfSliceOnScaledArr (wrap) : the input slice is invalid !");
+        GetIndicesOfSliceExplicitely(slic,&strt,&stp,&step,"DataArrayInt::buildExplicitArrOfSliceOnScaledArr (wrap) : the input slice is invalid !");
         if(strt==std::numeric_limits<int>::max() || stp==std::numeric_limits<int>::max())
           throw INTERP_KERNEL::Exception("DataArrayInt::buildExplicitArrOfSliceOnScaledArr (wrap) : the input slice contains some unknowns that can't be determined in static method ! Call DataArray::getSlice (non static) instead !");
         return self->buildExplicitArrOfSliceOnScaledArr(strt,stp,step);
@@ -3073,8 +2603,8 @@ namespace MEDCoupling
         int newNbOfTuples=-1;
         int szArr,szArrI,sw,iTypppArr,iTypppArrI;
         std::vector<int> stdvecTyyppArr,stdvecTyyppArrI;
-        const int *arrPtr=convertObjToPossibleCpp1_Safe(arr,sw,szArr,iTypppArr,stdvecTyyppArr);
-        const int *arrIPtr=convertObjToPossibleCpp1_Safe(arrI,sw,szArrI,iTypppArrI,stdvecTyyppArrI);
+        const int *arrPtr=convertIntStarLikePyObjToCppIntStar(arr,sw,szArr,iTypppArr,stdvecTyyppArr);
+        const int *arrIPtr=convertIntStarLikePyObjToCppIntStar(arrI,sw,szArrI,iTypppArrI,stdvecTyyppArrI);
         DataArrayInt *ret0=MEDCoupling::DataArrayInt::ConvertIndexArrayToO2N(nbOfOldTuples,arrPtr,arrIPtr,arrIPtr+szArrI,newNbOfTuples);
         PyObject *ret=PyTuple_New(2);
         PyTuple_SetItem(ret,0,SWIG_NewPointerObj((void*)ret0,SWIGTYPE_p_MEDCoupling__DataArrayInt,SWIG_POINTER_OWN | 0));
@@ -3087,7 +2617,7 @@ namespace MEDCoupling
         MCAuto<DataArrayInt> ret(DataArrayInt::New());
         int szArr,sw,iTypppArr;
         std::vector<int> stdvecTyyppArr;
-        const int *arrPtr(convertObjToPossibleCpp1_Safe(arr,sw,szArr,iTypppArr,stdvecTyyppArr));
+        const int *arrPtr(convertIntStarLikePyObjToCppIntStar(arr,sw,szArr,iTypppArr,stdvecTyyppArr));
         int *pt(MEDCoupling::DataArrayInt::CheckAndPreparePermutation(arrPtr,arrPtr+szArr));
         ret->useArray(pt,true,MEDCoupling::C_DEALLOC,szArr,1);
         return ret.retn();
@@ -3191,12 +2721,21 @@ namespace MEDCoupling
       void transformWithIndArr(PyObject *li) throw(INTERP_KERNEL::Exception)
       {
         void *da=0;
-        int res1=SWIG_ConvertPtr(li,&da,SWIGTYPE_p_MEDCoupling__DataArrayInt, 0 |  0 );
+        int res1(SWIG_ConvertPtr(li,&da,SWIGTYPE_p_MEDCoupling__DataArrayInt, 0 |  0 ));
         if (!SWIG_IsOK(res1))
           {
-            int size;
-            INTERP_KERNEL::AutoPtr<int> tmp=convertPyToNewIntArr2(li,&size);
-            self->transformWithIndArr(tmp,tmp+size);
+            int res2(SWIG_ConvertPtr(li,&da,SWIGTYPE_p_MEDCoupling__MapII, 0 |  0 ));
+            if(SWIG_IsOK(res2))
+              {
+                MapII *m=reinterpret_cast<MapII *>(da);
+                self->transformWithIndArr(*m);
+              }
+            else
+              {
+                int size;
+                INTERP_KERNEL::AutoPtr<int> tmp=convertPyToNewIntArr2(li,&size);
+                self->transformWithIndArr(tmp,tmp+size);
+              }
           }
         else
           {
@@ -3212,7 +2751,7 @@ namespace MEDCoupling
         std::vector<int> multiVal;
         std::pair<int, std::pair<int,int> > slic;
         MEDCoupling::DataArrayInt *daIntTyypp=0;
-        convertObjToPossibleCpp2(obj,self->getNumberOfTuples(),sw,singleVal,multiVal,slic,daIntTyypp);
+        convertIntStarOrSliceLikePyObjToCpp(obj,self->getNumberOfTuples(),sw,singleVal,multiVal,slic,daIntTyypp);
         switch(sw)
           {
           case 1:
@@ -3233,7 +2772,7 @@ namespace MEDCoupling
         std::vector<int> multiVal;
         std::pair<int, std::pair<int,int> > slic;
         MEDCoupling::DataArrayInt *daIntTyypp=0;
-        convertObjToPossibleCpp2(obj,self->getNumberOfTuples(),sw,singleVal,multiVal,slic,daIntTyypp);
+        convertIntStarOrSliceLikePyObjToCpp(obj,self->getNumberOfTuples(),sw,singleVal,multiVal,slic,daIntTyypp);
         switch(sw)
           {
           case 1:
@@ -3638,7 +3177,7 @@ namespace MEDCoupling
         std::vector<int> v1;
         DataArrayInt *d1=0;
         DataArrayIntTuple *dd1=0;
-        convertObjToPossibleCpp1(value,sw1,i1,v1,d1,dd1);
+        convertIntStarLikePyObjToCpp(value,sw1,i1,v1,d1,dd1);
         int it1,ic1;
         std::vector<int> vt1,vc1;
         std::pair<int, std::pair<int,int> > pt1,pc1;
@@ -4050,7 +3589,7 @@ namespace MEDCoupling
         std::vector<int> aa;
         DataArrayIntTuple *aaa;
         int sw;
-        convertObjToPossibleCpp1(obj,sw,val,aa,a,aaa);
+        convertIntStarLikePyObjToCpp(obj,sw,val,aa,a,aaa);
         switch(sw)
           {
           case 1:
@@ -4086,7 +3625,7 @@ namespace MEDCoupling
         std::vector<int> aa;
         DataArrayIntTuple *aaa;
         int sw;
-        convertObjToPossibleCpp1(obj,sw,val,aa,a,aaa);
+        convertIntStarLikePyObjToCpp(obj,sw,val,aa,a,aaa);
         switch(sw)
           {
           case 1:
@@ -4118,7 +3657,7 @@ namespace MEDCoupling
         std::vector<int> aa;
         DataArrayIntTuple *aaa;
         int sw;
-        convertObjToPossibleCpp1(obj,sw,val,aa,a,aaa);
+        convertIntStarLikePyObjToCpp(obj,sw,val,aa,a,aaa);
         switch(sw)
           {
           case 1:
@@ -4160,7 +3699,7 @@ namespace MEDCoupling
         std::vector<int> aa;
         DataArrayIntTuple *aaa;
         int sw;
-        convertObjToPossibleCpp1(obj,sw,val,aa,a,aaa);
+        convertIntStarLikePyObjToCpp(obj,sw,val,aa,a,aaa);
         switch(sw)
           {
           case 1:
@@ -4196,7 +3735,7 @@ namespace MEDCoupling
         std::vector<int> aa;
         DataArrayIntTuple *aaa;
         int sw;
-        convertObjToPossibleCpp1(obj,sw,val,aa,a,aaa);
+        convertIntStarLikePyObjToCpp(obj,sw,val,aa,a,aaa);
         switch(sw)
           {
           case 1:
@@ -4228,7 +3767,7 @@ namespace MEDCoupling
         std::vector<int> aa;
         DataArrayIntTuple *aaa;
         int sw;
-        convertObjToPossibleCpp1(obj,sw,val,aa,a,aaa);
+        convertIntStarLikePyObjToCpp(obj,sw,val,aa,a,aaa);
         switch(sw)
           {
           case 1:
@@ -4270,7 +3809,7 @@ namespace MEDCoupling
         std::vector<int> aa;
         DataArrayIntTuple *aaa;
         int sw;
-        convertObjToPossibleCpp1(obj,sw,val,aa,a,aaa);
+        convertIntStarLikePyObjToCpp(obj,sw,val,aa,a,aaa);
         switch(sw)
           {
           case 1:
@@ -4306,7 +3845,7 @@ namespace MEDCoupling
         std::vector<int> aa;
         DataArrayIntTuple *aaa;
         int sw;
-        convertObjToPossibleCpp1(obj,sw,val,aa,a,aaa);
+        convertIntStarLikePyObjToCpp(obj,sw,val,aa,a,aaa);
         switch(sw)
           {
           case 1:
@@ -4338,7 +3877,7 @@ namespace MEDCoupling
         std::vector<int> aa;
         DataArrayIntTuple *aaa;
         int sw;
-        convertObjToPossibleCpp1(obj,sw,val,aa,a,aaa);
+        convertIntStarLikePyObjToCpp(obj,sw,val,aa,a,aaa);
         switch(sw)
           {
           case 1:
@@ -4380,7 +3919,7 @@ namespace MEDCoupling
         std::vector<int> aa;
         DataArrayIntTuple *aaa;
         int sw;
-        convertObjToPossibleCpp1(obj,sw,val,aa,a,aaa);
+        convertIntStarLikePyObjToCpp(obj,sw,val,aa,a,aaa);
         switch(sw)
           {
           case 1:
@@ -4416,7 +3955,7 @@ namespace MEDCoupling
         std::vector<int> aa;
         DataArrayIntTuple *aaa;
         int sw;
-        convertObjToPossibleCpp1(obj,sw,val,aa,a,aaa);
+        convertIntStarLikePyObjToCpp(obj,sw,val,aa,a,aaa);
         switch(sw)
           {
           case 1:
@@ -4448,7 +3987,7 @@ namespace MEDCoupling
         std::vector<int> aa;
         DataArrayIntTuple *aaa;
         int sw;
-        convertObjToPossibleCpp1(obj,sw,val,aa,a,aaa);
+        convertIntStarLikePyObjToCpp(obj,sw,val,aa,a,aaa);
         switch(sw)
           {
           case 1:
@@ -4490,7 +4029,7 @@ namespace MEDCoupling
         std::vector<int> aa;
         DataArrayIntTuple *aaa;
         int sw;
-        convertObjToPossibleCpp1(obj,sw,val,aa,a,aaa);
+        convertIntStarLikePyObjToCpp(obj,sw,val,aa,a,aaa);
         switch(sw)
           {
           case 1:
@@ -4526,7 +4065,7 @@ namespace MEDCoupling
         std::vector<int> aa;
         DataArrayIntTuple *aaa;
         int sw;
-        convertObjToPossibleCpp1(obj,sw,val,aa,a,aaa);
+        convertIntStarLikePyObjToCpp(obj,sw,val,aa,a,aaa);
         switch(sw)
           {
           case 1:
@@ -4562,7 +4101,7 @@ namespace MEDCoupling
         std::vector<int> aa;
         DataArrayIntTuple *aaa;
         int sw;
-        convertObjToPossibleCpp1(obj,sw,val,aa,a,aaa);
+        convertIntStarLikePyObjToCpp(obj,sw,val,aa,a,aaa);
         switch(sw)
           {
           case 1:
@@ -4597,7 +4136,7 @@ namespace MEDCoupling
         std::vector<int> aa;
         DataArrayIntTuple *aaa;
         int sw;
-        convertObjToPossibleCpp1(obj,sw,val,aa,a,aaa);
+        convertIntStarLikePyObjToCpp(obj,sw,val,aa,a,aaa);
         switch(sw)
           {
           case 1:
@@ -4633,7 +4172,7 @@ namespace MEDCoupling
         std::vector<int> aa;
         DataArrayIntTuple *aaa;
         int sw;
-        convertObjToPossibleCpp1(obj,sw,val,aa,a,aaa);
+        convertIntStarLikePyObjToCpp(obj,sw,val,aa,a,aaa);
         switch(sw)
           {
           case 1:
@@ -4669,7 +4208,7 @@ namespace MEDCoupling
         std::vector<int> aa;
         DataArrayIntTuple *aaa;
         int sw;
-        convertObjToPossibleCpp1(obj,sw,val,aa,a,aaa);
+        convertIntStarLikePyObjToCpp(obj,sw,val,aa,a,aaa);
         switch(sw)
           {
           case 1:
@@ -4707,7 +4246,7 @@ namespace MEDCoupling
       {
         int szArr,sw,iTypppArr;
         std::vector<int> stdvecTyyppArr;
-        const int *tmp=convertObjToPossibleCpp1_Safe(li,sw,szArr,iTypppArr,stdvecTyyppArr);
+        const int *tmp=convertIntStarLikePyObjToCppIntStar(li,sw,szArr,iTypppArr,stdvecTyyppArr);
         self->pushBackValsSilent(tmp,tmp+szArr);
       }
       
@@ -4853,7 +4392,6 @@ namespace MEDCoupling
         Py_XINCREF(trueSelf);
         return trueSelf;
       }
-
       PyObject *___idiv___(PyObject *trueSelf, PyObject *obj) throw(INTERP_KERNEL::Exception)
       {
         MCAuto<DataArrayInt> ret=self->buildDAInt(1,self->getNumberOfCompo());
@@ -4885,7 +4423,7 @@ namespace MEDCoupling
         MEDCoupling::DataArrayInt *daIntTyypp=0;
         const int *pt=self->getConstPointer();
         int nbc=self->getNumberOfCompo();
-        convertObjToPossibleCpp2WithNegIntInterp(obj,nbc,sw,singleVal,multiVal,slic,daIntTyypp);
+        convertIntStarOrSliceLikePyObjToCppWithNegIntInterp(obj,nbc,sw,singleVal,multiVal,slic,daIntTyypp);
         switch(sw)
           {
           case 1:
@@ -4956,7 +4494,7 @@ namespace MEDCoupling
         std::pair<int, std::pair<int,int> > slic;
         MEDCoupling::DataArrayInt *daIntTyypp=0;
         int *pt=self->getPointer();
-        convertObjToPossibleCpp2WithNegIntInterp(obj,nbc,sw2,singleVal,multiVal,slic,daIntTyypp);
+        convertIntStarOrSliceLikePyObjToCppWithNegIntInterp(obj,nbc,sw2,singleVal,multiVal,slic,daIntTyypp);
         switch(sw2)
           {
           case 1:
@@ -5424,7 +4962,7 @@ namespace MEDCoupling
       {
         int sz=-1,sw=-1;
         int ival=-1; std::vector<int> ivval;
-        const int *pt=convertObjToPossibleCpp1_Safe(tupl,sw,sz,ival,ivval);
+        const int *pt=convertIntStarLikePyObjToCppIntStar(tupl,sw,sz,ival,ivval);
         std::vector<char> vals(sz);
         std::copy(pt,pt+sz,vals.begin());
         return self->presenceOfTuple(vals);
@@ -5434,7 +4972,7 @@ namespace MEDCoupling
       {
         int sz=-1,sw=-1;
         int ival=-1; std::vector<int> ivval;
-        const int *pt=convertObjToPossibleCpp1_Safe(vals,sw,sz,ival,ivval);
+        const int *pt=convertIntStarLikePyObjToCppIntStar(vals,sw,sz,ival,ivval);
         std::vector<char> vals2(sz);
         std::copy(pt,pt+sz,vals2.begin());
         return self->presenceOfValue(vals2);
@@ -5444,7 +4982,7 @@ namespace MEDCoupling
       {
         int sz=-1,sw=-1;
         int ival=-1; std::vector<int> ivval;
-        const int *pt=convertObjToPossibleCpp1_Safe(vals,sw,sz,ival,ivval);
+        const int *pt=convertIntStarLikePyObjToCppIntStar(vals,sw,sz,ival,ivval);
         std::vector<char> vals2(sz);
         std::copy(pt,pt+sz,vals2.begin());
         return self->findIdFirstEqual(vals2);
@@ -5454,7 +4992,7 @@ namespace MEDCoupling
       {
         int sz=-1,sw=-1;
         int ival=-1; std::vector<int> ivval;
-        const int *pt=convertObjToPossibleCpp1_Safe(tupl,sw,sz,ival,ivval);
+        const int *pt=convertIntStarLikePyObjToCppIntStar(tupl,sw,sz,ival,ivval);
         std::vector<char> vals(sz);
         std::copy(pt,pt+sz,vals.begin());
         return self->findIdFirstEqualTuple(vals);
@@ -5464,7 +5002,7 @@ namespace MEDCoupling
       {
         int sz=-1,sw=-1;
         int ival=-1; std::vector<int> ivval;
-        const int *pt=convertObjToPossibleCpp1_Safe(strOrListOfInt,sw,sz,ival,ivval);
+        const int *pt=convertIntStarLikePyObjToCppIntStar(strOrListOfInt,sw,sz,ival,ivval);
         std::vector<char> vals(sz);
         std::copy(pt,pt+sz,vals.begin());
         return self->findIdSequence(vals);
@@ -5584,7 +5122,7 @@ namespace MEDCoupling
         std::vector<int> v1;
         DataArrayInt *d1=0;
         DataArrayIntTuple *dd1=0;
-        convertObjToPossibleCpp1(value,sw1,i1,v1,d1,dd1);
+        convertIntStarLikePyObjToCpp(value,sw1,i1,v1,d1,dd1);
         int it1,ic1;
         std::vector<int> vt1,vc1;
         std::pair<int, std::pair<int,int> > pt1,pc1;
@@ -5889,6 +5427,19 @@ namespace MEDCoupling
                     else
                       throw INTERP_KERNEL::Exception(msg);
                   }
+%#if PY_VERSION_HEX >= 0x03000000
+                else if(PyUnicode_Check(nbOfTuples))
+                  {
+                    if(PyUnicode_GET_LENGTH(nbOfTuples)!=1)
+                      throw INTERP_KERNEL::Exception(msg);
+                    //DataArrayAsciiChar.New(["abc","de","fghi"],"t")
+                    std::vector<std::string> tmp;
+                    if(fillStringVector(elt0,tmp))
+                      return DataArrayAsciiChar::New(tmp,PyUnicode_AsUTF8(nbOfTuples)[0]);
+                    else
+                      throw INTERP_KERNEL::Exception(msg);
+                  }
+%#endif
                 else
                   throw INTERP_KERNEL::Exception(msg);
               }
@@ -5997,6 +5548,15 @@ namespace MEDCoupling
             std::copy(PyString_AsString(tupl),PyString_AsString(tupl)+sz,vals.begin());
             return self->presenceOfTuple(vals);
           }
+%#if PY_VERSION_HEX >= 0x03000000
+        else if(PyUnicode_Check(tupl))
+          {
+            Py_ssize_t sz=PyUnicode_GET_LENGTH(tupl);
+            std::vector<char> vals(sz);
+            std::copy(PyUnicode_AsUTF8(tupl),PyUnicode_AsUTF8(tupl)+sz,vals.begin());
+            return self->presenceOfTuple(vals);
+          }
+%#endif
         else
           throw INTERP_KERNEL::Exception("DataArrayAsciiChar::presenceOfTuple : only strings in input supported !");
       }
@@ -6010,6 +5570,15 @@ namespace MEDCoupling
             std::copy(PyString_AsString(vals),PyString_AsString(vals)+sz,vals2.begin());
             return self->presenceOfValue(vals2);
           }
+%#if PY_VERSION_HEX >= 0x03000000
+        if(PyUnicode_Check(vals))
+          {
+            Py_ssize_t sz=PyUnicode_GET_LENGTH(vals);
+            std::vector<char> vals2(sz);
+            std::copy(PyUnicode_AsUTF8(vals),PyUnicode_AsUTF8(vals)+sz,vals2.begin());
+            return self->presenceOfValue(vals2);
+          }
+%#endif
         else
           throw INTERP_KERNEL::Exception("DataArrayAsciiChar::presenceOfValue : only strings in input supported !");
       }
@@ -6023,6 +5592,15 @@ namespace MEDCoupling
             std::copy(PyString_AsString(vals),PyString_AsString(vals)+sz,vals2.begin());
             return self->findIdFirstEqual(vals2);
           }
+%#if PY_VERSION_HEX >= 0x03000000
+        if(PyUnicode_Check(vals))
+          {
+            Py_ssize_t sz=PyUnicode_GET_LENGTH(vals);
+            std::vector<char> vals2(sz);
+            std::copy(PyUnicode_AsUTF8(vals),PyUnicode_AsUTF8(vals)+sz,vals2.begin());
+            return self->findIdFirstEqual(vals2);
+          }
+%#endif
         else
           throw INTERP_KERNEL::Exception("DataArrayAsciiChar::findIdFirstEqual : only strings in input supported !");
       }
@@ -6036,6 +5614,15 @@ namespace MEDCoupling
             std::copy(PyString_AsString(tupl),PyString_AsString(tupl)+sz,vals.begin());
             return self->findIdFirstEqualTuple(vals);
           }
+%#if PY_VERSION_HEX >= 0x03000000
+        if(PyUnicode_Check(tupl))
+          {
+            Py_ssize_t sz=PyUnicode_GET_LENGTH(tupl);
+            std::vector<char> vals(sz);
+            std::copy(PyUnicode_AsUTF8(tupl),PyUnicode_AsUTF8(tupl)+sz,vals.begin());
+            return self->findIdFirstEqualTuple(vals);
+          }
+%#endif
         else
           throw INTERP_KERNEL::Exception("DataArrayAsciiChar::findIdFirstEqualTuple : only strings in input supported !");
       }
@@ -6049,6 +5636,15 @@ namespace MEDCoupling
             std::copy(PyString_AsString(strOrListOfInt),PyString_AsString(strOrListOfInt)+sz,vals.begin());
             return self->findIdSequence(vals);
           }
+%#if PY_VERSION_HEX >= 0x03000000
+        else if(PyUnicode_Check(strOrListOfInt))
+          {
+            Py_ssize_t sz=PyUnicode_GET_LENGTH(strOrListOfInt);
+            std::vector<char> vals(sz);
+            std::copy(PyUnicode_AsUTF8(strOrListOfInt),PyUnicode_AsUTF8(strOrListOfInt)+sz,vals.begin());
+            return self->findIdSequence(vals);
+          }
+%#endif
         else
           throw INTERP_KERNEL::Exception("DataArrayAsciiChar::search : only strings in input supported !");
       }
@@ -6099,6 +5695,17 @@ namespace MEDCoupling
                   else
                     throw INTERP_KERNEL::Exception("DataArrayAsciiChar::index : 'this' contains one component and trying to find a string with size different from 1 !");
                 }
+%#if PY_VERSION_HEX >= 0x03000000
+              if(PyUnicode_Check(obj))
+                {
+                  Py_ssize_t sz;
+                  char *pt=PyUnicode_AsUTF8AndSize(obj, &sz);
+                  if(sz==1)
+                    return self->findIdFirstEqual(pt[0]);
+                  else
+                    throw INTERP_KERNEL::Exception("DataArrayAsciiChar::index : 'this' contains one component and trying to find a string with size different from 1 !");
+                }
+%#endif
               else
                 throw INTERP_KERNEL::Exception("DataArrayAsciiChar::index : 'this' contains one component and trying to find an element which is not an integer !");
             }
@@ -6125,6 +5732,17 @@ namespace MEDCoupling
                   else
                     throw INTERP_KERNEL::Exception("DataArrayAsciiChar::__contains__ : 'this' contains one component and trying to find a string with size different from 1 !");
                 }
+%#if PY_VERSION_HEX >= 0x03000000
+              if(PyUnicode_Check(obj))
+                {
+                  Py_ssize_t sz;
+                  char *pt=PyUnicode_AsUTF8AndSize(obj, &sz);
+                  if(sz==1)
+                    return self->presenceOfValue(pt[0]);
+                  else
+                    throw INTERP_KERNEL::Exception("DataArrayAsciiChar::__contains__ : 'this' contains one component and trying to find a string with size different from 1 !");
+                }
+%#endif
               else
                 throw INTERP_KERNEL::Exception("DataArrayAsciiChar::__contains__ : 'this' contains one component and trying to find an element which is not an integer !");
             }
@@ -6139,7 +5757,7 @@ namespace MEDCoupling
         std::vector<int> stdvecTyyppArr;
         std::pair<int, std::pair<int,int> > sTyyppArr;
         MEDCoupling::DataArrayInt *daIntTyypp=0;
-        convertObjToPossibleCpp2WithNegIntInterp(obj,self->getNumberOfTuples(),sw,iTypppArr,stdvecTyyppArr,sTyyppArr,daIntTyypp);
+        convertIntStarOrSliceLikePyObjToCppWithNegIntInterp(obj,self->getNumberOfTuples(),sw,iTypppArr,stdvecTyyppArr,sTyyppArr,daIntTyypp);
         switch(sw)
           {
           case 1:
@@ -6164,7 +5782,7 @@ namespace MEDCoupling
         MEDCoupling::DataArrayInt *daIntTyypp=0;
         int nbOfCompo=self->getNumberOfComponents();
         int nbOfTuples=self->getNumberOfTuples();
-        convertObjToPossibleCpp2WithNegIntInterp(obj,nbOfTuples,sw1,iTypppArr,stdvecTyyppArr,sTyyppArr,daIntTyypp);
+        convertIntStarOrSliceLikePyObjToCppWithNegIntInterp(obj,nbOfTuples,sw1,iTypppArr,stdvecTyyppArr,sTyyppArr,daIntTyypp);
         int sw2;
         char vc; std::string sc; std::vector<std::string> vsc; DataArrayChar *dacc=0;
         convertObjToPossibleCpp6(value,sw2,vc,sc,vsc,dacc);

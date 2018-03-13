@@ -10,27 +10,27 @@ AM_CFLAGS = -DDEF_LECT_ECR
 #nodist_EXTRA_test11_SOURCES = dummy.cxx
 
 LDADD = $(top_builddir)/src/libmedC.la
-#EXTRA_DIST = test10.sh test11.sh test31.sh
+EXTRA_DIST = test10.sh
 
 
 TESTS_ENVIRONMENT = eval H5DUMP=@H5DUMP@ SRCDIR="$(abs_srcdir)" BUILDDIR="$(abs_builddir)" \
 		EXECDIR="$(abs_builddir)/../" CP=${CP} CPYMED="yes" AWK=${AWK}
 
-TESTS_LEC = ../test3.sh ../test5.sh ../test7.sh ../test9.sh \
-	../test11.sh ../test11b.sh ../test13.sh ../test15.sh ../test17.sh \
-	../test22.sh ../test24.sh ../test26.sh ../test28.sh \
-	../test30.sh ../test32.sh ../test33.sh
+TESTS_LEC = ../test3_Rd.sh ../test5_Rd.sh ../test7_Rd.sh ../test9_Rd.sh \
+	../test11_Rd.sh ../test11b_Rd.sh ../test13_Rd.sh ../test15_Rd.sh ../test17_Rd.sh \
+	../test22_Rd.sh ../test24_Rd.sh ../test26_Rd.sh ../test28_Rd.sh \
+	../test30_Rd.sh ../test32_Rd.sh ../test33_Rd.sh
 
-TESTS_ECR = ../test1.sh ../test2.sh ../test4.sh ../test6.sh \
-	../test8.sh ../test10.sh ../test12.sh ../test14.sh ../test16.sh \
-	../test18.sh ../test20.sh ../test21.sh ../test23.sh \
-	../test25.sh ../test27.sh ../test29.sh ../test31.sh
+TESTS_ECR = ../test1_Wr.sh ../test2_Wr.sh ../test4_Wr.sh ../test6_Wr.sh \
+	../test8_Wr.sh ./test10.sh ../test12_Wr.sh ../test14_Wr.sh ../test16_Wr.sh \
+	../test18_Wr.sh ../test20_Wr.sh ../test21_Wr.sh ../test23_Wr.sh \
+	../test25_Wr.sh ../test27_Wr.sh ../test29_Wr.sh ../test31_Wr.sh
 
 # ../test19.sh
 
 TESTS =  $(TESTS_ECR) $(TESTS_LEC)
 
-EXTRA_DIST = test.med.ref
+EXTRA_DIST += test.med.ref
 
 CLEANFILES = \
 ./test1.med\

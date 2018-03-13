@@ -80,7 +80,7 @@ IF(MEDFILE_BUILD_SHARED_LIBS)
   TARGET_LINK_LIBRARIES(medC ${HDF5_LIBRARIES} ${MPI_LIBS})
   MED_SET_DEFINITIONS(medC NOGDI)
   
-  INSTALL(TARGETS medC EXPORT ${_export_group} DESTINATION ${INSTALL_LIBRARIES_DIR})  
+  INSTALL(TARGETS medC EXPORT ${_export_group} DESTINATION lib)  
 ENDIF()
 
 ######### Static Libraries ##########
@@ -94,7 +94,7 @@ IF(MEDFILE_BUILD_STATIC_LIBS)
   TARGET_LINK_LIBRARIES(medC_static ${HDF5_LIBRARIES} ${MPI_LIBS})
   MED_SET_DEFINITIONS(medC_static NOGDI)
   
-  INSTALL(TARGETS medC_static EXPORT ${_export_group} DESTINATION ${INSTALL_LIBRARIES_DIR})
+  INSTALL(TARGETS medC_static EXPORT ${_export_group} DESTINATION lib)
 ENDIF()
 
 ########################### Fortran stuff ###################################
@@ -107,14 +107,14 @@ IF(CMAKE_Fortran_COMPILER_WORKS)
     ## if we want the Fortran wrapper to build correctly under win.
     ADD_LIBRARY(medfwrap STATIC ${medfort_wrap_SOURCES})
     TARGET_LINK_LIBRARIES(medfwrap medC)
-    INSTALL(TARGETS medfwrap EXPORT medfileTargetsF DESTINATION ${INSTALL_LIBRARIES_DIR})
+    INSTALL(TARGETS medfwrap EXPORT medfileTargetsF DESTINATION lib)
 
     # Add Shared MED library
     ADD_LIBRARY(med SHARED MEDiterators.c)
     TARGET_LINK_LIBRARIES(med medfwrap)    
    
     # Install only the resulting library:
-    INSTALL(TARGETS med EXPORT medTargetsF DESTINATION ${INSTALL_LIBRARIES_DIR})
+    INSTALL(TARGETS med EXPORT medTargetsF DESTINATION lib)
   ENDIF()
 
   ######### Static Libraries ##########
@@ -127,7 +127,7 @@ IF(CMAKE_Fortran_COMPILER_WORKS)
     ADD_LIBRARY(medfwrap_static STATIC ${medfort_wrap_SOURCES})
     SET_TARGET_PROPERTIES(medfwrap_static PROPERTIES OUTPUT_NAME medfwrap)
     TARGET_LINK_LIBRARIES(medfwrap_static medC_static)
-    INSTALL(TARGETS medfwrap_static EXPORT medfileTargetsF DESTINATION ${INSTALL_LIBRARIES_DIR})
+    INSTALL(TARGETS medfwrap_static EXPORT medfileTargetsF DESTINATION lib)
     
     # Add Static MED library
     ADD_LIBRARY(med_static STATIC MEDiterators.c)
@@ -135,7 +135,7 @@ IF(CMAKE_Fortran_COMPILER_WORKS)
     TARGET_LINK_LIBRARIES(med_static medfwrap_static)
 
     # Install only the resulting library:  
-    INSTALL(TARGETS med_static EXPORT medfileTargetsF DESTINATION ${INSTALL_LIBRARIES_DIR})
+    INSTALL(TARGETS med_static EXPORT medfileTargetsF DESTINATION lib)
   ENDIF()
   
 ENDIF(CMAKE_Fortran_COMPILER_WORKS)

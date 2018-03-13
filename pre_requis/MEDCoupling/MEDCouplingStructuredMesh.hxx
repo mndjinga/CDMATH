@@ -31,9 +31,9 @@ namespace MEDCoupling
   class MEDCouplingStructuredMesh : public MEDCouplingMesh
   {
   public:
-    MEDCOUPLING_EXPORT INTERP_KERNEL::NormalizedCellType getTypeOfCell(int cellId) const;
+    MEDCOUPLING_EXPORT INTERP_KERNEL::NormalizedCellType getTypeOfCell(std::size_t cellId) const;
     MEDCOUPLING_EXPORT std::set<INTERP_KERNEL::NormalizedCellType> getAllGeoTypes() const;
-    MEDCOUPLING_EXPORT int getNumberOfCellsWithType(INTERP_KERNEL::NormalizedCellType type) const;
+    MEDCOUPLING_EXPORT std::size_t getNumberOfCellsWithType(INTERP_KERNEL::NormalizedCellType type) const;
     MEDCOUPLING_EXPORT DataArrayInt *giveCellsWithType(INTERP_KERNEL::NormalizedCellType type) const;
     MEDCOUPLING_EXPORT DataArrayInt *computeNbOfNodesPerCell() const;
     MEDCOUPLING_EXPORT DataArrayInt *computeNbOfFacesPerCell() const;
@@ -42,7 +42,7 @@ namespace MEDCoupling
     MEDCOUPLING_EXPORT std::vector<int> getLocationFromNodeId(int nodeId) const;
     MEDCOUPLING_EXPORT static void GetPosFromId(int eltId, int meshDim, const int *split, int *res);
     MEDCOUPLING_EXPORT static INTERP_KERNEL::NormalizedCellType GetGeoTypeGivenMeshDimension(int meshDim);
-    MEDCOUPLING_EXPORT void getNodeIdsOfCell(int cellId, std::vector<int>& conn) const;
+    MEDCOUPLING_EXPORT void getNodeIdsOfCell(std::size_t cellId, std::vector<int>& conn) const;
     MEDCOUPLING_EXPORT std::size_t getHeapMemorySizeWithoutChildren() const;
     MEDCOUPLING_EXPORT void copyTinyStringsFrom(const MEDCouplingMesh *other);
     MEDCOUPLING_EXPORT bool isEqualIfNotWhy(const MEDCouplingMesh *other, double prec, std::string& reason) const;
@@ -61,7 +61,7 @@ namespace MEDCoupling
     MEDCOUPLING_EXPORT MEDCoupling1SGTUMesh *build1SGTSubLevelMesh() const;
     MEDCOUPLING_EXPORT int getCellIdFromPos(int i, int j, int k) const;
     MEDCOUPLING_EXPORT int getNodeIdFromPos(int i, int j, int k) const;
-    MEDCOUPLING_EXPORT int getNumberOfCells() const;
+    MEDCOUPLING_EXPORT std::size_t getNumberOfCells() const;
     MEDCOUPLING_EXPORT int getNumberOfNodes() const;
     MEDCOUPLING_EXPORT int getMeshDimension() const;
     MEDCOUPLING_EXPORT int getNumberOfCellsOfSubLevelMesh() const;
@@ -117,7 +117,7 @@ namespace MEDCoupling
     static int ZipNodeStructure(const int *nodeStBg, const int *nodeStEnd, int zipNodeSt[3]);
   protected:
     MEDCOUPLING_EXPORT MEDCouplingStructuredMesh();
-    MEDCOUPLING_EXPORT MEDCouplingStructuredMesh(const MEDCouplingStructuredMesh& other, bool deepCopy);
+    MEDCOUPLING_EXPORT MEDCouplingStructuredMesh(const MEDCouplingStructuredMesh& other, bool deepCpy);
     MEDCOUPLING_EXPORT ~MEDCouplingStructuredMesh();
   };
 }
