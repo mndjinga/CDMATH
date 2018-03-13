@@ -20,7 +20,7 @@
 #include "CdmathException.hxx"
 
 #include <iostream>
-#include <cassert>
+
 
 using namespace MEDCoupling;
 using namespace std;
@@ -158,7 +158,7 @@ Mesh::readMeshMed( const std::string filename, const int meshLevel)
 	_mesh->setName(_mesh->getName());
 	_meshDim=_mesh->getMeshDimension();
 	_spaceDim=_mesh->getSpaceDimension();
-	cout<< "Loaded file "<< filename<<", mesh name= "<<m->getName()<<", _meshDim="<< _meshDim<< ", _spaceDim="<< _spaceDim<<endl;
+	cout<<endl<< "Loaded file "<< filename<<", mesh name= "<<m->getName()<<", _meshDim="<< _meshDim<< ", _spaceDim="<< _spaceDim<<endl;
 	setMesh();
 	setGroups(m);
 	m->decrRef();
@@ -275,8 +275,8 @@ Mesh::getIndexFacePeriodic(int indexFace) const
 bool
 Mesh::isBorderNode(int nodeid) const
 {
-	//return getNode(nodeid).isBorder();
-
+	return getNode(nodeid).isBorder();
+	/*
 	Node N=getNode(nodeid);
 	int nbFaces=N.getNumberOfFaces();
 	int i=0;
@@ -286,7 +286,7 @@ Mesh::isBorderNode(int nodeid) const
 		return true;
 	else
 		return false;
-
+	 */
 }
 
 bool
@@ -327,22 +327,26 @@ Mesh::setGroups( const MEDFileUMesh* medmesh)
 		//We check if the group has a relative dimension equal to -1 before calling the function getGroup(-1,groupName.c_str())
 		vector<int>::iterator it = find(nonEmptyGrp.begin(), nonEmptyGrp.end(), -1);
 		if (it != nonEmptyGrp.end()){
-			_groups.push_back(groupName);
+			cout<<"Group of faces named "<<groupName<< " found"<<endl;
+			if ( std::find(_groups.begin(), _groups.end(), groupName) == _groups.end() )
+				_groups.push_back(groupName);
 			MEDCouplingUMesh *m=medmesh->getGroup(-1,groupName.c_str());
 			DataArrayDouble *baryCell = m->computeCellCenterOfMass() ;
 			const double *coorBary=baryCell->getConstPointer();
 			int nb=m->getNumberOfCells();
-			int k=0;
-			for (int ic=0;ic<nb;ic++)
+
+			for (int ic(0), k(0); ic<nb; ic++, k+=_spaceDim)
 			{
-				double xb=coorBary[k];
-				double yb=coorBary[k+1];
+				vector<double> coorBaryXyz(3,0);
+				for (int d=0; d<_spaceDim; d++)
+					coorBaryXyz[d] = coorBary[k+d];
+				Point p1(coorBaryXyz[0],coorBaryXyz[1],coorBaryXyz[2]) ;
+
 				int flag=0;
 				for (int iface=0;iface<_numberOfFaces;iface++ )
 				{
-					double xx=_faces[iface].x();
-					double yy=_faces[iface].y();
-					if(abs(xx-xb)<1.E-10 && abs(yy-yb)<1.E-10)
+					Point p2=_faces[iface].getBarryCenter();
+					if(p1.distance(p2)<1.E-10)
 					{
 						_faces[iface].setGroupName(groupName);
 						flag=1;
@@ -350,32 +354,35 @@ Mesh::setGroups( const MEDFileUMesh* medmesh)
 					}
 				}
 				if (flag==0)
-					assert("face not found");
-				k+=2;
+					throw CdmathException("No face belonging to group " + groupName + " found");
 			}
 			baryCell->decrRef();
 			m->decrRef();
 		}
 		//We check if the group has a relative dimension equal to -meshDim before calling the function getGroup(-meshDim,groupName.c_str())
-		it = find(nonEmptyGrp.begin(), nonEmptyGrp.end(), -_meshDim);
+		it = find(nonEmptyGrp.begin(), nonEmptyGrp.end(), 1-_meshDim);
 		if (it != nonEmptyGrp.end()){
-			_groups.push_back(groupName);
-			MEDCouplingUMesh *m=medmesh->getGroup(-_meshDim,groupName.c_str());
+			cout<<"Group of nodes named "<<groupName<< " found"<<endl;
+			if ( std::find(_groups.begin(), _groups.end(), groupName) == _groups.end() )
+				_groups.push_back(groupName);
+			MEDCouplingUMesh *m=medmesh->getGroup(1-_meshDim,groupName.c_str());
 			DataArrayDouble *coo = m->getCoords() ;
 			const double *cood=coo->getConstPointer();
 
 			int nb=m->getNumberOfNodes();
-			int k=0;
-			for (int ic=0;ic<nb;ic++)
+			for (int ic(0), k(0); ic<nb; ic++, k+=_spaceDim)
 			{
-				double xb=cood[ic*_spaceDim+k];
-				double yb=cood[ic*_spaceDim+k+1];
+				vector<double> coordXyz(3,0);
+				for (int d=0; d<_spaceDim; d++)
+					coordXyz[d] = cood[k+d];
+				Point p1(coordXyz[0],coordXyz[1],coordXyz[2]) ;
+
 				int flag=0;
 				for (int inode=0;inode<_numberOfNodes;inode++ )
 				{
-					double xx=_nodes[inode].x();
-					double yy=_nodes[inode].y();
-					if(abs(xx-xb)<1.E-10 && abs(yy-yb)<1.E-10)
+					Point p2=_nodes[inode].getPoint();
+
+					if(p1.distance(p2)<1.E-10)
 					{
 						_nodes[inode].setGroupName(groupName);
 						flag=1;
@@ -383,8 +390,7 @@ Mesh::setGroups( const MEDFileUMesh* medmesh)
 					}
 				}
 				if (flag==0)
-					assert("node not found");
-				k+=2;
+					throw CdmathException("No node belonging to group " + groupName + " found");
 			}
 			m->decrRef();
 		}
@@ -562,9 +568,7 @@ Mesh::setMesh( void )
 			int nbFaces=tmpI[id+1]-tmpI[id];
 			int nbVertices=mu->getNumberOfNodesInCell(id) ;
 
-			vector<double> coorBaryXyz(3);
-			for (int d=0; d<3; d++)
-				coorBaryXyz[d] = 0.;
+			vector<double> coorBaryXyz(3,0);
 			for (int d=0; d<_spaceDim; d++)
 				coorBaryXyz[d] = coorBary[k+d];
 
@@ -610,9 +614,9 @@ Mesh::setMesh( void )
 				}
 				else//_meshDim==2, number of faces around the cell id is variable, each face is composed of two nodes
 				{
-						Vector xyzn(3);//Normal to the cell
-						for (int d=0; d<_spaceDim; d++)
-							xyzn[d] = tmpNormal[_spaceDim*id+d];
+					Vector xyzn(3);//Normal to the cell
+					for (int d=0; d<_spaceDim; d++)
+						xyzn[d] = tmpNormal[_spaceDim*id+d];
 					for( int el=0;el<nbFaces;el++ )
 					{
 						const int *workv=tmpNE+tmpNEI[work[el]]+1;
