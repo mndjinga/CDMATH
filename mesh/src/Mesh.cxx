@@ -177,6 +177,11 @@ Mesh::setGroupAtFaceByCoords(double x, double y, double z, double eps, std::stri
 		if (abs(FX-x)<eps && abs(FY-y)<eps && abs(FZ-z)<eps)
 		{
 			_faces[iface].setGroupName(groupName);
+			IntTab nodesID= _faces[iface].getNodesId();
+			int nbNodes = _faces[iface].getNumberOfNodes();
+			for(int inode=0 ; inode<nbNodes ; inode++)
+				_nodes[nodesID[inode]].setGroupName(groupName);
+
 			flag=true;
 		}
 	}
@@ -195,6 +200,11 @@ Mesh::setGroupAtPlan(double value, int direction, double eps, std::string groupN
 		if (abs(cord-value)<eps)
 		{
 			_faces[iface].setGroupName(groupName);
+			IntTab nodesID= _faces[iface].getNodesId();
+			int nbNodes = _faces[iface].getNumberOfNodes();
+			for(int inode=0 ; inode<nbNodes ; inode++)
+				_nodes[nodesID[inode]].setGroupName(groupName);
+
 			flag=true;
 		}
 	}
@@ -317,18 +327,14 @@ Mesh::setGroups( const MEDFileUMesh* medmesh)
 		vector<int>::iterator it = find(nonEmptyGrp.begin(), nonEmptyGrp.end(), -1);
 		if (it != nonEmptyGrp.end())
 		{
-			cout<<"Group named "<<groupName<< " found"<<endl;
+			cout<<"Boundary named "<<groupName<< " found"<<endl;
 			if ( std::find(_groups.begin(), _groups.end(), groupName) == _groups.end() )
 				_groups.push_back(groupName);
 			MEDCouplingUMesh *m=medmesh->getGroup(-1,groupName.c_str());
 			DataArrayDouble *baryCell = m->computeCellCenterOfMass() ;
 			const double *coorBary=baryCell->getConstPointer();
-			DataArrayDouble *coo = m->getCoords() ;
-			const double *cood=coo->getConstPointer();
 
-			int nbNodes=m->getNumberOfNodes();
 			int nbCellsSubMesh=m->getNumberOfCells();
-			cout<< "Group node number= " << nbNodes <<" Group face number= " <<nbCellsSubMesh<<endl;
 			for (int ic(0), k(0); ic<nbCellsSubMesh; ic++, k+=_spaceDim)
 			{
 				vector<double> coorBaryXyz(3,0);
