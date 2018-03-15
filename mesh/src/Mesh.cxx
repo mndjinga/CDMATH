@@ -327,7 +327,7 @@ Mesh::setGroups( const MEDFileUMesh* medmesh)
 		vector<int>::iterator it = find(nonEmptyGrp.begin(), nonEmptyGrp.end(), -1);
 		if (it != nonEmptyGrp.end())
 		{
-			cout<<"Boundary named "<<groupName<< " found"<<endl;
+			cout<<"Boundary face group named "<<groupName<< " found"<<endl;
 			if ( std::find(_groups.begin(), _groups.end(), groupName) == _groups.end() )
 				_groups.push_back(groupName);
 			MEDCouplingUMesh *m=medmesh->getGroup(-1,groupName.c_str());
@@ -361,6 +361,43 @@ Mesh::setGroups( const MEDFileUMesh* medmesh)
 					throw CdmathException("No face belonging to group " + groupName + " found");
 			}
 			baryCell->decrRef();
+			m->decrRef();
+		}
+		//We check if the group has a relative dimension equal to -_meshDim before calling the function getNodeGroupArr 
+		it = find(nonEmptyGrp.begin(), nonEmptyGrp.end(), -_meshDim);
+		if (it != nonEmptyGrp.end())
+		{
+			cout<<"Boundary nod group named "<<groupName<< " found"<<endl;
+			if ( std::find(_groups.begin(), _groups.end(), groupName) == _groups.end() )
+				_groups.push_back(groupName);
+			MEDCouplingUMesh *m=medmesh->getGroup(-1,groupName.c_str());
+
+			int nbNodesSubMesh=m->getNumberOfCells();
+			for (int ic(0), k(0); ic<nbCellsSubMesh; ic++, k+=_spaceDim)
+			{
+				vector<double> coorBaryXyz(3,0);
+				for (int d=0; d<_spaceDim; d++)
+					coorBaryXyz[d] = coorBary[k+d];
+				Point p1(coorBaryXyz[0],coorBaryXyz[1],coorBaryXyz[2]) ;
+
+				int flag=0;
+				for (int iface=0;iface<_numberOfFaces;iface++ )
+				{
+					Point p2=_faces[iface].getBarryCenter();
+					if(p1.distance(p2)<1.E-10)
+					{
+						_faces[iface].setGroupName(groupName);
+						IntTab nodesID= _faces[iface].getNodesId();
+						int nbNodes = _faces[iface].getNumberOfNodes();
+						for(int inode=0 ; inode<nbNodes ; inode++)
+							_nodes[nodesID[inode]].setGroupName(groupName);
+						flag=1;
+						break;
+					}
+				}
+				if (flag==0)
+					throw CdmathException("No face belonging to group " + groupName + " found");
+			}
 			m->decrRef();
 		}
 	}
