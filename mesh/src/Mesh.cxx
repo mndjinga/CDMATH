@@ -325,13 +325,13 @@ Mesh::isHexahedral() const
 void
 Mesh::setGroups( const MEDFileUMesh* medmesh, MEDCouplingUMesh*  mu)
 {
-	vector<string> groups=medmesh->getGroupsNames() ;
+	//Searching for face groups
+	vector<string> faceGroups=medmesh->getGroupsNames() ;
 
-	for (unsigned int i=0;i<groups.size();i++ )
+	for (unsigned int i=0;i<faceGroups.size();i++ )
 	{
-		string groupName=groups[i];
+		string groupName=faceGroups[i];
 		vector<int> nonEmptyGrp(medmesh->getGrpNonEmptyLevels(groupName));
-		//Searching for face groups
 		//We check if the group has a relative dimension equal to -1 
 		//before call to the function getGroup(-1,groupName.c_str())
 		vector<int>::iterator it = find(nonEmptyGrp.begin(), nonEmptyGrp.end(), -1);
@@ -369,11 +369,19 @@ Mesh::setGroups( const MEDFileUMesh* medmesh, MEDCouplingUMesh*  mu)
 			baryCell->decrRef();
 			//m->decrRef();
 		}
-			//Searching for node groups
- 			DataArrayInt * nodeGroup=medmesh->getNodeGroupArr( groupName );
-			const int *nodeids=nodeGroup->getConstPointer();
-			if(nodeids!=NULL)
-			{
+	}
+
+	//Searching for node groups
+	vector<string> nodeGroups=medmesh->getGroupsOnSpecifiedLev(1) ;
+
+	for (unsigned int i=0;i<nodeGroups.size();i++ )
+	{
+		string groupName=faceGroups[i];
+		DataArrayInt * nodeGroup=medmesh->getNodeGroupArr( groupName );
+		const int *nodeids=nodeGroup->getConstPointer();
+
+		if(nodeids!=NULL)
+		{
 			cout<<"Boundary node group named "<< groupName << " found"<<endl;
 
 			int nbNodesSubMesh=nodeGroup->getNumberOfTuples();//nodeGroup->getNbOfElems();
@@ -763,7 +771,7 @@ Mesh::setMesh( void )
 	revNodeI->decrRef();
 	revCell->decrRef();
 	revCellI->decrRef();
-	
+
 	return mu;
 }
 
@@ -1293,12 +1301,12 @@ Mesh::writeMED ( const std::string fileName ) const
 	//MEDFileUMesh meshMEDFile;
 	//meshMEDFile.setMeshAtLevel(0,mu);
 	//for(int i=0; i< _groups.size(); i++)
-		//meshMEDFile.setMeshAtLevel(-1,_groups[i]);
+	//meshMEDFile.setMeshAtLevel(-1,_groups[i]);
 	//if (fromScratch)
-		//MEDCoupling::meshMEDFile.write(fname.c_str(),2)	;
+	//MEDCoupling::meshMEDFile.write(fname.c_str(),2)	;
 	//else
-		//MEDCoupling::meshMEDFile.write(fname.c_str(),1)	;
-	
-	
+	//MEDCoupling::meshMEDFile.write(fname.c_str(),1)	;
+
+
 	mu->decrRef();
 }
