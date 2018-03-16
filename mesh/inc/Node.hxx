@@ -18,6 +18,9 @@
 #include "Point.hxx"
 #include "IntTab.hxx"
 
+#include <vector>
+#include <string>
+
 class Node
 {
     public: //----------------------------------------------------------------
@@ -91,12 +94,17 @@ class Node
     double z ( void ) const ;
 
     /**
-     * return groupe name of this node
+     * return the list of group names of this node
      */
-    std::string getGroupName(void) const;
+    std::vector<std::string> getGroupNames(void) const;
 
     /**
-     * @param groupName : groupe name to set of this node
+     * return a specific group name of this node
+     */
+    std::string getGroupName(int igroup=0) const;
+
+    /**
+     *  set a groupe name for this node
      */
     void setGroupName(const std::string groupName);
 
@@ -173,9 +181,9 @@ class Node
     int _region ;
 
     /*
-     * The group name of the Node.
+     * The group names of the Node.
      */
-    std::string _groupName ;
+    std::vector<std::string> _groupNames ;
 };
 
 #endif /* NODe_HXX_ */

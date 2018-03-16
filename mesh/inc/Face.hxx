@@ -19,6 +19,7 @@
 #include "IntTab.hxx"
 #include "Point.hxx"
 
+#include <vector>
 #include <string>
 
 class Face
@@ -105,12 +106,17 @@ class Face
     double z ( void ) const ;
 
     /**
-     * return groupe name of this face
+     * return the list of group names of this face
      */
-    std::string getGroupName(void) const;
+    std::vector<std::string> getGroupNames(void) const;
 
     /**
-     * @param groupName : groupe name to set of this face
+     * return a groupe name of this face
+     */
+    std::string getGroupName(int igroup=0) const;
+
+    /**
+     * @param groupName : set a groupe name for this face
      */
     void setGroupName(const std::string groupName);
 
@@ -198,9 +204,9 @@ class Face
     int _region ;
 
     /*
-     * The group name of the cell.
+     * The group names of the face.
      */
-    std::string _groupName ;
+    std::vector<std::string> _groupNames ;
 };
 
 #endif /* FACE_HXX_ */
