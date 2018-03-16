@@ -336,65 +336,65 @@ Field::readFieldMed( const std::string & fileNameRadical,
 	/**
 	 * Reads the file fileNameRadical.med and creates a Field from it.
 	 */
-	 std::string completeFileName = fileNameRadical + ".med";
-	 std::vector<std::string> fieldNames = MEDCoupling::GetAllFieldNames(completeFileName);
-	 size_t iField = 0;
-	 std::string attributedFieldName;
-	 _field = NULL;
+	std::string completeFileName = fileNameRadical + ".med";
+	std::vector<std::string> fieldNames = MEDCoupling::GetAllFieldNames(completeFileName);
+	size_t iField = 0;
+	std::string attributedFieldName;
+	_field = NULL;
 
-	 // Get the name of the right field that we will attribute to the Field.
-	 if (fieldName == "") {
-		 if (fieldNames.size() > 0)
-			 attributedFieldName = fieldNames[0];
-		 else {
-			 std::ostringstream message;
-			 message << "No field in file " << completeFileName;
-			 throw CdmathException(message.str().c_str());
-		 }
-	 }
-	 else {
-		 for (; iField < fieldNames.size(); iField++)
-			 if (fieldName == fieldNames[iField]) break;
+	// Get the name of the right field that we will attribute to the Field.
+	if (fieldName == "") {
+		if (fieldNames.size() > 0)
+			attributedFieldName = fieldNames[0];
+		else {
+			std::ostringstream message;
+			message << "No field in file " << completeFileName;
+			throw CdmathException(message.str().c_str());
+		}
+	}
+	else {
+		for (; iField < fieldNames.size(); iField++)
+			if (fieldName == fieldNames[iField]) break;
 
-		 if (iField < fieldNames.size())
-			 attributedFieldName = fieldName;
-		 else {
-			 std::ostringstream message;
-			 message << "No field named " << fieldName << " in file " << completeFileName;
-			 throw CdmathException(message.str().c_str());
-		 }
-	 }
+		if (iField < fieldNames.size())
+			attributedFieldName = fieldName;
+		else {
+			std::ostringstream message;
+			message << "No field named " << fieldName << " in file " << completeFileName;
+			throw CdmathException(message.str().c_str());
+		}
+	}
 
-	 // Get the name of the right mesh that we will attribute to the Field.
-	 std::vector<std::string> meshNames
-	 = MEDCoupling::GetMeshNamesOnField(completeFileName, attributedFieldName);
-	 if (meshNames.size() == 0) {
-		 std::ostringstream message;
-		 message << "No mesh associated to " << fieldName
-				 << " in file " << completeFileName;
-		 throw CdmathException(message.str().c_str());
-	 }
-	 std::string attributedMeshName = meshNames[0];
+	// Get the name of the right mesh that we will attribute to the Field.
+	std::vector<std::string> meshNames
+	= MEDCoupling::GetMeshNamesOnField(completeFileName, attributedFieldName);
+	if (meshNames.size() == 0) {
+		std::ostringstream message;
+		message << "No mesh associated to " << fieldName
+				<< " in file " << completeFileName;
+		throw CdmathException(message.str().c_str());
+	}
+	std::string attributedMeshName = meshNames[0];
 
-	 // Create Field.
-	 MEDCoupling::TypeOfField medFieldType[3] = { ON_CELLS, ON_NODES, ON_CELLS };
-	 switch (type) {
-	 case CELLS:
-		 _field = MEDCoupling::ReadField(medFieldType[type], completeFileName,
-				 attributedMeshName, 0,
-				 attributedFieldName, iteration, order);
-		 break;
-	 case NODES:
-		 _field = MEDCoupling::ReadField(medFieldType[type], completeFileName,
-				 attributedMeshName, 0,
-				 attributedFieldName, iteration, order);
-		 break;
-	 case FACES:
-		 _field = MEDCoupling::ReadField(medFieldType[type], completeFileName,
-				 attributedMeshName, -1,
-				 attributedFieldName, iteration, order);
-		 break;
-	 }
+	// Create Field.
+	MEDCoupling::TypeOfField medFieldType[3] = { ON_CELLS, ON_NODES, ON_CELLS };
+	switch (type) {
+	case CELLS:
+		_field = MEDCoupling::ReadField(medFieldType[type], completeFileName,
+				attributedMeshName, 0,
+				attributedFieldName, iteration, order);
+		break;
+	case NODES:
+		_field = MEDCoupling::ReadField(medFieldType[type], completeFileName,
+				attributedMeshName, 0,
+				attributedFieldName, iteration, order);
+		break;
+	case FACES:
+		_field = MEDCoupling::ReadField(medFieldType[type], completeFileName,
+				attributedMeshName, -1,
+				attributedFieldName, iteration, order);
+		break;
+	}
 }
 
 
@@ -967,7 +967,7 @@ operator* (const Field& field, double value )
 }
 
 Field operator/ (const Field& field, double value)
-		{
+				{
 	Field fres(field.getName(),field.getTypeOfField(),field.getMesh(),field.getNumberOfComponents(),field.getTime());
 	int nbComp=field.getNumberOfComponents();
 	int nbElem=field.getNumberOfElements();
@@ -975,7 +975,7 @@ Field operator/ (const Field& field, double value)
 		for (int jcomp=0 ; jcomp<nbComp ; jcomp++)
 			fres(ielem, jcomp)=field(ielem, jcomp)/value;
 	return fres;
-		}
+				}
 
 Vector
 Field::getValuesOnAllComponents(int elem) const
