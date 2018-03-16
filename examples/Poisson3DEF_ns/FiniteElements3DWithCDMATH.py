@@ -63,7 +63,7 @@ for i in range(nbNodes):
 my_RHSfield.writeVTK("FiniteElements3DRHSField") 
 B.writeVTK("FiniteElements3DEXSOLField") 
 
-print("Right hand side discretidation done")
+print("Right hand side discretisation done")
 print("nb of interior nodes=", nbInteriorNodes)
 print("nb of boundary nodes=", nbBoundaryNodes)
 print("Max nb of neighbours=", maxNbNeighbours)

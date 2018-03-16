@@ -14,7 +14,7 @@ Node::Node( void )
 {
 	_numberOfCells = 0 ;
 	_numberOfFaces = 0 ;
-	_groupName="";
+	_groupNames=std::vector<std::string>(0);
 	_region=-1;
 }
 
@@ -33,7 +33,7 @@ Node::Node( const Node& node )
 	_facesId = node.getFacesId() ;
 	_numberOfCells = node.getNumberOfCells() ;
 	_numberOfFaces = node.getNumberOfFaces() ;
-	_groupName=node.getGroupName();
+	_groupNames=node.getGroupNames();
 	_region=node.getRegion();
 }
 
@@ -47,7 +47,7 @@ Node::Node( const int numberOfCells, const int numberOfFaces, const Point p )
 	_numberOfFaces = numberOfFaces ;
 	_cellsId = IntTab(_numberOfCells,0);
 	_facesId = IntTab(_numberOfFaces,0);
-	_groupName="";
+	_groupNames=std::vector<std::string>(0);
 	_region=-1;
 }
 
@@ -115,16 +115,22 @@ Node::z( void ) const
 	return _point.z() ;
 }
 
-std::string
-Node::getGroupName(void) const
+std::vector<std::string>
+Node::getGroupNames(void) const
 {
-	return _groupName;
+	return _groupNames;
+}
+
+std::string
+Node::getGroupName(int igroup) const
+{
+	return _groupNames[igroup];
 }
 
 void
 Node::setGroupName(const std::string groupName)
 {
-	_groupName=groupName;
+	_groupNames.push_back(groupName);
 	_region=0;
 }
 
@@ -186,6 +192,6 @@ Node::operator= ( const Node& node )
    _facesId = node.getFacesId() ;
    _numberOfCells = node.getNumberOfCells() ;
    _numberOfFaces = node.getNumberOfFaces() ;
-   _groupName = node.getGroupName();	
+   _groupNames = node.getGroupNames();	
 	return *this;
 }

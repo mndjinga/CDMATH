@@ -21,6 +21,7 @@ namespace MEDCoupling
 class MEDFileUMesh;
 class MEDCouplingMesh;
 class MEDCouplingIMesh;
+class MEDCouplingUMesh;
 }
 #include <MCAuto.hxx>
 #include "NormalizedGeometricTypes"
@@ -214,10 +215,16 @@ public: //----------------------------------------------------------------
 	MEDCoupling::MCAuto<MEDCoupling::MEDCouplingMesh> getMEDCouplingMesh ( void )  const ;
 
 	/**
-	 * return the mesh MEDCoupling
-	 * return _mesh
+	 * return the list of group names
+	 * return _groupNames
 	 */
 	std::vector<std::string> getNamesOfGroups( void )  const ;
+
+	/**
+	 * return the list of groups
+	 * return _groups
+	 */
+	std::vector<MEDCoupling::MEDCouplingUMesh *> getGroups( void )  const ;
 
 	/**
 	 * write mesh in the VTK format
@@ -247,9 +254,9 @@ public: //----------------------------------------------------------------
 
 private: //----------------------------------------------------------------
 
-	void setMesh( void ) ;
+	MEDCoupling::MEDCouplingUMesh*  setMesh( void ) ;
 
-	void setGroups( const MEDCoupling::MEDFileUMesh* medmesh) ;
+	void setGroups( const MEDCoupling::MEDFileUMesh* medmesh, MEDCoupling::MEDCouplingUMesh*  mu) ;
 
 	/**
 	 * Space dimension
@@ -309,8 +316,12 @@ private: //----------------------------------------------------------------
 	/*
 	 * The names of groups.
 	 */
-	std::vector<std::string> _groups;
+	std::vector<std::string> _groupNames;
 
+	/*
+	 * The list of groups.
+	 */
+	std::vector<MEDCoupling::MEDCouplingUMesh *> _groups;
 	/*
 	 * The mesh MEDCoupling
 	 */

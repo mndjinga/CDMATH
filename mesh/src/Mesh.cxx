@@ -44,6 +44,7 @@ Mesh::Mesh( void )
 	_ySup=0.;
 	_zMin=0.;
 	_zSup=0.;
+	_groupNames.resize(0);
 	_groups.resize(0);
 }
 
@@ -54,6 +55,8 @@ Mesh::~Mesh( void )
 	delete [] _cells;
 	delete [] _nodes;
 	delete [] _faces;
+	//for(int i=0; i< _groups.size(); i++)
+	//	_groups[i]->decrRef();
 }
 
 Mesh::Mesh( const MEDCoupling::MEDCouplingIMesh* mesh )
@@ -123,7 +126,8 @@ Mesh::Mesh( const Mesh& m )
 	_numberOfNodes = m.getNumberOfNodes();
 	_numberOfFaces = m.getNumberOfFaces();
 	_numberOfCells = m.getNumberOfCells();
-	_groups = m.getNamesOfGroups() ;
+	_groupNames = m.getNamesOfGroups() ;
+	_groups = m.getGroups() ;
 	_nodes   = new Node[_numberOfNodes] ;
 	_faces   = new Face[_numberOfFaces] ;
 	_cells   = new Cell[_numberOfCells] ;
@@ -159,9 +163,10 @@ Mesh::readMeshMed( const std::string filename, const int meshLevel)
 	_meshDim=_mesh->getMeshDimension();
 	_spaceDim=_mesh->getSpaceDimension();
 	cout<<endl<< "Loaded file "<< filename<<", mesh name= "<<m->getName()<<", _meshDim="<< _meshDim<< ", _spaceDim="<< _spaceDim<<endl;
-	setMesh();
-	setGroups(m);
+	MEDCouplingUMesh*  mu = setMesh();
+	setGroups(m, mu);
 	m->decrRef();
+	mu->decrRef();
 }
 
 void
@@ -186,7 +191,8 @@ Mesh::setGroupAtFaceByCoords(double x, double y, double z, double eps, std::stri
 		}
 	}
 	if (flag)
-		_groups.push_back(groupName);
+		_groupNames.push_back(groupName);
+	//To do : update _groups
 }
 
 void
@@ -209,7 +215,8 @@ Mesh::setGroupAtPlan(double value, int direction, double eps, std::string groupN
 		}
 	}
 	if (flag)
-		_groups.push_back(groupName);
+		_groupNames.push_back(groupName);
+	//To do : update _groups
 }
 
 IntTab
@@ -316,21 +323,24 @@ Mesh::isHexahedral() const
 }
 
 void
-Mesh::setGroups( const MEDFileUMesh* medmesh)
+Mesh::setGroups( const MEDFileUMesh* medmesh, MEDCouplingUMesh*  mu)
 {
 	vector<string> groups=medmesh->getGroupsNames() ;
+
 	for (unsigned int i=0;i<groups.size();i++ )
 	{
 		string groupName=groups[i];
 		vector<int> nonEmptyGrp(medmesh->getGrpNonEmptyLevels(groupName));
-		//We check if the group has a relative dimension equal to -1 before calling the function getGroup(-1,groupName.c_str())
+		//Searching for face groups
+		//We check if the group has a relative dimension equal to -1 
+		//before call to the function getGroup(-1,groupName.c_str())
 		vector<int>::iterator it = find(nonEmptyGrp.begin(), nonEmptyGrp.end(), -1);
 		if (it != nonEmptyGrp.end())
 		{
-			cout<<"Boundary named "<<groupName<< " found"<<endl;
-			if ( std::find(_groups.begin(), _groups.end(), groupName) == _groups.end() )
-				_groups.push_back(groupName);
+			cout<<"Boundary face group named "<< groupName << " found"<<endl;
 			MEDCouplingUMesh *m=medmesh->getGroup(-1,groupName.c_str());
+			_groups.push_back(m);
+			_groupNames.push_back(groupName);
 			DataArrayDouble *baryCell = m->computeCellCenterOfMass() ;
 			const double *coorBary=baryCell->getConstPointer();
 
@@ -349,10 +359,6 @@ Mesh::setGroups( const MEDFileUMesh* medmesh)
 					if(p1.distance(p2)<1.E-10)
 					{
 						_faces[iface].setGroupName(groupName);
-						IntTab nodesID= _faces[iface].getNodesId();
-						int nbNodes = _faces[iface].getNumberOfNodes();
-						for(int inode=0 ; inode<nbNodes ; inode++)
-							_nodes[nodesID[inode]].setGroupName(groupName);
 						flag=1;
 						break;
 					}
@@ -361,13 +367,47 @@ Mesh::setGroups( const MEDFileUMesh* medmesh)
 					throw CdmathException("No face belonging to group " + groupName + " found");
 			}
 			baryCell->decrRef();
-			m->decrRef();
+			//m->decrRef();
+		}
+			//Searching for node groups
+ 			DataArrayInt * nodeGroup=medmesh->getNodeGroupArr( groupName );
+			const int *nodeids=nodeGroup->getConstPointer();
+			if(nodeids!=NULL)
+			{
+			cout<<"Boundary node group named "<< groupName << " found"<<endl;
+
+			int nbNodesSubMesh=nodeGroup->getNumberOfTuples();//nodeGroup->getNbOfElems();
+
+			DataArrayDouble *coo = mu->getCoords() ;
+			const double *cood=coo->getConstPointer();
+
+			for (int ic(0); ic<nbNodesSubMesh; ic++)
+			{
+				vector<double> coorP(3,0);
+				for (int d=0; d<_spaceDim; d++)
+					coorP[d] = cood[nodeids[ic]*_spaceDim+d];
+				Point p1(coorP[0],coorP[1],coorP[2]) ;
+
+				int flag=0;
+				for (int inode=0;inode<_numberOfNodes;inode++ )
+				{
+					Point p2=_nodes[inode].getPoint();
+					if(p1.distance(p2)<1.E-10)
+					{
+						_nodes[inode].setGroupName(groupName);
+						flag=1;
+						break;
+					}
+				}
+				if (flag==0)
+					throw CdmathException("No node belonging to group " + groupName + " found");
+			}
 		}
 	}
 }
 
 //----------------------------------------------------------------------
-void
+MEDCouplingUMesh* 
 Mesh::setMesh( void )
 //----------------------------------------------------------------------
 {
@@ -631,9 +671,7 @@ Mesh::setMesh( void )
 		/*Building mesh nodes */
 		for(int id(0), k(0); id<_numberOfNodes; id++, k+=_spaceDim)
 		{
-			vector<double> coorP(3);
-			for (int d=0; d<3; d++)
-				coorP[d] = 0.;
+			vector<double> coorP(3,0);
 			for (int d=0; d<_spaceDim; d++)
 				coorP[d] = cood[k+d];
 			Point p(coorP[0],coorP[1],coorP[2]) ;
@@ -718,7 +756,6 @@ Mesh::setMesh( void )
 	descI->decrRef();
 	revDesc->decrRef();
 	revDescI->decrRef();
-	mu->decrRef();
 	m2->decrRef();
 	baryCell->decrRef();
 	fields->decrRef();
@@ -726,6 +763,8 @@ Mesh::setMesh( void )
 	revNodeI->decrRef();
 	revCell->decrRef();
 	revCellI->decrRef();
+	
+	return mu;
 }
 
 //----------------------------------------------------------------------
@@ -1170,6 +1209,12 @@ Mesh::getNodes ( void )  const
 vector<string>
 Mesh::getNamesOfGroups( void )  const
 {
+	return _groupNames;
+}
+
+vector<MEDCoupling::MEDCouplingUMesh *>
+Mesh::getGroups( void )  const
+{
 	return _groups;
 }
 
@@ -1189,7 +1234,8 @@ Mesh::operator= ( const Mesh& mesh )
 	_ySup=mesh.getYSup();
 	_zMin=mesh.getZMin();
 	_zSup=mesh.getZSup();
-	_groups = mesh.getNamesOfGroups() ;
+	_groupNames = mesh.getNamesOfGroups() ;
+	_groups = mesh.getGroups() ;
 	_nxyz = mesh.getCellGridStructure() ;
 	_dxyz = mesh.getDXYZ();
 	if (_nodes)
@@ -1243,5 +1289,16 @@ Mesh::writeMED ( const std::string fileName ) const
 	string fname=fileName+".med";
 	MEDCouplingUMesh* mu=_mesh->buildUnstructured();
 	MEDCoupling::WriteUMesh(fname.c_str(),mu,true);
+
+	//MEDFileUMesh meshMEDFile;
+	//meshMEDFile.setMeshAtLevel(0,mu);
+	//for(int i=0; i< _groups.size(); i++)
+		//meshMEDFile.setMeshAtLevel(-1,_groups[i]);
+	//if (fromScratch)
+		//MEDCoupling::meshMEDFile.write(fname.c_str(),2)	;
+	//else
+		//MEDCoupling::meshMEDFile.write(fname.c_str(),1)	;
+	
+	
 	mu->decrRef();
 }

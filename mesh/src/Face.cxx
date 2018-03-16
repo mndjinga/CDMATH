@@ -16,7 +16,7 @@ Face::Face( void )
 {
 	_measure = 0.0 ;
 	_region=-1;
-	_groupName="";
+	_groupNames=std::vector<std::string>(0);
 	_numberOfCells = 0 ;
 	_numberOfNodes = 0 ;
 	_xN=0.;
@@ -30,7 +30,7 @@ Face::Face( const Face& face )
 {
 	_measure = face.getMeasure() ;
 	_region=face.getRegion();
-	_groupName=face.getGroupName();
+	_groupNames=face.getGroupNames();
 	_point = face.getBarryCenter();
 	_numberOfCells = face.getNumberOfCells() ;
 	_numberOfNodes = face.getNumberOfNodes() ;
@@ -52,7 +52,7 @@ Face::Face( const int numberOfNodes, const int numberOfCells, const double measu
 	_cellsId = IntTab(_numberOfCells,0);
 	_measure = measure ;
 	_region=-1;
-	_groupName="";
+	_groupNames=std::vector<std::string>(0);
 	_xN=xN;
 	_yN=yN;
 	_zN=zN;
@@ -88,16 +88,22 @@ Face::getZN(void) const
 	return _zN;
 }
 
-string
-Face::getGroupName(void) const
+std::vector<std::string>
+Face::getGroupNames(void) const
 {
-	return _groupName;
+	return _groupNames;
+}
+
+string
+Face::getGroupName(int igroup) const
+{
+	return _groupNames[igroup];
 }
 
 void
 Face::setGroupName(const string groupName)
 {
-	_groupName=groupName;
+	_groupNames.push_back(groupName);
 	_region=0;
 }
 
@@ -207,7 +213,7 @@ Face::operator= ( const Face& face )
 	_numberOfNodes = face.getNumberOfNodes() ;
 	_nodesId=face.getNodesId();
 	_cellsId=face.getCellsId();
-	_groupName=face.getGroupName();
+	_groupNames=face.getGroupNames();
 	_region=face.getRegion();
 	_xN=face.getXN();
 	_yN=face.getYN();

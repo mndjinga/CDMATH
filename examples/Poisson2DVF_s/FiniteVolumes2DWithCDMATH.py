@@ -52,7 +52,7 @@ for i in range(nbCells):
 # sauvegarde sur le disque dur du second membre discrétisé dans un fichier paraview
 my_RHSfield.writeVTK("FiniteVolumes2DRHSField")
 
-print("Right hand sde discretidation done")
+print("Right hand side discretisation done")
 print("Max nb of neighbours=", maxNbNeighbours)
 
 # Construction de la matrice et du vecteur second membre du système linéaire
