@@ -57,7 +57,7 @@ for i in range(nbNodes):
 # sauvegarde sur le disque dur du second membre discrétisé dans un fichier paraview
 my_RHSfield.writeVTK("FiniteElements2DRHSField") 
 
-print("Right hand sde discretidation done")
+print("Right hand side discretisation done")
 print("nb of interior nodes=", nbInteriorNodes)
 print("nb of boundary nodes=", nbBoundaryNodes)
 print("Max nb of neighbours=", maxNbNeighbours)
