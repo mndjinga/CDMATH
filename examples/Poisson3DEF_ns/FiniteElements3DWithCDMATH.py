@@ -129,9 +129,14 @@ for i in range(nbCells):
 
 print("Linear system matrix building done")
 
+# Résolution du système linéaire
+#=================================
 LS=cdmath.LinearSolver(Rigidite,RHS,100,1.E-6,"CG","ILU")#,"ILU" Remplacer CG par CHOLESKY pour solveur direct
-
 SolSyst=LS.solve()
+print "Preconditioner used : ", LS.getNameOfPc()
+print "Number of iterations used : ", LS.getNumberOfIter()
+print "Final residual : ", LS.getResidu()
+print("Linear system solved")
 
 # Création du champ résultat
 #===========================
@@ -152,8 +157,7 @@ print("Numerical solution of 3D poisson equation using finite elements done")
 max_sol_exacte=(B.getNormEuclidean()).max()
 erreur_max=(B - my_ResultField).getNormEuclidean().max()
 
-print("The max exact solution is : ", max_sol_exacte)
-print("The cdmath l2 absolute error: ",erreur_max)
-print("The cdmath l2 relative error: ",erreur_max/max_sol_exacte)
+print("Absolute error: ",erreur_max)
+print("Relative error: ",erreur_max/max_sol_exacte)
 
 

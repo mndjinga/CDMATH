@@ -120,7 +120,10 @@ print("Linear system matrix building done")
 LS=cdmath.LinearSolver(Rigidite,RHS,100,1.E-6,"CG","ILU")#Remplacer CG par CHOLESKY pour solveur direct
 SolSyst=LS.solve()
 
-print("Fin de la résolution du système linéaire")
+print "Preconditioner used : ", LS.getNameOfPc()
+print "Number of iterations used : ", LS.getNumberOfIter()
+print "Final residual : ", LS.getResidu()
+print("Linear system solved")
 
 # Création du champ résultat
 #===========================
@@ -136,9 +139,11 @@ print("Numerical solution of 2D poisson equation using finite elements done")
 
 #Calcul de l'erreur commise par rapport à la solution exacte
 #===========================================================
+#The following formulas use the fact that the exact solution is equal the right hand side divided by 2*pi*pi
 max_sol_exacte=(my_RHSfield.getNormEuclidean()).max()/(2*pi*pi)
 erreur_max=(my_RHSfield/(2*pi*pi) - my_ResultField).getNormEuclidean().max()
-print("max(| numerical solution - exact solution |)/max(| exact solution |) = ",erreur_max/max_sol_exacte)
+print("Absolute error: max(| numerical solution - exact solution |) = ",erreur_max)
+print("Relative error: max(| numerical solution - exact solution |)/max(| exact solution |) = ",erreur_max/max_sol_exacte)
 
 #Postprocessing optionnel: ouverture du fichier FiniteElementsResultField.pvd contenant le résultat numérique à partir de commandes python (import paraview)
 

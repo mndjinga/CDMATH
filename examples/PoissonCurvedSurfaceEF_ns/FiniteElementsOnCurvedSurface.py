@@ -141,8 +141,9 @@ print("Linear system matrix building done")
 LS=cdmath.LinearSolver(Rigidite,RHS,100,1.E-3,"CG","ILU")#Remplacer CG par CHOLESKY pour solveur direct
 LS.isSingular()#En raison de l'absence de bord
 SolSyst=LS.solve()
-print LS.getNameOfPc()
-print LS.getNumberOfIter()
+print "Preconditioner used : ", LS.getNameOfPc()
+print "Number of iterations used : ", LS.getNumberOfIter()
+print "Final residual : ", LS.getResidu()
 print("Linear system solved")
 
 # Création du champ résultat
@@ -159,10 +160,24 @@ print("Numerical solution of 2D poisson equation using finite elements done")
 #Calcul de l'erreur commise par rapport à la solution exacte
 #===========================================================
 #The following formulas use the fact that the exact solution is equal the right hand side divided by 12
-max_sol_exacte=(my_RHSfield.getNormEuclidean()).max()/12
-erreur_max=(my_RHSfield/12 - my_ResultField).getNormEuclidean().max()
-print("max(| exact solution - numerical solution |)/max(| exact solution |) = ",erreur_max/max_sol_exacte)
-
-print("max sol exact=",my_RHSfield.getNormEuclidean().max()/12, "min sol exact=",my_RHSfield.getNormEuclidean().min()/12)
+max_abs_sol_exacte=0
+erreur_abs=0
+max_sol_num=0
+min_sol_num=0
+for i in range(nbNodes) :
+    if max_abs_sol_exacte < abs(my_RHSfield[i]) :
+        max_abs_sol_exacte = abs(my_RHSfield[i])
+    if erreur_abs < abs(my_RHSfield[i]/12 - my_ResultField[i]) :
+        erreur_abs = abs(my_RHSfield[i]/12 - my_ResultField[i])
+    if max_sol_num < my_RHSfield[i] :
+        max_sol_num = my_RHSfield[i]
+    if min_sol_num > my_RHSfield[i] :
+        min_sol_num = my_RHSfield[i]
+max_abs_sol_exacte = max_abs_sol_exacte/12
+max_sol_num = max_sol_num/12
+min_sol_num = min_sol_num/12
+print("Absolute error = max(| exact solution - numerical solution |) = ",erreur_abs )
+print("Relative error = max(| exact solution - numerical solution |)/max(| exact solution |) = ",erreur_abs/max_abs_sol_exacte)
+print ("Maximum numerical solution = ", max_sol_num, " Minimum numerical solution = ", min_sol_num)
 
 #Postprocessing optionnel: ouverture du fichier FiniteElementsResultField.pvd contenant le résultat numérique à partir de commandes python (import paraview)
