@@ -154,10 +154,17 @@ print("Numerical solution of 3D poisson equation using finite elements done")
 
 #Calcul de l'erreur commise par rapport à la solution exacte
 #===========================================================
-max_sol_exacte=(B.getNormEuclidean()).max()
-erreur_max=(B - my_ResultField).getNormEuclidean().max()
+#The following formulas use the fact that the exact solution is equal the right hand side divided by 3*pi*pi
+max_abs_sol_exacte=max(my_RHSfield.max(),-my_RHSfield.min())/(3*pi*pi)
+max_sol_num=my_ResultField.max()
+min_sol_num=my_ResultField.min()
+erreur_abs=0
+for i in range(nbNodes) :
+    if erreur_abs < abs(my_RHSfield[i]/(3*pi*pi) - my_ResultField[i]) :
+        erreur_abs = abs(my_RHSfield[i]/(3*pi*pi) - my_ResultField[i])
 
-print("Absolute error: ",erreur_max)
-print("Relative error: ",erreur_max/max_sol_exacte)
+print("Absolute error = max(| exact solution - numerical solution |) = ",erreur_abs )
+print("Relative error = max(| exact solution - numerical solution |)/max(| exact solution |) = ",erreur_abs/max_abs_sol_exacte)
+print ("Maximum numerical solution = ", max_sol_num, " Minimum numerical solution = ", min_sol_num)
 
 

@@ -140,10 +140,17 @@ print("Numerical solution of 2D poisson equation using finite elements done")
 #Calcul de l'erreur commise par rapport à la solution exacte
 #===========================================================
 #The following formulas use the fact that the exact solution is equal the right hand side divided by 2*pi*pi
-max_sol_exacte=(my_RHSfield.getNormEuclidean()).max()/(2*pi*pi)
-erreur_max=(my_RHSfield/(2*pi*pi) - my_ResultField).getNormEuclidean().max()
-print("Absolute error: max(| numerical solution - exact solution |) = ",erreur_max)
-print("Relative error: max(| numerical solution - exact solution |)/max(| exact solution |) = ",erreur_max/max_sol_exacte)
+max_abs_sol_exacte=max(my_RHSfield.max(),-my_RHSfield.min())/(2*pi*pi)
+max_sol_num=my_ResultField.max()
+min_sol_num=my_ResultField.min()
+erreur_abs=0
+for i in range(nbNodes) :
+    if erreur_abs < abs(my_RHSfield[i]/(2*pi*pi) - my_ResultField[i]) :
+        erreur_abs = abs(my_RHSfield[i]/(2*pi*pi) - my_ResultField[i])
+
+print("Absolute error = max(| exact solution - numerical solution |) = ",erreur_abs )
+print("Relative error = max(| exact solution - numerical solution |)/max(| exact solution |) = ",erreur_abs/max_abs_sol_exacte)
+print ("Maximum numerical solution = ", max_sol_num, " Minimum numerical solution = ", min_sol_num)
 
 #Postprocessing optionnel: ouverture du fichier FiniteElementsResultField.pvd contenant le résultat numérique à partir de commandes python (import paraview)
 

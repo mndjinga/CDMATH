@@ -169,13 +169,11 @@ for i in range(nbNodes) :
         max_abs_sol_exacte = abs(my_RHSfield[i])
     if erreur_abs < abs(my_RHSfield[i]/12 - my_ResultField[i]) :
         erreur_abs = abs(my_RHSfield[i]/12 - my_ResultField[i])
-    if max_sol_num < my_RHSfield[i] :
-        max_sol_num = my_RHSfield[i]
-    if min_sol_num > my_RHSfield[i] :
-        min_sol_num = my_RHSfield[i]
+    if max_sol_num < my_ResultField[i] :
+        max_sol_num = my_ResultField[i]
+    if min_sol_num > my_ResultField[i] :
+        min_sol_num = my_ResultField[i]
 max_abs_sol_exacte = max_abs_sol_exacte/12
-max_sol_num = max_sol_num/12
-min_sol_num = min_sol_num/12
 print("Absolute error = max(| exact solution - numerical solution |) = ",erreur_abs )
 print("Relative error = max(| exact solution - numerical solution |)/max(| exact solution |) = ",erreur_abs/max_abs_sol_exacte)
 print ("Maximum numerical solution = ", max_sol_num, " Minimum numerical solution = ", min_sol_num)

@@ -246,6 +246,10 @@ class Field
 
     DoubleTab getNormEuclidean( void ) const ;
 
+    double max( void ) const ;
+
+    double min( void ) const ;
+
     void setTime ( double time, int iter );
 
     Vector getValuesOnComponent(int compo) const ;
