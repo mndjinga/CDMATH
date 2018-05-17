@@ -10,7 +10,7 @@
 import cdmath
 from math import sin, pi
 
-def FiniteElements2DWithCDMATH(filename):
+def solve(filename):
     #Préprocessing optionnel: création du fichier my_mesh.med contenant la géométrie et le maillage du domaine de calcul à partir de commandes python (import salome)
     
     #Chargement du maillage triangulaire du domaine carré [0,1]x[0,1], définition des bords
@@ -158,4 +158,4 @@ def FiniteElements2DWithCDMATH(filename):
     return erreur_abs/max_abs_sol_exacte
 
 if __name__ == """__main__""":
-    FiniteElements2DWithCDMATH("meshSquare")
+    solve("meshSquare")
