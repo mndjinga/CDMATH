@@ -15,7 +15,7 @@ def solve(filename):
     
     #Chargement du maillage triangulaire du domaine carré [0,1]x[0,1], définition des bords
     #=======================================================================================
-    my_mesh = cdmath.Mesh(filename+"med")
+    my_mesh = cdmath.Mesh(filename+".med")
     if(not my_mesh.isTriangular()) :
         raise ValueError("Wrong cell types : mesh is not made of triangles")
     eps=1e-6

@@ -1,15 +1,10 @@
-SET(MESH_MED
-  ../tests/ressources/meshSquare.med
-  ../tests/ressources/meshCube.med
-  ../tests/ressources/meshSphere.med
-  )
 SET(MESH_MED2
-  ../tests/ressources/2DTriangles
-  ../tests/ressources/2DLocRefinedSquares
-  ../tests/ressources/3DTetrahedron
+  ../tests/ressources/
   )
 
-file(COPY ${MESH_MED} DESTINATION ${CMAKE_BINARY_DIR}/validation)
+file(COPY ${MESH_MED2} DESTINATION ${CMAKE_BINARY_DIR}/validation)
+
+install(DIRECTORY ${MESH_MED2} DESTINATION share/Validation)
 
 file(GLOB NICE_EXAMPLES_TO_INSTALL thermique1d transport1d transport2d_ns transport2d_s Poisson2DEF_ns Poisson3DEF_ns Poisson2DVF_ns Poisson2DVF_s PoissonCurvedSurfaceEF_ns)
 
