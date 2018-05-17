@@ -169,6 +169,11 @@ if (CDMATH_WITH_PYTHON AND CDMATH_WITH_POSTPRO)
   set (PV_PYTHON_DIR /usr/lib/paraview/site-packages/paraview/:/usr/lib/paraview/site-packages/paraview/vtk:/usr/lib64/paraview/site-packages/paraview/:/usr/lib64/paraview/site-packages/vtk)
 endif ()
 
+if (CDMATH_WITH_PYTHON AND CDMATH_WITH_PETSC)
+  add_subdirectory (validation)
+  #add_custom_target (validation ALL COMMAND ${PYTHON_EXECUTABLE} ${PROJECT_BINARY_DIR}/validation/validation.py)
+endif ()
+
 # Configuration file
 configure_file(
     ${PROJECT_SOURCE_DIR}/env_CDMATH.sh
