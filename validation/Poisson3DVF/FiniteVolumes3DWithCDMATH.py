@@ -55,7 +55,7 @@ def solve(my_mesh, filename):
     
     # Construction de la matrice et du vecteur second membre du système linéaire
     #===========================================================================
-    Rigidite=cdmath.SparseMatrixPetsc(nbInteriorNodes,nbInteriorNodes,maxNbNeighbours) # warning : third argument is maximum number of non zero coefficients per line of the matrix
+    Rigidite=cdmath.SparseMatrixPetsc(nbCells,nbCells,maxNbNeighbours) # warning : third argument is maximum number of non zero coefficients per line of the matrix
     RHS=cdmath.Vector(nbCells)
     #Parcours des cellules du domaine
     for i in range(nbCells):
