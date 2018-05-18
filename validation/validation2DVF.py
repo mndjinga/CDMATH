@@ -21,12 +21,13 @@ plt.xlabel('log(number of nodes)')
 plt.ylabel('log(error)')
 plt.title('Convergence of finite volumes for Laplace operator on a 2D triangular mesh')
 plt.savefig(mesh_name+".png")
+plt.close()
 
 ### 2D FV rectangular mesh
 nbMeshes=4
 error_tab=[0]*nbMeshes
 mesh_size_tab=[0]*nbMeshes
-mesh_name='meshSquareRectangles'
+mesh_name='meshSquareRectanglesFV'
 i=0
 for nx in [11,51,151,201]:
     my_mesh=cdmath.Mesh(0,1,nx,0,1,nx)
