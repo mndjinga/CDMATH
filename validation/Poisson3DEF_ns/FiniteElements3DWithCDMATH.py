@@ -13,9 +13,9 @@ from math import sin, pi
 def solve(filename):
     #Préprocessing optionnel: création du fichier my_mesh.med contenant la géométrie et le maillage du domaine de calcul à partir de commandes python (import salome)
     
-    #Chargement du maillage triangulaire du domaine carré [0,1]x[0,1], définition des bords
-    #=======================================================================================
-    my_mesh = cdmath.Mesh("meshCube.med")
+    #Chargement du maillage tétraédrique du domaine cubique [0,1]x[0,1]x[0,1], définition des bords
+    #==============================================================================================
+    my_mesh = cdmath.Mesh(filename+".med")
     if(not my_mesh.isTetrahedral()) :
         raise ValueError("Wrong cell types : mesh is not made of tetrahedra")
     eps=1e-6
@@ -61,8 +61,8 @@ def solve(filename):
             maxNbNeighbours= max(1+1*Ni.getNumberOfCells(),maxNbNeighbours) # need a function Ni.getNumberOfNeighbourNodes();
     
     # sauvegarde sur le disque dur du second membre discrétisé dans un fichier paraview
-    my_RHSfield.writeVTK("FiniteElements3DRHSField") 
-    B.writeVTK("FiniteElements3DEXSOLField") 
+    my_RHSfield.writeVTK("FiniteElements3DRHSField"+filename) 
+    B.writeVTK("FiniteElements3DEXSOLField"+filename) 
     
     print("Right hand side discretisation done")
     print("nb of interior nodes=", nbInteriorNodes)
@@ -147,7 +147,7 @@ def solve(filename):
     for j in range(nbBoundaryNodes):
         my_ResultField[boundaryNodes[j]]=0;#remplissage des valeurs pour les noeuds frontière (condition limite)
     #sauvegarde sur le disque dur du résultat dans un fichier paraview
-    my_ResultField.writeVTK("FiniteElements3DResultField")
+    my_ResultField.writeVTK("FiniteElements3DResultField"+filename)
     
     print("Numerical solution of 3D poisson equation using finite elements done")
     
