@@ -9,7 +9,7 @@ nbMeshes=5
 error_tab=[0]*nbMeshes
 mesh_size_tab=[0]*nbMeshes
 mesh_path='../validation/2DTriangles/'
-mesh_name='meshSquareTrianglesFE'
+mesh_name='meshSquareWithTrianglesFE'
 i=0
 # Computation of the numerical error
 for filename in ['triangleMeshSquare_1','triangleMeshSquare_2','triangleMeshSquare_3','triangleMeshSquare_4','triangleMeshSquare_5']:

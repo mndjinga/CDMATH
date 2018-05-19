@@ -1,6 +1,7 @@
 import cdmath
 import FiniteElements3DWithCDMATH
 import matplotlib.pyplot as plt
+import numpy as np
 from math import log10
 
 #### 3D FE tetrahedra mesh
@@ -8,7 +9,7 @@ nbMeshes=6
 error_tab=[0]*nbMeshes
 mesh_size_tab=[0]*nbMeshes
 mesh_path='../validation/3DTetrahedra/'
-mesh_name='meshCubeTetrahedraFE'
+mesh_name='meshCubeWithTetrahedraFE'
 i=0
 # Computation of the numerical error
 for filename in ['meshCubeTetrahedra_1','meshCubeTetrahedra_2','meshCubeTetrahedra_3','meshCubeTetrahedra_4','meshCubeTetrahedra_5','meshCubeTetrahedra_6']:

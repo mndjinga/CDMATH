@@ -8,7 +8,7 @@ from math import log10
 nbMeshes=4
 error_tab=[0]*nbMeshes
 mesh_size_tab=[0]*nbMeshes
-mesh_name='meshSquareRectanglesFV'
+mesh_name='meshSquareWithRectanglesFV'
 i=0
 # Computation of the numerical error
 for nx in [11,51,151,201]:

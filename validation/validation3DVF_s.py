@@ -5,10 +5,10 @@ import numpy as np
 from math import log10
 
 ### 3D FV rectangular mesh
-nbMeshes=4
+nbMeshes=3
 error_tab=[0]*nbMeshes
 mesh_size_tab=[0]*nbMeshes
-mesh_name='meshCubeRectangles3DFV'
+mesh_name='meshCubeWithCuboids3DFV'
 i=0
 # Computation of the numerical error
 for nx in [11,21,41]:

@@ -9,7 +9,7 @@ nbMeshes=7
 error_tab=[0]*nbMeshes
 mesh_size_tab=[0]*nbMeshes
 mesh_path='../validation/2DLocRefinedSquares/'
-mesh_name='meshSquareRefSquaresFV'
+mesh_name='meshSquareWithLocRefSquaresFV'
 i=0
 # Computation of the numerical error
 for filename in ['meshLocRefSquares_1','meshLocRefSquares_2','meshLocRefSquares_3','meshLocRefSquares_4','meshLocRefSquares_5','meshLocRefSquares_6','meshLocRefSquares_7']:
