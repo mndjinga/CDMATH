@@ -9,8 +9,9 @@
 
 import cdmath
 from math import sin, pi
+import VTK_routines
 
-def solve(filename):
+def solve(filename,resolution):
     #Préprocessing optionnel: création du fichier my_mesh.med contenant la géométrie et le maillage du domaine de calcul à partir de commandes python (import salome)
     
     #Chargement du maillage triangulaire du domaine carré [0,1]x[0,1], définition des bords
@@ -151,9 +152,10 @@ def solve(filename):
     print("Relative error = max(| exact solution - numerical solution |)/max(| exact solution |) = ",erreur_abs/max_abs_sol_exacte)
     print ("Maximum numerical solution = ", max_sol_num, " Minimum numerical solution = ", min_sol_num)
     
-    #Postprocessing optionnel: ouverture du fichier FiniteElementsResultField.pvd contenant le résultat numérique à partir de commandes python (import paraview)
+    #Postprocessing : Extraction of the diagonal data
+    diag_data=VTK_routines.Extract_field_data_over_line_to_numpyArray(my_ResultField,[0,1,0],[1,0,0], resolution)
     
-    return erreur_abs/max_abs_sol_exacte, my_mesh.getNumberOfNodes()
+    return erreur_abs/max_abs_sol_exacte, my_mesh.getNumberOfNodes(), diag_data
 
 if __name__ == """__main__""":
-    solve("meshSquare")
+    solve("meshSquare",100)

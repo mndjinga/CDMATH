@@ -8,9 +8,10 @@
 #================================================================================================================================
 
 import cdmath
+import VTK_routines
 from math import sin, pi
 
-def solve(my_mesh, filename):
+def solve(my_mesh, filename,resolution):
     # Maillage du domaine cubique [0,1]x[0,1]x[0,1], définition des bords
     #====================================================================================
     xmin=0
@@ -110,14 +111,16 @@ def solve(my_mesh, filename):
     print("Relative error = max(| exact solution - numerical solution |)/max(| exact solution |) = ",erreur_abs/max_abs_sol_exacte)
     print ("Maximum numerical solution = ", max_sol_num, " Minimum numerical solution = ", min_sol_num)
 
-    return erreur_abs/max_abs_sol_exacte, my_mesh.getNumberOfCells()
+    #Postprocessing : Extraction of the diagonal data
+    diag_data=VTK_routines.Extract_field_data_over_line_to_numpyArray(my_ResultField,[0,0,0],[1,1,1], resolution)
 
-#Postprocessing optionnel: ouverture du fichier FiniteElementsResultField.pvd contenant le résultat numérique à partir de commandes python (import paraview)
+    return erreur_abs/max_abs_sol_exacte, my_mesh.getNumberOfCells(), diag_data
 
-def solve_file( filename):
+
+def solve_file( filename,resolution):
     my_mesh = cdmath.Mesh(filename+".med")
-    return solve(my_mesh, filename)
+    return solve(my_mesh, filename,resolution)
     
 if __name__ == """__main__""":
         mesh51 = cdmath.Mesh(0,1,51,0,1,51,0,1,51)
-        solve(mesh51,'51')
+        solve(mesh51,'51',100)
