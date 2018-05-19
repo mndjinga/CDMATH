@@ -35,7 +35,7 @@ print "FV on 3D rectangular parallelepiped mesh :scheme order is ", -a
 
 # Plot of figures
 plt.plot(mesh_size_tab, error_tab, label='log(|numerical-exact|)')
-plt.plot(mesh_size_tab, a*np.array(mesh_size_tab)+b,label='least square slope : '+str(a))
+plt.plot(mesh_size_tab, a*np.array(mesh_size_tab)+b,label='least square slope : '+'%.3f' % a)
 plt.legend()
 plt.xlabel('log(number of nodes)')
 plt.ylabel('log(error)')

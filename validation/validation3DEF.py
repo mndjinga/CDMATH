@@ -5,14 +5,14 @@ import numpy as np
 from math import log10
 
 #### 3D FE tetrahedra mesh
-nbMeshes=6
+nbMeshes=7
 error_tab=[0]*nbMeshes
 mesh_size_tab=[0]*nbMeshes
 mesh_path='../validation/3DTetrahedra/'
 mesh_name='meshCubeWithTetrahedraFE'
 i=0
 # Computation of the numerical error
-for filename in ['meshCubeTetrahedra_1','meshCubeTetrahedra_2','meshCubeTetrahedra_3','meshCubeTetrahedra_4','meshCubeTetrahedra_5','meshCubeTetrahedra_6']:
+for filename in ['meshCubeTetrahedra_0','meshCubeTetrahedra_1','meshCubeTetrahedra_2','meshCubeTetrahedra_3','meshCubeTetrahedra_4','meshCubeTetrahedra_5','meshCubeTetrahedra_6']:
     error_tab[i], mesh_size_tab[i] =FiniteElements3DWithCDMATH.solve(mesh_path+filename)
     error_tab[i]=log10(error_tab[i])
     mesh_size_tab[i] = log10(mesh_size_tab[i])
@@ -35,7 +35,7 @@ print "FE on 3D tetrahedral mesh :scheme order is ", -a
 
 # Plot of figures
 plt.plot(mesh_size_tab, error_tab, label='log(|numerical-exact|)')
-plt.plot(mesh_size_tab, a*np.array(mesh_size_tab)+b,label='least square slope : '+str(a))
+plt.plot(mesh_size_tab, a*np.array(mesh_size_tab)+b,label='least square slope : '+'%.3f' % a)
 plt.legend()
 plt.xlabel('log(number of nodes)')
 plt.ylabel('log(error)')
