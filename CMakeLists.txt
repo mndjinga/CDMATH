@@ -141,7 +141,7 @@ if (CDMATH_WITH_DOCUMENTATION)
     message (FATAL_ERROR "Doxygen is needed to build the documentation. Please install it correctly.")
   endif (NOT DOXYGEN_FOUND)
   configure_file (Doxyfile.in ${PROJECT_BINARY_DIR}/Doxyfile  @ONLY IMMEDIATE)
-  add_custom_target (doc ALL COMMAND ${DOXYGEN_EXECUTABLE} ${PROJECT_BINARY_DIR}/Doxyfile
+  add_custom_target (doc COMMAND ${DOXYGEN_EXECUTABLE} ${PROJECT_BINARY_DIR}/Doxyfile
   							  SOURCES ${PROJECT_BINARY_DIR}/Doxyfile)
   install (DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/doc/html DESTINATION share/doc/cdmath)
 endif ()
@@ -169,9 +169,10 @@ if (CDMATH_WITH_PYTHON AND CDMATH_WITH_POSTPRO)
   set (PV_PYTHON_DIR /usr/lib/paraview/site-packages/paraview/:/usr/lib/paraview/site-packages/paraview/vtk:/usr/lib64/paraview/site-packages/paraview/:/usr/lib64/paraview/site-packages/vtk)
 endif ()
 
-if (CDMATH_WITH_PYTHON AND CDMATH_WITH_PETSC)
+if (CDMATH_WITH_PYTHON AND CDMATH_WITH_PETSC AND CDMATH_WITH_POSTPRO)
   add_subdirectory (validation)
-  #add_custom_target (validation ALL COMMAND ${PYTHON_EXECUTABLE} ${PROJECT_BINARY_DIR}/validation/validation.py)
+  add_custom_target (validation COMMAND ctest -R validation)# may be replace ctest -R with ctest -L
+  add_custom_target (check COMMAND ctest -E validation)# may be replace ctest -E with ctest -LE
 endif ()
 
 # Configuration file
