@@ -112,87 +112,113 @@ MeshTests::testClassMesh( void )
 
 
 	// Testing Mesh(xinf, xsup, nx, yinf, ysup, ny, zinf, zsup, nz) (hexaèdres)
-    		Mesh M3(0.0,1.0,4,0.0,1.0,4,0.0,1.0,4);
-    		CPPUNIT_ASSERT_EQUAL( 3, M3.getSpaceDimension() );
-    		CPPUNIT_ASSERT(M3.isHexahedral());
-    		int nbCellsM3 = M3.getNumberOfCells();
-    		double volM3=0;
-    		for(int i=0; i<nbCellsM3; i++)
-    			volM3+=M3.getCell(i).getMeasure();
-    		CPPUNIT_ASSERT_DOUBLES_EQUAL( 1., volM3, eps );
+    Mesh M3(0.0,1.0,4,0.0,1.0,4,0.0,1.0,4);
+    CPPUNIT_ASSERT_EQUAL( 3, M3.getSpaceDimension() );
+    CPPUNIT_ASSERT(M3.isHexahedral());
+    int nbCellsM3 = M3.getNumberOfCells();
+    double volM3=0;
+    for(int i=0; i<nbCellsM3; i++)
+        volM3+=M3.getCell(i).getMeasure();
+    CPPUNIT_ASSERT_DOUBLES_EQUAL( 1., volM3, eps );
 
-    		// Testing copies
-    		Mesh Mcopy1(M1);
-    		CPPUNIT_ASSERT_EQUAL( 1, Mcopy1.getSpaceDimension() );
-    		CPPUNIT_ASSERT_EQUAL( 5, Mcopy1.getNumberOfNodes() );
-    		CPPUNIT_ASSERT_EQUAL( 4, Mcopy1.getNumberOfCells() );
-    		CPPUNIT_ASSERT_EQUAL( 5, Mcopy1.getNumberOfFaces() );
+    // Testing copies
+    Mesh Mcopy1(M1);
+    CPPUNIT_ASSERT_EQUAL( 1, Mcopy1.getSpaceDimension() );
+    CPPUNIT_ASSERT_EQUAL( 5, Mcopy1.getNumberOfNodes() );
+    CPPUNIT_ASSERT_EQUAL( 4, Mcopy1.getNumberOfCells() );
+    CPPUNIT_ASSERT_EQUAL( 5, Mcopy1.getNumberOfFaces() );
 
-    		Mcopy1=M2;
-    		CPPUNIT_ASSERT_EQUAL( 2, Mcopy1.getSpaceDimension() );
-    		CPPUNIT_ASSERT_EQUAL( 25, Mcopy1.getNumberOfNodes() );
-    		CPPUNIT_ASSERT_EQUAL( 16, Mcopy1.getNumberOfCells() );
-    		CPPUNIT_ASSERT_EQUAL( 40, Mcopy1.getNumberOfFaces() );
+    Mcopy1=M2;
+    CPPUNIT_ASSERT_EQUAL( 2, Mcopy1.getSpaceDimension() );
+    CPPUNIT_ASSERT_EQUAL( 25, Mcopy1.getNumberOfNodes() );
+    CPPUNIT_ASSERT_EQUAL( 16, Mcopy1.getNumberOfCells() );
+    CPPUNIT_ASSERT_EQUAL( 40, Mcopy1.getNumberOfFaces() );
 
-    		Mesh Mcopy2;
-    		Mcopy2=Mcopy1;
-    		CPPUNIT_ASSERT_EQUAL( 2, Mcopy2.getSpaceDimension() );
-    		CPPUNIT_ASSERT_EQUAL( 25, Mcopy2.getNumberOfNodes() );
-    		CPPUNIT_ASSERT_EQUAL( 16, Mcopy2.getNumberOfCells() );
-    		CPPUNIT_ASSERT_EQUAL( 40, Mcopy2.getNumberOfFaces() );
+    Mesh Mcopy2;
+    Mcopy2=Mcopy1;
+    CPPUNIT_ASSERT_EQUAL( 2, Mcopy2.getSpaceDimension() );
+    CPPUNIT_ASSERT_EQUAL( 25, Mcopy2.getNumberOfNodes() );
+    CPPUNIT_ASSERT_EQUAL( 16, Mcopy2.getNumberOfCells() );
+    CPPUNIT_ASSERT_EQUAL( 40, Mcopy2.getNumberOfFaces() );
 
 
-    		// Connection with MED
-    		string fileNameVTK="TestMesh";
-    		string fileNameMED="TestMesh";
+    // Connection with MED
+    string fileNameVTK="TestMesh";
+    string fileNameMED="TestMesh";
 
-    		M2.writeMED(fileNameMED);
-    		Mesh M22(fileNameMED + ".med");
-    		CPPUNIT_ASSERT_EQUAL( 2, M22.getSpaceDimension() );
-    		CPPUNIT_ASSERT_EQUAL( 25, M22.getNumberOfNodes() );
-    		CPPUNIT_ASSERT_EQUAL( 16, M22.getNumberOfCells() );
-    		CPPUNIT_ASSERT_EQUAL( 40, M22.getNumberOfFaces() );
+    M2.writeMED(fileNameMED);
+    Mesh M22(fileNameMED + ".med");
+    CPPUNIT_ASSERT_EQUAL( 2, M22.getSpaceDimension() );
+    CPPUNIT_ASSERT_EQUAL( 25, M22.getNumberOfNodes() );
+    CPPUNIT_ASSERT_EQUAL( 16, M22.getNumberOfCells() );
+    CPPUNIT_ASSERT_EQUAL( 40, M22.getNumberOfFaces() );
 
-    		//Testing a 2D unstructured mesh (triangles)
-    		Mesh M23("meshSquare.med");
-    		CPPUNIT_ASSERT(M23.getNamesOfGroups()[0].compare("Bottom")==0);
-    		CPPUNIT_ASSERT(M23.getNamesOfGroups()[1].compare("Left")==0);
-    		CPPUNIT_ASSERT(M23.getNamesOfGroups()[2].compare("Right")==0);
-    		CPPUNIT_ASSERT(M23.getNamesOfGroups()[3].compare("Top")==0);
-    		CPPUNIT_ASSERT(M23.isTriangular());
-    		int nbCellsM23 = M23.getNumberOfCells();
-    		double areaM23=0;
-    		for(int i=0; i<nbCellsM23; i++)
-    			areaM23+=M23.getCell(i).getMeasure();
-    		CPPUNIT_ASSERT_DOUBLES_EQUAL( 1., areaM23 , eps);
+    //Testing a 2D unstructured mesh (triangles)
+    Mesh M23("meshSquare.med");
+    CPPUNIT_ASSERT(M23.getNamesOfGroups()[0].compare("Bottom")==0);
+    CPPUNIT_ASSERT(M23.getNamesOfGroups()[1].compare("Left")==0);
+    CPPUNIT_ASSERT(M23.getNamesOfGroups()[2].compare("Right")==0);
+    CPPUNIT_ASSERT(M23.getNamesOfGroups()[3].compare("Top")==0);
+    CPPUNIT_ASSERT(M23.isTriangular());
+    int nbCellsM23 = M23.getNumberOfCells();
+    double areaM23=0;
+    for(int i=0; i<nbCellsM23; i++)
+        areaM23+=M23.getCell(i).getMeasure();
+    CPPUNIT_ASSERT_DOUBLES_EQUAL( 1., areaM23 , eps);
 
-    		Mcopy2.writeVTK(fileNameVTK);
-    		Mcopy2.writeMED(fileNameMED);
-    		Mesh M6(fileNameMED + ".med");
-    		CPPUNIT_ASSERT_EQUAL( 2, M6.getSpaceDimension() );
-    		CPPUNIT_ASSERT_EQUAL( 25, M6.getNumberOfNodes() );
-    		CPPUNIT_ASSERT_EQUAL( 16, M6.getNumberOfCells() );
-    		CPPUNIT_ASSERT_EQUAL( 40, M6.getNumberOfFaces() );
+    Mcopy2.writeVTK(fileNameVTK);
+    Mcopy2.writeMED(fileNameMED);
+    Mesh M6(fileNameMED + ".med");
+    CPPUNIT_ASSERT_EQUAL( 2, M6.getSpaceDimension() );
+    CPPUNIT_ASSERT_EQUAL( 25, M6.getNumberOfNodes() );
+    CPPUNIT_ASSERT_EQUAL( 16, M6.getNumberOfCells() );
+    CPPUNIT_ASSERT_EQUAL( 40, M6.getNumberOfFaces() );
 
-    		/*
-    		const MEDCouplingMesh* M1MEDMesh = M2.getMEDCouplingMesh();
-    		 */
+    /*
+    const MEDCouplingMesh* M1MEDMesh = M2.getMEDCouplingMesh();
+     */
 
-    		//Test of a mesh with spaceDim=3 different from meshDim=2 (triangles)
-    		Mesh M4("meshSphere.med");
-    		CPPUNIT_ASSERT(M4.isTriangular());
-    		int nbCellsM4 = M4.getNumberOfCells();
-    		double areaM4=0;
-    		for(int i=0; i<nbCellsM4; i++)
-    			areaM4+=M4.getCell(i).getMeasure();
-    		CPPUNIT_ASSERT_DOUBLES_EQUAL( 4*3.14, areaM4, 1 );
+    //Test of a mesh with spaceDim=3 different from meshDim=2 (triangles)
+    Mesh M4("meshSphere.med");
+    CPPUNIT_ASSERT(M4.isTriangular());
+    int nbCellsM4 = M4.getNumberOfCells();
+    double areaM4=0;
+    for(int i=0; i<nbCellsM4; i++)
+        areaM4+=M4.getCell(i).getMeasure();
+    CPPUNIT_ASSERT_DOUBLES_EQUAL( 4*3.14, areaM4, 1 );
 
-    		//Testing a 3D unstructured mesh (tétraèdres)
-    		Mesh M5("meshCube.med");
-    		CPPUNIT_ASSERT(M5.isTetrahedral());
-    		int nbCellsM5 = M5.getNumberOfCells();
-    		double volM5=0;
-    		for(int i=0; i<nbCellsM5; i++)
-    			volM5+=M5.getCell(i).getMeasure();
-    		CPPUNIT_ASSERT_DOUBLES_EQUAL( 1., volM5, eps );
+    //Testing a 3D unstructured mesh (tétraèdres)
+    Mesh M5("meshCube.med");
+    CPPUNIT_ASSERT(M5.isTetrahedral());
+    int nbCellsM5 = M5.getNumberOfCells();
+    double volM5=0;
+    for(int i=0; i<nbCellsM5; i++)
+        volM5+=M5.getCell(i).getMeasure();
+    CPPUNIT_ASSERT_DOUBLES_EQUAL( 1., volM5, eps );
+    
+    //Testing Mesh( std::vector<double> points, std::string meshName )
+    int nbCellsM7 = 2*11;
+    int nbNodes = nbCellsM7+1;
+    vector<double> points (nbNodes);
+    double xmin=0;
+    double xmax=1;
+    double dx_min = (xmax-xmin)*2/nbCellsM7/3;
+    double dx_max = 2*dx_min;
+    points[0]=0;
+    for(int i=0; i<nbNodes-1; i++)
+    {
+        if(i%2==0)
+            points[i+1] = (dx_min+dx_max)*(i/2) + dx_min;
+        else
+            points[i+1] = (dx_min+dx_max)*(i/2) + dx_min + dx_max;        
+    }
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(points[0],        xmin,eps);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(points[nbNodes-1],xmax,eps);
+
+    Mesh M7(points, "Checkerboard mesh");
+
+    double volM7=0;
+    for(int i=0; i<nbCellsM7; i++)
+        volM7+=M7.getCell(i).getMeasure();
+    CPPUNIT_ASSERT_DOUBLES_EQUAL( 1., volM7, eps );
 }

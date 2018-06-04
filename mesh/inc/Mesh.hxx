@@ -56,7 +56,13 @@ public: //----------------------------------------------------------------
 	 * @param xsup : maximum x
 	 * @param nx : Number of cell in x direction
 	 */
-	Mesh( double xinf, double xsup, int nx, std::string meshName="MESH1D" ) ;
+	Mesh( double xinf, double xsup, int nx, std::string meshName="MESH1D_Regular_Grid" ) ;
+
+	/**
+	 * constructor with data
+	 * @param points : abscissas of the mesh nodes
+	 */
+	Mesh( std::vector<double> points, std::string meshName="MESH1D_unstructured" ) ;
 
 	/**
 	 * constructor with data
@@ -67,7 +73,7 @@ public: //----------------------------------------------------------------
 	 * @param nx : Number of cell in x direction
 	 * @param ny : Number of cell in y direction
 	 */
-	Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny, std::string meshName="MESH2D") ;
+	Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny, std::string meshName="MESH2D_Regular_Grid") ;
 
 	/**
 	 * constructor with data
@@ -81,7 +87,7 @@ public: //----------------------------------------------------------------
 	 * @param ny : Number of cell in y direction
 	 * @param nz : Number of cell in z direction
 	 */
-	Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny, double zinf, double zsup, int nz, std::string meshName="MESH3D") ;
+	Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny, double zinf, double zsup, int nz, std::string meshName="MESH3D_Regular_Grid") ;
 
 	Mesh( const MEDCoupling::MEDCouplingIMesh* mesh ) ;
 

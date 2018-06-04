@@ -20,7 +20,8 @@
 #include "CdmathException.hxx"
 
 #include <iostream>
-
+#include <iterator>
+#include <algorithm> 
 
 using namespace MEDCoupling;
 using namespace std;
@@ -908,6 +909,152 @@ Mesh::Mesh( double xinf, double xsup, int nx, std::string meshName )
 	mu->decrRef();
 }
 
+//----------------------------------------------------------------------
+Mesh::Mesh( std::vector<double> points, std::string meshName )
+//----------------------------------------------------------------------
+{
+    int nx=points.size();
+    
+	if(nx<2)
+		throw CdmathException("Mesh::Mesh( vector<double> points, string meshName) : nx < 2, vector should contain at least two values");
+    int i=0;
+    while( i<nx-1 && points[i+1]>points[i] )
+        i++;
+	if( i!=nx-1 )
+    {
+        //cout<< points << endl;
+		throw CdmathException("Mesh::Mesh( vector<double> points, string meshName) : vector values should be sorted");
+    }
+    
+	_spaceDim = 1 ;
+	_meshDim  = 1 ;
+	_xMin=points[0];
+	_xSup=points[nx-1];
+	_yMin=0.;
+	_ySup=0.;
+	_zMin=0.;
+	_zSup=0.;
+
+    //Not relevant
+	/*_dxyz.resize(_spaceDim);
+	_dxyz[0]=dx;
+	_nxyz.resize(_spaceDim);
+	_nxyz[0]=nx;
+    */
+    
+    MEDCouplingUMesh * mesh1d = MEDCouplingUMesh::New(meshName, 1);
+    mesh1d->allocateCells(nx - 1);
+    double * coords = new double[nx];
+    int * nodal_con = new int[2];
+    coords[0]=points[0];
+    for(int i=0; i<nx- 1 ; i++)
+    {
+        nodal_con[0]=i;
+        nodal_con[1]=i+1;
+        mesh1d->insertNextCell(INTERP_KERNEL::NORM_SEG2, 2, nodal_con);
+        coords[i+1]=points[i + 1];
+    }
+    mesh1d->finishInsertingCells();
+
+    DataArrayDouble * coords_arr = DataArrayDouble::New();
+    coords_arr->alloc(nx,1);
+    std::copy(coords,coords+nx,coords_arr->getPointer());
+    mesh1d->setCoords(coords_arr);
+
+    delete [] coords, nodal_con;
+    coords_arr->decrRef();
+
+    _mesh=mesh1d;
+    
+	DataArrayInt *desc=DataArrayInt::New();
+	DataArrayInt *descI=DataArrayInt::New();
+	DataArrayInt *revDesc=DataArrayInt::New();
+	DataArrayInt *revDescI=DataArrayInt::New();
+	    cout<<"coucou4"<<endl;
+    MEDCouplingUMesh* mu=_mesh->buildUnstructured();
+	MEDCouplingUMesh *m2=mu->buildDescendingConnectivity(desc,descI,revDesc,revDescI);
+	m2->setName(mu->getName());
+    cout<<"coucou3"<<endl;
+
+	DataArrayDouble *baryCell = mu->computeCellCenterOfMass() ;
+	const double *coorBary=baryCell->getConstPointer();
+
+	_numberOfCells = _mesh->getNumberOfCells() ;
+	_cells    = new Cell[_numberOfCells] ;
+
+	MEDCouplingFieldDouble* fieldl=mu->getMeasureField(true);
+	DataArrayDouble *longueur = fieldl->getArray();
+	const double *lon=longueur->getConstPointer();
+
+	int comp=0;
+	for( int id=0;id<_numberOfCells;id++ )
+	{
+		int nbVertices=mu->getNumberOfNodesInCell(id) ;
+		Point p(coorBary[id],0.0,0.0) ;
+		Cell ci( nbVertices, nbVertices, lon[id], p ) ;
+
+		std::vector<int> nodeIdsOfCell ;
+		mu->getNodeIdsOfCell(id,nodeIdsOfCell) ;
+		for( int el=0;el<nbVertices;el++ )
+		{
+			ci.addNodeId(el,nodeIdsOfCell[el]) ;
+			ci.addFaceId(el,nodeIdsOfCell[el]) ;
+		}
+		_cells[id] = ci ;
+		comp=comp+2;
+	}
+
+
+	DataArrayInt *revNode=DataArrayInt::New();
+	DataArrayInt *revNodeI=DataArrayInt::New();
+	mu->getReverseNodalConnectivity(revNode,revNodeI) ;
+	const int *tmpN=revNode->getConstPointer();
+	const int *tmpNI=revNodeI->getConstPointer();
+
+	_numberOfNodes = mu->getNumberOfNodes() ;
+	_nodes    = new Node[_numberOfNodes] ;
+	_numberOfFaces = _numberOfNodes;
+	_faces    = new Face[_numberOfFaces] ;
+
+	for( int id=0;id<_numberOfNodes;id++ )
+	{
+		std::vector<double> coo ;
+		mu->getCoordinatesOfNode(id,coo);
+		Point p(coo[0],0.0,0.0) ;
+		const int *workc=tmpN+tmpNI[id];
+		int nbCells=tmpNI[id+1]-tmpNI[id];
+		int nbFaces=1;
+		Node vi( nbCells, nbFaces, p ) ;
+		int nbVertices=1;
+		/* provisoire !!!!!!!!!!!!*/
+		//        Point pf(0.0,0.0,0.0) ;
+		Face fi( nbVertices, nbCells, 0.0, p, 0., 0., 0. ) ;
+
+		for( int el=0;el<nbCells;el++ )
+			vi.addCellId(el,workc[el]) ;
+		for( int el=0;el<nbFaces;el++ )
+			vi.addFaceId(el,id) ;
+		_nodes[id] = vi ;
+
+		for( int el=0;el<nbVertices;el++ )
+			fi.addNodeId(el,id) ;
+
+		for( int el=0;el<nbCells;el++ )
+			fi.addCellId(el,workc[el]) ;
+		_faces[id] = fi ;
+	}
+
+	fieldl->decrRef();
+	baryCell->decrRef();
+	desc->decrRef();
+	descI->decrRef();
+	revDesc->decrRef();
+	revDescI->decrRef();
+	revNode->decrRef();
+	revNodeI->decrRef();
+	m2->decrRef();
+	mu->decrRef();
+}
 //----------------------------------------------------------------------
 Mesh::Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny, std::string meshName)
 //----------------------------------------------------------------------
