@@ -82,6 +82,10 @@ outputFileName="Slice_field_data_to_txt_file"+fileNameVTK4+".csv"
 Slice_field_data_to_txt_file(field4, outputFileName, point, normal,resolution)
 print "Slice_field_data_to_txt_file ok"
 
+outputFileName="Slice_VTK_data_to_VTK"+fileNameVTK5+'_0.vtu'
+Slice_VTK_data_to_VTK(fileNameVTK5+'_0.vtu',outputFileName,point, normal,resolution )
+print "Slice_VTK_data_to_VTK ok"
+
 outputFileName="Clip_VTK_data_to_VTK"+fileNameVTK5+'_0.vtu'
 Clip_VTK_data_to_VTK(fileNameVTK5+'_0.vtu',outputFileName,point, normal,resolution )
 print "Clip_VTK_data_to_VTK ok"

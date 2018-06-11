@@ -101,6 +101,29 @@ def Slice_field_data_to_txt_file(field, outputFileName,
 
     np.savetxt(outputFileName, numpy_array, delimiter=" ")
 
+def Slice_VTK_data_to_VTK(inputFileName,
+                             outputFileName,
+                                 point, normal,
+                                 resolution
+                                           ):
+    reader = vtk.vtkXMLUnstructuredGridReader()
+    reader.SetFileName(inputFileName)
+    reader.Update()
+    
+    plane = vtk.vtkPlane()
+    plane.SetOrigin(point)
+    plane.SetNormal(normal)
+
+    cutter = vtk.vtkFiltersCorePython.vtkCutter()
+    cutter.SetCutFunction(plane)
+    cutter.SetInputConnection(reader.GetOutputPort())
+    cutter.Update()
+
+    writer = vtk.vtkXMLUnstructuredGridWriter()
+    writer.SetInputData(cutter.GetOutput())
+    writer.SetFileName(outputFileName)
+    writer.Write()
+
 def Clip_VTK_data_to_VTK(inputFileName,
                              outputFileName,
                                  point, normal,
@@ -122,7 +145,6 @@ def Clip_VTK_data_to_VTK(inputFileName,
     writer = vtk.vtkXMLUnstructuredGridWriter()
     writer.SetInputData(clipper.GetOutput())
     writer.SetFileName(outputFileName)
-    #Update or Write ?
     writer.Write()
 
 def Save_VTK_data_to_picture_file(inputFileName,
