@@ -155,7 +155,7 @@ def solve(filename,resolution):
     #Postprocessing : Extraction of the diagonal data
     diag_data=VTK_routines.Extract_field_data_over_line_to_numpyArray(my_ResultField,[0,1,0],[1,0,0], resolution)
     
-    return erreur_abs/max_abs_sol_exacte, my_mesh.getNumberOfNodes(), diag_data
+    return erreur_abs/max_abs_sol_exacte, my_mesh.getNumberOfNodes(), diag_data, min_sol_num, max_sol_num
 
 if __name__ == """__main__""":
     solve("meshSquare",100)
