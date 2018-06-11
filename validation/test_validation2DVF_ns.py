@@ -20,7 +20,8 @@ def test_validation2DVF():
     # Storing of numerical errors, mesh sizes and diagonal values
     for filename in meshList:
         error_tab[i], mesh_size_tab[i], diag_data[i], min_sol_num, max_sol_num =FiniteVolumes2DWithCDMATH.solve_file(mesh_path+filename,resolution)
-        assert min_sol_num>-0.01 && max_sol_num<1.01
+        assert min_sol_num>-0.01 
+        assert max_sol_num<1.2
         plt.plot(curv_abs, diag_data[i], label= str(mesh_size_tab[i]) + ' cells')
         error_tab[i]=log10(error_tab[i])
         mesh_size_tab[i] = log10(mesh_size_tab[i])

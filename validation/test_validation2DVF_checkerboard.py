@@ -19,7 +19,9 @@ def test_validation2DVF_checkerboard():
     i=0
     # Storing of numerical errors, mesh sizes and diagonal values
     for filename in meshList:
-        error_tab[i], mesh_size_tab[i], diag_data[i] =FiniteVolumes2DWithCDMATH.solve_file(mesh_path+filename,resolution)
+        error_tab[i], mesh_size_tab[i], diag_data[i], min_sol_num, max_sol_num =FiniteVolumes2DWithCDMATH.solve_file(mesh_path+filename,resolution)
+        assert min_sol_num>-0.01 
+        assert max_sol_num<1.01
         plt.plot(curv_abs, diag_data[i], label= str(mesh_size_tab[i]) + ' cells')
         error_tab[i]=log10(error_tab[i])
         mesh_size_tab[i] = log10(mesh_size_tab[i])
@@ -47,7 +49,7 @@ def test_validation2DVF_checkerboard():
     b=(-a2*b1+a1*b2)/det
     
     print "FV on 2D checkerboard mesh : scheme order is ", -a
-    assert abs(a-0.23)<0.1 #The scheme is not converging
+    assert abs(a+0.17)<0.1 #The scheme is not converging
     
     # Plot of figures
     plt.close()

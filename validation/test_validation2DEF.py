@@ -19,7 +19,9 @@ def test_validation2DEF():
     i=0
     # Storing of numerical errors, mesh sizes and diagonal values
     for filename in meshList:
-        error_tab[i], mesh_size_tab[i], diag_data[i] =FiniteElements2DWithCDMATH.solve(mesh_path+filename, resolution)
+        error_tab[i], mesh_size_tab[i], diag_data[i], min_sol_num, max_sol_num =FiniteElements2DWithCDMATH.solve(mesh_path+filename, resolution)
+        assert min_sol_num>-0.01 
+        assert max_sol_num<1.2
         plt.plot(curv_abs, diag_data[i], label= str(mesh_size_tab[i]) + ' nodes')
         error_tab[i]=log10(error_tab[i])
         mesh_size_tab[i] = log10(mesh_size_tab[i])
