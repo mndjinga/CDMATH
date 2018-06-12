@@ -119,8 +119,13 @@ def Slice_VTK_data_to_VTK(inputFileName,
     cutter.SetInputConnection(reader.GetOutputPort())
     cutter.Update()
 
+    #Convert tht polydata structure générated by cutter into unstructured grid by triangulation
+    triFilter = vtk.vtkDataSetTriangleFilter()
+    triFilter.SetInputConnection(cutter.GetOutputPort())
+    triFilter.Update()
+    
     writer = vtk.vtkXMLUnstructuredGridWriter()
-    writer.SetInputData(cutter.GetOutput())
+    writer.SetInputData(triFilter.GetOutput())
     writer.SetFileName(outputFileName)
     writer.Write()
 

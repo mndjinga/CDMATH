@@ -74,26 +74,26 @@ print "Extract_field_over_line ok"
 
 point=[0.5,0.5,0]
 normal=[1,1,0]
-outputFileName="Slice_VTK_data_to_txt_file"+fileNameVTK3+".csv"
+outputFileName="Slice_VTK_data_to_txt_file_"+fileNameVTK3+".csv"
 Slice_VTK_data_to_txt_file(fileNameVTK3+'_0.vtu', outputFileName, point, normal,resolution )
 print "Slice_VTK_data_to_txt_file ok"
 
-outputFileName="Slice_field_data_to_txt_file"+fileNameVTK4+".csv"
+outputFileName="Slice_field_data_to_txt_file_"+fileNameVTK4+".csv"
 Slice_field_data_to_txt_file(field4, outputFileName, point, normal,resolution)
 print "Slice_field_data_to_txt_file ok"
 
-outputFileName="Slice_VTK_data_to_VTK"+fileNameVTK5+'_0.vtu'
+outputFileName="Slice_VTK_data_to_VTK_"+fileNameVTK5+'_0.vtu'
 Slice_VTK_data_to_VTK(fileNameVTK5+'_0.vtu',outputFileName,point, normal,resolution )
 print "Slice_VTK_data_to_VTK ok"
 
-outputFileName="Clip_VTK_data_to_VTK"+fileNameVTK5+'_0.vtu'
+outputFileName="Clip_VTK_data_to_VTK_"+fileNameVTK5+'_0.vtu'
 Clip_VTK_data_to_VTK(fileNameVTK5+'_0.vtu',outputFileName,point, normal,resolution )
 print "Clip_VTK_data_to_VTK ok"
 
-inputFileName="Clip_VTK_data_to_VTK"+fileNameVTK5
+inputFileName="Clip_VTK_data_to_VTK_"+fileNameVTK5
 Save_VTK_data_to_picture_file(inputFileName+'_0.vtu',outputFileName)
 print "Save_VTK_Clip_data_to_picture_file ok"
 
-outputFileName="Save_VTK_data_to_picture_file"+fileNameVTK5
+outputFileName="Save_VTK_data_to_picture_file_"+fileNameVTK5
 Save_VTK_data_to_picture_file(fileNameVTK5+'_0.vtu',outputFileName)
 print "Save_VTK_data_to_picture_file ok"
