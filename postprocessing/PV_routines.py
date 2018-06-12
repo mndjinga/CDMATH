@@ -30,7 +30,7 @@ def Extract_PV_data_over_line_to_numpyArray(inputFileName, point1, point2, resol
     return x1, x2, x3, var
 
 # TODO : this routine 
-# should be rewritten in ordre to skip the tmp file
+# should be rewritten in order to skip the tmp file
 # and directly convert the Slide vtk field elt to a numpy array
 # 
 def Slice_PV_data_to_numpyArray(inputFileName, point, normal, resolution):

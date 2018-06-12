@@ -53,7 +53,7 @@ field4.writeVTK(fileNameVTK4)
 
 #cell field on 3D structured mesh
 M5 = cdmath.Mesh(0.0, 1.0, 4, 0.0, 1.0, 4, 0.0, 1.0, 4)
-fieldName5="test field 5"
+fieldName5="testfield5"
 field5 = cdmath.Field(fieldName5, cdmath.CELLS, M5, 1)
 for j in range(field5.getNumberOfComponents()):
     for i in range(field5.getNumberOfElements()):
@@ -69,27 +69,27 @@ point2=[0.,1.,0.]
 resolution=100
 
 outputFileName="Extract_PV_over_line_"+fileNameVTK1+".csv"
-Extract_PV_data_over_line_to_txt_file('/home/ndjinga/Logiciels/CDMATH/BUILD/tests/2D_structured_cell_field_0.vtu', outputFileName, point1, point2, resolution)
+Extract_PV_data_over_line_to_txt_file('2D_structured_cell_field_0.vtu', outputFileName, point1, point2, resolution)
 print "Extract_VTK_over_line ok"
 
 point=[0.5,0.5,0]
 normal=[1,1,0]
-outputFileName="Slice_PV_data_to_txt_file"+fileNameVTK3+".csv"
-Slice_PV_data_to_txt_file('/home/ndjinga/Logiciels/CDMATH/BUILD/tests/'+fileNameVTK3+'_0.vtu', outputFileName, point, normal,resolution )
+outputFileName="Slice_PV_data_to_txt_file_"+fileNameVTK3+".csv"
+Slice_PV_data_to_txt_file(fileNameVTK3+'_0.vtu', outputFileName, point, normal,resolution )
 print "Slice_PV_data_to_txt_file ok"
 
 #outputFileName="Slice_field_data_to_txt_file"+fileNameVTK4+".csv"
 #Slice_PV_field_data_to_txt_file(field4, outputFileName, point, normal,resolution)
 #print "Slice_field_data_to_txt_file ok"
 
-outputFileName="Clip_PV_data_to_VTK"+fileNameVTK5+'_0.vtu'
-Clip_PV_data_to_VTK('/home/ndjinga/Logiciels/CDMATH/BUILD/tests/'+fileNameVTK5+'_0.vtu',fieldName5, 'POINTS',outputFileName,point, normal,resolution )
+outputFileName="Clip_PV_data_to_VTK_"+fileNameVTK5+'_0.vtu'
+Clip_PV_data_to_VTK(fileNameVTK5+'_0.vtu',fieldName5, 'CELLS',outputFileName,point, normal,resolution )
 print "Clip_PV_data_to_VTK ok"
 
-inputFileName="Clip_PV_data_to_VTK"+fileNameVTK5
-Save_PV_data_to_picture_file('/home/ndjinga/Logiciels/CDMATH/BUILD/tests/'+inputFileName+'_0.vtu',fieldName5,'POINTS',outputFileName)
+inputFileName="Clip_PV_data_to_VTK_"+fileNameVTK5
+Save_PV_data_to_picture_file(inputFileName+'_0.vtu',fieldName5,'CELLS',outputFileName)
 print "Save_PV_Clip_data_to_picture_file ok"
 
-outputFileName="Save_PV_data_to_picture_file"+fileNameVTK5
-Save_PV_data_to_picture_file('/home/ndjinga/Logiciels/CDMATH/BUILD/tests/'+fileNameVTK5+'_0.vtu',fieldName5,'POINTS',outputFileName)
+outputFileName="Save_PV_data_to_picture_file_"+fileNameVTK5
+Save_PV_data_to_picture_file(fileNameVTK5+'_0.vtu',fieldName5,'CELLS',outputFileName)
 print "Save_PV_data_to_picture_file ok"

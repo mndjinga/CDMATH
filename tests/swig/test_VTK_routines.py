@@ -50,7 +50,7 @@ field4.writeVTK(fileNameVTK4)
 
 #cell field on 3D structured mesh
 M5 = cdmath.Mesh(0.0, 1.0, 4, 0.0, 1.0, 4, 0.0, 1.0, 4)
-field5 = cdmath.Field("test field 5", cdmath.CELLS, M5, 1)
+field5 = cdmath.Field("testfield5", cdmath.CELLS, M5, 1)
 for j in range(field5.getNumberOfComponents()):
     for i in range(field5.getNumberOfElements()):
         field5[i, j] = i + j
