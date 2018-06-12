@@ -72,8 +72,8 @@ outputFileName="Extract_field_over_line_"+fileNameVTK2+".csv"
 Extract_field_data_over_line_to_txt_file(field2, point1, point2, resolution, outputFileName)
 print "Extract_field_over_line ok"
 
-point=[0.5,0.5,0]
-normal=[1,1,0]
+point=[0.5,0.5,0.5]
+normal=[0.5,0.5,0.5]
 outputFileName="Slice_VTK_data_to_txt_file_"+fileNameVTK3+".csv"
 Slice_VTK_data_to_txt_file(fileNameVTK3+'_0.vtu', outputFileName, point, normal,resolution )
 print "Slice_VTK_data_to_txt_file ok"
