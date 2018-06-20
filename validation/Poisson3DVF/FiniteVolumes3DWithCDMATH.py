@@ -89,11 +89,11 @@ def solve(my_mesh, filename,resolution):
     
     # Création du champ résultat
     #===========================
-    my_ResultField = cdmath.Field("Result field", cdmath.CELLS, my_mesh, 1)
+    my_ResultField = cdmath.Field("ResultField", cdmath.CELLS, my_mesh, 1)
     for i in range(nbCells):
         my_ResultField[i]=SolSyst[i];
     #sauvegarde sur le disque dur du résultat dans un fichier paraview
-    my_ResultField.writeVTK("FiniteVolumes2DResultField"+filename)
+    my_ResultField.writeVTK("FiniteVolumes3DResultField"+filename)
     
     print("Numerical solution of 3D poisson equation using finite elements done")
     

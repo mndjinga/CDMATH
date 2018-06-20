@@ -140,7 +140,8 @@ for j in range(nbBoundaryNodes):
 my_ResultField.writeVTK("FiniteElements2DResultField")
 
 #Postprocessing : save 2D picture
-PV_routines.Save_PV_data_to_picture_file("FiniteElements2DResultField"+'_0.vtu',"ResultField",'NODES',"FiniteElements2DResultField"+'png')
+PV_routines.Save_PV_data_to_picture_file("FiniteElements2DResultField"+'_0.vtu',"ResultField",'NODES',"FiniteElements2DResultField")
+
 #Postprocessing : extract diagonal values
 resolution=100
 curv_abs=np.linspace(0,sqrt(2),resolution+1)
@@ -150,8 +151,7 @@ plt.legend()
 plt.xlabel('Position on diagonal line')
 plt.ylabel('Value on diagonal line')
 plt.title('Plot over diagonal line for finite elements \n for Laplace operator on a 2D triangular mesh')
-plt.savefig("FiniteElements2DResultField_"+str(nbNodes) + ' nodes'+"_PlotOverDiagonalLine.png")
-
+plt.savefig("FiniteElements2DResultField_"+str(nbNodes) + '_nodes'+"_PlotOverDiagonalLine.png")
 
 print("Numerical solution of 2D poisson equation using finite elements done")
 
@@ -169,4 +169,3 @@ for i in range(nbNodes) :
 print("Absolute error = max(| exact solution - numerical solution |) = ",erreur_abs )
 print("Relative error = max(| exact solution - numerical solution |)/max(| exact solution |) = ",erreur_abs/max_abs_sol_exacte)
 print ("Maximum numerical solution = ", max_sol_num, " Minimum numerical solution = ", min_sol_num)
-

@@ -8,7 +8,11 @@
 #================================================================================================================================
 
 import cdmath
-from math import sin, pi
+from math import sin, pi, sqrt
+import numpy as np
+import matplotlib.pyplot as plt
+import PV_routines
+import VTK_routines
 
 # Création d'un maillage cartésien du domaine carré [0,1]x[0,1], définition des bords
 #====================================================================================
@@ -91,11 +95,25 @@ print("Linear system solved")
 
 # Création du champ résultat
 #===========================
-my_ResultField = cdmath.Field("Result field", cdmath.CELLS, my_mesh, 1)
+my_ResultField = cdmath.Field("ResultField", cdmath.CELLS, my_mesh, 1)
 for i in range(nbCells):
     my_ResultField[i]=SolSyst[i];
 #sauvegarde sur le disque dur du résultat dans un fichier paraview
 my_ResultField.writeVTK("FiniteVolumes2DResultField")
+
+#Postprocessing : save 2D picture
+PV_routines.Save_PV_data_to_picture_file("FiniteVolumes2DResultField"+'_0.vtu',"ResultField",'CELLS',"FiniteVolumes2DResultField")
+
+#Postprocessing : extract diagonal values
+resolution=100
+curv_abs=np.linspace(0,sqrt(2),resolution+1)
+diag_data=VTK_routines.Extract_field_data_over_line_to_numpyArray(my_ResultField,[0,1,0],[1,0,0], resolution)
+plt.plot(curv_abs, diag_data, label= str(nx) +'x'+str(ny)+ ' cells mesh')
+plt.legend()
+plt.xlabel('Position on diagonal line')
+plt.ylabel('Value on diagonal line')
+plt.title('Plot over diagonal line for finite Volumes \n for Laplace operator on a 2D reular grid')
+plt.savefig("FiniteVolumes2DResultField_"+str(nx) +'x'+str(ny)+ '_cells'+"_PlotOverDiagonalLine.png")
 
 print("Numerical solution of 2D poisson equation using finite elements done")
 
@@ -113,5 +131,3 @@ for i in range(nbCells) :
 print("Absolute error = max(| exact solution - numerical solution |) = ",erreur_abs )
 print("Relative error = max(| exact solution - numerical solution |)/max(| exact solution |) = ",erreur_abs/max_abs_sol_exacte)
 print ("Maximum numerical solution = ", max_sol_num, " Minimum numerical solution = ", min_sol_num)
-
-#Postprocessing optionnel: ouverture du fichier FiniteElementsResultField.pvd contenant le résultat numérique à partir de commandes python (import paraview)

@@ -9,6 +9,10 @@
 
 import cdmath
 from math import pow
+import numpy as np
+import matplotlib.pyplot as plt
+import PV_routines
+import VTK_routines
 
 #Préprocessing optionnel: création du fichier my_mesh.med contenant la géométrie et le maillage du domaine de calcul à partir de commandes python (import salome)
 
@@ -48,7 +52,7 @@ for i in range(nbNodes):
 		maxNbNeighbours = max(1+Ni.getNumberOfCells(),maxNbNeighbours)
 
 # sauvegarde sur le disque dur du second membre discrétisé dans un fichier paraview
-my_RHSfield.writeVTK("FiniteElements2DSurfaceRHSField") 
+my_RHSfield.writeVTK("FiniteElementsOnSphereRHSField") 
 
 print("Right hand side discretisation done")
 print("Max nb of neighbours=", maxNbNeighbours)
@@ -148,14 +152,20 @@ print("Linear system solved")
 
 # Création du champ résultat
 #===========================
-my_ResultField = cdmath.Field("Result field", cdmath.NODES, my_mesh, 1)
+my_ResultField = cdmath.Field("ResultField", cdmath.NODES, my_mesh, 1)
 for j in range(nbNodes):
     my_ResultField[j]=SolSyst[j];#remplissage des valeurs pour les noeuds intérieurs
 #sauvegarde sur le disque dur du résultat dans un fichier paraview
-my_ResultField.writeVTK("FiniteElements2DSurfaceResultField")
+my_ResultField.writeVTK("FiniteElementsOnSphereResultField")
+
+#Postprocessing : save 3D picture
+PV_routines.Save_PV_data_to_picture_file("FiniteElementsOnSphereResultField"+'_0.vtu',"ResultField",'NODES',"FiniteElementsOnSphereResultField")
+resolution=100
+VTK_routines.Clip_VTK_data_to_VTK("FiniteElementsOnSphereResultField"+'_0.vtu',"Clip_VTK_data_to_VTK_"+ "FiniteElementsOnSphereResultField"+'_0.vtu',[0.25,0.25,0.25], [-0.5,-0.5,-0.5],resolution )
+PV_routines.Save_PV_data_to_picture_file("Clip_VTK_data_to_VTK_"+"FiniteElementsOnSphereResultField"+'_0.vtu',"ResultField",'NODES',"Clip_VTK_data_to_VTK_"+"FiniteElementsOnSphereResultField")
 
 print("Integral of the numerical solution", my_ResultField.integral(0))
-print("Numerical solution of 2D poisson equation using finite elements done")
+print("Numerical solution of poisson equation on a sphere using finite elements done")
 
 #Calcul de l'erreur commise par rapport à la solution exacte
 #===========================================================
@@ -174,8 +184,7 @@ for i in range(nbNodes) :
     if min_sol_num > my_ResultField[i] :
         min_sol_num = my_ResultField[i]
 max_abs_sol_exacte = max_abs_sol_exacte/12
+
 print("Absolute error = max(| exact solution - numerical solution |) = ",erreur_abs )
 print("Relative error = max(| exact solution - numerical solution |)/max(| exact solution |) = ",erreur_abs/max_abs_sol_exacte)
 print ("Maximum numerical solution = ", max_sol_num, " Minimum numerical solution = ", min_sol_num)
-
-#Postprocessing optionnel: ouverture du fichier FiniteElementsResultField.pvd contenant le résultat numérique à partir de commandes python (import paraview)

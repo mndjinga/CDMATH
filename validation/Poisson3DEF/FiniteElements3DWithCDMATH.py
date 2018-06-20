@@ -9,7 +9,7 @@
 
 import cdmath
 import VTK_routines
-from math import sin, pi
+from math import sin, pi, sqrt
 
 def solve(filename,resolution):
     #Préprocessing optionnel: création du fichier my_mesh.med contenant la géométrie et le maillage du domaine de calcul à partir de commandes python (import salome)
@@ -141,7 +141,7 @@ def solve(filename,resolution):
     
     # Création du champ résultat
     #===========================
-    my_ResultField = cdmath.Field("Result field", cdmath.NODES, my_mesh, 1)
+    my_ResultField = cdmath.Field("ResultField", cdmath.NODES, my_mesh, 1)
     for j in range(nbInteriorNodes):
         my_ResultField[interiorNodes[j]]=SolSyst[j];#remplissage des valeurs pour les noeuds intérieurs
     

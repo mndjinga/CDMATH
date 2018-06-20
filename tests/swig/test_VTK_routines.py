@@ -3,6 +3,7 @@
 
 from VTK_routines import *
 import cdmath
+from math import sqrt
 
 #Meshes and fields initialisation
 #================================
@@ -73,7 +74,7 @@ Extract_field_data_over_line_to_txt_file(field2, point1, point2, resolution, out
 print "Extract_field_over_line ok"
 
 point=[0.5,0.5,0.5]
-normal=[0.5,0.5,0.5]
+normal=[-0.5,-0.5,-0.5]
 outputFileName="Slice_VTK_data_to_txt_file_"+fileNameVTK3+".csv"
 Slice_VTK_data_to_txt_file(fileNameVTK3+'_0.vtu', outputFileName, point, normal,resolution )
 print "Slice_VTK_data_to_txt_file ok"
@@ -90,10 +91,10 @@ outputFileName="Clip_VTK_data_to_VTK_"+fileNameVTK5+'_0.vtu'
 Clip_VTK_data_to_VTK(fileNameVTK5+'_0.vtu',outputFileName,point, normal,resolution )
 print "Clip_VTK_data_to_VTK ok"
 
-inputFileName="Clip_VTK_data_to_VTK_"+fileNameVTK5
-Save_VTK_data_to_picture_file(inputFileName+'_0.vtu',outputFileName)
-print "Save_VTK_Clip_data_to_picture_file ok"
+#inputFileName="Clip_VTK_data_to_VTK_"+fileNameVTK5
+#Save_VTK_data_to_picture_file(inputFileName+'_0.vtu',outputFileName)
+#print "Save_VTK_Clip_data_to_picture_file ok"
 
-outputFileName="Save_VTK_data_to_picture_file_"+fileNameVTK5
-Save_VTK_data_to_picture_file(fileNameVTK5+'_0.vtu',outputFileName)
-print "Save_VTK_data_to_picture_file ok"
+#outputFileName="Save_VTK_data_to_picture_file_"+fileNameVTK5
+#Save_VTK_data_to_picture_file(fileNameVTK5+'_0.vtu',outputFileName)
+#print "Save_VTK_data_to_picture_file ok"
