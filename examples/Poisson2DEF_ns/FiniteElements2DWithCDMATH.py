@@ -8,7 +8,11 @@
 #================================================================================================================================
 
 import cdmath
-from math import sin, pi
+from math import sin, pi, sqrt
+import numpy as np
+import matplotlib.pyplot as plt
+import PV_routines
+import VTK_routines
 
 #Préprocessing optionnel: création du fichier my_mesh.med contenant la géométrie et le maillage du domaine de calcul à partir de commandes python (import salome)
 
@@ -127,13 +131,27 @@ print("Linear system solved")
 
 # Création du champ résultat
 #===========================
-my_ResultField = cdmath.Field("Result field", cdmath.NODES, my_mesh, 1)
+my_ResultField = cdmath.Field("ResultField", cdmath.NODES, my_mesh, 1)
 for j in range(nbInteriorNodes):
     my_ResultField[interiorNodes[j]]=SolSyst[j];#remplissage des valeurs pour les noeuds intérieurs
 for j in range(nbBoundaryNodes):
     my_ResultField[boundaryNodes[j]]=0;#remplissage des valeurs pour les noeuds frontière (condition limite)
 #sauvegarde sur le disque dur du résultat dans un fichier paraview
 my_ResultField.writeVTK("FiniteElements2DResultField")
+
+#Postprocessing : save 2D picture
+PV_routines.Save_PV_data_to_picture_file("FiniteElements2DResultField"+'_0.vtu',"ResultField",'NODES',"FiniteElements2DResultField"+'png')
+#Postprocessing : extract diagonal values
+resolution=100
+curv_abs=np.linspace(0,sqrt(2),resolution+1)
+diag_data=VTK_routines.Extract_field_data_over_line_to_numpyArray(my_ResultField,[0,1,0],[1,0,0], resolution)
+plt.plot(curv_abs, diag_data, label= '2D mesh with '+str(nbNodes) + ' nodes')
+plt.legend()
+plt.xlabel('Position on diagonal line')
+plt.ylabel('Value on diagonal line')
+plt.title('Plot over diagonal line for finite elements \n for Laplace operator on a 2D triangular mesh')
+plt.savefig("FiniteElements2DResultField_"+str(nbNodes) + ' nodes'+"_PlotOverDiagonalLine.png")
+
 
 print("Numerical solution of 2D poisson equation using finite elements done")
 
@@ -151,6 +169,4 @@ for i in range(nbNodes) :
 print("Absolute error = max(| exact solution - numerical solution |) = ",erreur_abs )
 print("Relative error = max(| exact solution - numerical solution |)/max(| exact solution |) = ",erreur_abs/max_abs_sol_exacte)
 print ("Maximum numerical solution = ", max_sol_num, " Minimum numerical solution = ", min_sol_num)
-
-#Postprocessing optionnel: ouverture du fichier FiniteElementsResultField.pvd contenant le résultat numérique à partir de commandes python (import paraview)
 
