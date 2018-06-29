@@ -111,7 +111,7 @@ def sigma_flux(VitesseX, VitesseY, cfl, y_field, indexFacesPerio):
 def EquationTransport2D(tmax, VitesseX, VitesseY, cfl, freqSortie, my_mesh, output_filename):
 
     # Initial conditions #
-    print("Construction of the initial condition…")
+    print("Construction of the initial condition …")
     y_field = initial_conditions(my_mesh)
     #
     # MED output of the initial condition at t=0 and iter = 0
@@ -119,7 +119,7 @@ def EquationTransport2D(tmax, VitesseX, VitesseY, cfl, freqSortie, my_mesh, outp
 
     it = 0
     time = 0.
-    print("MED post-treatment of the solution at T=" + str(time) + "…")
+    print("Saving the solution at T=" + str(time) + "…")
     y_field.setTime(time, it)
     y_field.writeMED(output_filename)
     y_field.writeVTK(output_filename)
@@ -163,9 +163,9 @@ def main():
     tmax = 1.
     freqSortie = 10
 
-    print("Building Cartesian mesh…")
+    print("Loading triangular mesh …")
     my_mesh = cdmath.Mesh("../../tests/ressources/meshSquare.med")
-    output_filename = "Exercie2PyTest"
+    output_filename = "Exercice2PyTest"
     EquationTransport2D(tmax, VitesseX, VitesseY, cfl, freqSortie, my_mesh, output_filename)
     print("CDMATH calculation done.")
     return

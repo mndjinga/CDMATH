@@ -124,7 +124,7 @@ void sigma_flux(double VitesseX, double VitesseY, double cfl, const Field& yFiel
 void EquationTransport2D(double tmax, double VitesseX, double VitesseY, double cfl, int freqSortie, const Mesh& myMesh, const string file)
 {
     /* Initial conditions */
-    cout << "Construction of the initial condition…" << endl;
+    cout << "Construction of the initial condition …" << endl;
     Field yField("Y field",CELLS,myMesh,1) ;
     conditions_initiales(yField);
 
@@ -133,7 +133,7 @@ void EquationTransport2D(double tmax, double VitesseX, double VitesseY, double c
      */
     int iter=0;
     double time=0.;
-    cout << "MED post-treatment of the solution at T=" << time << "…" << endl;
+    cout << "Saving the solution at T=" << time << "…" << endl;
     yField.setTime(time,iter);
     yField.writeMED(file);
     yField.writeVTK(file);
@@ -141,7 +141,7 @@ void EquationTransport2D(double tmax, double VitesseX, double VitesseY, double c
     /* --------------------------------------------- */
 
     /* Time loop */
-    cout << "Resolution of the transport equation with an UPWIND scheme…" << endl;
+    cout << "Resolution of the transport equation with an UPWIND scheme …" << endl;
     int ntmax=3;
     double dt;
     IntTab indexFacesPerio=myMesh.getIndexFacePeriodic();

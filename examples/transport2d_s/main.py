@@ -111,7 +111,7 @@ def sigma_flux(VitesseX, VitesseY, cfl, y_field, indexFacesPerio):
 def EquationTransport2D(tmax, VitesseX, VitesseY, cfl, output_freq, my_mesh, file):
 
     # Initial conditions #
-    print("Construction of the initial conditions…")
+    print("Construction of the initial condition …")
     y_field = initial_conditions(my_mesh)
     #
     #  MED output of the initial conditions at t=0 and iteration = 0
@@ -119,14 +119,14 @@ def EquationTransport2D(tmax, VitesseX, VitesseY, cfl, output_freq, my_mesh, fil
 
     iteration = 0
     time = 0.
-    print("MED post-treatement of the solution at T=" + str(time) + "…")
+    print("Saving the solution at T=" + str(time) + "…")
     y_field.setTime(time, iteration)
     y_field.writeMED(file)
     y_field.writeVTK(file)
     y_field.writeCSV(file)
 
     # Time loop #
-    print("Resolution of the transport equation with an UPWIND scheme…")
+    print("Resolution of the transport equation with an UPWIND scheme …")
     ntmax = 3
     indexFacesPerio = my_mesh.getIndexFacePeriodic()
     dt = 0.
@@ -151,7 +151,7 @@ def EquationTransport2D(tmax, VitesseX, VitesseY, cfl, output_freq, my_mesh, fil
 
 def main():
     print("RESOLUTION OF THE 2D TRANSPORT EQUATION:")
-    print("- DOMAIN: NON SQUARE")
+    print("- DOMAIN: SQUARE [0,1]x[0,1]")
     print("- MESH: CARTESIAN, INTERNAL GENERATION WITH CDMATH")
     print("- PERIODIC BC ON TOP AND BOTTOM")
     print("- HOMOGENEOUS NEUMANN BC ON LEFT AND RIGHT")
@@ -163,7 +163,7 @@ def main():
     tmax = 1.
     output_freq = 10
 
-    print("Construction of Cartesian mesh…")
+    print("Construction of a cartesian mesh …")
     xinf = 0.0
     xsup = 1.0
     yinf = 0.0
@@ -176,7 +176,7 @@ def main():
     my_mesh.setGroupAtPlan(xinf, 0, eps, "LeftEdge")
     my_mesh.setGroupAtPlan(yinf, 1, eps, "BottomEdge")
     my_mesh.setGroupAtPlan(ysup, 1, eps, "TopEdge")
-    fileOutPutCart = "Exercie1PyTest"
+    fileOutPutCart = "Exercice1PyTest"
     EquationTransport2D(tmax, VitesseX, VitesseY, cfl, output_freq, my_mesh, fileOutPutCart)
     print("CDMATH calculation done.")
     return

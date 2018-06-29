@@ -124,7 +124,7 @@ void sigma_flux(double VitesseX, double VitesseY, double cfl, const Field& yFiel
 void EquationTransport2D(double tmax, double VitesseX, double VitesseY, double cfl, int freqSortie, const Mesh& myMesh, const string file)
 {
     /* Initial conditions */
-    cout << "Construction of the initial conditions…" << endl;
+    cout << "Construction of the initial condition …" << endl;
     Field yField("Y field",CELLS,myMesh,1) ;
     initial_conditions(yField);
 
@@ -133,7 +133,7 @@ void EquationTransport2D(double tmax, double VitesseX, double VitesseY, double c
      */
     int iter=0;
     double time=0.;
-    cout << "MED post-treatment of the solution at T=" << time << "…" << endl;
+    cout << "Saving the solution at T=" << time << "…" << endl;
     yField.setTime(time,iter);
     yField.writeMED(file);
     yField.writeVTK(file);
@@ -141,7 +141,7 @@ void EquationTransport2D(double tmax, double VitesseX, double VitesseY, double c
     /* --------------------------------------------- */
 
     /* Time loop */
-    cout << "Resolution of the transport equation with an UPWIND scheme…" << endl;
+    cout << "Resolution of the transport equation with an UPWIND scheme …" << endl;
     int ntmax=3;
     double dt;
     IntTab indexFacesPerio=myMesh.getIndexFacePeriodic();
@@ -182,7 +182,7 @@ int main()
     double tmax=1.;
     int freqSortie=10;
 
-    cout << "Construction of Cartesian mesh…" << endl;
+    cout << "Construction of a cartesian mesh …" << endl;
     double xinf=0.0;
     double xsup=1.0;
     double yinf=0.0;
@@ -195,7 +195,7 @@ int main()
     myMesh.setGroupAtPlan(xinf,0,eps,"LeftEdge");
     myMesh.setGroupAtPlan(yinf,1,eps,"BottomEdge");
     myMesh.setGroupAtPlan(ysup,1,eps,"TopEdge");
-    string fileOutPutCart="Exercie1";
+    string fileOutPutCart="Exercice1";
     EquationTransport2D(tmax,VitesseX,VitesseY,cfl,freqSortie,myMesh,fileOutPutCart);
     cout << "CDMATH calculation done." << endl;
     return 0;
