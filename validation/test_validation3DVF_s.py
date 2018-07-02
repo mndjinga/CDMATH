@@ -58,7 +58,7 @@ def test_validation3DVF_s():
     plt.plot(mesh_size_tab, error_tab, label='log(|numerical-exact|)')
     plt.plot(mesh_size_tab, a*np.array(mesh_size_tab)+b,label='least square slope : '+'%.3f' % a)
     plt.legend()
-    plt.xlabel('log(number of nodes)')
+    plt.xlabel('log(number of cells)')
     plt.ylabel('log(error)')
     plt.title('Convergence of finite volumes for Laplace operator on a 3D cuboid mesh')
     plt.savefig(mesh_name+"ConvergenceCurve.png")
