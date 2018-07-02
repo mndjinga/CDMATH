@@ -1,6 +1,6 @@
 # -*-coding:utf-8 -*
 #===============================================================================================================================
-# Name        : Résolution EF de l'équation de Laplace-Beltrami -\triangle u = f sur une surface sans bord
+# Name        : Résolution EF de l'équation de Laplace-Beltrami -\triangle u = f sur une sphere 
 # Author      : Michael Ndjinga
 # Copyright   : CEA Saclay 2017
 # Description : Utilisation de la méthode des éléménts finis P1 avec champs u et f discrétisés aux noeuds d'un maillage triangulaire
@@ -10,7 +10,6 @@
 import cdmath
 from math import pow
 import numpy as np
-import matplotlib.pyplot as plt
 import PV_routines
 import VTK_routines
 
