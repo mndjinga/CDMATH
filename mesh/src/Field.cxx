@@ -510,9 +510,9 @@ Field::normL1 ( ) const
 //----------------------------------------------------------------------
 {
 	int nbComp=_field->getNumberOfComponents();
-	double res[nbComp];//Pointer containing the inegral of each component
+	double res[nbComp];//Pointer containing the L1 norm of each component
 	_field->normL1(res);
-	Vector result(nbComp);//Vector containing the inegral of each component
+	Vector result(nbComp);//Vector containing the L1 norm of each component
 
 	for(int i=0; i<nbComp ; i++)
 		result(i)=res[i];
@@ -526,12 +526,30 @@ Field::normL2 ( ) const
 //----------------------------------------------------------------------
 {
 	int nbComp=_field->getNumberOfComponents();
-	double res[nbComp];//Pointer containing the inegral of each component
+	double res[nbComp];//Pointer containing the L2 norm of each component
 	_field->normL2(res);
-	Vector result(nbComp);//Vector containing the inegral of each component
+	Vector result(nbComp);//Vector containing the L2 norm of each component
 
 	for(int i=0; i<nbComp ; i++)
 		result(i)=res[i];
+
+	return result;
+}
+
+//----------------------------------------------------------------------
+Vector
+Field::normMax ( ) const
+//----------------------------------------------------------------------
+{
+	int nbComp=_field->getNumberOfComponents();
+   	int nbElems=getNumberOfElements();
+
+	Vector result(nbComp);//Vector containing the Linfinity norm of each component
+
+	for(int i=0; i<nbElems ; i++)
+        for(int j=0; j<nbComp ; j++)
+            if(fabs((*this)(i,j))>result(j))
+                result(j)=fabs((*this)(i,j));
 
 	return result;
 }
