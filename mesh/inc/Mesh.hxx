@@ -257,7 +257,8 @@ public: //----------------------------------------------------------------
 	bool isTetrahedral() const ;
 	bool isQuadrangular() const ;
 	bool isHexahedral() const ;
-
+    bool isStructured() const ;
+    
 private: //----------------------------------------------------------------
 
 	MEDCoupling::MEDCouplingUMesh*  setMesh( void ) ;
@@ -273,7 +274,13 @@ private: //----------------------------------------------------------------
 	 * Mesh dimension
 	 */
 	int _meshDim ;
+    
+    /*
+     * Structured mes parameters
+     */
 
+    bool _isStructured;
+    
 	double _xMin;
 
 	double _xSup;
