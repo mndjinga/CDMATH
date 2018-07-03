@@ -195,7 +195,8 @@ Mesh::readMeshMed( const std::string filename, const int meshLevel)
     
 	MEDCouplingUMesh*  mu = setMesh();
 	setGroups(m, mu);
-	cout<<endl<< "Loaded file "<< filename<<", mesh name= "<<m->getName()<<", _meshDim="<< _meshDim<< ", _spaceDim="<< _spaceDim<<endl;
+	cout<<endl<< "Loaded file "<< filename<<endl;
+    cout<<"Mesh name= "<<m->getName()<<", mesh dim="<< _meshDim<< ", space dim="<< _spaceDim<< ", nb cells= "<<getNumberOfCells()<< ", nb nodes= "<<getNumberOfNodes()<<endl;
 
 	m->decrRef();
 	mu->decrRef();
