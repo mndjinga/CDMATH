@@ -18,6 +18,7 @@
 class MeshTests : public CppUnit::TestCase
 {
     public: //----------------------------------------------------------------
+      void testNormals( Mesh mesh );
       void testClassMesh( void );
       static CppUnit::Test *suite()
       {

@@ -17,6 +17,46 @@
 using namespace MEDCoupling;
 using namespace std;
 
+void
+MeshTests::testNormals(Mesh mesh)
+{
+	double eps=1.E-10;
+    int dim     = mesh.getSpaceDimension();
+    int nbCells = mesh.getNumberOfCells();
+    int nbFaces;//local number of faces around a cell
+    Face Fk;
+    Cell Cj;
+    int indexFace;
+    
+    vector<double> test(dim,0);
+    double norm;
+    
+    for(int j=0; j<nbCells; j++)
+    {
+        Cj = mesh.getCell(j);
+        nbFaces = Cj.getNumberOfFaces();
+
+        for(int i=0; i<dim; i++)
+            test[i]=0;
+
+        for(int k=0; k<nbFaces; k++)
+        {
+            indexFace = Cj.getFacesId()[k];
+            Fk = mesh.getFace(indexFace);
+            
+            norm=0;
+            for(int i=0; i<dim; i++)
+            {
+                test[i] += Cj.getNormalVector(k, i)*Fk.getMeasure();
+                norm += Cj.getNormalVector(k, i) * Cj.getNormalVector(k, i);
+            }      
+            CPPUNIT_ASSERT_DOUBLES_EQUAL( 1., norm, eps );
+        }
+        
+        for(int i=0; i<dim; i++)
+            CPPUNIT_ASSERT_DOUBLES_EQUAL( 0., test[i], eps  );
+    }
+}
 //----------------------------------------------------------------------
 void
 MeshTests::testClassMesh( void )
@@ -54,6 +94,8 @@ MeshTests::testClassMesh( void )
 	CPPUNIT_ASSERT(M1.getNamesOfGroups()[0].compare("LeftEdge")==0);
 	CPPUNIT_ASSERT(M1.getNamesOfGroups()[1].compare("RightEdge")==0);
 
+    cout<<endl<<"Test mesh M1 normals"<<endl;
+    testNormals(M1);
 
 	// Testing Mesh(xinf, xsup, nx, yinf, ysup, ny)
 	double xinf=0.0;
@@ -110,6 +152,8 @@ MeshTests::testClassMesh( void )
 			CPPUNIT_ASSERT_EQUAL( -1, M2.getIndexFacePeriodic(i) );
 	}
 
+    cout<<"Test mesh M2 normals"<<endl;
+    testNormals(M2);
 
 	// Testing Mesh(xinf, xsup, nx, yinf, ysup, ny, zinf, zsup, nz) (hexaèdres)
     Mesh M3(0.0,1.0,4,0.0,1.0,4,0.0,1.0,4);
@@ -120,6 +164,9 @@ MeshTests::testClassMesh( void )
     for(int i=0; i<nbCellsM3; i++)
         volM3+=M3.getCell(i).getMeasure();
     CPPUNIT_ASSERT_DOUBLES_EQUAL( 1., volM3, eps );
+
+    cout<<"Test mesh M3 normals"<<endl;
+    testNormals(M3);
 
     // Testing copies
     Mesh Mcopy1(M1);
@@ -153,6 +200,9 @@ MeshTests::testClassMesh( void )
     CPPUNIT_ASSERT_EQUAL( 16, M22.getNumberOfCells() );
     CPPUNIT_ASSERT_EQUAL( 40, M22.getNumberOfFaces() );
 
+    cout<<"Test mesh M22 normals "<<endl;
+    testNormals(M22);
+
     //Testing a 2D unstructured mesh (triangles)
     Mesh M23("meshSquare.med");
     CPPUNIT_ASSERT(M23.getNamesOfGroups()[0].compare("Bas")==0);
@@ -165,6 +215,9 @@ MeshTests::testClassMesh( void )
     for(int i=0; i<nbCellsM23; i++)
         areaM23+=M23.getCell(i).getMeasure();
     CPPUNIT_ASSERT_DOUBLES_EQUAL( 1., areaM23 , eps);
+
+    cout<<"Test mesh M23 normals"<<endl;
+    testNormals(M23);
 
     Mcopy2.writeVTK(fileNameVTK);
     Mcopy2.writeMED(fileNameMED);
@@ -187,6 +240,9 @@ MeshTests::testClassMesh( void )
         areaM4+=M4.getCell(i).getMeasure();
     CPPUNIT_ASSERT_DOUBLES_EQUAL( 4*3.14, areaM4, 1 );
 
+    cout<<"Test mesh M4 normals"<<endl;
+    testNormals(M4);
+
     //Testing a 3D unstructured mesh (tétraèdres)
     Mesh M5("meshCube.med");
     CPPUNIT_ASSERT(M5.isTetrahedral());
@@ -196,6 +252,9 @@ MeshTests::testClassMesh( void )
         volM5+=M5.getCell(i).getMeasure();
     CPPUNIT_ASSERT_DOUBLES_EQUAL( 1., volM5, eps );
     
+    cout<<"Test mesh M5 normals"<<endl;
+    testNormals(M5);
+
     //Testing Mesh( std::vector<double> points, std::string meshName )
     int nbCellsM7 = 2*11;
     int nbNodes = nbCellsM7+1;

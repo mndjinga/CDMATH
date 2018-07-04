@@ -540,7 +540,10 @@ Mesh::setMesh( void )
 			std::vector<int> nodeIdsOfCell ;
 			mu->getNodeIdsOfCell(id,nodeIdsOfCell) ;
 			for( int el=0;el<nbVertices;el++ )
+            {
 				ci.addNodeId(el,nodeIdsOfCell[el]) ;
+                ci.addFaceId(el,nodeIdsOfCell[el]) ;
+            }
 
 			double xn = (cood[nodeIdsOfCell[nbVertices-1]] - cood[nodeIdsOfCell[0]] > 0.0) ? -1.0 : 1.0;
 
@@ -685,25 +688,25 @@ Mesh::setMesh( void )
 
 						int idNodeA=workv[0];
 						int idNodeB=workv[1];
-						vector<double> nodeA(_spaceDim), nodeB(_spaceDim);
+						vector<double> nodeA(_spaceDim), nodeB(_spaceDim), nodeP(_spaceDim);
 						for(int i=0;i<_spaceDim;i++)
 						{
 							nodeA[i]=coo->getIJ(idNodeA,i);
 							nodeB[i]=coo->getIJ(idNodeB,i);
+							nodeP[i]=coorBary[_spaceDim*id+i];
 						}
 						//Let P be the barycenter of the cell id
-						//Let M be the barycenter of the face AB
-						Vector vecAB(3), vecPM(3);
+						Vector vecAB(3), vecPA(3);
 						for(int i=0;i<_spaceDim;i++)
 						{
 							vecAB[i]=coo->getIJ(idNodeB,i)       - coo->getIJ(idNodeA,i);
-							vecPM[i]=coorBarySeg[_spaceDim*el+i] - coorBary[_spaceDim*id+i];
+							vecPA[i]=coo->getIJ(idNodeA,i) - coorBary[_spaceDim*id+i];
 						}
 
 						Vector normale = xyzn % vecAB;//Normal to the edge
 						normale/=normale.norm();
-
-						if(normale*vecPM<0)
+                        
+						if(normale*vecPA<0)
 							ci.addNormalVector(el,normale[0],normale[1],normale[2]) ;	
 						else
 							ci.addNormalVector(el,-normale[0],-normale[1],-normale[2]) ;	
@@ -771,7 +774,7 @@ Mesh::setMesh( void )
 			if(_spaceDim==_meshDim)//Euclidean flat mesh geometry
 				fi=Face( nbNodes, nbCells, lon[id], p, normalFaces2[k], normalFaces2[k+1], 0.0) ;
 			else//Curved mesh geometry
-				fi=Face( nbNodes, nbCells, lon[id], p, 0.0, 0.0, 0.0) ;//Since spaceDim!=meshDim, normal to faces is not defined
+				fi=Face( nbNodes, nbCells, lon[id], p, 0.0, 0.0, 0.0) ;//Since spaceDim!=meshDim, normal to face is not defined
 
 			for(int node_id=0; node_id<nbNodes;node_id++)
 				fi.addNodeId(node_id,workv[node_id]) ;
@@ -878,6 +881,12 @@ Mesh::Mesh( double xinf, double xsup, int nx, std::string meshName )
 	DataArrayDouble *longueur = fieldl->getArray();
 	const double *lon=longueur->getConstPointer();
 
+	DataArrayDouble *coo = mu->getCoords() ;
+	const double *cood=coo->getConstPointer();
+
+	const int *tmp=desc->getConstPointer();
+	const int *tmpI=descI->getConstPointer();
+
 	int comp=0;
 	for( int id=0;id<_numberOfCells;id++ )
 	{
@@ -892,7 +901,21 @@ Mesh::Mesh( double xinf, double xsup, int nx, std::string meshName )
 			ci.addNodeId(el,nodeIdsOfCell[el]) ;
 			ci.addFaceId(el,nodeIdsOfCell[el]) ;
 		}
+
+        double xn = (cood[nodeIdsOfCell[nbVertices-1]] - cood[nodeIdsOfCell[0]] > 0.0) ? -1.0 : 1.0;
+
+        int nbFaces=tmpI[id+1]-tmpI[id];
+        const int *work=tmp+tmpI[id];
+		
+        for( int el=0;el<nbFaces;el++ )
+		{
+			ci.addNormalVector(el,xn,0.0,0.0) ;
+			ci.addFaceId(el,work[el]) ;
+			xn = - xn;
+		}
+
 		_cells[id] = ci ;
+
 		comp=comp+2;
 	}
 
