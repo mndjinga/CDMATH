@@ -8,10 +8,12 @@
 #================================================================================================================================
 
 import cdmath
+import time
 import VTK_routines
 from math import sin, pi
 
 def solve(my_mesh,filename,resolution):
+    start = time.time()
     # Création d'un maillage cartésien du domaine carré [0,1]x[0,1], définition des bords
     #====================================================================================
     xmin=0
@@ -112,9 +114,10 @@ def solve(my_mesh,filename,resolution):
     print ("Maximum numerical solution = ", max_sol_num, " Minimum numerical solution = ", min_sol_num)
 
     #Postprocessing : Extraction of the diagonal data
-
     diag_data=VTK_routines.Extract_field_data_over_line_to_numpyArray(my_ResultField,[0,1,0],[1,0,0], resolution)
-    return erreur_abs/max_abs_sol_exacte, my_mesh.getNumberOfCells(), diag_data, min_sol_num, max_sol_num
+
+    end = time.time()
+    return erreur_abs/max_abs_sol_exacte, my_mesh.getNumberOfCells(), diag_data, min_sol_num, max_sol_num, end - start
 
 
 def solve_file( filename,resolution):

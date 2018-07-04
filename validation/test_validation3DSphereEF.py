@@ -10,6 +10,7 @@ def test_validation3DSphereEF():
     nbMeshes=len(meshList)
     error_tab=[0]*nbMeshes
     mesh_size_tab=[0]*nbMeshes
+    time_tab=[0]*nbMeshes
     mesh_path='../validation/3DSphere/'
     mesh_name='meshSphereWithTrianglesFE'
     diag_data=[0]*nbMeshes
@@ -17,10 +18,11 @@ def test_validation3DSphereEF():
     i=0
     # Storing of numerical errors and mesh sizes
     for filename in meshList:
-        error_tab[i], mesh_size_tab[i], min_sol_num, max_sol_num =FiniteElementsOnSphere.solve(mesh_path+filename, resolution)
+        error_tab[i], mesh_size_tab[i], min_sol_num, max_sol_num, time_tab[i] =FiniteElementsOnSphere.solve(mesh_path+filename, resolution)
         assert min_sol_num>-1.1 
         assert max_sol_num<1.1
         error_tab[i]=log10(error_tab[i])
+        time_tab[i]=log10(time_tab[i])
         mesh_size_tab[i] = log10(mesh_size_tab[i])
         i=i+1
     
@@ -48,8 +50,17 @@ def test_validation3DSphereEF():
     plt.legend()
     plt.xlabel('log(number of nodes)')
     plt.ylabel('log(error)')
-    plt.title('Convergence of finite elements for Laplace operator on a 3D sphere triangular mesh')
+    plt.title('Convergence of finite elements for \n Laplace operator on 3D sphere triangular meshes')
     plt.savefig(mesh_name+"ConvergenceCurve.png")
+    
+    # Plot of computational time
+    plt.close()
+    plt.plot(mesh_size_tab, time_tab, label='log(cpu time)')
+    plt.legend()
+    plt.xlabel('log(number of nodes)')
+    plt.ylabel('log(cpu time)')
+    plt.title('Computational time of finite elements \n for Laplace operator on 3D sphere triangular meshes')
+    plt.savefig(mesh_name+"ComputationalTime.png")
     
 
 

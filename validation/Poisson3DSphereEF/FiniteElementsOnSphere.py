@@ -8,12 +8,14 @@
 #================================================================================================================================
 
 import cdmath
+import time
 from math import pow
 import numpy as np
 import PV_routines
 import VTK_routines
 
 def solve(filename,resolution):
+    start = time.time()
     #Préprocessing optionnel: création du fichier my_mesh.med contenant la géométrie et le maillage du domaine de calcul à partir de commandes python (import salome)
     
     #Chargement du maillage triangulaire de la sphère
@@ -188,7 +190,8 @@ def solve(filename,resolution):
     print("Relative error = max(| exact solution - numerical solution |)/max(| exact solution |) = ",erreur_abs/max_abs_sol_exacte)
     print ("Maximum numerical solution = ", max_sol_num, " Minimum numerical solution = ", min_sol_num)
 
-    return erreur_abs/max_abs_sol_exacte, my_mesh.getNumberOfNodes(), min_sol_num, max_sol_num
+    end = time.time()
+    return erreur_abs/max_abs_sol_exacte, my_mesh.getNumberOfNodes(), min_sol_num, max_sol_num, end - start
     
 if __name__ == """__main__""":
     solve("meshSphere",100)

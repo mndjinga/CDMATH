@@ -8,10 +8,12 @@
 #================================================================================================================================
 
 import cdmath
+import time
 import VTK_routines
 from math import sin, pi, sqrt
 
 def solve(filename,resolution):
+    start = time.time()
     #Préprocessing optionnel: création du fichier my_mesh.med contenant la géométrie et le maillage du domaine de calcul à partir de commandes python (import salome)
     
     #Chargement du maillage tétraédrique du domaine cubique [0,1]x[0,1]x[0,1], définition des bords
@@ -170,7 +172,8 @@ def solve(filename,resolution):
     #Postprocessing : Extraction of the diagonal data
     diag_data=VTK_routines.Extract_field_data_over_line_to_numpyArray(my_ResultField,[0,0,0],[1,1,1], resolution)
 
-    return erreur_abs/max_abs_sol_exacte, my_mesh.getNumberOfNodes(), diag_data, min_sol_num, max_sol_num
+    end = time.time()
+    return erreur_abs/max_abs_sol_exacte, my_mesh.getNumberOfNodes(), diag_data, min_sol_num, max_sol_num, end - start
 
 if __name__ == """__main__""":
     solve("meshCube",100)

@@ -13,17 +13,19 @@ def test_validation2DVF():
     mesh_path='../validation/2DTriangles/'
     mesh_name='meshSquareWithTrianglesFV'
     diag_data=[0]*nbMeshes
+    time_tab=[0]*nbMeshes
     resolution=100
     curv_abs=np.linspace(0,sqrt(2),resolution+1)
     plt.close()
     i=0
     # Storing of numerical errors, mesh sizes and diagonal values
     for filename in meshList:
-        error_tab[i], mesh_size_tab[i], diag_data[i], min_sol_num, max_sol_num =FiniteVolumes2DWithCDMATH.solve_file(mesh_path+filename,resolution)
+        error_tab[i], mesh_size_tab[i], diag_data[i], min_sol_num, max_sol_num, time_tab[i] =FiniteVolumes2DWithCDMATH.solve_file(mesh_path+filename,resolution)
         assert min_sol_num>-0.01 
         assert max_sol_num<1.2
         plt.plot(curv_abs, diag_data[i], label= str(mesh_size_tab[i]) + ' cells')
         error_tab[i]=log10(error_tab[i])
+        time_tab[i]=log10(time_tab[i])
         mesh_size_tab[i] = log10(mesh_size_tab[i])
         i=i+1
         
@@ -31,7 +33,7 @@ def test_validation2DVF():
     plt.legend()
     plt.xlabel('Position on diagonal line')
     plt.ylabel('Value on diagonal line')
-    plt.title('Plot over diagonal line for finite volumes \n for Laplace operator on a 2D triangular mesh')
+    plt.title('Plot over diagonal line for finite volumes \n for Laplace operator on 2D triangular meshes')
     plt.savefig(mesh_name+"PlotOverDiagonalLine.png")
 
     # Least square linear regression
@@ -51,15 +53,24 @@ def test_validation2DVF():
     print "FV on 2D triangle mesh : scheme order is ", -a
     assert abs(a+0.307)<0.1
     
-    # Plot of figures
+    # Plot of convergence curve
     plt.close()
     plt.plot(mesh_size_tab, error_tab, label='log(|numerical-exact|)')
     plt.plot(mesh_size_tab, a*np.array(mesh_size_tab)+b,label='least square slope : '+'%.3f' % a)
     plt.legend()
     plt.xlabel('log(number of cells)')
     plt.ylabel('log(error)')
-    plt.title('Convergence of finite volumes for Laplace operator on a 2D triangular mesh')
+    plt.title('Convergence of finite volumes \n for Laplace operator on a 2D triangular meshes')
     plt.savefig(mesh_name+"ConvergenceCurve.png")
 
+    # Plot of computational time
+    plt.close()
+    plt.plot(mesh_size_tab, time_tab, label='log(cpu time)')
+    plt.legend()
+    plt.xlabel('log(number of cells)')
+    plt.ylabel('log(cpu time)')
+    plt.title('Computational time of finite volumes \n for Laplace operator on 2D triangular meshes')
+    plt.savefig(mesh_name+"ComputationalTime.png")
+    
 if __name__ == """__main__""":
     test_validation2DVF()

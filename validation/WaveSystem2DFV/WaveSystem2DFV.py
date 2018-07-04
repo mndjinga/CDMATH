@@ -27,8 +27,8 @@ def initial_conditions_wave_system(my_mesh):
         velocity_field[i,0] =  sin(pi*x)*cos(pi*y)
         velocity_field[i,1] = -sin(pi*y)*cos(pi*x)
         U[i,0] =   p0
-        U[i,1] =  rho0*sin(pi*x)*cos(pi*y)
-        U[i,2] = -rho0*sin(pi*y)*cos(pi*x)
+        U[i,1] =  0*rho0*sin(pi*x)*cos(pi*y)
+        U[i,2] = -0*rho0*sin(pi*y)*cos(pi*x)
         
     return U, pressure_field, velocity_field
 
@@ -74,12 +74,13 @@ def computeFluxes(U, SumFluxes):
 
     for j in range(nbCells):#On parcourt les cellules
         Cj = my_mesh.getCell(j)
-        nbFace = Cj.getNumberOfFaces();
+        nbFaces = Cj.getNumberOfFaces();
         for i in range(nbComp) :
             Ucourant[i]=U[j,i];
             sumFluxCourant[i]=0;
 
-        for k in range(nbFace) :
+        test=cdmath.Vector(dim)
+        for k in range(nbFaces) :
             indexFace = Cj.getFacesId()[k];
             Fk = my_mesh.getFace(indexFace);
             for i in range(dim) :
@@ -113,10 +114,16 @@ def computeFluxes(U, SumFluxes):
 
             A, absA=jacobianMatrices( normal);
             
-            for i in range(nbComp):
-                #print 'Fcourant+Fautre +absA*(Ucourant-Uautre)', Fcourant+Fautre +absA*(Ucourant-Uautre)
-                sumFluxCourant[i] = sumFluxCourant[i] + Fk.getMeasure()*0.5*(Fcourant+Fautre +absA*(Ucourant-Uautre))[i]
-
+            sumFluxCourant = sumFluxCourant + (Fcourant+Fautre +absA*(Ucourant-Uautre))*Fk.getMeasure()*0.5
+            test+=normal*Fk.getMeasure()
+            #print 'k= ',k, 'Fk.getMeasure()',Fk.getMeasure()
+            #print 'normal=', normal
+            #print 'k= ', k, 'sumFluxCourant',sumFluxCourant    
+            #print 'Fcourant', Fcourant
+            #print 'Fautre', Fautre
+            #print '(Ucourant-Uautre)', (Ucourant-Uautre)
+            #print 'Fcourant+Fautre +absA*(Ucourant-Uautre)', Fcourant+Fautre +absA*(Ucourant-Uautre)
+        print test
         #On divise par le volume de la cellule la contribution des flux au snd membre
         for i in range(nbComp):
             SumFluxes[j,i]=sumFluxCourant[i]/Cj.getMeasure();
@@ -225,16 +232,14 @@ def WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq, outputFileName,resolu
         raise ValueError("Maximum time reached : Stationary state not found !!!!!!!")
 
 
-
-
 def solve(my_mesh,filename,resolution):
     print("RESOLUTION OF THE 2D Wave system:")
 
     # Problem data
     tmax = 1.
-    ntmax = 10000
-    cfl = 0.1
-    output_freq = 100
+    ntmax = 1
+    cfl = 0.45
+    output_freq = 10
 
     return WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq, filename,resolution)
     

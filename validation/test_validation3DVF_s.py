@@ -12,6 +12,7 @@ def test_validation3DVF_s():
     mesh_size_tab=[0]*nbMeshes
     mesh_name='meshCubeWithCuboids3DFV'
     diag_data=[0]*nbMeshes
+    time_tab=[0]*nbMeshes
     resolution=100
     curv_abs=np.linspace(0,sqrt(2),resolution+1)
     plt.close()
@@ -21,11 +22,12 @@ def test_validation3DVF_s():
     # Computation of the numerical error
     for nx in meshList:
         my_mesh=cdmath.Mesh(0,1,nx,0,1,nx,0,1,nx)
-        error_tab[i], mesh_size_tab[i], diag_data[i], min_sol_num, max_sol_num =FiniteVolumes3DWithCDMATH.solve(my_mesh,str(nx)+'x'+str(nx)+'x'+str(nx),resolution)
+        error_tab[i], mesh_size_tab[i], diag_data[i], min_sol_num, max_sol_num, time_tab[i] =FiniteVolumes3DWithCDMATH.solve(my_mesh,str(nx)+'x'+str(nx)+'x'+str(nx),resolution)
         assert min_sol_num>-0.01 
         assert max_sol_num<1.2
         plt.plot(curv_abs, diag_data[i], label= str(mesh_size_tab[i]) + ' cells')
         error_tab[i]=log10(error_tab[i])
+        time_tab[i]=log10(time_tab[i])
         mesh_size_tab[i] = log10(mesh_size_tab[i])
         i=i+1
         
@@ -33,7 +35,7 @@ def test_validation3DVF_s():
     plt.legend()
     plt.xlabel('Position on diagonal line')
     plt.ylabel('Value on diagonal line')
-    plt.title('Plot over diagonal line for finite volumes \n for Laplace operator on a 3D cuboid mesh')
+    plt.title('Plot over diagonal line for finite volumes \n for Laplace operator on 3D cuboid meshes')
     plt.savefig(mesh_name+"PlotOverDiagonalLine.png")
 
     # Least square linear regression
@@ -53,15 +55,24 @@ def test_validation3DVF_s():
     print "FV on 3D rectangular parallelepiped mesh : scheme order is ", -a
     assert abs(a+0.668)<0.1
     
-    # Plot of figures
+    # Plot of convergence curve
     plt.close()
     plt.plot(mesh_size_tab, error_tab, label='log(|numerical-exact|)')
     plt.plot(mesh_size_tab, a*np.array(mesh_size_tab)+b,label='least square slope : '+'%.3f' % a)
     plt.legend()
     plt.xlabel('log(number of cells)')
     plt.ylabel('log(error)')
-    plt.title('Convergence of finite volumes for Laplace operator on a 3D cuboid mesh')
+    plt.title('Convergence of finite volumes for Laplace operator on 3D cuboid meshes')
     plt.savefig(mesh_name+"ConvergenceCurve.png")
 
+    # Plot of computational time
+    plt.close()
+    plt.plot(mesh_size_tab, time_tab, label='log(cpu time)')
+    plt.legend()
+    plt.xlabel('log(number of cells)')
+    plt.ylabel('log(cpu time)')
+    plt.title('Computational time of finite volumes \n for Laplace operator on 3D cuboid meshes')
+    plt.savefig(mesh_name+"ComputationalTime.png")
+    
 if __name__ == """__main__""":
     test_validation3DVF_s()

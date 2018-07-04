@@ -11,6 +11,7 @@ def test_validation3DEF():
     error_tab=[0]*nbMeshes
     mesh_size_tab=[0]*nbMeshes
     diag_data=[0]*nbMeshes
+    time_tab=[0]*nbMeshes
     mesh_path='../validation/3DTetrahedra/'
     mesh_name='meshCubeWithTetrahedraFE'
     resolution=100
@@ -19,11 +20,12 @@ def test_validation3DEF():
     i=0
     # Storing of numerical errors, mesh sizes and diagonal values
     for filename in meshList :
-        error_tab[i], mesh_size_tab[i], diag_data[i], min_sol_num, max_sol_num =FiniteElements3DWithCDMATH.solve(mesh_path+filename,resolution)
+        error_tab[i], mesh_size_tab[i], diag_data[i], min_sol_num, max_sol_num, time_tab[i] =FiniteElements3DWithCDMATH.solve(mesh_path+filename,resolution)
         assert min_sol_num>-0.01 
         assert max_sol_num<1.2
         plt.plot(curv_abs, diag_data[i], label= str(mesh_size_tab[i]) + ' nodes')
         error_tab[i]=log10(error_tab[i])
+        time_tab[i]=log10(time_tab[i])
         mesh_size_tab[i] = log10(mesh_size_tab[i])
         i=i+1
         
@@ -31,7 +33,7 @@ def test_validation3DEF():
     plt.legend()
     plt.xlabel('Position on diagonal line')
     plt.ylabel('Value on diagonal line')
-    plt.title('Plot over diagonal line for finite elements \n for Laplace operator on a 3D tetrahedral mesh')
+    plt.title('Plot over diagonal line for finite elements \n for Laplace operator on 3D tetrahedral meshes')
     plt.savefig(mesh_name+"PlotOverDiagonalLine.png")
 
     # Least square linear regression
@@ -58,8 +60,17 @@ def test_validation3DEF():
     plt.legend()
     plt.xlabel('log(number of nodes)')
     plt.ylabel('log(error)')
-    plt.title('Convergence of finite elements for Laplace operator on a 3D tetrahedral mesh')
+    plt.title('Convergence of finite elements for \n Laplace operator on a 3D tetrahedral meshes')
     plt.savefig(mesh_name+"ConvergenceCurve.png")
 
+    # Plot of computational time
+    plt.close()
+    plt.plot(mesh_size_tab, time_tab, label='log(cpu time)')
+    plt.legend()
+    plt.xlabel('log(number of nodes)')
+    plt.ylabel('log(cpu time)')
+    plt.title('Computational time of finite elements \n for Laplace operator on 2D tetrahedral meshes')
+    plt.savefig(mesh_name+"ComputationalTime.png")
+    
 if __name__ == """__main__""":
     test_validation3DEF()
