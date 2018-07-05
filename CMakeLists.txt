@@ -154,10 +154,6 @@ if (CDMATH_WITH_TESTS)
   add_subdirectory (${TESTS_DIR})
 endif ()
 
-# Examples
-set (examples_dir ${CDMATH_SOURCE_DIR}/examples)
-add_subdirectory (${examples_dir})
-
 # Packaging
 if (CDMATH_WITH_PACKAGE)
   include (CPackLists.txt)
@@ -167,12 +163,6 @@ if (CDMATH_WITH_PYTHON AND CDMATH_WITH_POSTPRO)
   add_subdirectory (postprocessing)
   set (PV_LIB_DIR /usr/lib/paraview/:/usr/lib64/paraview/)
   set (PV_PYTHON_DIR /usr/lib/paraview/site-packages/paraview/:/usr/lib/paraview/site-packages/paraview/vtk:/usr/lib64/paraview/site-packages/paraview/:/usr/lib64/paraview/site-packages/vtk)
-endif ()
-
-if (CDMATH_WITH_PYTHON AND CDMATH_WITH_PETSC AND CDMATH_WITH_POSTPRO)
-  add_subdirectory (validation)
-  add_custom_target (validation COMMAND ctest -R validation)# may be replace ctest -R with ctest -L
-  add_custom_target (check COMMAND ctest -E validation)# may be replace ctest -E with ctest -LE
 endif ()
 
 # Configuration file

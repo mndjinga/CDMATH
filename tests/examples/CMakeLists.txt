@@ -1,0 +1,12 @@
+file(GLOB NICE_EXAMPLES_TO_INSTALL thermique1d transport1d transport2d_ns transport2d_s Poisson2DEF_ns Poisson3DEF_ns Poisson2DVF_s PoissonCurvedSurfaceEF_ns)
+
+install(DIRECTORY ${NICE_EXAMPLES_TO_INSTALL} DESTINATION share/examples)
+
+IF (CDMATH_WITH_PYTHON AND CDMATH_WITH_PETSC)
+    ADD_SUBDIRECTORY(PoissonCurvedSurfaceEF_ns)
+    ADD_SUBDIRECTORY(Poisson2DVF_s)
+    ADD_SUBDIRECTORY(Poisson2DEF_ns)
+    ADD_SUBDIRECTORY(Poisson3DEF_ns)
+ENDIF (CDMATH_WITH_PYTHON AND CDMATH_WITH_PETSC)
+
+
