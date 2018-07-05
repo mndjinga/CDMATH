@@ -34,7 +34,7 @@ def test_validation3DEF():
     plt.xlabel('Position on diagonal line')
     plt.ylabel('Value on diagonal line')
     plt.title('Plot over diagonal line for finite elements \n for Laplace operator on 3D tetrahedral meshes')
-    plt.savefig(mesh_name+"PlotOverDiagonalLine.png")
+    plt.savefig(mesh_name+"_3DPoissonFE_PlotOverDiagonalLine.png")
 
     # Least square linear regression
     # Find the best a,b such that f(x)=ax+b best approximates the convergence curve
@@ -53,7 +53,7 @@ def test_validation3DEF():
     print "FE on 3D tetrahedral mesh : scheme order is ", -a
     assert abs(a+0.329)<0.1
     
-    # Plot of figures
+    # Plot of convergence curve
     plt.close()
     plt.plot(mesh_size_tab, error_tab, label='log(|numerical-exact|)')
     plt.plot(mesh_size_tab, a*np.array(mesh_size_tab)+b,label='least square slope : '+'%.3f' % a)
@@ -61,7 +61,7 @@ def test_validation3DEF():
     plt.xlabel('log(number of nodes)')
     plt.ylabel('log(error)')
     plt.title('Convergence of finite elements for \n Laplace operator on a 3D tetrahedral meshes')
-    plt.savefig(mesh_name+"ConvergenceCurve.png")
+    plt.savefig(mesh_name+"_3DPoissonFE_ConvergenceCurve.png")
 
     # Plot of computational time
     plt.close()
@@ -70,7 +70,7 @@ def test_validation3DEF():
     plt.xlabel('log(number of nodes)')
     plt.ylabel('log(cpu time)')
     plt.title('Computational time of finite elements \n for Laplace operator on 2D tetrahedral meshes')
-    plt.savefig(mesh_name+"ComputationalTime.png")
+    plt.savefig(mesh_name+"_3DPoissonFE_ComputationalTime.png")
     
 if __name__ == """__main__""":
     test_validation3DEF()

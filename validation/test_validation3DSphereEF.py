@@ -51,7 +51,7 @@ def test_validation3DSphereEF():
     plt.xlabel('log(number of nodes)')
     plt.ylabel('log(error)')
     plt.title('Convergence of finite elements for \n Laplace operator on 3D sphere triangular meshes')
-    plt.savefig(mesh_name+"ConvergenceCurve.png")
+    plt.savefig(mesh_name+"_3DSpherePoissonFE_ConvergenceCurve.png")
     
     # Plot of computational time
     plt.close()
@@ -60,7 +60,7 @@ def test_validation3DSphereEF():
     plt.xlabel('log(number of nodes)')
     plt.ylabel('log(cpu time)')
     plt.title('Computational time of finite elements \n for Laplace operator on 3D sphere triangular meshes')
-    plt.savefig(mesh_name+"ComputationalTime.png")
+    plt.savefig(mesh_name+"_3DSpherePoissonFE_ComputationalTime.png")
     
 
 

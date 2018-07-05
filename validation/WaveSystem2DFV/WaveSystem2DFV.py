@@ -2,6 +2,7 @@
 # -*-coding:utf-8 -*
 
 from math import sin, cos, pi, sqrt
+import time
 import cdmath
 import PV_routines
 import VTK_routines
@@ -79,7 +80,6 @@ def computeFluxes(U, SumFluxes):
             Ucourant[i]=U[j,i];
             sumFluxCourant[i]=0;
 
-        test=cdmath.Vector(dim)
         for k in range(nbFaces) :
             indexFace = Cj.getFacesId()[k];
             Fk = my_mesh.getFace(indexFace);
@@ -115,7 +115,6 @@ def computeFluxes(U, SumFluxes):
             A, absA=jacobianMatrices( normal);
             
             sumFluxCourant = sumFluxCourant + (Fcourant+Fautre +absA*(Ucourant-Uautre))*Fk.getMeasure()*0.5
-            test+=normal*Fk.getMeasure()
             #print 'k= ',k, 'Fk.getMeasure()',Fk.getMeasure()
             #print 'normal=', normal
             #print 'k= ', k, 'sumFluxCourant',sumFluxCourant    
@@ -123,7 +122,6 @@ def computeFluxes(U, SumFluxes):
             #print 'Fautre', Fautre
             #print '(Ucourant-Uautre)', (Ucourant-Uautre)
             #print 'Fcourant+Fautre +absA*(Ucourant-Uautre)', Fcourant+Fautre +absA*(Ucourant-Uautre)
-        print test
         #On divise par le volume de la cellule la contribution des flux au snd membre
         for i in range(nbComp):
             SumFluxes[j,i]=sumFluxCourant[i]/Cj.getMeasure();
@@ -233,16 +231,19 @@ def WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq, outputFileName,resolu
 
 
 def solve(my_mesh,filename,resolution):
+    start = time.time()
     print("RESOLUTION OF THE 2D Wave system:")
 
     # Problem data
     tmax = 1.
-    ntmax = 1
+    ntmax = 100000
     cfl = 0.45
-    output_freq = 10
+    output_freq = 1000
 
-    return WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq, filename,resolution)
-    
+    error_p, error_u, nbCells, diag_data_press, diag_data_vel = WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq, filename,resolution)
+    end = time.time()
+
+    return error_p, error_u, nbCells, diag_data_press, diag_data_vel, end - start
 
 def solve_file( filename,resolution):
     my_mesh = cdmath.Mesh(filename+".med")

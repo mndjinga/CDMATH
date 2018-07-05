@@ -34,7 +34,7 @@ def test_validation2DVF_s():
     plt.xlabel('Position on diagonal line')
     plt.ylabel('Value on diagonal line')
     plt.title('Plot over diagonal line for finite volumes \n for Laplace operator on 2D rectangular meshes')
-    plt.savefig(mesh_name+"PlotOverDiagonalLine.png")
+    plt.savefig(mesh_name+"_2DPoissonFVs_PlotOverDiagonalLine.png")
 
     # Least square linear regression
     # Find the best a,b such that f(x)=ax+b best approximates the convergence curve
@@ -62,7 +62,7 @@ def test_validation2DVF_s():
     plt.xlabel('log(number of cells)')
     plt.ylabel('log(error)')
     plt.title('Convergence of finite volumes for \n Laplace operator on 2D rectangular meshes')
-    plt.savefig(mesh_name+"ConvergenceCurve.png")
+    plt.savefig(mesh_name+"_2DPoissonFVs_ConvergenceCurve.png")
 
     # Plot of computational time
     plt.close()
@@ -71,7 +71,7 @@ def test_validation2DVF_s():
     plt.xlabel('log(number of cells)')
     plt.ylabel('log(cpu time)')
     plt.title('Computational time of finite volumes \n for Laplace operator on 2D rectangular meshes')
-    plt.savefig(mesh_name+"ComputationalTime.png")
+    plt.savefig(mesh_name+"_2DPoissonFVs_ComputationalTime.png")
     
 if __name__ == """__main__""":
     test_validation2DVF_s()
