@@ -54,7 +54,7 @@ def solve(filename,resolution):
             maxNbNeighbours = max(1+Ni.getNumberOfCells(),maxNbNeighbours)
     
     # sauvegarde sur le disque dur du second membre discrétisé dans un fichier paraview
-    my_RHSfield.writeVTK("FiniteElementsOnSphereRHSField") 
+    my_RHSfield.writeVTK("FiniteElementsOnSphereRHSField"+str(nbNodes)) 
     
     print("Right hand side discretisation done")
     print("Max nb of neighbours=", maxNbNeighbours)
@@ -158,7 +158,7 @@ def solve(filename,resolution):
     for j in range(nbNodes):
         my_ResultField[j]=SolSyst[j];#remplissage des valeurs pour les noeuds intérieurs
     #sauvegarde sur le disque dur du résultat dans un fichier paraview
-    my_ResultField.writeVTK("FiniteElementsOnSphereResultField")
+    my_ResultField.writeVTK("FiniteElementsOnSphereResultField"+str(nbNodes))
     
     #Postprocessing : save 3D picture
     PV_routines.Save_PV_data_to_picture_file("FiniteElementsOnSphereResultField"+'_0.vtu',"ResultField",'NODES',"FiniteElementsOnSphereResultField")

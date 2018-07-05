@@ -60,7 +60,7 @@ def solve(filename,resolution):
             maxNbNeighbours= max(1+Ni.getNumberOfCells(),maxNbNeighbours) #true only in 2D, need a function Ni.getNumberOfNeighbourNodes()
     
     # sauvegarde sur le disque dur du second membre discrétisé dans un fichier paraview
-    my_RHSfield.writeVTK("FiniteElements2DRHSField"+filename) 
+    my_RHSfield.writeVTK("FiniteElements2DRHSField"+str(nbNodes)) 
     
     print("Right hand side discretisation done")
     print("nb of interior nodes=", nbInteriorNodes)
@@ -137,7 +137,7 @@ def solve(filename,resolution):
     for j in range(nbBoundaryNodes):
         my_ResultField[boundaryNodes[j]]=0;#remplissage des valeurs pour les noeuds frontière (condition limite)
     #sauvegarde sur le disque dur du résultat dans un fichier paraview
-    my_ResultField.writeVTK("FiniteElements2DResultField"+filename)
+    my_ResultField.writeVTK("FiniteElements2DResultField"+str(nbNodes))
     
     print("Numerical solution of 2D poisson equation using finite elements done")
     
@@ -157,7 +157,7 @@ def solve(filename,resolution):
     
     #Postprocessing : Extraction of the diagonal data
     diag_data=VTK_routines.Extract_field_data_over_line_to_numpyArray(my_ResultField,[0,1,0],[1,0,0], resolution)
-    #PV_routines.Save_PV_data_to_picture_file("FiniteElements2DResultField"+filename+'_0.vtu',"ResultField",'NODES',"FiniteElements2DResultField"+filename)
+    #PV_routines.Save_PV_data_to_picture_file("FiniteElements2DResultField"+str(nbNodes)+'_0.vtu',"ResultField",'NODES',"FiniteElements2DResultField"+str(nbNodes))
     
     end = time.time()
     return erreur_abs/max_abs_sol_exacte, my_mesh.getNumberOfNodes(), diag_data, min_sol_num, max_sol_num, end - start

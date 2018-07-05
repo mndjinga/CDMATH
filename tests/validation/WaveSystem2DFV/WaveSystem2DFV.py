@@ -28,8 +28,8 @@ def initial_conditions_wave_system(my_mesh):
         velocity_field[i,0] =  sin(pi*x)*cos(pi*y)
         velocity_field[i,1] = -sin(pi*y)*cos(pi*x)
         U[i,0] =   p0
-        U[i,1] =  0*rho0*sin(pi*x)*cos(pi*y)
-        U[i,2] = -0*rho0*sin(pi*y)*cos(pi*x)
+        U[i,1] =  rho0*sin(pi*x)*cos(pi*y)
+        U[i,2] = -rho0*sin(pi*y)*cos(pi*x)
         
     return U, pressure_field, velocity_field
 
@@ -99,15 +99,14 @@ def computeFluxes(U, SumFluxes):
                 for i in range(nbComp):
                     Uautre[i]=U[cellAutre,i]
             else :
-                #if(Fk.getGroupName() == "Wall"):
-                    Uautre=Ucourant;
+Fk.getGroupName() == "Wall" or                     Uautre=Ucourant;
                     for i in range(dim):
                         Uautre[1+i]=-Uautre[1+i]
-                #elif(Fk.getGroupName() == "Neumann"):
-                #    Uautre=Ucourant;
-                #else:
-                #    print Fk.getGroupName()
-                #    raise ValueError("computeFluxes: Unknown boundary condition name");
+                elif(Fk.getGroupName() == "Neumann"):
+                    Uautre=Ucourant;
+                else:
+                    print Fk.getGroupName()
+                    raise ValueError("computeFluxes: Unknown boundary condition name");
             
             Fcourant=Flux(Ucourant,normal);
             Fautre  =Flux(Uautre,normal);
@@ -115,13 +114,7 @@ def computeFluxes(U, SumFluxes):
             A, absA=jacobianMatrices( normal);
             
             sumFluxCourant = sumFluxCourant + (Fcourant+Fautre +absA*(Ucourant-Uautre))*Fk.getMeasure()*0.5
-            #print 'k= ',k, 'Fk.getMeasure()',Fk.getMeasure()
-            #print 'normal=', normal
-            #print 'k= ', k, 'sumFluxCourant',sumFluxCourant    
-            #print 'Fcourant', Fcourant
-            #print 'Fautre', Fautre
-            #print '(Ucourant-Uautre)', (Ucourant-Uautre)
-            #print 'Fcourant+Fautre +absA*(Ucourant-Uautre)', Fcourant+Fautre +absA*(Ucourant-Uautre)
+ 
         #On divise par le volume de la cellule la contribution des flux au snd membre
         for i in range(nbComp):
             SumFluxes[j,i]=sumFluxCourant[i]/Cj.getMeasure();
@@ -146,11 +139,11 @@ def WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq, outputFileName,resolu
     Uinitial=U
     #sauvegarde de la donnée initiale
     pressure_field.setTime(time,it);
-    pressure_field.writeVTK(outputFileName+"_pressure");
+    pressure_field.writeVTK(outputFileName+str(nbCells)+"_pressure");
     velocity_field.setTime(time,it);
-    velocity_field.writeVTK(outputFileName+"_velocity");
+    velocity_field.writeVTK(outputFileName+str(nbCells)+"_velocity");
 
-    #Computation dx_min
+    #Computation of dx_min
     dx_min  = 1e30;
     for i in range(nbCells):
         Ci = my_mesh.getCell(i);
@@ -191,9 +184,9 @@ def WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq, outputFileName,resolu
                     if(dim>2):
                         velocity_field[k,2]=U[k,3]/rho0
             pressure_field.setTime(time,it);
-            pressure_field.writeVTK(outputFileName+"_pressure",False);
+            pressure_field.writeVTK(outputFileName+str(nbCells)+"_pressure",False);
             velocity_field.setTime(time,it);
-            velocity_field.writeVTK(outputFileName+"_velocity",False);
+            velocity_field.writeVTK(outputFileName+str(nbCells)+"_velocity",False);
 
     if(it>=ntmax):
         print "Nombre de pas de temps maximum ntmax= ", ntmax, " atteint"
@@ -209,9 +202,9 @@ def WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq, outputFileName,resolu
                     velocity_field[k,2]=U[k,3]/rho0
 
         pressure_field.setTime(time,0);
-        pressure_field.writeVTK(outputFileName+"_pressure_Stat");
+        pressure_field.writeVTK(outputFileName+str(nbCells)+"_pressure_Stat");
         velocity_field.setTime(time,0);
-        velocity_field.writeVTK(outputFileName+"_velocity_Stat");
+        velocity_field.writeVTK(outputFileName+str(nbCells)+"_velocity_Stat");
 
         maxVector=(Uinitial-U).normMax()
         error_p=maxVector[0]/p0
@@ -221,8 +214,8 @@ def WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq, outputFileName,resolu
         diag_data_press=VTK_routines.Extract_field_data_over_line_to_numpyArray(pressure_field,[0,1,0],[1,0,0], resolution)    
         diag_data_vel  =VTK_routines.Extract_field_data_over_line_to_numpyArray(velocity_field,[0,1,0],[1,0,0], resolution)    
         #Postprocessing : save 2D picture
-        PV_routines.Save_PV_data_to_picture_file(outputFileName+"_pressure_Stat"+'_0.vtu',"Pressure",'CELLS',outputFileName+"_pressure_Stat")
-        PV_routines.Save_PV_data_to_picture_file(outputFileName+"_velocity_Stat"+'_0.vtu',"Velocity",'CELLS',outputFileName+"_velocity_Stat")
+        PV_routines.Save_PV_data_to_picture_file(outputFileName+str(nbCells)+"_pressure_Stat"+'_0.vtu',"Pressure",'CELLS',outputFileName+str(nbCells)+"_pressure_Stat")
+        PV_routines.Save_PV_data_to_picture_file(outputFileName+str(nbCells)+"_velocity_Stat"+'_0.vtu',"Velocity",'CELLS',outputFileName+str(nbCells)+"_velocity_Stat")
         
         return error_p, error_u, nbCells, diag_data_press, diag_data_vel
     else:

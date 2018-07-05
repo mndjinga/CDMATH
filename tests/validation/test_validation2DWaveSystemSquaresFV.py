@@ -20,19 +20,24 @@ def test_validation2DWaveSystemSquaresFV():
     curv_abs=np.linspace(0,sqrt(2),resolution+1)
     plt.close('all')
     i=0
+
+    plt.figure('pressure')
+    plt.figure('velocity')
     # Storing of numerical errors, mesh sizes and diagonal values
     for nx in meshList:
         my_mesh=cdmath.Mesh(0,1,nx,0,1,nx)
         error_p_tab[i], error_u_tab[i], mesh_size_tab[i], diag_data_press[i], diag_data_vel[i], time_tab[i] =WaveSystem2DFV.solve(my_mesh,str(nx)+'x'+str(nx), resolution)
-        plt.figure('pressure')
+        plt.show('pressure')
         plt.plot(curv_abs, diag_data_press[i], label= str(mesh_size_tab[i]) + ' cells')
-        plt.figure('velocity')
+        plt.close('pressure')
+        plt.show('velocity')
         plt.plot(curv_abs, diag_data_vel[i],   label= str(mesh_size_tab[i]) + ' cells')
+        plt.close('velocity')
         time_tab[i]=log10(time_tab[i])
         i=i+1
     
     # Plot over diagonal line
-    plt.figure('pressure')
+    plt.show('pressure')
     plt.legend()
     plt.xlabel('Position on diagonal line')
     plt.ylabel('Pressure on diagonal line')
@@ -41,7 +46,7 @@ def test_validation2DWaveSystemSquaresFV():
 
     plt.close('pressure')
 
-    plt.figure('velocity')
+    plt.show('velocity')
     plt.legend()
     plt.xlabel('Position on diagonal line')
     plt.ylabel('Velocity on diagonal line')

@@ -64,8 +64,8 @@ def solve(filename,resolution):
             maxNbNeighbours= max(1+1*Ni.getNumberOfCells(),maxNbNeighbours) # need a function Ni.getNumberOfNeighbourNodes();
     
     # sauvegarde sur le disque dur du second membre discrétisé dans un fichier paraview
-    my_RHSfield.writeVTK("FiniteElements3DRHSField"+filename) 
-    B.writeVTK("FiniteElements3DEXSOLField"+filename) 
+    my_RHSfield.writeVTK("FiniteElements3DRHSField"+str(nbNodes)) 
+    B.writeVTK("FiniteElements3DEXSOLField"+str(nbNodes)) 
     
     print("Right hand side discretisation done")
     print("nb of interior nodes=", nbInteriorNodes)
@@ -150,7 +150,7 @@ def solve(filename,resolution):
     for j in range(nbBoundaryNodes):
         my_ResultField[boundaryNodes[j]]=0;#remplissage des valeurs pour les noeuds frontière (condition limite)
     #sauvegarde sur le disque dur du résultat dans un fichier paraview
-    my_ResultField.writeVTK("FiniteElements3DResultField"+filename)
+    my_ResultField.writeVTK("FiniteElements3DResultField"+str(nbNodes))
     
     print("Numerical solution of 3D poisson equation using finite elements done")
     
