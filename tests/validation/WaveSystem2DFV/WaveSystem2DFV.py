@@ -99,7 +99,8 @@ def computeFluxes(U, SumFluxes):
                 for i in range(nbComp):
                     Uautre[i]=U[cellAutre,i]
             else :
-Fk.getGroupName() == "Wall" or                     Uautre=Ucourant;
+                if(Fk.getGroupName() == "Wall" or Fk.getGroupName() == "Paroi" or Fk.getGroupName() == "Haut" or Fk.getGroupName() == "Bas" or Fk.getGroupName() == "Gauche" or Fk.getGroupName() == "Droite"):#Wall boundary condition unless Neumannspecified explicitly
+                    Uautre=Ucourant;
                     for i in range(dim):
                         Uautre[1+i]=-Uautre[1+i]
                 elif(Fk.getGroupName() == "Neumann"):
@@ -229,9 +230,9 @@ def solve(my_mesh,filename,resolution):
 
     # Problem data
     tmax = 1.
-    ntmax = 100000
-    cfl = 0.45
-    output_freq = 1000
+    ntmax = 10000
+    cfl = 0.2
+    output_freq = 100
 
     error_p, error_u, nbCells, diag_data_press, diag_data_vel = WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq, filename,resolution)
     end = time.time()

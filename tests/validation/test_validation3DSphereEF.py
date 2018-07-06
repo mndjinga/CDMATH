@@ -23,8 +23,21 @@ def test_validation3DSphereEF():
         assert max_sol_num<1.1
         error_tab[i]=log10(error_tab[i])
         time_tab[i]=log10(time_tab[i])
+        with open('./FiniteElementsOnSphere_PlotOnSortedLines'+str(mesh_size_tab[i])+'0.csv') as f:
+            lines = f.readlines()
+            x = [line.split(",")[0] for line in lines[1:]]
+            y = [line.split(",")[1] for line in lines[1:]]
+
+        plt.plot(y, x, label= str(mesh_size_tab[i]) + ' cells')
         mesh_size_tab[i] = log10(mesh_size_tab[i])
         i=i+1
+
+    # Plot over diagonal line
+    plt.legend()
+    plt.xlabel('Position on slice circle')
+    plt.ylabel('Value on slice circle')
+    plt.title('Plot over slice circle for finite elements \n for Laplace operator on 3D sphere meshes')
+    plt.savefig(mesh_name+"_3DSpherePoissonFE_Slice.png")
     
     # Least square linear regression
     # Find the best a,b such that f(x)=ax+b best approximates the convergence curve

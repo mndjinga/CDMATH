@@ -12,6 +12,7 @@ from math import pow
 import numpy as np
 import PV_routines
 import VTK_routines
+import paraview.simple as pvs
 
 #Préprocessing optionnel: création du fichier my_mesh.med contenant la géométrie et le maillage du domaine de calcul à partir de commandes python (import salome)
 
@@ -155,13 +156,31 @@ my_ResultField = cdmath.Field("ResultField", cdmath.NODES, my_mesh, 1)
 for j in range(nbNodes):
     my_ResultField[j]=SolSyst[j];#remplissage des valeurs pour les noeuds intérieurs
 #sauvegarde sur le disque dur du résultat dans un fichier paraview
-my_ResultField.writeVTK("FiniteElementsOnSphereResultField")
+my_ResultField.writeVTK("FiniteElementsOnSphere")
 
 #Postprocessing : save 3D picture
-PV_routines.Save_PV_data_to_picture_file("FiniteElementsOnSphereResultField"+'_0.vtu',"ResultField",'NODES',"FiniteElementsOnSphereResultField")
+PV_routines.Save_PV_data_to_picture_file("FiniteElementsOnSphere"+'_0.vtu',"ResultField",'NODES',"FiniteElementsOnSphere")
 resolution=100
-VTK_routines.Clip_VTK_data_to_VTK("FiniteElementsOnSphereResultField"+'_0.vtu',"Clip_VTK_data_to_VTK_"+ "FiniteElementsOnSphereResultField"+'_0.vtu',[0.25,0.25,0.25], [-0.5,-0.5,-0.5],resolution )
-PV_routines.Save_PV_data_to_picture_file("Clip_VTK_data_to_VTK_"+"FiniteElementsOnSphereResultField"+'_0.vtu',"ResultField",'NODES',"Clip_VTK_data_to_VTK_"+"FiniteElementsOnSphereResultField")
+VTK_routines.Clip_VTK_data_to_VTK("FiniteElementsOnSphere"+'_0.vtu',"Clip_VTK_data_to_VTK_"+ "FiniteElementsOnSphere"+'_0.vtu',[0.25,0.25,0.25], [-0.5,-0.5,-0.5],resolution )
+PV_routines.Save_PV_data_to_picture_file("Clip_VTK_data_to_VTK_"+"FiniteElementsOnSphere"+'_0.vtu',"ResultField",'NODES',"Clip_VTK_data_to_VTK_"+"FiniteElementsOnSphere")
+
+finiteElementsOnSphere_0vtu = pvs.XMLUnstructuredGridReader(FileName=["FiniteElementsOnSphere"+'_0.vtu'])
+slice1 = pvs.Slice(Input=finiteElementsOnSphere_0vtu)
+slice1.SliceType.Normal = [0.5, 0.5, 0.5]
+renderView1 = pvs.GetActiveViewOrCreate('RenderView')
+finiteElementsOnSphere_0vtuDisplay = pvs.Show(finiteElementsOnSphere_0vtu, renderView1)
+pvs.ColorBy(finiteElementsOnSphere_0vtuDisplay, ('POINTS', 'ResultField'))
+slice1Display = pvs.Show(slice1, renderView1)
+pvs.SaveScreenshot("./FiniteElementsOnSphere"+"_Slice"+'.png', magnification=1, quality=100, view=renderView1)
+plotOnSortedLines1 = pvs.PlotOnSortedLines(Input=slice1)
+lineChartView2 = pvs.CreateView('XYChartView')
+plotOnSortedLines1Display = pvs.Show(plotOnSortedLines1, lineChartView2)
+plotOnSortedLines1Display.UseIndexForXAxis = 0
+plotOnSortedLines1Display.XArrayName = 'arc_length'
+plotOnSortedLines1Display.SeriesVisibility = ['ResultField (1)']
+pvs.SaveScreenshot("./FiniteElementsOnSphere"+"_PlotOnSortedLine_"+'.png', magnification=1, quality=100, view=lineChartView2)
+pvs.Delete(lineChartView2)
+pvs.Delete(renderView1)
 
 print("Integral of the numerical solution", my_ResultField.integral(0))
 print("Numerical solution of poisson equation on a sphere using finite elements done")

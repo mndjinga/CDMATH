@@ -122,12 +122,8 @@ def Save_PV_data_to_picture_file(inputFileName, field_name,
     # show color bar/color legend
     display.SetScalarBarVisibility(renderView1, True)
 
-    renderView1.CameraPosition = [0.5, 0.5, 3.8460652149512318]
-    renderView1.CameraFocalPoint = [0.5, 0.5, 0.5]
-    renderView1.CameraParallelScale = 0.8660254037844386
-
     pvs.SaveScreenshot(outputFileName+".png", magnification=1, quality=100, view=renderView1)
     display.SetScalarBarVisibility(renderView1, False)
-    pvs.Delete(pvs.GetActiveSource())
+    pvs.Delete()
     
 
