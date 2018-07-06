@@ -180,7 +180,6 @@ plotOnSortedLines1Display.XArrayName = 'arc_length'
 plotOnSortedLines1Display.SeriesVisibility = ['ResultField (1)']
 pvs.SaveScreenshot("./FiniteElementsOnSphere"+"_PlotOnSortedLine_"+'.png', magnification=1, quality=100, view=lineChartView2)
 pvs.Delete(lineChartView2)
-pvs.Delete(renderView1)
 
 print("Integral of the numerical solution", my_ResultField.integral(0))
 print("Numerical solution of poisson equation on a sphere using finite elements done")
