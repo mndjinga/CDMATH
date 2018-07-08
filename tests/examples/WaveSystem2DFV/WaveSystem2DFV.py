@@ -47,10 +47,10 @@ def jacobianMatrices(normal):
     return A, absA
     
 def Flux(U, normal):
-    nVar=U.size()
     dim=normal.size()
 
     result=cdmath.Vector(dim+1)
+    print result
     for i in range(dim):
         result[0]  +=normal[i]*U[i+1]
         result[i+1] =normal[i]*U[0]

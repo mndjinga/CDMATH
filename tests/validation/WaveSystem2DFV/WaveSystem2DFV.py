@@ -7,9 +7,9 @@ import cdmath
 import PV_routines
 import VTK_routines
 
-p0=1e5#reference pressure
 rho0=1000#reference density
 c0=1500#reference sound speed
+p0=rho0*c0*c0#reference pressure
 precision=1e-5
 
 def initial_conditions_wave_system(my_mesh):
@@ -48,14 +48,13 @@ def jacobianMatrices(normal):
     return A, absA
     
 def Flux(U, normal):
-    nVar=U.size()
     dim=normal.size()
 
     result=cdmath.Vector(dim+1)
     for i in range(dim):
         result[0]  +=normal[i]*U[i+1]
         result[i+1] =normal[i]*U[0]
-        
+    
     result[0]=c0*c0*result[0]
     
     return result
@@ -71,7 +70,6 @@ def computeFluxes(U, SumFluxes):
     Uautre=cdmath.Vector(nbComp)
     normal=cdmath.Vector(dim)
     sumFluxCourant=cdmath.Vector(nbComp)
-
 
     for j in range(nbCells):#On parcourt les cellules
         Cj = my_mesh.getCell(j)
@@ -92,17 +90,22 @@ def computeFluxes(U, SumFluxes):
                 if (Fk.getCellsId()[0] == j) :
                     # hypothese verifiée 
                     cellAutre = Fk.getCellsId()[1];
-                else :
+                elif(Fk.getCellsId()[1] == j) :
                     # hypothese non verifiée 
                     cellAutre = Fk.getCellsId()[0];
+                else :
+                    raise ValueError("computeFluxes: problem with mesh, unknown cel number");
                 
                 for i in range(nbComp):
                     Uautre[i]=U[cellAutre,i]
             else :
                 if(Fk.getGroupName() == "Wall" or Fk.getGroupName() == "Paroi" or Fk.getGroupName() == "Haut" or Fk.getGroupName() == "Bas" or Fk.getGroupName() == "Gauche" or Fk.getGroupName() == "Droite"):#Wall boundary condition unless Neumannspecified explicitly
                     Uautre=Ucourant;
+                    qn=0# normal momentum
                     for i in range(dim):
-                        Uautre[1+i]=-Uautre[1+i]
+                        qn+=Ucourant[i+1]*normal[i]
+                    for i in range(dim):
+                        Uautre[i+1]-=2*qn*normal[i]
                 elif(Fk.getGroupName() == "Neumann"):
                     Uautre=Ucourant;
                 else:
@@ -113,9 +116,9 @@ def computeFluxes(U, SumFluxes):
             Fautre  =Flux(Uautre,normal);
 
             A, absA=jacobianMatrices( normal);
-            
-            sumFluxCourant = sumFluxCourant + (Fcourant+Fautre +absA*(Ucourant-Uautre))*Fk.getMeasure()*0.5
- 
+            du=Fcourant+Fautre +absA*(Ucourant-Uautre)
+            sumFluxCourant = sumFluxCourant + (du)*Fk.getMeasure()*0.5
+
         #On divise par le volume de la cellule la contribution des flux au snd membre
         for i in range(nbComp):
             SumFluxes[j,i]=sumFluxCourant[i]/Cj.getMeasure();
@@ -158,26 +161,42 @@ def WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq, outputFileName,resolu
         else:
             dx_min = min(dx_minl,Ci.getMeasure());
     
+    dt = cfl * dx_min / c0
+
     print("Starting computation of the linear wave system with an UPWIND scheme …")
     
     # Starting time loop
     while (it<ntmax and time <= tmax and not isStationary):
         computeFluxes(U,SumFluxes);
+        #for i in range(nbCells):
+        #    for j in range(dim+1):
+        #        print "SumFluxes[",i,",",j,"]",SumFluxes[i,j]
         
-        dt = cfl * dx_min / c0
         SumFluxes*=dt;
         maxVector=SumFluxes.normMax()
         isStationary= maxVector[0]/p0<precision and maxVector[1]/rho0<precision and maxVector[2]/rho0<precision;
+        #print "U avant mise à jour"
+        #for i in range(nbCells):
+        #    for j in range(dim+1):
+        #        print "U[",i,",",j,"]",U[i,j]
         U-=SumFluxes;
+        #print "U après mise à jour", U
+        #for i in range(nbCells):
+        #    for j in range(dim+1):
+        #        print "U[",i,",",j,"]",U[i,j]
     
         time=time+dt;
         it=it+1;
     
         #Sauvegardes
         if(it%output_freq==0):
-            print("-- Iter: " + str(it) + ", Time: " + str(time) + ", dt: " + str(dt))
+            print("-- Iter: " + str(it) + ", Time: " + str(time) + ", dt: " + str(dt), " variations : ", maxVector[0]/p0 ,",", maxVector[1]/rho0 ,",", maxVector[2]/rho0)
             print 'U[0,0]',U[0,0]
+            totalMass=cdmath.Vector(dim+1)
             for k in range(nbCells):
+                Ck = my_mesh.getCell(k);
+                for i in range(dim+1):
+                    totalMass[i]+=U[k,i]*Ck.getMeasure()
                 pressure_field[k]=U[k,0]/p0
                 velocity_field[k,0]=U[k,1]/rho0
                 if(dim>1):
@@ -189,6 +208,7 @@ def WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq, outputFileName,resolu
             velocity_field.setTime(time,it);
             velocity_field.writeVTK(outputFileName+str(nbCells)+"_velocity",False);
 
+            print "totalMass", totalMass
     if(it>=ntmax):
         print "Nombre de pas de temps maximum ntmax= ", ntmax, " atteint"
         raise ValueError("Maximum number of time steps reached : Stationary state not found !!!!!!!")
@@ -230,9 +250,9 @@ def solve(my_mesh,filename,resolution):
 
     # Problem data
     tmax = 1.
-    ntmax = 10000
-    cfl = 0.2
-    output_freq = 100
+    ntmax = 10
+    cfl = 0.45
+    output_freq = 1
 
     error_p, error_u, nbCells, diag_data_press, diag_data_vel = WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq, filename,resolution)
     end = time.time()
