@@ -1527,6 +1527,29 @@ Mesh::operator= ( const Mesh& mesh )
 }
 
 //----------------------------------------------------------------------
+double 
+Mesh::minRatioSurfVol()
+{
+    double dx_min  = 1e30;
+    for(int i=0; i<_numberOfCells; i++)
+    {
+        Cell Ci = getCell(i);
+        if (_meshDim > 1)
+        {
+            double perimeter=0;
+            for(int k=0; k< Ci.getNumberOfFaces(); k++)
+            {
+                int indexFace=Ci.getFacesId()[k];
+                Face Fk = getFace(indexFace);
+                perimeter+=Fk.getMeasure();
+            }
+            dx_min = min(dx_min,Ci.getMeasure()/perimeter);
+        }
+        else
+            dx_min = min(dx_min,Ci.getMeasure());
+    }
+}
+//----------------------------------------------------------------------
 void
 Mesh::writeVTK ( const std::string fileName ) const
 //----------------------------------------------------------------------

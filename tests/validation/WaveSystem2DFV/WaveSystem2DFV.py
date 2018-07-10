@@ -104,8 +104,8 @@ def computeFluxes(U, SumFluxes):
                     qn=0# normal momentum
                     for i in range(dim):
                         qn+=Ucourant[i+1]*normal[i]
-                    for i in range(dim):
-                        Uautre[i+1]-=2*qn*normal[i]
+                    #for i in range(dim):
+                    #    Uautre[i+1]-=2*qn*normal[i]
                 elif(Fk.getGroupName() == "Neumann"):
                     Uautre=Ucourant;
                 else:
@@ -147,20 +147,8 @@ def WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq, outputFileName,resolu
     velocity_field.setTime(time,it);
     velocity_field.writeVTK(outputFileName+str(nbCells)+"_velocity");
 
-    #Computation of dx_min
-    dx_min  = 1e30;
-    for i in range(nbCells):
-        Ci = my_mesh.getCell(i);
-        if (dim > 1):
-            perimeter=0
-            for k in range(Ci.getNumberOfFaces()):
-                indexFace=Ci.getFacesId()[k];
-                Fk = my_mesh.getFace(indexFace);
-                perimeter+=Fk.getMeasure()
-            dx_min = min(dx_min,Ci.getMeasure()/perimeter);
-        else:
-            dx_min = min(dx_minl,Ci.getMeasure());
-    
+    dx_min=my_mesh.minRatioSurfVol()
+
     dt = cfl * dx_min / c0
 
     print("Starting computation of the linear wave system with an UPWIND scheme …")
@@ -190,7 +178,8 @@ def WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq, outputFileName,resolu
     
         #Sauvegardes
         if(it%output_freq==0):
-            print("-- Iter: " + str(it) + ", Time: " + str(time) + ", dt: " + str(dt), " variations : ", maxVector[0]/p0 ,",", maxVector[1]/rho0 ,",", maxVector[2]/rho0)
+            print"-- Iter: " + str(it) + ", Time: " + str(time) + ", dt: " + str(dt)
+            print "|| Un+1 - Un || : pressure ", maxVector[0]/p0 ,", velocity x", maxVector[1]/rho0 ,", velocity y", maxVector[2]/rho0
             print 'U[0,0]',U[0,0]
             totalMass=cdmath.Vector(dim+1)
             for k in range(nbCells):
@@ -208,7 +197,6 @@ def WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq, outputFileName,resolu
             velocity_field.setTime(time,it);
             velocity_field.writeVTK(outputFileName+str(nbCells)+"_velocity",False);
 
-            print "totalMass", totalMass
     if(it>=ntmax):
         print "Nombre de pas de temps maximum ntmax= ", ntmax, " atteint"
         raise ValueError("Maximum number of time steps reached : Stationary state not found !!!!!!!")
@@ -250,7 +238,7 @@ def solve(my_mesh,filename,resolution):
 
     # Problem data
     tmax = 1.
-    ntmax = 10
+    ntmax = 1
     cfl = 0.45
     output_freq = 1
 

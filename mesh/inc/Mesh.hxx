@@ -121,9 +121,6 @@ public: //----------------------------------------------------------------
 	 */
 	int getMeshDimension( void ) const ;
 
-	std::vector<double> getDXYZ() const ;
-
-	std::vector<int> getCellGridStructure() const;
 	/**
 	 * return The nodes in this mesh
 	 * @return _nodes
@@ -179,34 +176,38 @@ public: //----------------------------------------------------------------
 	Node& getNode ( int i )  const ;
 
 	/**
-	 * return number of cell in x direction
+	 * return number of cell in x direction (structured mesh)
 	 * return _nX
 	 */
 	int getNx( void )  const ;
 
 	/**
-	 * return number of cell in y direction
+	 * return number of cell in y direction (structured mesh)
 	 * return _nY
 	 */
 	int getNy( void )  const ;
 
 	/**
-	 * return number of cell in z direction
+	 * return number of cell in z direction (structured mesh)
 	 * return _nZ
 	 */
 	int getNz( void )  const ;
 
-	double getXMin( void )  const ;
+	double getXMin( void )  const ;// for structured meshes
 
-	double getXSup( void )  const ;
+	double getXSup( void )  const ;// for structured meshes
 
-	double getYMin( void )  const ;
+	double getYMin( void )  const ;// for structured meshes
 
-	double getYSup( void )  const ;
+	double getYSup( void )  const ;// for structured meshes
 
-	double getZMin( void )  const ;
+	double getZMin( void )  const ;// for structured meshes
 
-	double getZSup( void )  const ;
+	double getZSup( void )  const ;// for structured meshes
+
+	std::vector<double> getDXYZ() const ;// for structured meshes
+
+	std::vector<int> getCellGridStructure() const;// for structured meshes
 
 	/**
 	 * surcharge operator =
@@ -258,6 +259,11 @@ public: //----------------------------------------------------------------
 	bool isQuadrangular() const ;
 	bool isHexahedral() const ;
     bool isStructured() const ;
+    
+	/**
+	 * Compute the minimum value over all cells of the ratio cell perimeter/cell vaolume
+	 */
+    double minRatioSurfVol();
     
 private: //----------------------------------------------------------------
 
