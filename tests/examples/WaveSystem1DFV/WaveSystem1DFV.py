@@ -12,47 +12,43 @@ p0=rho0*c0*c0#reference pressure
 precision=1e-5
 
 def initial_conditions_wave_system(my_mesh):
-    dim     = my_mesh.getMeshDimension()
     nbCells = my_mesh.getNumberOfCells()
-
+    dim=1
     pressure_field = cdmath.Field("Pressure",            cdmath.CELLS, my_mesh, 1)
     velocity_field = cdmath.Field("Velocity",            cdmath.CELLS, my_mesh, dim)
     U              = cdmath.Field("Conservative vector", cdmath.CELLS, my_mesh, dim+1)
 
     for i in range(nbCells):
         x = my_mesh.getCell(i).x()
-        y = my_mesh.getCell(i).y()
 
+        
         pressure_field[i] = p0
-        velocity_field[i,0] =  sin(pi*x)*cos(pi*y)
-        velocity_field[i,1] = -sin(pi*y)*cos(pi*x)
+        if(x>0.5):
+            velocity_field[i,0] =   1
+        else:    
+            velocity_field[i,0] =  -1
+            
         U[i,0] =   p0
-        U[i,1] =  rho0*sin(pi*x)*cos(pi*y)
-        U[i,2] = -rho0*sin(pi*y)*cos(pi*x)
+        U[i,1] =  rho0*velocity_field[i,0]
         
     return U, pressure_field, velocity_field
 
-def jacobianMatrices(normal):
-    dim=normal.size()
-    A=cdmath.Matrix(dim+1,dim+1)
-    absA=cdmath.Matrix(dim+1,dim+1)
+def jacobianMatrices():
+    A=cdmath.Matrix(2,2)
+    absA=cdmath.Matrix(2,2)
 
     absA[0,0]=c0
-    for i in range(dim):
-        A[i+1,0]=normal[i]
-        A[0,i+1]=c0*c0*normal[i]
-        for j in range(dim):
-            absA[i+1,j+1]=c0*normal[i]*normal[j]
+    absA[1,1]=c0
+    A[1,0]=1
+    A[0,1]=c0*c0
     
     return A, absA
     
-def Flux(U, normal):
-    dim=normal.size()
+def Flux(U):
 
-    result=cdmath.Vector(dim+1)
-    for i in range(dim):
-        result[0]  +=normal[i]*U[i+1]
-        result[i+1] =normal[i]*U[0]
+    result=cdmath.Vector(2)
+    result[0] = U[1]
+    result[1] = U[0]
         
     result[0]=c0*c0*result[0]
     
@@ -110,10 +106,10 @@ def computeFluxes(U, SumFluxes):
                     print Fk.getGroupName()
                     raise ValueError("computeFluxes: Unknown boundary condition name");
             
-            Fcourant=Flux(Ucourant,normal);
-            Fautre  =Flux(Uautre,normal);
+            Fcourant=Flux(Ucourant);
+            Fautre  =Flux(Uautre);
 
-            A, absA=jacobianMatrices( normal);
+            A, absA=jacobianMatrices();
             
             sumFluxCourant = sumFluxCourant + (Fcourant+Fautre +absA*(Ucourant-Uautre))*Fk.getMeasure()*0.5
  
@@ -122,7 +118,7 @@ def computeFluxes(U, SumFluxes):
             SumFluxes[j,i]=sumFluxCourant[i]/Cj.getMeasure();
 
 
-def WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq, outputFileName,resolution):
+def WaveSystem1DVF(ntmax, tmax, cfl, my_mesh, output_freq, resolution):
     dim=my_mesh.getMeshDimension()
     nbCells = my_mesh.getNumberOfCells()
     
@@ -141,9 +137,9 @@ def WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq, outputFileName,resolu
     Uinitial=U
     #sauvegarde de la donnée initiale
     pressure_field.setTime(time,it);
-    pressure_field.writeVTK(outputFileName+"_pressure");
+    pressure_field.writeVTK("pressure");
     velocity_field.setTime(time,it);
-    velocity_field.writeVTK(outputFileName+"_velocity");
+    velocity_field.writeVTK("velocity");
 
     dx_min=my_mesh.minRatioSurfVol()
 
@@ -157,7 +153,7 @@ def WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq, outputFileName,resolu
         
         SumFluxes*=dt;
         maxVector=SumFluxes.normMax()
-        isStationary= maxVector[0]/p0<precision and maxVector[1]/rho0<precision and maxVector[2]/rho0<precision;
+        isStationary= maxVector[0]/p0<precision and maxVector[1]/rho0<precision
         U-=SumFluxes;
     
         time=time+dt;
@@ -166,21 +162,18 @@ def WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq, outputFileName,resolu
         #Sauvegardes
         if(it%output_freq==0):
             print("-- Iter: " + str(it) + ", Time: " + str(time) + ", dt: " + str(dt))
-            print "|| Un+1 - Un || : pressure ", maxVector[0]/p0 ,", velocity x", maxVector[1]/rho0 ,", velocity y", maxVector[2]/rho0
-            print 'U[0,0]',U[0,0]
+            print "|| Un+1 - Un || : pressure ", maxVector[0]/p0 ,", velocity x", maxVector[1]/rho0 
+
             for k in range(nbCells):
                 pressure_field[k]=U[k,0]/p0
                 velocity_field[k,0]=U[k,1]/rho0
-                if(dim>1):
-                    velocity_field[k,1]=U[k,2]/rho0
-                    if(dim>2):
-                        velocity_field[k,2]=U[k,3]/rho0
-            pressure_field.setTime(time,it);
-            pressure_field.writeVTK(outputFileName+"_pressure",False);
-            velocity_field.setTime(time,it);
-            velocity_field.writeVTK(outputFileName+"_velocity",False);
 
-    print "|| Un+1 - Un || : pressure ", maxVector[0]/p0 ,", velocity x", maxVector[1]/rho0 ,", velocity y", maxVector[2]/rho0
+            pressure_field.setTime(time,it);
+            pressure_field.writeVTK("pressure",False);
+            velocity_field.setTime(time,it);
+            velocity_field.writeVTK("velocity",False);
+    
+    print "|| Un+1 - Un || : pressure ", maxVector[0]/p0 ,", velocity x", maxVector[1]/rho0 
 
     if(it>=ntmax):
         print "Nombre de pas de temps maximum ntmax= ", ntmax, " atteint"
@@ -190,60 +183,41 @@ def WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq, outputFileName,resolu
         for k in range(nbCells):
             pressure_field[k]=U[k,0]/p0
             velocity_field[k,0]=U[k,1]/rho0
-            if(dim>1):
-                velocity_field[k,1]=U[k,2]/rho0
-                if(dim>2):
-                    velocity_field[k,2]=U[k,3]/rho0
 
         pressure_field.setTime(time,0);
-        pressure_field.writeVTK(outputFileName+"_pressure_Stat");
+        pressure_field.writeVTK("pressure_Stat");
         velocity_field.setTime(time,0);
-        velocity_field.writeVTK(outputFileName+"_velocity_Stat");
+        velocity_field.writeVTK("velocity_Stat");
 
         maxVector=(Uinitial-U).normMax()
         error_p=maxVector[0]/p0
-        error_u=sqrt(maxVector[1]*maxVector[1]+maxVector[2]*maxVector[2])/rho0
-
-        #Postprocessing : Extraction of the diagonal data
-        diag_data_press=VTK_routines.Extract_field_data_over_line_to_numpyArray(pressure_field,[0,1,0],[1,0,0], resolution)    
-        diag_data_vel  =VTK_routines.Extract_field_data_over_line_to_numpyArray(velocity_field,[0,1,0],[1,0,0], resolution)    
-        #Postprocessing : save 2D picture
-        PV_routines.Save_PV_data_to_picture_file(outputFileName+"_pressure_Stat"+'_0.vtu',"Pressure",'CELLS',outputFileName+"_pressure_Stat")
-        PV_routines.Save_PV_data_to_picture_file(outputFileName+"_velocity_Stat"+'_0.vtu',"Velocity",'CELLS',outputFileName+"_velocity_Stat")
+        error_u=maxVector[1]/rho0
         
     else:
         print "Temps maximum Tmax= ", tmax, " atteint"
         raise ValueError("Maximum time reached : Stationary state not found !!!!!!!")
 
 
-def solve(my_mesh,filename,resolution):
-    print("RESOLUTION OF THE 2D Wave system:")
+def solve(my_mesh,resolution):
+    print("RESOLUTION OF THE 1D Wave system:")
 
     # Problem data
     tmax = 1.
-    ntmax = 1
-    cfl = 0.45
-    output_freq = 1
+    ntmax = 100
+    cfl = 0.95
+    output_freq = 10
 
-    error_p, error_u, nbCells, diag_data_press, diag_data_vel = WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq, filename,resolution)
+    WaveSystem1DVF(ntmax, tmax, cfl, my_mesh, output_freq,resolution)
 
-def solve_file( filename,resolution):
-    my_mesh = cdmath.Mesh(filename+".med")
-    solve(my_mesh, filename,resolution)
-    
 if __name__ == """__main__""":
-    M=cdmath.Mesh("meshSquare.med")
-    solve(M,'Squares',100)
 
+    M=cdmath.Mesh(0,1,50)
+    
     xinf=0
     xsup=1
-    yinf=0
-    ysup=1
-    M=cdmath.Mesh(xinf,xsup,50,yinf,ysup,50)
-    
-    M.setGroupAtPlan(xsup,0,precision,"Wall");
-    M.setGroupAtPlan(xinf,0,precision,"Wall");
-    M.setGroupAtPlan(ysup,1,precision,"Wall");
-    M.setGroupAtPlan(yinf,1,precision,"Wall");
+ 
+    M=cdmath.Mesh(xinf,xsup,50)
+    M.setGroupAtPlan(xsup,0,precision,"Neumann");
+    M.setGroupAtPlan(xinf,0,precision,"Neumann");
 
-    solve(M,'Triangles',100)
+    solve(M,100)
