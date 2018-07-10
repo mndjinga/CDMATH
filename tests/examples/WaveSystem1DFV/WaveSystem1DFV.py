@@ -47,11 +47,9 @@ def jacobianMatrices():
 def Flux(U):
 
     result=cdmath.Vector(2)
-    result[0] = U[1]
+    result[0] = c0*c0*U[1]
     result[1] = U[0]
-        
-    result[0]=c0*c0*result[0]
-    
+            
     return result
     
 def computeFluxes(U, SumFluxes):
@@ -59,63 +57,46 @@ def computeFluxes(U, SumFluxes):
     nbCells = my_mesh.getNumberOfCells();
     dim=my_mesh.getMeshDimension();
     nbComp=U.getNumberOfComponents();
-    Fcourant=cdmath.Vector(nbComp)
-    Fautre=cdmath.Vector(nbComp)
-    Ucourant=cdmath.Vector(nbComp)
-    Uautre=cdmath.Vector(nbComp)
+    Fj=cdmath.Vector(nbComp)
+    Fjp1=cdmath.Vector(nbComp)
+    Fjm1=cdmath.Vector(nbComp)
+    Uj=cdmath.Vector(nbComp)
+    Ujp1=cdmath.Vector(nbComp)
+    Ujm1=cdmath.Vector(nbComp)
     normal=cdmath.Vector(dim)
     sumFluxCourant=cdmath.Vector(nbComp)
 
+    A, absA=jacobianMatrices();
 
     for j in range(nbCells):#On parcourt les cellules
         Cj = my_mesh.getCell(j)
-        nbFaces = Cj.getNumberOfFaces();
+
         for i in range(nbComp) :
-            Ucourant[i]=U[j,i];
+            Uj[i]=U[j,i];
             sumFluxCourant[i]=0;
 
-        for k in range(nbFaces) :
-            indexFace = Cj.getFacesId()[k];
-            Fk = my_mesh.getFace(indexFace);
-            for i in range(dim) :
-                normal[i] = Cj.getNormalVector(k, i);#normale sortante
-
-            cellAutre = -1;
-            if ( not Fk.isBorder()) :
-                # hypothese: La cellule d'index indexC1 est la cellule courante index j */
-                if (Fk.getCellsId()[0] == j) :
-                    # hypothese verifiée 
-                    cellAutre = Fk.getCellsId()[1];
-                else :
-                    # hypothese non verifiée 
-                    cellAutre = Fk.getCellsId()[0];
-                
-                for i in range(nbComp):
-                    Uautre[i]=U[cellAutre,i]
-            else :
-                if(Fk.getGroupName() == "Wall" or Fk.getGroupName() == "Paroi" or Fk.getGroupName() == "Haut" or Fk.getGroupName() == "Bas" or Fk.getGroupName() == "Gauche" or Fk.getGroupName() == "Droite"):#Wall boundary condition unless Neumannspecified explicitly
-                    Uautre=Ucourant;
-                    qn=0# normal momentum
-                    for i in range(dim):
-                        qn+=Ucourant[i+1]*normal[i]
-                    for i in range(dim):
-                        Uautre[i+1]-=2*qn*normal[i]
-                elif(Fk.getGroupName() == "Neumann"):
-                    Uautre=Ucourant;
-                else:
-                    print Fk.getGroupName()
-                    raise ValueError("computeFluxes: Unknown boundary condition name");
+        if ( j==0) :
+            for i in range(nbComp) :
+                Ujp1[i]=U[j+1,i];
+                Ujm1[i]=U[j  ,i];
+        elif ( j==nbCells-1) :
+            for i in range(nbComp) :
+                Ujp1[i]=U[j  ,i];
+                Ujm1[i]=U[j-1,i];
+        else :
+            for i in range(nbComp) :
+                Ujp1[i]=U[j+1,i];
+                Ujm1[i]=U[j-1,i];
             
-            Fcourant=Flux(Ucourant);
-            Fautre  =Flux(Uautre);
+            Fj   = Flux(Uj);
+            Fjp1 = Flux(Ujp1);
+            Fjm1 = Flux(Ujm1);
 
-            A, absA=jacobianMatrices();
-            
-            sumFluxCourant = sumFluxCourant + (Fcourant+Fautre +absA*(Ucourant-Uautre))*Fk.getMeasure()*0.5
+            sumFluxCourant = (Fj+Fjp1 +absA*(Uj-Ujp1) - (Fj+Fjm1 +absA*(Uj-Ujm1)))*0.5/Cj.getMeasure()
  
         #On divise par le volume de la cellule la contribution des flux au snd membre
         for i in range(nbComp):
-            SumFluxes[j,i]=sumFluxCourant[i]/Cj.getMeasure();
+            SumFluxes[j,i]=sumFluxCourant[i];
 
 
 def WaveSystem1DVF(ntmax, tmax, cfl, my_mesh, output_freq, resolution):
@@ -132,14 +113,6 @@ def WaveSystem1DVF(ntmax, tmax, cfl, my_mesh, output_freq, resolution):
     # Initial conditions #
     print("Construction of the initial condition …")
     U, pressure_field, velocity_field = initial_conditions_wave_system(my_mesh)
-
-    #keep the initial data in memory to measure the error later
-    Uinitial=U
-    #sauvegarde de la donnée initiale
-    pressure_field.setTime(time,it);
-    pressure_field.writeVTK("pressure");
-    velocity_field.setTime(time,it);
-    velocity_field.writeVTK("velocity");
 
     dx_min=my_mesh.minRatioSurfVol()
 
@@ -169,9 +142,9 @@ def WaveSystem1DVF(ntmax, tmax, cfl, my_mesh, output_freq, resolution):
                 velocity_field[k,0]=U[k,1]/rho0
 
             pressure_field.setTime(time,it);
-            pressure_field.writeVTK("pressure",False);
+            pressure_field.writeCSV("pressure");
             velocity_field.setTime(time,it);
-            velocity_field.writeVTK("velocity",False);
+            velocity_field.writeCSV("velocity");
     
     print "|| Un+1 - Un || : pressure ", maxVector[0]/p0 ,", velocity x", maxVector[1]/rho0 
 
@@ -185,13 +158,9 @@ def WaveSystem1DVF(ntmax, tmax, cfl, my_mesh, output_freq, resolution):
             velocity_field[k,0]=U[k,1]/rho0
 
         pressure_field.setTime(time,0);
-        pressure_field.writeVTK("pressure_Stat");
+        pressure_field.writeCSV("pressure_Stat");
         velocity_field.setTime(time,0);
-        velocity_field.writeVTK("velocity_Stat");
-
-        maxVector=(Uinitial-U).normMax()
-        error_p=maxVector[0]/p0
-        error_u=maxVector[1]/rho0
+        velocity_field.writeCSV("velocity_Stat");
         
     else:
         print "Temps maximum Tmax= ", tmax, " atteint"
@@ -217,7 +186,5 @@ if __name__ == """__main__""":
     xsup=1
  
     M=cdmath.Mesh(xinf,xsup,50)
-    M.setGroupAtPlan(xsup,0,precision,"Neumann");
-    M.setGroupAtPlan(xinf,0,precision,"Neumann");
 
     solve(M,100)
