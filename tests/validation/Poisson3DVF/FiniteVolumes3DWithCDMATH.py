@@ -51,7 +51,7 @@ def solve(my_mesh, filename,resolution):
         maxNbNeighbours= max(1+Ci.getNumberOfFaces(),maxNbNeighbours)
     
     # sauvegarde sur le disque dur du second membre discrétisé dans un fichier paraview
-    my_RHSfield.writeVTK("FiniteVolumes3DRHSField"+str(nbNodes))
+    my_RHSfield.writeVTK("FiniteVolumes3DRHSField"+str(nbCells))
     
     print("Right hand side discretisation done")
     print("Max nb of neighbours=", maxNbNeighbours)
@@ -95,7 +95,7 @@ def solve(my_mesh, filename,resolution):
     for i in range(nbCells):
         my_ResultField[i]=SolSyst[i];
     #sauvegarde sur le disque dur du résultat dans un fichier paraview
-    my_ResultField.writeVTK("FiniteVolumes3DResultField"+str(nbNodes))
+    my_ResultField.writeVTK("FiniteVolumes3DResultField"+str(nbCells))
     
     print("Numerical solution of 3D poisson equation using finite elements done")
     

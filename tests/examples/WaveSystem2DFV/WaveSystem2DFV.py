@@ -14,7 +14,8 @@ precision=1e-5
 def initial_conditions_wave_system(my_mesh):
     dim     = my_mesh.getMeshDimension()
     nbCells = my_mesh.getNumberOfCells()
-    if(dim!=1):
+
+    if(dim!=2):
         raise ValueError("initial_conditions_wave_system: Mesh dimension should be 2")
 
     pressure_field = cdmath.Field("Pressure",            cdmath.CELLS, my_mesh, 1)

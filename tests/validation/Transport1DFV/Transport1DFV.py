@@ -76,30 +76,75 @@ def computeFluxes(U, SumFluxes):
     A, absA=jacobianMatrices();
 
     for j in range(nbCells):#On parcourt les cellules
-        Cj = my_mesh.getCell(j)
+        #for i in range(nbComp) :
+            #Uj[i]=U[j,i];
+            #sumFluxCourant[i]=0;
 
+        #if ( j==0) :
+            #for i in range(nbComp) :
+                #Ujp1[i]=U[j+1,i];
+                #Ujm1[i]=U[j  ,i];
+        #elif ( j==nbCells-1) :
+            #for i in range(nbComp) :
+                #Ujp1[i]=U[j  ,i];
+                #Ujm1[i]=U[j-1,i];
+        #else :
+            #for i in range(nbComp) :
+                #Ujp1[i]=U[j+1,i];
+                #Ujm1[i]=U[j-1,i];
+            
+        #Fr=numericalFlux(Uj,Ujp1,absA)
+        #Fl=numericalFlux(Ujm1,Uj,absA)
+
+        #sumFluxCourant = (Fr - Fl)*0.5/Cj.getMeasure()
+ 
+        Cj = my_mesh.getCell(j)
+        nbFaces = Cj.getNumberOfFaces();
         for i in range(nbComp) :
-            Uj[i]=U[j,i];
+            Ucourant[i]=U[j,i];
             sumFluxCourant[i]=0;
 
-        if ( j==0) :
-            for i in range(nbComp) :
-                Ujp1[i]=U[j+1,i];
-                Ujm1[i]=U[j  ,i];
-        elif ( j==nbCells-1) :
-            for i in range(nbComp) :
-                Ujp1[i]=U[j  ,i];
-                Ujm1[i]=U[j-1,i];
-        else :
-            for i in range(nbComp) :
-                Ujp1[i]=U[j+1,i];
-                Ujm1[i]=U[j-1,i];
-            
-            Fr=numericalFlux(Uj,Ujp1,absA)
-            Fl=numericalFlux(Ujm1,Uj,absA)
+        for k in range(nbFaces) :
+            indexFace = Cj.getFacesId()[k];
+            Fk = my_mesh.getFace(indexFace);
+            for i in range(dim) :
+                normal[i] = Cj.getNormalVector(k, i);#normale sortante
 
-            sumFluxCourant = (Fr - Fl)*0.5/Cj.getMeasure()
- 
+            cellAutre = -1;
+            if ( not Fk.isBorder()) :
+                # hypothese: La cellule d'index indexC1 est la cellule courante index j */
+                if (Fk.getCellsId()[0] == j) :
+                    # hypothese verifiée 
+                    cellAutre = Fk.getCellsId()[1];
+                elif(Fk.getCellsId()[1] == j) :
+                    # hypothese non verifiée 
+                    cellAutre = Fk.getCellsId()[0];
+                else :
+                    raise ValueError("computeFluxes: problem with mesh, unknown cel number");
+                
+                for i in range(nbComp):
+                    Uautre[i]=U[cellAutre,i]
+            else :
+                if(Fk.getGroupName() == "Wall" or Fk.getGroupName() == "Paroi" or Fk.getGroupName() == "Haut" or Fk.getGroupName() == "Bas" or Fk.getGroupName() == "Gauche" or Fk.getGroupName() == "Droite"):#Wall boundary condition unless Neumannspecified explicitly
+                    Uautre=Ucourant;
+                    qn=0# normal momentum
+                    for i in range(dim):
+                        qn+=Ucourant[i+1]*normal[i]
+                    #for i in range(dim):
+                    #    Uautre[i+1]-=2*qn*normal[i]
+                elif(Fk.getGroupName() == "Neumann"):
+                    Uautre=Ucourant;
+                else:
+                    print Fk.getGroupName()
+                    raise ValueError("computeFluxes: Unknown boundary condition name");
+            
+            Fcourant=Flux(Ucourant,normal);
+            Fautre  =Flux(Uautre,  normal);
+
+            A, absA=jacobianMatrices( normal);
+            
+            sumFluxCourant = sumFluxCourant + (Fcourant+Fautre +absA*(Ucourant-Uautre))*Fk.getMeasure()*0.5
+
         #On divise par le volume de la cellule la contribution des flux au snd membre
         for i in range(nbComp):
             SumFluxes[j,i]=sumFluxCourant[i];

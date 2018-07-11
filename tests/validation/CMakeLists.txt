@@ -1,4 +1,4 @@
-file(GLOB VALIDATION_FOLDERS_TO_INSTALL Poisson2DEF Poisson3DEF Poisson3DSphereEF Poisson2DVF Poisson3DVF WaveSystem2DFV)
+file(GLOB VALIDATION_FOLDERS_TO_INSTALL Poisson2DEF Poisson3DEF Poisson3DSphereEF Poisson2DVF Poisson3DVF Transport1DFV WaveSystem2DFV)
 file(GLOB VALIDATION_TESTS_TO_INSTALL 
   test_validation2DEF.py 
   test_validation3DEF.py
