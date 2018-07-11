@@ -143,7 +143,7 @@ def WaveSystem1DVF(ntmax, tmax, cfl, my_mesh, output_freq, resolution):
             print("-- Iter: " + str(it) + ", Time: " + str(time) + ", dt: " + str(dt))
             print "|| Un+1 - Un || : pressure ", maxVector[0]/p0 ,", velocity x", maxVector[1]/rho0 
             print
-
+    
             for k in range(nbCells):
                 pressure_field[k]=U[k,0]/p0
                 velocity_field[k,0]=U[k,1]/rho0

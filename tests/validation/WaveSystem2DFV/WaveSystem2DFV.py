@@ -15,6 +15,8 @@ precision=1e-5
 def initial_conditions_wave_system(my_mesh):
     dim     = my_mesh.getMeshDimension()
     nbCells = my_mesh.getNumberOfCells()
+    if(dim!=1):
+        raise ValueError("initial_conditions_wave_system: Mesh dimension should be 2")
 
     pressure_field = cdmath.Field("Pressure",            cdmath.CELLS, my_mesh, 1)
     velocity_field = cdmath.Field("Velocity",            cdmath.CELLS, my_mesh, dim)
@@ -116,8 +118,8 @@ def computeFluxes(U, SumFluxes):
             Fautre  =Flux(Uautre,normal);
 
             A, absA=jacobianMatrices( normal);
-            du=Fcourant+Fautre +absA*(Ucourant-Uautre)
-            sumFluxCourant = sumFluxCourant + (du)*Fk.getMeasure()*0.5
+            
+            sumFluxCourant = sumFluxCourant + (Fcourant+Fautre +absA*(Ucourant-Uautre))*Fk.getMeasure()*0.5
 
         #On divise par le volume de la cellule la contribution des flux au snd membre
         for i in range(nbComp):
@@ -180,6 +182,7 @@ def WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq, outputFileName,resolu
         if(it%output_freq==0):
             print"-- Iter: " + str(it) + ", Time: " + str(time) + ", dt: " + str(dt)
             print "|| Un+1 - Un || : pressure ", maxVector[0]/p0 ,", velocity x", maxVector[1]/rho0 ,", velocity y", maxVector[2]/rho0
+            print
             print 'U[0,0]',U[0,0]
             totalMass=cdmath.Vector(dim+1)
             for k in range(nbCells):
@@ -196,6 +199,10 @@ def WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq, outputFileName,resolu
             pressure_field.writeVTK(outputFileName+str(nbCells)+"_pressure",False);
             velocity_field.setTime(time,it);
             velocity_field.writeVTK(outputFileName+str(nbCells)+"_velocity",False);
+
+    print"-- Iter: " + str(it) + ", Time: " + str(time) + ", dt: " + str(dt)
+    print "|| Un+1 - Un || : pressure ", maxVector[0]/p0 ,", velocity x", maxVector[1]/rho0 ,", velocity y", maxVector[2]/rho0
+    print
 
     if(it>=ntmax):
         print "Nombre de pas de temps maximum ntmax= ", ntmax, " atteint"
