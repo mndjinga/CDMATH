@@ -6,6 +6,8 @@
  */
 
 #include "Face.hxx"
+#include "CdmathException.hxx"
+
 #include <cmath>
 
 using namespace std;
@@ -228,12 +230,24 @@ int
 Face::getNodeId(int localId) const
 //------------------------------------------------------------------------
 {
-	return _nodesId[localId];
+    if(localId<_numberOfNodes)
+        return _nodesId[localId];
+    else
+    {
+        std::cout<< "Local id requested : "<< localId<<" total number of nodes= "<<_numberOfNodes<<std::endl;
+        throw CdmathException("Face::getNodeId : incorrect node local id");
+    }
 }
 //------------------------------------------------------------------------
 int
 Face::getCellId(int localId) const
 //------------------------------------------------------------------------
 {
-	return _cellsId[localId];
+    if(localId<_numberOfCells)
+        return _cellsId[localId];
+    else
+    {
+        std::cout<< "Local id requested : "<< localId<<" total number of cells= "<<_numberOfCells<<std::endl;
+        throw CdmathException("Face::getCellId : incorrect cell local id");
+    }
 }

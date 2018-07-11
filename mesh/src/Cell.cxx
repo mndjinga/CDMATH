@@ -195,7 +195,13 @@ int
 Cell::getFaceId(int localId) const
 //----------------------------------------------------------------------
 {
-	return _facesId[localId];
+    if(localId<_numberOfFaces)
+        return _facesId[localId];
+    else
+    {
+        std::cout<< "Local id requested : "<< localId<<", total number of faces= "<<_numberOfFaces<<std::endl;
+        throw CdmathException("Cell::getfaceId : incorrect face local id");
+    }
 }
 
 //----------------------------------------------------------------------
@@ -203,7 +209,13 @@ int
 Cell::getNodeId(int localId) const
 //----------------------------------------------------------------------
 {
-	return _nodesId[localId];
+    if(localId<_numberOfNodes)
+        return _nodesId[localId];
+    else
+    {
+        std::cout<< "Local id requested : "<< localId<<", total number of nodes= "<<_numberOfNodes<<std::endl;
+        throw CdmathException("Cell::getNodeId : incorrect node local id");
+    }
 }
 
 

@@ -6,6 +6,7 @@
  */
 
 #include "Node.hxx"
+#include "CdmathException.hxx"
 
 
 //----------------------------------------------------------------------
@@ -180,7 +181,13 @@ int
 Node::getFaceId(int localId) const
 //----------------------------------------------------------------------
 {
-	return _facesId[localId];
+    if(localId<_numberOfFaces)
+        return _facesId[localId];
+    else
+    {
+        std::cout<< "Local id requested : "<< localId<<", total number of faces= "<<_numberOfFaces<<std::endl;
+        throw CdmathException("Node::getfaceId : incorrect face local id");
+    }
 }
 
 const Node& 
