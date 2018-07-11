@@ -97,7 +97,10 @@ Face::getGroupNames(void) const
 string
 Face::getGroupName(int igroup) const
 {
-	return _groupNames[igroup];
+    if(igroup<_groupNames.size())
+        return _groupNames[igroup];
+    else
+        return "";
 }
 
 void
