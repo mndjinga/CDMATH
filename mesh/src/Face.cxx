@@ -110,7 +110,7 @@ Face::setGroupName(const string groupName)
 bool
 Face::isBorder(void)
 {
-	if (_region==0)
+	if (_region==0 || _numberOfCells==1)
 		return true;
 	else
 		return false;

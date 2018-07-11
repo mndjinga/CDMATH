@@ -24,7 +24,7 @@
 
 class Face
 {
-    public: //----------------------------------------------------------------
+public: //----------------------------------------------------------------
     /**
      * default constructor
      */
@@ -156,17 +156,17 @@ class Face
 
     double getZN(void) const ;
 
+    int getNodeId(int localId) const ;
+    
+    int getCellId(int localId) const ;
+
+private: //----------------------------------------------------------------
+
     double _xN;
 
     double _yN;
 
     double _zN;
-
-    int getNodeId(int localId) const ;
-    
-    int getCellId(int localId) const ;
-
-    private: //----------------------------------------------------------------
 
     /*
      * The cell id that this face belongs to.

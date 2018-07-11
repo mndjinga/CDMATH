@@ -561,6 +561,7 @@ Mesh::setMesh( void )
 			Point p(cood[k], 0.0, 0.0) ;
 			const int *workc=tmpN+tmpNI[id];
 			int nbCells=tmpNI[id+1]-tmpNI[id];
+
 			const int *workf=tmpC+tmpCI[id];
 			int nbFaces=tmpCI[id+1]-tmpCI[id];
 			Node vi( nbCells, nbFaces, p ) ;
@@ -939,19 +940,18 @@ Mesh::Mesh( double xinf, double xsup, int nx, std::string meshName )
 		const int *workc=tmpN+tmpNI[id];
 		int nbCells=tmpNI[id+1]-tmpNI[id];
 		int nbFaces=1;
+        
 		Node vi( nbCells, nbFaces, p ) ;
-		int nbVertices=1;
-		/* provisoire !!!!!!!!!!!!*/
-		//        Point pf(0.0,0.0,0.0) ;
-		Face fi( nbVertices, nbCells, 0.0, p, 0., 0., 0. ) ;
-
-		for( int el=0;el<nbCells;el++ )
+        for( int el=0;el<nbCells;el++ )
 			vi.addCellId(el,workc[el]) ;
 		for( int el=0;el<nbFaces;el++ )
 			vi.addFaceId(el,id) ;
 		_nodes[id] = vi ;
 
-		for( int el=0;el<nbVertices;el++ )
+
+		int nbVertices=1;
+		Face fi( nbVertices, nbCells, 1.0, p, 1., 0., 0. ) ;
+        for( int el=0;el<nbVertices;el++ )
 			fi.addNodeId(el,id) ;
 
 		for( int el=0;el<nbCells;el++ )
