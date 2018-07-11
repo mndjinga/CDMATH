@@ -136,6 +136,7 @@ def computeFluxes(U, SumFluxes):
             Ucourant[i]=U[j,i];
             sumFluxCourant[i]=0;
 
+        print "j= ",j, " Ucourant= ", Ucourant
         for k in range(nbFaces) :
             indexFace = Cj.getFacesId()[k];
             Fk = my_mesh.getFace(indexFace);
@@ -144,6 +145,7 @@ def computeFluxes(U, SumFluxes):
 
             cellAutre = -1;
             if ( not Fk.isBorder()) :
+                print "k= ", k, "Inner face"
                 # hypothese: La cellule d'index indexC1 est la cellule courante index j */
                 if (Fk.getCellsId()[0] == j) :
                     # hypothese verifiée 
@@ -157,7 +159,8 @@ def computeFluxes(U, SumFluxes):
                 for i in range(nbComp):
                     Uautre[i]=U[cellAutre,i]
             else :
-                if(Fk.getGroupName() == "Wall" or Fk.getGroupName() == "Paroi" or Fk.getGroupName() == "Haut" or Fk.getGroupName() == "Bas" or Fk.getGroupName() == "Gauche" or Fk.getGroupName() == "Droite"):#Wall boundary condition unless Neumannspecified explicitly
+                print "k= ", k, "Border face"
+                if(Fk.getGroupName() == "Wall" or Fk.getGroupName() == "Paroi" or Fk.getGroupName() == "Haut" or Fk.getGroupName() == "Bas" or Fk.getGroupName() == "Gauche" or Fk.getGroupName() == "Droite"):#Wall boundary condition unless Neumann specified explicitly
                     Uautre=Ucourant;
                     qn=0# normal momentum
                     for i in range(dim):
@@ -175,8 +178,19 @@ def computeFluxes(U, SumFluxes):
 
             A, absA=jacobianMatrices( normal);
             
+            a=sumFluxCourant
+            b=(Fcourant+Fautre +absA*(Ucourant-Uautre))*Fk.getMeasure()*0.5
+            c=a+b
+            print "Fk.getMeasure()= ",Fk.getMeasure()
+            print "a= ", a
+            print "b= ", b
+            print "a+b= ", a+b
             sumFluxCourant = sumFluxCourant + (Fcourant+Fautre +absA*(Ucourant-Uautre))*Fk.getMeasure()*0.5
 
+            Fint=Fcourant+Fautre +absA*(Ucourant-Uautre)
+            print " cellAutre= ", cellAutre, " Fint= ", Fint
+
+        print "j= ",j, " sumFluxCourant= ", sumFluxCourant
         #On divise par le volume de la cellule la contribution des flux au snd membre
         for i in range(nbComp):
             SumFluxes[j,i]=sumFluxCourant[i];
@@ -269,6 +283,6 @@ if __name__ == """__main__""":
     xinf=0
     xsup=1
  
-    M=cdmath.Mesh(xinf,xsup,50)
+    M=cdmath.Mesh(xinf,xsup,10)
 
     solve(M,100)
