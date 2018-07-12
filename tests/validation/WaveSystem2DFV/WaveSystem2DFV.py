@@ -104,14 +104,14 @@ def computeFluxes(U, SumFluxes):
                 for i in range(nbComp):
                     Uautre[i]=U[cellAutre,i]
             else :
-                if(Fk.getGroupName() == "Wall" or Fk.getGroupName() == "Paroi" or Fk.getGroupName() == "Haut" or Fk.getGroupName() == "Bas" or Fk.getGroupName() == "Gauche" or Fk.getGroupName() == "Droite"):#Wall boundary condition unless Neumannspecified explicitly
+                if(Fk.getGroupName() == "" or Fk.getGroupName() == "Wall" or Fk.getGroupName() == "Paroi" or Fk.getGroupName() != "Neumann"):#Wall boundary condition unless Neumannspecified explicitly
                     for i in range(nbComp):
                         Uautre[i]=Ucourant[i]
                     qn=0# normal momentum
                     for i in range(dim):
                         qn+=Ucourant[i+1]*normal[i]
-                    #for i in range(dim):
-                    #    Uautre[i+1]-=2*qn*normal[i]
+                    for i in range(dim):
+                        Uautre[i+1]-=2*qn*normal[i]
                 elif(Fk.getGroupName() == "Neumann"):
                     for i in range(nbComp):
                         Uautre[i]=Ucourant[i]
@@ -170,8 +170,11 @@ def WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq, outputFileName,resolu
 
         U-=SumFluxes;
     
+        time=time+dt;
+        it=it+1;
+    
         #Sauvegardes
-        if((it-1)%output_freq==0):
+        if(it%output_freq==0):
             print"-- Iter: " + str(it) + ", Time: " + str(time) + ", dt: " + str(dt)
             print "Variation temporelle relative : pressure ", maxVector[0]/p0 ,", velocity x", maxVector[1]/rho0 ,", velocity y", maxVector[2]/rho0
             print
@@ -188,9 +191,6 @@ def WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq, outputFileName,resolu
             velocity_field.setTime(time,it);
             velocity_field.writeVTK("WaveSystem2DFV"+outputFileName+str(nbCells)+"_velocity",False);
 
-        time=time+dt;
-        it=it+1;
-    
     print"-- Iter: " + str(it) + ", Time: " + str(time) + ", dt: " + str(dt)
     print "Variation temporelle relative : pressure ", maxVector[0]/p0 ,", velocity x", maxVector[1]/rho0 ,", velocity y", maxVector[2]/rho0
     print
@@ -251,7 +251,7 @@ def solve_file( filename,resolution):
     
 
 if __name__ == """__main__""":
-    M=cdmath.Mesh(0,1,50,0,1,50)
+    M=cdmath.Mesh(0,1,20,0,1,20)
     
     M.setGroupAtPlan(xsup,0,precision,"Wall");
     M.setGroupAtPlan(xinf,0,precision,"Wall");
