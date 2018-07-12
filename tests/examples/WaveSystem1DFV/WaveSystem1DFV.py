@@ -143,7 +143,7 @@ def WaveSystem1DVF(ntmax, tmax, cfl, my_mesh, output_freq, resolution):
         #Sauvegardes
         if(it%output_freq==0):
             print("-- Iter: " + str(it) + ", Time: " + str(time) + ", dt: " + str(dt))
-            print "|| Un+1 - Un || : pressure ", maxVector[0]/p0 ,", velocity x", maxVector[1]/rho0 
+            print "Variation temporelle relative : pressure ", maxVector[0]/p0 ,", velocity x", maxVector[1]/rho0 
             print
 
             for k in range(nbCells):
@@ -151,9 +151,9 @@ def WaveSystem1DVF(ntmax, tmax, cfl, my_mesh, output_freq, resolution):
                 velocity_field[k,0]=U[k,1]/rho0
 
             pressure_field.setTime(time,it);
-            pressure_field.writeCSV("pressure");
+            pressure_field.writeCSV("WaveSystem1DFV_pressure");
             velocity_field.setTime(time,it);
-            velocity_field.writeCSV("velocity");
+            velocity_field.writeCSV("WaveSystem1DFV_velocity");
     
     print("-- Iter: " + str(it) + ", Time: " + str(time) + ", dt: " + str(dt))
     print "|| Un+1 - Un || : pressure ", maxVector[0]/p0 ,", velocity x", maxVector[1]/rho0 
@@ -169,9 +169,9 @@ def WaveSystem1DVF(ntmax, tmax, cfl, my_mesh, output_freq, resolution):
             velocity_field[k,0]=U[k,1]/rho0
 
         pressure_field.setTime(time,0);
-        pressure_field.writeCSV("pressure_Stat");
+        pressure_field.writeCSV("WaveSystem1DFV_pressure_Stat");
         velocity_field.setTime(time,0);
-        velocity_field.writeCSV("velocity_Stat");
+        velocity_field.writeCSV("WaveSystem1DFV_velocity_Stat");
         
     else:
         print "Temps maximum Tmax= ", tmax, " atteint"
@@ -179,7 +179,7 @@ def WaveSystem1DVF(ntmax, tmax, cfl, my_mesh, output_freq, resolution):
 
 
 def solve(my_mesh,resolution):
-    print("RESOLUTION OF THE 1D Wave system:")
+    print("Resolution of the 1D Wave system:")
 
     # Problem data
     tmax = 1.

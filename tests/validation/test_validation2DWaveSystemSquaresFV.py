@@ -7,7 +7,7 @@ from math import log10, sqrt
     
 def test_validation2DWaveSystemSquaresFV():
     #### 2D square mesh
-    meshList=[11,51,151,201]
+    meshList=[11,51,151]#,201]
     nbMeshes=len(meshList)
     error_p_tab=[0]*nbMeshes
     error_u_tab=[0]*nbMeshes

@@ -6,7 +6,7 @@ from math import log10, sqrt
 
 def test_validation2DWaveSystemTrianglesFV():
     #### 2D triangle mesh
-    meshList=['triangleMeshSquare_1']#,'triangleMeshSquare_2','triangleMeshSquare_3','triangleMeshSquare_4','triangleMeshSquare_5']
+    meshList=['triangleMeshSquare_1','triangleMeshSquare_2','triangleMeshSquare_3']#,'triangleMeshSquare_4','triangleMeshSquare_5']
     nbMeshes=len(meshList)
     error_p_tab=[0]*nbMeshes
     error_u_tab=[0]*nbMeshes
