@@ -73,8 +73,7 @@ def computeFluxes(U, SumFluxes):
     normal=cdmath.Vector(dim)
     sumFluxCourant=cdmath.Vector(nbComp)
 
-
-    for j in range(nbCells):#On parcourt les cellules
+    for j in range(nbCells):#On parcourt les cellules         
         Cj = my_mesh.getCell(j)
         nbFaces = Cj.getNumberOfFaces();
         for i in range(nbComp) :
@@ -93,36 +92,55 @@ def computeFluxes(U, SumFluxes):
                 if (Fk.getCellsId()[0] == j) :
                     # hypothese verifiée 
                     cellAutre = Fk.getCellsId()[1];
-                else :
+                elif(Fk.getCellsId()[1] == j) :
                     # hypothese non verifiée 
                     cellAutre = Fk.getCellsId()[0];
+                else :
+                    raise ValueError("computeFluxes: problem with mesh, unknown cel number");
                 
                 for i in range(nbComp):
                     Uautre[i]=U[cellAutre,i]
             else :
-                if(Fk.getGroupName() == "Wall" or Fk.getGroupName() == "Paroi" or Fk.getGroupName() == "Haut" or Fk.getGroupName() == "Bas" or Fk.getGroupName() == "Gauche" or Fk.getGroupName() == "Droite"):#Wall boundary condition unless Neumannspecified explicitly
-                    Uautre=Ucourant;
+                if(Fk.getGroupName() == "" or Fk.getGroupName() == "Wall" or Fk.getGroupName() == "Paroi" or Fk.getGroupName() == "Haut" or Fk.getGroupName() == "Bas" or Fk.getGroupName() == "Gauche" or Fk.getGroupName() == "Droite"):
+                    for i in range(nbComp):
+                        Uautre[i]=Ucourant[i]
                     qn=0# normal momentum
                     for i in range(dim):
                         qn+=Ucourant[i+1]*normal[i]
                     for i in range(dim):
                         Uautre[i+1]-=2*qn*normal[i]
                 elif(Fk.getGroupName() == "Neumann"):
-                    Uautre=Ucourant;
+                    for i in range(nbComp):
+                        Uautre[i]=Ucourant[i]
                 else:
                     print Fk.getGroupName()
                     raise ValueError("computeFluxes: Unknown boundary condition name");
             
+            #if(j==98):
+                #print "face k= ",indexFace
+                #for i in range(nbComp) :
+                    #Ucourant[i]=U[98,i];
+                #print "j= ",98,"Ucourant=",Ucourant
+            #if(j==22):
+                #print "face k= ",indexFace
+                #for i in range(nbComp) :
+                    #Ucourant[i]=U[22,i];
+                #print "j= ",22,"Ucourant=",Ucourant
+
+            #if(j==98):
+                #print "flux indexFace=",indexFace
+                #print "j= ",j,"Ucourant=",Ucourant
+                #print "j= ", cellAutre,"Uautre=",Uautre
             Fcourant=Flux(Ucourant,normal);
-            Fautre  =Flux(Uautre,normal);
+            Fautre  =Flux(Uautre,  normal);
 
             A, absA=jacobianMatrices( normal);
-            
-            sumFluxCourant = sumFluxCourant + (Fcourant+Fautre +absA*(Ucourant-Uautre))*Fk.getMeasure()*0.5
- 
+            if ( not Fk.isBorder()) :
+                sumFluxCourant = sumFluxCourant + (Fcourant+Fautre +absA*(Ucourant-Uautre))*Fk.getMeasure()*0.5
+                
         #On divise par le volume de la cellule la contribution des flux au snd membre
         for i in range(nbComp):
-            SumFluxes[j,i]=sumFluxCourant[i]/Cj.getMeasure();
+            SumFluxes[j,i]=sumFluxCourant[i]/Cj.getMeasure()
 
 
 def WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq, outputFileName,resolution):
@@ -157,23 +175,30 @@ def WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq, outputFileName,resolu
     # Starting time loop
     while (it<ntmax and time <= tmax and not isStationary):
         computeFluxes(U,SumFluxes);
+
+        #totalFlux=cdmath.Vector(dim+1)
+        #for j in range(nbCells):
+            #Cj = my_mesh.getCell(j);
+            #for i in range(dim+1):
+                #totalFlux[i]+=SumFluxes[j,i]*Cj.getMeasure()
+        #print "totalFlux=" , totalFlux
         
         SumFluxes*=dt;
         maxVector=SumFluxes.normMax()
         isStationary= maxVector[0]/p0<precision and maxVector[1]/rho0<precision and maxVector[2]/rho0<precision;
         U-=SumFluxes;
     
-        time=time+dt;
-        it=it+1;
-    
         #Sauvegardes
         if(it%output_freq==0):
             print("-- Iter: " + str(it) + ", Time: " + str(time) + ", dt: " + str(dt))
-            print "|| Un+1 - Un || : pressure ", maxVector[0]/p0 ,", velocity x", maxVector[1]/rho0 ,", velocity y", maxVector[2]/rho0
+            print "vation temporelle relative : pressure ", maxVector[0]/p0 ,", velocity x", maxVector[1]/rho0 ,", velocity y", maxVector[2]/rho0
             print
-            print 'U[0,0]',U[0,0]
 
+            #totalMass=cdmath.Vector(dim+1)
             for k in range(nbCells):
+                #Ck = my_mesh.getCell(k);
+                #for i in range(dim+1):
+                    #totalMass[i]+=U[k,i]*Ck.getMeasure()
                 pressure_field[k]=U[k,0]/p0
                 velocity_field[k,0]=U[k,1]/rho0
                 if(dim>1):
@@ -184,7 +209,11 @@ def WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq, outputFileName,resolu
             pressure_field.writeVTK(outputFileName+"_pressure",False);
             velocity_field.setTime(time,it);
             velocity_field.writeVTK(outputFileName+"_velocity",False);
+            #print "totalMass=",totalMass
 
+        time=time+dt;
+        it=it+1;
+ 
     print("-- Iter: " + str(it) + ", Time: " + str(time) + ", dt: " + str(dt))
     print "|| Un+1 - Un || : pressure ", maxVector[0]/p0 ,", velocity x", maxVector[1]/rho0 ,", velocity y", maxVector[2]/rho0
     print
@@ -224,15 +253,15 @@ def WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq, outputFileName,resolu
 
 
 def solve(my_mesh,filename,resolution):
-    print("RESOLUTION OF THE 2D Wave system:")
+    print("Resolution of the 2D Wave system:")
 
     # Problem data
     tmax = 1.
-    ntmax = 1
+    ntmax = 10000
     cfl = 0.45
-    output_freq = 1
+    output_freq = 100
 
-    error_p, error_u, nbCells, diag_data_press, diag_data_vel = WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq, filename,resolution)
+    WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq, filename,resolution)
 
 def solve_file( filename,resolution):
     my_mesh = cdmath.Mesh(filename+".med")

@@ -103,14 +103,16 @@ def computeFluxes(U, SumFluxes):
                     Uautre[i]=U[cellAutre,i]
             else :
                 if(Fk.getGroupName() == "Wall" or Fk.getGroupName() == "Paroi" or Fk.getGroupName() == "Haut" or Fk.getGroupName() == "Bas" or Fk.getGroupName() == "Gauche" or Fk.getGroupName() == "Droite"):#Wall boundary condition unless Neumannspecified explicitly
-                    Uautre=Ucourant;
+                    for i in range(nbComp):
+                        Uautre[i]=Ucourant[i]
                     qn=0# normal momentum
                     for i in range(dim):
                         qn+=Ucourant[i+1]*normal[i]
                     #for i in range(dim):
                     #    Uautre[i+1]-=2*qn*normal[i]
                 elif(Fk.getGroupName() == "Neumann"):
-                    Uautre=Ucourant;
+                    for i in range(nbComp):
+                        Uautre[i]=Ucourant[i]
                 else:
                     print Fk.getGroupName()
                     raise ValueError("computeFluxes: Unknown boundary condition name");
@@ -162,6 +164,12 @@ def WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq, outputFileName,resolu
         #for i in range(nbCells):
         #    for j in range(dim+1):
         #        print "SumFluxes[",i,",",j,"]",SumFluxes[i,j]
+        totalFlux=cdmath.Vector(dim+1)
+        for j in range(nbCells):
+            Cj = my_mesh.getCell(j);
+            for i in range(dim+1):
+                totalFlux[i]+=SumFluxes[j,i]*Cj.getMeasure()
+        print "totalFlux=" , totalFlux
         
         SumFluxes*=dt;
         maxVector=SumFluxes.normMax()
@@ -176,11 +184,8 @@ def WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq, outputFileName,resolu
         #    for j in range(dim+1):
         #        print "U[",i,",",j,"]",U[i,j]
     
-        time=time+dt;
-        it=it+1;
-    
         #Sauvegardes
-        if(it%output_freq==0):
+        if((it-1)%output_freq==0):
             print"-- Iter: " + str(it) + ", Time: " + str(time) + ", dt: " + str(dt)
             print "|| Un+1 - Un || : pressure ", maxVector[0]/p0 ,", velocity x", maxVector[1]/rho0 ,", velocity y", maxVector[2]/rho0
             print
@@ -200,7 +205,11 @@ def WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq, outputFileName,resolu
             pressure_field.writeVTK(outputFileName+str(nbCells)+"_pressure",False);
             velocity_field.setTime(time,it);
             velocity_field.writeVTK(outputFileName+str(nbCells)+"_velocity",False);
+            print "totalMass=",totalMass
 
+        time=time+dt;
+        it=it+1;
+    
     print"-- Iter: " + str(it) + ", Time: " + str(time) + ", dt: " + str(dt)
     print "|| Un+1 - Un || : pressure ", maxVector[0]/p0 ,", velocity x", maxVector[1]/rho0 ,", velocity y", maxVector[2]/rho0
     print
@@ -242,11 +251,11 @@ def WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq, outputFileName,resolu
 
 def solve(my_mesh,filename,resolution):
     start = time.time()
-    print("RESOLUTION OF THE 2D Wave system:")
+    print("Resolution of the 2D Wave system:")
 
     # Problem data
     tmax = 1.
-    ntmax = 1
+    ntmax = 10
     cfl = 0.45
     output_freq = 1
 
