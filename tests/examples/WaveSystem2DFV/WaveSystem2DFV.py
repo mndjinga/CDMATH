@@ -118,21 +118,6 @@ def computeFluxes(U, SumFluxes):
                     print Fk.getGroupName()
                     raise ValueError("computeFluxes: Unknown boundary condition name");
             
-            #if(j==98):
-                #print "face k= ",indexFace
-                #for i in range(nbComp) :
-                    #Ucourant[i]=U[98,i];
-                #print "j= ",98,"Ucourant=",Ucourant
-            #if(j==22):
-                #print "face k= ",indexFace
-                #for i in range(nbComp) :
-                    #Ucourant[i]=U[22,i];
-                #print "j= ",22,"Ucourant=",Ucourant
-
-            #if(j==98):
-                #print "flux indexFace=",indexFace
-                #print "j= ",j,"Ucourant=",Ucourant
-                #print "j= ", cellAutre,"Uautre=",Uautre
             Fcourant=Flux(Ucourant,normal);
             Fautre  =Flux(Uautre,  normal);
 
@@ -262,7 +247,7 @@ def solve_file( filename,resolution):
     
 if __name__ == """__main__""":
     M=cdmath.Mesh("meshSquare.med")
-    solve(M,'Squares',100)
+    solve(M,'Triangles',100)
 
     xinf=0
     xsup=1
@@ -275,4 +260,4 @@ if __name__ == """__main__""":
     M.setGroupAtPlan(ysup,1,precision,"Wall");
     M.setGroupAtPlan(yinf,1,precision,"Wall");
 
-    solve(M,'Triangles',100)
+    solve(M,'Squares',100)
