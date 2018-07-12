@@ -240,9 +240,9 @@ SparseMatrix::SparseMatrix(const SparseMatrix& matrix)
 	_flagNNZ=matrix.getFlagNNZ();
 	_indexRows = matrix.getIndexRows();
 	_indexColumns = matrix.getIndexColumns();
-	_values = matrix.getValues();
 	_isSparseMatrix=matrix.isSparseMatrix();
 	_effectNumberOfNonZeros=matrix._effectNumberOfNonZeros;
+	_values=DoubleTab (_numberOfNonZeros,matrix.getValues().getValues());
 }
 
 //----------------------------------------------------------------------
@@ -257,9 +257,9 @@ SparseMatrix::operator= ( const SparseMatrix& matrix )
 	_flagNNZ=matrix.getFlagNNZ();
 	_indexRows = matrix.getIndexRows();
 	_indexColumns = matrix.getIndexColumns();
-	_values = matrix.getValues();
 	_isSparseMatrix=matrix.isSparseMatrix();
 	_effectNumberOfNonZeros=matrix._effectNumberOfNonZeros;
+	_values=DoubleTab (_numberOfNonZeros,matrix.getValues().getValues());
 	return (*this);
 }
 

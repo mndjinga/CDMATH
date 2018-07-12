@@ -41,8 +41,7 @@ DoubleTab::DoubleTab(const int size, const double* value)
 {
 	_values = new double [size];
 	_numberOfElements=size;
-	for (int i=0;i<size;i++)
-		_values[i] = value[i] ;
+	memcpy(_values,value,_numberOfElements*sizeof(double)) ;
 }
 
 void

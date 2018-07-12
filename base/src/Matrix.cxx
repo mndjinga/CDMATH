@@ -4,6 +4,7 @@
  *  Created on: 13 April. 2013
  *      Authors: CDMATH
  */
+#include <iostream>
 
 #include "Matrix.hxx"
 #include "Vector.hxx"
@@ -42,8 +43,7 @@ Matrix::Matrix(const Matrix& matrix)
 	_numberOfRows = matrix.getNumberOfRows();
 	_numberOfColumns = matrix.getNumberOfColumns();
 	_isSparseMatrix=matrix.isSparseMatrix();
-	DoubleTab val(matrix.getValues());
-	_values=val;
+	_values=DoubleTab (_numberOfRows*_numberOfColumns,matrix.getValues().getValues());
 }
 
 bool
@@ -294,7 +294,7 @@ Matrix::operator= ( const Matrix& matrix )
 	_numberOfRows=matrix.getNumberOfRows();
 	_numberOfColumns=matrix.getNumberOfColumns();
 	_isSparseMatrix=matrix.isSparseMatrix();
-	_values=matrix.getValues();
+	_values=DoubleTab (_numberOfRows*_numberOfColumns,matrix.getValues().getValues());
 	return *this;
 }
 
