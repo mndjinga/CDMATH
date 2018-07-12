@@ -50,8 +50,12 @@ public:
 	SparseMatrixPetsc transpose() const ;
 
 	double operator()( int i, int j ) const ;
+
 	void setValue( int i, int j, double value ) ;
 	void addValue( int i, int j, double value ) ;
+
+	void setValue( int i, int j, Matrix M ) ;
+	void addValue( int i, int j, Matrix M ) ;
 
 	SparseMatrixPetsc& operator+= (const SparseMatrixPetsc& SparseMatrixPetsc) ;
 

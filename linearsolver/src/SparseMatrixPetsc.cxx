@@ -100,6 +100,32 @@ SparseMatrixPetsc::addValue( int i, int j, double value )
 	MatSetValues(_mat,1, &i, 1, &j, &value, ADD_VALUES);
 }
 
+void
+SparseMatrixPetsc::setValue( int i, int j, Matrix M  )
+{
+    int I,J;
+    for (int k=0; k<M.getNumberOfRows(); k++)
+        for (int l=0; l<M.getNumberOfColumns(); l++)
+        {
+            I=i+k;
+            J=j+l;
+            MatSetValues(_mat,1, &I, 1, &J, &M(k,l), INSERT_VALUES);
+        }
+}
+
+void
+SparseMatrixPetsc::addValue( int i, int j, Matrix M  )
+{
+    int I,J;
+    for (int k=0; k<M.getNumberOfRows(); k++)
+        for (int l=0; l<M.getNumberOfColumns(); l++)
+        {
+            I=i+k;
+            J=j+l;
+            MatSetValues(_mat,1, &I, 1, &J, &M(k,l), ADD_VALUES);
+        }
+}
+
 //----------------------------------------------------------------------
 double
 SparseMatrixPetsc::operator()( int i, int j ) const

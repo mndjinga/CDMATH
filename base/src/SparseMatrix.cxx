@@ -92,6 +92,35 @@ SparseMatrix::addValue( int i, int j, double value )
 }
 
 void
+SparseMatrix::setValue( int i, int j, Matrix M  )
+{
+    double Val1, valueM;
+    for (int k=0; k<M.getNumberOfRows(); k++)
+        for (int l=0; l<M.getNumberOfColumns(); l++)
+        {
+            Val1 = (*this)(i+k,j+l);
+            valueM=M(k,l);
+
+           if(Val1 == 0.)
+                insertValue(i+k,j+l,valueM);
+            else
+                replaceValue(i+k,j+l,valueM);
+        }
+}
+
+void
+SparseMatrix::addValue( int i, int j, Matrix M  )
+{
+    double Val1;
+    for (int k=0; k<M.getNumberOfRows(); k++)
+        for (int l=0; l<M.getNumberOfColumns(); l++)
+        {
+            Val1 = (*this)(i+k,j+l) + M(k,l) ;
+            setValue(i+k,j+l,Val1);            
+        }
+}
+
+void
 SparseMatrix::replaceValue(int i,int j,double value)
 {
 

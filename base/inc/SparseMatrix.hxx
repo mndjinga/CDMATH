@@ -47,8 +47,12 @@ public:
 	bool getFlagNNZ() const ;
 
 	double operator()( int i, int j ) const ;
+
 	void setValue( int i, int j, double value ) ;
 	void addValue( int i, int j, double value ) ;
+
+	void setValue( int i, int j, Matrix M ) ;
+	void addValue( int i, int j, Matrix M ) ;
 
 	SparseMatrix& operator+= (const SparseMatrix& SparseMatrix) ;
 

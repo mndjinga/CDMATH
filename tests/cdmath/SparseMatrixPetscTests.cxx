@@ -177,5 +177,19 @@ SparseMatrixPetscTests::testClassSparseMatrixPetsc( void )
 	CPPUNIT_ASSERT_EQUAL( 1., BB(1,1) );
 	CPPUNIT_ASSERT_EQUAL( 2., BB(2,2) );
 	CPPUNIT_ASSERT_EQUAL( 3., BB(3,3) );
+
+    Matrix A6(2,2);
+    A6(0,0)=1.;
+    A6(0,1)=2.;
+    A6(1,0)=3.;
+    A6(1,1)=4.;
+
+    SparseMatrixPetsc A7(2,2);
+    A7.setValue(0,0,A6);
+
+	CPPUNIT_ASSERT_EQUAL( 1.0, A7(0,0) );
+	CPPUNIT_ASSERT_EQUAL( 2.0, A7(0,1) );
+	CPPUNIT_ASSERT_EQUAL( 3.0, A7(1,0) );
+	CPPUNIT_ASSERT_EQUAL( 4.0, A7(1,1) );
 }
 
