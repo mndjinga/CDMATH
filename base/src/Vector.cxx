@@ -113,6 +113,22 @@ double Vector::norm() const
 	return sqrt(norm);
 }
 
+Vector Vector::maxVector(int gap) const 
+{
+    if(getNumberOfRows()%gap != 0)
+     {
+         std::cout<<"Vector::maxVector(int gap) : vector size= "<< getNumberOfRows()<< " gap= "<<gap <<" remainder= "<< getNumberOfRows()%gap<<std::endl;
+         throw CdmathException("Vector::maxVector(int gap) gap is not a dividor of vector size");
+     }
+    int nbTuples=getNumberOfRows()/gap;
+	Vector result(gap);
+	for(int i=0; i<nbTuples; i++)
+        for(int j=0; j<gap; j++)
+            if(  fabs( Matrix::operator()(i*gap+j,0) ) > result[j])
+                result[j] = fabs( Matrix::operator()(i*gap+j,0) ) ;
+	return result;
+}
+
 Vector
 operator+ (const Vector& vector1, const Vector& vector2)
 {
