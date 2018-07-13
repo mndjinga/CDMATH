@@ -152,9 +152,9 @@ def WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq, outputFileName,resolu
             Uinitial[k,i]=U[k,i]
     #sauvegarde de la donnée initiale
     pressure_field.setTime(time,it);
-    pressure_field.writeVTK("WaveSystem2DFV"+outputFileName+"_pressure");
+    pressure_field.writeVTK("WaveSystem2DFV"+"_pressure");
     velocity_field.setTime(time,it);
-    velocity_field.writeVTK("WaveSystem2DFV"+outputFileName+"_velocity");
+    velocity_field.writeVTK("WaveSystem2DFV"+"_velocity");
 
     dx_min=my_mesh.minRatioSurfVol()
 
@@ -178,7 +178,6 @@ def WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq, outputFileName,resolu
         if(it%output_freq==0):
             print("-- Iter: " + str(it) + ", Time: " + str(time) + ", dt: " + str(dt))
             print "Variation temporelle relative : pressure ", maxVector[0]/p0 ,", velocity x", maxVector[1]/rho0 ,", velocity y", maxVector[2]/rho0
-            print
 
             #totalMass=cdmath.Vector(dim+1)
             for k in range(nbCells):
@@ -189,10 +188,16 @@ def WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq, outputFileName,resolu
                     if(dim>2):
                         velocity_field[k,2]=U[k,3]/rho0
             pressure_field.setTime(time,it);
-            pressure_field.writeVTK("WaveSystem2DFV"+outputFileName+"_pressure",False);
+            pressure_field.writeVTK("WaveSystem2DFV"+"_pressure",False);
             velocity_field.setTime(time,it);
-            velocity_field.writeVTK("WaveSystem2DFV"+outputFileName+"_velocity",False);
+            velocity_field.writeVTK("WaveSystem2DFV"+"_velocity",False);
 
+            maxVector=(Uinitial-U).normMax()
+            error_p=maxVector[0]/p0
+            error_u=sqrt(maxVector[1]*maxVector[1]+maxVector[2]*maxVector[2])/rho0
+
+            print "max(|Pnum-Pexact|/p0)= ", error_p, "max(||Qnum-Qexact|/rho0)= ", error_u
+            print
     print("-- Iter: " + str(it) + ", Time: " + str(time) + ", dt: " + str(dt))
     print "Variation temporelle relative : pressure ", maxVector[0]/p0 ,", velocity x", maxVector[1]/rho0 ,", velocity y", maxVector[2]/rho0
     print
@@ -211,9 +216,9 @@ def WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq, outputFileName,resolu
                     velocity_field[k,2]=U[k,3]/rho0
 
         pressure_field.setTime(time,0);
-        pressure_field.writeVTK("WaveSystem2DFV"+outputFileName+"_pressure_Stat");
+        pressure_field.writeVTK("WaveSystem2DFV"+"_pressure_Stat");
         velocity_field.setTime(time,0);
-        velocity_field.writeVTK("WaveSystem2DFV"+outputFileName+"_velocity_Stat");
+        velocity_field.writeVTK("WaveSystem2DFV"+"_velocity_Stat");
 
         maxVector=(Uinitial-U).normMax()
         error_p=maxVector[0]/p0
@@ -225,8 +230,8 @@ def WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq, outputFileName,resolu
         diag_data_press=VTK_routines.Extract_field_data_over_line_to_numpyArray(pressure_field,[0,1,0],[1,0,0], resolution)    
         diag_data_vel  =VTK_routines.Extract_field_data_over_line_to_numpyArray(velocity_field,[0,1,0],[1,0,0], resolution)    
         #Postprocessing : save 2D picture
-        PV_routines.Save_PV_data_to_picture_file("WaveSystem2DFV"+outputFileName+"_pressure_Stat"+'_0.vtu',"Pressure",'CELLS',"WaveSystem2DFV"+outputFileName+"_pressure_Stat")
-        PV_routines.Save_PV_data_to_picture_file("WaveSystem2DFV"+outputFileName+"_velocity_Stat"+'_0.vtu',"Velocity",'CELLS',"WaveSystem2DFV"+outputFileName+"_velocity_Stat")
+        PV_routines.Save_PV_data_to_picture_file("WaveSystem2DFV"+"_pressure_Stat"+'_0.vtu',"Pressure",'CELLS',"WaveSystem2DFV"+"_pressure_Stat")
+        PV_routines.Save_PV_data_to_picture_file("WaveSystem2DFV"+"_velocity_Stat"+'_0.vtu',"Velocity",'CELLS',"WaveSystem2DFV"+"_velocity_Stat")
         
     else:
         print "Temps maximum Tmax= ", tmax, " atteint"
@@ -250,7 +255,7 @@ def solve_file( filename,resolution):
     
 if __name__ == """__main__""":
     M=cdmath.Mesh("meshSquare.med")
-    solve(M,'Triangles',100)
+    solve(M,'SquaresWithTrianglesCells',100)
 
     xinf=0
     xsup=1
@@ -263,4 +268,4 @@ if __name__ == """__main__""":
     M.setGroupAtPlan(ysup,1,precision,"Wall");
     M.setGroupAtPlan(yinf,1,precision,"Wall");
 
-    solve(M,'Squares',100)
+    solve(M,'SquaresWithSquareCells',100)
