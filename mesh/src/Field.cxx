@@ -752,10 +752,10 @@ Field::operator= ( const Field& f )
 	return *this;
 }
 
-Field Field::deepCopy( const Field& field ) const
+Field Field::deepCopy( ) const
 {
-    Field F(field.getName(), field.getTypeOfField(), field.getMesh(), field.getNumberOfComponents(), field.getTime()) ;
-	MCAuto<MEDCouplingFieldDouble> f1=field.getField()->deepCopy();
+    Field F(getName(), getTypeOfField(), getMesh(), getNumberOfComponents(), getTime()) ;
+	MCAuto<MEDCouplingFieldDouble> f1=getField()->deepCopy();
 	F.setFieldByMEDCouplingFieldDouble(f1);
     
     return F;

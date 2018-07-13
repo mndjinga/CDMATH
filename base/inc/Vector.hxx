@@ -24,7 +24,7 @@ class Vector: public Matrix
      * deep copy of a vector (values are copied)
      * @param vector : The Vector object to be copied
      */
-    Vector deepCopy( const Vector& vector ) const;
+    Vector deepCopy( ) const;
 
 	int size() const ;
 
@@ -38,7 +38,7 @@ class Vector: public Matrix
 
 	double norm() const ;
 
-	Vector maxVector(int gap) const ;
+	Vector maxVector(int gap=0) const ;
 
 	Vector innerProduct (const Vector& vector) const ;
 

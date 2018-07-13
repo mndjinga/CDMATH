@@ -116,7 +116,7 @@ def WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq,resolution):
     
     nbVoisinsMax=10;
     iterGMRESMax=50
-    isImplicit=True
+    isImplicit=False
     
     #iteration vectors
     Un=cdmath.Vector(nbCells*(dim+1))
@@ -174,6 +174,8 @@ def WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq,resolution):
         if(it%output_freq==0):
             print"-- Iter: " + str(it) + ", Time: " + str(time) + ", dt: " + str(dt)
             print "Variation temporelle relative : pressure ", maxVector[0]/p0 ,", velocity x", maxVector[1]/rho0 ,", velocity y", maxVector[2]/rho0
+            if(isImplicit):
+                print "Linear system converged in ", iterGMRES, " GMRES iterations"
 
             for k in range(nbCells):
                 pressure_field[k]=Un[k*(dim+1)+0]
@@ -182,6 +184,7 @@ def WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq,resolution):
                     velocity_field[k,1]=Un[k*(dim+1)+2]/rho0
                     if(dim>2):
                         velocity_field[k,2]=Un[k*(dim+1)+3]/rho0
+            print "total pressure ",pressure_field.integral()[0]
             pressure_field.setTime(time,it);
             pressure_field.writeVTK("WaveSystem2DFV"+str(nbCells)+"_pressure",False);
             velocity_field.setTime(time,it);
@@ -235,7 +238,7 @@ def solve(my_mesh,filename,resolution):
 
     # Problem data
     tmax = 1000.
-    ntmax = 100000
+    ntmax = 10000
     cfl = 0.45
     output_freq = 1000
 
@@ -246,6 +249,7 @@ def solve(my_mesh,filename,resolution):
 
 def solve_file( filename,resolution):
     my_mesh = cdmath.Mesh(filename+".med")
+
     return solve(my_mesh, filename,resolution)
     
 

@@ -299,10 +299,10 @@ Matrix::operator= ( const Matrix& matrix )
     return *this;
 }
 
-Matrix Matrix::deepCopy( const Matrix& matrix ) const
+Matrix Matrix::deepCopy(  ) const
 {
-    Matrix A(matrix.getNumberOfRows(), matrix.getNumberOfColumns()) ;
-    DoubleTab values(_numberOfRows*_numberOfColumns,matrix.getValues().getValues());
+    Matrix A(getNumberOfRows(), getNumberOfColumns()) ;
+    DoubleTab values(_numberOfRows*_numberOfColumns,getValues().getValues());
     A.setValues(values);
     
     return A;

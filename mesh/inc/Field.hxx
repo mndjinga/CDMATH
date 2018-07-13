@@ -65,7 +65,7 @@ class Field
      * deep copy of a field (values are copied)
      * @param field : The Field object to be copied
      */
-    Field deepCopy( const Field& field ) const;
+    Field deepCopy( ) const;
 
     /**
      * constructor with data

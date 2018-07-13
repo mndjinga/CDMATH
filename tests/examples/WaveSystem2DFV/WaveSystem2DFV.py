@@ -146,7 +146,7 @@ def WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq, outputFileName,resolu
     U, pressure_field, velocity_field = initial_conditions_wave_system(my_mesh)
 
     #keep the initial data in memory to measure the error later
-    Uinitial== cdmath.Field("Initial vector", cdmath.CELLS, my_mesh, dim+1)
+    Uinitial = cdmath.Field("Initial vector", cdmath.CELLS, my_mesh, dim+1)
     for k in range(nbCells):
         for i in range(dim+1):
             Uinitial[k,i]=U[k,i]
@@ -187,6 +187,7 @@ def WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq, outputFileName,resolu
                     velocity_field[k,1]=U[k,2]/rho0
                     if(dim>2):
                         velocity_field[k,2]=U[k,3]/rho0
+            print "total pressure ",pressure_field.integral()[0]
             pressure_field.setTime(time,it);
             pressure_field.writeVTK("WaveSystem2DFV"+"_pressure",False);
             velocity_field.setTime(time,it);
