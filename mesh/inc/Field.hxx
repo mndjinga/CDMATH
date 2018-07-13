@@ -62,6 +62,12 @@ class Field
     Field ( const Field & field ) ;
 
     /**
+     * deep copy of a field (values are copied)
+     * @param field : The Field object to be copied
+     */
+    Field deepCopy( const Field& field ) const;
+
+    /**
      * constructor with data
      * @param filename : file name of field med file
      * @param fieldType: field type

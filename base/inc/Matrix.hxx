@@ -50,6 +50,12 @@ class Matrix: public GenericMatrix
     Matrix ( const Matrix& matrix ) ;
 
     /**
+     * deep copy of a matrix (values are copied)
+     * @param matrix : The Matrix object to be copied
+     */
+    Matrix deepCopy( const Matrix& matrix ) const;
+
+    /**
      * destructor
      */
     virtual ~Matrix ( void ) ;

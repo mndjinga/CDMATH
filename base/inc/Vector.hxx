@@ -20,6 +20,12 @@ class Vector: public Matrix
 
 	~Vector ( void ) ;
 
+    /**
+     * deep copy of a vector (values are copied)
+     * @param vector : The Vector object to be copied
+     */
+    Vector deepCopy( const Vector& vector ) const;
+
 	int size() const ;
 
 	double& operator () ( int i ) ;

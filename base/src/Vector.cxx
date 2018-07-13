@@ -25,6 +25,15 @@ Matrix(numberOfRows,1)
 
 }
 
+Vector Vector::deepCopy( const Vector& vector ) const
+{
+    Vector V(vector.size()) ;
+    DoubleTab values(vector.size(),vector.getValues().getValues());
+    V.setValues(values);
+    
+    return V;
+}
+
 int Vector::size() const
 {
 	return getNumberOfRows();

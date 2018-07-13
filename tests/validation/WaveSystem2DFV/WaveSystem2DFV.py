@@ -105,7 +105,7 @@ def computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt):
         
     return implMat
 
-def WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq, outputFileName,resolution):
+def WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq,resolution):
     dim=my_mesh.getMeshDimension()
     nbCells = my_mesh.getNumberOfCells()
     
@@ -143,14 +143,16 @@ def WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq, outputFileName,resolu
     dt = cfl * dx_min / c0
 
     divMat=computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt)
+    if(isImplicit):
+        LS=cdmath.LinearSolver(divMat,Un,iterGMRESMax, precision, "GMRES","ILU")
     
     print("Starting computation of the linear wave system with an UPWIND scheme …")
     
     # Starting time loop
     while (it<ntmax and time <= tmax and not isStationary):
         if(isImplicit):
-            dUn=Un
-            LS=cdmath.LinearSolver(divMat,Un,iterGMRESMax, precision, "GMRES","ILU")
+            dUn=Un.deepCopy()
+            LS.setSndMember(Un)
             Un=LS.solve();
             cvgceLS=LS.getStatus();
             iterGMRES=LS.getNumberOfIter();
@@ -207,9 +209,9 @@ def WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq, outputFileName,resolu
                 if(dim>2):
                     velocity_field[k,2]=Un[k*(dim+1)+3]/rho0
         pressure_field.setTime(time,0);
-        pressure_field.writeVTK("WaveSystem2DFV"+outputFileName+str(nbCells)+"_pressure_Stat");
+        pressure_field.writeVTK("WaveSystem2DFV"+str(nbCells)+"_pressure_Stat");
         velocity_field.setTime(time,0);
-        velocity_field.writeVTK("WaveSystem2DFV"+outputFileName+str(nbCells)+"_velocity_Stat");
+        velocity_field.writeVTK("WaveSystem2DFV"+str(nbCells)+"_velocity_Stat");
 
         error_p=(initial_pressure-pressure_field).normMax()/p0
         error_u=(initial_velocity-velocity_field).normMax().norm()/rho0
@@ -218,8 +220,8 @@ def WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq, outputFileName,resolu
         diag_data_press=VTK_routines.Extract_field_data_over_line_to_numpyArray(pressure_field,[0,1,0],[1,0,0], resolution)    
         diag_data_vel  =VTK_routines.Extract_field_data_over_line_to_numpyArray(velocity_field,[0,1,0],[1,0,0], resolution)    
         #Postprocessing : save 2D picture
-        PV_routines.Save_PV_data_to_picture_file("WaveSystem2DFV"+str(nbCells)+"_pressure_Stat"+'_0.vtu',"Pressure",'CELLS',"WaveSystem2DFV"+outputFileName+str(nbCells)+"_pressure_Stat")
-        PV_routines.Save_PV_data_to_picture_file("WaveSystem2DFV"+str(nbCells)+"_velocity_Stat"+'_0.vtu',"Velocity",'CELLS',"WaveSystem2DFV"+outputFileName+str(nbCells)+"_velocity_Stat")
+        PV_routines.Save_PV_data_to_picture_file("WaveSystem2DFV"+str(nbCells)+"_pressure_Stat"+'_0.vtu',"Pressure",'CELLS',"WaveSystem2DFV"+str(nbCells)+"_pressure_Stat")
+        PV_routines.Save_PV_data_to_picture_file("WaveSystem2DFV"+str(nbCells)+"_velocity_Stat"+'_0.vtu',"Velocity",'CELLS',"WaveSystem2DFV"+str(nbCells)+"_velocity_Stat")
         
         return error_p, error_u, nbCells, diag_data_press, diag_data_vel
     else:
@@ -234,10 +236,10 @@ def solve(my_mesh,filename,resolution):
     # Problem data
     tmax = 1000.
     ntmax = 100000
-    cfl = 100
+    cfl = 0.45
     output_freq = 1000
 
-    error_p, error_u, nbCells, diag_data_press, diag_data_vel = WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq, filename,resolution)
+    error_p, error_u, nbCells, diag_data_press, diag_data_vel = WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq, resolution)
     end = time.time()
 
     return error_p, error_u, nbCells, diag_data_press, diag_data_vel, end - start

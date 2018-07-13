@@ -295,7 +295,17 @@ Matrix::operator= ( const Matrix& matrix )
 	_numberOfColumns=matrix.getNumberOfColumns();
 	_isSparseMatrix=matrix.isSparseMatrix();
 	_values=DoubleTab (_numberOfRows*_numberOfColumns,matrix.getValues().getValues());
-	return *this;
+	
+    return *this;
+}
+
+Matrix Matrix::deepCopy( const Matrix& matrix ) const
+{
+    Matrix A(matrix.getNumberOfRows(), matrix.getNumberOfColumns()) ;
+    DoubleTab values(_numberOfRows*_numberOfColumns,matrix.getValues().getValues());
+    A.setValues(values);
+    
+    return A;
 }
 
 ostream&
