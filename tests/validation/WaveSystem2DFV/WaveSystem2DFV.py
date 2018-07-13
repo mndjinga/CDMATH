@@ -98,11 +98,6 @@ def computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt):
                     print Fk.getGroupName()
                     raise ValueError("computeFluxes: Unknown boundary condition name");
                 
-            
-    #Adding the identity matrix on the diagonal
-    for j in range(nbCells*nbComp):
-        implMat.addValue(j,j,1)
-        
     return implMat
 
 def WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq,resolution):
@@ -144,6 +139,9 @@ def WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq,resolution):
 
     divMat=computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt)
     if(isImplicit):
+        #Adding the identity matrix on the diagonal
+        for j in range(nbCells*nbComp):
+            divMat.addValue(j,j,1)
         LS=cdmath.LinearSolver(divMat,Un,iterGMRESMax, precision, "GMRES","ILU")
     
     print("Starting computation of the linear wave system with an UPWIND scheme …")
