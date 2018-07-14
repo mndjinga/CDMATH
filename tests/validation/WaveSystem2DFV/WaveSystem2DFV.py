@@ -235,13 +235,13 @@ def WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq,resolution):
         velocity_field.writeVTK("WaveSystem2DFV"+str(nbCells)+"_velocity_Stat");
 
         #Postprocessing : Extraction of the diagonal data
-        #diag_data_press=VTK_routines.Extract_field_data_over_line_to_numpyArray(pressure_field,[0,1,0],[1,0,0], resolution)    
-        #diag_data_vel  =VTK_routines.Extract_field_data_over_line_to_numpyArray(velocity_field,[0,1,0],[1,0,0], resolution)    
+        diag_data_press=VTK_routines.Extract_field_data_over_line_to_numpyArray(pressure_field,[0,1,0],[1,0,0], resolution)    
+        diag_data_vel  =VTK_routines.Extract_field_data_over_line_to_numpyArray(velocity_field,[0,1,0],[1,0,0], resolution)    
         #Postprocessing : save 2D picture
-        #PV_routines.Save_PV_data_to_picture_file("WaveSystem2DFV"+str(nbCells)+"_pressure_Stat"+'_0.vtu',"Pressure",'CELLS',"WaveSystem2DFV"+str(nbCells)+"_pressure_Stat")
-        #PV_routines.Save_PV_data_to_picture_file("WaveSystem2DFV"+str(nbCells)+"_velocity_Stat"+'_0.vtu',"Velocity",'CELLS',"WaveSystem2DFV"+str(nbCells)+"_velocity_Stat")
+        PV_routines.Save_PV_data_to_picture_file("WaveSystem2DFV"+str(nbCells)+"_pressure_Stat"+'_0.vtu',"Pressure",'CELLS',"WaveSystem2DFV"+str(nbCells)+"_pressure_Stat")
+        PV_routines.Save_PV_data_to_picture_file("WaveSystem2DFV"+str(nbCells)+"_velocity_Stat"+'_0.vtu',"Velocity",'CELLS',"WaveSystem2DFV"+str(nbCells)+"_velocity_Stat")
         
-        return delta_press/p0, max(delta_velx,delta_vely)/rho0, nbCells, time, it, velocity_field.getNormEuclidean().max()#diag_data_press, diag_data_vel
+        return delta_press/p0, max(delta_velx,delta_vely)/rho0, nbCells, time, it, velocity_field.getNormEuclidean().max(), diag_data_press, diag_data_vel
     else:
         print "Temps maximum Tmax= ", tmax, " atteint"
         raise ValueError("Maximum time reached : Stationary state not found !!!!!!!")
@@ -257,10 +257,10 @@ def solve(my_mesh,filename,resolution):
     cfl = 0.45
     output_freq = 1000
 
-    error_p, error_u, nbCells, t_final, ndt_final, max_vel = WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq, resolution)
+    error_p, error_u, nbCells, t_final, ndt_final, max_vel, diag_data_press, diag_data_vel = WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq, resolution)
     end = time.time()
 
-    return error_p, error_u, nbCells, t_final, ndt_final, max_vel, end - start
+    return error_p, error_u, nbCells, t_final, ndt_final, max_vel, diag_data_press, diag_data_vel, end - start
 
 def solve_file( filename,resolution):
     my_mesh = cdmath.Mesh(filename+".med")

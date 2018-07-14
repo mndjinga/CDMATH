@@ -22,42 +22,35 @@ def test_validation2DWaveSystemTrianglesFV():
     resolution=100
     curv_abs=np.linspace(0,sqrt(2),resolution+1)
     plt.close('all')
-    i=0
 
-    #plt.figure('pressure')
-    #plt.figure('velocity')
+    i=0
     # Storing of numerical errors, mesh sizes and diagonal values
     for filename in meshList:
-        error_p_tab[i], error_u_tab[i], mesh_size_tab[i], t_final[i], ndt_final[i], max_vel[i], time_tab[i] =WaveSystem2DFV.solve_file(mesh_path+filename, resolution)
-        #plt.show('pressure')
-        #plt.plot(curv_abs, diag_data_press[i], label= str(mesh_size_tab[i]) + ' cells')
-        #plt.close('pressure')
-        #plt.show('velocity')
-        #plt.plot(curv_abs, diag_data_vel[i],   label= str(mesh_size_tab[i]) + ' cells')
-        #plt.close('velocity')
+        error_p_tab[i], error_u_tab[i], mesh_size_tab[i], t_final[i], ndt_final[i], max_vel[i], diag_data_press[i], diag_data_vel[i], time_tab[i] =WaveSystem2DFV.solve_file(mesh_path+filename, resolution)
         error_p_tab[i]=log10(error_p_tab[i])
         error_u_tab[i]=log10(error_u_tab[i])
         time_tab[i]=log10(time_tab[i])
         i=i+1
     
-    ## Plot over diagonal line
-    #plt.show('pressure')
-    #plt.legend()
-    #plt.xlabel('Position on diagonal line')
-    #plt.ylabel('Pressure on diagonal line')
-    #plt.title('Plot over diagonal line for stationary wave system \n on 2D triangular meshes')
-    #plt.savefig(mesh_name+'_Pressure_2DWaveSystem_Triangles_'+"PlotOverDiagonalLine.png")
+    # Plot over diagonal line
+    for i in range(nbMeshes):
+        plt.plot(curv_abs, diag_data_press[i], label= str(mesh_size_tab[i]) + ' cells')
+    plt.legend()
+    plt.xlabel('Position on diagonal line')
+    plt.ylabel('Pressure on diagonal line')
+    plt.title('Plot over diagonal line for stationary wave system \n on 2D triangular meshes')
+    plt.savefig(mesh_name+'_Pressure_2DWaveSystem_Triangles_'+"PlotOverDiagonalLine.png")
+    plt.close()
 
-    #plt.close('pressure')
-
-    #plt.show('velocity')
-    #plt.legend()
-    #plt.xlabel('Position on diagonal line')
-    #plt.ylabel('Velocity on diagonal line')
-    #plt.title('Plot over diagonal line for the stationary wave system \n on 2D triangular meshes')
-    #plt.savefig(mesh_name+"_Velocity_2DWaveSystem_Triangles_"+"PlotOverDiagonalLine.png")
-    
-    #plt.close('velocity')
+    plt.clf()
+    for i in range(nbMeshes):
+        plt.plot(curv_abs, diag_data_vel[i],   label= str(mesh_size_tab[i]) + ' cells')
+    plt.legend()
+    plt.xlabel('Position on diagonal line')
+    plt.ylabel('Velocity on diagonal line')
+    plt.title('Plot over diagonal line for the stationary wave system \n on 2D triangular meshes')
+    plt.savefig(mesh_name+"_Velocity_2DWaveSystem_Triangles_"+"PlotOverDiagonalLine.png")    
+    plt.close()
 
     # Least square linear regression
     # Find the best a,b such that f(x)=ax+b best approximates the convergence curve
