@@ -90,7 +90,7 @@ def computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt):
                     v=cdmath.Vector(dim+1)
                     for i in range(dim) :
                         v[i+1]=normal[i]
-                    idMoinsJacCL=v.crossProduct(v)
+                    idMoinsJacCL=v.tensProduct(v)*2
                     
                     implMat.addValue(j*nbComp,j*nbComp,Am*(-1.)*idMoinsJacCL)
                     

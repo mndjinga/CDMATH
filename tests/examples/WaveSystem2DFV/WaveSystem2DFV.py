@@ -185,7 +185,7 @@ def WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq, outputFileName,resolu
                     velocity_field[k,1]=U[k,2]/rho0
                     if(dim>2):
                         velocity_field[k,2]=U[k,3]/rho0
-            print "total pressure ",pressure_field.integral()[0]
+
             pressure_field.setTime(time,it);
             pressure_field.writeVTK("WaveSystem2DFV"+"_pressure",False);
             velocity_field.setTime(time,it);
@@ -224,7 +224,7 @@ def WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq, outputFileName,resolu
         error_u=sqrt(maxVector[1]*maxVector[1]+maxVector[2]*maxVector[2])/rho0
 
         print "max(|Pnum-Pexact|/p0)= ", error_p, "max(||Qnum-Qexact|/rho0)= ", error_u
-        
+        print
         #Postprocessing : Extraction of the diagonal data
         diag_data_press=VTK_routines.Extract_field_data_over_line_to_numpyArray(pressure_field,[0,1,0],[1,0,0], resolution)    
         diag_data_vel  =VTK_routines.Extract_field_data_over_line_to_numpyArray(velocity_field,[0,1,0],[1,0,0], resolution)    
@@ -242,7 +242,7 @@ def solve(my_mesh,filename,resolution):
 
     # Problem data
     tmax = 1.
-    ntmax = 10000
+    ntmax = 1000
     cfl = 0.45
     output_freq = 100
 
@@ -256,15 +256,3 @@ if __name__ == """__main__""":
     M=cdmath.Mesh("meshSquare.med")
     solve(M,'SquaresWithTrianglesCells',100)
 
-    xinf=0
-    xsup=1
-    yinf=0
-    ysup=1
-    M=cdmath.Mesh(xinf,xsup,15,yinf,ysup,15)
-    
-    M.setGroupAtPlan(xsup,0,precision,"Wall");
-    M.setGroupAtPlan(xinf,0,precision,"Wall");
-    M.setGroupAtPlan(ysup,1,precision,"Wall");
-    M.setGroupAtPlan(yinf,1,precision,"Wall");
-
-    solve(M,'SquaresWithSquareCells',100)
