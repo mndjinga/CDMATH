@@ -16,6 +16,9 @@ def test_validation2DWaveSystemTrianglesFV():
     diag_data_press=[0]*nbMeshes
     diag_data_vel=[0]*nbMeshes
     time_tab=[0]*nbMeshes
+    t_final=[0]*nbMeshes
+    ndt_final=[0]*nbMeshes
+    max_vel=[0]*nbMeshes
     resolution=100
     curv_abs=np.linspace(0,sqrt(2),resolution+1)
     plt.close('all')
@@ -25,13 +28,15 @@ def test_validation2DWaveSystemTrianglesFV():
     #plt.figure('velocity')
     # Storing of numerical errors, mesh sizes and diagonal values
     for filename in meshList:
-        error_p_tab[i], error_u_tab[i], mesh_size_tab[i], time_tab[i] =WaveSystem2DFV.solve_file(mesh_path+filename, resolution)
+        error_p_tab[i], error_u_tab[i], mesh_size_tab[i], t_final[i], ndt_final[i], max_vel[i], time_tab[i] =WaveSystem2DFV.solve_file(mesh_path+filename, resolution)
         #plt.show('pressure')
         #plt.plot(curv_abs, diag_data_press[i], label= str(mesh_size_tab[i]) + ' cells')
         #plt.close('pressure')
         #plt.show('velocity')
         #plt.plot(curv_abs, diag_data_vel[i],   label= str(mesh_size_tab[i]) + ' cells')
         #plt.close('velocity')
+        error_p_tab[i]=log10(error_p_tab[i])
+        error_u_tab[i]=log10(error_u_tab[i])
         time_tab[i]=log10(time_tab[i])
         i=i+1
     
@@ -78,26 +83,53 @@ def test_validation2DWaveSystemTrianglesFV():
     
     print "FV on 2D triangle meshes : scheme order for velocity is ", -au
     
+    # Plot of number of time steps
+    plt.close()
+    plt.plot(mesh_size_tab, ndt_final, label='Number of time step to reach stationary regime')
+    plt.legend()
+    plt.xlabel('number of cells')
+    plt.ylabel('Max time steps for stationary regime')
+    plt.title('Number of times steps required \n for the stationary Wave System on 2D triangular meshes')
+    plt.savefig(mesh_name+"_2DWaveSystemTriangles_"+"TimeSteps.png")
+    
+    # Plot of number of stationary time
+    plt.close()
+    plt.plot(mesh_size_tab, t_final, label='Time where stationary regime is reached')
+    plt.legend()
+    plt.xlabel('number of cells')
+    plt.ylabel('Max time for stationary regime')
+    plt.title('Simulated time  \n for the stationary Wave System on 2D triangular meshes')
+    plt.savefig(mesh_name+"_2DWaveSystemTriangles_"+"TimeFinal.png")
+    
+    # Plot of number of maximal velocity norm
+    plt.close()
+    plt.plot(mesh_size_tab, max_vel, label='Maximum velocity norm')
+    plt.legend()
+    plt.xlabel('number of cells')
+    plt.ylabel('Max velocity norm')
+    plt.title('Maximum velocity norm  \n for the stationary Wave System on 2D triangular meshes')
+    plt.savefig(mesh_name+"_2DWaveSystemTriangles_"+"TimeFinal.png")
+    
+    for i in range(nbMeshes):
+        mesh_size_tab[i]=log10(mesh_size_tab[i])
+        
     # Plot of convergence curves
     plt.close()
     plt.plot(mesh_size_tab, error_p_tab, label='|error on stationary pressure|')
     plt.legend()
-    plt.xlabel('number of cells')
-    plt.ylabel('|error|')
+    plt.xlabel('log(number of cells)')
+    plt.ylabel('log(error p)')
     plt.title('Convergence of finite volumes for \n the stationary Wave System on 2D triangular meshes')
     plt.savefig(mesh_name+"_Pressure_2DWaveSystem_Triangles_"+"ConvergenceCurve.png")
     
     plt.close()
     plt.plot(mesh_size_tab, error_u_tab, label='|error on stationary velocity|')
     plt.legend()
-    plt.xlabel('number of cells')
-    plt.ylabel('|error|')
+    plt.xlabel('log(number of cells)')
+    plt.ylabel('log(error p)')
     plt.title('Convergence of finite volumes for \n the stationary Wave System on 2D triangular meshes')
     plt.savefig(mesh_name+"_Velocity_2DWaveSystem_Triangles_"+"ConvergenceCurve.png")
     
-    for i in range(nbMeshes):
-        mesh_size_tab[i]=log10(mesh_size_tab[i])
-        
     # Plot of computational time
     plt.close()
     plt.plot(mesh_size_tab, time_tab, label='log(cpu time)')

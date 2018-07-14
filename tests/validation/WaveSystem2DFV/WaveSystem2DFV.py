@@ -54,8 +54,7 @@ def computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt):
     nbComp=dim+1
     normal=cdmath.Vector(dim)
 
-    implMat=cdmath.SparseMatrix(nbCells*nbComp,nbCells*nbComp,(nbVoisinsMax+1)*nbComp*nbCells)
-    #implMat=cdmath.SparseMatrixPetsc(nbCells*nbComp,nbCells*nbComp,(nbVoisinsMax+1)*nbComp)
+    implMat=cdmath.SparseMatrixPetsc(nbCells*nbComp,nbCells*nbComp,(nbVoisinsMax+1)*nbComp)
 
     idMoinsJacCL=cdmath.Matrix(nbComp)
     
@@ -212,7 +211,7 @@ def WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq,resolution):
     elif(isStationary):
         print "Régime stationnaire atteint au pas de temps ", it, ", t= ", time
         assert abs(total_pressure_initial-pressure_field.integral()[0])/p0<precision
-        
+        print "------------------------------------------------------------------------------------"
         delta_press=0
         delta_velx=0
         delta_vely=0
@@ -229,7 +228,6 @@ def WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq,resolution):
                 delta_velx=abs(initial_velocity[k,0]-velocity_field[k,0])
             if (abs(initial_velocity[k,1]-velocity_field[k,1])>delta_vely):
                 delta_vely=abs(initial_velocity[k,1]-velocity_field[k,1])
-        delta_vel=sqrt(delta_velx*delta_velx+delta_vely*delta_vely)
 
         pressure_field.setTime(time,0);
         pressure_field.writeVTK("WaveSystem2DFV"+str(nbCells)+"_pressure_Stat");
@@ -243,7 +241,7 @@ def WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq,resolution):
         #PV_routines.Save_PV_data_to_picture_file("WaveSystem2DFV"+str(nbCells)+"_pressure_Stat"+'_0.vtu',"Pressure",'CELLS',"WaveSystem2DFV"+str(nbCells)+"_pressure_Stat")
         #PV_routines.Save_PV_data_to_picture_file("WaveSystem2DFV"+str(nbCells)+"_velocity_Stat"+'_0.vtu',"Velocity",'CELLS',"WaveSystem2DFV"+str(nbCells)+"_velocity_Stat")
         
-        return delta_press/p0, delta_velx/rho0, nbCells, #diag_data_press, diag_data_vel
+        return delta_press/p0, max(delta_velx,delta_vely)/rho0, nbCells, time, it, velocity_field.getNormEuclidean().max()#diag_data_press, diag_data_vel
     else:
         print "Temps maximum Tmax= ", tmax, " atteint"
         raise ValueError("Maximum time reached : Stationary state not found !!!!!!!")
@@ -255,14 +253,14 @@ def solve(my_mesh,filename,resolution):
 
     # Problem data
     tmax = 1000.
-    ntmax = 10000
+    ntmax = 20000
     cfl = 0.45
-    output_freq = 100
+    output_freq = 1000
 
-    error_p, error_u, nbCells = WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq, resolution)
+    error_p, error_u, nbCells, t_final, ndt_final, max_vel = WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq, resolution)
     end = time.time()
 
-    return error_p, error_u, nbCells, end - start
+    return error_p, error_u, nbCells, t_final, ndt_final, max_vel, end - start
 
 def solve_file( filename,resolution):
     my_mesh = cdmath.Mesh(filename+".med")
