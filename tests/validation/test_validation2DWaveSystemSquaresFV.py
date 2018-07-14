@@ -21,18 +21,18 @@ def test_validation2DWaveSystemSquaresFV():
     plt.close('all')
     i=0
 
-    plt.figure('pressure')
-    plt.figure('velocity')
+    #plt.figure('pressure')
+    #plt.figure('velocity')
     # Storing of numerical errors, mesh sizes and diagonal values
     for nx in meshList:
         my_mesh=cdmath.Mesh(0,1,nx,0,1,nx)
         error_p_tab[i], error_u_tab[i], mesh_size_tab[i], time_tab[i] =WaveSystem2DFV.solve(my_mesh,str(nx)+'x'+str(nx), resolution)
-        plt.show('pressure')
-        plt.plot(curv_abs, diag_data_press[i], label= str(mesh_size_tab[i]) + ' cells')
-        plt.close('pressure')
-        plt.show('velocity')
-        plt.plot(curv_abs, diag_data_vel[i],   label= str(mesh_size_tab[i]) + ' cells')
-        plt.close('velocity')
+        #plt.show('pressure')
+        #plt.plot(curv_abs, diag_data_press[i], label= str(mesh_size_tab[i]) + ' cells')
+        #plt.close('pressure')
+        #plt.show('velocity')
+        #plt.plot(curv_abs, diag_data_vel[i],   label= str(mesh_size_tab[i]) + ' cells')
+        #plt.close('velocity')
         time_tab[i]=log10(time_tab[i])
         i=i+1
     
@@ -55,6 +55,30 @@ def test_validation2DWaveSystemSquaresFV():
     
     #plt.close('velocity')
 
+    # Least square linear regression
+    # Find the best a,b such that f(x)=ax+b best approximates the convergence curve
+    # The vector X=(a,b) solves a symmetric linear system AX=B with A=(a1,a2\\a2,a3), B=(b1,b2)
+    a1=np.dot(mesh_size_tab,mesh_size_tab)
+    a2=np.sum(mesh_size_tab)
+    a3=nbMeshes
+    
+    det=a1*a3-a2*a2
+    assert det!=0, 'test_validation2DWaveSystemSquaresFV() : Make sure you use distinct meshes and at least two meshes'
+
+    b1p=np.dot(error_p_tab,mesh_size_tab)   
+    b2p=np.sum(error_p_tab)
+    ap=( a3*b1p-a2*b2p)/det
+    bp=(-a2*b1p+a1*b2p)/det
+    
+    print "FV on 2D square meshes : scheme order for pressure is ", -ap
+
+    b1u=np.dot(error_u_tab,mesh_size_tab)   
+    b2u=np.sum(error_u_tab)
+    au=( a3*b1u-a2*b2u)/det
+    bu=(-a2*b1u+a1*b2u)/det
+    
+    print "FV on 2D square meshes : scheme order for velocity is ", -au
+    
     # Plot of convergence curves
     plt.close()
     plt.plot(mesh_size_tab, error_p_tab, label='|error on stationary pressure|')
