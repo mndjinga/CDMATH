@@ -188,8 +188,10 @@ def WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq,resolution):
             velocity_field.setTime(time,it);
             velocity_field.writeVTK("WaveSystem2DFV"+str(nbCells)+"_velocity",False);
 
-            error_p=(initial_pressure-pressure_field).normMax().norm()/p0
-            error_u=(initial_velocity-velocity_field).normMax().norm()/rho0
+            a=initial_pressure
+            a-=pressure_field
+            error_p=(a.normMax()).norm()/p0
+            error_u=(a.normMax()).norm()/rho0
     
             print "Ecart au stationnaire exact : error_p= ",error_p," error_u= ",error_u
             print
@@ -214,8 +216,10 @@ def WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq,resolution):
         velocity_field.setTime(time,0);
         velocity_field.writeVTK("WaveSystem2DFV"+str(nbCells)+"_velocity_Stat");
 
-        error_p=(initial_pressure-pressure_field).normMax()/p0
-        error_u=(initial_velocity-velocity_field).normMax().norm()/rho0
+        a=initial_pressure
+        a-=pressure_field
+        error_p=(a.normMax()).norm()/p0
+        error_u=(a.normMax()).norm()/rho0
 
         #Postprocessing : Extraction of the diagonal data
         diag_data_press=VTK_routines.Extract_field_data_over_line_to_numpyArray(pressure_field,[0,1,0],[1,0,0], resolution)    

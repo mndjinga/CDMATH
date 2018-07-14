@@ -122,8 +122,7 @@ def computeFluxes(U, SumFluxes):
             Fautre  =Flux(Uautre,  normal);
 
             A, absA=jacobianMatrices( normal);
-            if ( not Fk.isBorder()) :
-                sumFluxCourant = sumFluxCourant + (Fcourant+Fautre +absA*(Ucourant-Uautre))*Fk.getMeasure()*0.5
+            sumFluxCourant = sumFluxCourant + (Fcourant+Fautre +absA*(Ucourant-Uautre))*Fk.getMeasure()*0.5
                 
         #On divise par le volume de la cellule la contribution des flux au snd membre
         for i in range(nbComp):
@@ -179,7 +178,6 @@ def WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq, outputFileName,resolu
             print("-- Iter: " + str(it) + ", Time: " + str(time) + ", dt: " + str(dt))
             print "Variation temporelle relative : pressure ", maxVector[0]/p0 ,", velocity x", maxVector[1]/rho0 ,", velocity y", maxVector[2]/rho0
 
-            #totalMass=cdmath.Vector(dim+1)
             for k in range(nbCells):
                 pressure_field[k]=U[k,0]
                 velocity_field[k,0]=U[k,1]/rho0
