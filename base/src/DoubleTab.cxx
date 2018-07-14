@@ -152,7 +152,12 @@ DoubleTab::getPointer(void)
 DoubleTab&
 DoubleTab::operator+=(const DoubleTab& dt)
 {
-	for (int i=0;i<dt.size();i++)
+    if(size() != dt.size())
+    {
+        cout<<"Warning : adding DoubleTab of different sizes"<<endl;
+        cout<<"First DoubleTab size "<<size()<<", second DoubleTab size "<<dt.size()<<endl;
+    }
+	for (int i=0;i<size();i++)
 		_values[i] += dt[i] ;
 	return *this;
 }
@@ -184,7 +189,12 @@ DoubleTab::operator/=(double value)
 DoubleTab&
 DoubleTab::operator-=(const DoubleTab& dt)
 {
-	for (int i=0;i<dt.size();i++)
+    if(size() != dt.size())
+    {
+        cout<<"Warning : subtracting DoubleTab of different sizes"<<endl;
+        cout<<"First DoubleTab size "<<size()<<", second DoubleTab size "<<dt.size()<<endl;
+    }
+	for (int i=0;i<size();i++)
 		_values[i] -= dt[i] ;
 	return *this;
 }

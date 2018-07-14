@@ -432,6 +432,9 @@ SparseMatrix::operator* (const Vector& vec) const
 SparseMatrix&
 SparseMatrix::operator+= (const SparseMatrix& matrix)
 {
+    if(_numberOfRows != matrix.getNumberOfRows() || _numberOfColumns != matrix.getNumberOfColumns())
+        throw CdmathException("SparseMatrix::operator+ cannot add matrices having different sizes");
+
 	_values+=matrix.getValues();
 	return (*this);
 }
@@ -439,6 +442,9 @@ SparseMatrix::operator+= (const SparseMatrix& matrix)
 SparseMatrix&
 SparseMatrix::operator-= (const SparseMatrix& matrix)
 {
+    if(_numberOfRows != matrix.getNumberOfRows() || _numberOfColumns != matrix.getNumberOfColumns())
+        throw CdmathException("SparseMatrix::operator- cannot subtract matrices having different sizes");
+    
 	_values-=matrix.getValues();
 	return (*this);
 }
