@@ -61,7 +61,7 @@ print("Max nb of neighbours=", maxNbNeighbours)
 
 # Construction de la matrice et du vecteur second membre du système linéaire
 #===========================================================================
-Rigidite=cdmath.SparseMatrix(nbCells,nbCells,nbCells*maxNbNeighbours)# warning : third argument is total number of non zero coefficients in the matrix
+Rigidite=cdmath.SparseMatrixPetsc(nbCells,nbCells,maxNbNeighbours)# warning : third argument is max number of non zero coefficients per line of the matrix
 RHS=cdmath.Vector(nbCells)
 #Parcours des cellules du domaine
 for i in range(nbCells):

@@ -68,7 +68,7 @@ print("Max nb of neighbours=", maxNbNeighbours)
 
 # Construction de la matrice de rigidité et du vecteur second membre du système linéaire
 #=======================================================================================
-Rigidite=cdmath.SparseMatrix(nbInteriorNodes,nbInteriorNodes,nbInteriorNodes*maxNbNeighbours)# warning : third argument is total number of non zero coefficients in the matrix
+Rigidite=cdmath.SparseMatrixPetsc(nbInteriorNodes,nbInteriorNodes,maxNbNeighbours)# warning : third argument is max number of non zero coefficients per line of the matrix
 RHS=cdmath.Vector(nbInteriorNodes)
 
 # Vecteurs gradient de la fonction de forme associée à chaque noeud d'un triangle (hypothèse 2D)
