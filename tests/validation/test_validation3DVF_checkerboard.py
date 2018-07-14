@@ -16,7 +16,7 @@ def test_validation3DVF_checkerboard():
     diag_data=[0]*nbMeshes
     resolution=100
     curv_abs=np.linspace(0,sqrt(3),resolution+1)
-    plt.close()
+    plt.close('all')
     i=0
     # Storing of numerical errors, mesh sizes and diagonal values
     for filename in meshList:
@@ -72,5 +72,7 @@ def test_validation3DVF_checkerboard():
     plt.title('Computational time of finite volumes \n for Laplace operator on 3D checkerboard meshes')
     plt.savefig(mesh_name+"_3DPoissonVFCheckerboard_ComputationalTime.png")
     
+    plt.close('all')
+
 if __name__ == """__main__""":
     test_validation3DVF_checkerboard()

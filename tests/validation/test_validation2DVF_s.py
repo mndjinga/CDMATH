@@ -15,7 +15,7 @@ def test_validation2DVF_s():
     time_tab=[0]*nbMeshes
     resolution=100
     curv_abs=np.linspace(0,sqrt(2),resolution+1)
-    plt.close()
+    plt.close('all')
     i=0
     # Storing of numerical errors, mesh sizes and diagonal values
     for nx in meshList:
@@ -73,5 +73,7 @@ def test_validation2DVF_s():
     plt.title('Computational time of finite volumes \n for Laplace operator on 2D rectangular meshes')
     plt.savefig(mesh_name+"_2DPoissonFVs_ComputationalTime.png")
     
+    plt.close('all')
+
 if __name__ == """__main__""":
     test_validation2DVF_s()

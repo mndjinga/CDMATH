@@ -133,6 +133,8 @@ def WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq,resolution):
     velocity_field.setTime(time,it);
     velocity_field.writeVTK("WaveSystem2DFV"+str(nbCells)+"_velocity");
 
+    total_pressure_initial=pressure_field.integral()[0]#For conservation test later
+    
     dx_min=my_mesh.minRatioSurfVol()
 
     dt = cfl * dx_min / c0
@@ -175,6 +177,9 @@ def WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq,resolution):
             if(isImplicit):
                 print "Linear system converged in ", iterGMRES, " GMRES iterations"
 
+            delta_press=0
+            delta_velx=0
+            delta_vely=0
             for k in range(nbCells):
                 pressure_field[k]=Un[k*(dim+1)+0]
                 velocity_field[k,0]=Un[k*(dim+1)+1]/rho0
@@ -182,18 +187,20 @@ def WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq,resolution):
                     velocity_field[k,1]=Un[k*(dim+1)+2]/rho0
                     if(dim>2):
                         velocity_field[k,2]=Un[k*(dim+1)+3]/rho0
-            print "total pressure ",pressure_field.integral()[0]
+                if (abs(initial_pressure[k]-pressure_field[k])>delta_press):
+                    delta_press=abs(initial_pressure[k]-pressure_field[k])
+                if (abs(initial_velocity[k,0]-velocity_field[k,0])>delta_velx):
+                    delta_velx=abs(initial_velocity[k,0]-velocity_field[k,0])
+                if (abs(initial_velocity[k,1]-velocity_field[k,1])>delta_vely):
+                    delta_vely=abs(initial_velocity[k,1]-velocity_field[k,1])
+            delta_vel=sqrt(delta_velx*delta_velx+delta_vely*delta_vely)
+
             pressure_field.setTime(time,it);
             pressure_field.writeVTK("WaveSystem2DFV"+str(nbCells)+"_pressure",False);
             velocity_field.setTime(time,it);
             velocity_field.writeVTK("WaveSystem2DFV"+str(nbCells)+"_velocity",False);
 
-            a=initial_pressure
-            a-=pressure_field
-            error_p=(a.normMax()).norm()/p0
-            error_u=(a.normMax()).norm()/rho0
-    
-            print "Ecart au stationnaire exact : error_p= ",error_p," error_u= ",error_u
+            print "Ecart au stationnaire exact : error_p= ",delta_press/p0," error_ux= ",delta_velx/rho0," error_uy= ",delta_vely/rho0
             print
     print"-- Iter: " + str(it) + ", Time: " + str(time) + ", dt: " + str(dt)
     print "Variation temporelle relative : pressure ", maxVector[0]/p0 ,", velocity x", maxVector[1]/rho0 ,", velocity y", maxVector[2]/rho0
@@ -204,6 +211,11 @@ def WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq,resolution):
         raise ValueError("Maximum number of time steps reached : Stationary state not found !!!!!!!")
     elif(isStationary):
         print "Régime stationnaire atteint au pas de temps ", it, ", t= ", time
+        assert abs(total_pressure_initial-pressure_field.integral()[0])/p0<precision
+        
+        delta_press=0
+        delta_velx=0
+        delta_vely=0
         for k in range(nbCells):
             pressure_field[k]=Un[k*(dim+1)+0]
             velocity_field[k,0]=Un[k*(dim+1)+1]/rho0
@@ -211,24 +223,27 @@ def WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq,resolution):
                 velocity_field[k,1]=Un[k*(dim+1)+2]/rho0
                 if(dim>2):
                     velocity_field[k,2]=Un[k*(dim+1)+3]/rho0
+            if (abs(initial_pressure[k]-pressure_field[k])>delta_press):
+                delta_press=abs(initial_pressure[k]-pressure_field[k])
+            if (abs(initial_velocity[k,0]-velocity_field[k,0])>delta_velx):
+                delta_velx=abs(initial_velocity[k,0]-velocity_field[k,0])
+            if (abs(initial_velocity[k,1]-velocity_field[k,1])>delta_vely):
+                delta_vely=abs(initial_velocity[k,1]-velocity_field[k,1])
+        delta_vel=sqrt(delta_velx*delta_velx+delta_vely*delta_vely)
+
         pressure_field.setTime(time,0);
         pressure_field.writeVTK("WaveSystem2DFV"+str(nbCells)+"_pressure_Stat");
         velocity_field.setTime(time,0);
         velocity_field.writeVTK("WaveSystem2DFV"+str(nbCells)+"_velocity_Stat");
 
-        a=initial_pressure
-        a-=pressure_field
-        error_p=(a.normMax()).norm()/p0
-        error_u=(a.normMax()).norm()/rho0
-
         #Postprocessing : Extraction of the diagonal data
-        diag_data_press=VTK_routines.Extract_field_data_over_line_to_numpyArray(pressure_field,[0,1,0],[1,0,0], resolution)    
-        diag_data_vel  =VTK_routines.Extract_field_data_over_line_to_numpyArray(velocity_field,[0,1,0],[1,0,0], resolution)    
+        #diag_data_press=VTK_routines.Extract_field_data_over_line_to_numpyArray(pressure_field,[0,1,0],[1,0,0], resolution)    
+        #diag_data_vel  =VTK_routines.Extract_field_data_over_line_to_numpyArray(velocity_field,[0,1,0],[1,0,0], resolution)    
         #Postprocessing : save 2D picture
-        PV_routines.Save_PV_data_to_picture_file("WaveSystem2DFV"+str(nbCells)+"_pressure_Stat"+'_0.vtu',"Pressure",'CELLS',"WaveSystem2DFV"+str(nbCells)+"_pressure_Stat")
-        PV_routines.Save_PV_data_to_picture_file("WaveSystem2DFV"+str(nbCells)+"_velocity_Stat"+'_0.vtu',"Velocity",'CELLS',"WaveSystem2DFV"+str(nbCells)+"_velocity_Stat")
+        #PV_routines.Save_PV_data_to_picture_file("WaveSystem2DFV"+str(nbCells)+"_pressure_Stat"+'_0.vtu',"Pressure",'CELLS',"WaveSystem2DFV"+str(nbCells)+"_pressure_Stat")
+        #PV_routines.Save_PV_data_to_picture_file("WaveSystem2DFV"+str(nbCells)+"_velocity_Stat"+'_0.vtu',"Velocity",'CELLS',"WaveSystem2DFV"+str(nbCells)+"_velocity_Stat")
         
-        return error_p, error_u, nbCells, diag_data_press, diag_data_vel
+        return delta_press/p0, delta_velx/rho0, nbCells, #diag_data_press, diag_data_vel
     else:
         print "Temps maximum Tmax= ", tmax, " atteint"
         raise ValueError("Maximum time reached : Stationary state not found !!!!!!!")
@@ -242,12 +257,12 @@ def solve(my_mesh,filename,resolution):
     tmax = 1000.
     ntmax = 10000
     cfl = 0.45
-    output_freq = 1000
+    output_freq = 100
 
-    error_p, error_u, nbCells, diag_data_press, diag_data_vel = WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq, resolution)
+    error_p, error_u, nbCells = WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq, resolution)
     end = time.time()
 
-    return error_p, error_u, nbCells, diag_data_press, diag_data_vel, end - start
+    return error_p, error_u, nbCells, end - start
 
 def solve_file( filename,resolution):
     my_mesh = cdmath.Mesh(filename+".med")

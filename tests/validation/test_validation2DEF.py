@@ -16,7 +16,7 @@ def test_validation2DEF():
     time_tab=[0]*nbMeshes
     resolution=100
     curv_abs=np.linspace(0,sqrt(2),resolution+1)
-    plt.close()
+    plt.close('all')
     i=0
     # Storing of numerical errors, mesh sizes and diagonal values
     for filename in meshList:
@@ -73,7 +73,7 @@ def test_validation2DEF():
     plt.title('Computational time of finite elements \n for Laplace operator on 2D triangular meshes')
     plt.savefig(mesh_name+"_2DPoissonEF_ComputationalTime.png")
     
-
+    plt.close('all')
 
 if __name__ == """__main__""":
     test_validation2DEF()

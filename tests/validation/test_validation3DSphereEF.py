@@ -15,6 +15,7 @@ def test_validation3DSphereEF():
     mesh_name='meshSphereWithTrianglesFE'
     diag_data=[0]*nbMeshes
     resolution=100
+    plt.close('all')
     i=0
     # Storing of numerical errors and mesh sizes
     for filename in meshList:
@@ -75,7 +76,7 @@ def test_validation3DSphereEF():
     plt.title('Computational time of finite elements \n for Laplace operator on 3D sphere triangular meshes')
     plt.savefig(mesh_name+"_3DSpherePoissonFE_ComputationalTime.png")
     
-
+    plt.close('all')
 
 if __name__ == """__main__""":
     test_validation3DSphereEF()

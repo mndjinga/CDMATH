@@ -6,7 +6,7 @@ from math import log10, sqrt
 
 def test_validation2DWaveSystemTrianglesFV():
     #### 2D triangle mesh
-    meshList=['triangleMeshSquare_1','triangleMeshSquare_2','triangleMeshSquare_3']#,'triangleMeshSquare_4','triangleMeshSquare_5']
+    meshList=['triangleMeshSquare_1','triangleMeshSquare_2','triangleMeshSquare_3','triangleMeshSquare_4','triangleMeshSquare_5']
     nbMeshes=len(meshList)
     error_p_tab=[0]*nbMeshes
     error_u_tab=[0]*nbMeshes
@@ -25,7 +25,7 @@ def test_validation2DWaveSystemTrianglesFV():
     plt.figure('velocity')
     # Storing of numerical errors, mesh sizes and diagonal values
     for filename in meshList:
-        error_p_tab[i], error_u_tab[i], mesh_size_tab[i], diag_data_press[i], diag_data_vel[i], time_tab[i] =WaveSystem2DFV.solve_file(mesh_path+filename, resolution)
+        error_p_tab[i], error_u_tab[i], mesh_size_tab[i], time_tab[i] =WaveSystem2DFV.solve_file(mesh_path+filename, resolution)
         plt.show('pressure')
         plt.plot(curv_abs, diag_data_press[i], label= str(mesh_size_tab[i]) + ' cells')
         plt.close('pressure')
@@ -35,24 +35,24 @@ def test_validation2DWaveSystemTrianglesFV():
         time_tab[i]=log10(time_tab[i])
         i=i+1
     
-    # Plot over diagonal line
-    plt.show('pressure')
-    plt.legend()
-    plt.xlabel('Position on diagonal line')
-    plt.ylabel('Pressure on diagonal line')
-    plt.title('Plot over diagonal line for stationary wave system \n on 2D triangular meshes')
-    plt.savefig(mesh_name+'_Pressure_2DWaveSystem_Triangles_'+"PlotOverDiagonalLine.png")
+    ## Plot over diagonal line
+    #plt.show('pressure')
+    #plt.legend()
+    #plt.xlabel('Position on diagonal line')
+    #plt.ylabel('Pressure on diagonal line')
+    #plt.title('Plot over diagonal line for stationary wave system \n on 2D triangular meshes')
+    #plt.savefig(mesh_name+'_Pressure_2DWaveSystem_Triangles_'+"PlotOverDiagonalLine.png")
 
-    plt.close('pressure')
+    #plt.close('pressure')
 
-    plt.show('velocity')
-    plt.legend()
-    plt.xlabel('Position on diagonal line')
-    plt.ylabel('Velocity on diagonal line')
-    plt.title('Plot over diagonal line for the stationary wave system \n on 2D triangular meshes')
-    plt.savefig(mesh_name+"_Velocity_2DWaveSystem_Triangles_"+"PlotOverDiagonalLine.png")
+    #plt.show('velocity')
+    #plt.legend()
+    #plt.xlabel('Position on diagonal line')
+    #plt.ylabel('Velocity on diagonal line')
+    #plt.title('Plot over diagonal line for the stationary wave system \n on 2D triangular meshes')
+    #plt.savefig(mesh_name+"_Velocity_2DWaveSystem_Triangles_"+"PlotOverDiagonalLine.png")
     
-    plt.close('velocity')
+    #plt.close('velocity')
 
     # Plot of convergence curves
     plt.close()
@@ -83,6 +83,7 @@ def test_validation2DWaveSystemTrianglesFV():
     plt.title('Computational time of finite volumes \n for the stationary Wave System on 2D triangular meshes')
     plt.savefig(mesh_name+"ComputationalTime_2DWaveSystem_Triangles.png")
     
+    plt.close('all')
     
 if __name__ == """__main__""":
     test_validation2DWaveSystemTrianglesFV()

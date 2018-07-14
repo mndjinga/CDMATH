@@ -16,7 +16,7 @@ def test_validation3DEF():
     mesh_name='meshCubeWithTetrahedraFE'
     resolution=100
     curv_abs=np.linspace(0,sqrt(3),resolution+1)
-    plt.close()
+    plt.close('all')
     i=0
     # Storing of numerical errors, mesh sizes and diagonal values
     for filename in meshList :
@@ -72,5 +72,7 @@ def test_validation3DEF():
     plt.title('Computational time of finite elements \n for Laplace operator on 2D tetrahedral meshes')
     plt.savefig(mesh_name+"_3DPoissonFE_ComputationalTime.png")
     
+    plt.close('all')
+
 if __name__ == """__main__""":
     test_validation3DEF()
