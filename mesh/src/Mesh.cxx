@@ -1404,10 +1404,7 @@ Mesh::getNz( void )  const
 double
 Mesh::getXMin( void )  const
 //----------------------------------------------------------------------
-{
-    if(!_isStructured)
-		throw CdmathException("double Mesh::getXmin( void ) : xMin is defined only for structured meshes !");
-        
+{        
 	return _xMin ;
 }
 
@@ -1416,9 +1413,6 @@ double
 Mesh::getXMax( void )  const
 //----------------------------------------------------------------------
 {
-    if(!_isStructured)
-		throw CdmathException("double Mesh::getXmax( void ) : xMax is defined only for structured meshes !");
-        
 	return _xMax ;
 }
 
@@ -1427,9 +1421,6 @@ double
 Mesh::getYMin( void )  const
 //----------------------------------------------------------------------
 {
-    if(!_isStructured)
-		throw CdmathException("double Mesh::getYmin( void ) : yMin is defined only for structured meshes !");
-        
 	return _yMin ;
 }
 
@@ -1438,9 +1429,6 @@ double
 Mesh::getYMax( void )  const
 //----------------------------------------------------------------------
 {
-    if(!_isStructured)
-		throw CdmathException("double Mesh::getYMax( void ) : yMax is defined only for structured meshes !");
-        
 	return _yMax ;
 }
 
@@ -1449,9 +1437,6 @@ double
 Mesh::getZMin( void )  const
 //----------------------------------------------------------------------
 {
-    if(!_isStructured)
-		throw CdmathException("double Mesh::getZmin( void ) : zMin is defined only for structured meshes !");
-
 	return _zMin ;
 }
 
@@ -1460,9 +1445,6 @@ double
 Mesh::getZMax( void )  const
 //----------------------------------------------------------------------
 {
-    if(!_isStructured)
-		throw CdmathException("double Mesh::getZMax( void ) : zMax is defined only for structured meshes !");
-
 	return _zMax ;
 }
 

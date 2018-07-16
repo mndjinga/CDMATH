@@ -16,20 +16,23 @@ def initial_conditions_wave_system(my_mesh):
     dim     = my_mesh.getMeshDimension()
     nbCells = my_mesh.getNumberOfCells()
 
-    if(dim!=2):
-        raise ValueError("initial_conditions_wave_system: Mesh dimension should be 2")
-
     pressure_field = cdmath.Field("Pressure",            cdmath.CELLS, my_mesh, 1)
     velocity_field = cdmath.Field("Velocity",            cdmath.CELLS, my_mesh, 3)
 
     for i in range(nbCells):
         x = my_mesh.getCell(i).x()
         y = my_mesh.getCell(i).y()
+        z = my_mesh.getCell(i).z()
 
         pressure_field[i] = p0
-        velocity_field[i,0] =  sin(pi*x)*cos(pi*y)
-        velocity_field[i,1] = -sin(pi*y)*cos(pi*x)
-        velocity_field[i,2] = 0
+        if(dim==2):
+            velocity_field[i,0] =  sin(pi*x)*cos(pi*y)
+            velocity_field[i,1] = -sin(pi*y)*cos(pi*x)
+            velocity_field[i,2] = 0
+        if(dim==3):
+            velocity_field[i,0] =    sin(pi*x)*cos(pi*y)*cos(pi*z)
+            velocity_field[i,1] =    sin(pi*y)*cos(pi*x)*cos(pi*z)
+            velocity_field[i,2] = -2*sin(pi*z)*cos(pi*x)*cos(pi*y)
         
     return pressure_field, velocity_field
 
@@ -54,6 +57,8 @@ def computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt):
     nbComp=dim+1
     normal=cdmath.Vector(dim)
 
+    indexFacesPerio = my_mesh.getIndexFacePeriodic()
+    
     implMat=cdmath.SparseMatrixPetsc(nbCells*nbComp,nbCells*nbComp,(nbVoisinsMax+1)*nbComp)
 
     idMoinsJacCL=cdmath.Matrix(nbComp)
@@ -85,7 +90,14 @@ def computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt):
                 implMat.addValue(j*nbComp,cellAutre*nbComp,Am)
                 implMat.addValue(j*nbComp,        j*nbComp,Am*(-1.))
             else  :
-                if(Fk.getGroupName() == "" or Fk.getGroupName() == "Wall" or Fk.getGroupName() == "Paroi" or Fk.getGroupName() != "Neumann"):#Wall boundary condition unless Neumannspecified explicitly
+                if(Fk.getGroupName() != "Wall" and Fk.getGroupName() != "Paroi" and Fk.getGroupName() != "Neumann"):#Periodic boundary condition unless Wall/Neumann specified explicitly
+                    indexFP = indexFacesPerio[indexFace]
+                    Fp = my_mesh.getFace(indexFP)
+                    cellAutre = Fp.getCellsId()[0]
+                    
+                    implMat.addValue(j*nbComp,cellAutre*nbComp,Am)
+                    implMat.addValue(j*nbComp,        j*nbComp,Am*(-1.))
+                elif( Fk.getGroupName() == "Wall" or Fk.getGroupName() == "Paroi"):#Wall boundary condition
                     v=cdmath.Vector(dim+1)
                     for i in range(dim) :
                         v[i+1]=normal[i]
@@ -99,7 +111,7 @@ def computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt):
                 
     return implMat
 
-def WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq,resolution):
+def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq,resolution):
     dim=my_mesh.getMeshDimension()
     nbCells = my_mesh.getNumberOfCells()
     
@@ -125,12 +137,14 @@ def WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq,resolution):
         Un[k*(dim+1)+0] =     initial_pressure[k]
         Un[k*(dim+1)+1] =rho0*initial_velocity[k,0]
         Un[k*(dim+1)+2] =rho0*initial_velocity[k,1]
+        if(dim==3):
+            Un[k*(dim+1)+3] =rho0*initial_velocity[k,2]
             
     #sauvegarde de la donnée initiale
     pressure_field.setTime(time,it);
-    pressure_field.writeVTK("WaveSystem2DFV"+str(nbCells)+"_pressure");
+    pressure_field.writeVTK("WaveSystem"+str(dim)+"DFV"+str(nbCells)+"_pressure");
     velocity_field.setTime(time,it);
-    velocity_field.writeVTK("WaveSystem2DFV"+str(nbCells)+"_velocity");
+    velocity_field.writeVTK("WaveSystem"+str(dim)+"DFV"+str(nbCells)+"_velocity");
 
     total_pressure_initial=pressure_field.integral()[0]#For conservation test later
     
@@ -163,9 +177,10 @@ def WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq,resolution):
             dUn=divMat*Un
             Un-=dUn
         
-        maxVector=dUn.maxVector(3)
+        maxVector=dUn.maxVector(dim+1)
         isStationary= maxVector[0]/p0<precision and maxVector[1]/rho0<precision and maxVector[2]/rho0<precision;
-    
+        if(dim==3):
+            isStationary=isStationary and maxVector[3]/rho0<precision
         time=time+dt;
         it=it+1;
     
@@ -179,6 +194,8 @@ def WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq,resolution):
             delta_press=0
             delta_velx=0
             delta_vely=0
+            if(dim==3):
+                delta_velz=0
             for k in range(nbCells):
                 pressure_field[k]=Un[k*(dim+1)+0]
                 velocity_field[k,0]=Un[k*(dim+1)+1]/rho0
@@ -192,12 +209,17 @@ def WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq,resolution):
                     delta_velx=abs(initial_velocity[k,0]-velocity_field[k,0])
                 if (abs(initial_velocity[k,1]-velocity_field[k,1])>delta_vely):
                     delta_vely=abs(initial_velocity[k,1]-velocity_field[k,1])
+                if(dim==3):
+                    if (abs(initial_velocity[k,2]-velocity_field[k,2])>delta_velz):
+                        delta_velz=abs(initial_velocity[k,2]-velocity_field[k,2])
             delta_vel=sqrt(delta_velx*delta_velx+delta_vely*delta_vely)
-
+            if(dim==3):
+                delta_vel=sqrt(delta_velx*delta_velx+delta_vely*delta_vely+delta_velz*delta_velz)
+                
             pressure_field.setTime(time,it);
-            pressure_field.writeVTK("WaveSystem2DFV"+str(nbCells)+"_pressure",False);
+            pressure_field.writeVTK("WaveSystem"+str(dim)+"DFV"+str(nbCells)+"_pressure",False);
             velocity_field.setTime(time,it);
-            velocity_field.writeVTK("WaveSystem2DFV"+str(nbCells)+"_velocity",False);
+            velocity_field.writeVTK("WaveSystem"+str(dim)+"DFV"+str(nbCells)+"_velocity",False);
 
             print "Ecart au stationnaire exact : error_p= ",delta_press/p0," error_ux= ",delta_velx/rho0," error_uy= ",delta_vely/rho0
             print
@@ -215,6 +237,8 @@ def WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq,resolution):
         delta_press=0
         delta_velx=0
         delta_vely=0
+        if(dim==3):
+            delta_velz=0
         for k in range(nbCells):
             pressure_field[k]=Un[k*(dim+1)+0]
             velocity_field[k,0]=Un[k*(dim+1)+1]/rho0
@@ -228,18 +252,25 @@ def WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq,resolution):
                 delta_velx=abs(initial_velocity[k,0]-velocity_field[k,0])
             if (abs(initial_velocity[k,1]-velocity_field[k,1])>delta_vely):
                 delta_vely=abs(initial_velocity[k,1]-velocity_field[k,1])
+            if(dim==3):
+                if (abs(initial_velocity[k,2]-velocity_field[k,2])>delta_velz):
+                    delta_velz=abs(initial_velocity[k,2]-velocity_field[k,2])
 
         pressure_field.setTime(time,0);
-        pressure_field.writeVTK("WaveSystem2DFV"+str(nbCells)+"_pressure_Stat");
+        pressure_field.writeVTK("WaveSystem"+str(dim)+"DFV"+str(nbCells)+"_pressure_Stat");
         velocity_field.setTime(time,0);
-        velocity_field.writeVTK("WaveSystem2DFV"+str(nbCells)+"_velocity_Stat");
+        velocity_field.writeVTK("WaveSystem"+str(dim)+"DFV"+str(nbCells)+"_velocity_Stat");
 
         #Postprocessing : Extraction of the diagonal data
-        diag_data_press=VTK_routines.Extract_field_data_over_line_to_numpyArray(pressure_field,[0,1,0],[1,0,0], resolution)    
-        diag_data_vel  =VTK_routines.Extract_field_data_over_line_to_numpyArray(velocity_field,[0,1,0],[1,0,0], resolution)    
+        if(dim==2):
+            diag_data_press=VTK_routines.Extract_field_data_over_line_to_numpyArray(pressure_field,[0,1,0],[1,0,0], resolution)    
+            diag_data_vel  =VTK_routines.Extract_field_data_over_line_to_numpyArray(velocity_field,[0,1,0],[1,0,0], resolution)    
+        elif(dim==3):
+            diag_data_press=VTK_routines.Extract_field_data_over_line_to_numpyArray(pressure_field,[0,0,0],[1,1,1], resolution)    
+            diag_data_vel  =VTK_routines.Extract_field_data_over_line_to_numpyArray(velocity_field,[0,0,0],[1,1,1], resolution)    
         #Postprocessing : save 2D picture
-        PV_routines.Save_PV_data_to_picture_file("WaveSystem2DFV"+str(nbCells)+"_pressure_Stat"+'_0.vtu',"Pressure",'CELLS',"WaveSystem2DFV"+str(nbCells)+"_pressure_Stat")
-        PV_routines.Save_PV_data_to_picture_file("WaveSystem2DFV"+str(nbCells)+"_velocity_Stat"+'_0.vtu',"Velocity",'CELLS',"WaveSystem2DFV"+str(nbCells)+"_velocity_Stat")
+        PV_routines.Save_PV_data_to_picture_file("WaveSystem"+str(dim)+"DFV"+str(nbCells)+"_pressure_Stat"+'_0.vtu',"Pressure",'CELLS',"WaveSystem2DFV"+str(nbCells)+"_pressure_Stat")
+        PV_routines.Save_PV_data_to_picture_file("WaveSystem"+str(dim)+"DFV"+str(nbCells)+"_velocity_Stat"+'_0.vtu',"Velocity",'CELLS',"WaveSystem2DFV"+str(nbCells)+"_velocity_Stat")
         
         return delta_press/p0, max(delta_velx,delta_vely)/rho0, nbCells, time, it, velocity_field.getNormEuclidean().max(), diag_data_press, diag_data_vel
     else:
@@ -249,7 +280,7 @@ def WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq,resolution):
 
 def solve(my_mesh,filename,resolution):
     start = time.time()
-    print("Resolution of the 2D Wave system:")
+    print("Resolution of the Wave system:")
 
     # Problem data
     tmax = 1000.
@@ -257,7 +288,7 @@ def solve(my_mesh,filename,resolution):
     cfl = 0.45
     output_freq = 1000
 
-    error_p, error_u, nbCells, t_final, ndt_final, max_vel, diag_data_press, diag_data_vel = WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq, resolution)
+    error_p, error_u, nbCells, t_final, ndt_final, max_vel, diag_data_press, diag_data_vel = WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, resolution)
     end = time.time()
 
     return error_p, error_u, nbCells, t_final, ndt_final, max_vel, diag_data_press, diag_data_vel, end - start
@@ -271,9 +302,4 @@ def solve_file( filename,resolution):
 if __name__ == """__main__""":
     M=cdmath.Mesh(0,1,20,0,1,20)
     
-    M.setGroupAtPlan(xsup,0,precision,"Wall");
-    M.setGroupAtPlan(xinf,0,precision,"Wall");
-    M.setGroupAtPlan(ysup,1,precision,"Wall");
-    M.setGroupAtPlan(yinf,1,precision,"Wall");
-
     solve(M,"SquareRegularSquares",100)
