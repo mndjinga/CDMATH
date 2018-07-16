@@ -41,11 +41,11 @@ Mesh::Mesh( void )
 	_numberOfCells = 0;
     _isStructured=false;
 	_xMin=0.;
-	_xSup=0.;
+	_xMax=0.;
 	_yMin=0.;
-	_ySup=0.;
+	_yMax=0.;
 	_zMin=0.;
-	_zSup=0.;
+	_zMax=0.;
     _nxyz.resize(0);
     _dxyz.resize(0.);
 	_groupNames.resize(0);
@@ -74,16 +74,16 @@ Mesh::Mesh( const MEDCoupling::MEDCouplingIMesh* mesh )
 	mesh->getBoundingBox(Box0);
 
 	_xMin=Box0[0];
-	_xSup=Box0[1];
+	_xMax=Box0[1];
 	if (_spaceDim>=2)
 	{
 		_yMin=Box0[2];
-		_ySup=Box0[3];
+		_yMax=Box0[3];
 	}
 	if (_spaceDim>=3)
 	{
 		_zMin=Box0[4];
-		_zSup=Box0[5];
+		_zMax=Box0[5];
 	}
 
 	double *originPtr = new double[_spaceDim];
@@ -123,11 +123,11 @@ Mesh::Mesh( const Mesh& m )
         _nxyz = m.getCellGridStructure() ;
         _dxyz=m.getDXYZ();
         _xMin=m.getXMin();
-        _xSup=m.getXSup();
+        _xMax=m.getXMax();
         _yMin=m.getYMin();
-        _ySup=m.getYSup();
+        _yMax=m.getYMax();
         _zMin=m.getZMin();
-        _zSup=m.getZSup();
+        _zMax=m.getZMax();
     }
 	_numberOfNodes = m.getNumberOfNodes();
 	_numberOfFaces = m.getNumberOfFaces();
@@ -178,20 +178,20 @@ Mesh::readMeshMed( const std::string filename, const int meshLevel)
         structuredMesh->getBoundingBox(Box0);
     
         _xMin=Box0[0];
-        _xSup=Box0[1];
+        _xMax=Box0[1];
         if (_spaceDim>=2)
         {
             _yMin=Box0[2];
-            _ySup=Box0[3];
+            _yMax=Box0[3];
         }
         if (_spaceDim>=3)
         {
             _zMin=Box0[4];
-            _zSup=Box0[5];
+            _zMax=Box0[5];
         }
     }
     else
-        _isStructured=true;
+        _isStructured=false;
     
 	MEDCouplingUMesh*  mu = setMesh();
 	setGroups(m, mu);
@@ -267,59 +267,129 @@ Mesh::getIndexFacePeriodic(int indexFace) const
 {
 	if (!_faces[indexFace].isBorder())
 		return -1;
-	double minmax[4];
-	_mesh->buildUnstructured()->getCoords()->getMinMaxPerComponent(minmax);
-	double xmin=minmax[0];
-	double xmax=minmax[1];
-	double ymin=minmax[2];
-	double ymax=minmax[3];
-	int nbFace=getNumberOfFaces();
-	double x=_faces[indexFace].x();
-	double y=_faces[indexFace].y();
-	double eps=1.E-10;
-	// pos=0 : bottom
-	// pos=1 : right
-	// pos=2 : top
-	// pos=3 : left
-	int pos=-1;
-	if (abs(y-ymin)<1.E-10)
-		pos=0;
-	if (abs(x-xmax)<1.E-10)
-		pos=1;
-	if (abs(y-ymax)<1.E-10)
-		pos=2;
-	if (abs(x-xmin)<1.E-10)
-		pos=3;
-	if (pos==-1)
-		cerr << "periodic face not found " << endl;
 
-	int ifaceOk=-1;
-	for (int iface=0;iface<nbFace;iface++)
-	{
-		double xi=_faces[iface].x();
-		double yi=_faces[iface].y();
-		if (abs(y-yi)<eps && pos==1 && abs(xi-xmin)<eps)
-		{
-			ifaceOk=iface;
-			break;
-		}
-		if (abs(y-yi)<eps && pos==3 && abs(xi-xmax)<eps)
-		{
-			ifaceOk=iface;
-			break;
-		}
-		if (abs(x-xi)<eps && pos==0 && abs(yi-ymax)<eps)
-		{
-			ifaceOk=iface;
-			break;
-		}
-		if (abs(x-xi)<eps && pos==2 && abs(yi-ymin)<eps)
-		{
-			ifaceOk=iface;
-			break;
-		}
-	}
-	return ifaceOk;
+	int nbFace=getNumberOfFaces();
+    double eps=1.E-10;
+    int ifaceOk=-1;
+
+    if(_spaceDim==2)
+    {
+        double x=_faces[indexFace].x();
+        double y=_faces[indexFace].y();
+        // pos=0 : bottom
+        // pos=1 : right
+        // pos=2 : top
+        // pos=3 : left
+        int pos=-1;
+        if (abs(y-_yMin)<eps)
+            pos=0;
+        if (abs(x-_xMax)<eps)
+            pos=1;
+        if (abs(y-_yMax)<eps)
+            pos=2;
+        if (abs(x-_xMin)<eps)
+            pos=3;
+        if (pos==-1)
+            throw CdmathException("Mesh::getIndexFacePeriodic: border position not found, pos==-1 " );
+    
+        for (int iface=0;iface<nbFace;iface++)
+        {
+            double xi=_faces[iface].x();
+            double yi=_faces[iface].y();
+            if (abs(y-yi)<eps && pos==1 && abs(xi-_xMin)<eps)
+            {
+                ifaceOk=iface;
+                break;
+            }
+            if (abs(y-yi)<eps && pos==3 && abs(xi-_xMax)<eps)
+            {
+                ifaceOk=iface;
+                break;
+            }
+            if (abs(x-xi)<eps && pos==0 && abs(yi-_yMax)<eps)
+            {
+                ifaceOk=iface;
+                break;
+            }
+            if (abs(x-xi)<eps && pos==2 && abs(yi-_yMin)<eps)
+            {
+                ifaceOk=iface;
+                break;
+            }
+        }
+    }
+    else if(_spaceDim==3)
+    {
+        double x=_faces[indexFace].x();
+        double y=_faces[indexFace].y();
+        double z=_faces[indexFace].z();
+        // pos=0 : bottom
+        // pos=1 : right
+        // pos=2 : top
+        // pos=3 : left
+        // pos=4 : down
+        // pos=5 : up
+        
+        int pos=-1;
+        if (abs(y-_yMin)<eps)
+            pos=0;
+        if (abs(x-_xMax)<eps)
+            pos=1;
+        if (abs(y-_yMax)<eps)
+            pos=2;
+        if (abs(x-_xMin)<eps)
+            pos=3;
+        if (abs(z-_zMin)<eps)
+            pos=4;
+        if (abs(z-_zMax)<eps)
+            pos=5;
+        if (pos==-1)
+            throw CdmathException("Mesh::getIndexFacePeriodic: border position not found, pos==-1 " );
+    
+        for (int iface=0;iface<nbFace;iface++)
+        {
+            double xi=_faces[iface].x();
+            double yi=_faces[iface].y();
+            double zi=_faces[iface].z();
+            if (abs(y-yi)<eps && abs(z-zi)<eps && pos==1 && abs(xi-_xMin)<eps)
+            {
+                ifaceOk=iface;
+                break;
+            }
+            if (abs(y-yi)<eps && abs(z-zi)<eps && pos==3 && abs(xi-_xMax)<eps)
+            {
+                ifaceOk=iface;
+                break;
+            }
+            if (abs(x-xi)<eps && abs(z-zi)<eps && pos==0 && abs(yi-_yMax)<eps)
+            {
+                ifaceOk=iface;
+                break;
+            }
+            if (abs(x-xi)<eps && abs(z-zi)<eps && pos==2 && abs(yi-_yMin)<eps)
+            {
+                ifaceOk=iface;
+                break;
+            }
+            if (abs(x-xi)<eps && abs(y-yi)<eps && pos==4 && abs(zi-_zMax)<eps)
+            {
+                ifaceOk=iface;
+                break;
+            }
+            if (abs(x-xi)<eps && abs(y-yi)<eps && pos==5 && abs(zi-_zMin)<eps)
+            {
+                ifaceOk=iface;
+                break;
+            }
+        }    
+    }
+    else
+        throw CdmathException("Mesh::getIndexFacePeriodic: Mesh dimensionshould be 2 or 3");
+    
+    if (ifaceOk==-1)
+        throw CdmathException("Mesh::getIndexFacePeriodic: periodic face not found, ifaceOk==-1 " );
+
+    return ifaceOk;
 }
 
 bool
@@ -802,7 +872,27 @@ Mesh::setMesh( void )
 	else
 		throw CdmathException("Mesh::setMesh space dimension should be 1, 2 or 3");
 
-	desc->decrRef();
+    //definition of the bounding box for unstructured meshes
+    if(!_isStructured)//Structured case is treated in function readMeshMed
+    {
+        double Box0[2*_spaceDim];
+        coo->getMinMaxPerComponent(Box0);
+
+        _xMin=Box0[0];
+        _xMax=Box0[1];
+        if (_spaceDim>=2)
+        {
+            _yMin=Box0[2];
+            _yMax=Box0[3];
+        }
+        if (_spaceDim>=3)
+        {
+            _zMin=Box0[4];
+            _zMax=Box0[5];
+        }
+    }
+    
+    desc->decrRef();
 	descI->decrRef();
 	revDesc->decrRef();
 	revDescI->decrRef();
@@ -818,25 +908,25 @@ Mesh::setMesh( void )
 }
 
 //----------------------------------------------------------------------
-Mesh::Mesh( double xinf, double xsup, int nx, std::string meshName )
+Mesh::Mesh( double xmin, double xmax, int nx, std::string meshName )
 //----------------------------------------------------------------------
 {
 	if(nx<=0)
-		throw CdmathException("Mesh::Mesh( double xinf, double xsup, int nx) : nx <= 0");
-	if(xinf>=xsup)
-		throw CdmathException("Mesh::Mesh( double xinf, double xsup, int nx) : xinf >= xsup");
+		throw CdmathException("Mesh::Mesh( double xmin, double xmax, int nx) : nx <= 0");
+	if(xmin>=xmax)
+		throw CdmathException("Mesh::Mesh( double xmin, double xmax, int nx) : xmin >= xmax");
 
-	double dx = (xsup - xinf)/nx ;
+	double dx = (xmax - xmin)/nx ;
 
 	_spaceDim = 1 ;
 	_meshDim  = 1 ;
     _isStructured = true;
-	_xMin=xinf;
-	_xSup=xsup;
+	_xMin=xmin;
+	_xMax=xmax;
 	_yMin=0.;
-	_ySup=0.;
+	_yMax=0.;
 	_zMin=0.;
-	_zSup=0.;
+	_zMax=0.;
 
 	_dxyz.resize(_spaceDim);
 	_dxyz[0]=dx;
@@ -847,7 +937,7 @@ Mesh::Mesh( double xinf, double xsup, int nx, std::string meshName )
 	double *dxyzPtr = new double[_spaceDim];
 	int *nodeStrctPtr = new int[_spaceDim];
 
-	originPtr[0]=xinf;
+	originPtr[0]=xmin;
 	nodeStrctPtr[0]=nx+1;
 	dxyzPtr[0]=dx;
 
@@ -990,11 +1080,11 @@ Mesh::Mesh( std::vector<double> points, std::string meshName )
 	_spaceDim = 1 ;
 	_meshDim  = 1 ;
 	_xMin=points[0];
-	_xSup=points[nx-1];
+	_xMax=points[nx-1];
 	_yMin=0.;
-	_ySup=0.;
+	_yMax=0.;
 	_zMin=0.;
-	_zSup=0.;
+	_zMax=0.;
 
     _isStructured = false;
     //Not relevant
@@ -1116,25 +1206,25 @@ Mesh::Mesh( std::vector<double> points, std::string meshName )
 	mu->decrRef();
 }
 //----------------------------------------------------------------------
-Mesh::Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny, std::string meshName)
+Mesh::Mesh( double xmin, double xmax, int nx, double ymin, double ymax, int ny, std::string meshName)
 //----------------------------------------------------------------------
 {
 	if(nx<=0 || ny<=0)
-		throw CdmathException("Mesh::Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny) : nx <= 0 or ny <= 0");
-	if(xinf>=xsup)
-		throw CdmathException("Mesh::Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny) : xinf >= xsup");
-	if(yinf>=ysup)
-		throw CdmathException("Mesh::Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny) : yinf >= ysup");
-	_xMin=xinf;
-	_xSup=xsup;
-	_yMin=yinf;
-	_ySup=ysup;
+		throw CdmathException("Mesh::Mesh( double xmin, double xmax, int nx, double ymin, double ymax, int ny) : nx <= 0 or ny <= 0");
+	if(xmin>=xmax)
+		throw CdmathException("Mesh::Mesh( double xmin, double xmax, int nx, double ymin, double ymax, int ny) : xmin >= xmax");
+	if(ymin>=ymax)
+		throw CdmathException("Mesh::Mesh( double xmin, double xmax, int nx, double ymin, double ymax, int ny) : ymin >= ymax");
+	_xMin=xmin;
+	_xMax=xmax;
+	_yMin=ymin;
+	_yMax=ymax;
 	_zMin=0.;
-	_zSup=0.;
+	_zMax=0.;
 
 
-	double dx = (xsup - xinf)/nx ;
-	double dy = (ysup - yinf)/ny ;
+	double dx = (xmax - xmin)/nx ;
+	double dy = (ymax - ymin)/ny ;
 
 	_spaceDim = 2 ;
 	_meshDim  = 2 ;
@@ -1151,8 +1241,8 @@ Mesh::Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny, 
 	double *dxyzPtr = new double[_spaceDim];
 	int *nodeStrctPtr = new int[_spaceDim];
 
-	originPtr[0]=xinf;
-	originPtr[1]=yinf;
+	originPtr[0]=xmin;
+	originPtr[1]=ymin;
 	nodeStrctPtr[0]=nx+1;
 	nodeStrctPtr[1]=ny+1;
 	dxyzPtr[0]=dx;
@@ -1174,30 +1264,30 @@ Mesh::Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny, 
 }
 
 //----------------------------------------------------------------------
-Mesh::Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny, double zinf, double zsup, int nz, std::string meshName)
+Mesh::Mesh( double xmin, double xmax, int nx, double ymin, double ymax, int ny, double zmin, double zmax, int nz, std::string meshName)
 //----------------------------------------------------------------------
 {
 	if(nx<=0 || ny<=0 || nz<=0)
-		throw CdmathException("Mesh::Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny, double zinf, double zsup, int nz) : nx <= 0 or ny <= 0 or nz <= 0");
-	if(xinf>=xsup)
-		throw CdmathException("Mesh::Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny, double zinf, double zsup, int nz) : xinf >= xsup");
-	if(yinf>=ysup)
-		throw CdmathException("Mesh::Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny, double zinf, double zsup, int nz) : yinf >= ysup");
-	if(zinf>=zsup)
-		throw CdmathException("Mesh::Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny, double zinf, double zsup, int nz) : zinf >= zsup");
+		throw CdmathException("Mesh::Mesh( double xmin, double xmax, int nx, double ymin, double ymax, int ny, double zmin, double zmax, int nz) : nx <= 0 or ny <= 0 or nz <= 0");
+	if(xmin>=xmax)
+		throw CdmathException("Mesh::Mesh( double xmin, double xmax, int nx, double ymin, double ymax, int ny, double zmin, double zmax, int nz) : xmin >= xmax");
+	if(ymin>=ymax)
+		throw CdmathException("Mesh::Mesh( double xmin, double xmax, int nx, double ymin, double ymax, int ny, double zmin, double zmax, int nz) : ymin >= ymax");
+	if(zmin>=zmax)
+		throw CdmathException("Mesh::Mesh( double xmin, double xmax, int nx, double ymin, double ymax, int ny, double zmin, double zmax, int nz) : zmin >= zmax");
 
 	_spaceDim = 3;
 	_meshDim  = 3;
-	_xMin=xinf;
-	_xSup=xsup;
-	_yMin=yinf;
-	_ySup=ysup;
-	_zMin=zinf;
-	_zSup=zsup;
+	_xMin=xmin;
+	_xMax=xmax;
+	_yMin=ymin;
+	_yMax=ymax;
+	_zMin=zmin;
+	_zMax=zmax;
 
-	double dx = (xsup - xinf)/nx ;
-	double dy = (ysup - yinf)/ny ;
-	double dz = (zsup - zinf)/nz ;
+	double dx = (xmax - xmin)/nx ;
+	double dy = (ymax - ymin)/ny ;
+	double dz = (zmax - zmin)/nz ;
 
     _isStructured = true;
 	_dxyz.resize(_spaceDim);
@@ -1214,9 +1304,9 @@ Mesh::Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny, 
 	double *dxyzPtr = new double[_spaceDim];
 	int *nodeStrctPtr = new int[_spaceDim];
 
-	originPtr[0]=xinf;
-	originPtr[1]=yinf;
-	originPtr[2]=zinf;
+	originPtr[0]=xmin;
+	originPtr[1]=ymin;
+	originPtr[2]=zmin;
 	nodeStrctPtr[0]=nx+1;
 	nodeStrctPtr[1]=ny+1;
 	nodeStrctPtr[2]=nz+1;
@@ -1323,13 +1413,13 @@ Mesh::getXMin( void )  const
 
 //----------------------------------------------------------------------
 double
-Mesh::getXSup( void )  const
+Mesh::getXMax( void )  const
 //----------------------------------------------------------------------
 {
     if(!_isStructured)
-		throw CdmathException("double Mesh::getXsup( void ) : xSup is defined only for structured meshes !");
+		throw CdmathException("double Mesh::getXmax( void ) : xMax is defined only for structured meshes !");
         
-	return _xSup ;
+	return _xMax ;
 }
 
 //----------------------------------------------------------------------
@@ -1345,13 +1435,13 @@ Mesh::getYMin( void )  const
 
 //----------------------------------------------------------------------
 double
-Mesh::getYSup( void )  const
+Mesh::getYMax( void )  const
 //----------------------------------------------------------------------
 {
     if(!_isStructured)
-		throw CdmathException("double Mesh::getYSup( void ) : ySup is defined only for structured meshes !");
+		throw CdmathException("double Mesh::getYMax( void ) : yMax is defined only for structured meshes !");
         
-	return _ySup ;
+	return _yMax ;
 }
 
 //----------------------------------------------------------------------
@@ -1367,13 +1457,13 @@ Mesh::getZMin( void )  const
 
 //----------------------------------------------------------------------
 double
-Mesh::getZSup( void )  const
+Mesh::getZMax( void )  const
 //----------------------------------------------------------------------
 {
     if(!_isStructured)
-		throw CdmathException("double Mesh::getZSup( void ) : zSup is defined only for structured meshes !");
+		throw CdmathException("double Mesh::getZMax( void ) : zMax is defined only for structured meshes !");
 
-	return _zSup ;
+	return _zMax ;
 }
 
 //----------------------------------------------------------------------
@@ -1484,11 +1574,11 @@ Mesh::operator= ( const Mesh& mesh )
         _nxyz = mesh.getCellGridStructure() ;
         _dxyz=mesh.getDXYZ();
         _xMin=mesh.getXMin();
-        _xSup=mesh.getXSup();
+        _xMax=mesh.getXMax();
         _yMin=mesh.getYMin();
-        _ySup=mesh.getYSup();
+        _yMax=mesh.getYMax();
         _zMin=mesh.getZMin();
-        _zSup=mesh.getZSup();
+        _zMax=mesh.getZMax();
     }
 	_groupNames = mesh.getNamesOfGroups() ;
 	_groups = mesh.getGroups() ;

@@ -64,7 +64,7 @@ MeshTests::testClassMesh( void )
 {
 	double eps=1.E-10;
 
-	// Testing Mesh(xinf, xsup, nx)
+	// Testing Mesh(xmin, xMax, nx)
 	Mesh M1(0.0,4.0,4);
 	CPPUNIT_ASSERT_EQUAL( 1, M1.getSpaceDimension() );
 	CPPUNIT_ASSERT_EQUAL( 5, M1.getNumberOfNodes() );
@@ -97,12 +97,12 @@ MeshTests::testClassMesh( void )
     cout<<endl<<"Test mesh M1 normals"<<endl;
     testNormals(M1);
 
-	// Testing Mesh(xinf, xsup, nx, yinf, ysup, ny)
-	double xinf=0.0;
-	double xsup=4.0;
-	double yinf=0.0;
-	double ysup=4.0;
-	Mesh M2(xinf,xsup,4,yinf,ysup,4);
+	// Testing Mesh(xmin, xMax, nx, ymin, yMax, ny)
+	double xmin=0.0;
+	double xmax=4.0;
+	double ymin=0.0;
+	double ymax=4.0;
+	Mesh M2(xmin,xmax,4,ymin,ymax,4);
 	CPPUNIT_ASSERT_EQUAL( 4, M2.getNx() );
 	CPPUNIT_ASSERT_EQUAL( 4, M2.getNy() );
 	CPPUNIT_ASSERT_EQUAL( 2, M2.getSpaceDimension() );
@@ -125,10 +125,10 @@ MeshTests::testClassMesh( void )
 	CPPUNIT_ASSERT_EQUAL( x2, 4. );
 	CPPUNIT_ASSERT_EQUAL( y2, 4. );
 
-	M2.setGroupAtPlan(xsup,0,eps,"RightEdge");
-	M2.setGroupAtPlan(xinf,0,eps,"LeftEdge");
-	M2.setGroupAtPlan(yinf,1,eps,"BottomEdge");
-	M2.setGroupAtPlan(ysup,1,eps,"TopEdge");
+	M2.setGroupAtPlan(xmax,0,eps,"RightEdge");
+	M2.setGroupAtPlan(xmin,0,eps,"LeftEdge");
+	M2.setGroupAtPlan(ymin,1,eps,"BottomEdge");
+	M2.setGroupAtPlan(ymax,1,eps,"TopEdge");
 	CPPUNIT_ASSERT_EQUAL( 4, int(M2.getNamesOfGroups().size()) );
 	CPPUNIT_ASSERT(M2.getNamesOfGroups()[2].compare("BottomEdge")==0);
 	int nbFaces=M2.getNumberOfFaces();
@@ -143,7 +143,7 @@ MeshTests::testClassMesh( void )
 			double xi=M2.getFace(indexFace).x();
 			double yi=M2.getFace(indexFace).y();
 			CPPUNIT_ASSERT_EQUAL( xi, x );
-			CPPUNIT_ASSERT_EQUAL( yi, ysup );
+			CPPUNIT_ASSERT_EQUAL( yi, ymax );
 			CPPUNIT_ASSERT_EQUAL( true, M2.getFace(indexFace).isBorder() );
 			CPPUNIT_ASSERT_EQUAL( indexFace, indexFaces(i) );
 		}
@@ -155,8 +155,14 @@ MeshTests::testClassMesh( void )
     cout<<"Test mesh M2 normals"<<endl;
     testNormals(M2);
 
-	// Testing Mesh(xinf, xsup, nx, yinf, ysup, ny, zinf, zsup, nz) (hexaèdres)
-    Mesh M3(0.0,1.0,4,0.0,1.0,4,0.0,1.0,4);
+	// Testing Mesh(xmin, xmax, nx, ymin, ymax, ny, zmin, zmax, nz) (hexaèdres)
+	xmin=0.0;
+	xmax=1.0;
+	ymin=0.0;
+	ymax=1.0;
+	double zmin=0.0;
+	double zmax=1.0;
+    Mesh M3(xmin,xmax,4,ymin,ymax,4,zmin,zmax,4);
     CPPUNIT_ASSERT_EQUAL( 3, M3.getSpaceDimension() );
     CPPUNIT_ASSERT(M3.isHexahedral());
     int nbCellsM3 = M3.getNumberOfCells();
@@ -164,6 +170,38 @@ MeshTests::testClassMesh( void )
     for(int i=0; i<nbCellsM3; i++)
         volM3+=M3.getCell(i).getMeasure();
     CPPUNIT_ASSERT_DOUBLES_EQUAL( 1., volM3, eps );
+
+	M3.setGroupAtPlan(xmax,0,eps,"RightEdge");
+	M3.setGroupAtPlan(xmin,0,eps,"LeftEdge");
+	M3.setGroupAtPlan(ymin,1,eps,"BottomEdge");
+	M3.setGroupAtPlan(ymax,1,eps,"TopEdge");
+	M3.setGroupAtPlan(zmin,2,eps,"DownEdge");
+	M3.setGroupAtPlan(zmax,2,eps,"UpEdge");
+	CPPUNIT_ASSERT_EQUAL( 6, int(M3.getNamesOfGroups().size()) );
+	CPPUNIT_ASSERT(M3.getNamesOfGroups()[4].compare("DownEdge")==0);
+	nbFaces=M3.getNumberOfFaces();
+	indexFaces=M3.getIndexFacePeriodic();
+	for (int i=0;i<nbFaces;i++)
+	{
+		double x=M3.getFaces()[i].x();
+		double y=M3.getFaces()[i].y();
+		double z=M3.getFaces()[i].z();
+		if (z==0. && x==1./8 && y==1./8)
+		{
+			int indexFace=M3.getIndexFacePeriodic(i);
+			double xi=M3.getFace(indexFace).x();
+			double yi=M3.getFace(indexFace).y();
+			double zi=M3.getFace(indexFace).z();
+			CPPUNIT_ASSERT_EQUAL( xi, x );
+			CPPUNIT_ASSERT_EQUAL( yi, y );
+			CPPUNIT_ASSERT_EQUAL( zi, zmax );
+			CPPUNIT_ASSERT_EQUAL( true, M3.getFace(indexFace).isBorder() );
+			CPPUNIT_ASSERT_EQUAL( indexFace, indexFaces(i) );
+		}
+
+		if (z==0.5 && y==0. && x==1.)
+			CPPUNIT_ASSERT_EQUAL( -1, M3.getIndexFacePeriodic(i) );
+	}
 
     cout<<"Test mesh M3 normals"<<endl;
     testNormals(M3);
@@ -259,8 +297,8 @@ MeshTests::testClassMesh( void )
     int nbCellsM7 = 2*11;
     int nbNodes = nbCellsM7+1;
     vector<double> points (nbNodes);
-    double xmin=0;
-    double xmax=1;
+    xmin=0;
+    xmax=1;
     double dx_min = (xmax-xmin)*2/nbCellsM7/3;
     double dx_max = 2*dx_min;
     points[0]=0;

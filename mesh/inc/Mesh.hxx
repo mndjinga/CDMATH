@@ -52,11 +52,11 @@ public: //----------------------------------------------------------------
 
 	/**
 	 * constructor with data
-	 * @param xinf : minimum x
-	 * @param xsup : maximum x
+	 * @param xmin : minimum x
+	 * @param xmax : maximum x
 	 * @param nx : Number of cell in x direction
 	 */
-	Mesh( double xinf, double xsup, int nx, std::string meshName="MESH1D_Regular_Grid" ) ;
+	Mesh( double xmin, double xmax, int nx, std::string meshName="MESH1D_Regular_Grid" ) ;
 
 	/**
 	 * constructor with data
@@ -66,28 +66,28 @@ public: //----------------------------------------------------------------
 
 	/**
 	 * constructor with data
-	 * @param xinf : minimum x
-	 * @param xsup : maximum x
-	 * @param yinf : minimum y
-	 * @param ysup : maximum y
+	 * @param xmin : minimum x
+	 * @param xmax : maximum x
+	 * @param ymin : minimum y
+	 * @param ymax : maximum y
 	 * @param nx : Number of cell in x direction
 	 * @param ny : Number of cell in y direction
 	 */
-	Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny, std::string meshName="MESH2D_Regular_Grid") ;
+	Mesh( double xmin, double xmax, int nx, double ymin, double ymax, int ny, std::string meshName="MESH2D_Regular_Grid") ;
 
 	/**
 	 * constructor with data
-	 * @param xinf : minimum x
-	 * @param xsup : maximum x
-	 * @param yinf : minimum y
-	 * @param ysup : maximum y
-	 * @param zinf : minimum z
-	 * @param zsup : maximum z
+	 * @param xmin : minimum x
+	 * @param xmax : maximum x
+	 * @param ymin : minimum y
+	 * @param ymax : maximum y
+	 * @param zmin : minimum z
+	 * @param zmax : maximum z
 	 * @param nx : Number of cell in x direction
 	 * @param ny : Number of cell in y direction
 	 * @param nz : Number of cell in z direction
 	 */
-	Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny, double zinf, double zsup, int nz, std::string meshName="MESH3D_Regular_Grid") ;
+	Mesh( double xmin, double xmax, int nx, double ymin, double ymax, int ny, double zmin, double zmax, int nz, std::string meshName="MESH3D_Regular_Grid") ;
 
 	Mesh( const MEDCoupling::MEDCouplingIMesh* mesh ) ;
 
@@ -195,15 +195,15 @@ public: //----------------------------------------------------------------
 
 	double getXMin( void )  const ;// for structured meshes
 
-	double getXSup( void )  const ;// for structured meshes
+	double getXMax( void )  const ;// for structured meshes
 
 	double getYMin( void )  const ;// for structured meshes
 
-	double getYSup( void )  const ;// for structured meshes
+	double getYMax( void )  const ;// for structured meshes
 
 	double getZMin( void )  const ;// for structured meshes
 
-	double getZSup( void )  const ;// for structured meshes
+	double getZMax( void )  const ;// for structured meshes
 
 	std::vector<double> getDXYZ() const ;// for structured meshes
 
@@ -289,15 +289,15 @@ private: //----------------------------------------------------------------
     
 	double _xMin;
 
-	double _xSup;
+	double _xMax;
 
 	double _yMin;
 
-	double _ySup;
+	double _yMax;
 
 	double _zMin;
 
-	double _zSup;
+	double _zMax;
 
 	std::vector<int> _nxyz;
 
