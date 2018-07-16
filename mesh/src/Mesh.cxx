@@ -270,6 +270,7 @@ Mesh::getIndexFacePeriodic(int indexFace) const
 
 	int nbFace=getNumberOfFaces();
     double eps=1.E-10;
+    int pos=-1;
     int ifaceOk=-1;
 
     if(_spaceDim==2)
@@ -280,7 +281,6 @@ Mesh::getIndexFacePeriodic(int indexFace) const
         // pos=1 : right
         // pos=2 : top
         // pos=3 : left
-        int pos=-1;
         if (abs(y-_yMin)<eps)
             pos=0;
         if (abs(x-_xMax)<eps)
@@ -330,7 +330,6 @@ Mesh::getIndexFacePeriodic(int indexFace) const
         // pos=4 : down
         // pos=5 : up
         
-        int pos=-1;
         if (abs(y-_yMin)<eps)
             pos=0;
         if (abs(x-_xMax)<eps)
