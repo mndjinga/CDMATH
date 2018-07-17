@@ -146,7 +146,8 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq,resolution):
     velocity_field.setTime(time,it);
     velocity_field.writeVTK("WaveSystem"+str(dim)+"DFV"+str(nbCells)+"_velocity");
 
-    total_pressure_initial=pressure_field.integral()[0]#For conservation test later
+    total_pressure_initial=pressure_field.integral()#For conservation test later
+    total_velocity_initial=velocity_field.integral()#For conservation test later
     
     dx_min=my_mesh.minRatioSurfVol()
 
@@ -192,10 +193,7 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq,resolution):
                 print "Linear system converged in ", iterGMRES, " GMRES iterations"
 
             delta_press=0
-            delta_velx=0
-            delta_vely=0
-            if(dim==3):
-                delta_velz=0
+            delta_v=cdmath.Vector(dim)
             for k in range(nbCells):
                 pressure_field[k]=Un[k*(dim+1)+0]
                 velocity_field[k,0]=Un[k*(dim+1)+1]/rho0
@@ -205,23 +203,20 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq,resolution):
                         velocity_field[k,2]=Un[k*(dim+1)+3]/rho0
                 if (abs(initial_pressure[k]-pressure_field[k])>delta_press):
                     delta_press=abs(initial_pressure[k]-pressure_field[k])
-                if (abs(initial_velocity[k,0]-velocity_field[k,0])>delta_velx):
-                    delta_velx=abs(initial_velocity[k,0]-velocity_field[k,0])
-                if (abs(initial_velocity[k,1]-velocity_field[k,1])>delta_vely):
-                    delta_vely=abs(initial_velocity[k,1]-velocity_field[k,1])
+                if (abs(initial_velocity[k,0]-velocity_field[k,0])>delta_v[0]):
+                    delta_v[0]=abs(initial_velocity[k,0]-velocity_field[k,0])
+                if (abs(initial_velocity[k,1]-velocity_field[k,1])>delta_v[1]):
+                    delta_v[1]=abs(initial_velocity[k,1]-velocity_field[k,1])
                 if(dim==3):
-                    if (abs(initial_velocity[k,2]-velocity_field[k,2])>delta_velz):
-                        delta_velz=abs(initial_velocity[k,2]-velocity_field[k,2])
-            delta_vel=sqrt(delta_velx*delta_velx+delta_vely*delta_vely)
-            if(dim==3):
-                delta_vel=sqrt(delta_velx*delta_velx+delta_vely*delta_vely+delta_velz*delta_velz)
+                    if (abs(initial_velocity[k,2]-velocity_field[k,2])>delta_v[2]):
+                        delta_v[2]=abs(initial_velocity[k,2]-velocity_field[k,2])
                 
             pressure_field.setTime(time,it);
             pressure_field.writeVTK("WaveSystem"+str(dim)+"DFV"+str(nbCells)+"_pressure",False);
             velocity_field.setTime(time,it);
             velocity_field.writeVTK("WaveSystem"+str(dim)+"DFV"+str(nbCells)+"_velocity",False);
 
-            print "Ecart au stationnaire exact : error_p= ",delta_press/p0," error_ux= ",delta_velx/rho0," error_uy= ",delta_vely/rho0
+            print "Ecart au stationnaire exact : error_p= ",delta_press/p0," error_||u||= ",delta_v.norm()
             print
     print"-- Iter: " + str(it) + ", Time: " + str(time) + ", dt: " + str(dt)
     print "Variation temporelle relative : pressure ", maxVector[0]/p0 ,", velocity x", maxVector[1]/rho0 ,", velocity y", maxVector[2]/rho0
@@ -232,13 +227,11 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq,resolution):
         raise ValueError("Maximum number of time steps reached : Stationary state not found !!!!!!!")
     elif(isStationary):
         print "Régime stationnaire atteint au pas de temps ", it, ", t= ", time
-        assert abs(total_pressure_initial-pressure_field.integral()[0])/p0<precision
+        assert (total_pressure_initial-pressure_field.integral()).norm()/p0<precision
+        assert (total_velocity_initial-velocity_field.integral()).norm()/rho0<precision
         print "------------------------------------------------------------------------------------"
         delta_press=0
-        delta_velx=0
-        delta_vely=0
-        if(dim==3):
-            delta_velz=0
+        delta_vel=cdmath.Vector(dim)
         for k in range(nbCells):
             pressure_field[k]=Un[k*(dim+1)+0]
             velocity_field[k,0]=Un[k*(dim+1)+1]/rho0
@@ -248,13 +241,13 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq,resolution):
                     velocity_field[k,2]=Un[k*(dim+1)+3]/rho0
             if (abs(initial_pressure[k]-pressure_field[k])>delta_press):
                 delta_press=abs(initial_pressure[k]-pressure_field[k])
-            if (abs(initial_velocity[k,0]-velocity_field[k,0])>delta_velx):
-                delta_velx=abs(initial_velocity[k,0]-velocity_field[k,0])
-            if (abs(initial_velocity[k,1]-velocity_field[k,1])>delta_vely):
-                delta_vely=abs(initial_velocity[k,1]-velocity_field[k,1])
-            if(dim==3):
-                if (abs(initial_velocity[k,2]-velocity_field[k,2])>delta_velz):
-                    delta_velz=abs(initial_velocity[k,2]-velocity_field[k,2])
+                if (abs(initial_velocity[k,0]-velocity_field[k,0])>delta_v[0]):
+                    delta_v[0]=abs(initial_velocity[k,0]-velocity_field[k,0])
+                if (abs(initial_velocity[k,1]-velocity_field[k,1])>delta_v[1]):
+                    delta_v[1]=abs(initial_velocity[k,1]-velocity_field[k,1])
+                if(dim==3):
+                    if (abs(initial_velocity[k,2]-velocity_field[k,2])>delta_v[2]):
+                        delta_v[2]=abs(initial_velocity[k,2]-velocity_field[k,2])
 
         pressure_field.setTime(time,0);
         pressure_field.writeVTK("WaveSystem"+str(dim)+"DFV"+str(nbCells)+"_pressure_Stat");
@@ -272,7 +265,7 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq,resolution):
         PV_routines.Save_PV_data_to_picture_file("WaveSystem"+str(dim)+"DFV"+str(nbCells)+"_pressure_Stat"+'_0.vtu',"Pressure",'CELLS',"WaveSystem2DFV"+str(nbCells)+"_pressure_Stat")
         PV_routines.Save_PV_data_to_picture_file("WaveSystem"+str(dim)+"DFV"+str(nbCells)+"_velocity_Stat"+'_0.vtu',"Velocity",'CELLS',"WaveSystem2DFV"+str(nbCells)+"_velocity_Stat")
         
-        return delta_press/p0, max(delta_velx,delta_vely)/rho0, nbCells, time, it, velocity_field.getNormEuclidean().max(), diag_data_press, diag_data_vel
+        return delta_press/p0, delta_v.norm(), nbCells, time, it, velocity_field.getNormEuclidean().max(), diag_data_press, diag_data_vel
     else:
         print "Temps maximum Tmax= ", tmax, " atteint"
         raise ValueError("Maximum time reached : Stationary state not found !!!!!!!")
