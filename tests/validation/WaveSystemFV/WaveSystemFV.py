@@ -90,7 +90,7 @@ def computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt):
                 implMat.addValue(j*nbComp,cellAutre*nbComp,Am)
                 implMat.addValue(j*nbComp,        j*nbComp,Am*(-1.))
             else  :
-                if(Fk.getGroupName() != "Wall" and Fk.getGroupName() != "Paroi" and Fk.getGroupName() != "Neumann"):#Periodic boundary condition unless Wall/Neumann specified explicitly
+                if( Fk.getGroupName() != "Wall" and Fk.getGroupName() != "Paroi" and Fk.getGroupName() != "Neumann"):#Periodic boundary condition unless Wall/Neumann specified explicitly
                     indexFP = indexFacesPerio[indexFace]
                     Fp = my_mesh.getFace(indexFP)
                     cellAutre = Fp.getCellsId()[0]
@@ -111,7 +111,7 @@ def computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt):
                 
     return implMat
 
-def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq,resolution):
+def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution):
     dim=my_mesh.getMeshDimension()
     nbCells = my_mesh.getNumberOfCells()
     
@@ -142,9 +142,12 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq,resolution):
             
     #sauvegarde de la donnée initiale
     pressure_field.setTime(time,it);
-    pressure_field.writeVTK("WaveSystem"+str(dim)+"DFV"+str(nbCells)+"_pressure");
+    pressure_field.writeVTK("WaveSystem"+str(dim)+"DFV"+meshName+str(nbCells)+"_pressure");
     velocity_field.setTime(time,it);
-    velocity_field.writeVTK("WaveSystem"+str(dim)+"DFV"+str(nbCells)+"_velocity");
+    velocity_field.writeVTK("WaveSystem"+str(dim)+"DFV"+meshName+str(nbCells)+"_velocity");
+    #Postprocessing : save 2D picture
+    PV_routines.Save_PV_data_to_picture_file("WaveSystem"+str(dim)+"DFV"+meshName+str(nbCells)+"_pressure"+'_0.vtu',"Pressure",'CELLS',"WaveSystem"+str(dim)+"DFV"+meshName+str(nbCells)+"_pressure_initial")
+    PV_routines.Save_PV_data_to_picture_file("WaveSystem"+str(dim)+"DFV"+meshName+str(nbCells)+"_velocity"+'_0.vtu',"Velocity",'CELLS',"WaveSystem"+str(dim)+"DFV"+meshName+str(nbCells)+"_velocity_initial")
 
     total_pressure_initial=pressure_field.integral()#For conservation test later
     total_velocity_initial=velocity_field.integral()#For conservation test later
@@ -212,9 +215,9 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq,resolution):
                         delta_v[2]=abs(initial_velocity[k,2]-velocity_field[k,2])
                 
             pressure_field.setTime(time,it);
-            pressure_field.writeVTK("WaveSystem"+str(dim)+"DFV"+str(nbCells)+"_pressure",False);
+            pressure_field.writeVTK("WaveSystem"+str(dim)+"DFV"+meshName+str(nbCells)+"_pressure",False);
             velocity_field.setTime(time,it);
-            velocity_field.writeVTK("WaveSystem"+str(dim)+"DFV"+str(nbCells)+"_velocity",False);
+            velocity_field.writeVTK("WaveSystem"+str(dim)+"DFV"+meshName+str(nbCells)+"_velocity",False);
 
             print "Ecart au stationnaire exact : error_p= ",delta_press/p0," error_||u||= ",delta_v.norm()
             print
@@ -250,9 +253,9 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq,resolution):
                         delta_v[2]=abs(initial_velocity[k,2]-velocity_field[k,2])
 
         pressure_field.setTime(time,0);
-        pressure_field.writeVTK("WaveSystem"+str(dim)+"DFV"+str(nbCells)+"_pressure_Stat");
+        pressure_field.writeVTK("WaveSystem"+str(dim)+"DFV"+meshName+str(nbCells)+"_pressure_Stat");
         velocity_field.setTime(time,0);
-        velocity_field.writeVTK("WaveSystem"+str(dim)+"DFV"+str(nbCells)+"_velocity_Stat");
+        velocity_field.writeVTK("WaveSystem"+str(dim)+"DFV"+meshName+str(nbCells)+"_velocity_Stat");
 
         #Postprocessing : Extraction of the diagonal data
         if(dim==2):
@@ -262,8 +265,8 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq,resolution):
             diag_data_press=VTK_routines.Extract_field_data_over_line_to_numpyArray(pressure_field,[0,0,0],[1,1,1], resolution)    
             diag_data_vel  =VTK_routines.Extract_field_data_over_line_to_numpyArray(velocity_field,[0,0,0],[1,1,1], resolution)    
         #Postprocessing : save 2D picture
-        PV_routines.Save_PV_data_to_picture_file("WaveSystem"+str(dim)+"DFV"+str(nbCells)+"_pressure_Stat"+'_0.vtu',"Pressure",'CELLS',"WaveSystem2DFV"+str(nbCells)+"_pressure_Stat")
-        PV_routines.Save_PV_data_to_picture_file("WaveSystem"+str(dim)+"DFV"+str(nbCells)+"_velocity_Stat"+'_0.vtu',"Velocity",'CELLS',"WaveSystem2DFV"+str(nbCells)+"_velocity_Stat")
+        PV_routines.Save_PV_data_to_picture_file("WaveSystem"+str(dim)+"DFV"+meshName+str(nbCells)+"_pressure_Stat"+'_0.vtu',"Pressure",'CELLS',"WaveSystem"+str(dim)+"DFV"+meshName+str(nbCells)+"_pressure_Stat")
+        PV_routines.Save_PV_data_to_picture_file("WaveSystem"+str(dim)+"DFV"+meshName+str(nbCells)+"_velocity_Stat"+'_0.vtu',"Velocity",'CELLS',"WaveSystem"+str(dim)+"DFV"+meshName+str(nbCells)+"_velocity_Stat")
         
         return delta_press/p0, delta_v.norm(), nbCells, time, it, velocity_field.getNormEuclidean().max(), diag_data_press, diag_data_vel
     else:
@@ -271,7 +274,7 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq,resolution):
         raise ValueError("Maximum time reached : Stationary state not found !!!!!!!")
 
 
-def solve(my_mesh,filename,resolution):
+def solve(my_mesh,meshName,resolution):
     start = time.time()
     print("Resolution of the Wave system with periodic boundary conditions:")
 
@@ -281,15 +284,15 @@ def solve(my_mesh,filename,resolution):
     cfl = 0.45
     output_freq = 1000
 
-    error_p, error_u, nbCells, t_final, ndt_final, max_vel, diag_data_press, diag_data_vel = WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, resolution)
+    error_p, error_u, nbCells, t_final, ndt_final, max_vel, diag_data_press, diag_data_vel = WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution)
     end = time.time()
 
     return error_p, error_u, nbCells, t_final, ndt_final, max_vel, diag_data_press, diag_data_vel, end - start
 
-def solve_file( filename,resolution):
+def solve_file( filename,meshName, resolution):
     my_mesh = cdmath.Mesh(filename+".med")
 
-    return solve(my_mesh, filename,resolution)
+    return solve(my_mesh, meshName,resolution)
     
 
 if __name__ == """__main__""":

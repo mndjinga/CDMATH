@@ -6,7 +6,7 @@ from math import log10, sqrt
 
 def test_validation3DWaveSystemTetrahedraFV():
     #### 3D tetrahedral mesh by simplexization of a cartesian mesh
-    meshList=[5,11,21]
+    meshList=[5,11]#,21]
     nbMeshes=len(meshList)
     error_p_tab=[0]*nbMeshes
     error_u_tab=[0]*nbMeshes
@@ -26,7 +26,7 @@ def test_validation3DWaveSystemTetrahedraFV():
     # Storing of numerical errors, mesh sizes and diagonal values
     for nx in meshList:
         my_mesh=cdmath.Mesh(6,0,1,nx,0,1,nx,0,1,nx)
-        error_p_tab[i], error_u_tab[i], mesh_size_tab[i], t_final[i], ndt_final[i], max_vel[i], diag_data_press[i], diag_data_vel[i], time_tab[i] =WaveSystemFV.solve(my_mesh,str(nx)+'x'+str(nx)+'x'+str(nx), resolution)
+        error_p_tab[i], error_u_tab[i], mesh_size_tab[i], t_final[i], ndt_final[i], max_vel[i], diag_data_press[i], diag_data_vel[i], time_tab[i] =WaveSystemFV.solve(my_mesh,str(nx)+'x'+str(nx)+'x'+str(nx), mesh_name, resolution)
         error_p_tab[i]=log10(error_p_tab[i])
         error_u_tab[i]=log10(error_u_tab[i])
         time_tab[i]=log10(time_tab[i])

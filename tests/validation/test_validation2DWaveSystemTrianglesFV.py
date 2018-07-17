@@ -6,7 +6,7 @@ from math import log10, sqrt
 
 def test_validation2DWaveSystemTrianglesFV():
     #### 2D triangle mesh
-    meshList=['triangleMeshSquare_1','triangleMeshSquare_2','triangleMeshSquare_3','triangleMeshSquare_4','triangleMeshSquare_5']
+    meshList=['triangleMeshSquare_1','triangleMeshSquare_2','triangleMeshSquare_3','triangleMeshSquare_4','triangleMeshSquare_5','triangleMeshSquare_6']
     nbMeshes=len(meshList)
     error_p_tab=[0]*nbMeshes
     error_u_tab=[0]*nbMeshes
@@ -26,7 +26,7 @@ def test_validation2DWaveSystemTrianglesFV():
     i=0
     # Storing of numerical errors, mesh sizes and diagonal values
     for filename in meshList:
-        error_p_tab[i], error_u_tab[i], mesh_size_tab[i], t_final[i], ndt_final[i], max_vel[i], diag_data_press[i], diag_data_vel[i], time_tab[i] =WaveSystemFV.solve_file(mesh_path+filename, resolution)
+        error_p_tab[i], error_u_tab[i], mesh_size_tab[i], t_final[i], ndt_final[i], max_vel[i], diag_data_press[i], diag_data_vel[i], time_tab[i] =WaveSystemFV.solve_file(mesh_path+filename, mesh_name, resolution)
         error_p_tab[i]=log10(error_p_tab[i])
         error_u_tab[i]=log10(error_u_tab[i])
         time_tab[i]=log10(time_tab[i])
@@ -60,7 +60,7 @@ def test_validation2DWaveSystemTrianglesFV():
     a3=nbMeshes
     
     det=a1*a3-a2*a2
-    assert det!=0, 'test_validation2DWaveSystemSquaresFV() : Make sure you use distinct meshes and at least two meshes'
+    assert det!=0, 'test_validation2DWaveSystemTrianglesFV() : Make sure you use distinct meshes and at least two meshes'
 
     b1p=np.dot(error_p_tab,mesh_size_tab)   
     b2p=np.sum(error_p_tab)
@@ -101,7 +101,7 @@ def test_validation2DWaveSystemTrianglesFV():
     plt.xlabel('number of cells')
     plt.ylabel('Max velocity norm')
     plt.title('Maximum velocity norm  \n for the stationary Wave System on 2D triangular meshes')
-    plt.savefig(mesh_name+"_2DWaveSystemTriangles_"+"TimeFinal.png")
+    plt.savefig(mesh_name+"_2DWaveSystemTriangles_"+"MaxVelNorm.png")
     
     for i in range(nbMeshes):
         mesh_size_tab[i]=log10(mesh_size_tab[i])
@@ -130,7 +130,7 @@ def test_validation2DWaveSystemTrianglesFV():
     plt.xlabel('log(number of cells)')
     plt.ylabel('log(cpu time)')
     plt.title('Computational time of finite volumes \n for the stationary Wave System on 2D triangular meshes')
-    plt.savefig(mesh_name+"ComputationalTime_2DWaveSystem_Triangles.png")
+    plt.savefig(mesh_name+"_2DWaveSystem_Triangles_ComputationalTime.png")
     
     plt.close('all')
     
