@@ -6,7 +6,7 @@ from math import log10, sqrt
 
 def test_validation3DWaveSystemTetrahedraFV():
     #### 3D tetrahedral mesh by simplexization of a cartesian mesh
-    meshList=[5,11]#,21]
+    meshList=[5,11,21,31]
     nbMeshes=len(meshList)
     error_p_tab=[0]*nbMeshes
     error_u_tab=[0]*nbMeshes
