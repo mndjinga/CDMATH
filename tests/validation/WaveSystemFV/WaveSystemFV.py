@@ -57,8 +57,7 @@ def computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt):
     nbComp=dim+1
     normal=cdmath.Vector(dim)
 
-    if(dim != 3):
-        indexFacesPerio = my_mesh.getIndexFacePeriodic()
+    indexFacesPerio = my_mesh.getIndexFacePeriodic()
     
     implMat=cdmath.SparseMatrixPetsc(nbCells*nbComp,nbCells*nbComp,(nbVoisinsMax+1)*nbComp)
 
@@ -91,14 +90,14 @@ def computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt):
                 implMat.addValue(j*nbComp,cellAutre*nbComp,Am)
                 implMat.addValue(j*nbComp,        j*nbComp,Am*(-1.))
             else  :
-                if(Fk.getGroupName() != "Wall" and Fk.getGroupName() != "Paroi" and Fk.getGroupName() != "Neumann" and dim != 3):#Periodic boundary condition unless Wall/Neumann specified explicitly
+                if(Fk.getGroupName() != "Wall" and Fk.getGroupName() != "Paroi" and Fk.getGroupName() != "Neumann"):#Periodic boundary condition unless Wall/Neumann specified explicitly
                     indexFP = indexFacesPerio[indexFace]
                     Fp = my_mesh.getFace(indexFP)
                     cellAutre = Fp.getCellsId()[0]
                     
                     implMat.addValue(j*nbComp,cellAutre*nbComp,Am)
                     implMat.addValue(j*nbComp,        j*nbComp,Am*(-1.))
-                elif( Fk.getGroupName() == "Wall" or Fk.getGroupName() == "Paroi" or dim==3):#Wall boundary condition
+                elif( Fk.getGroupName() == "Wall" or Fk.getGroupName() == "Paroi"):#Wall boundary condition
                     v=cdmath.Vector(dim+1)
                     for i in range(dim) :
                         v[i+1]=normal[i]
@@ -281,7 +280,7 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq,resolution):
 
 def solve(my_mesh,filename,resolution):
     start = time.time()
-    print("Resolution of the Wave system:")
+    print("Resolution of the Wave system with periodic boundary conditions:")
 
     # Problem data
     tmax = 1000.
@@ -301,6 +300,10 @@ def solve_file( filename,resolution):
     
 
 if __name__ == """__main__""":
-    M=cdmath.Mesh(0,1,20,0,1,20)
+    M1=cdmath.Mesh(0,0,1,20,0,1,20)
     
-    solve(M,"SquareRegularSquares",100)
+    solve(M1,"SquareRegularTriangles",100)
+
+    M2=cdmath.Mesh(6,0,1,10,0,1,10,0,1,10)
+    
+    solve(M2,"CubeRegularTetrahedra",100)

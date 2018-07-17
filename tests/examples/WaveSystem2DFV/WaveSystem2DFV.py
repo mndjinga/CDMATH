@@ -103,7 +103,7 @@ def computeFluxes(U, SumFluxes):
                 for i in range(nbComp):
                     Uautre[i]=U[cellAutre,i]
             else :
-                if(Fk.getGroupName() == "" or Fk.getGroupName() == "Wall" or Fk.getGroupName() == "Paroi" or Fk.getGroupName() == "Haut" or Fk.getGroupName() == "Bas" or Fk.getGroupName() == "Gauche" or Fk.getGroupName() == "Droite"):
+                if(Fk.getGroupName() != "Neumann"):#Wall boundary condition unless Wall/Neumann specified explicitly
                     for i in range(nbComp):
                         Uautre[i]=Ucourant[i]
                     qn=0# normal momentum
@@ -238,7 +238,7 @@ def WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq, outputFileName,resolu
 
 
 def solve(my_mesh,filename,resolution):
-    print("Resolution of the 2D Wave system:")
+    print("Resolution of the 2D Wave system with Wall boundary conditions:")
 
     # Problem data
     tmax = 1.
