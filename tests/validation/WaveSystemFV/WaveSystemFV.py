@@ -231,7 +231,7 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution):
     elif(isStationary):
         print "Régime stationnaire atteint au pas de temps ", it, ", t= ", time
         assert (total_pressure_initial-pressure_field.integral()).norm()/p0<precision
-        assert (total_velocity_initial-velocity_field.integral()).norm()/rho0<precision
+        assert (total_velocity_initial-velocity_field.integral()).norm()<precision
         print "------------------------------------------------------------------------------------"
         delta_press=0
         delta_v=cdmath.Vector(dim)
@@ -276,8 +276,10 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution):
 
 def solve(my_mesh,meshName,resolution):
     start = time.time()
-    print("Resolution of the Wave system with periodic boundary conditions:")
-
+    print "Resolution of the Wave system in dimension ", my_mesh.getSpaceDimension()
+    print "Mesh name : ",meshName , my_mesh.getNumberOfCells(), " cells"
+    print "Periodic boundary conditions"
+    
     # Problem data
     tmax = 1000.
     ntmax = 20000
