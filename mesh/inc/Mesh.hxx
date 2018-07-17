@@ -44,50 +44,75 @@ public: //----------------------------------------------------------------
 	Mesh ( void ) ;
 
 	/**
-	 * constructor with data
+	 * constructor with data to load a general unstructured mesh
 	 * @param filename name of mesh file
 	 * @param meshLevel : relative mesh dimension : 0->cells, 1->Faces etc
 	 */
 	Mesh ( const std::string filename, int meshLevel=0 ) ;
 
 	/**
-	 * constructor with data
+	 * constructor with data for a regular 1D grid 
 	 * @param xmin : minimum x
 	 * @param xmax : maximum x
-	 * @param nx : Number of cell in x direction
+	 * @param nx : Number of cells in x direction
 	 */
 	Mesh( double xmin, double xmax, int nx, std::string meshName="MESH1D_Regular_Grid" ) ;
 
 	/**
-	 * constructor with data
+	 * constructor with data for an unstructured 1D mesh
 	 * @param points : abscissas of the mesh nodes
 	 */
 	Mesh( std::vector<double> points, std::string meshName="MESH1D_unstructured" ) ;
 
 	/**
-	 * constructor with data
+	 * constructor with data for a regular 2D grid 
 	 * @param xmin : minimum x
 	 * @param xmax : maximum x
 	 * @param ymin : minimum y
 	 * @param ymax : maximum y
-	 * @param nx : Number of cell in x direction
-	 * @param ny : Number of cell in y direction
+	 * @param nx : Number of cells in x direction
+	 * @param ny : Number of cells in y direction
 	 */
-	Mesh( double xmin, double xmax, int nx, double ymin, double ymax, int ny, std::string meshName="MESH2D_Regular_Grid") ;
+	Mesh( double xmin, double xmax, int nx, double ymin, double ymax, int ny, std::string meshName="MESH2D_Regular_Rectangle_Grid") ;
 
 	/**
-	 * constructor with data
+	 * constructor with data for a regular 3D grid 
 	 * @param xmin : minimum x
 	 * @param xmax : maximum x
 	 * @param ymin : minimum y
 	 * @param ymax : maximum y
 	 * @param zmin : minimum z
 	 * @param zmax : maximum z
-	 * @param nx : Number of cell in x direction
-	 * @param ny : Number of cell in y direction
-	 * @param nz : Number of cell in z direction
+	 * @param nx : Number of cells in x direction
+	 * @param ny : Number of cells in y direction
+	 * @param nz : Number of cells in z direction
 	 */
-	Mesh( double xmin, double xmax, int nx, double ymin, double ymax, int ny, double zmin, double zmax, int nz, std::string meshName="MESH3D_Regular_Grid") ;
+	Mesh( double xmin, double xmax, int nx, double ymin, double ymax, int ny, double zmin, double zmax, int nz, std::string meshName="MESH3D_Regular_Cuboid_Grid") ;
+
+	/**
+	 * constructor with data for a regular 2D triangular mesh
+	 * @param xmin : minimum x
+	 * @param xmax : maximum x
+	 * @param ymin : minimum y
+	 * @param ymax : maximum y
+	 * @param nx : Number of square cells in x direction
+	 * @param ny : Number of square cells in y direction
+	 */
+	Mesh( int policy, double xmin, double xmax, int nx, double ymin, double ymax, int ny, std::string meshName="MESH2D_Regular_Triangle") ;
+
+	/**
+	 * constructor with data for a regular 3D hexahedral mesh 
+	 * @param xmin : minimum x
+	 * @param xmax : maximum x
+	 * @param ymin : minimum y
+	 * @param ymax : maximum y
+	 * @param zmin : minimum z
+	 * @param zmax : maximum z
+	 * @param nx : Number of cells in x direction
+	 * @param ny : Number of cells in y direction
+	 * @param nz : Number of cells in z direction
+	 */
+	Mesh( int policy, double xmin, double xmax, int nx, double ymin, double ymax, int ny, double zmin, double zmax, int nz, std::string meshName="MESH3D_Regular_Tetrahedra") ;
 
 	Mesh( const MEDCoupling::MEDCouplingIMesh* mesh ) ;
 
@@ -193,17 +218,17 @@ public: //----------------------------------------------------------------
 	 */
 	int getNz( void )  const ;
 
-	double getXMin( void )  const ;// for structured meshes
+	double getXMin( void )  const ;
 
-	double getXMax( void )  const ;// for structured meshes
+	double getXMax( void )  const ;
 
-	double getYMin( void )  const ;// for structured meshes
+	double getYMin( void )  const ;
 
-	double getYMax( void )  const ;// for structured meshes
+	double getYMax( void )  const ;
 
-	double getZMin( void )  const ;// for structured meshes
+	double getZMin( void )  const ;
 
-	double getZMax( void )  const ;// for structured meshes
+	double getZMax( void )  const ;
 
 	std::vector<double> getDXYZ() const ;// for structured meshes
 

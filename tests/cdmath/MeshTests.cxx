@@ -155,6 +155,33 @@ MeshTests::testClassMesh( void )
     cout<<"Test mesh M2 normals"<<endl;
     testNormals(M2);
 
+    // Testing 2D simplexization (regular triangle mesh)
+    int splittingPolicy =0;
+	Mesh M2Triangle(splittingPolicy,xmin,xmax,4,ymin,ymax,4);
+	CPPUNIT_ASSERT_EQUAL( 4, M2Triangle.getNx() );
+	CPPUNIT_ASSERT_EQUAL( 4, M2Triangle.getNy() );
+	CPPUNIT_ASSERT_EQUAL( 2, M2Triangle.getSpaceDimension() );
+	CPPUNIT_ASSERT_EQUAL( 25, M2Triangle.getNumberOfNodes() );
+	CPPUNIT_ASSERT_EQUAL( 32, M2Triangle.getNumberOfCells() );
+	CPPUNIT_ASSERT_EQUAL( 40+16, M2Triangle.getNumberOfFaces() );
+	CPPUNIT_ASSERT(M2Triangle.isTriangular());
+	int nbCellsM2Triangle = M2Triangle.getNumberOfCells();
+	double areaM2Triangle=0;
+	for(int i=0; i<nbCellsM2Triangle; i++)
+		areaM2Triangle+=M2Triangle.getCell(i).getMeasure();
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 16., areaM2Triangle, eps );
+
+	M2Triangle.setGroupAtPlan(xmax,0,eps,"RightEdge");
+	M2Triangle.setGroupAtPlan(xmin,0,eps,"LeftEdge");
+	M2Triangle.setGroupAtPlan(ymin,1,eps,"BottomEdge");
+	M2Triangle.setGroupAtPlan(ymax,1,eps,"TopEdge");
+	CPPUNIT_ASSERT_EQUAL( 4, int(M2Triangle.getNamesOfGroups().size()) );
+	CPPUNIT_ASSERT(M2Triangle.getNamesOfGroups()[2].compare("BottomEdge")==0);
+	IntTab indexFacesTriangle=M2Triangle.getIndexFacePeriodic();
+    
+    cout<<"Test mesh M2Triangle normals"<<endl;
+    testNormals(M2Triangle);
+
 	// Testing Mesh(xmin, xmax, nx, ymin, ymax, ny, zmin, zmax, nz) (hexaèdres)
 	xmin=0.0;
 	xmax=1.0;
@@ -240,6 +267,29 @@ MeshTests::testClassMesh( void )
 
     cout<<"Test mesh M22 normals "<<endl;
     testNormals(M22);
+
+    // Testing 3D simplexization (regular tetrahedra mesh)
+    Mesh M3Tetra(splittingPolicy, xmin,xmax,4,ymin,ymax,4,zmin,zmax,4);
+    CPPUNIT_ASSERT_EQUAL( 3, M3Tetra.getSpaceDimension() );
+    CPPUNIT_ASSERT(M3Tetra.isHexahedral());
+    int nbCellsM3Tetra = M3Tetra.getNumberOfCells();
+    double volM3Tetra=0;
+    for(int i=0; i<nbCellsM3Tetra; i++)
+        volM3Tetra+=M3Tetra.getCell(i).getMeasure();
+    CPPUNIT_ASSERT_DOUBLES_EQUAL( 1., volM3Tetra, eps );
+
+	M3Tetra.setGroupAtPlan(xmax,0,eps,"RightEdge");
+	M3Tetra.setGroupAtPlan(xmin,0,eps,"LeftEdge");
+	M3Tetra.setGroupAtPlan(ymin,1,eps,"BottomEdge");
+	M3Tetra.setGroupAtPlan(ymax,1,eps,"TopEdge");
+	M3Tetra.setGroupAtPlan(zmin,2,eps,"DownEdge");
+	M3Tetra.setGroupAtPlan(zmax,2,eps,"UpEdge");
+	CPPUNIT_ASSERT_EQUAL( 6, int(M3Tetra.getNamesOfGroups().size()) );
+	CPPUNIT_ASSERT(M3Tetra.getNamesOfGroups()[4].compare("DownEdge")==0);
+	indexFaces=M3Tetra.getIndexFacePeriodic();
+
+    cout<<"Test mesh M3Tetra normals"<<endl;
+    testNormals(M3Tetra);
 
     //Testing a 2D unstructured mesh (triangles)
     Mesh M23("meshSquare.med");

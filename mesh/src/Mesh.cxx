@@ -940,7 +940,6 @@ Mesh::Mesh( double xmin, double xmax, int nx, std::string meshName )
 	nodeStrctPtr[0]=nx+1;
 	dxyzPtr[0]=dx;
 
-
 	_mesh=MEDCouplingIMesh::New(meshName,
 			_spaceDim,
 			nodeStrctPtr,
@@ -1214,6 +1213,7 @@ Mesh::Mesh( double xmin, double xmax, int nx, double ymin, double ymax, int ny, 
 		throw CdmathException("Mesh::Mesh( double xmin, double xmax, int nx, double ymin, double ymax, int ny) : xmin >= xmax");
 	if(ymin>=ymax)
 		throw CdmathException("Mesh::Mesh( double xmin, double xmax, int nx, double ymin, double ymax, int ny) : ymin >= ymax");
+
 	_xMin=xmin;
 	_xMax=xmax;
 	_yMin=ymin;
@@ -1247,7 +1247,6 @@ Mesh::Mesh( double xmin, double xmax, int nx, double ymin, double ymax, int ny, 
 	dxyzPtr[0]=dx;
 	dxyzPtr[1]=dy;
 
-
 	_mesh=MEDCouplingIMesh::New(meshName,
 			_spaceDim,
 			nodeStrctPtr,
@@ -1259,6 +1258,7 @@ Mesh::Mesh( double xmin, double xmax, int nx, double ymin, double ymax, int ny, 
 	delete [] originPtr;
 	delete [] dxyzPtr;
 	delete [] nodeStrctPtr;
+    
 	setMesh();
 }
 
@@ -1313,7 +1313,6 @@ Mesh::Mesh( double xmin, double xmax, int nx, double ymin, double ymax, int ny, 
 	dxyzPtr[1]=dy;
 	dxyzPtr[2]=dz;
 
-
 	_mesh=MEDCouplingIMesh::New(meshName,
 			_spaceDim,
 			nodeStrctPtr,
@@ -1325,9 +1324,140 @@ Mesh::Mesh( double xmin, double xmax, int nx, double ymin, double ymax, int ny, 
 	delete [] originPtr;
 	delete [] dxyzPtr;
 	delete [] nodeStrctPtr;
+    
 	setMesh();
 }
 
+Mesh::Mesh( int policy, double xmin, double xmax, int nx, double ymin, double ymax, int ny, std::string meshName)
+{
+	if(nx<=0 || ny<=0)
+		throw CdmathException("Mesh::Mesh( int policy, double xmin, double xmax, int nx, double ymin, double ymax, int ny) : nx <= 0 or ny <= 0");
+	if(xmin>=xmax)
+		throw CdmathException("Mesh::Mesh( int policy, double xmin, double xmax, int nx, double ymin, double ymax, int ny) : xmin >= xmax");
+	if(ymin>=ymax)
+		throw CdmathException("Mesh::Mesh( int policy, double xmin, double xmax, int nx, double ymin, double ymax, int ny) : ymin >= ymax");
+
+	_xMin=xmin;
+	_xMax=xmax;
+	_yMin=ymin;
+	_yMax=ymax;
+	_zMin=0.;
+	_zMax=0.;
+
+	double dx = (xmax - xmin)/nx ;
+	double dy = (ymax - ymin)/ny ;
+
+	_spaceDim = 2 ;
+	_meshDim  = 2 ;
+    _isStructured = true;
+	_nxyz.resize(_spaceDim);
+	_nxyz[0]=nx;
+	_nxyz[1]=ny;
+
+	_dxyz.resize(_spaceDim);
+	_dxyz[0]=dx;
+	_dxyz[1]=dy;
+
+	double *originPtr = new double[_spaceDim];
+	double *dxyzPtr = new double[_spaceDim];
+	int *nodeStrctPtr = new int[_spaceDim];
+
+	originPtr[0]=xmin;
+	originPtr[1]=ymin;
+	nodeStrctPtr[0]=nx+1;
+	nodeStrctPtr[1]=ny+1;
+	dxyzPtr[0]=dx;
+	dxyzPtr[1]=dy;
+
+	_mesh=MEDCouplingIMesh::New(meshName,
+			_spaceDim,
+			nodeStrctPtr,
+			nodeStrctPtr+_spaceDim,
+			originPtr,
+			originPtr+_spaceDim,
+			dxyzPtr,
+			dxyzPtr+_spaceDim);
+
+    _mesh->simplexize(policy);
+        /*
+    DataArrayInt * n2oCells;
+    int nbOfAdditionalPoints;
+    _mesh=mesh->tetrahedrize(policy,n2oCells,nbOfAdditionalPoints);
+    n2oCells->decrRef();
+    */
+	delete [] originPtr;
+	delete [] dxyzPtr;
+	delete [] nodeStrctPtr;
+    
+	setMesh();    
+}
+
+Mesh::Mesh( int policy, double xmin, double xmax, int nx, double ymin, double ymax, int ny, double zmin, double zmax, int nz, std::string meshName)
+{
+	if(nx<=0 || ny<=0 || nz<=0)
+		throw CdmathException("Mesh::Mesh( int policy,double xmin, double xmax, int nx, double ymin, double ymax, int ny, double zmin, double zmax, int nz) : nx <= 0 or ny <= 0 or nz <= 0");
+	if(xmin>=xmax)
+		throw CdmathException("Mesh::Mesh( int policy,double xmin, double xmax, int nx, double ymin, double ymax, int ny, double zmin, double zmax, int nz) : xmin >= xmax");
+	if(ymin>=ymax)
+		throw CdmathException("Mesh::Mesh( int policy,double xmin, double xmax, int nx, double ymin, double ymax, int ny, double zmin, double zmax, int nz) : ymin >= ymax");
+	if(zmin>=zmax)
+		throw CdmathException("Mesh::Mesh( int policy,double xmin, double xmax, int nx, double ymin, double ymax, int ny, double zmin, double zmax, int nz) : zmin >= zmax");
+
+	_spaceDim = 3;
+	_meshDim  = 3;
+	_xMin=xmin;
+	_xMax=xmax;
+	_yMin=ymin;
+	_yMax=ymax;
+	_zMin=zmin;
+	_zMax=zmax;
+
+	double dx = (xmax - xmin)/nx ;
+	double dy = (ymax - ymin)/ny ;
+	double dz = (zmax - zmin)/nz ;
+
+    _isStructured = true;
+	_dxyz.resize(_spaceDim);
+	_dxyz[0]=dx;
+	_dxyz[1]=dy;
+	_dxyz[2]=dz;
+
+	_nxyz.resize(_spaceDim);
+	_nxyz[0]=nx;
+	_nxyz[1]=ny;
+	_nxyz[2]=nz;
+
+	double *originPtr = new double[_spaceDim];
+	double *dxyzPtr = new double[_spaceDim];
+	int *nodeStrctPtr = new int[_spaceDim];
+
+	originPtr[0]=xmin;
+	originPtr[1]=ymin;
+	originPtr[2]=zmin;
+	nodeStrctPtr[0]=nx+1;
+	nodeStrctPtr[1]=ny+1;
+	nodeStrctPtr[2]=nz+1;
+	dxyzPtr[0]=dx;
+	dxyzPtr[1]=dy;
+	dxyzPtr[2]=dz;
+
+	_mesh=MEDCouplingIMesh::New(meshName,
+			_spaceDim,
+			nodeStrctPtr,
+			nodeStrctPtr+_spaceDim,
+			originPtr,
+			originPtr+_spaceDim,
+			dxyzPtr,
+			dxyzPtr+_spaceDim);
+
+    _mesh->simplexize(policy);
+
+	delete [] originPtr;
+	delete [] dxyzPtr;
+	delete [] nodeStrctPtr;
+    
+	setMesh();    
+}
 //----------------------------------------------------------------------
 int
 Mesh::getSpaceDimension( void )  const
