@@ -231,7 +231,7 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq,resolution):
         assert (total_velocity_initial-velocity_field.integral()).norm()/rho0<precision
         print "------------------------------------------------------------------------------------"
         delta_press=0
-        delta_vel=cdmath.Vector(dim)
+        delta_v=cdmath.Vector(dim)
         for k in range(nbCells):
             pressure_field[k]=Un[k*(dim+1)+0]
             velocity_field[k,0]=Un[k*(dim+1)+1]/rho0
