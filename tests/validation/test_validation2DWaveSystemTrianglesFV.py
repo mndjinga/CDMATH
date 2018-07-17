@@ -119,7 +119,7 @@ def test_validation2DWaveSystemTrianglesFV():
     plt.plot(mesh_size_tab, error_u_tab, label='|error on stationary velocity|')
     plt.legend()
     plt.xlabel('log(number of cells)')
-    plt.ylabel('log(error p)')
+    plt.ylabel('log(error u)')
     plt.title('Convergence of finite volumes for \n the stationary Wave System on 2D triangular meshes')
     plt.savefig(mesh_name+"_Velocity_2DWaveSystem_Triangles_"+"ConvergenceCurve.png")
     
