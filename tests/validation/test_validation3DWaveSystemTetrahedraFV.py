@@ -27,6 +27,7 @@ def test_validation3DWaveSystemTetrahedraFV():
     for nx in meshList:
         my_mesh=cdmath.Mesh(6,0,1,nx,0,1,nx,0,1,nx)
         error_p_tab[i], error_u_tab[i], mesh_size_tab[i], t_final[i], ndt_final[i], max_vel[i], diag_data_press[i], diag_data_vel[i], time_tab[i] =WaveSystemFV.solve(my_mesh, mesh_name, resolution)
+        assert max_vel[i]>1.8 and max_vel[i]<2
         error_p_tab[i]=log10(error_p_tab[i])
         error_u_tab[i]=log10(error_u_tab[i])
         time_tab[i]=log10(time_tab[i])
@@ -101,7 +102,7 @@ def test_validation3DWaveSystemTetrahedraFV():
     plt.xlabel('number of cells')
     plt.ylabel('Max velocity norm')
     plt.title('Maximum velocity norm  \n for the stationary Wave System on 3D tetrahedral meshes')
-    plt.savefig(mesh_name+"_3DWaveSystemTetrahedra_"+"TimeFinal.png")
+    plt.savefig(mesh_name+"_3DWaveSystemTetrahedra_"+"MaxVelNorm.png")
     
     for i in range(nbMeshes):
         mesh_size_tab[i]=log10(mesh_size_tab[i])
@@ -130,7 +131,7 @@ def test_validation3DWaveSystemTetrahedraFV():
     plt.xlabel('log(number of cells)')
     plt.ylabel('log(cpu time)')
     plt.title('Computational time of finite volumes \n for the stationary Wave System on 3D tetrahedral meshes')
-    plt.savefig(mesh_name+"ComputationalTime_3DWaveSystem_Tetrahedra.png")
+    plt.savefig(mesh_name+"_3DWaveSystem_Tetrahedra_ComputationalTime.png")
     
     plt.close('all')
     
