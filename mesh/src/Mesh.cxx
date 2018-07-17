@@ -1397,7 +1397,7 @@ Mesh::Mesh( int policy, double xmin, double xmax, int nx, double ymin, double ym
 			originPtr,
 			originPtr+_spaceDim,
 			dxyzPtr,
-			dxyzPtr+_spaceDim);
+			dxyzPtr+_spaceDim)->buildUnstructured();
 
     _mesh->simplexize(policy);
         /*
@@ -1469,7 +1469,7 @@ Mesh::Mesh( int policy, double xmin, double xmax, int nx, double ymin, double ym
 			originPtr,
 			originPtr+_spaceDim,
 			dxyzPtr,
-			dxyzPtr+_spaceDim);
+			dxyzPtr+_spaceDim)->buildUnstructured();
 
     _mesh->simplexize(policy);
 

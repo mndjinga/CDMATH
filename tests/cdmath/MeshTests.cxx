@@ -269,9 +269,10 @@ MeshTests::testClassMesh( void )
     testNormals(M22);
 
     // Testing 3D simplexization (regular tetrahedra mesh)
+    splittingPolicy =INTERP_KERNEL::PLANAR_FACE_6;
     Mesh M3Tetra(splittingPolicy, xmin,xmax,4,ymin,ymax,4,zmin,zmax,4);
     CPPUNIT_ASSERT_EQUAL( 3, M3Tetra.getSpaceDimension() );
-    CPPUNIT_ASSERT(M3Tetra.isHexahedral());
+    CPPUNIT_ASSERT(M3Tetra.isTetrahedral());
     int nbCellsM3Tetra = M3Tetra.getNumberOfCells();
     double volM3Tetra=0;
     for(int i=0; i<nbCellsM3Tetra; i++)
