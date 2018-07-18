@@ -7,7 +7,7 @@ from math import log10, sqrt
     
 def test_validation3DWaveSystemCubesFV():
     #### 3D cubic mesh
-    meshList=[11,21,31,41]
+    meshList=[11,21,31]
     nbMeshes=len(meshList)
     error_p_tab=[0]*nbMeshes
     error_u_tab=[0]*nbMeshes
