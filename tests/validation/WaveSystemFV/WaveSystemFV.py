@@ -231,7 +231,8 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution):
     elif(isStationary):
         print "Régime stationnaire atteint au pas de temps ", it, ", t= ", time
         assert (total_pressure_initial-pressure_field.integral()).norm()/p0<precision
-        assert (total_velocity_initial-velocity_field.integral()).norm()<precision
+        print (total_velocity_initial-velocity_field.integral()).norm(),precision
+        assert (total_velocity_initial-velocity_field.integral()).norm()/10<precision
         print "------------------------------------------------------------------------------------"
         delta_press=0
         delta_v=cdmath.Vector(dim)
