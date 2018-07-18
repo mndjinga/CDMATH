@@ -10,13 +10,14 @@ IF (CDMATH_WITH_PYTHON)
 ENDIF (CDMATH_WITH_PYTHON)
 
 if (CDMATH_WITH_PYTHON AND CDMATH_WITH_PETSC AND CDMATH_WITH_POSTPRO)
+  # Examples tests
+  set (examples_dir ${CDMATH_SOURCE_DIR}/tests/examples)
+  add_subdirectory (${examples_dir})
+
+  #validation tests
   add_subdirectory (validation)
   add_custom_target (validation COMMAND ctest -R validation)# may be replace ctest -R with ctest -L
   add_custom_target (check COMMAND ctest -E validation)# may be replace ctest -E with ctest -LE
-
-  # Examples
-  set (examples_dir ${CDMATH_SOURCE_DIR}/tests/examples)
-  add_subdirectory (${examples_dir})
 endif ()
 
 
