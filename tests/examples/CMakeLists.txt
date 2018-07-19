@@ -1,4 +1,4 @@
-file(GLOB NICE_EXAMPLES_TO_INSTALL thermique1d transport1d transport2d_ns transport2d_s Poisson2DEF_ns Poisson3DEF_ns Poisson2DVF_s PoissonCurvedSurfaceEF_ns WaveSystem1DFV WaveSystem2DFV)
+file(GLOB NICE_EXAMPLES_TO_INSTALL thermique1d transport1d transport2d_ns transport2d_s Poisson2DEF_ns Poisson3DEF_ns Poisson2DVF_s PoissonCurvedSurfaceEF_ns WaveSystem1DFV WaveSystem2DUpwind WaveSystem2DPStag)
 
 install(DIRECTORY ${NICE_EXAMPLES_TO_INSTALL} DESTINATION share/examples)
 
@@ -8,7 +8,8 @@ IF (CDMATH_WITH_PYTHON AND CDMATH_WITH_PETSC)
     ADD_SUBDIRECTORY(Poisson2DEF_ns)
     ADD_SUBDIRECTORY(Poisson3DEF_ns)
     ADD_SUBDIRECTORY(WaveSystem1DFV)
-    ADD_SUBDIRECTORY(WaveSystem2DFV)
+    ADD_SUBDIRECTORY(WaveSystem2DUpwind)
+    ADD_SUBDIRECTORY(WaveSystemPStag)
 ENDIF (CDMATH_WITH_PYTHON AND CDMATH_WITH_PETSC)
 
 

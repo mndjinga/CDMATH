@@ -124,6 +124,11 @@ double Vector::norm() const
 
 Vector Vector::maxVector(int gap) const 
 {
+    if(gap<0)
+     {
+         std::cout<<"Vector::maxVector(int gap)  gap= "<<gap <<std::endl;
+         throw CdmathException("Vector::maxVector(int gap) gap should be strictly greater than 0");
+     }    
     if(getNumberOfRows()%gap != 0)
      {
          std::cout<<"Vector::maxVector(int gap) : vector size= "<< getNumberOfRows()<< " gap= "<<gap <<" remainder= "<< getNumberOfRows()%gap<<std::endl;
