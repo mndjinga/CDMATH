@@ -1,5 +1,5 @@
 import cdmath
-import WaveSystemFV
+import WaveSystemUpwind
 import matplotlib.pyplot as plt
 import numpy as np
 from math import log10, sqrt
@@ -27,7 +27,7 @@ def test_validation3DWaveSystemCubesFV():
     # Storing of numerical errors, mesh sizes and diagonal values
     for nx in meshList:
         my_mesh=cdmath.Mesh(0,1,nx,0,1,nx,0,1,nx)
-        error_p_tab[i], error_u_tab[i], mesh_size_tab[i], t_final[i], ndt_final[i], max_vel[i], diag_data_press[i], diag_data_vel[i], time_tab[i] =WaveSystemFV.solve(my_mesh, mesh_name, resolution)
+        error_p_tab[i], error_u_tab[i], mesh_size_tab[i], t_final[i], ndt_final[i], max_vel[i], diag_data_press[i], diag_data_vel[i], time_tab[i] =WaveSystemUpwind.solve(my_mesh, mesh_name+str(my_mesh.getNumberOfCells()), resolution)
         i=i+1
     
     # Plot over diagonal line

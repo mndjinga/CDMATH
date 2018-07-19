@@ -1,5 +1,5 @@
 import cdmath
-import WaveSystemFV
+import WaveSystemUpwind
 import matplotlib.pyplot as plt
 import numpy as np
 from math import log10, sqrt
@@ -12,7 +12,7 @@ def test_validation2DWaveSystemTrianglesFV():
     error_u_tab=[0]*nbMeshes
     mesh_size_tab=[0]*nbMeshes
     mesh_path='../ressources/2DTriangles/'
-    mesh_name='meshSquareWithTrianglesFV'
+    mesh_name='meshSquareWithTriangles'
     diag_data_press=[0]*nbMeshes
     diag_data_vel=[0]*nbMeshes
     time_tab=[0]*nbMeshes
@@ -26,11 +26,8 @@ def test_validation2DWaveSystemTrianglesFV():
     i=0
     # Storing of numerical errors, mesh sizes and diagonal values
     for filename in meshList:
-        error_p_tab[i], error_u_tab[i], mesh_size_tab[i], t_final[i], ndt_final[i], max_vel[i], diag_data_press[i], diag_data_vel[i], time_tab[i] =WaveSystemFV.solve_file(mesh_path+filename, mesh_name, resolution)
+        error_p_tab[i], error_u_tab[i], mesh_size_tab[i], t_final[i], ndt_final[i], max_vel[i], diag_data_press[i], diag_data_vel[i], time_tab[i] =WaveSystemUpwind.solve_file(mesh_path+filename, mesh_name, resolution)
         assert max_vel[i]>0.94 and max_vel[i]<1
-        error_p_tab[i]=log10(error_p_tab[i])
-        error_u_tab[i]=log10(error_u_tab[i])
-        time_tab[i]=log10(time_tab[i])
         i=i+1
     
     # Plot over diagonal line
@@ -39,8 +36,8 @@ def test_validation2DWaveSystemTrianglesFV():
     plt.legend()
     plt.xlabel('Position on diagonal line')
     plt.ylabel('Pressure on diagonal line')
-    plt.title('Plot over diagonal line for stationary wave system \n on 2D triangular meshes')
-    plt.savefig(mesh_name+'_Pressure_2DWaveSystem_Triangles_'+"PlotOverDiagonalLine.png")
+    plt.title('Plot over diagonal line for stationary wave system \n with upwind scheme on 2D triangular meshes')
+    plt.savefig(mesh_name+'_Pressure_2DWaveSystemUpwind_Triangles_'+"PlotOverDiagonalLine.png")
     plt.close()
 
     plt.clf()
@@ -49,8 +46,8 @@ def test_validation2DWaveSystemTrianglesFV():
     plt.legend()
     plt.xlabel('Position on diagonal line')
     plt.ylabel('Velocity on diagonal line')
-    plt.title('Plot over diagonal line for the stationary wave system \n on 2D triangular meshes')
-    plt.savefig(mesh_name+"_Velocity_2DWaveSystem_Triangles_"+"PlotOverDiagonalLine.png")    
+    plt.title('Plot over diagonal line for the stationary wave system \n with upwind scheme on 2D triangular meshes')
+    plt.savefig(mesh_name+"_Velocity_2DWaveSystemUpwind_Triangles_"+"PlotOverDiagonalLine.png")    
     plt.close()
 
     # Least square linear regression
@@ -61,21 +58,21 @@ def test_validation2DWaveSystemTrianglesFV():
     a3=nbMeshes
     
     det=a1*a3-a2*a2
-    assert det!=0, 'test_validation2DWaveSystemTrianglesFV() : Make sure you use distinct meshes and at least two meshes'
+    assert det!=0, 'test_validation2DWaveSystemUpwindTrianglesFV() : Make sure you use distinct meshes and at least two meshes'
 
     b1p=np.dot(error_p_tab,mesh_size_tab)   
     b2p=np.sum(error_p_tab)
     ap=( a3*b1p-a2*b2p)/det
     bp=(-a2*b1p+a1*b2p)/det
     
-    print "FV on 2D triangle meshes : scheme order for pressure is ", -ap
+    print "FV upwind on 2D triangle meshes : scheme order for pressure is ", -ap
 
     b1u=np.dot(error_u_tab,mesh_size_tab)   
     b2u=np.sum(error_u_tab)
     au=( a3*b1u-a2*b2u)/det
     bu=(-a2*b1u+a1*b2u)/det
     
-    print "FV on 2D triangle meshes : scheme order for velocity is ", -au
+    print "FV upwind on 2D triangle meshes : scheme order for velocity is ", -au
     
     # Plot of number of time steps
     plt.close()
@@ -83,8 +80,8 @@ def test_validation2DWaveSystemTrianglesFV():
     plt.legend()
     plt.xlabel('number of cells')
     plt.ylabel('Max time steps for stationary regime')
-    plt.title('Number of times steps required \n for the stationary Wave System on 2D triangular meshes')
-    plt.savefig(mesh_name+"_2DWaveSystemTriangles_"+"TimeSteps.png")
+    plt.title('Number of times steps required for the stationary Wave System \n with upwind scheme on 2D triangular meshes')
+    plt.savefig(mesh_name+"_2DWaveSystemTrianglesUpwind_"+"TimeSteps.png")
     
     # Plot of number of stationary time
     plt.close()
@@ -92,8 +89,8 @@ def test_validation2DWaveSystemTrianglesFV():
     plt.legend()
     plt.xlabel('number of cells')
     plt.ylabel('Max time for stationary regime')
-    plt.title('Simulated time  \n for the stationary Wave System on 2D triangular meshes')
-    plt.savefig(mesh_name+"_2DWaveSystemTriangles_"+"TimeFinal.png")
+    plt.title('Simulated time for the stationary Wave System \n with upwind scheme on 2D triangular meshes')
+    plt.savefig(mesh_name+"_2DWaveSystemTrianglesUpwind_"+"TimeFinal.png")
     
     # Plot of number of maximal velocity norm
     plt.close()
@@ -101,37 +98,34 @@ def test_validation2DWaveSystemTrianglesFV():
     plt.legend()
     plt.xlabel('number of cells')
     plt.ylabel('Max velocity norm')
-    plt.title('Maximum velocity norm  \n for the stationary Wave System on 2D triangular meshes')
-    plt.savefig(mesh_name+"_2DWaveSystemTriangles_"+"MaxVelNorm.png")
+    plt.title('Maximum velocity norm for the stationary Wave System \n with upwind scheme on 2D triangular meshes')
+    plt.savefig(mesh_name+"_2DWaveSystemTrianglesUpwind_"+"MaxVelNorm.png")
     
-    for i in range(nbMeshes):
-        mesh_size_tab[i]=log10(mesh_size_tab[i])
-        
     # Plot of convergence curves
     plt.close()
     plt.plot(mesh_size_tab, error_p_tab, label='|error on stationary pressure|')
     plt.legend()
-    plt.xlabel('log(number of cells)')
-    plt.ylabel('log(error p)')
-    plt.title('Convergence of finite volumes for \n the stationary Wave System on 2D triangular meshes')
-    plt.savefig(mesh_name+"_Pressure_2DWaveSystem_Triangles_"+"ConvergenceCurve.png")
+    plt.xlabel('number of cells')
+    plt.ylabel('error p')
+    plt.title('Convergence of finite volumes for the stationary Wave System \n with upwind scheme on 2D triangular meshes')
+    plt.savefig(mesh_name+"_Pressure_2DWaveSystemUpwind_Triangles_"+"ConvergenceCurve.png")
     
     plt.close()
     plt.plot(mesh_size_tab, error_u_tab, label='|error on stationary velocity|')
     plt.legend()
-    plt.xlabel('log(number of cells)')
-    plt.ylabel('log(error u)')
-    plt.title('Convergence of finite volumes for \n the stationary Wave System on 2D triangular meshes')
-    plt.savefig(mesh_name+"_Velocity_2DWaveSystem_Triangles_"+"ConvergenceCurve.png")
+    plt.xlabel('number of cells')
+    plt.ylabel('error u')
+    plt.title('Convergence of finite volumes for the stationary Wave System \n with upwind scheme on 2D triangular meshes')
+    plt.savefig(mesh_name+"_Velocity_2DWaveSystemUpwind_Triangles_"+"ConvergenceCurve.png")
     
     # Plot of computational time
     plt.close()
     plt.plot(mesh_size_tab, time_tab, label='log(cpu time)')
     plt.legend()
-    plt.xlabel('log(number of cells)')
-    plt.ylabel('log(cpu time)')
-    plt.title('Computational time of finite volumes \n for the stationary Wave System on 2D triangular meshes')
-    plt.savefig(mesh_name+"_2DWaveSystem_Triangles_ComputationalTime.png")
+    plt.xlabel('number of cells')
+    plt.ylabel('cpu time')
+    plt.title('Computational time of finite volumes for the stationary Wave System \n with upwind scheme on 2D triangular meshes')
+    plt.savefig(mesh_name+"_2DWaveSystemUpwind_Triangles_ComputationalTime.png")
     
     plt.close('all')
     

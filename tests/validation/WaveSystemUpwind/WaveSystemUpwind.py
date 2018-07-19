@@ -10,7 +10,7 @@ import VTK_routines
 rho0=1000#reference density
 c0=1500#reference sound speed
 p0=rho0*c0*c0#reference pressure
-precision=1e-5
+precision=1e-4
 
 def initial_conditions_wave_system(my_mesh):
     dim     = my_mesh.getMeshDimension()
@@ -41,13 +41,12 @@ def jacobianMatrices(normal, coeff):
     A=cdmath.Matrix(dim+1,dim+1)
     absA=cdmath.Matrix(dim+1,dim+1)
 
-    absA[0,0]=c0*coeff
     for i in range(dim):
         A[i+1,0]=normal[i]*coeff
+        absA[i+1,0]=A[i+1,0]
         A[0,i+1]=c0*c0*normal[i]*coeff
-        for j in range(dim):
-            absA[i+1,j+1]=c0*normal[i]*normal[j]*coeff
-    
+        absA[i+1,0]=-A[0,i+1]
+        
     return (A-absA)/2
     
     
@@ -121,7 +120,6 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution):
     isStationary=False;
     
     nbVoisinsMax=10;
-    iterGMRESMax=50
     isImplicit=False
     
     #iteration vectors
@@ -159,8 +157,10 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution):
     divMat=computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt)
     if(isImplicit):
         #Adding the identity matrix on the diagonal
-        for j in range(nbCells*nbComp):
+        for j in range(nbCells*(dim+1)):
             divMat.addValue(j,j,1)
+        
+        iterGMRESMax=50
         LS=cdmath.LinearSolver(divMat,Un,iterGMRESMax, precision, "GMRES","ILU")
     
     print("Starting computation of the linear wave system with an UPWIND scheme …")
@@ -231,8 +231,7 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution):
     elif(isStationary):
         print "Régime stationnaire atteint au pas de temps ", it, ", t= ", time
         assert (total_pressure_initial-pressure_field.integral()).norm()/p0<precision
-        print (total_velocity_initial-velocity_field.integral()).norm(),precision
-        assert (total_velocity_initial-velocity_field.integral()).norm()/10<precision
+        assert (total_velocity_initial-velocity_field.integral()).norm()<precision
         print "------------------------------------------------------------------------------------"
         delta_press=0
         delta_v=cdmath.Vector(dim)
@@ -252,6 +251,9 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution):
                 if(dim==3):
                     if (abs(initial_velocity[k,2]-velocity_field[k,2])>delta_v[2]):
                         delta_v[2]=abs(initial_velocity[k,2]-velocity_field[k,2])
+
+        print "Ecart au stationnaire exact : error p= ",delta_press/p0," error ||u||= ",delta_v.norm()
+        print
 
         pressure_field.setTime(time,0);
         pressure_field.writeVTK("WaveSystem"+str(dim)+"DFV"+meshName+str(nbCells)+"_pressure_Stat");
@@ -278,8 +280,10 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution):
 def solve(my_mesh,meshName,resolution):
     start = time.time()
     print "Resolution of the Wave system in dimension ", my_mesh.getSpaceDimension()
-    print "Mesh name : ",meshName , my_mesh.getNumberOfCells(), " cells"
+    print "Numerical method : upwind"
+    print "Initial data : constant pressure, divergence free velocity"
     print "Periodic boundary conditions"
+    print "Mesh name : ",meshName , my_mesh.getNumberOfCells(), " cells"
     
     # Problem data
     tmax = 1000.
@@ -295,7 +299,7 @@ def solve(my_mesh,meshName,resolution):
 def solve_file( filename,meshName, resolution):
     my_mesh = cdmath.Mesh(filename+".med")
 
-    return solve(my_mesh, meshName,resolution)
+    return solve(my_mesh, meshName+str(my_mesh.getNumberOfCells()),resolution)
     
 
 if __name__ == """__main__""":

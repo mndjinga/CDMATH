@@ -1,5 +1,5 @@
 import cdmath
-import WaveSystemFV
+import WaveSystemUpwind
 import matplotlib.pyplot as plt
 import numpy as np
 from math import log10, sqrt
@@ -26,11 +26,9 @@ def test_validation3DWaveSystemTetrahedraFV():
     # Storing of numerical errors, mesh sizes and diagonal values
     for nx in meshList:
         my_mesh=cdmath.Mesh(6,0,1,nx,0,1,nx,0,1,nx)
-        error_p_tab[i], error_u_tab[i], mesh_size_tab[i], t_final[i], ndt_final[i], max_vel[i], diag_data_press[i], diag_data_vel[i], time_tab[i] =WaveSystemFV.solve(my_mesh, mesh_name, resolution)
-        assert max_vel[i]>1.8 and max_vel[i]<2
-        error_p_tab[i]=log10(error_p_tab[i])
-        error_u_tab[i]=log10(error_u_tab[i])
-        time_tab[i]=log10(time_tab[i])
+        error_p_tab[i], error_u_tab[i], mesh_size_tab[i], t_final[i], ndt_final[i], max_vel[i], diag_data_press[i], diag_data_vel[i], time_tab[i] =WaveSystemUpwind.solve(my_mesh, mesh_name+str(my_mesh.getNumberOfCells()), resolution)
+        print max_vel[i]
+        #assert max_vel[i]>1.8 and max_vel[i]<2
         i=i+1
     
     # Plot over diagonal line
@@ -104,23 +102,21 @@ def test_validation3DWaveSystemTetrahedraFV():
     plt.title('Maximum velocity norm  \n for the stationary Wave System on 3D tetrahedral meshes')
     plt.savefig(mesh_name+"_3DWaveSystemTetrahedra_"+"MaxVelNorm.png")
     
-    for i in range(nbMeshes):
-        mesh_size_tab[i]=log10(mesh_size_tab[i])
-        
+       
     # Plot of convergence curves
     plt.close()
     plt.plot(mesh_size_tab, error_p_tab, label='|error on stationary pressure|')
     plt.legend()
-    plt.xlabel('log(number of cells)')
-    plt.ylabel('log(error p)')
+    plt.xlabel('number of cells')
+    plt.ylabel('error p')
     plt.title('Convergence of finite volumes for \n the stationary Wave System on 3D tetrahedral meshes')
     plt.savefig(mesh_name+"_Pressure_3DWaveSystem_Tetrahedra_"+"ConvergenceCurve.png")
     
     plt.close()
     plt.plot(mesh_size_tab, error_u_tab, label='|error on stationary velocity|')
     plt.legend()
-    plt.xlabel('log(number of cells)')
-    plt.ylabel('log(error p)')
+    plt.xlabel('number of cells')
+    plt.ylabel('error p')
     plt.title('Convergence of finite volumes for \n the stationary Wave System on 3D tetrahedral meshes')
     plt.savefig(mesh_name+"_Velocity_3DWaveSystem_Tetrahedra_"+"ConvergenceCurve.png")
     
@@ -128,8 +124,8 @@ def test_validation3DWaveSystemTetrahedraFV():
     plt.close()
     plt.plot(mesh_size_tab, time_tab, label='log(cpu time)')
     plt.legend()
-    plt.xlabel('log(number of cells)')
-    plt.ylabel('log(cpu time)')
+    plt.xlabel('number of cells')
+    plt.ylabel('cpu time')
     plt.title('Computational time of finite volumes \n for the stationary Wave System on 3D tetrahedral meshes')
     plt.savefig(mesh_name+"_3DWaveSystem_Tetrahedra_ComputationalTime.png")
     
