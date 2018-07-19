@@ -5,7 +5,7 @@ import numpy as np
 from math import log10, sqrt
 
     
-def test_validation2DWaveSystemSquaresFV():
+def test_validation2DWaveSystemPStagSquares():
     #### 2D triangular meshes
     meshList=['triangleMeshSquare_1','triangleMeshSquare_2','triangleMeshSquare_3','triangleMeshSquare_4','triangleMeshSquare_5','triangleMeshSquare_6']
     nbMeshes=len(meshList)
@@ -13,7 +13,7 @@ def test_validation2DWaveSystemSquaresFV():
     error_u_tab=[0]*nbMeshes
     mesh_size_tab=[0]*nbMeshes
     mesh_path='../ressources/2DTriangles/'
-    mesh_name='meshSquareWithTrianglesFV'
+    mesh_name='meshSquareWithTriangles'
     diag_data_press=[0]*nbMeshes
     diag_data_vel=[0]*nbMeshes
     time_tab=[0]*nbMeshes
@@ -96,7 +96,7 @@ def test_validation2DWaveSystemSquaresFV():
     plt.xlabel('number of cells')
     plt.ylabel('Max velocity norm')
     plt.title('Maximum velocity norm for the stationary Wave System \n with PStagggered scheme on 2D triangular meshes')
-    plt.savefig(mesh_name+"_2DWaveSystemSquaresPStag_"+"TimeFinal.png")
+    plt.savefig(mesh_name+"_2DWaveSystemSquaresPStag_"+"MaxVelNorm.png")
     
     for i in range(nbMeshes):
         mesh_size_tab[i]=log10(mesh_size_tab[i])
@@ -130,4 +130,4 @@ def test_validation2DWaveSystemSquaresFV():
     plt.close('all')
 
 if __name__ == """__main__""":
-    test_validation2DWaveSystemSquaresFV()
+    test_validation2DWaveSystemPStagSquares()

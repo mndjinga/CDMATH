@@ -38,7 +38,7 @@ class Vector: public Matrix
 
 	double norm() const ;
 
-	Vector maxVector(int gap=0) const ;
+	Vector maxVector(int gap=1) const ;
 
 	Vector innerProduct (const Vector& vector) const ;
 

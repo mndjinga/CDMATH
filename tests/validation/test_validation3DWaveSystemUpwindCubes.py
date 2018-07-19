@@ -5,14 +5,14 @@ import numpy as np
 from math import log10, sqrt
 
     
-def test_validation3DWaveSystemCubesFV():
+def test_validation3DWaveSystemUpwindCubes():
     #### 3D cubic mesh
     meshList=[11,21,31]
     nbMeshes=len(meshList)
     error_p_tab=[0]*nbMeshes
     error_u_tab=[0]*nbMeshes
     mesh_size_tab=[0]*nbMeshes
-    mesh_name='meshCubeWithCuboids3DFV'
+    mesh_name='meshCubeWithCuboids3D'
     diag_data_press=[0]*nbMeshes
     diag_data_vel=[0]*nbMeshes
     time_tab=[0]*nbMeshes
@@ -28,6 +28,8 @@ def test_validation3DWaveSystemCubesFV():
     for nx in meshList:
         my_mesh=cdmath.Mesh(0,1,nx,0,1,nx,0,1,nx)
         error_p_tab[i], error_u_tab[i], mesh_size_tab[i], t_final[i], ndt_final[i], max_vel[i], diag_data_press[i], diag_data_vel[i], time_tab[i] =WaveSystemUpwind.solve(my_mesh, mesh_name+str(my_mesh.getNumberOfCells()), resolution)
+        print max_vel[i]
+        #assert max_vel[i]>1.95 and max_vel[i]<2
         i=i+1
     
     # Plot over diagonal line
@@ -92,7 +94,7 @@ def test_validation3DWaveSystemCubesFV():
     plt.xlabel('number of cells')
     plt.ylabel('Max velocity norm')
     plt.title('Maximum velocity norm  \n for the stationary Wave System on 3D cube meshes')
-    plt.savefig(mesh_name+"_3DWaveSystemCubes_"+"TimeFinal.png")
+    plt.savefig(mesh_name+"_3DWaveSystemCubes_"+"MaxVelNorm.png")
     
     # Plot of convergence curves
     plt.close()
@@ -123,4 +125,4 @@ def test_validation3DWaveSystemCubesFV():
     plt.close('all')
 
 if __name__ == """__main__""":
-    test_validation3DWaveSystemCubesFV()
+    test_validation3DWaveSystemUpwindCubes()

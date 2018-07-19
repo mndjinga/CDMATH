@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from math import log10, sqrt
 
-def test_validation2DWaveSystemTrianglesFV():
+def test_validation2DWaveSystemUpwindTriangles():
     #### 2D triangle mesh
     meshList=['triangleMeshSquare_1','triangleMeshSquare_2','triangleMeshSquare_3','triangleMeshSquare_4','triangleMeshSquare_5','triangleMeshSquare_6']
     nbMeshes=len(meshList)
@@ -130,4 +130,4 @@ def test_validation2DWaveSystemTrianglesFV():
     plt.close('all')
     
 if __name__ == """__main__""":
-    test_validation2DWaveSystemTrianglesFV()
+    test_validation2DWaveSystemUpwindTriangles()

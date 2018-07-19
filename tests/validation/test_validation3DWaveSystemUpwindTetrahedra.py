@@ -4,14 +4,14 @@ import matplotlib.pyplot as plt
 import numpy as np
 from math import log10, sqrt
 
-def test_validation3DWaveSystemTetrahedraFV():
+def test_validation3DWaveSystemUpwindTetrahedra():
     #### 3D tetrahedral mesh by simplexization of a cartesian mesh
     meshList=[5,11,21,31]
     nbMeshes=len(meshList)
     error_p_tab=[0]*nbMeshes
     error_u_tab=[0]*nbMeshes
     mesh_size_tab=[0]*nbMeshes
-    mesh_name='meshCubeWithTetrahedra3DFV'
+    mesh_name='meshCubeWithTetrahedra3D'
     diag_data_press=[0]*nbMeshes
     diag_data_vel=[0]*nbMeshes
     time_tab=[0]*nbMeshes
@@ -28,7 +28,7 @@ def test_validation3DWaveSystemTetrahedraFV():
         my_mesh=cdmath.Mesh(6,0,1,nx,0,1,nx,0,1,nx)
         error_p_tab[i], error_u_tab[i], mesh_size_tab[i], t_final[i], ndt_final[i], max_vel[i], diag_data_press[i], diag_data_vel[i], time_tab[i] =WaveSystemUpwind.solve(my_mesh, mesh_name+str(my_mesh.getNumberOfCells()), resolution)
         print max_vel[i]
-        #assert max_vel[i]>1.8 and max_vel[i]<2
+        #assert max_vel[i]>1.95 and max_vel[i]<2
         i=i+1
     
     # Plot over diagonal line
@@ -132,4 +132,4 @@ def test_validation3DWaveSystemTetrahedraFV():
     plt.close('all')
     
 if __name__ == """__main__""":
-    test_validation3DWaveSystemTetrahedraFV()
+    test_validation3DWaveSystemUpwindTetrahedra()
