@@ -15,6 +15,11 @@ def initial_conditions_wave_system(my_mesh):
     dim     = my_mesh.getMeshDimension()
     nbCells = my_mesh.getNumberOfCells()
 
+    rayon = 0.15
+    xcentre = 0.25
+    ycentre = 0.25
+    zcentre = 0.25
+
     pressure_field = cdmath.Field("Pressure",            cdmath.CELLS, my_mesh, 1)
     velocity_field = cdmath.Field("Velocity",            cdmath.CELLS, my_mesh, 3)
 
@@ -23,15 +28,25 @@ def initial_conditions_wave_system(my_mesh):
         y = my_mesh.getCell(i).y()
         z = my_mesh.getCell(i).z()
 
-        pressure_field[i] = p0
+        velocity_field[i,0] = 0
+        velocity_field[i,1] = 0
+        velocity_field[i,2] = 0
+
+        valX = (x - xcentre) * (x - xcentre)
+        valY = (y - ycentre) * (y - ycentre)
         if(dim==2):
-            velocity_field[i,0] =  sin(pi*x)*cos(pi*y)
-            velocity_field[i,1] = -sin(pi*y)*cos(pi*x)
-            velocity_field[i,2] = 0
+            val =  sqrt(valX + valY)
         if(dim==3):
-            velocity_field[i,0] =    sin(pi*x)*cos(pi*y)*cos(pi*z)
-            velocity_field[i,1] =    sin(pi*y)*cos(pi*x)*cos(pi*z)
-            velocity_field[i,2] = -2*sin(pi*z)*cos(pi*x)*cos(pi*y)
+            valZ = (z - zcentre) * (z - zcentre)
+            val =  sqrt(valX + valY + valZ)
+            
+        if val < rayon:
+            pressure_field[i] = p0
+            pass
+        else:
+            pressure_field[i] = p0/2
+            pass
+        pass
         
     return pressure_field, velocity_field
 
@@ -55,8 +70,6 @@ def computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt):
     nbComp=dim+1
     normal=cdmath.Vector(dim)
 
-    indexFacesPerio = my_mesh.getIndexFacePeriodic()
-    
     implMat=cdmath.SparseMatrixPetsc(nbCells*nbComp,nbCells*nbComp,(nbVoisinsMax+1)*nbComp)
 
     idMoinsJacCL=cdmath.Matrix(nbComp)
@@ -186,8 +199,6 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution):
             print "Variation temporelle relative : pressure ", maxVector[0]/p0 ,", velocity x", maxVector[1]/rho0 ,", velocity y", maxVector[2]/rho0
             print "Linear system converged in ", iterGMRES, " GMRES iterations"
 
-            delta_press=0
-            delta_v=cdmath.Vector(dim)
             for k in range(nbCells):
                 pressure_field[k]=Un[k*(dim+1)+0]
                 velocity_field[k,0]=Un[k*(dim+1)+1]/rho0
@@ -195,23 +206,12 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution):
                     velocity_field[k,1]=Un[k*(dim+1)+2]/rho0
                     if(dim>2):
                         velocity_field[k,2]=Un[k*(dim+1)+3]/rho0
-                if (abs(initial_pressure[k]-pressure_field[k])>delta_press):
-                    delta_press=abs(initial_pressure[k]-pressure_field[k])
-                if (abs(initial_velocity[k,0]-velocity_field[k,0])>delta_v[0]):
-                    delta_v[0]=abs(initial_velocity[k,0]-velocity_field[k,0])
-                if (abs(initial_velocity[k,1]-velocity_field[k,1])>delta_v[1]):
-                    delta_v[1]=abs(initial_velocity[k,1]-velocity_field[k,1])
-                if(dim==3):
-                    if (abs(initial_velocity[k,2]-velocity_field[k,2])>delta_v[2]):
-                        delta_v[2]=abs(initial_velocity[k,2]-velocity_field[k,2])
                 
             pressure_field.setTime(time,it);
             pressure_field.writeVTK("WaveSystem"+str(dim)+"DPStag"+meshName+"_pressure",False);
             velocity_field.setTime(time,it);
             velocity_field.writeVTK("WaveSystem"+str(dim)+"DPStag"+meshName+"_velocity",False);
 
-            print "Ecart au stationnaire exact : error_p= ",delta_press/p0," error_||u||= ",delta_v.maxVector()[0]
-            print
     print"-- Iter: " + str(it) + ", Time: " + str(time) + ", dt: " + str(dt)
     print "Variation temporelle relative : pressure ", maxVector[0]/p0 ,", velocity x", maxVector[1]/rho0 ,", velocity y", maxVector[2]/rho0
     print
@@ -223,8 +223,7 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution):
         assert (total_pressure_initial-pressure_field.integral()).norm()/p0<precision
         assert (total_velocity_initial-velocity_field.integral()).norm()<precision
         print "------------------------------------------------------------------------------------"
-        delta_press=0
-        delta_v=cdmath.Vector(dim)
+
         for k in range(nbCells):
             pressure_field[k]=Un[k*(dim+1)+0]
             velocity_field[k,0]=Un[k*(dim+1)+1]/rho0
@@ -232,18 +231,6 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution):
                 velocity_field[k,1]=Un[k*(dim+1)+2]/rho0
                 if(dim>2):
                     velocity_field[k,2]=Un[k*(dim+1)+3]/rho0
-            if (abs(initial_pressure[k]-pressure_field[k])>delta_press):
-                delta_press=abs(initial_pressure[k]-pressure_field[k])
-            if (abs(initial_velocity[k,0]-velocity_field[k,0])>delta_v[0]):
-                delta_v[0]=abs(initial_velocity[k,0]-velocity_field[k,0])
-            if (abs(initial_velocity[k,1]-velocity_field[k,1])>delta_v[1]):
-                delta_v[1]=abs(initial_velocity[k,1]-velocity_field[k,1])
-            if(dim==3):
-                if (abs(initial_velocity[k,2]-velocity_field[k,2])>delta_v[2]):
-                    delta_v[2]=abs(initial_velocity[k,2]-velocity_field[k,2])
-
-        print "Ecart au stationnaire exact : error p= ",delta_press/p0," error ||u||= ",delta_v.maxVector()[0]
-        print
 
         pressure_field.setTime(time,0);
         pressure_field.writeVTK("WaveSystem"+str(dim)+"DPStag"+meshName+"_pressure_Stat");
@@ -274,7 +261,7 @@ def solve(my_mesh,meshName,resolution):
     
     # Problem data
     tmax = 1000.
-    ntmax = 20000
+    ntmax = 100
     cfl = 1./my_mesh.getSpaceDimension()
     output_freq = 1000
 
@@ -290,5 +277,5 @@ if __name__ == """__main__""":
     M1=cdmath.Mesh(0,1,20,0,1,20)
     solve(M1,"SquareWithSquares",100)
 
-    M2=cdmath.Mesh("meshSquare.med")
-    solve(M2,'SquaresWithTrianglesCells',100)
+    M2=cdmath.Mesh("meshCube.med")
+    solve(M2,'CubeWithTetrahedraCells',100)

@@ -15,6 +15,10 @@ def initial_conditions_wave_system(my_mesh):
     dim     = my_mesh.getMeshDimension()
     nbCells = my_mesh.getNumberOfCells()
 
+    rayon = 0.15
+    xcentre = 0.25
+    ycentre = 0.25
+
     if(dim!=2):
         raise ValueError("initial_conditions_wave_system: Mesh dimension should be 2")
 
@@ -26,14 +30,24 @@ def initial_conditions_wave_system(my_mesh):
         x = my_mesh.getCell(i).x()
         y = my_mesh.getCell(i).y()
 
-        pressure_field[i] = p0
-        velocity_field[i,0] =  sin(pi*x)*cos(pi*y)
-        velocity_field[i,1] = -sin(pi*y)*cos(pi*x)
+        velocity_field[i,0] = 0
+        velocity_field[i,1] = 0
         velocity_field[i,2] = 0
 
-        U[i,0] =   p0
-        U[i,1] =  rho0*sin(pi*x)*cos(pi*y)
-        U[i,2] = -rho0*sin(pi*y)*cos(pi*x)
+        valX = (x - xcentre) * (x - xcentre)
+        valY = (y - ycentre) * (y - ycentre)
+        val =  sqrt(valX + valY)
+        if val < rayon:
+            pressure_field[i] = p0
+            pass
+        else:
+            pressure_field[i] = p0/2
+            pass
+        pass
+
+        U[i,0] =  pressure_field[i]
+        U[i,1] =  velocity_field[i,0]
+        U[i,2] =  velocity_field[i,1]
         
     return U, pressure_field, velocity_field
 
@@ -144,11 +158,6 @@ def WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq, outputFileName,resolu
     print("Construction of the initial condition …")
     U, pressure_field, velocity_field = initial_conditions_wave_system(my_mesh)
 
-    #keep the initial data in memory to measure the error later
-    Uinitial = cdmath.Field("Initial vector", cdmath.CELLS, my_mesh, dim+1)
-    for k in range(nbCells):
-        for i in range(dim+1):
-            Uinitial[k,i]=U[k,i]
     #sauvegarde de la donnée initiale
     pressure_field.setTime(time,it);
     pressure_field.writeVTK("WaveSystem2DFV"+"_pressure");
@@ -191,19 +200,12 @@ def WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq, outputFileName,resolu
             velocity_field.setTime(time,it);
             velocity_field.writeVTK("WaveSystem2DFV"+"_velocity",False);
 
-            maxVector=(Uinitial-U).normMax()
-            error_p=maxVector[0]/p0
-            error_u=sqrt(maxVector[1]*maxVector[1]+maxVector[2]*maxVector[2])/rho0
-
-            print "max(|Pnum-Pexact|/p0)= ", error_p, "max(||Qnum-Qexact|/rho0)= ", error_u
-            print
     print("-- Iter: " + str(it) + ", Time: " + str(time) + ", dt: " + str(dt))
     print "Variation temporelle relative : pressure ", maxVector[0]/p0 ,", velocity x", maxVector[1]/rho0 ,", velocity y", maxVector[2]/rho0
     print
 
     if(it>=ntmax):
         print "Nombre de pas de temps maximum ntmax= ", ntmax, " atteint"
-        raise ValueError("Maximum number of time steps reached : Stationary state not found !!!!!!!")
     elif(isStationary):
         print "Régime stationnaire atteint au pas de temps ", it, ", t= ", time
         for k in range(nbCells):
@@ -219,12 +221,6 @@ def WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq, outputFileName,resolu
         velocity_field.setTime(time,0);
         velocity_field.writeVTK("WaveSystem2DFV"+"_velocity_Stat");
 
-        maxVector=(Uinitial-U).normMax()
-        error_p=maxVector[0]/p0
-        error_u=sqrt(maxVector[1]*maxVector[1]+maxVector[2]*maxVector[2])/rho0
-
-        print "max(|Pnum-Pexact|/p0)= ", error_p, "max(||Qnum-Qexact|/rho0)= ", error_u
-        print
         #Postprocessing : Extraction of the diagonal data
         diag_data_press=VTK_routines.Extract_field_data_over_line_to_numpyArray(pressure_field,[0,1,0],[1,0,0], resolution)    
         diag_data_vel  =VTK_routines.Extract_field_data_over_line_to_numpyArray(velocity_field,[0,1,0],[1,0,0], resolution)    
@@ -234,7 +230,6 @@ def WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq, outputFileName,resolu
         
     else:
         print "Temps maximum Tmax= ", tmax, " atteint"
-        raise ValueError("Maximum time reached : Stationary state not found !!!!!!!")
 
 
 def solve(my_mesh,filename,resolution):
@@ -242,7 +237,7 @@ def solve(my_mesh,filename,resolution):
 
     # Problem data
     tmax = 1.
-    ntmax = 1000
+    ntmax = 100
     cfl = 0.45
     output_freq = 100
 
