@@ -11,7 +11,7 @@ def test_validation2DWaveSystemUpwindTriangles():
     error_p_tab=[0]*nbMeshes
     error_u_tab=[0]*nbMeshes
     mesh_size_tab=[0]*nbMeshes
-    mesh_path='../ressources/2DTriangles/'
+    mesh_path='../../ressources/2DTriangles/'
     mesh_name='meshSquareWithTriangles'
     diag_data_press=[0]*nbMeshes
     diag_data_vel=[0]*nbMeshes

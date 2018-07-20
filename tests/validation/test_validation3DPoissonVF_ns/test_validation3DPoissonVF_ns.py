@@ -11,7 +11,7 @@ def test_validation3DVF_ns():
     error_tab=[0]*nbMeshes
     mesh_size_tab=[0]*nbMeshes
     time_tab=[0]*nbMeshes
-    mesh_path='../ressources/3DTetrahedra/'
+    mesh_path='../../ressources/3DTetrahedra/'
     mesh_name='meshCubeWithTetrahedra3DFV'
     diag_data=[0]*nbMeshes
     resolution=100
