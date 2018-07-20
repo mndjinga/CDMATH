@@ -1,86 +1,27 @@
-file(GLOB VALIDATION_FOLDERS_TO_INSTALL Poisson2DEF Poisson3DEF Poisson3DSphereEF Poisson2DVF Poisson3DVF Transport1DFV WaveSystemFV)
-file(GLOB VALIDATION_TESTS_TO_INSTALL 
-  test_validation2DPoissonEF.py 
-  test_validation3DPoissonEF.py
-  test_validation3DSpherePoissonEF.py
-  test_validation2DPoissonVF_s.py
-  test_validation2DPoissonVF_ns.py
-  test_validation2DPoissonVF_loc_ref.py
-  test_validation3DPoissonVF_s.py
-  test_validation3DPoissonVF_ns.py
-  test_validation2DPoissonVF_checkerboard.py
-  test_validation3DPoissonVF_checkerboard.py
-  test_validation2DWaveSystemTrianglesFV.py
-  test_validation2DWaveSystemSquaresFV.py)
 
-install(FILES ${VALIDATION_TESTS_TO_INSTALL} DESTINATION share/validation)
+IF (CDMATH_WITH_PYTHON AND CDMATH_WITH_PETSC)
+    ADD_SUBDIRECTORY(test_validation2DPoissonEF)
+    ADD_SUBDIRECTORY(test_validation2DPoissonVF_checkerboard)
+    ADD_SUBDIRECTORY(test_validation2DPoissonVF_loc_ref)
+    ADD_SUBDIRECTORY(test_validation2DPoissonVF_ns)
+    ADD_SUBDIRECTORY(test_validation2DPoissonVF_s)
+    ADD_SUBDIRECTORY(test_validation2DWaveSystemPStagSquares)
+    ADD_SUBDIRECTORY(test_validation2DWaveSystemPStagTriangles)
+    ADD_SUBDIRECTORY(test_validation2DWaveSystemUpwindSquares)
+    ADD_SUBDIRECTORY(test_validation2DWaveSystemUpwindTriangles)
+    ADD_SUBDIRECTORY(test_validation3DSpherePoissonEF)
+    ADD_SUBDIRECTORY(test_validation3DPoissonEF)
+    ADD_SUBDIRECTORY(test_validation3DPoissonVF_checkerboard)
+    ADD_SUBDIRECTORY(test_validation3DPoissonVF_ns)
+    ADD_SUBDIRECTORY(test_validation3DPoissonVF_s)
+    ADD_SUBDIRECTORY(test_validation3DWaveSystemUpwindCubes)
+    ADD_SUBDIRECTORY(test_validation3DWaveSystemUpwindTetrahedra)
+ENDIF (CDMATH_WITH_PYTHON AND CDMATH_WITH_PETSC)
+
+
+file(GLOB VALIDATION_FOLDERS_TO_INSTALL test_validation2DPoissonEF test_validation2DPoissonVF_checkerboard test_validation2DPoissonVF_loc_ref test_validation2DPoissonVF_ns test_validation2DPoissonVF_s 
+test_validation2DWaveSystemPStagSquares test_validation2DWaveSystemPStagTriangles test_validation2DWaveSystemUpwindSquares test_validation2DWaveSystemUpwindTriangles test_validation3DPoissonEF test_validation3DPoissonVF_checkerboard test_validation3DPoissonVF_ns test_validation3DPoissonVF_s test_validation3DSpherePoissonEF test_validation3DWaveSystemUpwindCubes test_validation3DWaveSystemUpwindTetrahedra )
+
 install(DIRECTORY ${VALIDATION_FOLDERS_TO_INSTALL} DESTINATION share/validation)
-
-if (CDMATH_WITH_PYTHON AND CDMATH_WITH_PETSC AND CDMATH_WITH_POSTPRO)
-    ADD_TEST(test_validation2DPoissonEF ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_validation2DPoissonEF.py)
-    SET_PROPERTY(TEST test_validation2DPoissonEF PROPERTY ENVIRONMENT "LD_LIBRARY_PATH=${CMAKE_INSTALL_PREFIX}/lib:${CMAKE_INSTALL_PREFIX}/lib/medcoupling:${CMAKE_INSTALL_PREFIX}/lib/med:${PETSC_DIR}/${PETSC_ARCH}/lib:${HDF5_ROOT_DIR}/lib")
-    SET_PROPERTY(TEST test_validation2DPoissonEF APPEND PROPERTY ENVIRONMENT "PYTHONPATH=${CMAKE_CURRENT_SOURCE_DIR}/Poisson2DEF:${CMAKE_INSTALL_PREFIX}/lib/cdmath:${CMAKE_INSTALL_PREFIX}/bin/cdmath:${CMAKE_INSTALL_PREFIX}/bin/cdmath/postprocessing:${CMAKE_INSTALL_PREFIX}/${MEDCOUPLING_INSTALL_PYTHON}")
-
-    ADD_TEST(test_validation3DPoissonEF ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_validation3DPoissonEF.py)
-    SET_PROPERTY(TEST test_validation3DPoissonEF PROPERTY ENVIRONMENT "LD_LIBRARY_PATH=${CMAKE_INSTALL_PREFIX}/lib:${CMAKE_INSTALL_PREFIX}/lib/medcoupling:${CMAKE_INSTALL_PREFIX}/lib/med:${PETSC_DIR}/${PETSC_ARCH}/lib:${HDF5_ROOT_DIR}/lib")
-    SET_PROPERTY(TEST test_validation3DPoissonEF APPEND PROPERTY ENVIRONMENT "PYTHONPATH=${CMAKE_CURRENT_SOURCE_DIR}/Poisson3DEF:${CMAKE_INSTALL_PREFIX}/lib/cdmath:${CMAKE_INSTALL_PREFIX}/bin/cdmath:${CMAKE_INSTALL_PREFIX}/lib/cdmath:${CMAKE_INSTALL_PREFIX}/bin/cdmath/postprocessing:${CMAKE_INSTALL_PREFIX}/${MEDCOUPLING_INSTALL_PYTHON}")
-
-    ADD_TEST(test_validation3DSpherePoissonEF ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_validation3DSpherePoissonEF.py)
-    SET_PROPERTY(TEST test_validation3DSpherePoissonEF PROPERTY ENVIRONMENT "LD_LIBRARY_PATH=${CMAKE_INSTALL_PREFIX}/lib:${CMAKE_INSTALL_PREFIX}/lib/medcoupling:${CMAKE_INSTALL_PREFIX}/lib/med:${PETSC_DIR}/${PETSC_ARCH}/lib:${HDF5_ROOT_DIR}/lib")
-    SET_PROPERTY(TEST test_validation3DSpherePoissonEF APPEND PROPERTY ENVIRONMENT "PYTHONPATH=${CMAKE_CURRENT_SOURCE_DIR}/Poisson3DSphereEF:${CMAKE_INSTALL_PREFIX}/lib/cdmath:${CMAKE_INSTALL_PREFIX}/bin/cdmath:${CMAKE_INSTALL_PREFIX}/bin/cdmath/postprocessing:${CMAKE_INSTALL_PREFIX}/${MEDCOUPLING_INSTALL_PYTHON}")
-
-    ADD_TEST(test_validation2DPoissonVF_s ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_validation2DPoissonVF_s.py)
-    SET_PROPERTY(TEST test_validation2DPoissonVF_s PROPERTY ENVIRONMENT "LD_LIBRARY_PATH=${CMAKE_INSTALL_PREFIX}/lib:${CMAKE_INSTALL_PREFIX}/lib/medcoupling:${CMAKE_INSTALL_PREFIX}/lib/med:${PETSC_DIR}/${PETSC_ARCH}/lib:${HDF5_ROOT_DIR}/lib")
-    SET_PROPERTY(TEST test_validation2DPoissonVF_s APPEND PROPERTY ENVIRONMENT "PYTHONPATH=${CMAKE_CURRENT_SOURCE_DIR}/Poisson2DVF:${CMAKE_INSTALL_PREFIX}/lib/cdmath:${CMAKE_INSTALL_PREFIX}/bin/cdmath:${CMAKE_INSTALL_PREFIX}/bin/cdmath/postprocessing:${CMAKE_INSTALL_PREFIX}/${MEDCOUPLING_INSTALL_PYTHON}")
-
-    ADD_TEST(test_validation2DPoissonVF_ns ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_validation2DPoissonVF_ns.py)
-    SET_PROPERTY(TEST test_validation2DPoissonVF_ns PROPERTY ENVIRONMENT "LD_LIBRARY_PATH=${CMAKE_INSTALL_PREFIX}/lib:${CMAKE_INSTALL_PREFIX}/lib/medcoupling:${CMAKE_INSTALL_PREFIX}/lib/med:${PETSC_DIR}/${PETSC_ARCH}/lib:${HDF5_ROOT_DIR}/lib")
-    SET_PROPERTY(TEST test_validation2DPoissonVF_ns APPEND PROPERTY ENVIRONMENT "PYTHONPATH=${CMAKE_CURRENT_SOURCE_DIR}/Poisson2DVF:${CMAKE_INSTALL_PREFIX}/lib/cdmath:${CMAKE_INSTALL_PREFIX}/bin/cdmath:${CMAKE_INSTALL_PREFIX}/bin/cdmath/postprocessing:${CMAKE_INSTALL_PREFIX}/${MEDCOUPLING_INSTALL_PYTHON}")
-
-    ADD_TEST(test_validation2DPoissonVF_loc_ref ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_validation2DPoissonVF_loc_ref.py)
-    SET_PROPERTY(TEST test_validation2DPoissonVF_loc_ref PROPERTY ENVIRONMENT "LD_LIBRARY_PATH=${CMAKE_INSTALL_PREFIX}/lib:${CMAKE_INSTALL_PREFIX}/lib/medcoupling:${CMAKE_INSTALL_PREFIX}/lib/med:${PETSC_DIR}/${PETSC_ARCH}/lib:${HDF5_ROOT_DIR}/lib")
-    SET_PROPERTY(TEST test_validation2DPoissonVF_loc_ref APPEND PROPERTY ENVIRONMENT "PYTHONPATH=${CMAKE_CURRENT_SOURCE_DIR}/Poisson2DVF:${CMAKE_INSTALL_PREFIX}/lib/cdmath:${CMAKE_INSTALL_PREFIX}/bin/cdmath:${CMAKE_INSTALL_PREFIX}/bin/cdmath/postprocessing:${CMAKE_INSTALL_PREFIX}/${MEDCOUPLING_INSTALL_PYTHON}")
-
-    ADD_TEST(test_validation3DPoissonVF_s ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_validation3DPoissonVF_s.py)
-    SET_PROPERTY(TEST test_validation3DPoissonVF_s PROPERTY ENVIRONMENT "LD_LIBRARY_PATH=${CMAKE_INSTALL_PREFIX}/lib:${CMAKE_INSTALL_PREFIX}/lib/medcoupling:${CMAKE_INSTALL_PREFIX}/lib/med:${PETSC_DIR}/${PETSC_ARCH}/lib:${HDF5_ROOT_DIR}/lib")
-    SET_PROPERTY(TEST test_validation3DPoissonVF_s APPEND PROPERTY ENVIRONMENT "PYTHONPATH=${CMAKE_CURRENT_SOURCE_DIR}/Poisson3DVF:${CMAKE_INSTALL_PREFIX}/lib/cdmath:${CMAKE_INSTALL_PREFIX}/bin/cdmath:${CMAKE_INSTALL_PREFIX}/bin/cdmath/postprocessing:${CMAKE_INSTALL_PREFIX}/${MEDCOUPLING_INSTALL_PYTHON}")
-
-    ADD_TEST(test_validation3DPoissonVF_ns ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_validation3DPoissonVF_ns.py)
-    SET_PROPERTY(TEST test_validation3DPoissonVF_ns PROPERTY ENVIRONMENT "LD_LIBRARY_PATH=${CMAKE_INSTALL_PREFIX}/lib:${CMAKE_INSTALL_PREFIX}/lib/medcoupling:${CMAKE_INSTALL_PREFIX}/lib/med:${PETSC_DIR}/${PETSC_ARCH}/lib:${HDF5_ROOT_DIR}/lib")
-    SET_PROPERTY(TEST test_validation3DPoissonVF_ns APPEND PROPERTY ENVIRONMENT "PYTHONPATH=${CMAKE_CURRENT_SOURCE_DIR}/Poisson3DVF:${CMAKE_INSTALL_PREFIX}/lib/cdmath:${CMAKE_INSTALL_PREFIX}/bin/cdmath:${CMAKE_INSTALL_PREFIX}/bin/cdmath/postprocessing:${CMAKE_INSTALL_PREFIX}/${MEDCOUPLING_INSTALL_PYTHON}")
-
-    ADD_TEST(test_validation2DPoissonVF_checkerboard ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_validation2DPoissonVF_checkerboard.py)
-    SET_PROPERTY(TEST test_validation2DPoissonVF_checkerboard PROPERTY ENVIRONMENT "LD_LIBRARY_PATH=${CMAKE_INSTALL_PREFIX}/lib:${CMAKE_INSTALL_PREFIX}/lib/medcoupling:${CMAKE_INSTALL_PREFIX}/lib/med:${PETSC_DIR}/${PETSC_ARCH}/lib:${HDF5_ROOT_DIR}/lib")
-    SET_PROPERTY(TEST test_validation2DPoissonVF_checkerboard APPEND PROPERTY ENVIRONMENT "PYTHONPATH=${CMAKE_CURRENT_SOURCE_DIR}/Poisson2DVF:${CMAKE_INSTALL_PREFIX}/lib/cdmath:${CMAKE_INSTALL_PREFIX}/bin/cdmath:${CMAKE_INSTALL_PREFIX}/bin/cdmath/postprocessing:${CMAKE_INSTALL_PREFIX}/${MEDCOUPLING_INSTALL_PYTHON}")
-
-    ADD_TEST(test_validation3DPoissonVF_checkerboard ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_validation3DPoissonVF_checkerboard.py)
-    SET_PROPERTY(TEST test_validation3DPoissonVF_checkerboard PROPERTY ENVIRONMENT "LD_LIBRARY_PATH=${CMAKE_INSTALL_PREFIX}/lib:${CMAKE_INSTALL_PREFIX}/lib/medcoupling:${CMAKE_INSTALL_PREFIX}/lib/med:${PETSC_DIR}/${PETSC_ARCH}/lib:${HDF5_ROOT_DIR}/lib")
-    SET_PROPERTY(TEST test_validation3DPoissonVF_checkerboard APPEND PROPERTY ENVIRONMENT "PYTHONPATH=${CMAKE_CURRENT_SOURCE_DIR}/Poisson3DVF:${CMAKE_INSTALL_PREFIX}/lib/cdmath:${CMAKE_INSTALL_PREFIX}/bin/cdmath:${CMAKE_INSTALL_PREFIX}/bin/cdmath/postprocessing:${CMAKE_INSTALL_PREFIX}/${MEDCOUPLING_INSTALL_PYTHON}")
-
-    ADD_TEST(test_validation2DWaveSystemUpwindTriangles ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_validation2DWaveSystemUpwindTriangles.py)
-    SET_PROPERTY(TEST test_validation2DWaveSystemUpwindTriangles PROPERTY ENVIRONMENT "LD_LIBRARY_PATH=${CMAKE_INSTALL_PREFIX}/lib:${CMAKE_INSTALL_PREFIX}/lib/medcoupling:${CMAKE_INSTALL_PREFIX}/lib/med:${PETSC_DIR}/${PETSC_ARCH}/lib:${HDF5_ROOT_DIR}/lib")
-    SET_PROPERTY(TEST test_validation2DWaveSystemUpwindTriangles APPEND PROPERTY ENVIRONMENT "PYTHONPATH=${CMAKE_CURRENT_SOURCE_DIR}/WaveSystemUpwind:${CMAKE_INSTALL_PREFIX}/lib/cdmath:${CMAKE_INSTALL_PREFIX}/bin/cdmath:${CMAKE_INSTALL_PREFIX}/bin/cdmath/postprocessing:${CMAKE_INSTALL_PREFIX}/${MEDCOUPLING_INSTALL_PYTHON}")
-
-    ADD_TEST(test_validation2DWaveSystemUpwindSquares ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_validation2DWaveSystemUpwindSquares.py)
-    SET_PROPERTY(TEST test_validation2DWaveSystemUpwindSquares PROPERTY ENVIRONMENT "LD_LIBRARY_PATH=${CMAKE_INSTALL_PREFIX}/lib:${CMAKE_INSTALL_PREFIX}/lib/medcoupling:${CMAKE_INSTALL_PREFIX}/lib/med:${PETSC_DIR}/${PETSC_ARCH}/lib:${HDF5_ROOT_DIR}/lib")
-    SET_PROPERTY(TEST test_validation2DWaveSystemUpwindSquares APPEND PROPERTY ENVIRONMENT "PYTHONPATH=${CMAKE_CURRENT_SOURCE_DIR}/WaveSystemUpwind:${CMAKE_INSTALL_PREFIX}/lib/cdmath:${CMAKE_INSTALL_PREFIX}/bin/cdmath:${CMAKE_INSTALL_PREFIX}/bin/cdmath/postprocessing:${CMAKE_INSTALL_PREFIX}/${MEDCOUPLING_INSTALL_PYTHON}")
-
-    ADD_TEST(test_validation2DWaveSystemPStagTriangles ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_validation2DWaveSystemPStagTriangles.py)
-    SET_PROPERTY(TEST test_validation2DWaveSystemPStagTriangles PROPERTY ENVIRONMENT "LD_LIBRARY_PATH=${CMAKE_INSTALL_PREFIX}/lib:${CMAKE_INSTALL_PREFIX}/lib/medcoupling:${CMAKE_INSTALL_PREFIX}/lib/med:${PETSC_DIR}/${PETSC_ARCH}/lib:${HDF5_ROOT_DIR}/lib")
-    SET_PROPERTY(TEST test_validation2DWaveSystemPStagTriangles APPEND PROPERTY ENVIRONMENT "PYTHONPATH=${CMAKE_CURRENT_SOURCE_DIR}/WaveSystemPStag:${CMAKE_INSTALL_PREFIX}/lib/cdmath:${CMAKE_INSTALL_PREFIX}/bin/cdmath:${CMAKE_INSTALL_PREFIX}/bin/cdmath/postprocessing:${CMAKE_INSTALL_PREFIX}/${MEDCOUPLING_INSTALL_PYTHON}")
-
-    ADD_TEST(test_validation2DWaveSystemPStagSquares ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_validation2DWaveSystemPStagSquares.py)
-    SET_PROPERTY(TEST test_validation2DWaveSystemPStagSquares PROPERTY ENVIRONMENT "LD_LIBRARY_PATH=${CMAKE_INSTALL_PREFIX}/lib:${CMAKE_INSTALL_PREFIX}/lib/medcoupling:${CMAKE_INSTALL_PREFIX}/lib/med:${PETSC_DIR}/${PETSC_ARCH}/lib:${HDF5_ROOT_DIR}/lib")
-    SET_PROPERTY(TEST test_validation2DWaveSystemPStagSquares APPEND PROPERTY ENVIRONMENT "PYTHONPATH=${CMAKE_CURRENT_SOURCE_DIR}/WaveSystemPStag:${CMAKE_INSTALL_PREFIX}/lib/cdmath:${CMAKE_INSTALL_PREFIX}/bin/cdmath:${CMAKE_INSTALL_PREFIX}/bin/cdmath/postprocessing:${CMAKE_INSTALL_PREFIX}/${MEDCOUPLING_INSTALL_PYTHON}")
-
-    ADD_TEST(test_validation3DWaveSystemUpwindTetrahedra ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_validation3DWaveSystemUpwindTetrahedra.py)
-    SET_PROPERTY(TEST test_validation3DWaveSystemUpwindTetrahedra PROPERTY ENVIRONMENT "LD_LIBRARY_PATH=${CMAKE_INSTALL_PREFIX}/lib:${CMAKE_INSTALL_PREFIX}/lib/medcoupling:${CMAKE_INSTALL_PREFIX}/lib/med:${PETSC_DIR}/${PETSC_ARCH}/lib:${HDF5_ROOT_DIR}/lib")
-    SET_PROPERTY(TEST test_validation3DWaveSystemUpwindTetrahedra APPEND PROPERTY ENVIRONMENT "PYTHONPATH=${CMAKE_CURRENT_SOURCE_DIR}/WaveSystemUpwind:${CMAKE_INSTALL_PREFIX}/lib/cdmath:${CMAKE_INSTALL_PREFIX}/bin/cdmath:${CMAKE_INSTALL_PREFIX}/bin/cdmath/postprocessing:${CMAKE_INSTALL_PREFIX}/${MEDCOUPLING_INSTALL_PYTHON}")
-
-    ADD_TEST(test_validation3DWaveSystemUpwindCubes ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_validation3DWaveSystemUpwindCubes.py)
-    SET_PROPERTY(TEST test_validation3DWaveSystemUpwindCubes PROPERTY ENVIRONMENT "LD_LIBRARY_PATH=${CMAKE_INSTALL_PREFIX}/lib:${CMAKE_INSTALL_PREFIX}/lib/medcoupling:${CMAKE_INSTALL_PREFIX}/lib/med:${PETSC_DIR}/${PETSC_ARCH}/lib:${HDF5_ROOT_DIR}/lib")
-    SET_PROPERTY(TEST test_validation3DWaveSystemUpwindCubes APPEND PROPERTY ENVIRONMENT "PYTHONPATH=${CMAKE_CURRENT_SOURCE_DIR}/WaveSystemUpwind:${CMAKE_INSTALL_PREFIX}/lib/cdmath:${CMAKE_INSTALL_PREFIX}/bin/cdmath:${CMAKE_INSTALL_PREFIX}/bin/cdmath/postprocessing:${CMAKE_INSTALL_PREFIX}/${MEDCOUPLING_INSTALL_PYTHON}")
-
-endif (CDMATH_WITH_PYTHON AND CDMATH_WITH_PETSC AND CDMATH_WITH_POSTPRO)
 
 
