@@ -1,5 +1,5 @@
 import cdmath
-import FiniteElementsOnSphere
+import FiniteElements3DSphereWithCDMATH
 import matplotlib.pyplot as plt
 import numpy as np
 from math import log10, sqrt
@@ -19,7 +19,7 @@ def test_validation3DSphereEF():
     i=0
     # Storing of numerical errors and mesh sizes
     for filename in meshList:
-        error_tab[i], mesh_size_tab[i], min_sol_num, max_sol_num, time_tab[i] =FiniteElementsOnSphere.solve(mesh_path+filename, resolution)
+        error_tab[i], mesh_size_tab[i], min_sol_num, max_sol_num, time_tab[i] =FiniteElements3DSphereWithCDMATH.solve(mesh_path+filename, resolution)
         assert min_sol_num>-1.1 
         assert max_sol_num<1.1
         error_tab[i]=log10(error_tab[i])
