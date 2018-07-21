@@ -553,7 +553,13 @@ Mesh::setMesh( void )
 	DataArrayInt *revDescI=DataArrayInt::New();
 	MEDCouplingUMesh* mu=_mesh->buildUnstructured();
 	mu->unPolyze();
-	MEDCouplingUMesh* m2=mu->buildDescendingConnectivity(desc,descI,revDesc,revDescI);//mesh of dimension N-1 containing the cell interfaces
+	MEDCouplingUMesh* m2=mu->buildDescendingConnectivity2(desc,descI,revDesc,revDescI);//mesh of dimension N-1 containing the cell interfaces
+
+    const int *tmp2=desc->getConstPointer();
+    const int *tmpI2=descI->getConstPointer();
+
+    //const int *work=tmp+tmpI[id];//corresponds to buildDescendingConnectivity
+    //const int *work2=tmp2+tmpI2[id];//corresponds to buildDescendingConnectivity2
 
 	//Test du type d'éléments contenus dans le maillage afin d'éviter les éléments contenant des points de gauss
 	_eltsTypes=mu->getAllGeoTypesSorted();
@@ -572,9 +578,6 @@ Mesh::setMesh( void )
 			throw CdmathException("Mesh::setMesh : in order to avoid gauss points, mesh should contain elements of type NORM_POINT1, NORM_SEG2, NORM_TRI3, NORM_QUAD4, NORM_TETRA4, NORM_PYRA5, NORM_PENTA6, NORM_HEXA8, NORM_POLYGON");
 		}
 	}
-
-	const int *tmp=desc->getConstPointer();
-	const int *tmpI=descI->getConstPointer();
 
 	DataArrayDouble *baryCell = mu->computeCellCenterOfMass() ;
 	const double *coorBary=baryCell->getConstPointer();
@@ -620,10 +623,11 @@ Mesh::setMesh( void )
 	{
 		for( int id=0;id<_numberOfCells;id++ )
 		{
-			int nbFaces=tmpI[id+1]-tmpI[id];
+			const int *work2=tmp2+tmpI2[id];//const int *work=tmp+tmpI[id];
+            int nbFaces=tmpI2[id+1]-tmpI2[id];//int nbFaces=tmpI[id+1]-tmpI[id];
+			
 			int nbVertices=mu->getNumberOfNodesInCell(id) ;
-			const int *work=tmp+tmpI[id];
-
+            
 			Cell ci( nbVertices, nbFaces, surf[id], Point(coorBary[id], 0.0, 0.0) ) ;
 
 			std::vector<int> nodeIdsOfCell ;
@@ -639,7 +643,8 @@ Mesh::setMesh( void )
 			for( int el=0;el<nbFaces;el++ )
 			{
 				ci.addNormalVector(el,xn,0.0,0.0) ;
-				ci.addFaceId(el,work[el]) ;
+				int indexFace=abs(work2[el])-1;
+                ci.addFaceId(el,indexFace) ;
 				xn = - xn;
 			}
 			_cells[id] = ci ;
@@ -680,15 +685,6 @@ Mesh::setMesh( void )
 	}
 	else if(_spaceDim==2  || _spaceDim==3)
 	{
-		DataArrayInt *desc2=DataArrayInt::New();
-		DataArrayInt *descI2=DataArrayInt::New();
-		DataArrayInt *revDesc2=DataArrayInt::New();
-		DataArrayInt *revDescI2=DataArrayInt::New();
-		MEDCouplingUMesh *m3=mu->buildDescendingConnectivity2(desc2,descI2,revDesc2,revDescI2);
-
-		const int *tmp2=desc2->getConstPointer();
-		const int *tmpI2=descI2->getConstPointer();
-
 		DataArrayDouble *barySeg = m2->computeCellCenterOfMass() ;
 		const double *coorBarySeg=barySeg->getConstPointer();
 
@@ -707,10 +703,9 @@ Mesh::setMesh( void )
 		/*Building mesh cells */
 		for(int id(0), k(0); id<_numberOfCells; id++, k+=_spaceDim)
 		{
-			//const int *work=tmp+tmpI[id];
-			const int *work2=tmp2+tmpI2[id];
-
-			int nbFaces=tmpI[id+1]-tmpI[id];
+            const int *work2=tmp2+tmpI2[id];//const int *work=tmp+tmpI[id];            
+			int nbFaces=tmpI2[id+1]-tmpI2[id];//int nbFaces=tmpI[id+1]-tmpI[id];
+            
 			int nbVertices=mu->getNumberOfNodesInCell(id) ;
 
 			vector<double> coorBaryXyz(3,0);
@@ -870,11 +865,6 @@ Mesh::setMesh( void )
 
 			_faces[id] = fi ;
 		}
-		desc2->decrRef();
-		descI2->decrRef();
-		revDesc2->decrRef();
-		revDescI2->decrRef();
-		m3->decrRef();
 		if(_spaceDim==_meshDim)
 			fieldn->decrRef();
 		fieldl->decrRef();
