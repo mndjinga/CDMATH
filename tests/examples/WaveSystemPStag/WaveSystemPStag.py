@@ -9,7 +9,7 @@ import VTK_routines
 rho0=1000#reference density
 c0=1500#reference sound speed
 p0=rho0*c0*c0#reference pressure
-precision=1e-4
+precision=1e-5
 
 def initial_conditions_wave_system(my_mesh):
     dim     = my_mesh.getMeshDimension()
@@ -167,11 +167,13 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution):
     dt = cfl * dx_min / c0
 
     divMat=computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt)
-    #Add the identity matrix on the diagonal
+
+    #print divMat*Un#
+    # Add the identity matrix on the diagonal
     for j in range(nbCells*(dim+1)):
         divMat.addValue(j,j,1)
     LS=cdmath.LinearSolver(divMat,Un,iterGMRESMax, precision, "GMRES","ILU")
-    
+    LS.viewPetscMatrix()
     print("Starting computation of the linear wave system with an pseudo staggered scheme …")
     
     # Starting time loop
@@ -277,5 +279,5 @@ if __name__ == """__main__""":
     M1=cdmath.Mesh(0,1,20,0,1,20)
     solve(M1,"SquareWithSquares",100)
 
-    M2=cdmath.Mesh("meshCube.med")
-    solve(M2,'CubeWithTetrahedraCells',100)
+    #M2=cdmath.Mesh("meshCube.med")
+    #solve(M2,'CubeWithTetrahedraCells',100)

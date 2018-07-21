@@ -39,6 +39,7 @@ Mesh::Mesh( void )
 	_numberOfNodes = 0;
 	_numberOfFaces = 0;
 	_numberOfCells = 0;
+	_numberOfEdges = 0;
     _isStructured=false;
 	_xMin=0.;
 	_xMax=0.;
@@ -117,21 +118,22 @@ Mesh::Mesh( const Mesh& m )
 {
 	_spaceDim = m.getSpaceDimension() ;
 	_meshDim = m.getMeshDimension() ;
+    _xMin=m.getXMin();
+    _xMax=m.getXMax();
+    _yMin=m.getYMin();
+    _yMax=m.getYMax();
+    _zMin=m.getZMin();
+    _zMax=m.getZMax();
     _isStructured=m.isStructured();
     if(_isStructured)
     {
         _nxyz = m.getCellGridStructure() ;
         _dxyz=m.getDXYZ();
-        _xMin=m.getXMin();
-        _xMax=m.getXMax();
-        _yMin=m.getYMin();
-        _yMax=m.getYMax();
-        _zMin=m.getZMin();
-        _zMax=m.getZMax();
     }
 	_numberOfNodes = m.getNumberOfNodes();
 	_numberOfFaces = m.getNumberOfFaces();
 	_numberOfCells = m.getNumberOfCells();
+	_numberOfEdges = m.getNumberOfEdges();
 	_groupNames = m.getNamesOfGroups() ;
 	_groups = m.getGroups() ;
 	_nodes   = new Node[_numberOfNodes] ;
@@ -553,7 +555,7 @@ Mesh::setMesh( void )
 	DataArrayInt *revDescI=DataArrayInt::New();
 	MEDCouplingUMesh* mu=_mesh->buildUnstructured();
 	mu->unPolyze();
-	MEDCouplingUMesh* m2=mu->buildDescendingConnectivity2(desc,descI,revDesc,revDescI);//mesh of dimension N-1 containing the cell interfaces
+	MEDCouplingUMesh* mu2=mu->buildDescendingConnectivity2(desc,descI,revDesc,revDescI);//mesh of dimension N-1 containing the cell interfaces
 
     const int *tmp2=desc->getConstPointer();
     const int *tmpI2=descI->getConstPointer();
@@ -597,12 +599,12 @@ Mesh::setMesh( void )
 
 	DataArrayInt *revCell=DataArrayInt::New();
 	DataArrayInt *revCellI=DataArrayInt::New();
-	m2->getReverseNodalConnectivity(revCell,revCellI) ;
+	mu2->getReverseNodalConnectivity(revCell,revCellI) ;
 	const int *tmpC=revCell->getConstPointer();
 	const int *tmpCI=revCellI->getConstPointer();
 
-	const DataArrayInt *nodal = m2->getNodalConnectivity() ;
-	const DataArrayInt *nodalI = m2->getNodalConnectivityIndex() ;
+	const DataArrayInt *nodal = mu2->getNodalConnectivity() ;
+	const DataArrayInt *nodalI = mu2->getNodalConnectivityIndex() ;
 	const int *tmpNE=nodal->getConstPointer();
 	const int *tmpNEI=nodalI->getConstPointer();
 
@@ -615,9 +617,29 @@ Mesh::setMesh( void )
 	_numberOfNodes = mu->getNumberOfNodes() ;
 	_nodes    = new Node[_numberOfNodes] ;
 
-	_numberOfFaces = m2->getNumberOfCells();
+	_numberOfFaces = mu2->getNumberOfCells();
 	_faces    = new Face[_numberOfFaces] ;
 
+	if (_spaceDim == 1)
+        _numberOfEdges = mu->getNumberOfCells();
+    else if (_spaceDim == 2)
+        _numberOfEdges = mu2->getNumberOfCells();
+    else
+    {
+        DataArrayInt *desc2=DataArrayInt::New();
+        DataArrayInt *descI2=DataArrayInt::New();
+        DataArrayInt *revDesc2=DataArrayInt::New();
+        DataArrayInt *revDescI2=DataArrayInt::New();
+        MEDCouplingUMesh* mu3=mu2->buildDescendingConnectivity(desc2,descI2,revDesc2,revDescI2);//mesh of dimension N-1 containing the cell interfaces
+        
+        _numberOfEdges = mu3->getNumberOfCells();
+
+        desc2->decrRef();
+        descI2->decrRef();
+        revDesc2->decrRef();
+        revDescI2->decrRef();
+        mu3->decrRef();
+    }    
 	// _cells, _nodes and _faces initialization:
 	if (_spaceDim == 1)
 	{
@@ -685,7 +707,7 @@ Mesh::setMesh( void )
 	}
 	else if(_spaceDim==2  || _spaceDim==3)
 	{
-		DataArrayDouble *barySeg = m2->computeCellCenterOfMass() ;
+		DataArrayDouble *barySeg = mu2->computeCellCenterOfMass() ;
 		const double *coorBarySeg=barySeg->getConstPointer();
 
 		MEDCouplingFieldDouble* fieldn;
@@ -693,7 +715,7 @@ Mesh::setMesh( void )
 		const double *tmpNormal;
 
 		if(_spaceDim==_meshDim)
-			fieldn = m2->buildOrthogonalField();//Compute the normal to each cell interface
+			fieldn = mu2->buildOrthogonalField();//Compute the normal to each cell interface
 		else
 			fieldn = mu->buildOrthogonalField();//compute the 3D normal vector to the 2D cell
 		
@@ -822,7 +844,7 @@ Mesh::setMesh( void )
 			_nodes[id] = vi ;
 		}
 
-		MEDCouplingFieldDouble* fieldl=m2->getMeasureField(true);
+		MEDCouplingFieldDouble* fieldl=mu2->getMeasureField(true);
 		DataArrayDouble *longueur = fieldl->getArray();
 		const double *lon=longueur->getConstPointer();
 
@@ -897,7 +919,7 @@ Mesh::setMesh( void )
 	descI->decrRef();
 	revDesc->decrRef();
 	revDescI->decrRef();
-	m2->decrRef();
+	mu2->decrRef();
 	baryCell->decrRef();
 	fields->decrRef();
 	revNode->decrRef();
@@ -959,14 +981,15 @@ Mesh::Mesh( double xmin, double xmax, int nx, std::string meshName )
 	DataArrayInt *revDesc=DataArrayInt::New();
 	DataArrayInt *revDescI=DataArrayInt::New();
 	MEDCouplingUMesh* mu=_mesh->buildUnstructured();
-	MEDCouplingUMesh *m2=mu->buildDescendingConnectivity(desc,descI,revDesc,revDescI);
-	m2->setName(mu->getName());
+	MEDCouplingUMesh *mu2=mu->buildDescendingConnectivity(desc,descI,revDesc,revDescI);
 
 	DataArrayDouble *baryCell = mu->computeCellCenterOfMass() ;
 	const double *coorBary=baryCell->getConstPointer();
 
 	_numberOfCells = _mesh->getNumberOfCells() ;
 	_cells    = new Cell[_numberOfCells] ;
+
+    _numberOfEdges = _numberOfCells;
 
 	MEDCouplingFieldDouble* fieldl=mu->getMeasureField(true);
 	DataArrayDouble *longueur = fieldl->getArray();
@@ -1056,7 +1079,7 @@ Mesh::Mesh( double xmin, double xmax, int nx, std::string meshName )
 	revDescI->decrRef();
 	revNode->decrRef();
 	revNodeI->decrRef();
-	m2->decrRef();
+	mu2->decrRef();
 	mu->decrRef();
 }
 
@@ -1123,14 +1146,15 @@ Mesh::Mesh( std::vector<double> points, std::string meshName )
 	DataArrayInt *revDesc=DataArrayInt::New();
 	DataArrayInt *revDescI=DataArrayInt::New();
     MEDCouplingUMesh* mu=_mesh->buildUnstructured();
-	MEDCouplingUMesh *m2=mu->buildDescendingConnectivity(desc,descI,revDesc,revDescI);
-	m2->setName(mu->getName());
+	MEDCouplingUMesh *mu2=mu->buildDescendingConnectivity(desc,descI,revDesc,revDescI);
 
 	DataArrayDouble *baryCell = mu->computeCellCenterOfMass() ;
 	const double *coorBary=baryCell->getConstPointer();
 
 	_numberOfCells = _mesh->getNumberOfCells() ;
 	_cells    = new Cell[_numberOfCells] ;
+
+    _numberOfEdges = _numberOfCells;
 
 	MEDCouplingFieldDouble* fieldl=mu->getMeasureField(true);
 	DataArrayDouble *longueur = fieldl->getArray();
@@ -1202,7 +1226,7 @@ Mesh::Mesh( std::vector<double> points, std::string meshName )
 	revDescI->decrRef();
 	revNode->decrRef();
 	revNodeI->decrRef();
-	m2->decrRef();
+	mu2->decrRef();
 	mu->decrRef();
 }
 //----------------------------------------------------------------------
@@ -1612,6 +1636,14 @@ Mesh::getNumberOfFaces ( void ) const
 }
 
 //----------------------------------------------------------------------
+int
+Mesh::getNumberOfEdges ( void ) const
+//----------------------------------------------------------------------
+{
+	return _numberOfEdges ;
+}
+
+//----------------------------------------------------------------------
 Face*
 Mesh::getFaces ( void )  const
 //----------------------------------------------------------------------
@@ -1681,6 +1713,8 @@ Mesh::operator= ( const Mesh& mesh )
 	_numberOfNodes = mesh.getNumberOfNodes();
 	_numberOfFaces = mesh.getNumberOfFaces();
 	_numberOfCells = mesh.getNumberOfCells();
+	_numberOfEdges = mesh.getNumberOfEdges();
+    
     _isStructured = mesh.isStructured();
     if(_isStructured)
     {

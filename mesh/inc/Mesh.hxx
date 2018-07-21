@@ -159,28 +159,34 @@ public: //----------------------------------------------------------------
 	Cell* getCells ( void ) const ;
 
 	/**
-	 * return The faces in this mesh
+	 * return the faces in this mesh
 	 * @return _vertices
 	 */
 	Face* getFaces ( void ) const ;
 
 	/**
-	 * return number of nodes in this mesh
+	 * return the number of nodes in this mesh
 	 * @return _numberOfNodes
 	 */
 	int getNumberOfNodes ( void )  const ;
 
 	/**
-	 * return number of faces in this mesh
+	 * return the number of faces in this mesh
 	 * @return _numberOfFaces
 	 */
 	int getNumberOfFaces ( void )  const ;
 
 	/**
-	 * return number of cells in this mesh
+	 * return the number of cells in this mesh
 	 * @return _numberOfCells
 	 */
 	int getNumberOfCells ( void )  const ;
+
+	/**
+	 * return the number of edges in this mesh
+	 * @return _numberOfEdges
+	 */
+	int getNumberOfEdges ( void )  const ;
 
 	/**
 	 * return The cell i in this mesh
@@ -356,6 +362,11 @@ private: //----------------------------------------------------------------
 	 * The number of cells in this mesh.
 	 */
 	int _numberOfCells;
+
+	/*
+	 * The number of edges in this mesh.
+	 */
+	int _numberOfEdges;
 
 	/*
 	 * The names of groups.

@@ -70,6 +70,7 @@ MeshTests::testClassMesh( void )
 	CPPUNIT_ASSERT_EQUAL( 5, M1.getNumberOfNodes() );
 	CPPUNIT_ASSERT_EQUAL( 4, M1.getNumberOfCells() );
 	CPPUNIT_ASSERT_EQUAL( 5, M1.getNumberOfFaces() );
+	CPPUNIT_ASSERT_EQUAL( 4, M1.getNumberOfEdges() );
 	CPPUNIT_ASSERT_EQUAL( 0., M1.getFace(0).x() );
 	CPPUNIT_ASSERT_EQUAL( 0., M1.getNode(0).x() );
 	CPPUNIT_ASSERT_EQUAL( 1., M1.getFace(1).x() );
@@ -109,6 +110,7 @@ MeshTests::testClassMesh( void )
 	CPPUNIT_ASSERT_EQUAL( 25, M2.getNumberOfNodes() );
 	CPPUNIT_ASSERT_EQUAL( 16, M2.getNumberOfCells() );
 	CPPUNIT_ASSERT_EQUAL( 40, M2.getNumberOfFaces() );
+	CPPUNIT_ASSERT_EQUAL( 40, M2.getNumberOfEdges() );
 	CPPUNIT_ASSERT(M2.isQuadrangular());
 	int nbCellsM2 = M2.getNumberOfCells();
 	double areaM2=0;
@@ -164,6 +166,7 @@ MeshTests::testClassMesh( void )
 	CPPUNIT_ASSERT_EQUAL( 25, M2Triangle.getNumberOfNodes() );
 	CPPUNIT_ASSERT_EQUAL( 32, M2Triangle.getNumberOfCells() );
 	CPPUNIT_ASSERT_EQUAL( 40+16, M2Triangle.getNumberOfFaces() );
+	CPPUNIT_ASSERT_EQUAL( 40+16, M2Triangle.getNumberOfEdges() );
 	CPPUNIT_ASSERT(M2Triangle.isTriangular());
 	int nbCellsM2Triangle = M2Triangle.getNumberOfCells();
 	double areaM2Triangle=0;
@@ -191,6 +194,10 @@ MeshTests::testClassMesh( void )
 	double zmax=1.0;
     Mesh M3(xmin,xmax,4,ymin,ymax,4,zmin,zmax,4);
     CPPUNIT_ASSERT_EQUAL( 3, M3.getSpaceDimension() );
+	CPPUNIT_ASSERT_EQUAL( 5*5*5, M3.getNumberOfNodes() );
+	CPPUNIT_ASSERT_EQUAL( 4*4*4, M3.getNumberOfCells() );
+	CPPUNIT_ASSERT_EQUAL( 5*4*4*3, M3.getNumberOfFaces() );
+	CPPUNIT_ASSERT_EQUAL( 5*5*4*3, M3.getNumberOfEdges() );
     CPPUNIT_ASSERT(M3.isHexahedral());
     int nbCellsM3 = M3.getNumberOfCells();
     double volM3=0;
@@ -239,12 +246,14 @@ MeshTests::testClassMesh( void )
     CPPUNIT_ASSERT_EQUAL( 5, Mcopy1.getNumberOfNodes() );
     CPPUNIT_ASSERT_EQUAL( 4, Mcopy1.getNumberOfCells() );
     CPPUNIT_ASSERT_EQUAL( 5, Mcopy1.getNumberOfFaces() );
+    CPPUNIT_ASSERT_EQUAL( 4, Mcopy1.getNumberOfEdges() );
 
     Mcopy1=M2;
     CPPUNIT_ASSERT_EQUAL( 2, Mcopy1.getSpaceDimension() );
     CPPUNIT_ASSERT_EQUAL( 25, Mcopy1.getNumberOfNodes() );
     CPPUNIT_ASSERT_EQUAL( 16, Mcopy1.getNumberOfCells() );
     CPPUNIT_ASSERT_EQUAL( 40, Mcopy1.getNumberOfFaces() );
+    CPPUNIT_ASSERT_EQUAL( 40, Mcopy1.getNumberOfEdges() );
 
     Mesh Mcopy2;
     Mcopy2=Mcopy1;
@@ -252,6 +261,7 @@ MeshTests::testClassMesh( void )
     CPPUNIT_ASSERT_EQUAL( 25, Mcopy2.getNumberOfNodes() );
     CPPUNIT_ASSERT_EQUAL( 16, Mcopy2.getNumberOfCells() );
     CPPUNIT_ASSERT_EQUAL( 40, Mcopy2.getNumberOfFaces() );
+    CPPUNIT_ASSERT_EQUAL( 40, Mcopy2.getNumberOfEdges() );
 
 
     // Connection with MED
@@ -264,6 +274,7 @@ MeshTests::testClassMesh( void )
     CPPUNIT_ASSERT_EQUAL( 25, M22.getNumberOfNodes() );
     CPPUNIT_ASSERT_EQUAL( 16, M22.getNumberOfCells() );
     CPPUNIT_ASSERT_EQUAL( 40, M22.getNumberOfFaces() );
+    CPPUNIT_ASSERT_EQUAL( 40, M22.getNumberOfEdges() );
 
     cout<<"Test mesh M22 normals "<<endl;
     testNormals(M22);
@@ -315,6 +326,7 @@ MeshTests::testClassMesh( void )
     CPPUNIT_ASSERT_EQUAL( 25, M6.getNumberOfNodes() );
     CPPUNIT_ASSERT_EQUAL( 16, M6.getNumberOfCells() );
     CPPUNIT_ASSERT_EQUAL( 40, M6.getNumberOfFaces() );
+    CPPUNIT_ASSERT_EQUAL( 40, M6.getNumberOfEdges() );
 
     /*
     const MEDCouplingMesh* M1MEDMesh = M2.getMEDCouplingMesh();
