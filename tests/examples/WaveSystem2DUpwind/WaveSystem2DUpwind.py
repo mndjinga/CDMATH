@@ -16,8 +16,8 @@ def initial_conditions_wave_system(my_mesh):
     nbCells = my_mesh.getNumberOfCells()
 
     rayon = 0.15
-    xcentre = 0.25
-    ycentre = 0.25
+    xcentre = 0.5
+    ycentre = 0.5
 
     if(dim!=2):
         raise ValueError("initial_conditions_wave_system: Mesh dimension should be 2")
@@ -45,9 +45,9 @@ def initial_conditions_wave_system(my_mesh):
             pass
         pass
 
-        U[i,0] =  pressure_field[i]
-        U[i,1] =  velocity_field[i,0]
-        U[i,2] =  velocity_field[i,1]
+        U[i,0] =       pressure_field[i]
+        U[i,1] =  rho0*velocity_field[i,0]
+        U[i,2] =  rho0*velocity_field[i,1]
         
     return U, pressure_field, velocity_field
 
@@ -249,5 +249,5 @@ def solve_file( filename,resolution):
     
 if __name__ == """__main__""":
     M=cdmath.Mesh("meshSquare.med")
-    solve(M,'SquaresWithTrianglesCells',100)
+    solve(M,'SquareWithTrianglesCells',100)
 

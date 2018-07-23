@@ -2,6 +2,7 @@
 # -*-coding:utf-8 -*
 
 from math import sin, cos, pi, sqrt
+from numpy import sign
 import time
 import cdmath
 import PV_routines
@@ -10,7 +11,7 @@ import VTK_routines
 rho0=1000#reference density
 c0=1500#reference sound speed
 p0=rho0*c0*c0#reference pressure
-precision=1e-4
+precision=1e-5
 
 def initial_conditions_wave_system(my_mesh):
     dim     = my_mesh.getMeshDimension()
@@ -22,7 +23,6 @@ def initial_conditions_wave_system(my_mesh):
     for i in range(nbCells):
         x = my_mesh.getCell(i).x()
         y = my_mesh.getCell(i).y()
-        z = my_mesh.getCell(i).z()
 
         pressure_field[i] = p0
         if(dim==2):
@@ -30,22 +30,23 @@ def initial_conditions_wave_system(my_mesh):
             velocity_field[i,1] = -sin(pi*y)*cos(pi*x)
             velocity_field[i,2] = 0
         if(dim==3):
+            z = my_mesh.getCell(i).z()
             velocity_field[i,0] =    sin(pi*x)*cos(pi*y)*cos(pi*z)
             velocity_field[i,1] =    sin(pi*y)*cos(pi*x)*cos(pi*z)
             velocity_field[i,2] = -2*sin(pi*z)*cos(pi*x)*cos(pi*y)
         
     return pressure_field, velocity_field
 
-def jacobianMatrices(normal, coeff):
+def jacobianMatrices(normal, coeff, signun):
     dim=normal.size()
     A=cdmath.Matrix(dim+1,dim+1)
     absA=cdmath.Matrix(dim+1,dim+1)
 
     for i in range(dim):
         A[i+1,0]=normal[i]*coeff
-        absA[i+1,0]=A[i+1,0]
+        absA[i+1,0]=-signun*A[i+1,0]
         A[0,i+1]=c0*c0*normal[i]*coeff
-        absA[0,i+1]=-A[0,i+1]
+        absA[0,i+1]=signun*A[0,i+1]
     
     return (A-absA)/2
     
@@ -72,7 +73,8 @@ def computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt):
             for i in range(dim) :
                 normal[i] = Cj.getNormalVector(k, i);#normale sortante
 
-            Am=jacobianMatrices( normal,dt*Fk.getMeasure()/Cj.getMeasure());
+            signun=sign(normal*v0)
+            Am=jacobianMatrices( normal,dt*Fk.getMeasure()/Cj.getMeasure(),signun);
 
             cellAutre =-1
             if ( not Fk.isBorder()) :
@@ -155,6 +157,7 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution):
     dt = cfl * dx_min / c0
 
     divMat=computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt)
+
     #Add the identity matrix on the diagonal
     for j in range(nbCells*(dim+1)):
         divMat.addValue(j,j,1)
@@ -272,16 +275,16 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution):
 def solve(my_mesh,meshName,resolution):
     start = time.time()
     print "Resolution of the Wave system in dimension ", my_mesh.getSpaceDimension()
-    print "Numerical method : immplicit pseudo staggered"
+    print "Numerical method : implicit pseudo staggered"
     print "Initial data : constant pressure, divergence free velocity"
     print "Periodic boundary conditions"
     print "Mesh name : ",meshName , my_mesh.getNumberOfCells(), " cells"
     
     # Problem data
     tmax = 1000.
-    ntmax = 20000
+    ntmax = 10000
     cfl = 1./my_mesh.getSpaceDimension()
-    output_freq = 1000
+    output_freq = 100
 
     error_p, error_u, nbCells, t_final, ndt_final, max_vel, diag_data_press, diag_data_vel = WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution)
     end = time.time()
@@ -298,7 +301,3 @@ if __name__ == """__main__""":
     M1=cdmath.Mesh(0,1,20,0,1,20)
     
     solve(M1,"SquareWithSquares",100)
-
-    M2=cdmath.Mesh("meshCube.med")
-    
-    solve(M2,"CubeRegularTetrahedra",100)
