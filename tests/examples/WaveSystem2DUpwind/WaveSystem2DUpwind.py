@@ -183,7 +183,7 @@ def WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq, outputFileName,resolu
         it=it+1;
  
          #Sauvegardes
-        if(it%output_freq==0):
+        if(it%output_freq==0 or it>=ntmax or isStationary or time >=tmax):
             print("-- Iter: " + str(it) + ", Time: " + str(time) + ", dt: " + str(dt))
             print "Variation temporelle relative : pressure ", maxVector[0]/p0 ,", velocity x", maxVector[1]/rho0 ,", velocity y", maxVector[2]/rho0
 
@@ -196,9 +196,9 @@ def WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq, outputFileName,resolu
                         velocity_field[k,2]=U[k,3]/rho0
 
             pressure_field.setTime(time,it);
-            pressure_field.writeVTK("WaveSystem2DFV"+"_pressure",False);
+            pressure_field.writeVTK("WaveSystem2DUpwind"+"_pressure",False);
             velocity_field.setTime(time,it);
-            velocity_field.writeVTK("WaveSystem2DFV"+"_velocity",False);
+            velocity_field.writeVTK("WaveSystem2DUpwind"+"_velocity",False);
 
     print("-- Iter: " + str(it) + ", Time: " + str(time) + ", dt: " + str(dt))
     print "Variation temporelle relative : pressure ", maxVector[0]/p0 ,", velocity x", maxVector[1]/rho0 ,", velocity y", maxVector[2]/rho0
@@ -208,25 +208,18 @@ def WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq, outputFileName,resolu
         print "Nombre de pas de temps maximum ntmax= ", ntmax, " atteint"
     elif(isStationary):
         print "Régime stationnaire atteint au pas de temps ", it, ", t= ", time
-        for k in range(nbCells):
-            pressure_field[k]=U[k,0]
-            velocity_field[k,0]=U[k,1]/rho0
-            if(dim>1):
-                velocity_field[k,1]=U[k,2]/rho0
-                if(dim>2):
-                    velocity_field[k,2]=U[k,3]/rho0
 
         pressure_field.setTime(time,0);
-        pressure_field.writeVTK("WaveSystem2DFV"+"_pressure_Stat");
+        pressure_field.writeVTK("WaveSystem2DUpwind"+"_pressure_Stat");
         velocity_field.setTime(time,0);
-        velocity_field.writeVTK("WaveSystem2DFV"+"_velocity_Stat");
+        velocity_field.writeVTK("WaveSystem2DUpwind"+"_velocity_Stat");
 
         #Postprocessing : Extraction of the diagonal data
         diag_data_press=VTK_routines.Extract_field_data_over_line_to_numpyArray(pressure_field,[0,1,0],[1,0,0], resolution)    
         diag_data_vel  =VTK_routines.Extract_field_data_over_line_to_numpyArray(velocity_field,[0,1,0],[1,0,0], resolution)    
         #Postprocessing : save 2D picture
-        PV_routines.Save_PV_data_to_picture_file("WaveSystem2DFV"+"_pressure_Stat"+'_0.vtu',"Pressure",'CELLS',"WaveSystem2DFV"+"_pressure_Stat")
-        PV_routines.Save_PV_data_to_picture_file("WaveSystem2DFV"+"_velocity_Stat"+'_0.vtu',"Velocity",'CELLS',"WaveSystem2DFV"+"_velocity_Stat")
+        PV_routines.Save_PV_data_to_picture_file("WaveSystem2DUpwind"+"_pressure_Stat"+'_0.vtu',"Pressure",'CELLS',"WaveSystem2DUpwind"+"_pressure_Stat")
+        PV_routines.Save_PV_data_to_picture_file("WaveSystem2DUpwind"+"_velocity_Stat"+'_0.vtu',"Velocity",'CELLS',"WaveSystem2DUpwind"+"_velocity_Stat")
         
     else:
         print "Temps maximum Tmax= ", tmax, " atteint"

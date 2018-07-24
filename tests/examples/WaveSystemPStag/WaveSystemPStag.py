@@ -197,7 +197,7 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution):
         it=it+1;
     
         #Sauvegardes
-        if(it%output_freq==0):
+        if(it%output_freq==0 or it>=ntmax or isStationary or time >=tmax):
             print"-- Iter: " + str(it) + ", Time: " + str(time) + ", dt: " + str(dt)
             print "Variation temporelle relative : pressure ", maxVector[0]/p0 ,", velocity x", maxVector[1]/rho0 ,", velocity y", maxVector[2]/rho0
             print "Linear system converged in ", iterGMRES, " GMRES iterations"
@@ -224,14 +224,6 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution):
     elif(isStationary):
         print "Régime stationnaire atteint au pas de temps ", it, ", t= ", time
         print "------------------------------------------------------------------------------------"
-
-        for k in range(nbCells):
-            pressure_field[k]=Un[k*(dim+1)+0]
-            velocity_field[k,0]=Un[k*(dim+1)+1]/rho0
-            if(dim>1):
-                velocity_field[k,1]=Un[k*(dim+1)+2]/rho0
-                if(dim>2):
-                    velocity_field[k,2]=Un[k*(dim+1)+3]/rho0
 
         pressure_field.setTime(time,0);
         pressure_field.writeVTK("WaveSystem"+str(dim)+"DPStag"+meshName+"_pressure_Stat");
