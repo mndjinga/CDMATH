@@ -31,7 +31,6 @@ my_mesh.setGroupAtPlan(1.,2,eps,"DirichletBorder")#Bord ARRIERE
 
 nbNodes = my_mesh.getNumberOfNodes()
 nbCells = my_mesh.getNumberOfCells()
-nbEdges = my_mesh.getNumberOfEdges()
 
 print("Mesh building done")
 print("nb of nodes=", nbNodes)

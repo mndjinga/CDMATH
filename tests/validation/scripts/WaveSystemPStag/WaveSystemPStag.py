@@ -63,6 +63,10 @@ def computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt):
 
     idMoinsJacCL=cdmath.Matrix(nbComp)
     
+    v0=cdmath.Vector(dim)
+    for i in range(dim) :
+        v0[i] = 1
+
     for j in range(nbCells):#On parcourt les cellules
         Cj = my_mesh.getCell(j)
         nbFaces = Cj.getNumberOfFaces();
