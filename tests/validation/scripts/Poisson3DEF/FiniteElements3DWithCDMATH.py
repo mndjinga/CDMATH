@@ -62,7 +62,7 @@ def solve(filename,resolution):
         else: # Détection des noeuds intérieurs
             interiorNodes.append(i)
             nbInteriorNodes=nbInteriorNodes+1
-            maxNbNeighbours= max(1+Ni.getNumberOfEdges(),maxNbNeighbours) # need a function Ni.getNumberOfNeighbourNodes();
+            maxNbNeighbours= max(1+Ni.getNumberOfEdges(),maxNbNeighbours)
     
     # sauvegarde sur le disque dur du second membre discrétisé dans un fichier paraview
     my_RHSfield.writeVTK("FiniteElements3DRHSField"+str(nbNodes)) 
