@@ -35,7 +35,7 @@ class Node
      * @param numberOfFaces : The number of faces allocated for this node
      * @param p : The barycenter of this node
      */
-    Node ( const int numberOfCells, const int numberOfFaces, const Point p ) ;
+    Node ( const int numberOfCells, const int numberOfFaces, const int numberOfEdges, const Point p ) ;
 
     /**
      * constructor by copy
@@ -49,28 +49,22 @@ class Node
     ~Node ( void ) ;
 
     /**
-     * The cells ID that this Node belongs to
-     * @return _cellsId
-     */
-    IntTab getCellsId ( void ) const ;
-
-    /**
-     * The faces ID that this Node belongs to
-     * @return _facesId
-     */
-    IntTab getFacesId ( void ) const ;
-
-    /**
-     * return number of cells in this cell
+     * return number of cells in this node
      * @return _numberOfCells
      */
     int getNumberOfCells ( void ) const ;
 
     /**
-     * return number of faces in this cell
+     * return number of faces in this node
      * @return _numberOfFaces
      */
     int getNumberOfFaces ( void ) const ;
+
+    /**
+     * return number of edges in this node
+     * @return _numberOfEdges
+     */
+    int getNumberOfEdges ( void ) const ;
 
     /**
      * return The coordinate of the Node
@@ -134,6 +128,12 @@ class Node
     void addCellId (const int numCell, const int cellId ) ;
 
     /**
+     * @param numNode : local index of node to add in this node neighbours
+     * @param nodeId : global index of node to add in this node neighbours
+     */
+    void addNeighbourNodeId (const int numNode, const int nodeId ) ;
+
+    /**
      * surcharge opertor =
      * @param node : The node object to be copied
      */
@@ -146,7 +146,27 @@ class Node
      */
     double distance( const Node& n ) const ;
 
+    /**
+     * The cells ID that this Node belongs to
+     * @return _cellsId
+     */
+    IntTab getCellsId ( void ) const ;
+
+    /**
+     * The faces ID that this Node belongs to
+     * @return _facesId
+     */
+    IntTab getFacesId ( void ) const ;
+
     int getFaceId(int localId) const ;
+
+    /**
+     * The neighbour nodes ID : nodes connected to this node by an edge
+     * @return _neighbourNodeId
+     */
+    IntTab getNeighbourNodesId ( void ) const ;
+
+    int getNeighbourNodeId(int localId) const ;
 
     private: //----------------------------------------------------------------
 
@@ -166,6 +186,11 @@ class Node
     IntTab _facesId ;
 
     /*
+     * The neighbour nodes ID that this Node belongs to.
+     */
+    IntTab _neighbourNodesId ;
+
+    /*
      * The number of cells allocated for this Node.
      */
     int _numberOfCells ;
@@ -174,6 +199,11 @@ class Node
      * The number of faces allocated for this Node.
      */
     int _numberOfFaces ;
+
+    /*
+     * The number of edges allocated for this Node.
+     */
+    int _numberOfEdges ;
 
     /*
      * The region of this face. -1 internal or number of edge that this face belongs to

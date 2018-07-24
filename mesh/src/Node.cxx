@@ -15,6 +15,7 @@ Node::Node( void )
 {
 	_numberOfCells = 0 ;
 	_numberOfFaces = 0 ;
+	_numberOfEdges = 0 ;
 	_groupNames=std::vector<std::string>(0);
 	_region=-1;
 }
@@ -34,20 +35,23 @@ Node::Node( const Node& node )
 	_facesId = node.getFacesId() ;
 	_numberOfCells = node.getNumberOfCells() ;
 	_numberOfFaces = node.getNumberOfFaces() ;
+	_numberOfEdges = node.getNumberOfEdges() ;
 	_groupNames=node.getGroupNames();
 	_region=node.getRegion();
 }
 
 //----------------------------------------------------------------------
-Node::Node( const int numberOfCells, const int numberOfFaces, const Point p )
+Node::Node( const int numberOfCells, const int numberOfFaces, const int numberOfEdges, const Point p )
 //----------------------------------------------------------------------
 {
 
 	_point = p ;
 	_numberOfCells = numberOfCells ;
 	_numberOfFaces = numberOfFaces ;
+	_numberOfEdges = numberOfEdges ;
 	_cellsId = IntTab(_numberOfCells,0);
 	_facesId = IntTab(_numberOfFaces,0);
+	_neighbourNodesId = IntTab(_numberOfEdges,0);
 	_groupNames=std::vector<std::string>(0);
 	_region=-1;
 }
@@ -69,6 +73,14 @@ Node::getFacesId( void ) const
 }
 
 //----------------------------------------------------------------------
+IntTab
+Node::getNeighbourNodesId( void ) const 
+//----------------------------------------------------------------------
+{
+	return _neighbourNodesId ;
+}
+
+//----------------------------------------------------------------------
 int
 Node::getNumberOfCells( void ) const 
 //----------------------------------------------------------------------
@@ -82,6 +94,14 @@ Node::getNumberOfFaces( void ) const
 //----------------------------------------------------------------------
 {
 	return _numberOfFaces ;
+}
+
+//----------------------------------------------------------------------
+int
+Node::getNumberOfEdges( void ) const 
+//----------------------------------------------------------------------
+{
+	return _numberOfEdges ;
 }
 
 //----------------------------------------------------------------------
@@ -167,6 +187,14 @@ Node::addCellId (const int numCell, const int cellId )
 }
 
 //----------------------------------------------------------------------
+void
+Node::addNeighbourNodeId (const int numNode, const int nodeId ) 
+//----------------------------------------------------------------------
+{
+	_neighbourNodesId(numNode) = nodeId ;
+}
+
+//----------------------------------------------------------------------
 double
 Node::distance( const Node& n ) const
 //----------------------------------------------------------------------
@@ -186,7 +214,22 @@ Node::getFaceId(int localId) const
     else
     {
         std::cout<< "Local id requested : "<< localId<<", total number of faces= "<<_numberOfFaces<<std::endl;
-        throw CdmathException("Node::getfaceId : incorrect face local id");
+        throw CdmathException("Node::getFaceId : incorrect face local id");
+    }
+}
+
+//----------------------------------------------------------------------
+int
+//----------------------------------------------------------------------
+Node::getNeighbourNodeId(int localId) const
+//----------------------------------------------------------------------
+{
+    if(localId<_numberOfEdges)
+        return _neighbourNodesId[localId];
+    else
+    {
+        std::cout<< "Local id requested : "<< localId<<", total number of edges= "<<_numberOfEdges<<std::endl;
+        throw CdmathException("Node::getNeighbourNodeId : incorrect node local id");
     }
 }
 
@@ -197,8 +240,10 @@ Node::operator= ( const Node& node )
    _point = node.getPoint()  ;
    _cellsId = node.getCellsId() ;
    _facesId = node.getFacesId() ;
+   _neighbourNodesId = node.getNeighbourNodesId() ;
    _numberOfCells = node.getNumberOfCells() ;
    _numberOfFaces = node.getNumberOfFaces() ;
+   _numberOfEdges = node.getNumberOfEdges() ;
    _groupNames = node.getGroupNames();	
 	return *this;
 }

@@ -31,6 +31,7 @@ def solve(filename,resolution):
     
     nbNodes = my_mesh.getNumberOfNodes()
     nbCells = my_mesh.getNumberOfCells()
+    nbEdges = my_mesh.getNumberOfEdges()
     
     print("Mesh building done")
     print("nb of nodes=", nbNodes)
@@ -61,16 +62,16 @@ def solve(filename,resolution):
         else: # Détection des noeuds intérieurs
             interiorNodes.append(i)
             nbInteriorNodes=nbInteriorNodes+1
-            maxNbNeighbours= max(1+1*Ni.getNumberOfCells(),maxNbNeighbours) # need a function Ni.getNumberOfNeighbourNodes();
+            maxNbNeighbours= max(1+Ni.getNumberOfEdges(),maxNbNeighbours) # need a function Ni.getNumberOfNeighbourNodes();
     
     # sauvegarde sur le disque dur du second membre discrétisé dans un fichier paraview
     my_RHSfield.writeVTK("FiniteElements3DRHSField"+str(nbNodes)) 
     B.writeVTK("FiniteElements3DEXSOLField"+str(nbNodes)) 
     
     print("Right hand side discretisation done")
-    print("nb of interior nodes=", nbInteriorNodes)
-    print("nb of boundary nodes=", nbBoundaryNodes)
-    print("Max nb of neighbours=", maxNbNeighbours)
+    print("Number of interior nodes=", nbInteriorNodes)
+    print("Number of boundary nodes=", nbBoundaryNodes)
+    print("Maximum number of neighbours per node=", maxNbNeighbours)
     
     # Construction de la matrice de rigidité et du vecteur second membre du système linéaire
     #=======================================================================================
