@@ -77,7 +77,7 @@ def computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt):
 
     v0=cdmath.Vector(dim)
     for i in range(dim) :
-        v0[i] = 1
+        v0[i] = 1.
 
     for j in range(nbCells):#On parcourt les cellules
         Cj = my_mesh.getCell(j)
@@ -172,7 +172,7 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution):
 
     # Add the identity matrix on the diagonal
     for j in range(nbCells*(dim+1)):
-        divMat.addValue(j,j,1)
+        divMat.addValue(j,j,1.)
     LS=cdmath.LinearSolver(divMat,Un,iterGMRESMax, precision, "GMRES","ILU")
 
     print("Starting computation of the linear wave system with an pseudo staggered scheme …")
