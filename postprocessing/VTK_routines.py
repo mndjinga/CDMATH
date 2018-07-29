@@ -159,75 +159,31 @@ def Save_VTK_data_to_picture_file(inputFileName,
     reader.SetFileName(inputFileName)
     reader.Update()
 
-#-------------------------------------------------------------------------------
-    # create a rendering window and renderer
+#-------------------------------------------------------------------------------    
+    boy = vtk.vtkParametricBoy()
+    boySource = vtk.vtkParametricFunctionSource()
+    boySource.SetParametricFunction(boy)
+    boySource.SetScalarModeToModulus()
+    
+    boyMapper = vtk.vtkDataSetMapper()
+    boyMapper.SetInputConnection(reader.GetOutputPort())
+    boyActor = vtk.vtkActor()
+    boyActor.SetMapper(boyMapper)
+
     ren = vtk.vtkRenderer()
     renWin = vtk.vtkRenderWindow()
     renWin.AddRenderer(ren)
     
-    # create source
-    source = vtk.vtkSphereSource()
-    source.SetCenter(0,0,0)
-    source.SetRadius(5.0)
- 
-    # mapper
-    mapper = vtk.vtkPolyDataMapper()
-    mapper.SetInputData(source.GetOutput())
- 
-    # actor
-    actor = vtk.vtkActor()
-    actor.SetMapper(mapper)
- 
-    # color the actor
-    actor.GetProperty().SetColor(1,0,0) # (R,G,B)
- 
-    # assign actor to the renderer
-    ren.AddActor(actor)
-    
+    ren.AddViewProp(boyActor)
+        
     renWin.Render()
     
-    wif = vtk.vtkWindowToImageFilter()
-    wif.SetInput(renWin)
-    wif.Update()
-
+    image = vtk.vtkWindowToImageFilter()
+    image.SetInput(renWin)
+    image.ReadFrontBufferOff()
+    image.Update()
     writer = vtk.vtkPNGWriter()
-    #writer.SetInputConnection(reader.GetOutputPort())
-    #writer.SetInputData(reader.GetOutput().GetPointData())
-    writer.SetInputConnection(wif.GetOutputPort())
-    writer.SetFileName(outputFileName+"bis.png")
-    writer.Write()
-
-#-------------------------------------------------------------------------------------------------------
-    renwin = vtk.vtkRenderWindow()
-    renderer = vtk.vtkRenderer() 
-    renwin.AddRenderer(renderer) 
-    renwin.Render() 
-    #mapper = vtk.vtkUnstructuredGridVolumeRayCastMapper() 
-    mapper = vtk.vtkDataSetMapper() 
-    mapper.SetInputConnection(reader.GetOutputPort())
-    #mapper.SetInput(id)
-    
-    actor = vtk.vtkActor() 
-    actor.SetMapper(mapper) 
-    renderer.AddViewProp(actor) 
-    renwin.Render() 
-
-    #mapper2D = vtk.vtkImageMapper()
-    #actor2D = vtk.vtkActor2D()
-    #actor2D.SetMapper(mapper2D)
-    #renwin.AddActor2D(actor2D)
-    
-    wif = vtk.vtkWindowToImageFilter()
-    wif.SetInput(renwin)
-    wif.Update()
-    
-
-#--------------------------------------------------------------------------------
-    
-    
-    writer = vtk.vtkPNGWriter()
-    #writer.SetInputConnection(reader.GetOutputPort())
-    #writer.SetInputData(reader.GetOutput().GetPointData())
-    writer.SetInputConnection(wif.GetOutputPort())
     writer.SetFileName(outputFileName+".png")
+    writer.SetInputConnection(image.GetOutputPort())
     writer.Write()
+    
