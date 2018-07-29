@@ -29,10 +29,10 @@ class MEDCouplingUMesh;
 class Node;
 class Cell;
 class Face;
-class IntTab;
 
 #include <vector>
 #include <string>
+#include "IntTab.hxx"
 
 class Mesh
 {
@@ -278,10 +278,14 @@ public: //----------------------------------------------------------------
 
 	void setGroupAtFaceByCoords(double x, double y, double z, double eps, std::string groupName) ;
 
-	int getIndexFacePeriodic(int indexFace) const ;
-
-	IntTab getIndexFacePeriodic( void ) const ;
-
+	/*
+     * Functions to manage periodic boundary condition in square/cubic geometries 
+     */
+    int getIndexFacePeriodic(int indexFace) const ;
+    void setPeriodicFaces();
+    IntTab getIndexFacePeriodic( void ) const;
+    bool isIndexFacePeriodicSet() const ;
+    
 	bool isBorderNode(int nodeid) const ;
 	bool isBorderFace(int faceid) const ;
 	
@@ -382,6 +386,12 @@ private: //----------------------------------------------------------------
 	 */
 	MEDCoupling::MCAuto<MEDCoupling::MEDCouplingMesh> _mesh;
 	std::vector< INTERP_KERNEL::NormalizedCellType > _eltsTypes;//List of cell types contained in the mesh
+    
+    /*
+     * Tools to manage periodic boundary conditions in square/cube geometries
+     */
+     bool _indexFacePeriodicSet;
+     IntTab _indexFacePeriodicArray;
 };
 
 #endif /* MESH_HXX_ */

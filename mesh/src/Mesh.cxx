@@ -9,7 +9,6 @@
 #include "Node.hxx"
 #include "Cell.hxx"
 #include "Face.hxx"
-#include "IntTab.hxx"
 
 #include "MEDFileMesh.hxx"
 #include "MEDLoader.hxx"
@@ -51,6 +50,7 @@ Mesh::Mesh( void )
     _dxyz.resize(0.);
 	_groupNames.resize(0);
 	_groups.resize(0);
+    _indexFacePeriodicSet=false;
 }
 
 //----------------------------------------------------------------------
@@ -254,19 +254,32 @@ Mesh::setGroupAtPlan(double value, int direction, double eps, std::string groupN
 	//To do : update _groups
 }
 
+void
+Mesh::setPeriodicFaces()
+{
+    if(!_indexFacePeriodicSet)
+    {
+	int nbFace=getNumberOfFaces();
+	_indexFacePeriodicArray=IntTab(nbFace);
+	for (int iface=0;iface<nbFace;iface++)
+		_indexFacePeriodicArray(iface)=getIndexFacePeriodic(iface);
+    
+    _indexFacePeriodicSet=true;    
+    }
+}
+
 IntTab
 Mesh::getIndexFacePeriodic( void ) const
 {
-	int nbFace=getNumberOfFaces();
-	IntTab indexesFacesPerio(nbFace);
-	for (int iface=0;iface<nbFace;iface++)
-		indexesFacesPerio(iface)=getIndexFacePeriodic(iface);
-	return indexesFacesPerio;
+    return _indexFacePeriodicArray;
 }
 
 int
 Mesh::getIndexFacePeriodic(int indexFace) const
 {
+    if(_indexFacePeriodicSet)
+        return _indexFacePeriodicArray(indexFace);
+
 	if (!_faces[indexFace].isBorder())
 		return -1;
 
@@ -618,6 +631,8 @@ Mesh::setMesh( void )
 
 	_numberOfFaces = mu2->getNumberOfCells();
 	_faces       = new Face[_numberOfFaces] ;
+
+    _indexFacePeriodicSet=false;
 
     //Definition used if _meshDim =3 to determine the edges
     DataArrayInt *desc2 =DataArrayInt::New();
@@ -981,6 +996,8 @@ Mesh::Mesh( double xmin, double xmax, int nx, std::string meshName )
 	_spaceDim = 1 ;
 	_meshDim  = 1 ;
     _isStructured = true;
+    _indexFacePeriodicSet=false;
+
 	_xMin=xmin;
 	_xMax=xmax;
 	_yMin=0.;
@@ -1034,11 +1051,12 @@ Mesh::Mesh( double xmin, double xmax, int nx, std::string meshName )
 
 	_numberOfNodes = mu->getNumberOfNodes() ;
 	_nodes    = new Node[_numberOfNodes] ;
+
 	_numberOfFaces = _numberOfNodes;
 	_faces    = new Face[_numberOfFaces] ;
 
     _numberOfEdges = _numberOfCells;
-
+    
 	MEDCouplingFieldDouble* fieldl=mu->getMeasureField(true);
 	DataArrayDouble *longueur = fieldl->getArray();
 	const double *lon=longueur->getConstPointer();
@@ -1154,6 +1172,7 @@ Mesh::Mesh( std::vector<double> points, std::string meshName )
 	_zMax=0.;
 
     _isStructured = false;
+    _indexFacePeriodicSet=false;
     
     MEDCouplingUMesh * mesh1d = MEDCouplingUMesh::New(meshName, 1);
     mesh1d->allocateCells(nx - 1);
@@ -1757,6 +1776,9 @@ Mesh::operator= ( const Mesh& mesh )
 	_numberOfFaces = mesh.getNumberOfFaces();
 	_numberOfCells = mesh.getNumberOfCells();
 	_numberOfEdges = mesh.getNumberOfEdges();
+    _indexFacePeriodicSet= mesh.isIndexFacePeriodicSet();
+    if(_indexFacePeriodicSet)
+        _indexFacePeriodicArray=mesh.getIndexFacePeriodic();
     
     _isStructured = mesh.isStructured();
     if(_isStructured)
@@ -1806,6 +1828,10 @@ Mesh::operator= ( const Mesh& mesh )
 	return *this;
 }
 
+bool Mesh::isIndexFacePeriodicSet() const
+{
+ return    _indexFacePeriodicSet;
+}
 //----------------------------------------------------------------------
 double 
 Mesh::minRatioSurfVol()
