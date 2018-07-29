@@ -160,9 +160,9 @@ def WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq, outputFileName,resolu
 
     #sauvegarde de la donnée initiale
     pressure_field.setTime(time,it);
-    pressure_field.writeVTK("WaveSystem2DFV"+"_pressure");
+    pressure_field.writeVTK("WaveSystem2DUpwind"+"_pressure");
     velocity_field.setTime(time,it);
-    velocity_field.writeVTK("WaveSystem2DFV"+"_velocity");
+    velocity_field.writeVTK("WaveSystem2DUpwind"+"_velocity");
 
     dx_min=my_mesh.minRatioSurfVol()
 

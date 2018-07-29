@@ -152,19 +152,21 @@ def Clip_VTK_data_to_VTK(inputFileName,
     writer.SetFileName(outputFileName)
     writer.Write()
 
-def Save_VTK_data_to_picture_file(inputFileName,
-                             outputFileName
+def Save_VTK_data_to_picture_file(inputFileName, field_name,
+                             node_or_cell, outputFileName
                              ):
     reader = vtk.vtkXMLUnstructuredGridReader()
     reader.SetFileName(inputFileName)
     reader.Update()
 
+    if node_or_cell== 'CELLS':
+        reader.CellArrayStatus = [field_name]
+    elif node_or_cell== 'NODES':
+        reader.PointArrayStatus = [field_name]
+    else:
+        raise ValueError("unknown type : should be CELLS or NODES")
+
 #-------------------------------------------------------------------------------    
-    boy = vtk.vtkParametricBoy()
-    boySource = vtk.vtkParametricFunctionSource()
-    boySource.SetParametricFunction(boy)
-    boySource.SetScalarModeToModulus()
-    
     boyMapper = vtk.vtkDataSetMapper()
     boyMapper.SetInputConnection(reader.GetOutputPort())
     boyActor = vtk.vtkActor()

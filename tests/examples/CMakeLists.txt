@@ -1,4 +1,4 @@
-file(GLOB NICE_EXAMPLES_TO_INSTALL thermique1d transport1d transport2d_ns transport2d_s Poisson2DEF Poisson3DEF Poisson2DVF_s Poisson3DSphereEF WaveSystem1DFV WaveSystem2DUpwind WaveSystemPStag)
+file(GLOB NICE_EXAMPLES_TO_INSTALL thermique1d transport1d transport2d_ns transport2d_s Poisson2DEF Poisson3DEF Poisson2DVF_s Poisson3DSphereEF Poisson3DTorusEF WaveSystem1DFV WaveSystem2DUpwind WaveSystemPStag)
 
 install(DIRECTORY ${NICE_EXAMPLES_TO_INSTALL} DESTINATION share/examples)
 

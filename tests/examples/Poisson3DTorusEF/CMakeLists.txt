@@ -3,7 +3,7 @@ SET(MESH_MED
   ../../ressources/meshTorus.med
   )
 
-file(COPY ${MESH_MED} DESTINATION ${CMAKE_BINARY_DIR}/tests/examples/Poisson3DtorusEF)
+file(COPY ${MESH_MED} DESTINATION ${CMAKE_BINARY_DIR}/tests/examples/Poisson3DTorusEF)
 install(FILES ${MESH_MED} DESTINATION share/examples/Poisson3DTorusEF)
 
 if (CDMATH_WITH_PYTHON AND CDMATH_WITH_PETSC)
