@@ -19,7 +19,7 @@ import paraview.simple as pvs
 
 #Chargement du maillage triangulaire du tore
 #=======================================================================================
-my_mesh = cdmath.Mesh("MeshTorus.med")
+my_mesh = cdmath.Mesh("meshTorus.med")
 if(not my_mesh.isTriangular()) :
 	raise ValueError("Wrong cell types : mesh is not made of triangles")
 if(my_mesh.getMeshDimension()!=2) :

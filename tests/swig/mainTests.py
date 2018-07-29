@@ -373,11 +373,12 @@ class TestsCDMATHSwig(unittest.TestCase):
 
     def testClassNode(self):
         P = Point(0.5, 0.5, 0.0)
-        n1 = Node(4, 4, P)
+        n1 = Node(4, 4, 3, P)
         n = Node()
         n = n1
         self.assertTrue(4 == n.getNumberOfCells())
         self.assertTrue(4, n.getNumberOfFaces())
+        self.assertTrue(3, n.getNumberOfEdges())
         self.assertTrue(0.5 == n.getPoint().x())
         self.assertTrue(0.5 == n.getPoint().y())
         self.assertTrue(0.0 == n.getPoint().z())
@@ -608,6 +609,7 @@ class TestsCDMATHSwig(unittest.TestCase):
         M2.setGroupAtPlan(ysup, 1, eps, "TopEdge")
         self.assertTrue(M2.getNamesOfGroups()[2] == "BottomEdge")
         nbFaces = M2.getNumberOfFaces()
+        M2.setPeriodicFaces()
         indexFaces = M2.getIndexFacePeriodic()
         for i in range(nbFaces):
             #            x=M2.getFaces()[i].x();

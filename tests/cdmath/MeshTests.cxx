@@ -134,6 +134,7 @@ MeshTests::testClassMesh( void )
 	CPPUNIT_ASSERT_EQUAL( 4, int(M2.getNamesOfGroups().size()) );
 	CPPUNIT_ASSERT(M2.getNamesOfGroups()[2].compare("BottomEdge")==0);
 	int nbFaces=M2.getNumberOfFaces();
+    M2.setPeriodicFaces();
 	IntTab indexFaces=M2.getIndexFacePeriodic();
 	for (int i=0;i<nbFaces;i++)
 	{
@@ -214,6 +215,7 @@ MeshTests::testClassMesh( void )
 	CPPUNIT_ASSERT_EQUAL( 6, int(M3.getNamesOfGroups().size()) );
 	CPPUNIT_ASSERT(M3.getNamesOfGroups()[4].compare("DownEdge")==0);
 	nbFaces=M3.getNumberOfFaces();
+    M3.setPeriodicFaces();
 	indexFaces=M3.getIndexFacePeriodic();
 	for (int i=0;i<nbFaces;i++)
 	{
