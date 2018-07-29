@@ -57,6 +57,7 @@ def computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt):
     nbComp=dim+1
     normal=cdmath.Vector(dim)
 
+    my_mesh.setPeriodicFaces()
     indexFacesPerio = my_mesh.getIndexFacePeriodic()
     
     implMat=cdmath.SparseMatrixPetsc(nbCells*nbComp,nbCells*nbComp,(nbVoisinsMax+1)*nbComp)
@@ -133,7 +134,7 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution):
     dUn=cdmath.Vector(nbCells*(dim+1))
     
     # Initial conditions #
-    print("Construction of the initial condition …")
+    print("Construction of the initial data …")
     pressure_field, velocity_field = initial_conditions_wave_system(my_mesh)
     initial_pressure, initial_velocity = initial_conditions_wave_system(my_mesh)
 
@@ -159,7 +160,6 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution):
     dx_min=my_mesh.minRatioSurfVol()
 
     dt = cfl * dx_min / c0
-
     divMat=computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt)
 
     #Add the identity matrix on the diagonal

@@ -57,6 +57,7 @@ def computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt):
     nbComp=dim+1
     normal=cdmath.Vector(dim)
 
+    my_mesh.setPeriodicFaces()
     indexFacesPerio = my_mesh.getIndexFacePeriodic()
     
     implMat=cdmath.SparseMatrixPetsc(nbCells*nbComp,nbCells*nbComp,(nbVoisinsMax+1)*nbComp)
