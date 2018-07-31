@@ -91,10 +91,16 @@ outputFileName="Clip_VTK_data_to_VTK_"+fileNameVTK5+'_0.vtu'
 Clip_VTK_data_to_VTK(fileNameVTK5+'_0.vtu',outputFileName,point, normal,resolution )
 print "Clip_VTK_data_to_VTK ok"
 
+inputFileName="Slice_VTK_data_to_VTK_"+fileNameVTK5
+outputFileName="Save_Slice_VTK_data_to_VTK_"+fileNameVTK5
+Save_VTK_data_to_picture_file(inputFileName+'_0.vtu',"testfield5","CELLS",outputFileName)
+print "Save_VTK_Slice_data_to_picture_file ok"
+
 inputFileName="Clip_VTK_data_to_VTK_"+fileNameVTK5
-Save_VTK_data_to_picture_file(inputFileName+'_0.vtu',outputFileName)
+outputFileName="Save_Clip_VTK_data_to_VTK_"+fileNameVTK5
+Save_VTK_data_to_picture_file(inputFileName+'_0.vtu',"testfield5","CELLS",outputFileName)
 print "Save_VTK_Clip_data_to_picture_file ok"
 
 outputFileName="Save_VTK_data_to_picture_file_"+fileNameVTK5
-Save_VTK_data_to_picture_file(fileNameVTK5+'_0.vtu',outputFileName)
+Save_VTK_data_to_picture_file(fileNameVTK5+'_0.vtu',"testfield5","CELLS",outputFileName)
 print "Save_VTK_data_to_picture_file ok"
