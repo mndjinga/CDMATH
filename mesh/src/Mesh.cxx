@@ -19,6 +19,8 @@
 #include "CdmathException.hxx"
 
 #include <iostream>
+#include <stdio.h>
+#include <stdlib.h>
 #include <iterator>
 #include <algorithm> 
 
@@ -260,29 +262,42 @@ Mesh::setPeriodicFaces()
     if(!_indexFacePeriodicSet)
     {
 	int nbFace=getNumberOfFaces();
-	_indexFacePeriodicArray=IntTab(nbFace);
 	for (int iface=0;iface<nbFace;iface++)
-		_indexFacePeriodicArray(iface)=getIndexFacePeriodic(iface);
+        if (_faces[iface].isBorder())
+            _indexFacePeriodicMap[iface]=getIndexFacePeriodic(iface);
     
     _indexFacePeriodicSet=true;    
     }
 }
 
-IntTab
+std::map<int,int>
 Mesh::getIndexFacePeriodic( void ) const
 {
-    return _indexFacePeriodicArray;
+    return _indexFacePeriodicMap;
 }
 
 int
 Mesh::getIndexFacePeriodic(int indexFace) const
 {
     if(_indexFacePeriodicSet)
-        return _indexFacePeriodicArray(indexFace);
-
+    {
+        std::map<int,int>::const_iterator  it = _indexFacePeriodicMap.find(indexFace);
+        if( it != _indexFacePeriodicMap.end() )
+            return it->second;
+        else
+        {
+            cout<<"Pb with indexFace= "<<indexFace<<endl;
+            throw CdmathException("Mesh::getIndexFacePeriodic: not a periodic face" );
+        }
+    }
+    
+    
 	if (!_faces[indexFace].isBorder())
-		return -1;
-
+        {
+            cout<<"Pb with indexFace= "<<indexFace<<endl;
+            throw CdmathException("Mesh::getIndexFacePeriodic: not a border face" );
+        }
+        
 	int nbFace=getNumberOfFaces();
     double eps=1.E-10;
     int iface=0;
@@ -306,8 +321,11 @@ Mesh::getIndexFacePeriodic(int indexFace) const
         if (abs(x-_xMin)<eps)
             pos=3;
         if (pos==-1)
-            throw CdmathException("Mesh::getIndexFacePeriodic: border position not found, pos==-1 " );
-
+        {
+            cout<<"Pb with indexFace= "<<indexFace<<endl;
+            throw CdmathException("Mesh::getIndexFacePeriodic: border position not found" );
+        }
+        
         for (iface=0;iface<nbFace;iface++)
         {
             double xi=_faces[iface].x();
@@ -1778,7 +1796,7 @@ Mesh::operator= ( const Mesh& mesh )
 	_numberOfEdges = mesh.getNumberOfEdges();
     _indexFacePeriodicSet= mesh.isIndexFacePeriodicSet();
     if(_indexFacePeriodicSet)
-        _indexFacePeriodicArray=mesh.getIndexFacePeriodic();
+        _indexFacePeriodicMap=mesh.getIndexFacePeriodic();
     
     _isStructured = mesh.isStructured();
     if(_isStructured)

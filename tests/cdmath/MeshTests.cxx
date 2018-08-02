@@ -135,7 +135,7 @@ MeshTests::testClassMesh( void )
 	CPPUNIT_ASSERT(M2.getNamesOfGroups()[2].compare("BottomEdge")==0);
 	int nbFaces=M2.getNumberOfFaces();
     M2.setPeriodicFaces();
-	IntTab indexFaces=M2.getIndexFacePeriodic();
+	std::map<int,int> indexFaces=M2.getIndexFacePeriodic();
 	for (int i=0;i<nbFaces;i++)
 	{
 		double x=M2.getFaces()[i].x();
@@ -148,11 +148,9 @@ MeshTests::testClassMesh( void )
 			CPPUNIT_ASSERT_EQUAL( xi, x );
 			CPPUNIT_ASSERT_EQUAL( yi, ymax );
 			CPPUNIT_ASSERT_EQUAL( true, M2.getFace(indexFace).isBorder() );
-			CPPUNIT_ASSERT_EQUAL( indexFace, indexFaces(i) );
+			CPPUNIT_ASSERT_EQUAL( indexFace, indexFaces[i] );
 		}
 
-		if (y==0.5 && x==1.)
-			CPPUNIT_ASSERT_EQUAL( -1, M2.getIndexFacePeriodic(i) );
 	}
 
     cout<<"Test mesh M2 normals"<<endl;
@@ -181,7 +179,7 @@ MeshTests::testClassMesh( void )
 	M2Triangle.setGroupAtPlan(ymax,1,eps,"TopEdge");
 	CPPUNIT_ASSERT_EQUAL( 4, int(M2Triangle.getNamesOfGroups().size()) );
 	CPPUNIT_ASSERT(M2Triangle.getNamesOfGroups()[2].compare("BottomEdge")==0);
-	IntTab indexFacesTriangle=M2Triangle.getIndexFacePeriodic();
+	std::map<int,int> indexFacesTriangle=M2Triangle.getIndexFacePeriodic();
     
     cout<<"Test mesh M2Triangle normals"<<endl;
     testNormals(M2Triangle);
@@ -232,7 +230,7 @@ MeshTests::testClassMesh( void )
 			CPPUNIT_ASSERT_EQUAL( yi, y );
 			CPPUNIT_ASSERT_EQUAL( zi, zmax );
 			CPPUNIT_ASSERT_EQUAL( true, M3.getFace(indexFace).isBorder() );
-			CPPUNIT_ASSERT_EQUAL( indexFace, indexFaces(i) );
+			CPPUNIT_ASSERT_EQUAL( indexFace, indexFaces[i] );
 		}
 
 		if (z==0.5 && y==0. && x==1.)

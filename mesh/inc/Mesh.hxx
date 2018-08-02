@@ -32,7 +32,7 @@ class Face;
 
 #include <vector>
 #include <string>
-#include "IntTab.hxx"
+#include <map>
 
 class Mesh
 {
@@ -283,7 +283,7 @@ public: //----------------------------------------------------------------
      */
     int getIndexFacePeriodic(int indexFace) const ;
     void setPeriodicFaces();
-    IntTab getIndexFacePeriodic( void ) const;
+    std::map<int,int> getIndexFacePeriodic( void ) const;
     bool isIndexFacePeriodicSet() const ;
     
 	bool isBorderNode(int nodeid) const ;
@@ -391,7 +391,7 @@ private: //----------------------------------------------------------------
      * Tools to manage periodic boundary conditions in square/cube geometries
      */
      bool _indexFacePeriodicSet;
-     IntTab _indexFacePeriodicArray;
+     std::map<int,int> _indexFacePeriodicMap;
 };
 
 #endif /* MESH_HXX_ */
