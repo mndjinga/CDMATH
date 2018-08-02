@@ -179,7 +179,7 @@ def WaveSystem1DVF(ntmax, tmax, cfl, my_mesh, output_freq, resolution):
 
 
 def solve(my_mesh,resolution):
-    print("Resolution of the 1D Wave system:")
+    print("Resolution of the 1D Wave system with Upwind scheme:")
 
     # Problem data
     tmax = 1.
