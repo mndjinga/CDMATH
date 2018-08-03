@@ -116,7 +116,7 @@ def computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt):
                     implMat.addValue(j*nbComp,j*nbComp,Am*(-1.)*idMoinsJacCL)
                     
                 elif( Fk.getGroupName() == "Periodic"):#Periodic boundary condition
-                    indexFP=my_mesh.getIndexFacePeriodic(indexFace)# To save time, first indexFacesPerio = my_mesh.getIndexFacePeriodic(), then indexFP = indexFacesPerio[indexFace]
+                    indexFP=my_mesh.getIndexFacePeriodic(indexFace)
                     Fp = my_mesh.getFace(indexFP)
                     cellAutre = Fp.getCellsId()[0]
                     
@@ -163,7 +163,7 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution):
     #Postprocessing : save 2D picture
     PV_routines.Save_PV_data_to_picture_file("WaveSystem"+str(dim)+"DPStag"+meshName+"_pressure"+'_0.vtu',"Pressure",'CELLS',"WaveSystem"+str(dim)+"DPStag"+meshName+"_pressure_initial")
     PV_routines.Save_PV_data_to_picture_file("WaveSystem"+str(dim)+"DPStag"+meshName+"_velocity"+'_0.vtu',"Velocity",'CELLS',"WaveSystem"+str(dim)+"DPStag"+meshName+"_velocity_initial")
-
+    
     dx_min=my_mesh.minRatioSurfVol()
 
     dt = cfl * dx_min / c0

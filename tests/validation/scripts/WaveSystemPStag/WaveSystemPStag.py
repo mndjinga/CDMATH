@@ -57,9 +57,6 @@ def computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt):
     nbComp=dim+1
     normal=cdmath.Vector(dim)
 
-    my_mesh.setPeriodicFaces()
-    indexFacesPerio = my_mesh.getIndexFacePeriodic()
-    
     implMat=cdmath.SparseMatrixPetsc(nbCells*nbComp,nbCells*nbComp,(nbVoisinsMax+1)*nbComp)
 
     idMoinsJacCL=cdmath.Matrix(nbComp)
@@ -97,7 +94,7 @@ def computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt):
                 implMat.addValue(j*nbComp,        j*nbComp,Am*(-1.))
             else  :
                 if( Fk.getGroupName() != "Wall" and Fk.getGroupName() != "Paroi" and Fk.getGroupName() != "Neumann"):#Periodic boundary condition unless Wall/Neumann specified explicitly
-                    indexFP = indexFacesPerio[indexFace]
+                    indexFP = my_mesh.getIndexFacePeriodic(indexFace)
                     Fp = my_mesh.getFace(indexFP)
                     cellAutre = Fp.getCellsId()[0]
                     
