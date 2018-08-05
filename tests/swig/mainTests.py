@@ -623,10 +623,7 @@ class TestsCDMATHSwig(unittest.TestCase):
                 self.assertTrue(xi == x)
                 self.assertTrue(yi == ysup)
                 self.assertTrue(True == M2.getFace(indexFace).isBorder())
-                self.assertTrue(indexFace == indexFaces[i])
                 pass
-            if (abs(y - 0.5) < 1.E-10 and abs(x - 1.) < 1.E-10):
-                self.assertTrue(-1 == M2.getIndexFacePeriodic(i))
                 pass
             pass
 
