@@ -173,7 +173,7 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution):
     # Add the identity matrix on the diagonal
     for j in range(nbCells*(dim+1)):
         divMat.addValue(j,j,1.)
-    LS=cdmath.LinearSolver(divMat,Un,iterGMRESMax, precision, "GMRES","ILU")
+    LS=cdmath.LinearSolver(divMat,Un,iterGMRESMax, precision, "GMRES","LU")
 
     print("Starting computation of the linear wave system with an pseudo staggered scheme …")
     
@@ -247,9 +247,9 @@ def solve(my_mesh,meshName,resolution):
     
     # Problem data
     tmax = 1000.
-    ntmax = 100
+    ntmax = 10000
     cfl = 1./my_mesh.getSpaceDimension()
-    output_freq = 1
+    output_freq = 100
 
     WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution)
 

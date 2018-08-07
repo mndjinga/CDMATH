@@ -28,7 +28,7 @@ def test_validation2DWaveSystemPStagSquares():
     for nx in meshList:
         my_mesh=cdmath.Mesh(0,1,nx,0,1,nx)
         error_p_tab[i], error_u_tab[i], mesh_size_tab[i], t_final[i], ndt_final[i], max_vel[i], diag_data_press[i], diag_data_vel[i], time_tab[i] =WaveSystemPStag.solve(my_mesh, mesh_name+str(my_mesh.getNumberOfCells()), resolution)
-        assert max_vel[i]>0.94 and max_vel[i]<1
+        assert max_vel[i]>0.999 and max_vel[i]<1.03
         error_p_tab[i]=log10(error_p_tab[i])
         error_u_tab[i]=log10(error_u_tab[i])
         time_tab[i]=log10(time_tab[i])

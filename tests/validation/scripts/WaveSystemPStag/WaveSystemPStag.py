@@ -162,7 +162,7 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution):
     #Add the identity matrix on the diagonal
     for j in range(nbCells*(dim+1)):
         divMat.addValue(j,j,1)
-    LS=cdmath.LinearSolver(divMat,Un,iterGMRESMax, precision, "GMRES","ILU")
+    LS=cdmath.LinearSolver(divMat,Un,iterGMRESMax, precision, "GMRES","LU")
     
     print("Starting computation of the linear wave system with an pseudo staggered scheme …")
     
@@ -227,6 +227,7 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution):
     elif(isStationary):
         print "Régime stationnaire atteint au pas de temps ", it, ", t= ", time
         assert (total_pressure_initial-pressure_field.integral()).norm()/p0<precision
+        print (total_velocity_initial-velocity_field.integral()).norm() , precision
         assert (total_velocity_initial-velocity_field.integral()).norm()<precision
         print "------------------------------------------------------------------------------------"
 
