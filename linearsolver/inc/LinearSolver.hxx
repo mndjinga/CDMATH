@@ -40,7 +40,8 @@ public: //----------------------------------------------------------------
 	void setPreconditioner(std::string pc) ;
 
 	void setDisplayConditionNumber(bool display=false);
-
+    double getConditionNumber() const;
+    
 	int getNumberOfIter( void ) const ;
 
 	bool getStatus( void ) const ;
@@ -103,6 +104,7 @@ private: //----------------------------------------------------------------
 	bool _isSingular;
 	bool _isSparseMatrix;
 	bool _displayConditionNumber;
+	double _conditionNumber;
 	std::string _nameOfPc;
 	std::string _nameOfMethod;
 	Vector _secondMember;

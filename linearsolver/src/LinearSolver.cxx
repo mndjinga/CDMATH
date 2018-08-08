@@ -36,6 +36,7 @@ LinearSolver::LinearSolver ( void )
 	_prec=NULL;
 	_isSparseMatrix=false;
 	_displayConditionNumber=false;
+    _conditionNumber=1e100;
 }
 
 void
@@ -95,6 +96,17 @@ void
 LinearSolver::setDisplayConditionNumber(bool display)
 {
 	_displayConditionNumber=display;
+}
+
+double 
+LinearSolver::getConditionNumber() const
+{
+    if(_displayConditionNumber and _convergence)
+        return _conditionNumber;
+    else if(!_displayConditionNumber)
+        throw CdmathException("LinearSolver::getConditionNumber(): Condition number can not be evaluated without prior call to setDisplayConditionNumber()");
+    else //_convergence = false
+        throw CdmathException("LinearSolver::getConditionNumber(): Condition number can not be evaluated without prior successful resolution of a linear system");
 }
 
 LinearSolver::LinearSolver( const GenericMatrix& matrix,
@@ -452,7 +464,7 @@ LinearSolver::solve( void )
 	else
 	{
 		string msg="Vector LinearSolver::solve( void ) : The preconditioner "+_nameOfPc+" is not yet available.\n";
-		msg+="The preconditioners available are : ICC, ILU, CHOLESKY and LU.\n";
+		msg+="The preconditioners available are : void, ICC, ILU, CHOLESKY and LU.\n";
 		throw CdmathException(msg);
 	}
 
@@ -474,7 +486,7 @@ LinearSolver::solve( void )
 	}
 
 	if(_displayConditionNumber)
-		KSPSetComputeEigenvalues(_ksp,PETSC_TRUE);
+		KSPSetComputeSingularValues(_ksp,PETSC_TRUE);
 
 	KSPSolve(_ksp,_smb,X);
 
@@ -503,6 +515,7 @@ LinearSolver::solve( void )
 		PetscReal sv_max, sv_min;
 		KSPComputeExtremeSingularValues(_ksp, &sv_max, &sv_min);
 		cout<<" Maximal singular value = " << sv_max <<", Minimal singular value = " << sv_min <<", Condition number = " << sv_max/sv_min <<endl;
+        _conditionNumber=sv_max/sv_min;
 	}
 
 	Vector X1=vecToVector(X);
