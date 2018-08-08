@@ -262,3 +262,7 @@ def solve_file( filename,meshName, resolution):
 if __name__ == """__main__""":
     M1=cdmath.Mesh(0,1,20,0,1,20)
     solve(M1,"SquareWithSquares",100)
+
+    filename = "meshSquare"
+    M1=cdmath.Mesh(filename+".med")
+    solve(M1,"SquareWithTriangles",100)

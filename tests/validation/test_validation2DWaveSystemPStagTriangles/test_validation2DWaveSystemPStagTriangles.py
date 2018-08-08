@@ -5,7 +5,7 @@ import numpy as np
 from math import log10, sqrt
 
     
-def test_validation2DWaveSystemPStagSquares():
+def test_validation2DWaveSystemPStagTriangles():
     #### 2D triangular meshes
     meshList=['triangleMeshSquare_1','triangleMeshSquare_2','triangleMeshSquare_3','triangleMeshSquare_4','triangleMeshSquare_5','triangleMeshSquare_6']
     nbMeshes=len(meshList)
@@ -131,4 +131,4 @@ def test_validation2DWaveSystemPStagSquares():
     plt.close('all')
 
 if __name__ == """__main__""":
-    test_validation2DWaveSystemPStagSquares()
+    test_validation2DWaveSystemPStagTriangles()
