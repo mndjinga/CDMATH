@@ -88,6 +88,8 @@ public:
 
 	bool containsPetscMatrix() const;
 	Mat getPetscMatrix() const;
+    
+    void diagonalShift(double lambda);
 
 private:
 	Mat _mat;

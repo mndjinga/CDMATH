@@ -391,3 +391,12 @@ SparseMatrixPetsc::getMatrixCoeff(int i, int j) const
 	MatGetValues(_mat,1,&idxm,1, &idxn,&res);
 	return res;
 }
+
+void 
+SparseMatrixPetsc::diagonalShift(double lambda)
+{
+    MatAssemblyBegin(_mat, MAT_FINAL_ASSEMBLY);
+	MatAssemblyEnd(_mat, MAT_FINAL_ASSEMBLY);
+
+    MatShift(_mat, lambda);
+}
