@@ -152,7 +152,7 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution):
     total_pressure_initial=pressure_field.integral()#For conservation test later
     total_velocity_initial=velocity_field.integral()#For conservation test later
     
-    dx_min=my_mesh.minRatioSurfVol()
+    dx_min=my_mesh.minRatioVolSurf()
 
     dt = cfl * dx_min / c0
 

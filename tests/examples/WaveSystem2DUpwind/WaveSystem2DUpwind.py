@@ -164,7 +164,7 @@ def WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq, outputFileName,resolu
     velocity_field.setTime(time,it);
     velocity_field.writeVTK("WaveSystem2DUpwind"+"_velocity");
 
-    dx_min=my_mesh.minRatioSurfVol()
+    dx_min=my_mesh.minRatioVolSurf()
 
     dt = cfl * dx_min / c0
     

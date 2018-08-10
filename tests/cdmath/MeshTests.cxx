@@ -94,6 +94,8 @@ MeshTests::testClassMesh( void )
 	CPPUNIT_ASSERT(M1.getFace(4).isBorder()==true);
 	CPPUNIT_ASSERT(M1.getNamesOfGroups()[0].compare("LeftEdge")==0);
 	CPPUNIT_ASSERT(M1.getNamesOfGroups()[1].compare("RightEdge")==0);
+    double dx1=M1.minRatioVolSurf();
+    CPPUNIT_ASSERT_DOUBLES_EQUAL( dx1, 1., eps  );
 
     cout<<endl<<"Test mesh M1 normals"<<endl;
     testNormals(M1);
@@ -150,8 +152,10 @@ MeshTests::testClassMesh( void )
 			CPPUNIT_ASSERT_EQUAL( true, M2.getFace(indexFace).isBorder() );
 			CPPUNIT_ASSERT_EQUAL( indexFace, indexFaces[i] );
 		}
-
 	}
+    double dx2=M2.minRatioVolSurf();
+    cout<< dx2 <<", "<< 1./4<<endl;
+    CPPUNIT_ASSERT_DOUBLES_EQUAL( dx2, 1./4, eps  );
 
     cout<<"Test mesh M2 normals"<<endl;
     testNormals(M2);
@@ -180,6 +184,9 @@ MeshTests::testClassMesh( void )
 	CPPUNIT_ASSERT_EQUAL( 4, int(M2Triangle.getNamesOfGroups().size()) );
 	CPPUNIT_ASSERT(M2Triangle.getNamesOfGroups()[2].compare("BottomEdge")==0);
 	std::map<int,int> indexFacesTriangle=M2Triangle.getIndexFacePeriodic();
+
+    double dx2Triangle=M2Triangle.minRatioVolSurf();
+    CPPUNIT_ASSERT_DOUBLES_EQUAL( dx2Triangle, 0.5/3.414, 0.01  );
     
     cout<<"Test mesh M2Triangle normals"<<endl;
     testNormals(M2Triangle);
@@ -236,6 +243,9 @@ MeshTests::testClassMesh( void )
 		if (z==0.5 && y==0. && x==1.)
 			CPPUNIT_ASSERT_EQUAL( -1, M3.getIndexFacePeriodic(i) );
 	}
+
+    double dx3=M3.minRatioVolSurf();
+    CPPUNIT_ASSERT_DOUBLES_EQUAL( dx3, 0.25/6, eps  );
 
     cout<<"Test mesh M3 normals"<<endl;
     testNormals(M3);

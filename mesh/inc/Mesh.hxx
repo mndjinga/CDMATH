@@ -298,7 +298,7 @@ public: //----------------------------------------------------------------
 	/**
 	 * Compute the minimum value over all cells of the ratio cell perimeter/cell vaolume
 	 */
-    double minRatioSurfVol();
+    double minRatioVolSurf();
     
 private: //----------------------------------------------------------------
 

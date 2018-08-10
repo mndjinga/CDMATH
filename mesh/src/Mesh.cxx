@@ -1852,7 +1852,7 @@ bool Mesh::isIndexFacePeriodicSet() const
 }
 //----------------------------------------------------------------------
 double 
-Mesh::minRatioSurfVol()
+Mesh::minRatioVolSurf()
 {
     double dx_min  = 1e30;
     for(int i=0; i<_numberOfCells; i++)
@@ -1872,6 +1872,8 @@ Mesh::minRatioSurfVol()
         else
             dx_min = min(dx_min,Ci.getMeasure());
     }
+    
+    return dx_min;
 }
 //----------------------------------------------------------------------
 void
