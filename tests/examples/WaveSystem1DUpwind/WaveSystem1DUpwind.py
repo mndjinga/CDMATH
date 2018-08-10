@@ -122,7 +122,7 @@ def WaveSystem1DVF(ntmax, tmax, cfl, my_mesh, output_freq, resolution):
     print("Construction of the initial condition …")
     U, pressure_field, velocity_field = initial_conditions_wave_system(my_mesh)
 
-    dx_min=my_mesh.minRatioSurfVol()
+    dx_min=my_mesh.minRatioVolSurf()
 
     dt = cfl * dx_min / c0
     
