@@ -8,7 +8,7 @@ import cdmath
 import PV_routines
 import VTK_routines
 
-test_description={}
+test_desc={}
 
 rho0=1000#reference density
 c0=1500#reference sound speed
@@ -16,7 +16,7 @@ p0=rho0*c0*c0#reference pressure
 precision=1e-5
 
 def initial_conditions_wave_system(my_mesh):
-    test_description["Initial_data"]="Divergence_free"
+    test_desc["Initial_data"]="Divergence_free"
     
     dim     = my_mesh.getMeshDimension()
     nbCells = my_mesh.getNumberOfCells()
@@ -42,7 +42,7 @@ def initial_conditions_wave_system(my_mesh):
     return pressure_field, velocity_field
 
 def jacobianMatrices(normal, coeff, signun):
-    test_description["Numerical_method_name"]="Pseudo_staggered"
+    test_desc["Numerical_method_name"]="Pseudo_staggered"
     
     dim=normal.size()
     A=cdmath.Matrix(dim+1,dim+1)
@@ -100,7 +100,7 @@ def computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt):
                 implMat.addValue(j*nbComp,        j*nbComp,Am*(-1.))
             else  :
                 if( Fk.getGroupName() != "Wall" and Fk.getGroupName() != "Paroi" and Fk.getGroupName() != "Neumann"):#Periodic boundary condition unless Wall/Neumann specified explicitly
-                    test_description["Boundary_conditions"]="Periodic"
+                    test_desc["Boundary_conditions"]="Periodic"
                     
                     indexFP = my_mesh.getIndexFacePeriodic(indexFace)
                     Fp = my_mesh.getFace(indexFP)
@@ -109,7 +109,7 @@ def computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt):
                     implMat.addValue(j*nbComp,cellAutre*nbComp,Am)
                     implMat.addValue(j*nbComp,        j*nbComp,Am*(-1.))
                 elif( Fk.getGroupName() == "Wall" or Fk.getGroupName() == "Paroi"):#Wall boundary condition
-                    test_description["Boundary_conditions"]="Wall"
+                    test_desc["Boundary_conditions"]="Wall"
                     
                     v=cdmath.Vector(dim+1)
                     for i in range(dim) :
@@ -173,36 +173,32 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution):
     for j in range(nbCells*(dim+1)):
         divMat.addValue(j,j,1)
     
-    solver="GMRES"
-    preconditioner="LU"
-    LS=cdmath.LinearSolver(divMat,Un,iterGMRESMax, precision, solver,preconditioner)
+    LS=cdmath.LinearSolver(divMat,Un,iterGMRESMax, precision, "GMRES","LU")
     LS.setDisplayConditionNumber()
-    test_description["Linear_solver_algorithm"]=solver
-    test_description["Linear_solver_preconditioner"]=preconditioner
-    test_description["Linear_solver_precision"]=precision
-    test_description["Linear_solver_maximum_iterations"]=iterGMRESMax
-    test_description["Numerical_parameter_space_step"]=dx_min
-    test_description["Numerical_parameter_time_step"]=dt
-    
-    print("Starting computation of the linear wave system with an pseudo staggered scheme …")
+    test_desc["Linear_solver_algorithm"]=LS.getNameOfMethod()
+    test_desc["Linear_solver_preconditioner"]=LS.getNameOfPc()
+    test_desc["Linear_solver_precision"]=LS.getTolerance()
+    test_desc["Linear_solver_maximum_iterations"]=LS.getNumberMaxOfIter()
+    test_desc["Numerical_parameter_space_step"]=dx_min
+    test_desc["Numerical_parameter_time_step"]=dt
+    test_desc["Linear_solver_with_scaling"]=True
+
+    print("Starting computation of the linear wave system with a pseudo staggered scheme …")
     
     # Starting time loop
     while (it<ntmax and time <= tmax and not isStationary):
         dUn=Un.deepCopy()
         LS.setSndMember(Un)
         Un=LS.solve();
-        cvgceLS=LS.getStatus();
-        iterGMRES=LS.getNumberOfIter();
-        conditionNumber=LS.getConditionNumber()
-        residu=LS.getResidu()
-        if(not cvgceLS):
+
+        if(not LS.getStatus()):
             print "Linear system did not converge ", iterGMRES, " GMRES iterations"
             raise ValueError("Pas de convergence du système linéaire");
         dUn-=Un
         
-        test_description["Linear_system_max_actual_iterations_number"]=max(iterGMRES,test_description["Linear_system_max_actual_iterations_number"])
-        test_description["Linear_system_max_actual_error"]=max(residu,test_description["Linear_system_max_actual_error"])
-        test_description["Linear_system_max_actual_condition number"]=max(conditionNumber,test_description["Linear_system_max_actual_condition number"])
+        #test_desc["Linear_system_max_actual_iterations_number"]=max(LS.getNumberOfIter(),test_desc["Linear_system_max_actual_iterations_number"])
+        #test_desc["Linear_system_max_actual_error"]=max(LS.getResidu(),test_desc["Linear_system_max_actual_error"])
+        #test_desc["Linear_system_max_actual_condition number"]=max(LS.getConditionNumber(),test_desc["Linear_system_max_actual_condition number"])
 
         maxVector=dUn.maxVector(dim+1)
         isStationary= maxVector[0]/p0<precision and maxVector[1]/rho0<precision and maxVector[2]/rho0<precision;
@@ -215,7 +211,7 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution):
         if(it%output_freq==0 or it>=ntmax or isStationary or time >=tmax):
             print"-- Iter: " + str(it) + ", Time: " + str(time) + ", dt: " + str(dt)
             print "Variation temporelle relative : pressure ", maxVector[0]/p0 ,", velocity x", maxVector[1]/rho0 ,", velocity y", maxVector[2]/rho0
-            print "Linear system converged in ", iterGMRES, " GMRES iterations"
+            print "Linear system converged in ", LS.getNumberOfIter(), " GMRES iterations"
 
             delta_press=0
             delta_v=cdmath.Vector(dim)
@@ -281,7 +277,7 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution):
 
 def solve(my_mesh,meshName,resolution):
     start = time.time()
-    test_name="Resolution of the Wave system in dimension" +str( my_mesh.getSpaceDimension())
+    test_name="Resolution of the Wave system in dimension " +str( my_mesh.getSpaceDimension())+" on "+str(my_mesh.getNumberOfCells())+ " cells"
     test_name_comment="New scheme for low Mach flows"
     test_model="wave system"
     test_method="pseudo staggered"
@@ -302,37 +298,40 @@ def solve(my_mesh,meshName,resolution):
     error_p, error_u, nbCells, t_final, ndt_final, max_vel, diag_data_press, diag_data_vel = WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution)
     end = time.time()
 
-    test_description["Global_name"]=test_name
-    test_description["Global_comment"]=test_name_comment
-    test_description["PDE_model"]=test_model
-    test_description["PDE_is_stationary"]=False
-    test_description["PDE_search_for_stationary_solution"]=True
-    test_description["Numerical_method_name"]=test_method
-    test_description["Numerical_method_space_discretization"]="Finite volumes"
-    test_description["Numerical_method_time_discretization_implicit"]=True
-    test_description["Space_dimension"]=my_mesh.getSpaceDimension()
-    test_description["Mesh_dimension"]=my_mesh.getMeshDimension()
-    test_description["Mesh_is_unstructured"]=True
-    test_description["Mesh_cell_type"]="Quadrangles"
-    test_description["Mesh_number_of_elements"]=my_mesh.getNumberOfCells()
-    test_description["Mesh_max_number_of_neighbours"]=10
-    test_description["Geometry"]="Square"
-    test_description["Boundary_conditions"]=test_bc
-    test_description["Initial_data"]=test_initial_data
-    test_description["Part_of_mesh_convergence_analysis"]=True
-    test_description["Numerical_parameter_cfl"]=cfl
-    test_description["Simulation_parameter_maximum_time_step"]=ntmax
-    test_description["Simulation_parameter_maximum_time"]=tmax
-    test_description["Simulation_output_frequency"]=output_freq
-    test_description["Simulation_final_time_after_run"]=t_final
-    test_description["Simulation_final_number_of_time_steps_after_run"]=ndt_final
-    test_description["Computational_time_taken_by_run"]=end-start
-    test_description["||actual-ref||"]=max(error_p,error_u)
-    test_description["Linear_system_max_actual_iterations_number"]=0
-    test_description["Linear_system_max_actual_error"]=0
-    test_description["Linear_system_max_actual_condition number"]=0
+    test_desc["Global_name"]=test_name
+    test_desc["Global_comment"]=test_name_comment
+    test_desc["PDE_model"]=test_model
+    test_desc["PDE_is_stationary"]=False
+    test_desc["PDE_search_for_stationary_solution"]=True
+    test_desc["Numerical_method_name"]=test_method
+    test_desc["Numerical_method_space_discretization"]="Finite volumes"
+    test_desc["Numerical_method_time_discretization"]="Implicit"
+    test_desc["Space_dimension"]=my_mesh.getSpaceDimension()
+    test_desc["Mesh_dimension"]=my_mesh.getMeshDimension()
+    test_desc["Mesh_is_unstructured"]=True
+    test_desc["Mesh_cell_type"]="Quadrangles"
+    test_desc["Mesh_number_of_elements"]=my_mesh.getNumberOfCells()
+    test_desc["Mesh_max_number_of_neighbours"]=10
+    test_desc["Geometry"]="Square"
+    test_desc["Boundary_conditions"]=test_bc
+    test_desc["Initial_data"]=test_initial_data
+    test_desc["Part_of_mesh_convergence_analysis"]=True
+    test_desc["Numerical_parameter_cfl"]=cfl
+    test_desc["Simulation_parameter_maximum_time_step"]=ntmax
+    test_desc["Simulation_parameter_maximum_time"]=tmax
+    test_desc["Simulation_output_frequency"]=output_freq
+    test_desc["Simulation_final_time_after_run"]=t_final
+    test_desc["Simulation_final_number_of_time_steps_after_run"]=ndt_final
+    test_desc["Computational_time_taken_by_run"]=end-start
+    test_desc["||actual-ref||"]=max(error_p,error_u)
+    test_desc["Linear_system_max_actual_iterations_number"]=0
+    test_desc["Linear_system_max_actual_error"]=0
+    test_desc["Linear_system_max_actual_condition number"]=0
 
 
+    with open('WaveSystemPStag_'+meshName+str(my_mesh.getNumberOfCells())+ "Cells.json", 'w') as outfile:  
+        json.dump(test_desc, outfile)
+    
     return error_p, error_u, nbCells, t_final, ndt_final, max_vel, diag_data_press, diag_data_vel, end - start
 
 def solve_file( filename,meshName, resolution):
