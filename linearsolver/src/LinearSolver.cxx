@@ -35,7 +35,7 @@ LinearSolver::LinearSolver ( void )
 	_ksp=NULL;
 	_prec=NULL;
 	_isSparseMatrix=false;
-	_displayConditionNumber=false;
+	_computeConditionNumber=false;
     _conditionNumber=1e100;
 }
 
@@ -93,18 +93,18 @@ LinearSolver::setNumberMaxOfIter(int numberMaxOfIter)
 }
 
 void
-LinearSolver::setDisplayConditionNumber(bool display)
+LinearSolver::setComputeConditionNumber(bool display)
 {
-	_displayConditionNumber=display;
+	_computeConditionNumber=display;
 }
 
 double 
 LinearSolver::getConditionNumber() const
 {
-    if(_displayConditionNumber and _convergence)
+    if(_computeConditionNumber and _convergence)
         return _conditionNumber;
-    else if(!_displayConditionNumber)
-        throw CdmathException("LinearSolver::getConditionNumber(): Condition number can not be evaluated without prior call to setDisplayConditionNumber()");
+    else if(!_computeConditionNumber)
+        throw CdmathException("LinearSolver::getConditionNumber(): Condition number can not be evaluated without prior call to setComputeConditionNumber()");
     else //_convergence = false
         throw CdmathException("LinearSolver::getConditionNumber(): Condition number can not be evaluated without prior successful resolution of a linear system");
 }
@@ -123,7 +123,7 @@ LinearSolver::LinearSolver( const GenericMatrix& matrix,
 	_numberOfIter = 0;
 	_isSingular = false;
 	_isSparseMatrix = matrix.isSparseMatrix();
-	_displayConditionNumber=false;
+	_computeConditionNumber=false;
 	_nameOfPc = nameOfPc;
 	_nameOfMethod = nameOfMethod;
 	_secondMember = secondMember;
@@ -485,7 +485,7 @@ LinearSolver::solve( void )
 		MatNullSpaceDestroy(&nullsp);
 	}
 
-	if(_displayConditionNumber)
+	if(_computeConditionNumber)
 		KSPSetComputeSingularValues(_ksp,PETSC_TRUE);
 
 	KSPSolve(_ksp,_smb,X);
@@ -510,7 +510,7 @@ LinearSolver::solve( void )
 		throw CdmathException(msg);
 	}
 
-	if(_displayConditionNumber)
+	if(_computeConditionNumber)
 	{
 		PetscReal sv_max, sv_min;
 		KSPComputeExtremeSingularValues(_ksp, &sv_max, &sv_min);

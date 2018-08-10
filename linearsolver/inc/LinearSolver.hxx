@@ -39,7 +39,7 @@ public: //----------------------------------------------------------------
 
 	void setPreconditioner(std::string pc) ;
 
-	void setDisplayConditionNumber(bool display=false);
+	void setComputeConditionNumber(bool display=true);
     double getConditionNumber() const;
     
 	int getNumberOfIter( void ) const ;
@@ -103,7 +103,7 @@ private: //----------------------------------------------------------------
 	int _numberOfIter;
 	bool _isSingular;
 	bool _isSparseMatrix;
-	bool _displayConditionNumber;
+	bool _computeConditionNumber;
 	double _conditionNumber;
 	std::string _nameOfPc;
 	std::string _nameOfMethod;
