@@ -514,7 +514,7 @@ LinearSolver::solve( void )
 	{
 		PetscReal sv_max, sv_min;
 		KSPComputeExtremeSingularValues(_ksp, &sv_max, &sv_min);
-		cout<<" Maximal singular value = " << sv_max <<", Minimal singular value = " << sv_min <<", Condition number = " << sv_max/sv_min <<endl;
+		//cout<<" Maximal singular value = " << sv_max <<", Minimal singular value = " << sv_min <<", Condition number = " << sv_max/sv_min <<endl;
         _conditionNumber=sv_max/sv_min;
 	}
 

@@ -10,6 +10,8 @@ import VTK_routines
 
 test_desc={}
 
+scaling=False
+
 rho0=1000#reference density
 c0=1500#reference sound speed
 p0=rho0*c0*c0#reference pressure
@@ -51,7 +53,10 @@ def jacobianMatrices(normal, coeff, signun):
     for i in range(dim):
         A[i+1,0]=normal[i]*coeff
         absA[i+1,0]=-signun*A[i+1,0]
-        A[0,i+1]=c0*c0*normal[i]*coeff
+        if(not scaling):
+            A[0,i+1]=c0*c0*normal[i]*coeff
+        else:
+            A[0,i+1]=      normal[i]*coeff
         absA[0,i+1]=signun*A[0,i+1]
     
     return (A-absA)/2
@@ -137,7 +142,7 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution):
     iterGMRESMax=50
     
     #iteration vectors
-    Un=cdmath.Vector(nbCells*(dim+1))
+    Un =cdmath.Vector(nbCells*(dim+1))
     dUn=cdmath.Vector(nbCells*(dim+1))
     
     # Initial conditions #
@@ -151,6 +156,10 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution):
         Un[k*(dim+1)+2] = rho0*initial_velocity[k,1]
         if(dim==3):
             Un[k*(dim+1)+3] = rho0*initial_velocity[k,2]
+    if( scaling):
+        Vn = Un
+        for k in range(nbCells):
+            Vn[k*(dim+1)+0] = Vn[k*(dim+1)+0]/(c0*c0)
             
     #sauvegarde de la donnée initiale
     pressure_field.setTime(time,it);
@@ -170,11 +179,19 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution):
     divMat=computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt)
 
     #Add the identity matrix on the diagonal
-    for j in range(nbCells*(dim+1)):
-        divMat.addValue(j,j,1)
+    if(not scaling):
+        divMat.diagonalShift(1)#only after  filling all coefficients
+    else:
+        for j in range(nbCells):
+            divMat.addValue(j*(dim+1),j*(dim+1),1/(c0*c0))
+            for i in range(dim):
+                divMat.addValue(j*(dim+1)+1+i,j*(dim+1)+1+i,1)
     
-    LS=cdmath.LinearSolver(divMat,Un,iterGMRESMax, precision, "GMRES","LU")
-    LS.setDisplayConditionNumber()
+    if(not scaling):
+        LS=cdmath.LinearSolver(divMat,Un,iterGMRESMax, precision, "GMRES","LU")
+    else:
+        LS=cdmath.LinearSolver(divMat,Vn,iterGMRESMax, precision, "GMRES","LU")
+    LS.setComputeConditionNumber()
     test_desc["Linear_solver_algorithm"]=LS.getNameOfMethod()
     test_desc["Linear_solver_preconditioner"]=LS.getNameOfPc()
     test_desc["Linear_solver_precision"]=LS.getTolerance()
@@ -183,12 +200,19 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution):
     test_desc["Numerical_parameter_time_step"]=dt
     test_desc["Linear_solver_with_scaling"]=True
 
+    test_desc['Linear_system_max_actual_iterations_number']=0
+    test_desc["Linear_system_max_actual_error"]=0
+    test_desc["Linear_system_max_actual_condition number"]=0
+
     print("Starting computation of the linear wave system with a pseudo staggered scheme …")
     
     # Starting time loop
     while (it<ntmax and time <= tmax and not isStationary):
         dUn=Un.deepCopy()
-        LS.setSndMember(Un)
+        if(not scaling):
+            LS.setSndMember(Un)
+        else:
+            LS.setSndMember(Vn)
         Un=LS.solve();
 
         if(not LS.getStatus()):
@@ -196,9 +220,9 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution):
             raise ValueError("Pas de convergence du système linéaire");
         dUn-=Un
         
-        #test_desc["Linear_system_max_actual_iterations_number"]=max(LS.getNumberOfIter(),test_desc["Linear_system_max_actual_iterations_number"])
-        #test_desc["Linear_system_max_actual_error"]=max(LS.getResidu(),test_desc["Linear_system_max_actual_error"])
-        #test_desc["Linear_system_max_actual_condition number"]=max(LS.getConditionNumber(),test_desc["Linear_system_max_actual_condition number"])
+        test_desc["Linear_system_max_actual_iterations_number"]=max(LS.getNumberOfIter(),test_desc["Linear_system_max_actual_iterations_number"])
+        test_desc["Linear_system_max_actual_error"]=max(LS.getResidu(),test_desc["Linear_system_max_actual_error"])
+        test_desc["Linear_system_max_actual_condition number"]=max(LS.getConditionNumber(),test_desc["Linear_system_max_actual_condition number"])
 
         maxVector=dUn.maxVector(dim+1)
         isStationary= maxVector[0]/p0<precision and maxVector[1]/rho0<precision and maxVector[2]/rho0<precision;
@@ -207,6 +231,11 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution):
         time=time+dt;
         it=it+1;
     
+        if( scaling):
+            Vn = Un
+            for k in range(nbCells):
+                Vn[k*(dim+1)+0] = Vn[k*(dim+1)+0]/(c0*c0)
+
         #Sauvegardes
         if(it%output_freq==0 or it>=ntmax or isStationary or time >=tmax):
             print"-- Iter: " + str(it) + ", Time: " + str(time) + ", dt: " + str(dt)
@@ -324,12 +353,9 @@ def solve(my_mesh,meshName,resolution):
     test_desc["Simulation_final_number_of_time_steps_after_run"]=ndt_final
     test_desc["Computational_time_taken_by_run"]=end-start
     test_desc["||actual-ref||"]=max(error_p,error_u)
-    test_desc["Linear_system_max_actual_iterations_number"]=0
-    test_desc["Linear_system_max_actual_error"]=0
-    test_desc["Linear_system_max_actual_condition number"]=0
 
 
-    with open('WaveSystemPStag_'+meshName+str(my_mesh.getNumberOfCells())+ "Cells.json", 'w') as outfile:  
+    with open('WaveSystem'+str(my_mesh.getMeshDimension())+'DPStag_'+meshName+ "Cells.json", 'w') as outfile:  
         json.dump(test_desc, outfile)
     
     return error_p, error_u, nbCells, t_final, ndt_final, max_vel, diag_data_press, diag_data_vel, end - start
