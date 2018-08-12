@@ -10,7 +10,7 @@ import VTK_routines
 
 test_desc={}
 
-scaling=False
+scaling=True
 
 rho0=1000#reference density
 c0=1500#reference sound speed
@@ -157,7 +157,7 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution):
         if(dim==3):
             Un[k*(dim+1)+3] = rho0*initial_velocity[k,2]
     if( scaling):
-        Vn = Un
+        Vn = Un.deepCopy()
         for k in range(nbCells):
             Vn[k*(dim+1)+0] = Vn[k*(dim+1)+0]/(c0*c0)
             
@@ -183,14 +183,14 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution):
         divMat.diagonalShift(1)#only after  filling all coefficients
     else:
         for j in range(nbCells):
-            divMat.addValue(j*(dim+1),j*(dim+1),1/(c0*c0))
+            divMat.addValue(j*(dim+1),j*(dim+1),1/(c0*c0))#/(c0*c0)
             for i in range(dim):
                 divMat.addValue(j*(dim+1)+1+i,j*(dim+1)+1+i,1)
     
     if(not scaling):
         LS=cdmath.LinearSolver(divMat,Un,iterGMRESMax, precision, "GMRES","LU")
     else:
-        LS=cdmath.LinearSolver(divMat,Vn,iterGMRESMax, precision, "GMRES","LU")
+        LS=cdmath.LinearSolver(divMat,Vn,iterGMRESMax, precision, "CG","CHOLESKY")
     LS.setComputeConditionNumber()
     test_desc["Linear_solver_algorithm"]=LS.getNameOfMethod()
     test_desc["Linear_solver_preconditioner"]=LS.getNameOfPc()
@@ -198,7 +198,7 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution):
     test_desc["Linear_solver_maximum_iterations"]=LS.getNumberMaxOfIter()
     test_desc["Numerical_parameter_space_step"]=dx_min
     test_desc["Numerical_parameter_time_step"]=dt
-    test_desc["Linear_solver_with_scaling"]=True
+    test_desc["Linear_solver_with_scaling"]=scaling
 
     test_desc['Linear_system_max_actual_iterations_number']=0
     test_desc["Linear_system_max_actual_error"]=0
@@ -232,7 +232,7 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution):
         it=it+1;
     
         if( scaling):
-            Vn = Un
+            Vn = Un.deepCopy()
             for k in range(nbCells):
                 Vn[k*(dim+1)+0] = Vn[k*(dim+1)+0]/(c0*c0)
 
@@ -316,11 +316,13 @@ def solve(my_mesh,meshName,resolution):
     print "Numerical method : ", test_method
     print "Initial data : ", test_initial_data
     print "Boundary conditions : ",test_bc
-    print "Mesh name : ",meshName , my_mesh.getNumberOfCells(), " cells"
-    
+    print "Mesh name : ",meshName , ", ", my_mesh.getNumberOfCells(), " cells"
+    if( scaling):
+        print "Use of scaling strategy for better preconditioning"
+
     # Problem data
     tmax = 1000.
-    ntmax = 10000
+    ntmax = 1#0000
     cfl = 1./my_mesh.getSpaceDimension()
     output_freq = 100
 

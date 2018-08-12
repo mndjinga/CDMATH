@@ -143,7 +143,7 @@ LinearSolver::LinearSolver( const GenericMatrix& matrix,
 void
 LinearSolver::setPreconditioner(string pc)
 {
-	if((pc.compare("ICC") != 0) && (pc.compare("ILU") != 0) && (pc.compare("LU") != 0) && (pc.compare("") != 0))
+	if((pc.compare("ICC") != 0) && (pc.compare("ILU") != 0) && (pc.compare("LU") != 0) && (pc.compare("CHOLESKY") != 0) && (pc.compare("") != 0))
 	{
 		string msg="LinearSolver::LinearSolver: preconditioner "+pc+" does not exist.\n";
 		throw CdmathException(msg);
@@ -504,7 +504,8 @@ LinearSolver::solve( void )
 	else{
 		_convergence=false;
 		cout<<"Linear system algorithm did not converge"<<endl;
-		cout<<"Final number of iterationx= "<<_numberOfIter<<". Maximum allowed was " << _numberMaxOfIter<<endl;
+        cout<<"solver used "<<  _nameOfMethod<<", preconditioner "<<_nameOfPc<<endl;
+		cout<<"Final number of iteration= "<<_numberOfIter<<". Maximum allowed was " << _numberMaxOfIter<<endl;
 		cout<<"Final residual "<< _residu<< ". Objective was "<< _tol<<endl;
 		string msg="Linear system algorithm did not converge";
 		throw CdmathException(msg);
