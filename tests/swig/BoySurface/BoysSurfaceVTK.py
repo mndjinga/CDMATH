@@ -3,7 +3,7 @@
    
 import vtk
 import VTKnewReader#To generate med file
-import paraview.simple as pvs#to obtain a binary vtu file in append mode
+#import paraview.simple as pvs#to obtain a binary vtu file in append mode
 
 # ------------------------------------------------------------
 # Create Boy's surface
@@ -90,13 +90,16 @@ unstructuredGrid.DeepCopy(appendFilter.GetOutput())
 writer=vtk.vtkXMLUnstructuredGridWriter()
 writer.SetFileName("BoySurface"+".vtu")
 writer.SetInputData(unstructuredGrid)
+writer.SetDataModeToBinary()
+#writer.SetDataModeToAppended()
+writer.EncodeAppendedDataOn()
 writer.Write()
 
 #Generate binary vtu file in append mode
-boySurfaceBisvtu = pvs.XMLUnstructuredGridReader(FileName=['./BoySurface.vtu'])
-pvs.SaveData('./BoySurface2.vtu', proxy=boySurfaceBisvtu, DataMode='Binary',EncodeAppendedData=1)
+#boySurfaceBisvtu = pvs.XMLUnstructuredGridReader(FileName=['./BoySurface.vtu'])
+#pvs.SaveData('./BoySurface2.vtu', proxy=boySurfaceBisvtu, DataMode='Binary',EncodeAppendedData=1)
 
 #Generate med file
-vtu = VTKnewReader.VTURawReader('./BoySurface2.vtu')
+vtu = VTKnewReader.VTURawReader('./BoySurface.vtu')
 med = vtu.loadInMEDFileDS()
 med.write("./BoySurface.med", 2)
