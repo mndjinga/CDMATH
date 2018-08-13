@@ -135,6 +135,12 @@ public: //----------------------------------------------------------------
 	~Mesh( void ) ;
 
 	/**
+	 * return mesh name
+	 * @return _name
+	 */
+	std::string getName( void ) const ;
+
+	/**
 	 * return Space dimension
 	 * @return _spaceDim
 	 */
@@ -306,6 +312,8 @@ private: //----------------------------------------------------------------
 
 	void setGroups( const MEDCoupling::MEDFileUMesh* medmesh, MEDCoupling::MEDCouplingUMesh*  mu) ;
 
+    std::string _name;
+    
 	/**
 	 * Space dimension
 	 */

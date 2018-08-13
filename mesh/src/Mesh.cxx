@@ -53,6 +53,7 @@ Mesh::Mesh( void )
 	_groupNames.resize(0);
 	_groups.resize(0);
     _indexFacePeriodicSet=false;
+    _name="";
 }
 
 //----------------------------------------------------------------------
@@ -66,6 +67,12 @@ Mesh::~Mesh( void )
 	//	_groups[i]->decrRef();
 }
 
+std::string 
+Mesh::getName( void ) const
+{
+    return _name;
+}
+
 Mesh::Mesh( const MEDCoupling::MEDCouplingIMesh* mesh )
 {
 	_spaceDim=mesh->getSpaceDimension();
@@ -75,6 +82,7 @@ Mesh::Mesh( const MEDCoupling::MEDCouplingIMesh* mesh )
 	_nxyz=mesh->getCellGridStructure();
 	double* Box0=new double[2*_spaceDim];
 	mesh->getBoundingBox(Box0);
+    _name=mesh->getName();
 
 	_xMin=Box0[0];
 	_xMax=Box0[1];
@@ -99,7 +107,7 @@ Mesh::Mesh( const MEDCoupling::MEDCouplingIMesh* mesh )
 		nodeStrctPtr[i]=_nxyz[i]+1;
 		dxyzPtr[i]=_dxyz[i];
 	}
-	_mesh=MEDCouplingIMesh::New("MESH",
+	_mesh=MEDCouplingIMesh::New(_name,
 			_spaceDim,
 			nodeStrctPtr,
 			nodeStrctPtr+_spaceDim,
@@ -120,7 +128,7 @@ Mesh::Mesh( const Mesh& m )
 {
 	_spaceDim = m.getSpaceDimension() ;
 	_meshDim = m.getMeshDimension() ;
-    _xMin=m.getXMin();
+    _name=m.getName();
     _xMax=m.getXMax();
     _yMin=m.getYMin();
     _yMax=m.getYMax();
@@ -172,6 +180,7 @@ Mesh::readMeshMed( const std::string filename, const int meshLevel)
 	_mesh->setName(_mesh->getName());
 	_meshDim=_mesh->getMeshDimension();
 	_spaceDim=_mesh->getSpaceDimension();
+    _name=_mesh->getName();
     MEDCoupling::MEDCouplingIMesh* structuredMesh = dynamic_cast<MEDCoupling::MEDCouplingIMesh*> (_mesh.retn());
     if(structuredMesh)
     {
@@ -1013,6 +1022,7 @@ Mesh::Mesh( double xmin, double xmax, int nx, std::string meshName )
 
 	_spaceDim = 1 ;
 	_meshDim  = 1 ;
+    _name=meshName;
     _isStructured = true;
     _indexFacePeriodicSet=false;
 
@@ -1182,6 +1192,7 @@ Mesh::Mesh( std::vector<double> points, std::string meshName )
     
 	_spaceDim = 1 ;
 	_meshDim  = 1 ;
+    _name=meshName;
 	_xMin=points[0];
 	_xMax=points[nx-1];
 	_yMin=0.;
@@ -1333,6 +1344,7 @@ Mesh::Mesh( double xmin, double xmax, int nx, double ymin, double ymax, int ny, 
 
 	_spaceDim = 2 ;
 	_meshDim  = 2 ;
+    _name=meshName;
     _isStructured = true;
 	_nxyz.resize(_spaceDim);
 	_nxyz[0]=nx;
@@ -1383,6 +1395,7 @@ Mesh::Mesh( double xmin, double xmax, int nx, double ymin, double ymax, int ny, 
 
 	_spaceDim = 3;
 	_meshDim  = 3;
+    _name=meshName;
 	_xMin=xmin;
 	_xMax=xmax;
 	_yMin=ymin;
@@ -1455,6 +1468,7 @@ Mesh::Mesh( int policy, double xmin, double xmax, int nx, double ymin, double ym
 
 	_spaceDim = 2 ;
 	_meshDim  = 2 ;
+    _name=meshName;
     _isStructured = true;
 	_nxyz.resize(_spaceDim);
 	_nxyz[0]=nx;
@@ -1511,6 +1525,7 @@ Mesh::Mesh( int policy, double xmin, double xmax, int nx, double ymin, double ym
 
 	_spaceDim = 3;
 	_meshDim  = 3;
+    _name=meshName;
 	_xMin=xmin;
 	_xMax=xmax;
 	_yMin=ymin;
@@ -1790,6 +1805,7 @@ Mesh::operator= ( const Mesh& mesh )
 {
 	_spaceDim = mesh.getSpaceDimension() ;
 	_meshDim  = mesh.getMeshDimension() ;
+    _name = mesh.getName();
 	_numberOfNodes = mesh.getNumberOfNodes();
 	_numberOfFaces = mesh.getNumberOfFaces();
 	_numberOfCells = mesh.getNumberOfCells();
