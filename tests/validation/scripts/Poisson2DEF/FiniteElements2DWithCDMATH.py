@@ -8,10 +8,30 @@
 #================================================================================================================================
 
 import cdmath
-import time
 from math import sin, pi
+import time, json
 import VTK_routines
 #import PV_routines
+
+test_desc={}
+test_desc["Initial_data"]="None"
+test_desc["Numerical_method_name"]="P1 FE"
+test_desc["Boundary_conditions"]="Dirichlet"
+test_desc["Global_name"]=t"Résolution EF de l'équation de Poisson 2D"
+test_desc["Global_comment"]="Maillage triangulaire"
+test_desc["PDE_model"]="Poisson"
+test_desc["PDE_is_stationary"]=True
+test_desc["PDE_search_for_stationary_solution"]=False
+test_desc["Numerical_method_name"]="P1 FE"
+test_desc["Numerical_method_space_discretization"]="Finite elements"
+test_desc["Numerical_method_time_discretization"]="None"
+test_desc["Space_dimension"]=my_mesh.getSpaceDimension()
+test_desc["Mesh_dimension"]=my_mesh.getMeshDimension()
+test_desc["Mesh_is_unstructured"]=True
+test_desc["Mesh_cell_type"]="Triangles"
+test_desc["Mesh_number_of_elements"]=my_mesh.getNumberOfCells()
+test_desc["Geometry"]="Square"
+test_desc["Part_of_mesh_convergence_analysis"]=True
 
 def solve(filename,resolution):
     start = time.time()
@@ -58,6 +78,8 @@ def solve(filename,resolution):
             interiorNodes.append(i)
             nbInteriorNodes=nbInteriorNodes+1
             maxNbNeighbours= max(1+Ni.getNumberOfCells(),maxNbNeighbours) #true only in 2D, need a function Ni.getNumberOfNeighbourNodes()
+
+    test_desc["Mesh_max_number_of_neighbours"]=maxNbNeighbours
     
     # sauvegarde sur le disque dur du second membre discrétisé dans un fichier paraview
     my_RHSfield.writeVTK("FiniteElements2DRHSField"+str(nbNodes)) 
@@ -129,6 +151,15 @@ def solve(filename,resolution):
     print "Number of iterations used : ", LS.getNumberOfIter()
     print("Linear system solved")
     
+    test_desc["Linear_solver_algorithm"]=LS.getNameOfMethod()
+    test_desc["Linear_solver_preconditioner"]=LS.getNameOfPc()
+    test_desc["Linear_solver_precision"]=LS.getTolerance()
+    test_desc["Linear_solver_maximum_iterations"]=LS.getNumberMaxOfIter()
+    test_desc["Linear_system_max_actual_iterations_number"]=LS.getNumberOfIter()
+    test_desc["Linear_system_max_actual_error"]=LS.getResidu()
+    test_desc["Linear_system_max_actual_condition number"]=LS.getConditionNumber()
+
+
     # Création du champ résultat
     #===========================
     my_ResultField = cdmath.Field("ResultField", cdmath.NODES, my_mesh, 1)
@@ -160,6 +191,12 @@ def solve(filename,resolution):
     #PV_routines.Save_PV_data_to_picture_file("FiniteElements2DResultField"+str(nbNodes)+'_0.vtu',"ResultField",'NODES',"FiniteElements2DResultField"+str(nbNodes))
     
     end = time.time()
+    test_desc["Computational_time_taken_by_run"]=end-start
+    test_desc["||actual-ref||"]=erreur_abs/max_abs
+
+    with open('Poisson'+str(my_mesh.getMeshDimension())+'D_EF_'+meshName+ "Cells.json", 'w') as outfile:  
+        json.dump(test_desc, outfile)
+
     return erreur_abs/max_abs_sol_exacte, my_mesh.getNumberOfNodes(), diag_data, min_sol_num, max_sol_num, end - start
 
 if __name__ == """__main__""":

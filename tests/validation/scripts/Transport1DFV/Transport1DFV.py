@@ -2,6 +2,9 @@
 # -*-coding:utf-8 -*
 
 import cdmath
+import time, json
+
+test_desc={}
 
 rho0=1000#reference density
 c0=1500#reference sound speed
@@ -9,6 +12,7 @@ p0=rho0*c0*c0#reference pressure
 precision=1e-5
 
 def initial_conditions_wave_system(my_mesh):
+    test_desc["Initial_data"]="Schock"
     dim     = my_mesh.getMeshDimension()
     nbCells = my_mesh.getNumberOfCells()
     if(dim!=1):
@@ -34,6 +38,7 @@ def initial_conditions_wave_system(my_mesh):
     return U, pressure_field, velocity_field
 
 def jacobianMatrices():
+    test_desc["Numerical_method_name"]="Upwind"
     A=cdmath.Matrix(2,2)
     absA=cdmath.Matrix(2,2)
 
@@ -80,6 +85,7 @@ def computeFluxes(U, SumFluxes):
             Uj[i]=U[j,i];
             sumFluxCourant[i]=0;
 
+        test_desc["Boundary_conditions"]="Neumann"
         if ( j==0) :
             for i in range(nbComp) :
                 Ujp1[i]=U[j+1,i];
@@ -180,17 +186,61 @@ def WaveSystem1DVF(ntmax, tmax, cfl, my_mesh, output_freq, resolution):
         print "Temps maximum Tmax= ", tmax, " atteint"
         raise ValueError("Maximum time reached : Stationary state not found !!!!!!!")
 
+    return time, it
 
 def solve(my_mesh,resolution):
-    print("RESOLUTION OF THE 1D Wave system:")
+    start = time.time()
+    test_name="Resolution of the Wave system in dimension " +str( my_mesh.getSpaceDimension())+" on "+str(my_mesh.getNumberOfCells())+ " cells"
+    test_name_comment="Classical characteristic based scheme"
+    test_model="Wave system"
+    test_method="Upwind"
+    test_initial_data="Schock"
+    test_bc="Neumann"
 
+    print test_name
+    print "Numerical method : ", test_method
+    print "Initial data : ", test_initial_data
+    print "Boundary conditions : ",test_bc
+    print "Mesh name : ",meshName , ", ", my_mesh.getNumberOfCells(), " cells"
+ 
     # Problem data
     tmax = 1.
     ntmax = 100
     cfl = 0.95
     output_freq = 10
 
-    WaveSystem1DVF(ntmax, tmax, cfl, my_mesh, output_freq,resolution)
+    t_final, ndt_final = WaveSystem1DVF(ntmax, tmax, cfl, my_mesh, output_freq,resolution)
+    end = time.time()
+
+    test_desc["Global_name"]=test_name
+    test_desc["Global_comment"]=test_name_comment
+    test_desc["PDE_model"]=test_model
+    test_desc["PDE_is_stationary"]=False
+    test_desc["PDE_search_for_stationary_solution"]=False
+    test_desc["Numerical_method_name"]=test_method
+    test_desc["Numerical_method_space_discretization"]="Finite volumes"
+    test_desc["Numerical_method_time_discretization"]="Implicit"
+    test_desc["Space_dimension"]=my_mesh.getSpaceDimension()
+    test_desc["Mesh_dimension"]=my_mesh.getMeshDimension()
+    test_desc["Mesh_is_unstructured"]=False
+    test_desc["Mesh_cell_type"]="Quadrangles"
+    test_desc["Mesh_number_of_elements"]=my_mesh.getNumberOfCells()
+    test_desc["Mesh_max_number_of_neighbours"]=2
+    test_desc["Geometry"]="Interval"
+    test_desc["Boundary_conditions"]=test_bc
+    test_desc["Initial_data"]=test_initial_data
+    test_desc["Part_of_mesh_convergence_analysis"]=True
+    test_desc["Numerical_parameter_cfl"]=cfl
+    test_desc["Simulation_parameter_maximum_time_step"]=ntmax
+    test_desc["Simulation_parameter_maximum_time"]=tmax
+    test_desc["Simulation_output_frequency"]=output_freq
+    test_desc["Simulation_final_time_after_run"]=t_final
+    test_desc["Simulation_final_number_of_time_steps_after_run"]=ndt_final
+    test_desc["Computational_time_taken_by_run"]=end-start
+    test_desc["Part_of_mesh_convergence_analysis"]=True
+
+    with open('Transport'+str(my_mesh.getMeshDimension())+'DFV_'+meshName+ "Cells.json", 'w') as outfile:  
+        json.dump(test_desc, outfile)
 
 if __name__ == """__main__""":
 

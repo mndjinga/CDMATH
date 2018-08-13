@@ -8,9 +8,29 @@
 #================================================================================================================================
 
 import cdmath
-import time
+import time, json
 import VTK_routines
 from math import sin, pi
+
+test_desc={}
+test_desc["Initial_data"]="None"
+test_desc["Numerical_method_name"]="2 points finite volumes"
+test_desc["Boundary_conditions"]="Dirichlet"
+test_desc["Global_name"]=t"Résolution VF de l'équation de Poisson 3D"
+test_desc["Global_comment"]="Schéma VF à 2 points"
+test_desc["PDE_model"]="Poisson"
+test_desc["PDE_is_stationary"]=True
+test_desc["PDE_search_for_stationary_solution"]=False
+test_desc["Numerical_method_name"]="VF9"
+test_desc["Numerical_method_space_discretization"]="Finite volumes"
+test_desc["Numerical_method_time_discretization"]="None"
+test_desc["Space_dimension"]=my_mesh.getSpaceDimension()
+test_desc["Mesh_dimension"]=my_mesh.getMeshDimension()
+test_desc["Mesh_is_unstructured"]=True
+test_desc["Mesh_cell_type"]=""
+test_desc["Mesh_number_of_elements"]=my_mesh.getNumberOfCells()
+test_desc["Geometry"]="Square"
+test_desc["Part_of_mesh_convergence_analysis"]=True
 
 def solve(my_mesh, filename,resolution):
     start = time.time()
@@ -50,6 +70,8 @@ def solve(my_mesh, filename,resolution):
         # compute maximum number of neighbours
         maxNbNeighbours= max(1+Ci.getNumberOfFaces(),maxNbNeighbours)
     
+    test_desc["Mesh_max_number_of_neighbours"]=maxNbNeighbours
+
     # sauvegarde sur le disque dur du second membre discrétisé dans un fichier paraview
     my_RHSfield.writeVTK("FiniteVolumes3DRHSField"+str(nbCells))
     
@@ -89,6 +111,14 @@ def solve(my_mesh, filename,resolution):
     print "Number of iterations used : ", LS.getNumberOfIter()
     print("Linear system solved")
     
+    test_desc["Linear_solver_algorithm"]=LS.getNameOfMethod()
+    test_desc["Linear_solver_preconditioner"]=LS.getNameOfPc()
+    test_desc["Linear_solver_precision"]=LS.getTolerance()
+    test_desc["Linear_solver_maximum_iterations"]=LS.getNumberMaxOfIter()
+    test_desc["Linear_system_max_actual_iterations_number"]=LS.getNumberOfIter()
+    test_desc["Linear_system_max_actual_error"]=LS.getResidu()
+    test_desc["Linear_system_max_actual_condition number"]=LS.getConditionNumber()
+    
     # Création du champ résultat
     #===========================
     my_ResultField = cdmath.Field("ResultField", cdmath.CELLS, my_mesh, 1)
@@ -117,6 +147,12 @@ def solve(my_mesh, filename,resolution):
     diag_data=VTK_routines.Extract_field_data_over_line_to_numpyArray(my_ResultField,[0,0,0],[1,1,1], resolution)
 
     end = time.time()
+    test_desc["Computational_time_taken_by_run"]=end-start
+    test_desc["||actual-ref||"]=erreur_abs/max_abs
+
+    with open('Poisson'+str(my_mesh.getMeshDimension())+'D_VF_'+meshName+ "Cells.json", 'w') as outfile:  
+        json.dump(test_desc, outfile)
+
     return erreur_abs/max_abs_sol_exacte, my_mesh.getNumberOfCells(), diag_data, min_sol_num, max_sol_num, end - start
 
 

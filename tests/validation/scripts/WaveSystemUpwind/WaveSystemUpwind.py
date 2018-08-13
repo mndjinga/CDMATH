@@ -2,10 +2,12 @@
 # -*-coding:utf-8 -*
 
 from math import sin, cos, pi, sqrt
-import time
+import time, json
 import cdmath
 import PV_routines
 import VTK_routines
+
+test_desc={}
 
 rho0=1000#reference density
 c0=1500#reference sound speed
@@ -13,6 +15,7 @@ p0=rho0*c0*c0#reference pressure
 precision=1e-4
 
 def initial_conditions_wave_system(my_mesh):
+    test_desc["Initial_data"]="Constant pressure, divergence free velocity"
     dim     = my_mesh.getMeshDimension()
     nbCells = my_mesh.getNumberOfCells()
 
@@ -37,6 +40,7 @@ def initial_conditions_wave_system(my_mesh):
     return pressure_field, velocity_field
 
 def jacobianMatrices(normal, coeff):
+    test_desc["Numerical_method_name"]="Upwind"
     dim=normal.size()
     A=cdmath.Matrix(dim+1,dim+1)
     absA=cdmath.Matrix(dim+1,dim+1)
@@ -92,6 +96,7 @@ def computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt):
                 implMat.addValue(j*nbComp,        j*nbComp,Am*(-1.))
             else  :
                 if( Fk.getGroupName() != "Wall" and Fk.getGroupName() != "Paroi" and Fk.getGroupName() != "Neumann"):#Periodic boundary condition unless Wall/Neumann specified explicitly
+                    test_desc["Boundary_conditions"]="Periodic"
                     indexFP = indexFacesPerio[indexFace]
                     Fp = my_mesh.getFace(indexFP)
                     cellAutre = Fp.getCellsId()[0]
@@ -99,6 +104,7 @@ def computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt):
                     implMat.addValue(j*nbComp,cellAutre*nbComp,Am)
                     implMat.addValue(j*nbComp,        j*nbComp,Am*(-1.))
                 elif( Fk.getGroupName() == "Wall" or Fk.getGroupName() == "Paroi"):#Wall boundary condition
+                    test_desc["Boundary_conditions"]="Wall"
                     v=cdmath.Vector(dim+1)
                     for i in range(dim) :
                         v[i+1]=normal[i]
@@ -165,6 +171,19 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution):
         iterGMRESMax=50
         LS=cdmath.LinearSolver(divMat,Un,iterGMRESMax, precision, "GMRES","ILU")
     
+    LS.setComputeConditionNumber()
+    test_desc["Linear_solver_algorithm"]=LS.getNameOfMethod()
+    test_desc["Linear_solver_preconditioner"]=LS.getNameOfPc()
+    test_desc["Linear_solver_precision"]=LS.getTolerance()
+    test_desc["Linear_solver_maximum_iterations"]=LS.getNumberMaxOfIter()
+    test_desc["Numerical_parameter_space_step"]=dx_min
+    test_desc["Numerical_parameter_time_step"]=dt
+    test_desc["Linear_solver_with_scaling"]=scaling
+
+    test_desc['Linear_system_max_actual_iterations_number']=0
+    test_desc["Linear_system_max_actual_error"]=0
+    test_desc["Linear_system_max_actual_condition number"]=0
+
     print("Starting computation of the linear wave system with an Upwind scheme …")
     
     # Starting time loop
@@ -179,6 +198,11 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution):
                 print "Linear system did not converge ", iterGMRES, " GMRES iterations"
                 raise ValueError("Pas de convergence du système linéaire");
             dUn-=Un
+
+            test_desc["Linear_system_max_actual_iterations_number"]=max(LS.getNumberOfIter(),test_desc["Linear_system_max_actual_iterations_number"])
+            test_desc["Linear_system_max_actual_error"]=max(LS.getResidu(),test_desc["Linear_system_max_actual_error"])
+            test_desc["Linear_system_max_actual_condition number"]=max(LS.getConditionNumber(),test_desc["Linear_system_max_actual_condition number"])
+
         else:
             dUn=divMat*Un
             Un-=dUn
@@ -261,11 +285,20 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution):
 
 def solve(my_mesh,meshName,resolution):
     start = time.time()
-    print "Resolution of the Wave system in dimension ", my_mesh.getSpaceDimension()
-    print "Numerical method : explicit upwind"
-    print "Initial data : constant pressure, divergence free velocity"
-    print "Periodic boundary conditions"
-    print "Mesh name : ",meshName , my_mesh.getNumberOfCells(), " cells"
+    test_name="Resolution of the Wave system in dimension " +str( my_mesh.getSpaceDimension())+" on "+str(my_mesh.getNumberOfCells())+ " cells"
+    test_name_comment="Classical characteristic based scheme"
+    test_model="Wave system"
+    test_method="Upwind"
+    test_initial_data="Constant pressure, divergence free velocity"
+    test_bc="Periodic"
+
+    print test_name
+    print "Numerical method : ", test_method
+    print "Initial data : ", test_initial_data
+    print "Boundary conditions : ",test_bc
+    print "Mesh name : ",meshName , ", ", my_mesh.getNumberOfCells(), " cells"
+    if( scaling):
+        print "Use of scaling strategy for better preconditioning"
     
     # Problem data
     tmax = 1000.
@@ -276,7 +309,37 @@ def solve(my_mesh,meshName,resolution):
     error_p, error_u, nbCells, t_final, ndt_final, max_vel, diag_data_press, diag_data_vel = WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution)
     end = time.time()
 
-    return error_p, error_u, nbCells, t_final, ndt_final, max_vel, diag_data_press, diag_data_vel, end - start
+     test_desc["Global_name"]=test_name
+    test_desc["Global_comment"]=test_name_comment
+    test_desc["PDE_model"]=test_model
+    test_desc["PDE_is_stationary"]=False
+    test_desc["PDE_search_for_stationary_solution"]=True
+    test_desc["Numerical_method_name"]=test_method
+    test_desc["Numerical_method_space_discretization"]="Finite volumes"
+    test_desc["Numerical_method_time_discretization"]="Implicit"
+    test_desc["Space_dimension"]=my_mesh.getSpaceDimension()
+    test_desc["Mesh_dimension"]=my_mesh.getMeshDimension()
+    test_desc["Mesh_is_unstructured"]=True
+    test_desc["Mesh_cell_type"]="Quadrangles"
+    test_desc["Mesh_number_of_elements"]=my_mesh.getNumberOfCells()
+    test_desc["Mesh_max_number_of_neighbours"]=10
+    test_desc["Geometry"]="Square"
+    test_desc["Boundary_conditions"]=test_bc
+    test_desc["Initial_data"]=test_initial_data
+    test_desc["Part_of_mesh_convergence_analysis"]=True
+    test_desc["Numerical_parameter_cfl"]=cfl
+    test_desc["Simulation_parameter_maximum_time_step"]=ntmax
+    test_desc["Simulation_parameter_maximum_time"]=tmax
+    test_desc["Simulation_output_frequency"]=output_freq
+    test_desc["Simulation_final_time_after_run"]=t_final
+    test_desc["Simulation_final_number_of_time_steps_after_run"]=ndt_final
+    test_desc["Computational_time_taken_by_run"]=end-start
+    test_desc["||actual-ref||"]=max(error_p,error_u)
+
+    with open('WaveSystem'+str(my_mesh.getMeshDimension())+'DUpwind_'+meshName+ "Cells.json", 'w') as outfile:  
+        json.dump(test_desc, outfile)
+
+   return error_p, error_u, nbCells, t_final, ndt_final, max_vel, diag_data_press, diag_data_vel, end - start
 
 def solve_file( filename,meshName, resolution):
     my_mesh = cdmath.Mesh(filename+".med")

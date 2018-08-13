@@ -18,7 +18,7 @@ p0=rho0*c0*c0#reference pressure
 precision=1e-5
 
 def initial_conditions_wave_system(my_mesh):
-    test_desc["Initial_data"]="Divergence_free"
+    test_desc["Initial_data"]="Constant pressure, divergence free velocity"
     
     dim     = my_mesh.getMeshDimension()
     nbCells = my_mesh.getNumberOfCells()
@@ -44,7 +44,7 @@ def initial_conditions_wave_system(my_mesh):
     return pressure_field, velocity_field
 
 def jacobianMatrices(normal, coeff, signun):
-    test_desc["Numerical_method_name"]="Pseudo_staggered"
+    test_desc["Numerical_method_name"]="Pseudo staggered"
     
     dim=normal.size()
     A=cdmath.Matrix(dim+1,dim+1)
@@ -308,10 +308,10 @@ def solve(my_mesh,meshName,resolution):
     start = time.time()
     test_name="Resolution of the Wave system in dimension " +str( my_mesh.getSpaceDimension())+" on "+str(my_mesh.getNumberOfCells())+ " cells"
     test_name_comment="New scheme for low Mach flows"
-    test_model="wave system"
-    test_method="pseudo staggered"
-    test_initial_data="constant pressure, divergence free velocity"
-    test_bc="periodic"
+    test_model="Wave system"
+    test_method="Pseudo staggered"
+    test_initial_data="Constant pressure, divergence free velocity"
+    test_bc="Periodic"
     print test_name
     print "Numerical method : ", test_method
     print "Initial data : ", test_initial_data
@@ -355,7 +355,6 @@ def solve(my_mesh,meshName,resolution):
     test_desc["Simulation_final_number_of_time_steps_after_run"]=ndt_final
     test_desc["Computational_time_taken_by_run"]=end-start
     test_desc["||actual-ref||"]=max(error_p,error_u)
-
 
     with open('WaveSystem'+str(my_mesh.getMeshDimension())+'DPStag_'+meshName+ "Cells.json", 'w') as outfile:  
         json.dump(test_desc, outfile)
