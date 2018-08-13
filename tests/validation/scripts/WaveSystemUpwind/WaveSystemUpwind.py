@@ -9,6 +9,8 @@ import VTK_routines
 
 test_desc={}
 
+scaling=False
+
 rho0=1000#reference density
 c0=1500#reference sound speed
 p0=rho0*c0*c0#reference pressure
@@ -61,9 +63,6 @@ def computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt):
     nbComp=dim+1
     normal=cdmath.Vector(dim)
 
-    my_mesh.setPeriodicFaces()
-    indexFacesPerio = my_mesh.getIndexFacePeriodic()
-    
     implMat=cdmath.SparseMatrixPetsc(nbCells*nbComp,nbCells*nbComp,(nbVoisinsMax+1)*nbComp)
 
     idMoinsJacCL=cdmath.Matrix(nbComp)
@@ -97,7 +96,7 @@ def computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt):
             else  :
                 if( Fk.getGroupName() != "Wall" and Fk.getGroupName() != "Paroi" and Fk.getGroupName() != "Neumann"):#Periodic boundary condition unless Wall/Neumann specified explicitly
                     test_desc["Boundary_conditions"]="Periodic"
-                    indexFP = indexFacesPerio[indexFace]
+                    indexFP = my_mesh.getIndexFacePeriodic(indexFace)
                     Fp = my_mesh.getFace(indexFP)
                     cellAutre = Fp.getCellsId()[0]
                     
@@ -170,19 +169,19 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution):
         
         iterGMRESMax=50
         LS=cdmath.LinearSolver(divMat,Un,iterGMRESMax, precision, "GMRES","ILU")
+        LS.setComputeConditionNumber()
+        
+        test_desc["Linear_solver_algorithm"]=LS.getNameOfMethod()
+        test_desc["Linear_solver_preconditioner"]=LS.getNameOfPc()
+        test_desc["Linear_solver_precision"]=LS.getTolerance()
+        test_desc["Linear_solver_maximum_iterations"]=LS.getNumberMaxOfIter()
+        test_desc["Numerical_parameter_space_step"]=dx_min
+        test_desc["Numerical_parameter_time_step"]=dt
+        test_desc["Linear_solver_with_scaling"]=scaling
     
-    LS.setComputeConditionNumber()
-    test_desc["Linear_solver_algorithm"]=LS.getNameOfMethod()
-    test_desc["Linear_solver_preconditioner"]=LS.getNameOfPc()
-    test_desc["Linear_solver_precision"]=LS.getTolerance()
-    test_desc["Linear_solver_maximum_iterations"]=LS.getNumberMaxOfIter()
-    test_desc["Numerical_parameter_space_step"]=dx_min
-    test_desc["Numerical_parameter_time_step"]=dt
-    test_desc["Linear_solver_with_scaling"]=scaling
-
-    test_desc['Linear_system_max_actual_iterations_number']=0
-    test_desc["Linear_system_max_actual_error"]=0
-    test_desc["Linear_system_max_actual_condition number"]=0
+        test_desc['Linear_system_max_actual_iterations_number']=0
+        test_desc["Linear_system_max_actual_error"]=0
+        test_desc["Linear_system_max_actual_condition number"]=0
 
     print("Starting computation of the linear wave system with an Upwind scheme …")
     
@@ -257,7 +256,6 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution):
     elif(isStationary):
         print "Régime stationnaire atteint au pas de temps ", it, ", t= ", time
         assert (total_pressure_initial-pressure_field.integral()).norm()/p0<precision
-        print (total_velocity_initial-velocity_field.integral()).norm(),2*precision
         assert (total_velocity_initial-velocity_field.integral()).norm()<2*precision
         print "------------------------------------------------------------------------------------"
 
