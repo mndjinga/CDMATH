@@ -165,6 +165,8 @@ if (CDMATH_WITH_PYTHON AND CDMATH_WITH_POSTPRO)
   add_subdirectory (postprocessing)
   set (PV_LIB_DIR /usr/lib/paraview/:/usr/lib64/paraview/)
   set (PV_PYTHON_DIR /usr/lib/paraview/site-packages/paraview/:/usr/lib/paraview/site-packages/paraview/vtk:/usr/lib64/paraview/site-packages/paraview/:/usr/lib64/paraview/site-packages/vtk)
+
+  add_custom_target (jupyter COMMAND jupyter-nbconvert ${PROJECT_BINARY_DIR}/tests/validation/test_synthesis/test_synthesis_nbook.ipynb)
 endif ()
 
 # Configuration file
