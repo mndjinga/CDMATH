@@ -16,7 +16,7 @@ test_desc={}
 test_desc["Initial_data"]="None"
 test_desc["Numerical_method_name"]="2 points finite volumes"
 test_desc["Boundary_conditions"]="Dirichlet"
-test_desc["Global_name"]=t"Résolution VF de l'équation de Poisson 3D"
+test_desc["Global_name"]="Résolution VF de l'équation de Poisson 3D"
 test_desc["Global_comment"]="Schéma VF à 2 points"
 test_desc["PDE_model"]="Poisson"
 test_desc["PDE_is_stationary"]=True
@@ -24,11 +24,8 @@ test_desc["PDE_search_for_stationary_solution"]=False
 test_desc["Numerical_method_name"]="VF9"
 test_desc["Numerical_method_space_discretization"]="Finite volumes"
 test_desc["Numerical_method_time_discretization"]="None"
-test_desc["Space_dimension"]=my_mesh.getSpaceDimension()
-test_desc["Mesh_dimension"]=my_mesh.getMeshDimension()
 test_desc["Mesh_is_unstructured"]=True
 test_desc["Mesh_cell_type"]=""
-test_desc["Mesh_number_of_elements"]=my_mesh.getNumberOfCells()
 test_desc["Geometry"]="Square"
 test_desc["Part_of_mesh_convergence_analysis"]=True
 
@@ -53,6 +50,10 @@ def solve(my_mesh, filename,resolution):
     
     nbCells = my_mesh.getNumberOfCells()
     
+    test_desc["Space_dimension"]=my_mesh.getSpaceDimension()
+    test_desc["Mesh_dimension"]=my_mesh.getMeshDimension()
+    test_desc["Mesh_number_of_elements"]=my_mesh.getNumberOfCells()
+
     print("Mesh groups done")
     print("nb of cells =", nbCells)
     
@@ -105,6 +106,7 @@ def solve(my_mesh, filename,resolution):
     # Résolution du système linéaire
     #=================================
     LS=cdmath.LinearSolver(Rigidite,RHS,500,1.E-6,"CG","LU")
+    LS.setComputeConditionNumber()
     SolSyst=LS.solve()
     
     print "Preconditioner used : ", LS.getNameOfPc()
@@ -148,9 +150,9 @@ def solve(my_mesh, filename,resolution):
 
     end = time.time()
     test_desc["Computational_time_taken_by_run"]=end-start
-    test_desc["||actual-ref||"]=erreur_abs/max_abs
+    test_desc["||actual-ref||"]=erreur_abs/max_abs_sol_exacte
 
-    with open('Poisson'+str(my_mesh.getMeshDimension())+'D_VF_'+meshName+ "Cells.json", 'w') as outfile:  
+    with open('Poisson'+str(my_mesh.getMeshDimension())+'D_VF_'+str(my_mesh.getNumberOfCells())+ "Cells.json", 'w') as outfile:  
         json.dump(test_desc, outfile)
 
     return erreur_abs/max_abs_sol_exacte, my_mesh.getNumberOfCells(), diag_data, min_sol_num, max_sol_num, end - start

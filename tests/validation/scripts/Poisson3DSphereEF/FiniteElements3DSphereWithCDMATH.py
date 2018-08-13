@@ -18,7 +18,7 @@ test_desc={}
 test_desc["Initial_data"]="No"
 test_desc["Numerical_method_name"]="P1 FE"
 test_desc["Boundary_conditions"]="Dirichlet"
-test_desc["Global_name"]=t"Résolution EF de l'équation de Poisson Surfacique"
+test_desc["Global_name"]="Résolution EF de l'équation de Poisson Surfacique"
 test_desc["Global_comment"]="Maillage triangulaire"
 test_desc["PDE_model"]="Poisson"
 test_desc["PDE_is_stationary"]=True
@@ -26,11 +26,8 @@ test_desc["PDE_search_for_stationary_solution"]=False
 test_desc["Numerical_method_name"]="P1 FE"
 test_desc["Numerical_method_space_discretization"]="Finite elements"
 test_desc["Numerical_method_time_discretization"]="None"
-test_desc["Space_dimension"]=my_mesh.getSpaceDimension()
-test_desc["Mesh_dimension"]=my_mesh.getMeshDimension()
 test_desc["Mesh_is_unstructured"]=True
 test_desc["Mesh_cell_type"]="Triangles"
-test_desc["Mesh_number_of_elements"]=my_mesh.getNumberOfCells()
 test_desc["Geometry"]="Square"
 test_desc["Part_of_mesh_convergence_analysis"]=True
 
@@ -51,6 +48,10 @@ def solve(filename,resolution):
     nbNodes = my_mesh.getNumberOfNodes()
     nbCells = my_mesh.getNumberOfCells()
     
+    test_desc["Space_dimension"]=my_mesh.getSpaceDimension()
+    test_desc["Mesh_dimension"]=my_mesh.getMeshDimension()
+    test_desc["Mesh_number_of_elements"]=my_mesh.getNumberOfNodes()
+
     print("Mesh building/loading done")
     print("nb of nodes=", nbNodes)
     print("nb of cells=", nbCells)
@@ -168,6 +169,7 @@ def solve(filename,resolution):
     #=================================
     LS=cdmath.LinearSolver(Rigidite,RHS,100,1.E-3,"CG","ILU")#Remplacer CG par CHOLESKY pour solveur direct
     LS.isSingular()#En raison de l'absence de bord
+    LS.setComputeConditionNumber()
     SolSyst=LS.solve()
 
     print "Preconditioner used : ", LS.getNameOfPc()
@@ -241,9 +243,9 @@ def solve(filename,resolution):
 
     end = time.time()
     test_desc["Computational_time_taken_by_run"]=end-start
-    test_desc["||actual-ref||"]=erreur_abs/max_abs
+    test_desc["||actual-ref||"]=erreur_abs/max_abs_sol_exacte
 
-    with open('Poisson'+str(my_mesh.getMeshDimension())+'D_EF_'+meshName+ "Cells.json", 'w') as outfile:  
+    with open('Poisson'+str(my_mesh.getMeshDimension())+'D_EF_'+str(my_mesh.getNumberOfCells())+ "Cells.json", 'w') as outfile:  
         json.dump(test_desc, outfile)
 
     return erreur_abs/max_abs_sol_exacte, my_mesh.getNumberOfNodes(), min_sol_num, max_sol_num, end - start
