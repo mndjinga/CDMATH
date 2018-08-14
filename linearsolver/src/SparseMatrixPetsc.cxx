@@ -378,6 +378,9 @@ SparseMatrixPetsc::operator/= (double value)
 void
 SparseMatrixPetsc::viewMatrix() const 
 {
+    MatAssemblyBegin(_mat, MAT_FINAL_ASSEMBLY);
+	MatAssemblyEnd(_mat, MAT_FINAL_ASSEMBLY);
+
 	MatView(_mat,PETSC_VIEWER_STDOUT_SELF);
 }
 double

@@ -10,10 +10,10 @@ import VTK_routines
 
 test_desc={}
 
-scaling=True
+scaling=0
 
-rho0=1000#reference density
-c0=1500#reference sound speed
+rho0=1000.#reference density
+c0=1500.#reference sound speed
 p0=rho0*c0*c0#reference pressure
 precision=1e-5
 
@@ -51,13 +51,17 @@ def jacobianMatrices(normal, coeff, signun):
     absA=cdmath.Matrix(dim+1,dim+1)
 
     for i in range(dim):
-        A[i+1,0]=normal[i]*coeff
-        absA[i+1,0]=-signun*A[i+1,0]
-        if(not scaling):
+        if( scaling==0):
             A[0,i+1]=c0*c0*normal[i]*coeff
-        else:
+            A[i+1,0]=      normal[i]*coeff
+        elif( scaling==1):
             A[0,i+1]=      normal[i]*coeff
-        absA[0,i+1]=signun*A[0,i+1]
+            A[i+1,0]=      normal[i]*coeff
+        else:
+            A[0,i+1]=   c0*normal[i]*coeff
+            A[i+1,0]=   c0*normal[i]*coeff
+        absA[0,i+1]= signun*A[0,i+1]
+        absA[i+1,0]=-signun*A[i+1,0]
     
     return (A-absA)/2
     
@@ -126,7 +130,7 @@ def computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt):
                 elif(Fk.getGroupName() != "Neumann"):#Nothing to do for Neumann boundary condition
                     print Fk.getGroupName()
                     raise ValueError("computeFluxes: Unknown boundary condition name");
-                
+
     return implMat
 
 def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution):
@@ -156,7 +160,7 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution):
         Un[k*(dim+1)+2] = rho0*initial_velocity[k,1]
         if(dim==3):
             Un[k*(dim+1)+3] = rho0*initial_velocity[k,2]
-    if( scaling):
+    if( scaling>0):
         Vn = Un.deepCopy()
         for k in range(nbCells):
             Vn[k*(dim+1)+0] = Vn[k*(dim+1)+0]/(c0*c0)
@@ -187,10 +191,15 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution):
             for i in range(dim):
                 divMat.addValue(j*(dim+1)+1+i,j*(dim+1)+1+i,1)
     
+    #V=cdmath.Vector(nbCells*(dim+1))
+    #for i in range(nbCells*(dim+1)) :
+        #V[i]=1
+    #divMat.viewMatrix()
+
     if(not scaling):
         LS=cdmath.LinearSolver(divMat,Un,iterGMRESMax, precision, "GMRES","LU")
     else:
-        LS=cdmath.LinearSolver(divMat,Vn,iterGMRESMax, precision, "CG","CHOLESKY")
+        LS=cdmath.LinearSolver(divMat,Vn,iterGMRESMax, precision, "GMRES","")
     LS.setComputeConditionNumber()
     test_desc["Linear_solver_algorithm"]=LS.getNameOfMethod()
     test_desc["Linear_solver_preconditioner"]=LS.getNameOfPc()
@@ -278,7 +287,6 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution):
     elif(isStationary):
         print "Régime stationnaire atteint au pas de temps ", it, ", t= ", time
         assert (total_pressure_initial-pressure_field.integral()).norm()/p0<precision
-        print (total_velocity_initial-velocity_field.integral()).norm()/velocity_field.normL1().norm() , precision
         assert (total_velocity_initial-velocity_field.integral()).norm()/velocity_field.normL1().norm()<precision
         print "------------------------------------------------------------------------------------"
 
@@ -322,7 +330,7 @@ def solve(my_mesh,meshName,resolution):
 
     # Problem data
     tmax = 1000.
-    ntmax = 1#0000
+    ntmax = 10000
     cfl = 1./my_mesh.getSpaceDimension()
     output_freq = 100
 
