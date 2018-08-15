@@ -160,10 +160,14 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution):
         Un[k*(dim+1)+2] = rho0*initial_velocity[k,1]
         if(dim==3):
             Un[k*(dim+1)+3] = rho0*initial_velocity[k,2]
-    if( scaling>0):
+    if( scaling==1):
         Vn = Un.deepCopy()
         for k in range(nbCells):
             Vn[k*(dim+1)+0] = Vn[k*(dim+1)+0]/(c0*c0)
+    if( scaling==2):
+        Vn = Un.deepCopy()
+        for k in range(nbCells):
+            Vn[k*(dim+1)+0] = Vn[k*(dim+1)+0]/c0
             
     #sauvegarde de la donnée initiale
     pressure_field.setTime(time,it);
@@ -183,11 +187,14 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution):
     divMat=computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt)
 
     #Add the identity matrix on the diagonal
-    if(not scaling):
+    if( scaling==0):
         divMat.diagonalShift(1)#only after  filling all coefficients
     else:
         for j in range(nbCells):
-            divMat.addValue(j*(dim+1),j*(dim+1),1/(c0*c0))#/(c0*c0)
+            if( scaling==1):
+                divMat.addValue(j*(dim+1),j*(dim+1),1/(c0*c0))#/(c0*c0)
+            if( scaling==2):
+                divMat.addValue(j*(dim+1),j*(dim+1),1/c0)#/c0
             for i in range(dim):
                 divMat.addValue(j*(dim+1)+1+i,j*(dim+1)+1+i,1)
     
@@ -218,12 +225,22 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution):
     # Starting time loop
     while (it<ntmax and time <= tmax and not isStationary):
         dUn=Un.deepCopy()
-        if(not scaling):
+        if( scaling==0):
             LS.setSndMember(Un)
         else:
             LS.setSndMember(Vn)
-        Un=LS.solve();
-
+        if( scaling<2):
+            Un=LS.solve()
+            if( scaling==1):
+                Vn = Un.deepCopy()
+                for k in range(nbCells):
+                    Vn[k*(dim+1)+0] = Vn[k*(dim+1)+0]/(c0*c0)
+        else:#( scaling==2)
+            Vn=LS.solve()
+            Un = Vn.deepCopy()
+            for k in range(nbCells):
+                Un[k*(dim+1)+0] = c0*Vn[k*(dim+1)+0]
+            
         if(not LS.getStatus()):
             print "Linear system did not converge ", iterGMRES, " GMRES iterations"
             raise ValueError("Pas de convergence du système linéaire");
@@ -240,11 +257,6 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution):
         time=time+dt;
         it=it+1;
     
-        if( scaling):
-            Vn = Un.deepCopy()
-            for k in range(nbCells):
-                Vn[k*(dim+1)+0] = Vn[k*(dim+1)+0]/(c0*c0)
-
         #Sauvegardes
         if(it%output_freq==0 or it>=ntmax or isStationary or time >=tmax):
             print"-- Iter: " + str(it) + ", Time: " + str(time) + ", dt: " + str(dt)
