@@ -25,14 +25,14 @@ SparseMatrixPetsc::SparseMatrixPetsc()
 }
 
 //----------------------------------------------------------------------
-SparseMatrixPetsc::SparseMatrixPetsc( int numberOfRows, int numberOfColumns):_numberOfNonZeros(10000)
+SparseMatrixPetsc::SparseMatrixPetsc( int numberOfRows, int numberOfColumns)
 //----------------------------------------------------------------------
 {
 	_numberOfRows = numberOfRows;
 	_numberOfColumns=numberOfColumns;
 	_isSparseMatrix=true;
 	PetscInitialize(0, (char ***)"", PETSC_NULL, PETSC_NULL);
-	MatCreateSeqAIJ(MPI_COMM_SELF,_numberOfRows,_numberOfColumns,_numberOfNonZeros,NULL,&_mat);
+	MatCreateSeqAIJ(MPI_COMM_SELF,_numberOfRows,_numberOfColumns,PETSC_DEFAULT,NULL,&_mat);
 }
 
 //----------------------------------------------------------------------
@@ -62,6 +62,19 @@ SparseMatrixPetsc::SparseMatrixPetsc( int numberOfRows, int numberOfColumns, int
 	_mat=NULL;
 	PetscInitialize(0, (char ***)"", PETSC_NULL, PETSC_NULL);
 	MatCreateSeqAIJ(MPI_COMM_SELF,_numberOfRows,_numberOfColumns,_numberOfNonZeros,NULL,&_mat);
+}
+
+//----------------------------------------------------------------------
+SparseMatrixPetsc::SparseMatrixPetsc( int blockSize, int numberOfRows, int numberOfColumns, int nnz )
+//----------------------------------------------------------------------
+{
+	_numberOfRows = numberOfRows;
+	_numberOfColumns=numberOfColumns;
+	_numberOfNonZeros=nnz;
+	_isSparseMatrix=true;
+	_mat=NULL;
+	PetscInitialize(0, (char ***)"", PETSC_NULL, PETSC_NULL);
+	MatCreateSeqBAIJ(MPI_COMM_SELF,blockSize, _numberOfRows,_numberOfColumns,_numberOfNonZeros,NULL,&_mat);
 }
 
 //----------------------------------------------------------------------

@@ -21,19 +21,29 @@ public:
 	virtual ~SparseMatrixPetsc();
 
 	/**
-	 * constructor with data
+	 * constructor for a block sparse matrix
 	 * @param numberOfRows : The number of rows
 	 * @param numberOfColumns : The number of columns
 	 */
 	SparseMatrixPetsc( int numberOfRows, int numberOfColumns ) ;
 
 	/**
-	 * constructor with data
+	 * constructor for a block sparse matrix with number of non zero coefficients given
 	 * @param numberOfRows : The number of rows
 	 * @param numberOfColumns : The number of columns
 	 * @param nnz : The maximum number of nonzeros coefficients per line (or an upper bound)
 	 */
 	SparseMatrixPetsc( int numberOfRows, int numberOfColumns, int nnz ) ;
+
+	/**
+	 * constructor for a sparse matrix with block structure
+	 * @param blockSize : The block size
+	 * @param numberOfRows : The number of rows
+	 * @param numberOfColumns : The number of columns
+	 * @param nnz : The maximum number of nonzeros coefficients per line (or an upper bound)
+     * @comment blockSize should always divide numberOfRows and numberOfColumns
+	 */
+    SparseMatrixPetsc( int blockSize, int numberOfRows, int numberOfColumns, int nnz );
 
 	/**
 	 * constructor by copy
