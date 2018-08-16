@@ -67,6 +67,9 @@ public:
 	void setValue( int i, int j, Matrix M ) ;
 	void addValue( int i, int j, Matrix M ) ;
 
+	void setValuesBlocked( int i, int j, Matrix M ) ;
+	void addValuesBlocked( int i, int j, Matrix M ) ;
+
 	SparseMatrixPetsc& operator+= (const SparseMatrixPetsc& SparseMatrixPetsc) ;
 
 	SparseMatrixPetsc& operator-= (const SparseMatrixPetsc& SparseMatrixPetsc) ;
