@@ -146,7 +146,7 @@ SparseMatrixPetsc::setValuesBlocked( int i, int j, Matrix M  )
     MatGetBlockSize(_mat,&blockSize);
     if(blockSize!=M.getNumberOfRows() || blockSize!=M.getNumberOfColumns())
         throw CdmathException("SparseMatrixPetsc::setValuesBlocked : matrix size is different from sparse matrix block structure");
-    double petscValues[blockSize];
+    double petscValues[blockSize*blockSize];
     for (int k=0; k<M.getNumberOfRows(); k++)
         for (int l=0; l<M.getNumberOfColumns(); l++)
             petscValues[k*blockSize+l]=M(k,l);
@@ -160,11 +160,11 @@ SparseMatrixPetsc::addValuesBlocked( int i, int j, Matrix M  )
     MatGetBlockSize(_mat,&blockSize);
     if(blockSize!=M.getNumberOfRows() || blockSize!=M.getNumberOfColumns())
         throw CdmathException("SparseMatrixPetsc::addValuesBlocked : matrix size is different from sparse matrix block structure");
-    double petscValues[blockSize];
+    double petscValues[blockSize*blockSize];
     for (int k=0; k<M.getNumberOfRows(); k++)
         for (int l=0; l<M.getNumberOfColumns(); l++)
             petscValues[k*blockSize+l]=M(k,l);
-    MatSetValuesBlocked(_mat,1, &i, 1, &i, petscValues, ADD_VALUES);
+    MatSetValuesBlocked(_mat,1, &i, 1, &j, petscValues, ADD_VALUES);
 }
 
 //----------------------------------------------------------------------
