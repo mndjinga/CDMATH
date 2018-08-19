@@ -468,10 +468,10 @@ LinearSolver::solve( void )
 		throw CdmathException(msg);
 	}
 
-	KSPSetTolerances(_ksp,_tol,_tol,PETSC_DEFAULT,_numberMaxOfIter);
+	KSPSetTolerances(_ksp,_tol*_tol*_tol*_tol,_tol,PETSC_DEFAULT,_numberMaxOfIter);
 
 	PetscInt its;
-	PetscReal rtol,abstol,dtol;
+	PetscReal atol;
 	PetscInt maxits;
 
 	Vec X;
@@ -490,8 +490,8 @@ LinearSolver::solve( void )
 
 	KSPSolve(_ksp,_smb,X);
 
-	KSPGetResidualNorm(_ksp,&rtol);
-	_residu=(double)rtol;
+	KSPGetResidualNorm(_ksp,&atol);
+	_residu=(double)atol;
 
 	KSPGetIterationNumber(_ksp,&its);
 	_numberOfIter=(int)its;
@@ -499,12 +499,12 @@ LinearSolver::solve( void )
 	KSPConvergedReason reason;
 	KSPGetConvergedReason(_ksp,&reason);
 
-	if (reason>=0 )
+	if (reason==3 )
 		_convergence=true;
 	else{
 		_convergence=false;
-		cout<<"Linear system algorithm did not converge"<<endl;
-        cout<<"solver used "<<  _nameOfMethod<<", preconditioner "<<_nameOfPc<<endl;
+		cout<<"Linear system algorithm did not converge, divergence reason "<< reason <<endl;
+        cout<<"Solver used "<<  _nameOfMethod<<", preconditioner "<<_nameOfPc<<endl;
 		cout<<"Final number of iteration= "<<_numberOfIter<<". Maximum allowed was " << _numberMaxOfIter<<endl;
 		cout<<"Final residual "<< _residu<< ". Objective was "<< _tol<<endl;
 		string msg="Linear system algorithm did not converge";
@@ -521,7 +521,7 @@ LinearSolver::solve( void )
 
 	Vector X1=vecToVector(X);
 
-	return (X1);
+	return X1;
 }
 
 Vec
@@ -542,17 +542,21 @@ LinearSolver::vectorToVec(const Vector& myVector) const
 	VecAssemblyBegin(X);
 	VecAssemblyEnd(X);
 
-	return (X);
+	return X;
 }
 
 Vector
 LinearSolver::vecToVector(const Vec& vec) const
 {
 	PetscInt numberOfRows;
-
 	VecGetSize(vec,&numberOfRows);
-
+    //double * petscValues;
+    //VecGetArrays(vec,numberOfRows,petscValues);
+    
 	Vector X(numberOfRows);
+    //DoubleTab values(numberOfRows,petscValues());
+    //X.setValues(values);
+
 	double value;
 
 	for (PetscInt i=0; i<numberOfRows; i++)
