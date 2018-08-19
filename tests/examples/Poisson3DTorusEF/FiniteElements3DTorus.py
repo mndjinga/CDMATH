@@ -153,7 +153,7 @@ print("Linear system matrix building done")
 
 # Résolution du système linéaire
 #=================================
-LS=cdmath.LinearSolver(Rigidite,RHS,100,1.E-2,"CG","ILU")#Remplacer CG par CHOLESKY pour solveur direct
+LS=cdmath.LinearSolver(Rigidite,RHS,100,1.E-1,"GMRES","ILU")#Remplacer CG par CHOLESKY pour solveur direct
 LS.isSingular()#En raison de l'absence de bord
 SolSyst=LS.solve()
 print "Preconditioner used : ", LS.getNameOfPc()
