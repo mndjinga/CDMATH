@@ -10,7 +10,7 @@ import VTK_routines
 
 test_desc={}
 
-scaling=0
+scaling=2
 
 rho0=1000.#reference density
 c0=1500.#reference sound speed
@@ -187,27 +187,20 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution):
     divMat=computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt)
 
     #Add the identity matrix on the diagonal
-    if( scaling==0):
+    if( scaling==0 or  scaling==2):
         divMat.diagonalShift(1)#only after  filling all coefficients
     else:
         for j in range(nbCells):
-            if( scaling==1):
-                divMat.addValue(j*(dim+1),j*(dim+1),1/(c0*c0))#/(c0*c0)
-            if( scaling==2):
-                divMat.addValue(j*(dim+1),j*(dim+1),1/c0)#/c0
+            divMat.addValue(j*(dim+1),j*(dim+1),1/(c0*c0))#/(c0*c0)
             for i in range(dim):
                 divMat.addValue(j*(dim+1)+1+i,j*(dim+1)+1+i,1)
     
-    #V=cdmath.Vector(nbCells*(dim+1))
-    #for i in range(nbCells*(dim+1)) :
-        #V[i]=1
-    #divMat.viewMatrix()
-
-    if(not scaling):
-        LS=cdmath.LinearSolver(divMat,Un,iterGMRESMax, precision, "GMRES","LU")
+    if( scaling==0):
+        LS=cdmath.LinearSolver(divMat,Un,iterGMRESMax, precision, "GMRES","ILU")
     else:
-        LS=cdmath.LinearSolver(divMat,Vn,iterGMRESMax, precision, "GMRES","")
+        LS=cdmath.LinearSolver(divMat,Vn,iterGMRESMax, precision, "GMRES","ILU")
     LS.setComputeConditionNumber()
+
     test_desc["Linear_solver_algorithm"]=LS.getNameOfMethod()
     test_desc["Linear_solver_preconditioner"]=LS.getNameOfPc()
     test_desc["Linear_solver_precision"]=LS.getTolerance()
