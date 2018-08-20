@@ -10,8 +10,6 @@ import VTK_routines
 
 test_desc={}
 
-scaling=2
-
 rho0=1000.#reference density
 c0=1500.#reference sound speed
 p0=rho0*c0*c0#reference pressure
@@ -43,7 +41,7 @@ def initial_conditions_wave_system(my_mesh):
         
     return pressure_field, velocity_field
 
-def jacobianMatrices(normal, coeff, signun):
+def jacobianMatrices(normal, coeff, signun,scaling):
     test_desc["Numerical_method_name"]="Pseudo staggered"
     
     dim=normal.size()
@@ -66,7 +64,7 @@ def jacobianMatrices(normal, coeff, signun):
     return (A-absA)/2
     
     
-def computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt):
+def computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt,scaling):
     nbCells = my_mesh.getNumberOfCells()
     dim=my_mesh.getMeshDimension()
     nbComp=dim+1
@@ -91,7 +89,7 @@ def computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt):
                 normal[i] = Cj.getNormalVector(k, i);#normale sortante
 
             signun=sign(normal*v0)
-            Am=jacobianMatrices( normal,dt*Fk.getMeasure()/Cj.getMeasure(),signun);
+            Am=jacobianMatrices( normal,dt*Fk.getMeasure()/Cj.getMeasure(),signun,scaling);
 
             cellAutre =-1
             if ( not Fk.isBorder()) :
@@ -133,7 +131,7 @@ def computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt):
 
     return implMat
 
-def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution):
+def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,scaling):
     dim=my_mesh.getMeshDimension()
     nbCells = my_mesh.getNumberOfCells()
     
@@ -184,7 +182,7 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution):
     dx_min=my_mesh.minRatioVolSurf()
 
     dt = cfl * dx_min / c0
-    divMat=computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt)
+    divMat=computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt,scaling)
 
     #Add the identity matrix on the diagonal
     if( scaling==0 or  scaling==2):
@@ -292,6 +290,7 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution):
     elif(isStationary):
         print "Régime stationnaire atteint au pas de temps ", it, ", t= ", time
         assert (total_pressure_initial-pressure_field.integral()).norm()/p0<precision
+        print (total_velocity_initial-velocity_field.integral()).norm()/velocity_field.normL1().norm(), precision
         assert (total_velocity_initial-velocity_field.integral()).norm()/velocity_field.normL1().norm()<precision
         print "------------------------------------------------------------------------------------"
 
@@ -311,15 +310,15 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution):
         PV_routines.Save_PV_data_to_picture_file("WaveSystem"+str(dim)+"DPStag"+meshName+"_pressure_Stat"+'_0.vtu',"Pressure",'CELLS',"WaveSystem"+str(dim)+"DPStag"+meshName+"_pressure_Stat")
         PV_routines.Save_PV_data_to_picture_file("WaveSystem"+str(dim)+"DPStag"+meshName+"_velocity_Stat"+'_0.vtu',"Velocity",'CELLS',"WaveSystem"+str(dim)+"DPStag"+meshName+"_velocity_Stat")
         
-        return delta_press/p0, delta_v.maxVector()[0], nbCells, time, it, velocity_field.getNormEuclidean().max(), diag_data_press, diag_data_vel
+        return delta_press/p0, delta_v.maxVector()[0], nbCells, time, it, velocity_field.getNormEuclidean().max(), diag_data_press, diag_data_vel,test_desc["Linear_system_max_actual_condition number"]
     else:
         print "Temps maximum Tmax= ", tmax, " atteint"
         raise ValueError("Maximum time reached : Stationary state not found !!!!!!!")
 
 
-def solve(my_mesh,meshName,resolution):
+def solve(my_mesh,meshName,resolution,scaling):
     start = time.time()
-    test_name="Resolution of the Wave system in dimension " +str( my_mesh.getSpaceDimension())+" on "+str(my_mesh.getNumberOfCells())+ " cells"
+    test_name="Resolution of the Wave system in dimension " +str( my_mesh.getMeshDimension())+" on "+str(my_mesh.getNumberOfCells())+ " cells"
     test_name_comment="New scheme for low Mach flows"
     test_model="Wave system"
     test_method="Pseudo staggered"
@@ -339,7 +338,7 @@ def solve(my_mesh,meshName,resolution):
     cfl = 1./my_mesh.getSpaceDimension()
     output_freq = 100
 
-    error_p, error_u, nbCells, t_final, ndt_final, max_vel, diag_data_press, diag_data_vel = WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution)
+    error_p, error_u, nbCells, t_final, ndt_final, max_vel, diag_data_press, diag_data_vel, cond_number = WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,scaling)
     end = time.time()
 
     test_desc["Global_name"]=test_name
@@ -372,12 +371,12 @@ def solve(my_mesh,meshName,resolution):
     with open('WaveSystem'+str(my_mesh.getMeshDimension())+'DPStag_'+meshName+ "Cells.json", 'w') as outfile:  
         json.dump(test_desc, outfile)
     
-    return error_p, error_u, nbCells, t_final, ndt_final, max_vel, diag_data_press, diag_data_vel, end - start
+    return error_p, error_u, nbCells, t_final, ndt_final, max_vel, diag_data_press, diag_data_vel, end - start, cond_number
 
-def solve_file( filename,meshName, resolution):
+def solve_file( filename,meshName, resolution,scaling):
     my_mesh = cdmath.Mesh(filename+".med")
 
-    return solve(my_mesh, meshName+str(my_mesh.getNumberOfCells()),resolution)
+    return solve(my_mesh, meshName+str(my_mesh.getNumberOfCells()),resolution,scaling)
     
 
 if __name__ == """__main__""":
