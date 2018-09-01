@@ -332,7 +332,8 @@ def solve(my_mesh,meshName,resolution):
     test_desc["Simulation_final_time_after_run"]=t_final
     test_desc["Simulation_final_number_of_time_steps_after_run"]=ndt_final
     test_desc["Computational_time_taken_by_run"]=end-start
-    test_desc["||actual-ref||"]=max(error_p,error_u)
+    test_desc["Absolute_error"]=max(error_p*p0,error_u)
+    test_desc["Relative_error"]=max(error_p,error_u)
 
     with open('WaveSystem'+str(my_mesh.getMeshDimension())+'DUpwind_'+meshName+ "Cells.json", 'w') as outfile:  
         json.dump(test_desc, outfile)

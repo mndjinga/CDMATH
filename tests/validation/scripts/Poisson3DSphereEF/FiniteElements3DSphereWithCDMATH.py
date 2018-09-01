@@ -167,7 +167,7 @@ def solve(filename,resolution):
     
     # Résolution du système linéaire
     #=================================
-    LS=cdmath.LinearSolver(Rigidite,RHS,100,1.E-3,"CG","ILU")#Remplacer CG par CHOLESKY pour solveur direct
+    LS=cdmath.LinearSolver(Rigidite,RHS,100,1.E-1,"CG","ILU")#Remplacer CG par CHOLESKY pour solveur direct
     LS.isSingular()#En raison de l'absence de bord
     LS.setComputeConditionNumber()
     SolSyst=LS.solve()
@@ -243,7 +243,8 @@ def solve(filename,resolution):
 
     end = time.time()
     test_desc["Computational_time_taken_by_run"]=end-start
-    test_desc["||actual-ref||"]=erreur_abs/max_abs_sol_exacte
+    test_desc["Absolute_error"]=erreur_abs
+    test_desc["Relative_error"]=erreur_abs/max_abs_sol_exacte
 
     with open('Poisson'+str(my_mesh.getMeshDimension())+'D_EF_'+str(my_mesh.getNumberOfCells())+ "Cells.json", 'w') as outfile:  
         json.dump(test_desc, outfile)
