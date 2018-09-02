@@ -167,7 +167,7 @@ def solve(filename,resolution):
     
     # Résolution du système linéaire
     #=================================
-    LS=cdmath.LinearSolver(Rigidite,RHS,100,1.E-1,"CG","ILU")#Remplacer CG par CHOLESKY pour solveur direct
+    LS=cdmath.LinearSolver(Rigidite,RHS,100,1.E-2,"CG","ILU")#Remplacer CG par CHOLESKY pour solveur direct
     LS.isSingular()#En raison de l'absence de bord
     LS.setComputeConditionNumber()
     SolSyst=LS.solve()

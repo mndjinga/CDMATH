@@ -88,15 +88,15 @@ def test_validation2DWaveSystemPStagSquares():
 
     b1u_noscaling=np.dot(error_u_tab_noscaling,mesh_size_tab)   
     b2u_noscaling=np.sum(error_u_tab_noscaling)
-    au_noscaling=( a3_noscaling*b1u_noscaling-a2_noscaling*b2u_noscaling)/det
-    bu_noscaling=(-a2_noscaling*b1u_noscaling+a1_noscaling*b2u_noscaling)/det
+    au_noscaling=( a3*b1u_noscaling-a2*b2u_noscaling)/det
+    bu_noscaling=(-a2*b1u_noscaling+a1*b2u_noscaling)/det
     
     print "FVPStag on 2D square meshes : scheme order for velocity without scaling is ", -au_noscaling
     
     b1u_scaling=np.dot(error_u_tab_scaling,mesh_size_tab)   
     b2u_scaling=np.sum(error_u_tab_scaling)
-    au_scaling=( a3_scaling*b1u_scaling-a2_scaling*b2u_scaling)/det
-    bu_scaling=(-a2_scaling*b1u_scaling+a1_scaling*b2u_scaling)/det
+    au_scaling=( a3*b1u_scaling-a2*b2u_scaling)/det
+    bu_scaling=(-a2*b1u_scaling+a1*b2u_scaling)/det
     
     print "FVPStag on 2D square meshes : scheme order for velocity with scaling is ", -au_scaling
     
