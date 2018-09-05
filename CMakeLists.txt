@@ -115,6 +115,12 @@ if (CDMATH_WITH_PETSC)
 
 endif ()
 
+# Paraview
+if (CDMATH_WITH_PYTHON AND CDMATH_WITH_POSTPRO)
+  set (PV_LIB_DIR /usr/lib/paraview/:/usr/lib64/paraview/)
+  set (PV_PYTHON_DIR /usr/lib/paraview/site-packages/paraview/:/usr/lib/paraview/site-packages/paraview/vtk:/usr/lib64/paraview/site-packages/:/usr/lib64/paraview/site-packages/paraview/:/usr/lib64/paraview/site-packages/vtk/)
+endif ()
+
 # Swig interface
 if (CDMATH_WITH_PYTHON)
    find_package (PYTHON REQUIRED)
@@ -161,14 +167,14 @@ if (CDMATH_WITH_PACKAGE)
   include (CPackLists.txt)
 endif ()
 
+# Postprocessing
 if (CDMATH_WITH_PYTHON AND CDMATH_WITH_POSTPRO)
   add_subdirectory (postprocessing)
-  set (PV_LIB_DIR /usr/lib/paraview/:/usr/lib64/paraview/)
-  set (PV_PYTHON_DIR /usr/lib/paraview/site-packages/paraview/:/usr/lib/paraview/site-packages/paraview/vtk:/usr/lib64/paraview/site-packages/paraview/:/usr/lib64/paraview/site-packages/vtk)
 
   add_custom_target (jupyter COMMAND jupyter-nbconvert --to html ${PROJECT_BINARY_DIR}/tests/validation/test_synthesis/test_synthesis_nbook.ipynb
 				&&   jupyter-nbconvert --to pdf ${PROJECT_BINARY_DIR}/tests/validation/test_synthesis/test_synthesis_nbook.ipynb
-				&&   jupyter-nbconvert --to latex ${PROJECT_BINARY_DIR}/tests/validation/test_synthesis/test_synthesis_nbook.ipynb)
+				&&   jupyter-nbconvert --to latex ${PROJECT_BINARY_DIR}/tests/validation/test_synthesis/test_synthesis_nbook.ipynb
+				&&   jupyter-nbconvert --to md ${PROJECT_BINARY_DIR}/tests/validation/test_synthesis/test_synthesis_nbook.ipynb)
 endif ()
 
 # Configuration file

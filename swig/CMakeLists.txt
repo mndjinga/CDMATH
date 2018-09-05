@@ -34,7 +34,7 @@ INCLUDE_DIRECTORIES(
   ${MED_LOADER_DIR}
 )
 
-SWIG_ADD_MODULE(cdmath python ${CMAKE_BINARY_DIR}/swig/cdmath.i)
+SWIG_ADD_LIBRARY(cdmath LANGUAGE python SOURCES ${CMAKE_BINARY_DIR}/swig/cdmath.i)
 SWIG_LINK_LIBRARIES(cdmath ${PYTHON_LIBS} base mesh medcoupling medloader ${_extra_lib_SWIG})
 
 INSTALL(TARGETS _cdmath DESTINATION lib/cdmath)
