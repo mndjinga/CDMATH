@@ -174,7 +174,7 @@ if (CDMATH_WITH_PYTHON AND CDMATH_WITH_POSTPRO)
   add_custom_target (jupyter COMMAND jupyter-nbconvert --to html ${PROJECT_BINARY_DIR}/tests/validation/test_synthesis/test_synthesis_nbook.ipynb
 				&&   jupyter-nbconvert --to pdf ${PROJECT_BINARY_DIR}/tests/validation/test_synthesis/test_synthesis_nbook.ipynb
 				&&   jupyter-nbconvert --to latex ${PROJECT_BINARY_DIR}/tests/validation/test_synthesis/test_synthesis_nbook.ipynb
-				&&   jupyter-nbconvert --to md ${PROJECT_BINARY_DIR}/tests/validation/test_synthesis/test_synthesis_nbook.ipynb)
+				&&   jupyter-nbconvert --to markdown ${PROJECT_BINARY_DIR}/tests/validation/test_synthesis/test_synthesis_nbook.ipynb)
 endif ()
 
 # Configuration file
