@@ -492,6 +492,42 @@ Mesh::isStructured() const
 	return _isStructured;
 }
 
+std::string 
+Mesh::getElementTypes() const
+{
+    std::string result;    
+    for(int i=0; i< _eltsTypes.size(); i++)
+    {
+        if( _eltsTypes[i]==INTERP_KERNEL::NORM_POINT1)
+            result += "Points ";
+        else if( _eltsTypes[i]==INTERP_KERNEL::NORM_SEG2)
+            result += "Segments ";
+        else if( _eltsTypes[i]==INTERP_KERNEL::NORM_TRI3)
+            result += "Triangles ";
+        else if( _eltsTypes[i]==INTERP_KERNEL::NORM_QUAD4)
+            result += "Quadrangles ";
+        else if( _eltsTypes[i]==INTERP_KERNEL::NORM_POLYGON)
+            result += "Polygons ";
+        else if( _eltsTypes[i]==INTERP_KERNEL::NORM_TETRA4)
+            result += "Tetrahedra ";
+        else if( _eltsTypes[i]==INTERP_KERNEL::NORM_PYRA5)
+            result += "Pyramids ";
+        else if( _eltsTypes[i]==INTERP_KERNEL::NORM_PENTA6)
+            result += "Pentahedra ";
+        else if( _eltsTypes[i]==INTERP_KERNEL::NORM_HEXA8)
+            result += "Hexahedra ";
+        else if( _eltsTypes[i]==INTERP_KERNEL::NORM_POLYHED)
+            result += "Polyhedrons ";
+        else
+		{
+			cout<< "Mesh " + _name + " contains an element of type " <<endl;
+			cout<< _eltsTypes[i]<<endl;
+			throw CdmathException("Mesh::getElementTypes : recognised cell med types are NORM_POINT1, NORM_SEG2, NORM_TRI3, NORM_QUAD4, NORM_TETRA4, NORM_PYRA5, NORM_PENTA6, NORM_HEXA8, NORM_POLYGON, NORM_POLYHED");
+        }
+    }
+    return result;
+}
+
 void
 Mesh::setGroups( const MEDFileUMesh* medmesh, MEDCouplingUMesh*  mu)
 {
@@ -619,7 +655,7 @@ Mesh::setMesh( void )
 		{
 			cout<< "Mesh " + mu->getName() + " contains an element of type " <<endl;
 			cout<< _eltsTypes[i]<<endl;
-			throw CdmathException("Mesh::setMesh : in order to avoid gauss points, mesh should contain elements of type NORM_POINT1, NORM_SEG2, NORM_TRI3, NORM_QUAD4, NORM_TETRA4, NORM_PYRA5, NORM_PENTA6, NORM_HEXA8, NORM_POLYGON");
+			throw CdmathException("Mesh::setMesh : in order to avoid gauss points, mesh should contain elements of type NORM_POINT1, NORM_SEG2, NORM_TRI3, NORM_QUAD4, NORM_TETRA4, NORM_PYRA5, NORM_PENTA6, NORM_HEXA8, NORM_POLYGON, NORM_POLYHED");
 		}
 	}
 

@@ -300,6 +300,7 @@ public: //----------------------------------------------------------------
 	bool isQuadrangular() const ;
 	bool isHexahedral() const ;
     bool isStructured() const ;
+    std::string getElementTypes() const ;
     
 	/**
 	 * Compute the minimum value over all cells of the ratio cell perimeter/cell vaolume
