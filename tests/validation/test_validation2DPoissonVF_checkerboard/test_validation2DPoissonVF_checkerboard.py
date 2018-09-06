@@ -7,6 +7,8 @@ from math import log10, sqrt
 def test_validation2DVF_checkerboard():
     ##### 2D FV refined squares mesh
     meshList=['checkerboard_4x4','checkerboard_8x8','checkerboard_16x16','checkerboard_32x32','checkerboard_64x64','checkerboard_128x128']
+    meshType="Non conforming cartesian"
+    testColor="Green"
     nbMeshes=len(meshList)
     error_tab=[0]*nbMeshes
     mesh_size_tab=[0]*nbMeshes
@@ -20,7 +22,7 @@ def test_validation2DVF_checkerboard():
     i=0
     # Storing of numerical errors, mesh sizes and diagonal values
     for filename in meshList:
-        error_tab[i], mesh_size_tab[i], diag_data[i], min_sol_num, max_sol_num, time_tab[i] =FiniteVolumes2DWithCDMATH.solve_file(mesh_path+filename,resolution)
+        error_tab[i], mesh_size_tab[i], diag_data[i], min_sol_num, max_sol_num, time_tab[i] =FiniteVolumes2DWithCDMATH.solve_file(mesh_path+filename,resolution, meshType, testColor)
         assert min_sol_num>-0.01 
         assert max_sol_num<1.01
         plt.plot(curv_abs, diag_data[i], label= str(mesh_size_tab[i]) + ' cells')

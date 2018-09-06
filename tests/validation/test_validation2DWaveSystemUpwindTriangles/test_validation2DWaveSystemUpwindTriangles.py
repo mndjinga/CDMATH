@@ -7,6 +7,8 @@ from math import log10, sqrt
 def test_validation2DWaveSystemUpwindTriangles():
     #### 2D triangle mesh
     meshList=['triangleMeshSquare_1','triangleMeshSquare_2','triangleMeshSquare_3','triangleMeshSquare_4','triangleMeshSquare_5','triangleMeshSquare_6']
+    meshType="Unstructured triangles"
+    testColor="Green"
     nbMeshes=len(meshList)
     error_p_tab=[0]*nbMeshes
     error_u_tab=[0]*nbMeshes
@@ -26,7 +28,7 @@ def test_validation2DWaveSystemUpwindTriangles():
     i=0
     # Storing of numerical errors, mesh sizes and diagonal values
     for filename in meshList:
-        error_p_tab[i], error_u_tab[i], mesh_size_tab[i], t_final[i], ndt_final[i], max_vel[i], diag_data_press[i], diag_data_vel[i], time_tab[i] =WaveSystemUpwind.solve_file(mesh_path+filename, mesh_name, resolution)
+        error_p_tab[i], error_u_tab[i], mesh_size_tab[i], t_final[i], ndt_final[i], max_vel[i], diag_data_press[i], diag_data_vel[i], time_tab[i] =WaveSystemUpwind.solve_file(mesh_path+filename, mesh_name, resolution,meshType,testColor)
         assert max_vel[i]>0.94 and max_vel[i]<1
         i=i+1
     

@@ -8,6 +8,8 @@ from math import log10, sqrt
 def test_validation2DWaveSystemPStagTriangles():
     #### 2D triangular meshes
     meshList=['triangleMeshSquare_1','triangleMeshSquare_2','triangleMeshSquare_3','triangleMeshSquare_4','triangleMeshSquare_5','triangleMeshSquare_6']
+    meshType="Unstructured triangles"
+    testColor="Orange"
     nbMeshes=len(meshList)
     mesh_size_tab=[0]*nbMeshes
     mesh_path='../../ressources/2DTriangles/'
@@ -40,14 +42,14 @@ def test_validation2DWaveSystemPStagTriangles():
 
     # Storing of numerical errors, mesh sizes and diagonal values
     for filename in meshList:
-        error_p_tab_noscaling[i], error_u_tab_noscaling[i], mesh_size_tab[i], t_final_noscaling[i], ndt_final_noscaling[i], max_vel_noscaling[i], diag_data_press_noscaling[i], diag_data_vel_noscaling[i], time_tab_noscaling[i], cond_number_noscaling[i] = WaveSystemPStag.solve_file(mesh_path+filename, mesh_name, resolution,0)
+        error_p_tab_noscaling[i], error_u_tab_noscaling[i], mesh_size_tab[i], t_final_noscaling[i], ndt_final_noscaling[i], max_vel_noscaling[i], diag_data_press_noscaling[i], diag_data_vel_noscaling[i], time_tab_noscaling[i], cond_number_noscaling[i] = WaveSystemPStag.solve_file(mesh_path+filename, mesh_name, resolution,0,meshType,testColor)
         print max_vel_noscaling[i]
         assert max_vel_noscaling[i]>0.94 and max_vel_noscaling[i]<1.1
         error_p_tab_noscaling[i]=log10(error_p_tab_noscaling[i])
         error_u_tab_noscaling[i]=log10(error_u_tab_noscaling[i])
         time_tab_noscaling[i]=log10(time_tab_noscaling[i])
 
-        error_p_tab_scaling[i],   error_u_tab_scaling[i],   mesh_size_tab[i],   t_final_scaling[i], ndt_final_scaling[i],   max_vel_scaling[i],   diag_data_press_scaling[i],   diag_data_vel_scaling[i],   time_tab_scaling[i],   cond_number_scaling[i] = WaveSystemPStag.solve_file(mesh_path+filename, mesh_name, resolution,2)
+        error_p_tab_scaling[i],   error_u_tab_scaling[i],   mesh_size_tab[i],   t_final_scaling[i], ndt_final_scaling[i],   max_vel_scaling[i],   diag_data_press_scaling[i],   diag_data_vel_scaling[i],   time_tab_scaling[i],   cond_number_scaling[i] = WaveSystemPStag.solve_file(mesh_path+filename, mesh_name, resolution,2,meshType,testColor)
         print max_vel_scaling[i]
         assert max_vel_scaling[i]>0.94 and max_vel_scaling[i]<1.1
         error_p_tab_scaling[i]=log10(error_p_tab_scaling[i])

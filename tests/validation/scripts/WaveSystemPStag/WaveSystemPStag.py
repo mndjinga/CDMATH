@@ -316,8 +316,10 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,sc
         raise ValueError("Maximum time reached : Stationary state not found !!!!!!!")
 
 
-def solve(my_mesh,meshName,resolution,scaling):
+def solve(my_mesh,meshName,resolution,scaling, meshType, testColor):
     start = time.time()
+    test_desc["Mesh_type"]=meshType
+    test_desc["Test_color"]=testColor
     test_name="Resolution of the Wave system in dimension " +str( my_mesh.getMeshDimension())+" on "+str(my_mesh.getNumberOfCells())+ " cells"
     test_name_comment="New scheme for low Mach flows"
     test_model="Wave system"
@@ -352,7 +354,7 @@ def solve(my_mesh,meshName,resolution,scaling):
     test_desc["Space_dimension"]=my_mesh.getSpaceDimension()
     test_desc["Mesh_dimension"]=my_mesh.getMeshDimension()
     test_desc["Mesh_is_unstructured"]=True
-    test_desc["Mesh_cell_type"]="Quadrangles"
+    test_desc["Mesh_cell_type"]=my_mesh.getElementTypes()
     test_desc["Mesh_number_of_elements"]=my_mesh.getNumberOfCells()
     test_desc["Mesh_max_number_of_neighbours"]=10
     test_desc["Geometry"]="Square"
@@ -383,4 +385,4 @@ def solve_file( filename,meshName, resolution,scaling):
 if __name__ == """__main__""":
     M1=cdmath.Mesh(0,1,20,0,1,20)
     
-    solve(M1,"SquareWithSquares",100)
+    solve(M1,"SquareWithSquares",100,"Regular squares","Green")

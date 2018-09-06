@@ -16,7 +16,6 @@ import paraview.simple as pvs
 
 test_desc={}
 test_desc["Initial_data"]="No"
-test_desc["Numerical_method_name"]="P1 FE"
 test_desc["Boundary_conditions"]="Dirichlet"
 test_desc["Global_name"]="FE simulation of the Poisson equation on a sphere"
 test_desc["Global_comment"]="Triangular mesh, compact surface (no boundary)"
@@ -27,13 +26,13 @@ test_desc["Numerical_method_name"]="P1 FE"
 test_desc["Numerical_method_space_discretization"]="Finite elements"
 test_desc["Numerical_method_time_discretization"]="None"
 test_desc["Mesh_is_unstructured"]=True
-test_desc["Mesh_cell_type"]="Triangles"
 test_desc["Geometry"]="Square"
 test_desc["Part_of_mesh_convergence_analysis"]=True
 
-def solve(filename,resolution):
+def solve(filename,resolution,meshType, testColor):
     start = time.time()
-    #Préprocessing optionnel: création du fichier my_mesh.med contenant la géométrie et le maillage du domaine de calcul à partir de commandes python (import salome)
+    test_desc["Mesh_type"]=meshType
+    test_desc["Test_color"]=testColor
     
     #Chargement du maillage triangulaire de la sphère
     #=======================================================================================
@@ -51,6 +50,7 @@ def solve(filename,resolution):
     test_desc["Space_dimension"]=my_mesh.getSpaceDimension()
     test_desc["Mesh_dimension"]=my_mesh.getMeshDimension()
     test_desc["Mesh_number_of_elements"]=my_mesh.getNumberOfNodes()
+    test_desc["Mesh_cell_type"]=my_mesh.getElementTypes()
 
     print("Mesh building/loading done")
     print("nb of nodes=", nbNodes)
@@ -252,4 +252,4 @@ def solve(filename,resolution):
     return erreur_abs/max_abs_sol_exacte, my_mesh.getNumberOfNodes(), min_sol_num, max_sol_num, end - start
     
 if __name__ == """__main__""":
-    solve("meshSphere",100)
+    solve("meshSphere",100,"Unstructured 3D triangles","Green")

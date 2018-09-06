@@ -14,7 +14,6 @@ from math import sin, pi, sqrt
 
 test_desc={}
 test_desc["Initial_data"]="None"
-test_desc["Numerical_method_name"]="P1 FE"
 test_desc["Boundary_conditions"]="Dirichlet"
 test_desc["Global_name"]="FE simulation of the 3D Poisson equation"
 test_desc["Global_comment"]="Tetrahedral mesh"
@@ -25,13 +24,13 @@ test_desc["Numerical_method_name"]="P1 FE"
 test_desc["Numerical_method_space_discretization"]="Finite elements"
 test_desc["Numerical_method_time_discretization"]="None"
 test_desc["Mesh_is_unstructured"]=True
-test_desc["Mesh_cell_type"]="Tetrahedra"
 test_desc["Geometry"]="Cube"
 test_desc["Part_of_mesh_convergence_analysis"]=True
 
-def solve(filename,resolution):
+def solve(filename,resolution, meshType, testColor):
     start = time.time()
-    #Préprocessing optionnel: création du fichier my_mesh.med contenant la géométrie et le maillage du domaine de calcul à partir de commandes python (import salome)
+    test_desc["Mesh_type"]=meshType
+    test_desc["Test_color"]=testColor
     
     #Chargement du maillage tétraédrique du domaine cubique [0,1]x[0,1]x[0,1], définition des bords
     #==============================================================================================
@@ -53,6 +52,7 @@ def solve(filename,resolution):
     test_desc["Space_dimension"]=my_mesh.getSpaceDimension()
     test_desc["Mesh_dimension"]=my_mesh.getMeshDimension()
     test_desc["Mesh_number_of_elements"]=my_mesh.getNumberOfNodes()
+    test_desc["Mesh_cell_type"]=my_mesh.getElementTypes()
 
     print("Mesh building done")
     print("nb of nodes=", nbNodes)
@@ -218,5 +218,5 @@ def solve(filename,resolution):
     return erreur_abs/max_abs_sol_exacte, my_mesh.getNumberOfNodes(), diag_data, min_sol_num, max_sol_num, end - start
 
 if __name__ == """__main__""":
-    solve("meshCube",100)
+    solve("meshCube",100,"Unstructured tetrahedra","Green")
 

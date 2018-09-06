@@ -8,6 +8,8 @@ from math import log10, sqrt
 def test_validation2DWaveSystemPStagSquares():
     #### 2D square mesh
     meshList=[7,15,31,51,81]#
+    meshType="Regular squares"
+    testColor="Green"
     nbMeshes=len(meshList)
     mesh_size_tab=[0]*nbMeshes
     mesh_name='meshSquareWithSquares'
@@ -40,13 +42,13 @@ def test_validation2DWaveSystemPStagSquares():
     # Storing of numerical errors, mesh sizes and diagonal values
     for nx in meshList:
         my_mesh=cdmath.Mesh(0,1,nx,0,1,nx)
-        error_p_tab_noscaling[i], error_u_tab_noscaling[i], mesh_size_tab[i], t_final_noscaling[i], ndt_final_noscaling[i], max_vel_noscaling[i], diag_data_press_noscaling[i], diag_data_vel_noscaling[i], time_tab_noscaling[i], cond_number_noscaling[i] =WaveSystemPStag.solve(my_mesh, mesh_name+str(my_mesh.getNumberOfCells()), resolution,0)
+        error_p_tab_noscaling[i], error_u_tab_noscaling[i], mesh_size_tab[i], t_final_noscaling[i], ndt_final_noscaling[i], max_vel_noscaling[i], diag_data_press_noscaling[i], diag_data_vel_noscaling[i], time_tab_noscaling[i], cond_number_noscaling[i] =WaveSystemPStag.solve(my_mesh, mesh_name+str(my_mesh.getNumberOfCells()), resolution,0,meshType,testColor)
         assert max_vel_noscaling[i]>0.999 and max_vel_noscaling[i]<1.03
         error_p_tab_noscaling[i]=log10(error_p_tab_noscaling[i])
         error_u_tab_noscaling[i]=log10(error_u_tab_noscaling[i])
         time_tab_noscaling[i]=log10(time_tab_noscaling[i])
 
-        error_p_tab_scaling[i],   error_u_tab_scaling[i],   mesh_size_tab[i],  t_final_scaling[i],   ndt_final_scaling[i],  max_vel_scaling[i],   diag_data_press_scaling[i],   diag_data_vel_scaling[i],   time_tab_scaling[i],   cond_number_scaling[i] =WaveSystemPStag.solve(my_mesh, mesh_name+str(my_mesh.getNumberOfCells()), resolution,2)
+        error_p_tab_scaling[i],   error_u_tab_scaling[i],   mesh_size_tab[i],  t_final_scaling[i],   ndt_final_scaling[i],  max_vel_scaling[i],   diag_data_press_scaling[i],   diag_data_vel_scaling[i],   time_tab_scaling[i],   cond_number_scaling[i] =WaveSystemPStag.solve(my_mesh, mesh_name+str(my_mesh.getNumberOfCells()), resolution,2,meshType,testColor)
         assert max_vel_scaling[i]>0.999 and max_vel_scaling[i]<1.03
         error_p_tab_scaling[i]=log10(error_p_tab_scaling[i])
         error_u_tab_scaling[i]=log10(error_u_tab_scaling[i])

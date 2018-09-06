@@ -8,6 +8,8 @@ from math import log10, sqrt
 def test_validation3DWaveSystemUpwindCubes():
     #### 3D cubic mesh
     meshList=[11,21,31]
+    meshType="Regular cubes"
+    testColor="Green"
     nbMeshes=len(meshList)
     error_p_tab=[0]*nbMeshes
     error_u_tab=[0]*nbMeshes
@@ -27,7 +29,7 @@ def test_validation3DWaveSystemUpwindCubes():
     # Storing of numerical errors, mesh sizes and diagonal values
     for nx in meshList:
         my_mesh=cdmath.Mesh(0,1,nx,0,1,nx,0,1,nx)
-        error_p_tab[i], error_u_tab[i], mesh_size_tab[i], t_final[i], ndt_final[i], max_vel[i], diag_data_press[i], diag_data_vel[i], time_tab[i] =WaveSystemUpwind.solve(my_mesh, mesh_name+str(my_mesh.getNumberOfCells()), resolution)
+        error_p_tab[i], error_u_tab[i], mesh_size_tab[i], t_final[i], ndt_final[i], max_vel[i], diag_data_press[i], diag_data_vel[i], time_tab[i] =WaveSystemUpwind.solve(my_mesh, mesh_name+str(my_mesh.getNumberOfCells()), resolution,meshType,testColor)
         print max_vel[i]
         #assert max_vel[i]>1.95 and max_vel[i]<2
         i=i+1

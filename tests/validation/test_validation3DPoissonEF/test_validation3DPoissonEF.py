@@ -7,6 +7,8 @@ from math import log10, sqrt
 def test_validation3DEF():
     #### 3D FE tetrahedra mesh
     meshList=['meshCubeTetrahedra_0','meshCubeTetrahedra_1','meshCubeTetrahedra_2','meshCubeTetrahedra_3','meshCubeTetrahedra_4','meshCubeTetrahedra_5','meshCubeTetrahedra_6']
+    meshType="Unstructured tetrahedra"
+    testColor="Green"
     nbMeshes=len(meshList)
     error_tab=[0]*nbMeshes
     mesh_size_tab=[0]*nbMeshes
@@ -20,7 +22,7 @@ def test_validation3DEF():
     i=0
     # Storing of numerical errors, mesh sizes and diagonal values
     for filename in meshList :
-        error_tab[i], mesh_size_tab[i], diag_data[i], min_sol_num, max_sol_num, time_tab[i] =FiniteElements3DWithCDMATH.solve(mesh_path+filename,resolution)
+        error_tab[i], mesh_size_tab[i], diag_data[i], min_sol_num, max_sol_num, time_tab[i] =FiniteElements3DWithCDMATH.solve(mesh_path+filename,resolution,meshType,testColor)
         assert min_sol_num>-0.01 
         assert max_sol_num<1.2
         plt.plot(curv_abs, diag_data[i], label= str(mesh_size_tab[i]) + ' nodes')

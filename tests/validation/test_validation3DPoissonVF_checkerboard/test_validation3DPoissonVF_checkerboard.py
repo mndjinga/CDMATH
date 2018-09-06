@@ -5,8 +5,10 @@ import numpy as np
 from math import log10, sqrt
 
 def test_validation3DVF_checkerboard():
-    #### 3D FV tetrahedra mesh
+    #### 3D FV cartesian non conforming mesh
     meshList=['checkerboard_2x2x2','checkerboard_4x4x4','checkerboard_8x8x8','checkerboard_16x16x16']
+    meshType="Non conforming cartesian"
+    testColor="Green"
     nbMeshes=len(meshList)
     error_tab=[0]*nbMeshes
     mesh_size_tab=[0]*nbMeshes
@@ -20,7 +22,7 @@ def test_validation3DVF_checkerboard():
     i=0
     # Storing of numerical errors, mesh sizes and diagonal values
     for filename in meshList:
-        error_tab[i], mesh_size_tab[i], diag_data[i], min_sol_num, max_sol_num, time_tab[i] =FiniteVolumes3DWithCDMATH.solve_file(mesh_path+filename,resolution)
+        error_tab[i], mesh_size_tab[i], diag_data[i], min_sol_num, max_sol_num, time_tab[i] =FiniteVolumes3DWithCDMATH.solve_file(mesh_path+filename,resolution,meshType,testColor)
         assert min_sol_num>-1.1 
         assert max_sol_num<8.1
         plt.plot(curv_abs, diag_data[i], label= str(mesh_size_tab[i]) + ' cells')

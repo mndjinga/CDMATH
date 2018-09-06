@@ -14,7 +14,6 @@ import VTK_routines
 
 test_desc={}
 test_desc["Initial_data"]="None"
-test_desc["Numerical_method_name"]="2 points finite volumes"
 test_desc["Boundary_conditions"]="Dirichlet"
 test_desc["Global_name"]="FV simulation of the 2D Poisson equation"
 test_desc["Global_comment"]="2 points FV diffusion scheme"
@@ -25,12 +24,14 @@ test_desc["Numerical_method_name"]="VF9"
 test_desc["Numerical_method_space_discretization"]="Finite volumes"
 test_desc["Numerical_method_time_discretization"]="None"
 test_desc["Mesh_is_unstructured"]=True
-test_desc["Mesh_cell_type"]=""
 test_desc["Geometry"]="Square"
 test_desc["Part_of_mesh_convergence_analysis"]=True
 
-def solve(my_mesh,filename,resolution):
+def solve(my_mesh,filename,resolution, meshType, testColor):
     start = time.time()
+    test_desc["Mesh_type"]=meshType
+    test_desc["Test_color"]=testColor
+
     # Création d'un maillage cartésien du domaine carré [0,1]x[0,1], définition des bords
     #====================================================================================
     xmin=0
@@ -53,6 +54,7 @@ def solve(my_mesh,filename,resolution):
     test_desc["Space_dimension"]=my_mesh.getSpaceDimension()
     test_desc["Mesh_dimension"]=my_mesh.getMeshDimension()
     test_desc["Mesh_number_of_elements"]=my_mesh.getNumberOfCells()
+    test_desc["Mesh_cell_type"]=my_mesh.getElementTypes()
 
     print("Mesh groups done")
     print("nb of cells  = ", nbCells)
@@ -159,10 +161,10 @@ def solve(my_mesh,filename,resolution):
     return erreur_abs/max_abs_sol_exacte, my_mesh.getNumberOfCells(), diag_data, min_sol_num, max_sol_num, end - start
 
 
-def solve_file( filename,resolution):
+def solve_file( filename,resolution, meshType, testColor):
     my_mesh = cdmath.Mesh(filename+".med")
-    return solve(my_mesh, filename,resolution)
+    return solve(my_mesh, filename,resolution, meshType, testColor)
     
 if __name__ == """__main__""":
         mesh51 = cdmath.Mesh(0,1,51,0,1,51)
-        solve(mesh51,'51',100)
+        solve(mesh51,'51',100,"Regular squares","Green")
