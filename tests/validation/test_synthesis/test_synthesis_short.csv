@@ -1,0 +1,70 @@
+,PDE_model,Numerical_method_space_discretization,Numerical_method_name,Mesh_dimension,Mesh_type,Mesh_cell_type,Test_color,Mesh_number_of_elements
+0,Poisson,Finite volumes,VF9,2,Non conforming cartesian,Quadrangles Polygons ,Green,163840
+1,Poisson,Finite volumes,VF9,2,Non conforming cartesian,Quadrangles Polygons ,Green,40960
+2,Poisson,Finite volumes,VF9,2,Non conforming cartesian,Quadrangles Polygons ,Green,160
+3,Poisson,Finite volumes,VF9,2,Non conforming cartesian,Quadrangles Polygons ,Green,40
+4,Poisson,Finite volumes,VF9,2,Non conforming cartesian,Quadrangles Polygons ,Green,2560
+5,Poisson,Finite volumes,VF9,2,Non conforming cartesian,Quadrangles Polygons ,Green,10240
+6,Poisson,Finite volumes,VF9,2,Non conforming cartesian,Quadrangles Polygons ,Green,640
+7,Wave system,Finite volumes,Pseudo staggered,2,Regular squares,Quadrangles ,Green,225
+8,Wave system,Finite volumes,Pseudo staggered,2,Regular squares,Quadrangles ,Green,6561
+9,Wave system,Finite volumes,Pseudo staggered,2,Regular squares,Quadrangles ,Green,961
+10,Wave system,Finite volumes,Pseudo staggered,2,Regular squares,Quadrangles ,Green,49
+11,Wave system,Finite volumes,Pseudo staggered,2,Regular squares,Quadrangles ,Green,2601
+12,Poisson,Finite elements,P1 FE,2,Unstructured 3D triangles,Triangles ,Green,2638
+13,Poisson,Finite elements,P1 FE,2,Unstructured 3D triangles,Triangles ,Green,4512
+14,Poisson,Finite elements,P1 FE,2,Unstructured 3D triangles,Triangles ,Green,1124
+15,Poisson,Finite elements,P1 FE,2,Unstructured 3D triangles,Triangles ,Green,288
+16,Poisson,Finite elements,P1 FE,2,Unstructured 3D triangles,Triangles ,Green,10773
+17,Poisson,Finite volumes,VF9,2,Non conforming cartesian,Quadrangles Polygons ,Green,40960
+18,Poisson,Finite volumes,VF9,2,Non conforming cartesian,Quadrangles Polygons ,Green,160
+19,Poisson,Finite volumes,VF9,2,Non conforming cartesian,Quadrangles Polygons ,Green,40
+20,Poisson,Finite volumes,VF9,2,Non conforming cartesian,Quadrangles Polygons ,Green,2560
+21,Poisson,Finite volumes,VF9,2,Non conforming cartesian,Quadrangles Polygons ,Green,10240
+22,Poisson,Finite volumes,VF9,2,Non conforming cartesian,Quadrangles Polygons ,Green,640
+23,Poisson,Finite volumes,VF27,3,Unstructured tetrahedra,Tetrahedra ,Green,2081
+24,Poisson,Finite volumes,VF27,3,Unstructured tetrahedra,Tetrahedra ,Green,4077
+25,Poisson,Finite volumes,VF27,3,Unstructured tetrahedra,Tetrahedra ,Green,28561
+26,Poisson,Finite volumes,VF27,3,Unstructured tetrahedra,Tetrahedra ,Green,270
+27,Poisson,Finite volumes,VF27,3,Unstructured tetrahedra,Tetrahedra ,Green,16834
+28,Poisson,Finite volumes,VF27,3,Unstructured tetrahedra,Tetrahedra ,Green,63249
+29,Poisson,Finite volumes,VF27,3,Unstructured tetrahedra,Tetrahedra ,Green,7629
+30,Wave system,Finite volumes,Upwind,2,Regular squares,Quadrangles ,Green,225
+31,Wave system,Finite volumes,Upwind,2,Regular squares,Quadrangles ,Green,49
+32,Wave system,Finite volumes,Upwind,2,Regular squares,Quadrangles ,Green,6561
+33,Wave system,Finite volumes,Upwind,2,Regular squares,Quadrangles ,Green,961
+34,Wave system,Finite volumes,Upwind,2,Regular squares,Quadrangles ,Green,2601
+35,Poisson,Finite volumes,VF9,2,Unstructured triangles,Triangles ,Green,40
+36,Poisson,Finite volumes,VF9,2,Unstructured triangles,Triangles ,Green,224
+37,Poisson,Finite volumes,VF9,2,Unstructured triangles,Triangles ,Green,934
+38,Poisson,Finite volumes,VF9,2,Unstructured triangles,Triangles ,Green,25872
+39,Poisson,Finite volumes,VF9,2,Unstructured triangles,Triangles ,Green,6422
+40,Poisson,Finite volumes,VF9,2,Regular squares,Quadrangles ,Green,22801
+41,Poisson,Finite volumes,VF9,2,Regular squares,Quadrangles ,Green,2601
+42,Poisson,Finite volumes,VF9,2,Regular squares,Quadrangles ,Green,121
+43,Poisson,Finite volumes,VF9,2,Regular squares,Quadrangles ,Green,40401
+44,Poisson,Finite volumes,VF27,3,Regular cubes,Hexahedra ,Green,1331
+45,Poisson,Finite volumes,VF27,3,Regular cubes,Hexahedra ,Green,9261
+46,Poisson,Finite volumes,VF27,3,Regular cubes,Hexahedra ,Green,68921
+47,Wave system,Finite volumes,Upwind,3,Regular cubes,Hexahedra ,Green,9261
+48,Wave system,Finite volumes,Upwind,3,Regular cubes,Hexahedra ,Green,1331
+49,Wave system,Finite volumes,Upwind,3,Regular cubes,Hexahedra ,Green,29791
+50,Poisson,Finite elements,P1 FE,2,Unstructured triangles,Triangles ,Green,3310
+51,Poisson,Finite elements,P1 FE,2,Unstructured triangles,Triangles ,Green,131
+52,Poisson,Finite elements,P1 FE,2,Unstructured triangles,Triangles ,Green,506
+53,Poisson,Finite elements,P1 FE,2,Unstructured triangles,Triangles ,Green,29
+54,Poisson,Finite elements,P1 FE,2,Unstructured triangles,Triangles ,Green,13135
+55,Poisson,Finite elements,P1 FE,3,Unstructured tetrahedra,Tetrahedra ,Green,74
+56,Poisson,Finite elements,P1 FE,3,Unstructured tetrahedra,Tetrahedra ,Green,841
+57,Poisson,Finite elements,P1 FE,3,Unstructured tetrahedra,Tetrahedra ,Green,508
+58,Poisson,Finite elements,P1 FE,3,Unstructured tetrahedra,Tetrahedra ,Green,3372
+59,Poisson,Finite elements,P1 FE,3,Unstructured tetrahedra,Tetrahedra ,Green,5956
+60,Poisson,Finite elements,P1 FE,3,Unstructured tetrahedra,Tetrahedra ,Green,1543
+61,Poisson,Finite elements,P1 FE,3,Unstructured tetrahedra,Tetrahedra ,Green,12465
+62,Wave system,Finite volumes,Upwind,3,Regular tetrahedra,Tetrahedra ,Green,7986
+63,Wave system,Finite volumes,Upwind,3,Regular tetrahedra,Tetrahedra ,Green,55566
+64,Wave system,Finite volumes,Upwind,3,Regular tetrahedra,Tetrahedra ,Green,750
+65,Poisson,Finite volumes,VF27,3,Non conforming cartesian,Hexahedra Polyhedrons ,Green,36
+66,Poisson,Finite volumes,VF27,3,Non conforming cartesian,Hexahedra Polyhedrons ,Green,288
+67,Poisson,Finite volumes,VF27,3,Non conforming cartesian,Hexahedra Polyhedrons ,Green,2304
+68,Poisson,Finite volumes,VF27,3,Non conforming cartesian,Hexahedra Polyhedrons ,Green,18432
