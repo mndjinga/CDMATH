@@ -342,7 +342,7 @@ def solve(my_mesh,meshName,resolution, meshType, testColor):
 
     return error_p, error_u, nbCells, t_final, ndt_final, max_vel, diag_data_press, diag_data_vel, end - start
 
-def solve_file( filename,meshName, resolution):
+def solve_file( filename,meshName, resolution, meshType, testColor):
     my_mesh = cdmath.Mesh(filename+".med")
 
     return solve(my_mesh, meshName+str(my_mesh.getNumberOfCells()),resolution)
