@@ -25,7 +25,7 @@ test_desc["Numerical_method_name"]="P1 FE"
 test_desc["Numerical_method_space_discretization"]="Finite elements"
 test_desc["Numerical_method_time_discretization"]="None"
 test_desc["Mesh_is_unstructured"]=True
-test_desc["Mesh_cell_type"]="Tétraèdres"
+test_desc["Mesh_cell_type"]="Tetrahedra"
 test_desc["Geometry"]="Cube"
 test_desc["Part_of_mesh_convergence_analysis"]=True
 
