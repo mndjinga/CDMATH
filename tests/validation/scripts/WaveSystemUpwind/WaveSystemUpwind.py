@@ -345,7 +345,7 @@ def solve(my_mesh,meshName,resolution, meshType, testColor):
 def solve_file( filename,meshName, resolution, meshType, testColor):
     my_mesh = cdmath.Mesh(filename+".med")
 
-    return solve(my_mesh, meshName+str(my_mesh.getNumberOfCells()),resolution)
+    return solve(my_mesh, meshName+str(my_mesh.getNumberOfCells()),resolution, meshType, testColor)
     
 
 if __name__ == """__main__""":
