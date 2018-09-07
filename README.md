@@ -22,14 +22,17 @@ Set environment for the compilation of CDMATH
 ---------------------------------------------
 Dependencies. The following packages list is sufficient on Ubuntu 14.04, Ubuntu 16.04 :
 
- - `cmake`
- - `g++` or another C++ compiler
- - `libhdf5-dev`
- - `libopenmpi-dev`, in particular if you need to use the compilation option `-DMEDFILE_USE_MPI=ON`.
- - `python-dev`, `python-numpy` and `swig`, if you want to generate Python executables and libraries of CDMATH. Use the compilation option `-DCDMATH_WITH_PYTHON=ON`.
- - `libcppunit-dev`, if you want to generate unit tests. Use the compilation option `-DCDMATH_WITH_TESTS=ON`.
- - `doxygen`, `graphviz` and `mscgen`, if you want to generate a nice documentation in `~/workspace/cdmath/cdmath_install/doc/`. Use the compilation option `-DCDMATH_WITH_DOCUMENTATION=ON`.
- - `rpm`, if you want to generate RPM installation packages. Use the compilation option `-DCDMATH_WITH_PACKAGE=ON`.
+ - `cmake` (mandatory)
+ - `g++` or another C++ compiler (mandatory)
+ - `libhdf5-dev` (mandatory)
+ - `python-dev`, `python-numpy` and `swig`, if you want to generate Python executables and libraries of CDMATH (highly recommended). Use the compilation option `-DCDMATH_WITH_PYTHON=ON`.
+ - `python-matplotlib` and `paraview` for postprocessing tools such as plotting curves (matplotlib) or generating 3D views (paraview). Use the compilation option `-DCDMATH_WITH_POSTPRO=ON` (recommended).
+ - `petsc` if you want to solve large spase linear system. Typically required for implicit methods (recommended).
+ - `jupyter`, in order to generate nice reports from test case simulations
+ - `doxygen`, `graphviz` and `mscgen`, if you want to generate a nice code source documentation in `~/workspace/cdmath/cdmath_install/doc/` (recommended). Use the compilation option `-DCDMATH_WITH_DOCUMENTATION=ON`.
+ - `libcppunit-dev`, if you want to generate unit tests. Use the compilation option `-DCDMATH_WITH_TESTS=ON` (optional).
+ - `libopenmpi-dev`, in particular if you need to use the compilation option `-DMEDFILE_USE_MPI=ON` (optional).
+ - `rpm`, if you want to generate RPM installation packages. Use the compilation option `-DCDMATH_WITH_PACKAGE=ON` (optional).
 
 Directories. Create the suggested build and installation folders:
 * `cd ~/workspace/cdmath`
@@ -49,6 +52,12 @@ Or generate makefiles for an all-options version:
 Compile and install:
 * `make`
 * `make install`
+
+Run unit and example tests:
+* make check
+
+Run validation tests:
+* make validation
 
 Notes for compilation options:
 * Eclipse: The Cmake options `-G"Eclipse CDT4 - Unix Makefiles" -D_ECLIPSE_VERSION=4.3` create project files if you want to develop CDMATH with Eclipse Kepler or higher.
