@@ -8,7 +8,7 @@ def test_validation2DVF_checkerboard():
     ##### 2D FV refined squares mesh
     meshList=['checkerboard_4x4','checkerboard_8x8','checkerboard_16x16','checkerboard_32x32','checkerboard_64x64','checkerboard_128x128']
     meshType="Non conforming cartesian"
-    testColor="Green"
+    testColor="Orange, dark squares. PB with mesh ?"
     nbMeshes=len(meshList)
     error_tab=[0]*nbMeshes
     mesh_size_tab=[0]*nbMeshes
