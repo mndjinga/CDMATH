@@ -10,6 +10,7 @@
 import cdmath
 import time, json
 from math import sin, pi
+import PV_routines
 import VTK_routines
 
 test_desc={}
@@ -149,6 +150,7 @@ def solve(my_mesh,filename,resolution, meshType, testColor):
 
     #Postprocessing : Extraction of the diagonal data
     diag_data=VTK_routines.Extract_field_data_over_line_to_numpyArray(my_ResultField,[0,1,0],[1,0,0], resolution)
+    PV_routines.Save_PV_data_to_picture_file("FiniteVolumes2DResultField"+str(nbCells)+'_0.vtu',"Result field",'CELLS',"FiniteVolumes2DResultField"+str(nbCells))
 
     end = time.time()
     test_desc["Computational_time_taken_by_run"]=end-start
