@@ -2,7 +2,6 @@ import paraview.simple as pvs
 import os
 import time
 import numpy as np
-import vtk.util.numpy_support as vn
 # do I need to kill the pipeline?
 
 def Extract_PV_data_over_line_to_txt_file(inputFileName, outputFileName,
@@ -31,7 +30,7 @@ def Extract_PV_data_over_line_to_numpyArray(inputFileName, point1, point2, resol
 
 # TODO : this routine 
 # should be rewritten in order to skip the tmp file
-# and directly convert the Slide vtk field elt to a numpy array
+# and directly convert the field data to a numpy array
 # 
 def Slice_PV_data_to_numpyArray(inputFileName, point, normal, resolution):
     dirName = os.path.dirname(inputFileName)
