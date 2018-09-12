@@ -1,6 +1,6 @@
 # -*-coding:utf-8 -*
 #===============================================================================================================================
-# Name        : Résolution VF de l'équation de Poisson -\triangle u = f avec conditions aux limites de Dirichlet u=0
+# Name        : Résolution VF de l'équation de Poisson -\triangle u = f sur un cube avec conditions aux limites de Dirichlet u=0
 # Author      : Michaël Ndjinga
 # Copyright   : CEA Saclay 2018
 # Description : Utilisation de la méthode des volumes finis avec champs u et f discrétisés aux cellules d'un maillage quelconque
@@ -136,7 +136,7 @@ def solve(my_mesh, filename,resolution, meshType, testColor):
     
     #Calcul de l'erreur commise par rapport à la solution exacte
     #===========================================================
-    #The following formulas use the fact that the exact solution is equal the right hand side divided by 3*pi*pi
+    #The following formulas use the fact that the exact solution is equal to the right hand side divided by 3*pi*pi
     max_abs_sol_exacte=max(my_RHSfield.max(),-my_RHSfield.min())/(3*pi*pi)
     max_sol_num=my_ResultField.max()
     min_sol_num=my_ResultField.min()
@@ -148,8 +148,11 @@ def solve(my_mesh, filename,resolution, meshType, testColor):
     print("Relative error = max(| exact solution - numerical solution |)/max(| exact solution |) = ",erreur_abs/max_abs_sol_exacte)
     print ("Maximum numerical solution = ", max_sol_num, " Minimum numerical solution = ", min_sol_num)
 
-    #Postprocessing : Extraction of the diagonal data
+    # Postprocessing 
+	#==============
+	# Extraction of the diagonal data
     diag_data=VTK_routines.Extract_field_data_over_line_to_numpyArray(my_ResultField,[0,0,0],[1,1,1], resolution)
+    # save 2D picture
     PV_routines.Save_PV_data_to_picture_file("FiniteVolumes3DResultField"+str(nbCells)+'_0.vtu',"ResultField",'CELLS',"FiniteVolumes3DResultField"+str(nbCells))
 
     end = time.time()
