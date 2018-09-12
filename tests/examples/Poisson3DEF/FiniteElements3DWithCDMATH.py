@@ -14,8 +14,6 @@ import matplotlib.pyplot as plt
 import PV_routines
 import VTK_routines
 
-#Préprocessing optionnel: création du fichier my_mesh.med contenant la géométrie et le maillage du domaine de calcul à partir de commandes python (import salome)
-
 #Chargement du maillage tétraédrique du domaine cubique [0,1]x[0,1]x[0,1], définition des bords
 #==============================================================================================
 my_mesh = cdmath.Mesh("meshCube.med")
@@ -153,12 +151,14 @@ for j in range(nbBoundaryNodes):
 #sauvegarde sur le disque dur du résultat dans un fichier paraview
 my_ResultField.writeVTK("FiniteElements3DResultField")
 
-#Postprocessing : save 3D picture
+#Postprocessing :
+#================
+# save 3D picture
 resolution=100
 VTK_routines.Clip_VTK_data_to_VTK("FiniteElements3DResultField"+'_0.vtu',"Clip_VTK_data_to_VTK_"+ "FiniteElements3DResultField"+'_0.vtu',[0.5,0.5,0.5], [-0.5,-0.5,-0.5],resolution )
 PV_routines.Save_PV_data_to_picture_file("Clip_VTK_data_to_VTK_"+"FiniteElements3DResultField"+'_0.vtu',"ResultField",'NODES',"Clip_VTK_data_to_VTK_"+"FiniteElements3DResultField")
 
-#Postprocessing : extract diagonal values
+# extract and plot diagonal values
 curv_abs=np.linspace(0,sqrt(3),resolution+1)
 diag_data=VTK_routines.Extract_field_data_over_line_to_numpyArray(my_ResultField,[0,0,0],[1,1,1], resolution)
 plt.plot(curv_abs, diag_data, label= str(nbNodes) + ' nodes 3D mesh')

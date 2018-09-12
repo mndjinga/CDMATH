@@ -113,7 +113,7 @@ my_ResultField.writeVTK("FiniteVolumes3DResultField")
 # save 2D picture
 PV_routines.Save_PV_data_to_picture_file("FiniteVolumes3DResultField"+'_0.vtu',"ResultField",'CELLS',"FiniteVolumes3DResultField")
 
-# extract diagonal values
+# extract and plot diagonal values
 resolution=100
 curv_abs=np.linspace(0,sqrt(2),resolution+1)
 diag_data=VTK_routines.Extract_field_data_over_line_to_numpyArray(my_ResultField,[0,1,0],[1,0,0], resolution)

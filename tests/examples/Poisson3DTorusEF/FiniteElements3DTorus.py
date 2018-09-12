@@ -15,8 +15,6 @@ import PV_routines
 import VTK_routines
 import paraview.simple as pvs
 
-#Préprocessing optionnel: création du fichier my_mesh.med contenant la géométrie et le maillage du domaine de calcul à partir de commandes python (import salome)
-
 #Chargement du maillage triangulaire du tore
 #=======================================================================================
 my_mesh = cdmath.Mesh("meshTorus.med")
@@ -181,12 +179,17 @@ print("Absolute error =  max(| exact solution - numerical solution |)/max(| exac
 print(" The max exact solution is =",max_sol_exacte )
 print("The max numerical solution is =",my_ResultField.getNormEuclidean().max())
 
-#Postprocessing : save 3D picture
+assert erreur_max/max_sol_exacte <1.
+
+#Postprocessing : 
+#================
+# Save 3D picture
 PV_routines.Save_PV_data_to_picture_file("FiniteElementsOnTorus"+'_0.vtu',"Numerical result field",'NODES',"FiniteElementsOnTorus")
 resolution=100
 VTK_routines.Clip_VTK_data_to_VTK("FiniteElementsOnTorus"+'_0.vtu',"Clip_VTK_data_to_VTK_"+ "FiniteElementsOnTorus"+'_0.vtu',[0.25,0.25,0.25], [-0.5,-0.5,-0.5],resolution )
 PV_routines.Save_PV_data_to_picture_file("Clip_VTK_data_to_VTK_"+"FiniteElementsOnTorus"+'_0.vtu',"Numerical result field",'NODES',"Clip_VTK_data_to_VTK_"+"FiniteElementsOnTorus")
 
+# Plot  over slice circle
 finiteElementsOnTorus_0vtu = pvs.XMLUnstructuredGridReader(FileName=["FiniteElementsOnTorus"+'_0.vtu'])
 slice1 = pvs.Slice(Input=finiteElementsOnTorus_0vtu)
 slice1.SliceType.Normal = [0.5, 0.5, 0.5]
@@ -203,5 +206,3 @@ plotOnSortedLines1Display.XArrayName = 'arc_length'
 plotOnSortedLines1Display.SeriesVisibility = ['Numerical result field (1)']
 pvs.SaveScreenshot("./FiniteElementsOnTorus"+"_PlotOnSortedLine_"+'.png', magnification=1, quality=100, view=lineChartView2)
 pvs.Delete(lineChartView2)
-
-assert erreur_max/max_sol_exacte <1.

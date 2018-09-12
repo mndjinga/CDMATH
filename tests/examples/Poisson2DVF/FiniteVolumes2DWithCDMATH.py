@@ -103,10 +103,12 @@ for i in range(nbCells):
 #sauvegarde sur le disque dur du résultat dans un fichier paraview
 my_ResultField.writeVTK("FiniteVolumes2DResultField")
 
-#Postprocessing : save 2D picture
+#Postprocessing : 
+#===============
+# save 2D picture
 PV_routines.Save_PV_data_to_picture_file("FiniteVolumes2DResultField"+'_0.vtu',"ResultField",'CELLS',"FiniteVolumes2DResultField")
 
-#Postprocessing : extract diagonal values
+# extract and plot diagonal values
 resolution=100
 curv_abs=np.linspace(0,sqrt(2),resolution+1)
 diag_data=VTK_routines.Extract_field_data_over_line_to_numpyArray(my_ResultField,[0,1,0],[1,0,0], resolution)
