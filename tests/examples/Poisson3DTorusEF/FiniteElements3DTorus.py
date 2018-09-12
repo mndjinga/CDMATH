@@ -204,4 +204,4 @@ plotOnSortedLines1Display.SeriesVisibility = ['Numerical result field (1)']
 pvs.SaveScreenshot("./FiniteElementsOnTorus"+"_PlotOnSortedLine_"+'.png', magnification=1, quality=100, view=lineChartView2)
 pvs.Delete(lineChartView2)
 
-assert erreur_abs/max_abs_sol_exacte <1.
+assert erreur_max/max_sol_exacte <1.
