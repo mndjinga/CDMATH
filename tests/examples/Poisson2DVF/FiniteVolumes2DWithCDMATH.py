@@ -13,18 +13,22 @@ import numpy as np
 import matplotlib.pyplot as plt
 import PV_routines
 import VTK_routines
+import sys
 
+if len(sys.argv) >1 :#non rectangular mesh
+    my_mesh = cdmath.Mesh(sys.argv[1])
+else :   #rectangular mesh
 # Création d'un maillage cartésien du domaine carré [0,1]x[0,1], définition des bords
 #====================================================================================
-xmin=0
-xmax=1
-ymin=0
-ymax=1
-
-nx=51
-ny=51
-
-my_mesh = cdmath.Mesh(xmin,xmax,nx,ymin,ymax,ny)
+    xmin=0
+    xmax=1
+    ymin=0
+    ymax=1
+    
+    nx=51
+    ny=51
+    
+    my_mesh = cdmath.Mesh(xmin,xmax,nx,ymin,ymax,ny)
 
 eps=1e-6
 my_mesh.setGroupAtPlan(0,0,eps,"DirichletBorder")#Bord GAUCHE
@@ -34,8 +38,8 @@ my_mesh.setGroupAtPlan(1,1,eps,"DirichletBorder")#Bord HAUT
 
 nbCells = my_mesh.getNumberOfCells()
 
-print("Mesh building done")
-print("nb of cells "," = ", nbCells)
+print "Mesh building done"
+print "nb of cells  = ", nbCells
 
 #Discrétisation du second membre et extraction du nb max de voisins d'une cellule
 #================================================================================
@@ -55,7 +59,7 @@ for i in range(nbCells):
 my_RHSfield.writeVTK("FiniteVolumes2DRHSField")
 
 print("Right hand side discretisation done")
-print("Max nb of neighbours=", maxNbNeighbours)
+print "Max nb of neighbours = ", maxNbNeighbours
 
 # Construction de la matrice et du vecteur second membre du système linéaire
 #===========================================================================
@@ -83,13 +87,13 @@ print("Linear system matrix building done")
 
 # Résolution du système linéaire
 #=================================
-LS=cdmath.LinearSolver(Rigidite,RHS,500,1.E-6,"CG","ILU")
+LS=cdmath.LinearSolver(Rigidite,RHS,500,1.E-6,"GMRES","ILU")
 SolSyst=LS.solve()
 
 print "Preconditioner used : ", LS.getNameOfPc()
 print "Number of iterations used : ", LS.getNumberOfIter()
 print "Final residual : ", LS.getResidu()
-print("Linear system solved")
+print "Linear system solved"
 
 # Création du champ résultat
 #===========================
@@ -106,12 +110,17 @@ PV_routines.Save_PV_data_to_picture_file("FiniteVolumes2DResultField"+'_0.vtu',"
 resolution=100
 curv_abs=np.linspace(0,sqrt(2),resolution+1)
 diag_data=VTK_routines.Extract_field_data_over_line_to_numpyArray(my_ResultField,[0,1,0],[1,0,0], resolution)
-plt.plot(curv_abs, diag_data, label= str(nx) +'x'+str(ny)+ ' cells mesh')
 plt.legend()
 plt.xlabel('Position on diagonal line')
 plt.ylabel('Value on diagonal line')
-plt.title('Plot over diagonal line for finite Volumes \n for Laplace operator on a 2D reular grid')
-plt.savefig("FiniteVolumes2DResultField_"+str(nx) +'x'+str(ny)+ '_cells'+"_PlotOverDiagonalLine.png")
+if len(sys.argv) >1 :
+    plt.title('Plot over diagonal line for finite Volumes \n for Laplace operator on a 2D mesh '+my_mesh.getName())
+    plt.plot(curv_abs, diag_data, label= str(nbCells)+ ' cells mesh')
+    plt.savefig("FiniteVolumes2DResultField_"+str(nbCells)+ '_cells'+"_PlotOverDiagonalLine.png")
+else :   
+    plt.title('Plot over diagonal line for finite Volumes \n for Laplace operator on a 2D rectangular grid')
+    plt.plot(curv_abs, diag_data, label= str(nx) +'x'+str(ny)+ ' cells mesh')
+    plt.savefig("FiniteVolumes2DResultField_"+str(nx) +'x'+str(ny)+ '_cells'+"_PlotOverDiagonalLine.png")
 
 print("Numerical solution of 2D poisson equation using finite volumes done")
 
@@ -129,3 +138,5 @@ for i in range(nbCells) :
 print("Absolute error = max(| exact solution - numerical solution |) = ",erreur_abs )
 print("Relative error = max(| exact solution - numerical solution |)/max(| exact solution |) = ",erreur_abs/max_abs_sol_exacte)
 print ("Maximum numerical solution = ", max_sol_num, " Minimum numerical solution = ", min_sol_num)
+
+assert erreur_abs/max_abs_sol_exacte <1.

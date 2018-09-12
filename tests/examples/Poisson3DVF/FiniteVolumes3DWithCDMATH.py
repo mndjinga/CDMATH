@@ -14,20 +14,25 @@ import matplotlib.pyplot as plt
 import PV_routines
 import VTK_routines
 
+import sys
+
+if len(sys.argv) >1 :#non rectangular mesh
+    my_mesh = cdmath.Mesh(sys.argv[1])
+else :   #rectangular mesh
 # Maillage du domaine cubique [0,1]x[0,1]x[0,1], définition des bords
 #====================================================================================
-xmin=0
-xmax=1
-ymin=0
-ymax=1
-zmin=0 
-zmax=1
-
-nx=21
-ny=21
-nz=21
-
-my_mesh = cdmath.Mesh(xmin,xmax,nx,ymin,ymax,ny,zmin,zmax,nz)#Ajouter ,zmin,zmax,nz si calcul 3D
+    xmin=0
+    xmax=1
+    ymin=0
+    ymax=1
+    zmin=0 
+    zmax=1
+    
+    nx=21
+    ny=21
+    nz=21
+    
+    my_mesh = cdmath.Mesh(xmin,xmax,nx,ymin,ymax,ny,zmin,zmax,nz)#Ajouter ,zmin,zmax,nz si calcul 3D
 eps=1e-6
 my_mesh.setGroupAtPlan(0,0,eps,"DirichletBorder")#Bord GAUCHE
 my_mesh.setGroupAtPlan(1,0,eps,"DirichletBorder")#Bord DROIT
@@ -56,7 +61,7 @@ for i in range(nbCells):
 	maxNbNeighbours= max(1+Ci.getNumberOfFaces(),maxNbNeighbours)
 
 # sauvegarde sur le disque dur du second membre discrétisé dans un fichier paraview
-my_RHSfield.writeVTK("FiniteVolumes2DRHSField")
+my_RHSfield.writeVTK("FiniteVolumes3DRHSField")
 
 print("Right hand side discretisation done")
 print("Max nb of neighbours=", maxNbNeighbours)
@@ -87,7 +92,7 @@ print("Linear system matrix building done")
 
 # Résolution du système linéaire
 #=================================
-LS=cdmath.LinearSolver(Rigidite,RHS,500,1.E-6,"CG","ILU")
+LS=cdmath.LinearSolver(Rigidite,RHS,500,1.E-6,"GMRES","ILU")
 SolSyst=LS.solve()
 
 print "Preconditioner used : ", LS.getNameOfPc()
@@ -101,23 +106,28 @@ my_ResultField = cdmath.Field("ResultField", cdmath.CELLS, my_mesh, 1)
 for i in range(nbCells):
     my_ResultField[i]=SolSyst[i];
 #sauvegarde sur le disque dur du résultat dans un fichier paraview
-my_ResultField.writeVTK("FiniteVolumes2DResultField")
+my_ResultField.writeVTK("FiniteVolumes3DResultField")
 
 #Postprocessing 
 #==============
 # save 2D picture
-PV_routines.Save_PV_data_to_picture_file("FiniteVolumes2DResultField"+'_0.vtu',"ResultField",'CELLS',"FiniteVolumes2DResultField")
+PV_routines.Save_PV_data_to_picture_file("FiniteVolumes3DResultField"+'_0.vtu',"ResultField",'CELLS',"FiniteVolumes3DResultField")
 
 # extract diagonal values
 resolution=100
 curv_abs=np.linspace(0,sqrt(2),resolution+1)
 diag_data=VTK_routines.Extract_field_data_over_line_to_numpyArray(my_ResultField,[0,1,0],[1,0,0], resolution)
-plt.plot(curv_abs, diag_data, label= str(nx) +'x'+str(ny)+ ' cells mesh')
 plt.legend()
 plt.xlabel('Position on diagonal line')
 plt.ylabel('Value on diagonal line')
-plt.title('Plot over diagonal line for finite Volumes \n for Laplace operator on a 2D reular grid')
-plt.savefig("FiniteVolumes2DResultField_"+str(nx) +'x'+str(ny)+ '_cells'+"_PlotOverDiagonalLine.png")
+if len(sys.argv) >1 :
+    plt.title('Plot over diagonal line for finite Volumes \n for Laplace operator on a 3D mesh '+my_mesh.getName())
+    plt.plot(curv_abs, diag_data, label= str(nbCells)+ ' cells mesh')
+    plt.savefig("FiniteVolumes3DResultField_"+str(nbCells)+ '_cells'+"_PlotOverDiagonalLine.png")
+else :   
+    plt.title('Plot over diagonal line for finite Volumes \n for Laplace operator on a 3D rectangular grid')
+    plt.plot(curv_abs, diag_data, label= str(nx) +'x'+str(ny)+ ' cells mesh')
+    plt.savefig("FiniteVolumes3DResultField_"+str(nx) +'x'+str(ny)+ '_cells'+"_PlotOverDiagonalLine.png")
 
 print("Numerical solution of 3D poisson equation using finite volumes done")
 
@@ -135,3 +145,5 @@ for i in range(nbCells) :
 print("Absolute error = max(| exact solution - numerical solution |) = ",erreur_abs )
 print("Relative error = max(| exact solution - numerical solution |)/max(| exact solution |) = ",erreur_abs/max_abs_sol_exacte)
 print ("Maximum numerical solution = ", max_sol_num, " Minimum numerical solution = ", min_sol_num)
+
+assert erreur_abs/max_abs_sol_exacte <1.
