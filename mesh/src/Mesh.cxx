@@ -1928,6 +1928,28 @@ Mesh::minRatioVolSurf()
     
     return dx_min;
 }
+double 
+Mesh::getMaxNbNeighbours(EntityType type) const
+{
+    double result=0;
+    
+    if (type==CELLS)
+	{
+        for(int i=0; i<_numberOfCells; i++)
+            if(result < _cells[i].getNumberOfFaces())
+                result=_cells[i].getNumberOfFaces();
+	}
+    else if(type==NODES)
+	{
+        for(int i=0; i<_numberOfNodes; i++)
+            if(result < _nodes[i].getNumberOfEdges())
+                result=_nodes[i].getNumberOfEdges();
+	}
+    else
+		throw CdmathException("Mesh::getMaxNbNeighbours : entity type is not accepted. Should be CELLS or NODES");
+
+    return result;
+}
 //----------------------------------------------------------------------
 void
 Mesh::writeVTK ( const std::string fileName ) const

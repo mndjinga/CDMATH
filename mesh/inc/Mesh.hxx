@@ -10,10 +10,13 @@
 
 /**
  * Mesh class is defined by
- * - case 1: file name of mesh med file
- * - case 2: 1D : xmin and xmax and number of cells
- * - case 3: 2D : xmin, xmax, ymin and ymax and numbers of cells in x direction and y direction
- * - case 4 (not yet): 3D : xmin, xmax, ymin and ymax and numbers of cells in x direction, y direction and z direction
+ * - case 1: file name of mesh med file (general unstructured)
+ * - case 2: 1D cartesian, xmin and xmax and number of cells
+ * - case 3: 2D cartesian, xmin, xmax, ymin and ymax and numbers of cells in x direction and y direction
+ * - case 4: 3D cartesian, xmin, xmax, ymin, ymax, zmin and zmax and numbers of cells in x direction, y direction and z direction
+ * - case 5: 2D regular triangular mesh
+ * - case 6: 3D regular hexahedral mesh
+ * - case 7: 1D unstructured
  */
 
 namespace MEDCoupling
@@ -29,6 +32,13 @@ class MEDCouplingUMesh;
 class Node;
 class Cell;
 class Face;
+
+typedef enum
+  {
+    CELLS = 0,
+    NODES = 1,
+    FACES = 2,
+  } EntityType;
 
 #include <vector>
 #include <string>
@@ -307,6 +317,11 @@ public: //----------------------------------------------------------------
 	 */
     double minRatioVolSurf();
     
+	/**
+	 * Compute the maximum number of neighbours around an element (cells around a cell or nodes around a node)
+	 */
+    double getMaxNbNeighbours(EntityType type) const;
+    
 private: //----------------------------------------------------------------
 
 	MEDCoupling::MEDCouplingUMesh*  setMesh( void ) ;
@@ -379,7 +394,7 @@ private: //----------------------------------------------------------------
 	/*
 	 * The number of edges in this mesh.
 	 */
-	int _numberOfEdges;
+	int _numberOfEdges;//Useful to deduce the number of non zero coefficients in the finite element matrix 
 
 	/*
 	 * The names of groups.

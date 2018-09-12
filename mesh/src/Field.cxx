@@ -22,7 +22,7 @@ using namespace std;
 
 
 //----------------------------------------------------------------------
-Field::Field( TypeField typeField )
+Field::Field( EntityType typeField )
 //----------------------------------------------------------------------
 {
 	_field=NULL;
@@ -39,7 +39,7 @@ Field::~Field( void )
 }
 
 
-Field::Field(const std::string fieldName, TypeField type, const Mesh& mesh, int numberOfComponents, double time)
+Field::Field(const std::string fieldName, EntityType type, const Mesh& mesh, int numberOfComponents, double time)
 {
 	_field = NULL;
 	_mesh=Mesh(mesh);
@@ -89,7 +89,7 @@ void Field::buildFieldMemoryStructure()
 	mu->decrRef();
 }
 
-Field::Field( const std::string filename, TypeField type,
+Field::Field( const std::string filename, EntityType type,
 		const std::string & fieldName,
 		int iteration, int order, int meshLevel,
 		int numberOfComponents, double time)
@@ -104,7 +104,7 @@ Field::Field( const std::string filename, TypeField type,
 	readFieldMed(filename, type, fieldName, iteration, order);
 }
 
-Field::Field(const std::string meshFileName, TypeField type, const std::vector<double> Vconstant, 
+Field::Field(const std::string meshFileName, EntityType type, const std::vector<double> Vconstant, 
 		const std::string & fieldName, int meshLevel, double time )
 {
 	_field = NULL;
@@ -123,7 +123,7 @@ Field::Field(const std::string meshFileName, TypeField type, const std::vector<d
 		for (int jcomp=0 ; jcomp<nbcomp ; jcomp++)
 			_field->getArray()->getPointer()[jcomp+ielem*_field->getNumberOfComponents()]=Vconstant[jcomp];
 }
-Field::Field(const Mesh& M, TypeField type, const Vector Vconstant, const std::string & fieldName, double time)
+Field::Field(const Mesh& M, EntityType type, const Vector Vconstant, const std::string & fieldName, double time)
 {
 	_field = NULL;
 	_mesh=Mesh(M);
@@ -141,7 +141,7 @@ Field::Field(const Mesh& M, TypeField type, const Vector Vconstant, const std::s
 		for (int jcomp=0 ; jcomp<nbcomp ; jcomp++)
 			_field->getArray()->getPointer()[jcomp+ielem*_field->getNumberOfComponents()]=Vconstant[jcomp];
 }
-Field::Field(const Mesh& M, TypeField type, const vector<double> Vconstant, const std::string & fieldName, double time) 
+Field::Field(const Mesh& M, EntityType type, const vector<double> Vconstant, const std::string & fieldName, double time) 
 {
 	_field = NULL;
 	_mesh=Mesh(M);
@@ -159,7 +159,7 @@ Field::Field(const Mesh& M, TypeField type, const vector<double> Vconstant, cons
 		for (int jcomp=0 ; jcomp<nbcomp ; jcomp++)
 			_field->getArray()->getPointer()[jcomp+ielem*_field->getNumberOfComponents()]=Vconstant[jcomp];
 }
-Field::Field( int nDim, const vector<double> Vconstant, TypeField type, 
+Field::Field( int nDim, const vector<double> Vconstant, EntityType type, 
 		double xmin, double xmax, int nx, string leftSide, string rightSide,
 		double ymin, double ymax, int ny, string backSide, string frontSide,
 		double zmin, double zmax, int nz, string bottomSide, string topSide, 
@@ -206,7 +206,7 @@ Field::Field( int nDim, const vector<double> Vconstant, TypeField type,
 			_field->getArray()->getPointer()[jcomp+ielem*_field->getNumberOfComponents()]=Vconstant[jcomp];
 }
 Field::Field(const Mesh M, const Vector VV_Left, const Vector VV_Right, double disc_pos,
-		TypeField type, int direction, const std::string & fieldName, double time)
+		EntityType type, int direction, const std::string & fieldName, double time)
 {
 	if  (VV_Right.getNumberOfRows()!=VV_Left.getNumberOfRows())
 		throw CdmathException( "Field::Field: Vectors VV_Left and VV_Right have different sizes");
@@ -243,7 +243,7 @@ Field::Field(const Mesh M, const Vector VV_Left, const Vector VV_Right, double d
 	}
 }
 Field::Field( int nDim, const vector<double> VV_Left, vector<double> VV_Right, 
-		double xstep, TypeField type,
+		double xstep, EntityType type,
 		double xmin, double xmax, int nx, string leftSide, string rightSide,
 		double ymin, double ymax, int ny, string backSide, string frontSide,
 		double zmin, double zmax, int nz, string bottomSide, string topSide,
@@ -280,7 +280,7 @@ Field::Field( int nDim, const vector<double> VV_Left, vector<double> VV_Right,
 }
 
 Field::Field(const Mesh M, const Vector Vin, const Vector Vout, double radius, 
-		const Vector Center, TypeField type, const std::string & fieldName, double time)
+		const Vector Center, EntityType type, const std::string & fieldName, double time)
 {
 	if((Center.size()!=M.getSpaceDimension()) || (Vout.size() != Vin.size()) )
 	{
@@ -328,7 +328,7 @@ MEDCoupling::DataArrayDouble * Field::getArray(){
 
 void
 Field::readFieldMed( const std::string & fileNameRadical,
-		TypeField type,
+		EntityType type,
 		const std::string & fieldName,
 		int iteration,
 		int order)
@@ -677,7 +677,7 @@ Field::getMesh ( void ) const
 }
 
 //----------------------------------------------------------------------
-TypeField
+EntityType
 Field::getTypeOfField ( void ) const
 //----------------------------------------------------------------------
 {
