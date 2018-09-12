@@ -32,7 +32,7 @@ else :   #rectangular mesh
     ny=21
     nz=21
     
-    my_mesh = cdmath.Mesh(xmin,xmax,nx,ymin,ymax,ny,zmin,zmax,nz)#Ajouter ,zmin,zmax,nz si calcul 3D
+    my_mesh = cdmath.Mesh(xmin,xmax,nx,ymin,ymax,ny,zmin,zmax,nz)
 eps=1e-6
 my_mesh.setGroupAtPlan(0,0,eps,"DirichletBorder")#Bord GAUCHE
 my_mesh.setGroupAtPlan(1,0,eps,"DirichletBorder")#Bord DROIT

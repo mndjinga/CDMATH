@@ -54,7 +54,7 @@ for i in range(nbNodes):
 	else: # Détection des noeuds intérieurs
 		interiorNodes.append(i)
 		nbInteriorNodes=nbInteriorNodes+1
-		maxNbNeighbours= max(1+Ni.getNumberOfCells(),maxNbNeighbours) #true only in 2D, need a function Ni.getNumberOfNeighbourNodes()
+		maxNbNeighbours= max(1+Ni.getNumberOfCells(),maxNbNeighbours) #true only in 2D, otherwise use function Ni.getNumberOfEdges()
 
 # sauvegarde sur le disque dur du second membre discrétisé dans un fichier paraview
 my_RHSfield.writeVTK("FiniteElements2DRHSField") 

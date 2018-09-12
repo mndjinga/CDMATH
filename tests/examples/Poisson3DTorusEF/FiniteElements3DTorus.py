@@ -58,7 +58,7 @@ for i in range(nbNodes):
 	if my_mesh.isBorderNode(i): # Détection des noeuds frontière
 		raise ValueError("Mesh should not contain borders")
 	else:
-		maxNbNeighbours = max(1+Ni.getNumberOfCells(),maxNbNeighbours)
+		maxNbNeighbours = max(1+Ni.getNumberOfCells(),maxNbNeighbours)#true only for planar cells, otherwise use function Ni.getNumberOfEdges()
 
 # sauvegarde sur le disque dur du second membre discrétisé dans un fichier paraview
 exactSolField.writeVTK("FiniteElementsExactSolutionField") 
