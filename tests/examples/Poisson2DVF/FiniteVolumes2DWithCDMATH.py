@@ -113,7 +113,7 @@ plt.ylabel('Value on diagonal line')
 plt.title('Plot over diagonal line for finite Volumes \n for Laplace operator on a 2D reular grid')
 plt.savefig("FiniteVolumes2DResultField_"+str(nx) +'x'+str(ny)+ '_cells'+"_PlotOverDiagonalLine.png")
 
-print("Numerical solution of 2D poisson equation using finite elements done")
+print("Numerical solution of 2D poisson equation using finite volumes done")
 
 #Calcul de l'erreur commise par rapport à la solution exacte
 #===========================================================

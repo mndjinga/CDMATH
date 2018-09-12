@@ -23,11 +23,11 @@ ymax=1
 zmin=0 
 zmax=1
 
-nx=51
-ny=51
-nz=51
+nx=21
+ny=21
+nz=21
 
-my_mesh = cdmath.Mesh(xmin,xmax,nx,ymin,ymax,ny)#Ajouter ,zmin,zmax,nz si calcul 3D
+my_mesh = cdmath.Mesh(xmin,xmax,nx,ymin,ymax,ny,zmin,zmax,nz)#Ajouter ,zmin,zmax,nz si calcul 3D
 eps=1e-6
 my_mesh.setGroupAtPlan(0,0,eps,"DirichletBorder")#Bord GAUCHE
 my_mesh.setGroupAtPlan(1,0,eps,"DirichletBorder")#Bord DROIT
@@ -50,8 +50,8 @@ for i in range(nbCells):
 	Ci = my_mesh.getCell(i)
 	x = Ci.x()
 	y = Ci.y()
-	z=Ci.z() si calcul 3D
-    my_RHSfield[i]=3*pi*pi*sin(pi*x)*sin(pi*y)*sin(pi*z)#mettre la fonction definie au second membre de l edp
+	z = Ci.z() 
+	my_RHSfield[i]=3*pi*pi*sin(pi*x)*sin(pi*y)*sin(pi*z)#mettre la fonction definie au second membre de l edp
 	# compute maximum number of neighbours
 	maxNbNeighbours= max(1+Ci.getNumberOfFaces(),maxNbNeighbours)
 
@@ -119,7 +119,7 @@ plt.ylabel('Value on diagonal line')
 plt.title('Plot over diagonal line for finite Volumes \n for Laplace operator on a 2D reular grid')
 plt.savefig("FiniteVolumes2DResultField_"+str(nx) +'x'+str(ny)+ '_cells'+"_PlotOverDiagonalLine.png")
 
-print("Numerical solution of 2D poisson equation using finite elements done")
+print("Numerical solution of 3D poisson equation using finite volumes done")
 
 #Calcul de l'erreur commise par rapport à la solution exacte
 #===========================================================
