@@ -13,6 +13,7 @@ if (CDMATH_WITH_PYTHON AND CDMATH_WITH_PETSC AND CDMATH_WITH_POSTPRO)
   # Examples tests
   set (examples_dir ${CDMATH_SOURCE_DIR}/tests/examples)
   add_subdirectory (${examples_dir})
+  add_custom_target (examples COMMAND ctest -R Example)# may be replace ctest -R with ctest -L
 
   #validation tests
   add_subdirectory (validation)
