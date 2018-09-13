@@ -7,7 +7,7 @@ from math import log10, sqrt
 def test_validation3DVF_checkerboard():
     #### 3D FV cartesian non conforming mesh
     meshList=['checkerboard_2x2x2','checkerboard_4x4x4','checkerboard_8x8x8','checkerboard_16x16x16']
-    meshType="Non conforming cartesian"
+    meshType="Non conforming cartesian checkerboard"
     testColor="Orange, BC violated. PB with mesh ?"
     nbMeshes=len(meshList)
     error_tab=[0]*nbMeshes

@@ -7,7 +7,7 @@ from math import log10, sqrt
 def test_validation2DVF_ns_loc_ref():
     ##### 2D FV refined squares mesh
     meshList=['meshLocRefSquares_1','meshLocRefSquares_2','meshLocRefSquares_3','meshLocRefSquares_4','meshLocRefSquares_5','meshLocRefSquares_6','meshLocRefSquares_7']
-    meshType="Non conforming cartesian"
+    meshType="Non conforming cartesian locally refined"
     testColor="Green"
     nbMeshes=len(meshList)
     error_tab=[0]*nbMeshes
