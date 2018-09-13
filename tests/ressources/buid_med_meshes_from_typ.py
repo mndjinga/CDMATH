@@ -1,4 +1,5 @@
 import MEDLoader as ml
+import os
 
 def read_typ2(fichier, nom_med):
     with open(fichier, "r") as fic: lines = fic.readlines()
@@ -35,7 +36,30 @@ def read_typ2(fichier, nom_med):
     grp.setName("boundary")
     mm.addGroup(-1, grp)
 
-    mm.write(nom_med, 2)
+    mm.write("{}/mesh.med".format(nom_med), 2)
+
+def read_between(infile, patern1, patern2):
+    with open(infile) as fic:
+        copy = False
+        string = ''
+        for line in fic:
+            if any([line.strip().lower().startswith(patern.lower()) for patern in patern1]):
+                copy = True
+            elif any([line.strip().lower().startswith(patern.lower()) for patern in patern2]):
+                copy = False
+            elif copy:
+                string += line
+    return string
+
+def connectivity_from_string(string):
+    indicies = map(int, string.split())
+    tab = []
+    off = 0
+    while off < len(indicies):
+        off_old = off + 1
+        off += indicies[off] + 1
+        tab.append(indicies[off_old:off])
+    return tab
 
 def read_typ3(fichier, nom_med):
     with open(fichier, "r") as fic: lines = fic.readlines()
@@ -45,14 +69,16 @@ def read_typ3(fichier, nom_med):
 
     som = [map(float, line.split()) for line in lines[17:17 + nb_som]]
 
-
     # les connectivites ne partent pas de 0...
-    tmp_cel = [map(int, line.split()[1:]) for line in lines[18 + nb_som:18 + nb_som + nb_cel]]
+    s = read_between(fichier, ["Volumes->Faces"], ["Volumes->Vertices"])
+    tmp_cel = connectivity_from_string(s)
+    # tmp_cel = [map(int, line.split()[1:]) for line in lines[18 + nb_som:18 + nb_som + nb_cel]]
     cel = [[p - 1 for p in c] for c in tmp_cel]
 
-    tmp_fac = [map(int, line.split()[1:]) for line in lines[21 + nb_som + 2 * nb_cel + nb_fac:21 + nb_som + 2 * nb_cel + 2 * nb_fac]]
+    s = read_between(fichier, ["Faces->Vertices"], ["Faces->Control volumes", "Faces->volumes"])
+    tmp_fac = connectivity_from_string(s)
+    # tmp_fac = [map(int, line.split()[1:]) for line in lines[21 + nb_som + 2 * nb_cel + nb_fac:21 + nb_som + 2 * nb_cel + 2 * nb_fac]]
     fac = [[p - 1 for p in c] for c in tmp_fac]
-
 
     mesh = ml.MEDCouplingUMesh("mesh", 3)
     mesh.allocateCells(len(cel))
@@ -84,16 +110,20 @@ def read_typ3(fichier, nom_med):
     grp.setName("boundary")
     mm.addGroup(-1, grp)
 
-    mm.write(nom_med, 2)
-
-# maillages 2D
-for t, m, (l, d) in (("Cartesian", "cart", (1, 7)), ("Locally_Refined", "ref", (1, 7)), ("Quadrangles", "quad", (1, 7)), ("Triangles", "tri", (1, 6))):
-    for n in range(l, d + 1):
-        print t, n
-        read_typ2("Meshes/2D/{}/mesh_{}_{}.typ2".format(t, m, n), "{}_{}.med".format(t, n))
+    mm.write("{}/mesh.med".format(nom_med), 2)
 
 # maillages 3D
-for t, m, (l, d) in (("Hexa", "hexa", (1, 5)), ("Prism", "prism", (1, 4)), ("Tetra", "tetra", (0, 6))):
-    for n in range(l, d + 1):
+meshes = (("meshAA-random",      "RandMesh",     ("4", "8", "16", "32")),
+          #("meshBB_well",        "WellMesh_",     ("1", "2", "3", "4", "5", "6", "7")),
+          #("meshB_tetra",        "tet.",          ("00", "0", "1", "2", "3", "4", "5", "6")),
+          ("meshC_voro",         "vmesh_",        ("1", "2", "3", "4", "5")),
+          ("meshD_kershaw",      "dkershaw",      ("08", "16", "32", "64")),
+          ("meshF_dbls",         "dbls_",         ("10", "20", "30", "40")))
+          # ("meshH_locrafgrid",   "locrafgrid_",   ("1", "2", "3", "4", "5")),
+          # ("meshI_checkerboard", "checkerboard_", ("2x2x2", "4x4x4", "8x8x8", "16x16x16", "32x32x32")))
+for t, m, d in meshes:
+    for n in d:
         print t, n
-        read_typ3("Meshes/3D/{}/mesh_{}_{}.typ3".format(t, m, n), "{}_{}.med".format(t, n))
+        folder = "{}/jdd_{}".format(t, n)
+        os.system("mkdir -p {}".format(folder))
+        read_typ3("Meshes_3D/{}/{}{}.msh".format(t, m, n), folder)
