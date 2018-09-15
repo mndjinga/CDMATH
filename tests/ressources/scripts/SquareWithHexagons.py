@@ -38,36 +38,23 @@ for pos,t in enumerate(translationToPerform):
                  ds[pos] = d[:]         # Perform a deep copy of d and place it at position 'pos' in ds
                  ds[pos] += t             # Adding a vector to a set of coordinates does a translation
                  pass
-# Identifying duplicate tuples
-d2 = mc.DataArrayDouble.Aggregate(ds)
-oldNbOfTuples = d2.getNumberOfTuples()
-c,cI = d2.findCommonTuples(1e-12)
-tmp = c[cI[0]:cI[0+1]]
-print tmp
-a = cI.deltaShiftIndex()
-b = a - 1
-myNewNbOfTuples = oldNbOfTuples - sum(b.getValues())
-o2n, newNbOfTuples = mc.DataArrayInt.ConvertIndexArrayToO2N(oldNbOfTuples,c,cI)
-print "Have I got the right number of tuples?"
-print "myNewNbOfTuples = %d, newNbOfTuples = %d" % (myNewNbOfTuples, newNbOfTuples)
-assert(myNewNbOfTuples == newNbOfTuples)
-print "Old number of tuple was ", oldNbOfTuples
 
-# Extracting the unique set of tuples
-d3 = d2.renumberAndReduce(o2n, newNbOfTuples)
-n2o = o2n.invertArrayO2N2N2O(newNbOfTuples)
-d3_bis = d2[n2o]
-print "Are d3 and d3_bis equal ? %s" % (str(d3.isEqual(d3_bis, 1e-12)))
-# Now build an unstructured mesh representing the final pattern
+d2 = mc.DataArrayDouble.Aggregate(ds)
+# Build an unstructured mesh representing the final pattern
 mesh = mc.MEDCouplingUMesh("squareWithHexagons",2)
-mesh.setCoords(d3)
+mesh.setCoords(d2)
 print "Mesh dimension is", mesh.getMeshDimension()
 print "Spatial dimension is", mesh.getCoords().getNumberOfComponents()
 mesh.allocateCells(nx*ny)
 for i in xrange(nx*ny):
-        cell_connec = o2n[6*i:6*(i+1)]
-        mesh.insertNextCell(mc.NORM_POLYGON, cell_connec.getValues())
+        cell_connec = range(6*i,6*(i+1))
+        mesh.insertNextCell(mc.NORM_POLYGON, cell_connec)
         pass
+
+# Identifying duplicate nodes
+oldNbOfNodes=mesh.getNumberOfNodes()        
+arr, areNodesMerged, newNbOfNodes=mesh.mergeNodes(1e-10)
+print "oldNbOfNodes=",oldNbOfNodes,"newNbOfNodes",newNbOfNodes
 
 # Crée les éléments 1D pour pouvoir imposer les conditions aux limites
 mesh_1d = mesh.computeSkin()
