@@ -69,10 +69,10 @@ def createLocallyRefinedMesh(nb_segs_x, mesh_name):
   arr_bottom = MC.DataArrayInt(ids_bottom)
   arr_top = MC.DataArrayInt(ids_top)
   
-  arr_left.setName("left")
-  arr_right.setName("right")
-  arr_bottom.setName("bottom")
-  arr_top.setName("top")
+  arr_left.setName("Left")
+  arr_right.setName("Right")
+  arr_bottom.setName("Bottom")
+  arr_top.setName("Top")
 
   # Trie les cellules par type conformément à la convention MED fichier
   o2n = mesh.sortCellsInMEDFileFrmt()

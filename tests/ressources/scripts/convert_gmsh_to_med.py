@@ -143,12 +143,12 @@ arr_top = MC.DataArrayInt(ids_top)
 arr_back = MC.DataArrayInt(ids_back)
 arr_front = MC.DataArrayInt(ids_front)
 
-arr_left.setName("left")
-arr_right.setName("right")
-arr_bottom.setName("bottom")
-arr_top.setName("top")
-arr_back.setName("back")
-arr_front.setName("front")
+arr_left.setName("Left")
+arr_right.setName("Right")
+arr_bottom.setName("Bottom")
+arr_top.setName("Top")
+arr_back.setName("Back")
+arr_front.setName("Front")
 
 # Trie les cellules par type conformément à la convention MED fichier
 o2n = mesh.sortCellsInMEDFileFrmt()
