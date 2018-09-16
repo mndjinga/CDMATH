@@ -634,10 +634,6 @@ Mesh::setMesh( void )
 	mu->unPolyze();
 	MEDCouplingUMesh* mu2=mu->buildDescendingConnectivity2(desc,descI,revDesc,revDescI);//mesh of dimension N-1 containing the cell interfaces
     
-    mu2->checkConsistency();
-  	string fname="test.med";
-	MEDCoupling::WriteUMesh(fname.c_str(),mu2,true);
-
     const int *tmp = desc->getConstPointer();
     const int *tmpI=descI->getConstPointer();
 
