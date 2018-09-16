@@ -633,6 +633,10 @@ Mesh::setMesh( void )
 	MEDCouplingUMesh* mu = _mesh->buildUnstructured();
 	mu->unPolyze();
 	MEDCouplingUMesh* mu2=mu->buildDescendingConnectivity2(desc,descI,revDesc,revDescI);//mesh of dimension N-1 containing the cell interfaces
+    
+    mu2->checkConsistency();
+  	string fname="test.med";
+	MEDCoupling::WriteUMesh(fname.c_str(),mu2,true);
 
     const int *tmp = desc->getConstPointer();
     const int *tmpI=descI->getConstPointer();
@@ -970,7 +974,15 @@ Mesh::setMesh( void )
 			Point p(coorBarySegXyz[0],coorBarySegXyz[1],coorBarySegXyz[2]) ;
 			const int *workc=tmpA+tmpAI[id];
 			int nbCells=tmpAI[id+1]-tmpAI[id];
-
+            
+            if (nbCells>2 && _spaceDim==_meshDim)
+            {
+                cout<<"Warning : nbCells>2, numberOfFaces="<<_numberOfFaces<<endl;
+                cout<<"nbCells= "<<nbCells<<", _spaceDim="<<_spaceDim<<", _meshDim="<<_meshDim<<endl;
+                for(int icell=0; icell<nbCells; icell++)
+                    cout<<workc[icell]<<", ";
+                cout<<endl;
+            }
 			const int *workv=tmpNE+tmpNEI[id]+1;
 			int nbNodes= tmpNEI[id+1]-tmpNEI[id]-1;
 
@@ -987,9 +999,16 @@ Mesh::setMesh( void )
 				fi.addNodeId(node_id,workv[node_id]) ;
 
 			fi.addCellId(0,workc[0]) ;
-			if (nbCells==2)
-				fi.addCellId(1,workc[1]) ;
-
+			for(int cell_id=1; cell_id<nbCells;cell_id++)
+            {
+                int cell_idx=0;
+                if (workc[cell_id]!=workc[cell_id-1])//For some meshes (bad ones) the same cell can appear several times
+                    {
+                    fi.addCellId(cell_idx+1,workc[cell_id]) ;
+                    cell_idx++;
+                    }                
+            }
+            
 			_faces[id] = fi ;
 		}
 		if(_spaceDim==_meshDim)
