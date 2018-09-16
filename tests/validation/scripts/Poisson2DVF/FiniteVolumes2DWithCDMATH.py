@@ -2,9 +2,10 @@
 #===============================================================================================================================
 # Name        : Résolution VF de l'équation de Poisson -\triangle u = f avec conditions aux limites de Dirichlet u=0
 # Author      : Michaël Ndjinga
-# Copyright   : CEA Saclay 2016
+# Copyright   : CEA Saclay 2018
 # Description : Utilisation de la méthode des volumes finis avec champs u et f discrétisés aux cellules d'un maillage quelconque
 #				Création et sauvegarde du champ résultant ainsi que du champ second membre en utilisant CDMATH
+#               Comparaison de la solution num"rique avec la solution exacte u=-sin(pi*x)*sin(pi*y)
 #================================================================================================================================
 
 import cdmath
@@ -39,16 +40,12 @@ def solve(my_mesh,filename,resolution, meshType, testColor):
     xmax=1
     ymin=0
     ymax=1
-    #zmin=0 si calcul 3D
-    #zmax=1 si calcul 3D
     
     eps=1e-6
     my_mesh.setGroupAtPlan(0,0,eps,"DirichletBorder")#Bord GAUCHE
     my_mesh.setGroupAtPlan(1,0,eps,"DirichletBorder")#Bord DROIT
     my_mesh.setGroupAtPlan(0,1,eps,"DirichletBorder")#Bord BAS
     my_mesh.setGroupAtPlan(1,1,eps,"DirichletBorder")#Bord HAUT
-    #my_mesh.setGroupAtPlan(0,2,eps,"DirichletBorder")#Bord AVANT si calcul 3D
-    #my_mesh.setGroupAtPlan(1,2,eps,"DirichletBorder")#Bord ARRIERE si calcul 3D
     
     nbCells = my_mesh.getNumberOfCells()
     
@@ -69,7 +66,7 @@ def solve(my_mesh,filename,resolution, meshType, testColor):
         Ci = my_mesh.getCell(i)
         x = Ci.x()
         y = Ci.y()
-        # z=Ci.z() si calcul 3D
+
         my_RHSfield[i]=2*pi*pi*sin(pi*x)*sin(pi*y)#mettre la fonction definie au second membre de l edp
         # compute maximum number of neighbours
         maxNbNeighbours= max(1+Ci.getNumberOfFaces(),maxNbNeighbours)
@@ -126,7 +123,7 @@ def solve(my_mesh,filename,resolution, meshType, testColor):
 
     # Création du champ résultat
     #===========================
-    my_ResultField = cdmath.Field("Result field", cdmath.CELLS, my_mesh, 1)
+    my_ResultField = cdmath.Field("ResultField", cdmath.CELLS, my_mesh, 1)
     for i in range(nbCells):
         my_ResultField[i]=SolSyst[i];
     #sauvegarde sur le disque dur du résultat dans un fichier paraview
@@ -150,7 +147,7 @@ def solve(my_mesh,filename,resolution, meshType, testColor):
 
     #Postprocessing : Extraction of the diagonal data
     diag_data=VTK_routines.Extract_field_data_over_line_to_numpyArray(my_ResultField,[0,1,0],[1,0,0], resolution)
-    PV_routines.Save_PV_data_to_picture_file("FiniteVolumes2DResultField"+str(nbCells)+'_0.vtu',"Result field",'CELLS',"FiniteVolumes2DResultField"+str(nbCells))
+    PV_routines.Save_PV_data_to_picture_file("FiniteVolumes2DResultField"+str(nbCells)+'_0.vtu',"ResultField",'CELLS',"FiniteVolumes2DResultField"+str(nbCells))
 
     end = time.time()
     test_desc["Computational_time_taken_by_run"]=end-start

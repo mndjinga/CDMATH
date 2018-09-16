@@ -3,7 +3,7 @@ SET(SCRIPT
   ../scripts/Poisson2DVF/FiniteVolumes2DWithCDMATH.py
   )
 
-file(COPY ${SCRIPT} DESTINATION ${CMAKE_BINARY_DIR}/tests/validation/test_validation2DPoissonVF_ns)
+file(COPY ${SCRIPT} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 install(FILES ${SCRIPT} DESTINATION share/validation/test_validation2DPoissonVF_ns)
 
 if (CDMATH_WITH_PYTHON AND CDMATH_WITH_PETSC)
