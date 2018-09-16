@@ -55,7 +55,7 @@ def solve(my_mesh,filename,resolution, meshType, testColor):
     test_desc["Mesh_cell_type"]=my_mesh.getElementTypes()
 
     print("Mesh groups done")
-    print("nb of cells  = ", nbCells)
+    print("Number of cells  = ", nbCells)
     
     #Discrétisation du second membre et extraction du nb max de voisins d'une cellule
     #================================================================================
@@ -74,7 +74,7 @@ def solve(my_mesh,filename,resolution, meshType, testColor):
     test_desc["Mesh_max_number_of_neighbours"]=maxNbNeighbours
 
     # sauvegarde sur le disque dur du second membre discrétisé dans un fichier paraview
-    my_RHSfield.writeVTK("FiniteVolumes2DRHSField"+str(nbCells))
+    my_RHSfield.writeVTK("FiniteVolumes2D_square_RHSField"+str(nbCells))
     
     print("Right hand side discretisation done")
     print("Max nb of neighbours=", maxNbNeighbours)
@@ -127,9 +127,9 @@ def solve(my_mesh,filename,resolution, meshType, testColor):
     for i in range(nbCells):
         my_ResultField[i]=SolSyst[i];
     #sauvegarde sur le disque dur du résultat dans un fichier paraview
-    my_ResultField.writeVTK("FiniteVolumes2DResultField"+str(nbCells))
+    my_ResultField.writeVTK("FiniteVolumes2D_square_ResultField"+str(nbCells))
     
-    print("Numerical solution of 2D poisson equation using finite elements done")
+    print("Numerical solution of 2D Poisson equation on a square using finite elements done")
     
     #Calcul de l'erreur commise par rapport à la solution exacte
     #===========================================================
@@ -147,7 +147,7 @@ def solve(my_mesh,filename,resolution, meshType, testColor):
 
     #Postprocessing : Extraction of the diagonal data
     diag_data=VTK_routines.Extract_field_data_over_line_to_numpyArray(my_ResultField,[0,1,0],[1,0,0], resolution)
-    PV_routines.Save_PV_data_to_picture_file("FiniteVolumes2DResultField"+str(nbCells)+'_0.vtu',"ResultField",'CELLS',"FiniteVolumes2DResultField"+str(nbCells))
+    PV_routines.Save_PV_data_to_picture_file("FiniteVolumes2D_square_ResultField"+str(nbCells)+'_0.vtu',"ResultField",'CELLS',"FiniteVolumes2D_square_ResultField"+str(nbCells))
 
     end = time.time()
     test_desc["Computational_time_taken_by_run"]=end-start

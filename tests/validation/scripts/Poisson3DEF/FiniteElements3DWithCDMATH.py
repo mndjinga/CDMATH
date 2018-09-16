@@ -1,10 +1,11 @@
 # -*-coding:utf-8 -*
 #===============================================================================================================================
-# Name        : Résolution EF de l'équation de Poisson 3D -\triangle u = f avec conditions aux limites de Dirichlet u=0
+# Name        : Résolution EF de l'équation de Poisson 3D -\triangle u = f sur un cube avec conditions aux limites de Dirichlet u=0
 # Author      : Michaël Ndjinga, Sédrick Kameni
 # Copyright   : CEA Saclay 2017
 # Description : Utilisation de la méthode des éléménts finis P1 avec champs u et f discrétisés aux noeuds d'un maillage tétraédrique
-#		Création et sauvegarde du champ résultant ainsi que du champ second membre en utilisant la librairie CDMATH
+#		        Création et sauvegarde du champ résultant ainsi que du champ second membre en utilisant la librairie CDMATH
+#               Comparaison de la solution num"rique avec la solution exacte u=-sin(pi*x)*sin(pi*y)*sin(pi*z)
 #================================================================================================================================
 
 import cdmath
@@ -55,13 +56,13 @@ def solve(filename,resolution, meshType, testColor):
     test_desc["Mesh_number_of_elements"]=my_mesh.getNumberOfNodes()
     test_desc["Mesh_cell_type"]=my_mesh.getElementTypes()
 
-    print("Mesh building done")
-    print("nb of nodes=", nbNodes)
-    print("nb of cells=", nbCells)
+    print("Mesh loading done")
+    print("Number of nodes=", nbNodes)
+    print("Number of cells=", nbCells)
     
     #Discrétisation du second membre et détermination des noeuds intérieurs
     #======================================================================
-    my_RHSfield = cdmath.Field("RHS field", cdmath.NODES, my_mesh, 1)
+    my_RHSfield = cdmath.Field("RHS_field", cdmath.NODES, my_mesh, 1)
     B = cdmath.Field("EXA_SOL field", cdmath.NODES, my_mesh, 1)
     nbInteriorNodes = 0
     nbBoundaryNodes = 0
@@ -89,8 +90,8 @@ def solve(filename,resolution, meshType, testColor):
     test_desc["Mesh_max_number_of_neighbours"]=maxNbNeighbours
 
     # sauvegarde sur le disque dur du second membre discrétisé dans un fichier paraview
-    my_RHSfield.writeVTK("FiniteElements3DRHSField"+str(nbNodes)) 
-    B.writeVTK("FiniteElements3DEXSOLField"+str(nbNodes)) 
+    my_RHSfield.writeVTK("FiniteElements3D_cube_RHSField"+str(nbNodes)) 
+    B.writeVTK("FiniteElements3D_cube_EXSOLField"+str(nbNodes)) 
     
     print("Right hand side discretisation done")
     print("Number of interior nodes=", nbInteriorNodes)
@@ -186,9 +187,9 @@ def solve(filename,resolution, meshType, testColor):
     for j in range(nbBoundaryNodes):
         my_ResultField[boundaryNodes[j]]=0;#remplissage des valeurs pour les noeuds frontière (condition limite)
     #sauvegarde sur le disque dur du résultat dans un fichier paraview
-    my_ResultField.writeVTK("FiniteElements3DResultField"+str(nbNodes))
+    my_ResultField.writeVTK("FiniteElements3D_cube_ResultField"+str(nbNodes))
     
-    print("Numerical solution of 3D poisson equation using finite elements done")
+    print("Numerical solution of 3D Poisson equation on a cube using finite elements done")
     
     
     #Calcul de l'erreur commise par rapport à la solution exacte
@@ -207,7 +208,7 @@ def solve(filename,resolution, meshType, testColor):
     
     #Postprocessing : Extraction of the diagonal data
     diag_data=VTK_routines.Extract_field_data_over_line_to_numpyArray(my_ResultField,[0,0,0],[1,1,1], resolution)
-    PV_routines.Save_PV_data_to_picture_file("FiniteElements3DResultField"+str(nbNodes)+'_0.vtu',"ResultField",'NODES',"FiniteElements3DResultField"+str(nbNodes))
+    PV_routines.Save_PV_data_to_picture_file("FiniteElements3D_cube_ResultField"+str(nbNodes)+'_0.vtu',"ResultField",'NODES',"FiniteElements3D_cube_ResultField"+str(nbNodes))
 
     end = time.time()
     test_desc["Computational_time_taken_by_run"]=end-start

@@ -5,6 +5,7 @@
 # Copyright   : CEA Saclay 2018
 # Description : Utilisation de la méthode des volumes finis avec champs u et f discrétisés aux cellules d'un maillage quelconque
 #				Création et sauvegarde du champ résultant ainsi que du champ second membre en utilisant CDMATH
+#               Comparaison de la solution num"rique avec la solution exacte u=-sin(pi*x)*sin(pi*y)*sin(pi*z)
 #================================================================================================================================
 
 import cdmath
@@ -58,7 +59,7 @@ def solve(my_mesh, filename,resolution, meshType, testColor):
     test_desc["Mesh_cell_type"]=my_mesh.getElementTypes()
 
     print("Mesh groups done")
-    print("nb of cells =", nbCells)
+    print("Number of cells =", nbCells)
     
     #Discrétisation du second membre et extraction du nb max de voisins d'une cellule
     #================================================================================
@@ -77,7 +78,7 @@ def solve(my_mesh, filename,resolution, meshType, testColor):
     test_desc["Mesh_max_number_of_neighbours"]=maxNbNeighbours
 
     # sauvegarde sur le disque dur du second membre discrétisé dans un fichier paraview
-    my_RHSfield.writeVTK("FiniteVolumes3DRHSField"+str(nbCells))
+    my_RHSfield.writeVTK("FiniteVolumes3D_cube_RHSField"+str(nbCells))
     
     print("Right hand side discretisation done")
     print("Max nb of neighbours=", maxNbNeighbours)
@@ -130,9 +131,9 @@ def solve(my_mesh, filename,resolution, meshType, testColor):
     for i in range(nbCells):
         my_ResultField[i]=SolSyst[i];
     #sauvegarde sur le disque dur du résultat dans un fichier paraview
-    my_ResultField.writeVTK("FiniteVolumes3DResultField"+str(nbCells))
+    my_ResultField.writeVTK("FiniteVolumes3D_cube_ResultField"+str(nbCells))
     
-    print("Numerical solution of 3D poisson equation using finite elements done")
+    print("Numerical solution of 3D Poisson equation on a cube using finite elements done")
     
     #Calcul de l'erreur commise par rapport à la solution exacte
     #===========================================================
@@ -153,7 +154,7 @@ def solve(my_mesh, filename,resolution, meshType, testColor):
 	# Extraction of the diagonal data
     diag_data=VTK_routines.Extract_field_data_over_line_to_numpyArray(my_ResultField,[0,0,0],[1,1,1], resolution)
     # save 2D picture
-    PV_routines.Save_PV_data_to_picture_file("FiniteVolumes3DResultField"+str(nbCells)+'_0.vtu',"ResultField",'CELLS',"FiniteVolumes3DResultField"+str(nbCells))
+    PV_routines.Save_PV_data_to_picture_file("FiniteVolumes3D_cube_ResultField"+str(nbCells)+'_0.vtu',"ResultField",'CELLS',"FiniteVolumes3D_cube_ResultField"+str(nbCells))
 
     end = time.time()
     test_desc["Computational_time_taken_by_run"]=end-start

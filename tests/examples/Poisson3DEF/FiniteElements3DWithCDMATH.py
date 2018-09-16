@@ -4,7 +4,8 @@
 # Author      : Michaël Ndjinga, Sédrick Kameni
 # Copyright   : CEA Saclay 2017
 # Description : Utilisation de la méthode des éléménts finis P1 avec champs u et f discrétisés aux noeuds d'un maillage tétraédrique
-#		Création et sauvegarde du champ résultant ainsi que du champ second membre en utilisant la librairie CDMATH
+#		        Création et sauvegarde du champ résultant ainsi que du champ second membre en utilisant la librairie CDMATH
+#               Comparaison de la solution numérique avec la solution exacte u=-sin(pi*x)*sin(pi*y)*sin(pi*z)
 #================================================================================================================================
 
 import cdmath
@@ -30,13 +31,13 @@ my_mesh.setGroupAtPlan(1.,2,eps,"DirichletBorder")#Bord ARRIERE
 nbNodes = my_mesh.getNumberOfNodes()
 nbCells = my_mesh.getNumberOfCells()
 
-print("Mesh building done")
-print("nb of nodes=", nbNodes)
-print("nb of cells=", nbCells)
+print("Mesh loading done")
+print("Number of nodes=", nbNodes)
+print("Number of cells=", nbCells)
 
 #Discrétisation du second membre et détermination des noeuds intérieurs
 #======================================================================
-my_RHSfield = cdmath.Field("RHS field", cdmath.NODES, my_mesh, 1)
+my_RHSfield = cdmath.Field("RHS_field", cdmath.NODES, my_mesh, 1)
 B = cdmath.Field("EXA_SOL field", cdmath.NODES, my_mesh, 1)
 nbInteriorNodes = 0
 nbBoundaryNodes = 0
@@ -62,12 +63,12 @@ for i in range(nbNodes):
 		maxNbNeighbours= max(1+Ni.getNumberOfEdges(),maxNbNeighbours)
 
 # sauvegarde sur le disque dur du second membre discrétisé dans un fichier paraview
-my_RHSfield.writeVTK("FiniteElements3DRHSField") 
-B.writeVTK("FiniteElements3DEXSOLField") 
+my_RHSfield.writeVTK("FiniteElements3D_cube_RHSField") 
+B.writeVTK("FiniteElements3D_cube_EXSOLField") 
 
 print("Right hand side discretisation done")
-print("Numbe of interior nodes=", nbInteriorNodes)
-print("Numbe of boundary nodes=", nbBoundaryNodes)
+print("Number of interior nodes=", nbInteriorNodes)
+print("Number of boundary nodes=", nbBoundaryNodes)
 print("Maximum number of neighbours per node=", maxNbNeighbours)
 
 # Construction de la matrice de rigidité et du vecteur second membre du système linéaire
@@ -149,14 +150,14 @@ for j in range(nbInteriorNodes):
 for j in range(nbBoundaryNodes):
     my_ResultField[boundaryNodes[j]]=0;#remplissage des valeurs pour les noeuds frontière (condition limite)
 #sauvegarde sur le disque dur du résultat dans un fichier paraview
-my_ResultField.writeVTK("FiniteElements3DResultField")
+my_ResultField.writeVTK("FiniteElements3D_cube_ResultField")
 
 #Postprocessing :
 #================
 # save 3D picture
 resolution=100
-VTK_routines.Clip_VTK_data_to_VTK("FiniteElements3DResultField"+'_0.vtu',"Clip_VTK_data_to_VTK_"+ "FiniteElements3DResultField"+'_0.vtu',[0.5,0.5,0.5], [-0.5,-0.5,-0.5],resolution )
-PV_routines.Save_PV_data_to_picture_file("Clip_VTK_data_to_VTK_"+"FiniteElements3DResultField"+'_0.vtu',"ResultField",'NODES',"Clip_VTK_data_to_VTK_"+"FiniteElements3DResultField")
+VTK_routines.Clip_VTK_data_to_VTK("FiniteElements3D_cube_ResultField"+'_0.vtu',"Clip_VTK_data_to_VTK_"+ "FiniteElements3D_cube_ResultField"+'_0.vtu',[0.5,0.5,0.5], [-0.5,-0.5,-0.5],resolution )
+PV_routines.Save_PV_data_to_picture_file("Clip_VTK_data_to_VTK_"+"FiniteElements3D_cube_ResultField"+'_0.vtu',"ResultField",'NODES',"Clip_VTK_data_to_VTK_"+"FiniteElements3D_cube_ResultField")
 
 # extract and plot diagonal values
 curv_abs=np.linspace(0,sqrt(3),resolution+1)
@@ -166,9 +167,9 @@ plt.legend()
 plt.xlabel('Position on diagonal line')
 plt.ylabel('Value on diagonal line')
 plt.title('Plot over diagonal line for finite elements \n for Laplace operator on a 3D triangular mesh')
-plt.savefig("FiniteElements3DResultField_"+str(nbNodes) + '_nodes'+"_PlotOverDiagonalLine.png")
+plt.savefig("FiniteElements3D_cube_ResultField_"+str(nbNodes) + '_nodes'+"_PlotOverDiagonalLine.png")
 
-print("Numerical solution of 3D poisson equation using finite elements done")
+print("Numerical solution of 3D Poisson equation on a cube using finite elements done")
 
 
 #Calcul de l'erreur commise par rapport à la solution exacte

@@ -5,7 +5,7 @@
 # Copyright   : CEA Saclay 2016
 # Description : Utilisation de la méthode des volumes finis avec champs u et f discrétisés aux cellules d'un maillage quelconque
 #				Création et sauvegarde du champ résultant ainsi que du champ second membre en utilisant CDMATH
-#               Comparaison de la solution num"rique avec la solution exacte u=-sin(pi*x)*sin(pi*y)
+#               Comparaison de la solution numérique avec la solution exacte u=-sin(pi*x)*sin(pi*y)
 #================================================================================================================================
 
 import cdmath
@@ -39,12 +39,12 @@ else :   #rectangular mesh
 
 nbCells = my_mesh.getNumberOfCells()
 
-print "Mesh building done"
-print "nb of cells  = ", nbCells
+print "Mesh loading done"
+print "Number of cells  = ", nbCells
 
 #Discrétisation du second membre et extraction du nb max de voisins d'une cellule
 #================================================================================
-my_RHSfield = cdmath.Field("RHS field", cdmath.CELLS, my_mesh, 1)
+my_RHSfield = cdmath.Field("RHS_field", cdmath.CELLS, my_mesh, 1)
 maxNbNeighbours=0#This is to determine the number of non zero coefficients in the sparse finite element rigidity matrix
 #parcours des cellules pour discrétisation du second membre et extraction du nb max de voisins d'une cellule
 for i in range(nbCells): 
@@ -57,7 +57,7 @@ for i in range(nbCells):
 	maxNbNeighbours= max(1+Ci.getNumberOfFaces(),maxNbNeighbours)
 
 # sauvegarde sur le disque dur du second membre discrétisé dans un fichier paraview
-my_RHSfield.writeVTK("FiniteVolumes2DRHSField")
+my_RHSfield.writeVTK("FiniteVolumes2D_square_RHSField")
 
 print("Right hand side discretisation done")
 print "Max nb of neighbours = ", maxNbNeighbours
@@ -104,12 +104,12 @@ my_ResultField = cdmath.Field("ResultField", cdmath.CELLS, my_mesh, 1)
 for i in range(nbCells):
     my_ResultField[i]=SolSyst[i];
 #sauvegarde sur le disque dur du résultat dans un fichier paraview
-my_ResultField.writeVTK("FiniteVolumes2DResultField")
+my_ResultField.writeVTK("FiniteVolumes2D_square_ResultField")
 
 #Postprocessing : 
 #===============
 # save 2D picture
-PV_routines.Save_PV_data_to_picture_file("FiniteVolumes2DResultField"+'_0.vtu',"ResultField",'CELLS',"FiniteVolumes2DResultField")
+PV_routines.Save_PV_data_to_picture_file("FiniteVolumes2D_square_ResultField"+'_0.vtu',"ResultField",'CELLS',"FiniteVolumes2D_square_ResultField")
 
 # extract and plot diagonal values
 resolution=100
@@ -119,15 +119,15 @@ plt.legend()
 plt.xlabel('Position on diagonal line')
 plt.ylabel('Value on diagonal line')
 if len(sys.argv) >1 :
-    plt.title('Plot over diagonal line for finite Volumes \n for Laplace operator on a 2D mesh '+my_mesh.getName())
+    plt.title('Plot over diagonal line for finite Volumes \n for Laplace operator on a 2D square '+my_mesh.getName())
     plt.plot(curv_abs, diag_data, label= str(nbCells)+ ' cells mesh')
-    plt.savefig("FiniteVolumes2DResultField_"+str(nbCells)+ '_cells'+"_PlotOverDiagonalLine.png")
+    plt.savefig("FiniteVolumes2D_square_ResultField_"+str(nbCells)+ '_cells'+"_PlotOverDiagonalLine.png")
 else :   
-    plt.title('Plot over diagonal line for finite Volumes \n for Laplace operator on a 2D rectangular grid')
+    plt.title('Plot over diagonal line for finite Volumes \n for Laplace operator on a 2D square with a rectangular grid')
     plt.plot(curv_abs, diag_data, label= str(nx) +'x'+str(ny)+ ' cells mesh')
-    plt.savefig("FiniteVolumes2DResultField_"+str(nx) +'x'+str(ny)+ '_cells'+"_PlotOverDiagonalLine.png")
+    plt.savefig("FiniteVolumes2D_square_ResultField_"+str(nx) +'x'+str(ny)+ '_cells'+"_PlotOverDiagonalLine.png")
 
-print("Numerical solution of 2D poisson equation using finite volumes done")
+print("Numerical solution of 2D Poisson equation on a square using finite volumes done")
 
 #Calcul de l'erreur commise par rapport à la solution exacte
 #===========================================================

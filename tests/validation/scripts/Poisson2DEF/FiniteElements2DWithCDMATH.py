@@ -1,10 +1,11 @@
 # -*-coding:utf-8 -*
 #===============================================================================================================================
-# Name        : Résolution EF de l'équation de Poisson 2D -\triangle u = f avec conditions aux limites de Dirichlet u=0
+# Name        : Résolution EF de l'équation de Poisson 2D -\triangle u = f sur un carré avec conditions aux limites de Dirichlet u=0
 # Author      : Michaël Ndjinga
 # Copyright   : CEA Saclay 2016
 # Description : Utilisation de la méthode des éléménts finis P1 avec champs u et f discrétisés aux noeuds d'un maillage triangulaire
-#		Création et sauvegarde du champ résultant ainsi que du champ second membre en utilisant la librairie CDMATH
+#		        Création et sauvegarde du champ résultant ainsi que du champ second membre en utilisant la librairie CDMATH
+#               Comparaison de la solution numérique avec la solution exacte u=-sin(pi*x)*sin(pi*y)
 #================================================================================================================================
 
 import cdmath
@@ -53,13 +54,13 @@ def solve(filename,resolution,meshType, testColor):
     test_desc["Mesh_number_of_elements"]=my_mesh.getNumberOfNodes()
     test_desc["Mesh_cell_type"]=my_mesh.getElementTypes()
 
-    print("Mesh building done")
-    print("nb of nodes=", nbNodes)
-    print("nb of cells=", nbCells)
+    print("Mesh loading done")
+    print("Number of nodes=", nbNodes)
+    print("Number of cells=", nbCells)
     
     #Discrétisation du second membre et détermination des noeuds intérieurs
     #======================================================================
-    my_RHSfield = cdmath.Field("RHS field", cdmath.NODES, my_mesh, 1)
+    my_RHSfield = cdmath.Field("RHS_field", cdmath.NODES, my_mesh, 1)
     nbInteriorNodes = 0
     nbBoundaryNodes = 0
     maxNbNeighbours = 0#This is to determine the number of non zero coefficients in the sparse finite element rigidity matrix
@@ -84,12 +85,12 @@ def solve(filename,resolution,meshType, testColor):
     test_desc["Mesh_max_number_of_neighbours"]=maxNbNeighbours
     
     # sauvegarde sur le disque dur du second membre discrétisé dans un fichier paraview
-    my_RHSfield.writeVTK("FiniteElements2DRHSField"+str(nbNodes)) 
+    my_RHSfield.writeVTK("FiniteElements2D_square_RHSField"+str(nbNodes)) 
     
     print("Right hand side discretisation done")
-    print("nb of interior nodes=", nbInteriorNodes)
-    print("nb of boundary nodes=", nbBoundaryNodes)
-    print("Max nb of neighbours=", maxNbNeighbours)
+    print("Number of interior nodes=", nbInteriorNodes)
+    print("Number of boundary nodes=", nbBoundaryNodes)
+    print("Max number of neighbours=", maxNbNeighbours)
     
     # Construction de la matrice de rigidité et du vecteur second membre du système linéaire
     #=======================================================================================
@@ -171,9 +172,9 @@ def solve(filename,resolution,meshType, testColor):
     for j in range(nbBoundaryNodes):
         my_ResultField[boundaryNodes[j]]=0;#remplissage des valeurs pour les noeuds frontière (condition limite)
     #sauvegarde sur le disque dur du résultat dans un fichier paraview
-    my_ResultField.writeVTK("FiniteElements2DResultField"+str(nbNodes))
+    my_ResultField.writeVTK("FiniteElements2D_square_ResultField"+str(nbNodes))
     
-    print("Numerical solution of 2D poisson equation using finite elements done")
+    print("Numerical solution of 2D Poisson equation on a square using finite elements done")
     
     #Calcul de l'erreur commise par rapport à la solution exacte
     #===========================================================
@@ -191,7 +192,7 @@ def solve(filename,resolution,meshType, testColor):
     
     #Postprocessing : Extraction of the diagonal data
     diag_data=VTK_routines.Extract_field_data_over_line_to_numpyArray(my_ResultField,[0,1,0],[1,0,0], resolution)
-    PV_routines.Save_PV_data_to_picture_file("FiniteElements2DResultField"+str(nbNodes)+'_0.vtu',"ResultField",'NODES',"FiniteElements2DResultField"+str(nbNodes))
+    PV_routines.Save_PV_data_to_picture_file("FiniteElements2D_square_ResultField"+str(nbNodes)+'_0.vtu',"ResultField",'NODES',"FiniteElements2D_square_ResultField"+str(nbNodes))
     
     end = time.time()
     test_desc["Computational_time_taken_by_run"]=end-start
