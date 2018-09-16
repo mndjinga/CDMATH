@@ -583,7 +583,7 @@ Mesh::setGroups( const MEDFileUMesh* medmesh, MEDCouplingUMesh*  mu)
 
 	for (unsigned int i=0;i<nodeGroups.size();i++ )
 	{
-		string groupName=faceGroups[i];
+		string groupName=nodeGroups[i];
 		DataArrayInt * nodeGroup=medmesh->getNodeGroupArr( groupName );
 		const int *nodeids=nodeGroup->getConstPointer();
 
