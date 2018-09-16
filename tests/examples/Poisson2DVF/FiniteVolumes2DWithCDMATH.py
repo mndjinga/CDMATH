@@ -5,6 +5,7 @@
 # Copyright   : CEA Saclay 2016
 # Description : Utilisation de la méthode des volumes finis avec champs u et f discrétisés aux cellules d'un maillage quelconque
 #				Création et sauvegarde du champ résultant ainsi que du champ second membre en utilisant CDMATH
+#               Comparaison de la solution num"rique avec la solution exacte u=-sin(pi*x)*sin(pi*y)
 #================================================================================================================================
 
 import cdmath
@@ -25,16 +26,16 @@ else :   #rectangular mesh
     ymin=0
     ymax=1
     
-    nx=51
-    ny=51
+    nx=15
+    ny=15
     
     my_mesh = cdmath.Mesh(xmin,xmax,nx,ymin,ymax,ny)
 
-eps=1e-6
-my_mesh.setGroupAtPlan(0,0,eps,"DirichletBorder")#Bord GAUCHE
-my_mesh.setGroupAtPlan(1,0,eps,"DirichletBorder")#Bord DROIT
-my_mesh.setGroupAtPlan(0,1,eps,"DirichletBorder")#Bord BAS
-my_mesh.setGroupAtPlan(1,1,eps,"DirichletBorder")#Bord HAUT
+    eps=1e-6
+    my_mesh.setGroupAtPlan(0,0,eps,"DirichletBorder")#Bord GAUCHE
+    my_mesh.setGroupAtPlan(1,0,eps,"DirichletBorder")#Bord DROIT
+    my_mesh.setGroupAtPlan(0,1,eps,"DirichletBorder")#Bord BAS
+    my_mesh.setGroupAtPlan(1,1,eps,"DirichletBorder")#Bord HAUT
 
 nbCells = my_mesh.getNumberOfCells()
 
@@ -72,11 +73,13 @@ for i in range(nbCells):
 	for j in range(Ci.getNumberOfFaces()):# parcours des faces voisinnes
 		Fj=my_mesh.getFace(Ci.getFaceId(j))
 		if not Fj.isBorder():
+			#print Fj.getNumberOfCells(), Fj.getCellId(0),Fj.getCellId(1)
 			k=Fj.getCellId(0)
 			if k==i :
 				k=Fj.getCellId(1)
 			Ck=my_mesh.getCell(k)
 			distance=Ci.getBarryCenter().distance(Ck.getBarryCenter())
+			#print "i=",i,"k=",k,"dist=",distance
 			coeff=Fj.getMeasure()/Ci.getMeasure()/distance
 			Rigidite.setValue(i,k,-coeff) # terme extradiagonal
 		else:
