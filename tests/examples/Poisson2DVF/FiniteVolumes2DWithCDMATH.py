@@ -73,13 +73,11 @@ for i in range(nbCells):
 	for j in range(Ci.getNumberOfFaces()):# parcours des faces voisinnes
 		Fj=my_mesh.getFace(Ci.getFaceId(j))
 		if not Fj.isBorder():
-			#print Fj.getNumberOfCells(), Fj.getCellId(0),Fj.getCellId(1)
 			k=Fj.getCellId(0)
 			if k==i :
 				k=Fj.getCellId(1)
 			Ck=my_mesh.getCell(k)
 			distance=Ci.getBarryCenter().distance(Ck.getBarryCenter())
-			#print "i=",i,"k=",k,"dist=",distance
 			coeff=Fj.getMeasure()/Ci.getMeasure()/distance
 			Rigidite.setValue(i,k,-coeff) # terme extradiagonal
 		else:
