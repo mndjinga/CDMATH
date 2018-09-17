@@ -115,8 +115,8 @@ def createCheckerboardMesh(nb_segs_x, mesh_name=""):
 if __name__ == '__main__':
   createCheckerboardMesh(4)
   createCheckerboardMesh(8)
+  createCheckerboardMesh(10)
   createCheckerboardMesh(16)
   createCheckerboardMesh(32)
   createCheckerboardMesh(64)
   createCheckerboardMesh(128)
-  createCheckerboardMesh(256)
