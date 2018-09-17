@@ -10,7 +10,7 @@ import MEDLoader as ML
 #filename = "checkerboard_2x2x2_new.msh"
 
 if len(sys.argv) != 2:
-  print "USAGE: convert_to_med.py file.msh"
+  print "USAGE: convert_gmsh_to_med.py file.msh"
   sys.exit(-1)
 
 filename = sys.argv[1]
@@ -37,7 +37,7 @@ cell_connectivity = []
 
 mesh = MC.MEDCouplingUMesh.New()
 mesh.setMeshDimension(mesh_dim)
-mesh.setName("mesh")
+mesh.setName("mesh_from_gmsh")
 
 with open(filename, 'rb') as f:
   for line in f:
