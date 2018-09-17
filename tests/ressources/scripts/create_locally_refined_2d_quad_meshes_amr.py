@@ -92,10 +92,10 @@ def createLocallyRefinedMesh(nb_segs_x, mesh_name):
   return meshMEDFile
 
 if __name__ == '__main__':
-  createLocallyRefinedMesh(4, "mesh_ref_1")
-  createLocallyRefinedMesh(8, "mesh_ref_2")
-  createLocallyRefinedMesh(16, "mesh_ref_3")
-  createLocallyRefinedMesh(32, "mesh_ref_4")
-  createLocallyRefinedMesh(64, "mesh_ref_5")
-  createLocallyRefinedMesh(128, "mesh_ref_6")
-  createLocallyRefinedMesh(256, "mesh_ref_7")
+  createLocallyRefinedMesh(4, "squareWithLocRefSquares_1")
+  createLocallyRefinedMesh(8, "squareWithLocRefSquares_2")
+  createLocallyRefinedMesh(16, "squareWithLocRefSquares_3")
+  createLocallyRefinedMesh(32, "squareWithLocRefSquares_4")
+  createLocallyRefinedMesh(64, "squareWithLocRefSquares_5")
+  createLocallyRefinedMesh(128, "squareWithLocRefSquares_6")
+  createLocallyRefinedMesh(256, "squareWithLocRefSquares_7")
