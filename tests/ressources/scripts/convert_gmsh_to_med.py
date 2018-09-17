@@ -100,13 +100,13 @@ with open(filename, 'rb') as f:
         nb_nodes_in_cell = 0
         cell_connectivity = []
 
+# Merge les noeuds confondus (à faire avant le conformize2D)
+arr, areNodesMerged, newNbOfNodes = mesh.mergeNodes(1e-10)
+
 # Crée des polyèdres pour rendre conforme les mailles
 mesh.convertAllToPoly()
 mesh.conformize3D(1e-10)
 mesh.unPolyze()
-
-# Merge les noeuds confondus
-arr, areNodesMerged, newNbOfNodes = mesh.mergeNodes(1e-10)
 
 # Crée les éléments 1D pour pouvoir imposer les conditions aux limites
 mesh_2d = mesh.computeSkin()

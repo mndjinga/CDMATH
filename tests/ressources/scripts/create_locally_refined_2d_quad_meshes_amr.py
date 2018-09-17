@@ -29,10 +29,10 @@ def createLocallyRefinedMesh(nb_segs_x, mesh_name):
   # Crée un seul maillage avec tous les rafinements
   mesh = amr.buildUnstructured()
   mesh.setName(mesh_name)
+  # Merge les noeuds confondus (à faire avant le conformize2D)
+  arr, areNodesMerged, newNbOfNodes = mesh.mergeNodes(1e-10)
   # Crée des polygones pour rendre conforme les mailles
   mesh.conformize2D(1e-10)
-  # Merge les noeuds confondus
-  arr, areNodesMerged, newNbOfNodes = mesh.mergeNodes(1e-10)
 
   # Crée les éléments 1D pour pouvoir imposer les conditions aux limites
   mesh_1d = mesh.computeSkin()
