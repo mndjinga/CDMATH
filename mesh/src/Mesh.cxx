@@ -978,6 +978,7 @@ Mesh::setMesh( void )
                 for(int icell=0; icell<nbCells; icell++)
                     cout<<workc[icell]<<", ";
                 cout<<endl;
+                throw CdmathException("Wrong mesh : nbCells>2 and spaceDim==meshDim");
             }
 			const int *workv=tmpNE+tmpNEI[id]+1;
 			int nbNodes= tmpNEI[id+1]-tmpNEI[id]-1;
