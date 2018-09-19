@@ -33,19 +33,6 @@ def solve(my_mesh,filename,resolution, meshType, testColor):
     start = time.time()
     test_desc["Mesh_type"]=meshType
     test_desc["Test_color"]=testColor
-
-    # Création d'un maillage cartésien du domaine carré [0,1]x[0,1], définition des bords
-    #====================================================================================
-    xmin=0
-    xmax=1
-    ymin=0
-    ymax=1
-    
-    eps=1e-6
-    my_mesh.setGroupAtPlan(0,0,eps,"DirichletBorder")#Bord GAUCHE
-    my_mesh.setGroupAtPlan(1,0,eps,"DirichletBorder")#Bord DROIT
-    my_mesh.setGroupAtPlan(0,1,eps,"DirichletBorder")#Bord BAS
-    my_mesh.setGroupAtPlan(1,1,eps,"DirichletBorder")#Bord HAUT
     
     nbCells = my_mesh.getNumberOfCells()
     
