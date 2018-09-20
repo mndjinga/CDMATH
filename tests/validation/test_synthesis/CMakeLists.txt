@@ -5,6 +5,7 @@ SET(SCRIPT
   ./test_synthesis_short.csv
   ./test_synthesis_all.xlsx
   ./test_synthesis_short.xlsx
+  ./Convergence_Poisson_FV5.ipynb
   )
 
 file(COPY ${SCRIPT} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
