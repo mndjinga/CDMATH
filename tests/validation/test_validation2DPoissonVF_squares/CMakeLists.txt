@@ -7,7 +7,6 @@ SET(PICTURES
   ../../ressources/2DCartesien/squareWithSquares_2.png
   ../../ressources/2DCartesien/squareWithSquares_3.png
   ../../ressources/2DCartesien/squareWithSquares_4.png
-  ../../ressources/2DCartesien/squareWithSquares_5.png
 )
 SET(NOTEBOOK
   Convergence_Poisson_FV5_SQUARE_squares.ipynb
