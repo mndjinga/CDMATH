@@ -6,6 +6,7 @@ from numpy import sign
 import cdmath
 import PV_routines
 import VTK_routines
+import sys
 
 rho0=1000#reference density
 c0=1500#reference sound speed
@@ -260,9 +261,8 @@ def solve_file( filename,meshName, resolution):
     
 
 if __name__ == """__main__""":
-    M1=cdmath.Mesh(0,1,20,0,1,20)
-    solve(M1,"SquareWithSquares",100)
-
-    filename = "meshSquare"
-    M1=cdmath.Mesh(filename+".med")
-    solve(M1,"SquareWithTriangles",100)
+	if len(sys.argv) >1 :
+		my_mesh = cdmath.Mesh(sys.argv[1])
+		solve(my_mesh,my_mesh.getName(),100)
+	else :
+		raise ValueError("WaveSystemPStag.py expects a mesh file name")
