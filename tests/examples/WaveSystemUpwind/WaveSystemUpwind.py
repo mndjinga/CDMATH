@@ -5,6 +5,7 @@ from math import sin, cos, pi, sqrt
 import cdmath
 import PV_routines
 import VTK_routines
+import sys
 
 rho0=1000#reference density
 c0=1500#reference sound speed
@@ -18,9 +19,8 @@ def initial_conditions_wave_system(my_mesh):
     rayon = 0.15
     xcentre = 0.5
     ycentre = 0.5
+    zcentre = 0.5
 
-    if(dim!=2):
-        raise ValueError("initial_conditions_wave_system: Mesh dimension should be 2")
 
     pressure_field = cdmath.Field("Pressure",            cdmath.CELLS, my_mesh, 1)
     velocity_field = cdmath.Field("Velocity",            cdmath.CELLS, my_mesh, 3)
@@ -36,7 +36,14 @@ def initial_conditions_wave_system(my_mesh):
 
         valX = (x - xcentre) * (x - xcentre)
         valY = (y - ycentre) * (y - ycentre)
-        val =  sqrt(valX + valY)
+
+        if(dim==2):
+            val =  sqrt(valX + valY)
+        if(dim==3):
+            z = my_mesh.getCell(i).z()
+            valZ = (z - zcentre) * (z - zcentre)
+            val =  sqrt(valX + valY + valZ)
+
         if val < rayon:
             pressure_field[i] = p0
             pass
@@ -143,7 +150,7 @@ def computeFluxes(U, SumFluxes):
             SumFluxes[j,i]=sumFluxCourant[i]/Cj.getMeasure()
 
 
-def WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq, outputFileName,resolution):
+def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, outputFileName,resolution):
     dim=my_mesh.getMeshDimension()
     nbCells = my_mesh.getNumberOfCells()
     
@@ -160,9 +167,9 @@ def WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq, outputFileName,resolu
 
     #sauvegarde de la donnée initiale
     pressure_field.setTime(time,it);
-    pressure_field.writeVTK("WaveSystem2DUpwind"+"_pressure");
+    pressure_field.writeVTK("WaveSystem"+str(dim)+"Upwind"+"_pressure");
     velocity_field.setTime(time,it);
-    velocity_field.writeVTK("WaveSystem2DUpwind"+"_velocity");
+    velocity_field.writeVTK("WaveSystem"+str(dim)+"Upwind"+"_velocity");
 
     dx_min=my_mesh.minRatioVolSurf()
 
@@ -196,9 +203,9 @@ def WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq, outputFileName,resolu
                         velocity_field[k,2]=U[k,3]/rho0
 
             pressure_field.setTime(time,it);
-            pressure_field.writeVTK("WaveSystem2DUpwind"+"_pressure",False);
+            pressure_field.writeVTK("WaveSystem"+str(dim)+"Upwind"+"_pressure",False);
             velocity_field.setTime(time,it);
-            velocity_field.writeVTK("WaveSystem2DUpwind"+"_velocity",False);
+            velocity_field.writeVTK("WaveSystem"+str(dim)+"Upwind"+"_velocity",False);
 
     print("-- Iter: " + str(it) + ", Time: " + str(time) + ", dt: " + str(dt))
     print "Variation temporelle relative : pressure ", maxVector[0]/p0 ,", velocity x", maxVector[1]/rho0 ,", velocity y", maxVector[2]/rho0
@@ -210,23 +217,23 @@ def WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq, outputFileName,resolu
         print "Régime stationnaire atteint au pas de temps ", it, ", t= ", time
 
         pressure_field.setTime(time,0);
-        pressure_field.writeVTK("WaveSystem2DUpwind"+"_pressure_Stat");
+        pressure_field.writeVTK("WaveSystem"+str(dim)+"Upwind"+"_pressure_Stat");
         velocity_field.setTime(time,0);
-        velocity_field.writeVTK("WaveSystem2DUpwind"+"_velocity_Stat");
+        velocity_field.writeVTK("WaveSystem"+str(dim)+"Upwind"+"_velocity_Stat");
 
         #Postprocessing : Extraction of the diagonal data
         diag_data_press=VTK_routines.Extract_field_data_over_line_to_numpyArray(pressure_field,[0,1,0],[1,0,0], resolution)    
         diag_data_vel  =VTK_routines.Extract_field_data_over_line_to_numpyArray(velocity_field,[0,1,0],[1,0,0], resolution)    
         #Postprocessing : save 2D picture
-        PV_routines.Save_PV_data_to_picture_file("WaveSystem2DUpwind"+"_pressure_Stat"+'_0.vtu',"Pressure",'CELLS',"WaveSystem2DUpwind"+"_pressure_Stat")
-        PV_routines.Save_PV_data_to_picture_file("WaveSystem2DUpwind"+"_velocity_Stat"+'_0.vtu',"Velocity",'CELLS',"WaveSystem2DUpwind"+"_velocity_Stat")
+        PV_routines.Save_PV_data_to_picture_file("WaveSystem"+str(dim)+"Upwind"+"_pressure_Stat"+'_0.vtu',"Pressure",'CELLS',"WaveSystem"+str(dim)+"Upwind"+"_pressure_Stat")
+        PV_routines.Save_PV_data_to_picture_file("WaveSystem"+str(dim)+"Upwind"+"_velocity_Stat"+'_0.vtu',"Velocity",'CELLS',"WaveSystem"+str(dim)+"Upwind"+"_velocity_Stat")
         
     else:
         print "Temps maximum Tmax= ", tmax, " atteint"
 
 
 def solve(my_mesh,filename,resolution):
-    print("Resolution of the 2D Wave system with Wall boundary conditions:")
+    print("Resolution of the Wave system with Wall boundary conditions:")
 
     # Problem data
     tmax = 1.
@@ -234,13 +241,16 @@ def solve(my_mesh,filename,resolution):
     cfl = 0.45
     output_freq = 100
 
-    WaveSystem2DVF(ntmax, tmax, cfl, my_mesh, output_freq, filename,resolution)
+    WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, filename,resolution)
 
 def solve_file( filename,resolution):
     my_mesh = cdmath.Mesh(filename+".med")
     solve(my_mesh, filename,resolution)
     
 if __name__ == """__main__""":
-    M=cdmath.Mesh("meshSquare.med")
-    solve(M,'SquareWithTrianglesCells',100)
+	if len(sys.argv) >1 :
+		my_mesh = cdmath.Mesh(sys.argv[1])
+		solve(my_mesh,my_mesh.getName(),100)
+	else :
+		raise ValueError("WaveSystemUpwind.py expects a mesh file name")
 
