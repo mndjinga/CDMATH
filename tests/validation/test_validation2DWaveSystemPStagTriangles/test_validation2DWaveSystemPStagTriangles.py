@@ -7,13 +7,13 @@ from math import log10, sqrt
     
 def test_validation2DWaveSystemPStagTriangles():
     #### 2D triangular meshes
-    meshList=['triangleMeshSquare_1','triangleMeshSquare_2','triangleMeshSquare_3','triangleMeshSquare_4','triangleMeshSquare_5','triangleMeshSquare_6']
+    meshList=['squareWithTriangles_1','squareWithTriangles_2','squareWithTriangles_3','squareWithTriangles_4','squareWithTriangles_5','squareWithTriangles_6']
     meshType="Unstructured triangles"
     testColor="Orange"
     nbMeshes=len(meshList)
     mesh_size_tab=[0]*nbMeshes
     mesh_path='../../ressources/2DTriangles/'
-    mesh_name='meshSquareWithTriangles'
+    mesh_name='squareWithTriangles'
     resolution=100
     curv_abs=np.linspace(0,sqrt(2),resolution+1)
 
@@ -66,7 +66,7 @@ def test_validation2DWaveSystemPStagTriangles():
     plt.xlabel('Position on diagonal line')
     plt.ylabel('Pressure on diagonal line')
     plt.title('Plot over diagonal line for stationary wave system \n with PStagggered scheme on 2D triangular meshes')
-    plt.savefig(mesh_name+'_Pressure_2DWaveSystemSquaresPStag_'+"PlotOverDiagonalLine.png")
+    plt.savefig(mesh_name+'_Pressure_2DWaveSystemPStagTriangles_'+"PlotOverDiagonalLine.png")
     plt.close()
 
     plt.clf()

@@ -4,16 +4,16 @@ import matplotlib.pyplot as plt
 import numpy as np
 from math import log10,sqrt
 
-def test_validation2DVF():
+def test_validation2DVF_triangles():
     ##### 2D FV triangle mesh
-    meshList=['triangleMeshSquare_1','triangleMeshSquare_2','triangleMeshSquare_3','triangleMeshSquare_4','triangleMeshSquare_5']
+    meshList=['squareWithTriangles_1','squareWithTriangles_2','squareWithTriangles_3','squareWithTriangles_4','squareWithTriangles_5']
     meshType="Unstructured triangles"
     testColor="Green"
     nbMeshes=len(meshList)
     error_tab=[0]*nbMeshes
     mesh_size_tab=[0]*nbMeshes
     mesh_path='../../ressources/2DTriangles/'
-    mesh_name='meshSquareWithTrianglesFV'
+    mesh_name='squareWithTriangles'
     diag_data=[0]*nbMeshes
     time_tab=[0]*nbMeshes
     resolution=100
@@ -48,7 +48,7 @@ def test_validation2DVF():
     b2=np.sum(error_tab)
     
     det=a1*a3-a2*a2
-    assert det!=0, 'test_validation2DVF_ns() : Make sure you use distinct meshes and at least two meshes'
+    assert det!=0, 'test_validation2DVF_triangles() : Make sure you use distinct meshes and at least two meshes'
     a=( a3*b1-a2*b2)/det
     b=(-a2*b1+a1*b2)/det
     
@@ -77,4 +77,4 @@ def test_validation2DVF():
     plt.close('all')
 
 if __name__ == """__main__""":
-    test_validation2DVF()
+    test_validation2DVF_triangles()

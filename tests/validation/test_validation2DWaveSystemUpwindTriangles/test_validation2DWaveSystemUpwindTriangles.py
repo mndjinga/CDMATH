@@ -6,7 +6,7 @@ from math import log10, sqrt
 
 def test_validation2DWaveSystemUpwindTriangles():
     #### 2D triangle mesh
-    meshList=['triangleMeshSquare_1','triangleMeshSquare_2','triangleMeshSquare_3','triangleMeshSquare_4','triangleMeshSquare_5','triangleMeshSquare_6']
+    meshList=['squareWithTriangles_1','squareWithTriangles_2','squareWithTriangles_3','squareWithTriangles_4','squareWithTriangles_5','squareWithTriangles_6']
     meshType="Unstructured triangles"
     testColor="Green"
     nbMeshes=len(meshList)
@@ -14,7 +14,7 @@ def test_validation2DWaveSystemUpwindTriangles():
     error_u_tab=[0]*nbMeshes
     mesh_size_tab=[0]*nbMeshes
     mesh_path='../../ressources/2DTriangles/'
-    mesh_name='meshSquareWithTriangles'
+    mesh_name='squareWithTriangles'
     diag_data_press=[0]*nbMeshes
     diag_data_vel=[0]*nbMeshes
     time_tab=[0]*nbMeshes
