@@ -2,9 +2,20 @@
 SET(SCRIPT
   ../scripts/Poisson2DVF/FiniteVolumes2DWithCDMATH.py
   )
+SET(PICTURES
+  ../../ressources/2DLocRefinedSquares/squareWithLocRefSquares_1.png
+  ../../ressources/2DLocRefinedSquares/squareWithLocRefSquares_2.png
+  ../../ressources/2DLocRefinedSquares/squareWithLocRefSquares_3.png
+  ../../ressources/2DLocRefinedSquares/squareWithLocRefSquares_4.png
+  ../../ressources/2DLocRefinedSquares/squareWithLocRefSquares_5.png
+  ../../ressources/2DLocRefinedSquares/squareWithLocRefSquares_6.png
+)
+SET(NOTEBOOK
+  Convergence_Poisson_FV5_SQUARE_loc_ref.ipynb
+)
 
-file(COPY ${SCRIPT} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
-install(FILES ${SCRIPT} DESTINATION share/validation/test_validation2DPoissonVF_loc_ref)
+file(COPY ${SCRIPT} ${PICTURES} ${NOTEBOOK} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+install(FILES ${SCRIPT} ${PICTURES} ${NOTEBOOK} DESTINATION share/validation/test_validation2DPoissonVF_loc_ref)
 
 if (CDMATH_WITH_PYTHON AND CDMATH_WITH_PETSC)
     ADD_TEST(validationPoisson_2DFV_loc_ref ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_validation2DPoissonVF_loc_ref.py)
