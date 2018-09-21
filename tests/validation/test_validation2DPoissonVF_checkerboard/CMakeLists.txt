@@ -2,9 +2,19 @@
 SET(SCRIPT
   ../scripts/Poisson2DVF/FiniteVolumes2DWithCDMATH.py
   )
+SET(PICTURES
+  ../../ressources/2DCheckerboard/checkerboard_4x4.png
+  ../../ressources/2DCheckerboard/checkerboard_8x8.png
+  ../../ressources/2DCheckerboard/checkerboard_16x16.png
+  ../../ressources/2DCheckerboard/checkerboard_32x32.png
+  ../../ressources/2DCheckerboard/checkerboard_64x64.png
+)
+SET(NOTEBOOK
+  Convergence_Poisson_FV5_SQUARE_checkerboard.ipynb
+)
 
-file(COPY ${SCRIPT} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
-install(FILES ${SCRIPT} DESTINATION share/validation/test_validation2DPoissonVF_checkerboard)
+file(COPY ${SCRIPT} ${PICTURES} ${NOTEBOOK} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+install(FILES ${SCRIPT} ${PICTURES} ${NOTEBOOK} DESTINATION share/validation/test_validation2DPoissonVF_checkerboard)
 
 if (CDMATH_WITH_PYTHON AND CDMATH_WITH_PETSC)
     ADD_TEST(validationPoisson_2DFV_checkerboard ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_validation2DPoissonVF_checkerboard.py)
