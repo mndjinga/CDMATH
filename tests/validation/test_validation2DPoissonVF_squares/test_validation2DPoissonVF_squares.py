@@ -6,7 +6,9 @@ from math import log10, sqrt
 
 def test_validation2DVF_s():
     ### 2D FV rectangular mesh
-    meshList=[11,51,151,201]
+#    meshList=[11,51,151,201]
+    meshList=['squareWithSquares_1','squareWithSquares_2','squareWithSquares_3','squareWithSquares_4','squareWithSquares_5']
+    mesh_path='../../ressources/2DCartesien/'
     meshType="Regular squares"
     testColor="Green"
     nbMeshes=len(meshList)
@@ -20,9 +22,11 @@ def test_validation2DVF_s():
     plt.close('all')
     i=0
     # Storing of numerical errors, mesh sizes and diagonal values
-    for nx in meshList:
-        my_mesh=cdmath.Mesh(0,1,nx,0,1,nx)
-        error_tab[i], mesh_size_tab[i], diag_data[i], min_sol_num, max_sol_num, time_tab[i] =FiniteVolumes2DWithCDMATH.solve(my_mesh,str(nx)+'x'+str(nx),resolution,meshType,testColor)
+    for filename in meshList:
+#    for nx in meshList:
+#        my_mesh=cdmath.Mesh(0,1,nx,0,1,nx)
+#        error_tab[i], mesh_size_tab[i], diag_data[i], min_sol_num, max_sol_num, time_tab[i] =FiniteVolumes2DWithCDMATH.solve(my_mesh,str(nx)+'x'+str(nx),resolution,meshType,testColor)
+        error_tab[i], mesh_size_tab[i], diag_data[i], min_sol_num, max_sol_num, time_tab[i] =FiniteVolumes2DWithCDMATH.solve_file(mesh_path+filename,resolution,meshType,testColor)
         assert min_sol_num>-0.01 
         assert max_sol_num<1.2
         plt.plot(curv_abs, diag_data[i], label= str(mesh_size_tab[i]) + ' cells')
