@@ -53,7 +53,6 @@ for i in range(nbNodes):
 	z = Ni.z()
 
 	my_RHSfield[i]=3*pi*pi*sin(pi*x)*sin(pi*y)*sin(pi*z)#mettre la fonction definie au second membre de l'edp
-	B[i]=sin(pi*x)*sin(pi*y)*sin(pi*z)
 	if my_mesh.isBorderNode(i): # Détection des noeuds frontière
 		boundaryNodes.append(i)
 		nbBoundaryNodes=nbBoundaryNodes+1
