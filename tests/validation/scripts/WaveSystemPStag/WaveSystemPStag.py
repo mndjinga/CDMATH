@@ -385,4 +385,4 @@ def solve_file( filename,meshName, resolution,scaling, meshType, testColor):
 if __name__ == """__main__""":
     M1=cdmath.Mesh(0,1,20,0,1,20)
     
-    solve(M1,"SquareWithSquares",100,"Regular squares","Green")
+    solve(M1,"SquareWithSquares",100,2,"Regular squares","Green")
