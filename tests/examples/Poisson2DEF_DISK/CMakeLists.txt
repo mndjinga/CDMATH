@@ -3,8 +3,8 @@ SET(MESH_MED
   ../../ressources/diskWithTriangles.med
   )
 
-file(COPY ${MESH_MED} DESTINATION ${CMAKE_BINARY_DIR}/tests/examples/Poisson2DEF_disk)
-install(FILES ${MESH_MED} DESTINATION share/examples/Poisson2DEF_disk)
+file(COPY ${MESH_MED} DESTINATION ${CMAKE_BINARY_DIR}/tests/examples/Poisson2DEF_DISK)
+install(FILES ${MESH_MED} DESTINATION share/examples/Poisson2DEF_DISK)
 
 if (CDMATH_WITH_PYTHON AND CDMATH_WITH_PETSC)
     ADD_TEST(ExamplePoisson_2DEF_DISK ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/FiniteElements2DWithCDMATH_disk.py)
