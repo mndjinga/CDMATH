@@ -76,5 +76,9 @@ def test_validation2DVF_ns_loc_ref():
     
     plt.close('all')
 
+    import os
+    os.system("jupyter-nbconvert --to html Convergence_Poisson_FV5_SQUARE_loc_ref.ipynb")
+    os.system("jupyter-nbconvert --to pdf Convergence_Poisson_FV5_SQUARE_loc_ref.ipynb")
+    
 if __name__ == """__main__""":
     test_validation2DVF_ns_loc_ref()

@@ -76,5 +76,8 @@ def test_validation2DVF_deformedQuadrangles():
     
     plt.close('all')
 
+    import os
+    os.system("jupyter-nbconvert --to html Convergence_Poisson_FV5_SQUARE_deformedQuadrangles.ipynb")
+
 if __name__ == """__main__""":
     test_validation2DVF_deformedQuadrangles()
