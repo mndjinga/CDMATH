@@ -155,7 +155,7 @@ def test_validation3DWaveSystemUpwind_cubes():
     convergence_synthesis["Max_vel_norm"]=max_vel
     convergence_synthesis["Final_time"]=t_final  
     convergence_synthesis["Final_time_step"]=ndt_final  
-    convergence_synthesis["Scheme_order"]=-a
+    convergence_synthesis["Scheme_order_vel"]=-au
     convergence_synthesis["Scaling_preconditioner"]="None"
 
     with open('Convergence_WaveSystem_3DFV_Upwind_'+mesh_name+'.json', 'w') as outfile:  
