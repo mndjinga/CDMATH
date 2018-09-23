@@ -9,7 +9,7 @@ convergence_synthesis=dict(FiniteVolumes2DWithCDMATH.test_desc)
 
 def test_validation2DVF_deformedQuadrangles():
     ##### 2D FV deformed quadrangles mesh
-    meshList=['mesh_quad_1','mesh_quad_2','mesh_quad_3','mesh_quad_4','mesh_quad_5','mesh_quad_6','mesh_quad_7']
+    meshList=['squareWithDeformedQuadrangles_1','squareWithDeformedQuadrangles_2','squareWithDeformedQuadrangles_3','squareWithDeformedQuadrangles_4','squareWithDeformedQuadrangles_5','squareWithDeformedQuadrangles_6','squareWithDeformedQuadrangles_7']
     meshType="Deformed quadrangles"
     testColor="Green"
     nbMeshes=len(meshList)
