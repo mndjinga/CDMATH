@@ -3,8 +3,12 @@ import FiniteVolumes3DWithCDMATH
 import matplotlib.pyplot as plt
 import numpy as np
 from math import log10, sqrt
+import sys
+import json
 
-def test_validation3DVF_s():
+convergence_synthesis=dict(FiniteVolumes3DWithCDMATH.test_desc)
+
+def test_validation3DVF_cubes():
     ### 3D FV rectangular mesh
     meshList=[11,21,41]
     meshType="Regular cubes"
@@ -78,5 +82,20 @@ def test_validation3DVF_s():
     
     plt.close('all')
 
+    convergence_synthesis["Mesh_names"]=meshList
+    convergence_synthesis["Mesh_type"]=meshType
+    #convergence_synthesis["Mesh_path"]=mesh_path
+    convergence_synthesis["Mesh_description"]=mesh_name
+    convergence_synthesis["Mesh_sizes"]=[10**x for x in mesh_size_tab]
+    convergence_synthesis["Space_dimension"]=3
+    convergence_synthesis["Mesh_dimension"]=3
+    convergence_synthesis["Mesh_cell_type"]="Cubes"
+    convergence_synthesis["Color"]=testColor
+    convergence_synthesis["Errors"]=[10**x for x in error_tab]
+    convergence_synthesis["Scheme_order"]=-a
+
+    with open('Convergence_Poisson_3DFV_'+mesh_name+'.json', 'w') as outfile:  
+        json.dump(convergence_synthesis, outfile)
+
 if __name__ == """__main__""":
-    test_validation3DVF_s()
+    test_validation3DVF_cubes()
