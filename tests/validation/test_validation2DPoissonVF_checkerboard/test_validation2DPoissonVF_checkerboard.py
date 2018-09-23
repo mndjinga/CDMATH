@@ -3,17 +3,20 @@ import FiniteVolumes2DWithCDMATH
 import matplotlib.pyplot as plt
 import numpy as np
 from math import log10, sqrt
+import json
+
+convergence_synthesis=dict(FiniteVolumes2DWithCDMATH.test_desc)
 
 def test_validation2DVF_checkerboard():
-    ##### 2D FV refined squares mesh
+    ##### 2D FV checkerboard mesh
     meshList=['checkerboard_4x4','checkerboard_8x8','checkerboard_16x16','checkerboard_32x32','checkerboard_64x64','checkerboard_128x128']
     meshType="Non conforming cartesian checkerboard"
-    testColor="Orange, dark squares. PB with mesh ?"
+    testColor="Green"
     nbMeshes=len(meshList)
     error_tab=[0]*nbMeshes
     mesh_size_tab=[0]*nbMeshes
     mesh_path='../../ressources/2DCheckerboard/'
-    mesh_name='meshSquareCheckerboardFV'
+    mesh_name='SquareWithCheckerboardRefinement'
     diag_data=[0]*nbMeshes
     time_tab=[0]*nbMeshes
     resolution=100
@@ -36,7 +39,7 @@ def test_validation2DVF_checkerboard():
     plt.xlabel('Position on diagonal line')
     plt.ylabel('Value on diagonal line')
     plt.title('Plot over diagonal line for finite volumes \n for Laplace operator on a 2D checkerboard mesh')
-    plt.savefig(mesh_name+"_2DPoissonVFCheckerboard_PlotOverDiagonalLine.png")
+    plt.savefig(mesh_name+"_2DPoissonVF_PlotOverDiagonalLine.png")
 
     # Least square linear regression
     # Find the best a,b such that f(x)=ax+b best approximates the convergence curve
@@ -63,7 +66,7 @@ def test_validation2DVF_checkerboard():
     plt.xlabel('log(number of cells)')
     plt.ylabel('log(error)')
     plt.title('Convergence of finite volumes for Laplace operator on a 2D checkerboard meshes')
-    plt.savefig(mesh_name+"_2DPoissonVFCheckerboard_ConvergenceCurve.png")
+    plt.savefig(mesh_name+"_2DPoissonVF_ConvergenceCurve.png")
 
     # Plot of computational time
     plt.close()
@@ -72,9 +75,24 @@ def test_validation2DVF_checkerboard():
     plt.xlabel('log(number of cells)')
     plt.ylabel('log(cpu time)')
     plt.title('Computational time of finite volumes \n for Laplace operator on a 2D checkerboard meshes')
-    plt.savefig(mesh_name+"_2DPoissonVFCheckerboard_ComputationalTime.png")
+    plt.savefig(mesh_name+"_2DPoissonVF_ComputationalTime.png")
     
     plt.close('all')
+
+    convergence_synthesis["Mesh_names"]=meshList
+    convergence_synthesis["Mesh_type"]=meshType
+    convergence_synthesis["Mesh_path"]=mesh_path
+    convergence_synthesis["Mesh_description"]=mesh_name
+    convergence_synthesis["Mesh_sizes"]=[10**x for x in mesh_size_tab]
+    convergence_synthesis["Space_dimension"]=2
+    convergence_synthesis["Mesh_dimension"]=2
+    convergence_synthesis["Mesh_cell_type"]="Squares"
+    convergence_synthesis["Color"]=testColor
+    convergence_synthesis["Errors"]=[10**x for x in error_tab]
+    convergence_synthesis["Scheme_order"]=-a
+
+    with open('Convergence_Poisson_2DVF_'+mesh_name+'.json', 'w') as outfile:  
+        json.dump(convergence_synthesis, outfile)
 
     import os
     os.system("jupyter-nbconvert --to html Convergence_Poisson_FV5_SQUARE_checkerboard.ipynb")

@@ -3,6 +3,9 @@ import FiniteElements2DWithCDMATH
 import matplotlib.pyplot as plt
 import numpy as np
 from math import log10, sqrt
+import json
+
+convergence_synthesis=dict(FiniteElements2DWithCDMATH.test_desc)
 
 def test_validation2DEF():
     #### 2D FE triangle mesh
@@ -13,7 +16,7 @@ def test_validation2DEF():
     error_tab=[0]*nbMeshes
     mesh_size_tab=[0]*nbMeshes
     mesh_path='../../ressources/2DTriangles/'
-    mesh_name='squareWithTriangles'
+    mesh_name='SquareWithTriangles'
     diag_data=[0]*nbMeshes
     time_tab=[0]*nbMeshes
     resolution=100
@@ -76,6 +79,21 @@ def test_validation2DEF():
     plt.savefig(mesh_name+"_2DPoissonEF_ComputationalTime.png")
     
     plt.close('all')
+
+    convergence_synthesis["Mesh_names"]=meshList
+    convergence_synthesis["Mesh_type"]=meshType
+    convergence_synthesis["Mesh_path"]=mesh_path
+    convergence_synthesis["Mesh_description"]=mesh_name
+    convergence_synthesis["Mesh_sizes"]=[10**x for x in mesh_size_tab]
+    convergence_synthesis["Space_dimension"]=2
+    convergence_synthesis["Mesh_dimension"]=2
+    convergence_synthesis["Mesh_cell_type"]="Triangles"
+    convergence_synthesis["Color"]=testColor
+    convergence_synthesis["Errors"]=[10**x for x in error_tab]
+    convergence_synthesis["Scheme_order"]=-a
+
+    with open('Convergence_Poisson_2DFE_'+mesh_name+'.json', 'w') as outfile:  
+        json.dump(convergence_synthesis, outfile)
 
 if __name__ == """__main__""":
     test_validation2DEF()

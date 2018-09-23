@@ -3,16 +3,20 @@ import WaveSystemPStag
 import matplotlib.pyplot as plt
 import numpy as np
 from math import log10, sqrt
+import sys
+import json
 
     
-def test_validation2DWaveSystemPStagSquares(scaling):
+def test_validation2DWaveSystemPStag_squares(scaling):
     #### 2D square mesh
-    meshList=[7,15,31,51,81]#
+    #meshList=[7,15,31,51,81]
+    meshList=['squareWithSquares_1','squareWithSquares_2','squareWithSquares_3','squareWithSquares_4','squareWithSquares_5']
+    mesh_path='../../ressources/2DCartesien/'
     meshType="Regular squares"
     testColor="Green"
     nbMeshes=len(meshList)
     mesh_size_tab=[0]*nbMeshes
-    mesh_name='meshSquareWithSquares'
+    mesh_name='SquareWithSquares'
     resolution=100
     curv_abs=np.linspace(0,sqrt(2),resolution+1)
 
@@ -39,18 +43,17 @@ def test_validation2DWaveSystemPStagSquares(scaling):
 
     plt.close('all')
     i=0
-
+    cfl=0.5
     # Storing of numerical errors, mesh sizes and diagonal values
-    for nx in meshList:
-        my_mesh=cdmath.Mesh(0,1,nx,0,1,nx)
+    for filename in meshList:
         if(scaling==0):
-            error_p_tab_noscaling[i], error_u_tab_noscaling[i], mesh_size_tab[i], t_final_noscaling[i], ndt_final_noscaling[i], max_vel_noscaling[i], diag_data_press_noscaling[i], diag_data_vel_noscaling[i], time_tab_noscaling[i], cond_number_noscaling[i] =WaveSystemPStag.solve(my_mesh, mesh_name+str(my_mesh.getNumberOfCells()), resolution,scaling,meshType,testColor)
+            error_p_tab_noscaling[i], error_u_tab_noscaling[i], mesh_size_tab[i], t_final_noscaling[i], ndt_final_noscaling[i], max_vel_noscaling[i], diag_data_press_noscaling[i], diag_data_vel_noscaling[i], time_tab_noscaling[i], cond_number_noscaling[i] =WaveSystemPStag.solve_file(mesh_path+filename, mesh_name, resolution,scaling,meshType,testColor,cfl)
             assert max_vel_noscaling[i]>0.999 and max_vel_noscaling[i]<1.03
             error_p_tab_noscaling[i]=log10(error_p_tab_noscaling[i])
             error_u_tab_noscaling[i]=log10(error_u_tab_noscaling[i])
             time_tab_noscaling[i]=log10(time_tab_noscaling[i])
         else:
-            error_p_tab_scaling[i],   error_u_tab_scaling[i],   mesh_size_tab[i],  t_final_scaling[i],   ndt_final_scaling[i],  max_vel_scaling[i],   diag_data_press_scaling[i],   diag_data_vel_scaling[i],   time_tab_scaling[i],   cond_number_scaling[i] =WaveSystemPStag.solve(my_mesh, mesh_name+str(my_mesh.getNumberOfCells()), resolution,2,meshType,testColor)
+            error_p_tab_scaling[i],   error_u_tab_scaling[i],   mesh_size_tab[i],  t_final_scaling[i],   ndt_final_scaling[i],  max_vel_scaling[i],   diag_data_press_scaling[i],   diag_data_vel_scaling[i],   time_tab_scaling[i],   cond_number_scaling[i] =WaveSystemPStag.solve_file(mesh_path+filename, mesh_name, resolution,2,meshType,testColor,cfl)
             assert max_vel_scaling[i]>0.999 and max_vel_scaling[i]<1.03
             error_p_tab_scaling[i]=log10(error_p_tab_scaling[i])
             error_u_tab_scaling[i]=log10(error_u_tab_scaling[i])
@@ -197,9 +200,38 @@ def test_validation2DWaveSystemPStagSquares(scaling):
 
     plt.close('all')
 
+    convergence_synthesis["Study_name"]="Wave system"
+    convergence_synthesis["PDE_is_stationary"]=False
+    convergence_synthesis["PDE_search_for_stationary_solution"]=True
+    convergence_synthesis["Numerical_method_name"]="Upwind"
+    convergence_synthesis["Numerical_method_space_discretization"]="Finite volumes"
+    convergence_synthesis["Numerical_method_time_discretization"]="Implicit"
+    convergence_synthesis["Initial_data"]="Constant pressure, divergence free velocity"
+    convergence_synthesis["Boundary_conditions"]="Periodic"
+    convergence_synthesis["Numerical_parameter_cfl"]=cfl
+    convergence_synthesis["Space_dimension"]=2
+    convergence_synthesis["Mesh_dimension"]=2
+    convergence_synthesis["Mesh_names"]=meshList
+    convergence_synthesis["Mesh_type"]=meshType
+    convergence_synthesis["Mesh_path"]=mesh_path
+    convergence_synthesis["Mesh_description"]=mesh_name
+    convergence_synthesis["Mesh_sizes"]=mesh_size_tab
+    convergence_synthesis["Mesh_cell_type"]="Squares"
+    convergence_synthesis["Study_color"]=testColor
+    convergence_synthesis["Numerical_error_velocity"]=error_u_tab
+    convergence_synthesis["Numerical_error_pressure"]=error_p_tab
+    convergence_synthesis["Max_vel_norm"]=max_vel
+    convergence_synthesis["Final_time"]=t_final  
+    convergence_synthesis["Final_time_step"]=ndt_final  
+    convergence_synthesis["Scheme_order"]=-a
+    convergence_synthesis["Scaling_preconditioner"]=scaling
+
+    with open('Convergence_WaveSystem_2DFV_PStag_'+mesh_name+'.json', 'w') as outfile:  
+        json.dump(convergence_synthesis, outfile)
+
 if __name__ == """__main__""":
-	if len(sys.argv) >1 :
-		scaling = sys.argv[1]
-		    test_validation2DWaveSystemPStagSquares(scaling)
-	else :
-		raise ValueError("test_validation2DWaveSystemPStagSquares.py expects a mesh file name")
+    if len(sys.argv) >1 :
+        scaling = sys.argv[1]
+        test_validation2DWaveSystemPStag_squares(scaling)
+    else :
+        raise ValueError("test_validation2DWaveSystemPStagSquares.py expects a mesh file name")

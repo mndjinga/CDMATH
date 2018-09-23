@@ -3,18 +3,20 @@ import WaveSystemUpwind
 import matplotlib.pyplot as plt
 import numpy as np
 from math import log10, sqrt
+import sys
+import json
 
     
-def test_validation3DWaveSystemUpwindCubes():
+def test_validation3DWaveSystemUpwind_cubes():
     #### 3D cubic mesh
-    meshList=[11,21,31]
+    meshList=[6,11,21]
     meshType="Regular cubes"
     testColor="Green"
     nbMeshes=len(meshList)
     error_p_tab=[0]*nbMeshes
     error_u_tab=[0]*nbMeshes
     mesh_size_tab=[0]*nbMeshes
-    mesh_name='meshCubeWithCuboids3D'
+    mesh_name='CubeWithCubes'
     diag_data_press=[0]*nbMeshes
     diag_data_vel=[0]*nbMeshes
     time_tab=[0]*nbMeshes
@@ -23,13 +25,15 @@ def test_validation3DWaveSystemUpwindCubes():
     max_vel=[0]*nbMeshes
     resolution=100
     curv_abs=np.linspace(0,sqrt(3),resolution+1)
+
     plt.close('all')
     i=0
-
+    cfl=1./3
+    
     # Storing of numerical errors, mesh sizes and diagonal values
     for nx in meshList:
         my_mesh=cdmath.Mesh(0,1,nx,0,1,nx,0,1,nx)
-        error_p_tab[i], error_u_tab[i], mesh_size_tab[i], t_final[i], ndt_final[i], max_vel[i], diag_data_press[i], diag_data_vel[i], time_tab[i] =WaveSystemUpwind.solve(my_mesh, mesh_name+str(my_mesh.getNumberOfCells()), resolution,meshType,testColor)
+        error_p_tab[i], error_u_tab[i], mesh_size_tab[i], t_final[i], ndt_final[i], max_vel[i], diag_data_press[i], diag_data_vel[i], time_tab[i] =WaveSystemUpwind.solve(my_mesh, mesh_name+str(my_mesh.getNumberOfCells()), resolution,meshType,testColor,cfl)
         print max_vel[i]
         #assert max_vel[i]>1.95 and max_vel[i]<2
         i=i+1
@@ -41,7 +45,7 @@ def test_validation3DWaveSystemUpwindCubes():
     plt.xlabel('Position on diagonal line')
     plt.ylabel('Pressure on diagonal line')
     plt.title('Plot over diagonal line for stationary wave system \n on 3D cube meshes')
-    plt.savefig(mesh_name+'_Pressure_3DWaveSystemCubes_'+"PlotOverDiagonalLine.png")
+    plt.savefig(mesh_name+'_Pressure_3DWaveSystem_'+"PlotOverDiagonalLine.png")
     plt.close()
 
     plt.clf()
@@ -51,7 +55,7 @@ def test_validation3DWaveSystemUpwindCubes():
     plt.xlabel('Position on diagonal line')
     plt.ylabel('Velocity on diagonal line')
     plt.title('Plot over diagonal line for the stationary wave system \n on 3D cube meshes')
-    plt.savefig(mesh_name+"_Velocity_3DWaveSystemCubes_"+"PlotOverDiagonalLine.png")    
+    plt.savefig(mesh_name+"_Velocity_3DWaveSystem_"+"PlotOverDiagonalLine.png")    
     plt.close()
 
     # Least square linear regression
@@ -62,7 +66,7 @@ def test_validation3DWaveSystemUpwindCubes():
     a3=nbMeshes
     
     det=a1*a3-a2*a2
-    assert det!=0, 'test_validation3DWaveSystemCubesFV() : Make sure you use distinct meshes and at least two meshes'
+    assert det!=0, 'test_validation3DWaveSystem_cubes() : Make sure you use distinct meshes and at least two meshes'
 
     b1u=np.dot(error_u_tab,mesh_size_tab)   
     b2u=np.sum(error_u_tab)
@@ -78,7 +82,7 @@ def test_validation3DWaveSystemUpwindCubes():
     plt.xlabel('number of cells')
     plt.ylabel('Max time steps for stationary regime')
     plt.title('Number of times steps required \n for the stationary Wave System on 3D cube meshes')
-    plt.savefig(mesh_name+"_3DWaveSystemCubes_"+"TimeSteps.png")
+    plt.savefig(mesh_name+"_3DWaveSystem_"+"TimeSteps.png")
     
     # Plot of number of stationary time
     plt.close()
@@ -87,7 +91,7 @@ def test_validation3DWaveSystemUpwindCubes():
     plt.xlabel('number of cells')
     plt.ylabel('Max time for stationary regime')
     plt.title('Simulated time  \n for the stationary Wave System on 3D cube meshes')
-    plt.savefig(mesh_name+"_3DWaveSystemCubes_"+"TimeFinal.png")
+    plt.savefig(mesh_name+"_3DWaveSystem_"+"TimeFinal.png")
     
     # Plot of number of maximal velocity norm
     plt.close()
@@ -96,7 +100,7 @@ def test_validation3DWaveSystemUpwindCubes():
     plt.xlabel('number of cells')
     plt.ylabel('Max velocity norm')
     plt.title('Maximum velocity norm  \n for the stationary Wave System on 3D cube meshes')
-    plt.savefig(mesh_name+"_3DWaveSystemCubes_"+"MaxVelNorm.png")
+    plt.savefig(mesh_name+"_3DWaveSystem_"+"MaxVelNorm.png")
     
     # Plot of convergence curves
     plt.close()
@@ -105,7 +109,7 @@ def test_validation3DWaveSystemUpwindCubes():
     plt.xlabel('number of cells')
     plt.ylabel('|error p|')
     plt.title('Convergence of finite volumes \n for the stationary Wave System on 3D cube meshes')
-    plt.savefig(mesh_name+"_Pressure_3DWaveSystemCubes_"+"ConvergenceCurve.png")
+    plt.savefig(mesh_name+"_Pressure_3DWaveSystem_"+"ConvergenceCurve.png")
     
     plt.close()
     plt.plot(mesh_size_tab, error_u_tab, label='log(|error on stationary velocity|)')
@@ -113,7 +117,7 @@ def test_validation3DWaveSystemUpwindCubes():
     plt.xlabel('number of cells')
     plt.ylabel('|error u|')
     plt.title('Convergence of finite volumes \n for the stationary Wave System on 3D cube meshes')
-    plt.savefig(mesh_name+"_Velocity_3DWaveSystemCubes_"+"ConvergenceCurve.png")
+    plt.savefig(mesh_name+"_Velocity_3DWaveSystem_"+"ConvergenceCurve.png")
     
     # Plot of computational time
     plt.close()
@@ -122,9 +126,40 @@ def test_validation3DWaveSystemUpwindCubes():
     plt.xlabel('number of cells')
     plt.ylabel('cpu time')
     plt.title('Computational time of finite volumes \n for the stationary Wave System on 3D cube meshes')
-    plt.savefig(mesh_name+"3DWaveSystemCubes_ComputationalTimeSquares.png")
+    plt.savefig(mesh_name+"3DWaveSystem_ComputationalTime.png")
 
     plt.close('all')
 
+    convergence_synthesis={}
+
+    convergence_synthesis["Study_name"]="Wave system"
+    convergence_synthesis["PDE_is_stationary"]=False
+    convergence_synthesis["PDE_search_for_stationary_solution"]=True
+    convergence_synthesis["Numerical_method_name"]="Upwind"
+    convergence_synthesis["Numerical_method_space_discretization"]="Finite volumes"
+    convergence_synthesis["Numerical_method_time_discretization"]="Implicit"
+    convergence_synthesis["Initial_data"]="Constant pressure, divergence free velocity"
+    convergence_synthesis["Boundary_conditions"]="Periodic"
+    convergence_synthesis["Numerical_parameter_cfl"]=cfl
+    convergence_synthesis["Space_dimension"]=3
+    convergence_synthesis["Mesh_dimension"]=3
+    convergence_synthesis["Mesh_names"]=meshList
+    convergence_synthesis["Mesh_type"]=meshType
+    #convergence_synthesis["Mesh_path"]=mesh_path
+    convergence_synthesis["Mesh_description"]=mesh_name
+    convergence_synthesis["Mesh_sizes"]=mesh_size_tab
+    convergence_synthesis["Mesh_cell_type"]="Cubes"
+    convergence_synthesis["Study_color"]=testColor
+    convergence_synthesis["Numerical_error_velocity"]=error_u_tab
+    convergence_synthesis["Numerical_error_pressure"]=error_p_tab
+    convergence_synthesis["Max_vel_norm"]=max_vel
+    convergence_synthesis["Final_time"]=t_final  
+    convergence_synthesis["Final_time_step"]=ndt_final  
+    convergence_synthesis["Scheme_order"]=-a
+    convergence_synthesis["Scaling_preconditioner"]="None"
+
+    with open('Convergence_WaveSystem_3DFV_Upwind_'+mesh_name+'.json', 'w') as outfile:  
+        json.dump(convergence_synthesis, outfile)
+
 if __name__ == """__main__""":
-    test_validation3DWaveSystemUpwindCubes()
+    test_validation3DWaveSystemUpwind_cubes()

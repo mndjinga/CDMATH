@@ -3,10 +3,13 @@ import FiniteVolumes3DWithCDMATH
 import matplotlib.pyplot as plt
 import numpy as np
 from math import log10, sqrt
+import json
+
+convergence_synthesis=dict(FiniteVolumes3DWithCDMATH.test_desc)
 
 def test_validation3DVF_checkerboard():
     #### 3D FV cartesian non conforming mesh
-    meshList=['checkerboard_2x2x2','checkerboard_4x4x4','checkerboard_8x8x8','checkerboard_16x16x16']
+    meshList=['cubeWithCheckerboardCubes_2x2x2','cubeWithCheckerboardCubes_4x4x4','cubeWithCheckerboardCubes_8x8x8','cubeWithCheckerboardCubes_16x16x16']
     meshType="Non conforming cartesian checkerboard"
     testColor="Orange, BC violated. PB with mesh ?"
     nbMeshes=len(meshList)
@@ -14,7 +17,7 @@ def test_validation3DVF_checkerboard():
     mesh_size_tab=[0]*nbMeshes
     time_tab=[0]*nbMeshes
     mesh_path='../../ressources/3DCheckerboard/'
-    mesh_name='meshCubeCheckerboardFV'
+    mesh_name='CubeWithCheckerboardCubes'
     diag_data=[0]*nbMeshes
     resolution=100
     curv_abs=np.linspace(0,sqrt(3),resolution+1)
@@ -36,7 +39,7 @@ def test_validation3DVF_checkerboard():
     plt.xlabel('Position on diagonal line')
     plt.ylabel('Value on diagonal line')
     plt.title('Plot over diagonal line for finite volumes \n for Laplace operator on 3D checkerboard meshes')
-    plt.savefig(mesh_name+"_3DPoissonVFCheckerboard_PlotOverDiagonalLine.png")
+    plt.savefig(mesh_name+"_3DPoissonVF_PlotOverDiagonalLine.png")
 
     # Least square linear regression
     # Find the best a,b such that f(x)=ax+b best approximates the convergence curve
@@ -63,7 +66,7 @@ def test_validation3DVF_checkerboard():
     plt.xlabel('log(number of cells)')
     plt.ylabel('log(error)')
     plt.title('Convergence of finite volumes for \n Laplace operator on 3D checkerboard meshes')
-    plt.savefig(mesh_name+"_3DPoissonVFCheckerboard_ConvergenceCurve.png")
+    plt.savefig(mesh_name+"_3DPoissonVF_ConvergenceCurve.png")
 
     # Plot of computational time
     plt.close()
@@ -72,9 +75,24 @@ def test_validation3DVF_checkerboard():
     plt.xlabel('log(number of cells)')
     plt.ylabel('log(cpu time)')
     plt.title('Computational time of finite volumes \n for Laplace operator on 3D checkerboard meshes')
-    plt.savefig(mesh_name+"_3DPoissonVFCheckerboard_ComputationalTime.png")
+    plt.savefig(mesh_name+"_3DPoissonVF_ComputationalTime.png")
     
     plt.close('all')
+
+    convergence_synthesis["Mesh_names"]=meshList
+    convergence_synthesis["Mesh_type"]=meshType
+    convergence_synthesis["Mesh_path"]=mesh_path
+    convergence_synthesis["Mesh_description"]=mesh_name
+    convergence_synthesis["Mesh_sizes"]=[10**x for x in mesh_size_tab]
+    convergence_synthesis["Space_dimension"]=3
+    convergence_synthesis["Mesh_dimension"]=3
+    convergence_synthesis["Mesh_cell_type"]="Cubes"
+    convergence_synthesis["Color"]=testColor
+    convergence_synthesis["Errors"]=[10**x for x in error_tab]
+    convergence_synthesis["Scheme_order"]=-a
+
+    with open('Convergence_Poisson_3DFV_'+mesh_name+'.json', 'w') as outfile:  
+        json.dump(convergence_synthesis, outfile)
 
 if __name__ == """__main__""":
     test_validation3DVF_checkerboard()

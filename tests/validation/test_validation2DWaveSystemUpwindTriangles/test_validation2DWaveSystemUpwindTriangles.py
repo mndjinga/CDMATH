@@ -3,6 +3,8 @@ import WaveSystemUpwind
 import matplotlib.pyplot as plt
 import numpy as np
 from math import log10, sqrt
+import sys
+import json
 
 def test_validation2DWaveSystemUpwindTriangles():
     #### 2D triangle mesh
@@ -23,12 +25,13 @@ def test_validation2DWaveSystemUpwindTriangles():
     max_vel=[0]*nbMeshes
     resolution=100
     curv_abs=np.linspace(0,sqrt(2),resolution+1)
-    plt.close('all')
 
+    plt.close('all')
     i=0
+    cfl=0.5
     # Storing of numerical errors, mesh sizes and diagonal values
     for filename in meshList:
-        error_p_tab[i], error_u_tab[i], mesh_size_tab[i], t_final[i], ndt_final[i], max_vel[i], diag_data_press[i], diag_data_vel[i], time_tab[i] =WaveSystemUpwind.solve_file(mesh_path+filename, mesh_name, resolution,meshType,testColor)
+        error_p_tab[i], error_u_tab[i], mesh_size_tab[i], t_final[i], ndt_final[i], max_vel[i], diag_data_press[i], diag_data_vel[i], time_tab[i] =WaveSystemUpwind.solve_file(mesh_path+filename, mesh_name, resolution,meshType,testColor,cfl)
         assert max_vel[i]>0.94 and max_vel[i]<1
         i=i+1
     
@@ -131,5 +134,36 @@ def test_validation2DWaveSystemUpwindTriangles():
     
     plt.close('all')
     
+    convergence_synthesis={}
+
+    convergence_synthesis["Study_name"]="Wave system"
+    convergence_synthesis["PDE_is_stationary"]=False
+    convergence_synthesis["PDE_search_for_stationary_solution"]=True
+    convergence_synthesis["Numerical_method_name"]="Upwind"
+    convergence_synthesis["Numerical_method_space_discretization"]="Finite volumes"
+    convergence_synthesis["Numerical_method_time_discretization"]="Implicit"
+    convergence_synthesis["Initial_data"]="Constant pressure, divergence free velocity"
+    convergence_synthesis["Boundary_conditions"]="Periodic"
+    convergence_synthesis["Numerical_parameter_cfl"]=cfl
+    convergence_synthesis["Space_dimension"]=2
+    convergence_synthesis["Mesh_dimension"]=2
+    convergence_synthesis["Mesh_names"]=meshList
+    convergence_synthesis["Mesh_type"]=meshType
+    convergence_synthesis["Mesh_path"]=mesh_path
+    convergence_synthesis["Mesh_description"]=mesh_name
+    convergence_synthesis["Mesh_sizes"]=mesh_size_tab
+    convergence_synthesis["Mesh_cell_type"]="Triangles"
+    convergence_synthesis["Study_color"]=testColor
+    convergence_synthesis["Numerical_error_velocity"]=error_u_tab
+    convergence_synthesis["Numerical_error_pressure"]=error_p_tab
+    convergence_synthesis["Max_vel_norm"]=max_vel
+    convergence_synthesis["Final_time"]=t_final  
+    convergence_synthesis["Final_time_step"]=ndt_final  
+    convergence_synthesis["Scheme_order"]=-a
+    convergence_synthesis["Scaling_preconditioner"]="None"
+
+    with open('Convergence_WaveSystem_2DFV_Upwind_'+mesh_name+'.json', 'w') as outfile:  
+        json.dump(convergence_synthesis, outfile)
+
 if __name__ == """__main__""":
     test_validation2DWaveSystemUpwindTriangles()
