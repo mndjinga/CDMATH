@@ -176,6 +176,8 @@ def test_validation2DWaveSystemPStag_triangles(scaling):
 
     plt.close('all')
 
+    convergence_synthesis={}
+
     convergence_synthesis["Study_name"]="Wave system"
     convergence_synthesis["PDE_is_stationary"]=False
     convergence_synthesis["PDE_search_for_stationary_solution"]=True

@@ -36,7 +36,7 @@ def test_validation2DWaveSystemPStag_squares(scaling):
     # Storing of numerical errors, mesh sizes and diagonal values
     for filename in meshList:
         error_p_tab[i], error_u_tab[i], mesh_size_tab[i], t_final[i], ndt_final[i], max_vel[i], diag_data_press[i], diag_data_vel[i], time_tab[i], cond_number[i] =WaveSystemPStag.solve_file(mesh_path+filename, mesh_name, resolution,scaling,meshType,testColor,cfl)
-        assert max_vel[i]>0.999 and max_vel[i]<1.03
+        assert max_vel[i]>0.8 and max_vel[i]<1.03
         error_p_tab[i]=log10(error_p_tab[i])
         error_u_tab[i]=log10(error_u_tab[i])
         time_tab[i]=log10(time_tab[i])
@@ -175,6 +175,8 @@ def test_validation2DWaveSystemPStag_squares(scaling):
     plt.savefig(mesh_name+"2DWaveSystemSquaresPStag_"+"scaling"+str(scaling)+"_ComputationalTimeSquares.png")
 
     plt.close('all')
+
+    convergence_synthesis={}
 
     convergence_synthesis["Study_name"]="Wave system"
     convergence_synthesis["PDE_is_stationary"]=False

@@ -194,7 +194,7 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,sc
                 divMat.addValue(j*(dim+1)+1+i,j*(dim+1)+1+i,1)
 
     if( scaling==0):
-        LS=cdmath.LinearSolver(divMat,Un,iterGMRESMax, precision, "GMRES","LU")
+        LS=cdmath.LinearSolver(divMat,Un,iterGMRESMax, precision, "GMRES","ILU")
     else:
         LS=cdmath.LinearSolver(divMat,Vn,iterGMRESMax, precision, "GMRES","ILU")
     LS.setComputeConditionNumber()
@@ -290,7 +290,7 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,sc
     elif(isStationary):
         print "Régime stationnaire atteint au pas de temps ", it, ", t= ", time
         assert (total_pressure_initial-pressure_field.integral()).norm()/p0<precision
-        print (total_velocity_initial-velocity_field.integral()).norm()/velocity_field.normL1().norm(), precision
+        #print (total_velocity_initial-velocity_field.integral()).norm()/velocity_field.normL1().norm(), precision
         assert (total_velocity_initial-velocity_field.integral()).norm()/velocity_field.normL1().norm()<precision
         print "------------------------------------------------------------------------------------"
 
@@ -336,7 +336,7 @@ def solve(my_mesh,meshName,resolution,scaling, meshType, testColor,cfl):
 
     # Problem data
     tmax = 1000.
-    ntmax = 1#0000
+    ntmax = 10000
     output_freq = 100
 
     error_p, error_u, nbCells, t_final, ndt_final, max_vel, diag_data_press, diag_data_vel, cond_number = WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,scaling)
