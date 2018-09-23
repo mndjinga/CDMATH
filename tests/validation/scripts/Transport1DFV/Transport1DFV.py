@@ -239,7 +239,7 @@ def solve(my_mesh,resolution):
     test_desc["Computational_time_taken_by_run"]=end-start
     test_desc["Part_of_mesh_convergence_analysis"]=True
 
-    with open('Transport'+str(my_mesh.getMeshDimension())+'DFV_'+meshName+ "Cells.json", 'w') as outfile:  
+    with open('test_Transport'+str(my_mesh.getMeshDimension())+'DFV_'+meshName+ "Cells.json", 'w') as outfile:  
         json.dump(test_desc, outfile)
 
 if __name__ == """__main__""":
