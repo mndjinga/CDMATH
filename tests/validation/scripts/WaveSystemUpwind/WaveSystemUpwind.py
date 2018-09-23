@@ -337,7 +337,7 @@ def solve(my_mesh,meshName,resolution, meshType, testColor):
     test_desc["Absolute_error"]=max(error_p*p0,error_u)
     test_desc["Relative_error"]=max(error_p,error_u)
 
-    with open('WaveSystem'+str(my_mesh.getMeshDimension())+'DUpwind_'+meshName+ "Cells.json", 'w') as outfile:  
+    with open('test_WaveSystem'+str(my_mesh.getMeshDimension())+'DUpwind_'+meshName+ "Cells.json", 'w') as outfile:  
         json.dump(test_desc, outfile)
 
     return error_p, error_u, nbCells, t_final, ndt_final, max_vel, diag_data_press, diag_data_vel, end - start
