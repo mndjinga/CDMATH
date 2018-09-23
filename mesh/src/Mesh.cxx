@@ -314,7 +314,7 @@ Mesh::getIndexFacePeriodic(int indexFace) const
     int pos=-1;
     int ifaceOk=-1;
 
-    if(_spaceDim==2)
+    if(_meshDim==2)
     {
         double x=_faces[indexFace].x();
         double y=_faces[indexFace].y();
@@ -372,7 +372,7 @@ Mesh::getIndexFacePeriodic(int indexFace) const
             throw CdmathException("Mesh::getIndexFacePeriodic: Periodic face found but normal vectors are different");
         }
     }
-    else if(_spaceDim==3)
+    else if(_meshDim==3)
     {
         double x=_faces[indexFace].x();
         double y=_faces[indexFace].y();
