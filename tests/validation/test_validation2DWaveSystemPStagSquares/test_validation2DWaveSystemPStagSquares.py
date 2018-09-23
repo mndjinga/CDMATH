@@ -208,7 +208,7 @@ def test_validation2DWaveSystemPStag_squares(scaling):
 
 if __name__ == """__main__""":
     if len(sys.argv) >1 :
-        scaling = sys.argv[1]
+        scaling = int(sys.argv[1])
         test_validation2DWaveSystemPStag_squares(scaling)
     else :
         raise ValueError("test_validation2DWaveSystemPStagSquares.py expects a mesh file name")

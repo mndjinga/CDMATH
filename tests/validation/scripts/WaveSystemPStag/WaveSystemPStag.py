@@ -87,7 +87,7 @@ def computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt,scaling):
             Fk = my_mesh.getFace(indexFace);
             for i in range(dim) :
                 normal[i] = Cj.getNormalVector(k, i);#normale sortante
-
+            
             signun=sign(normal*v0)
             Am=jacobianMatrices( normal,dt*Fk.getMeasure()/Cj.getMeasure(),signun,scaling);
 
@@ -192,9 +192,9 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,sc
             divMat.addValue(j*(dim+1),j*(dim+1),1/(c0*c0))#/(c0*c0)
             for i in range(dim):
                 divMat.addValue(j*(dim+1)+1+i,j*(dim+1)+1+i,1)
-    
+
     if( scaling==0):
-        LS=cdmath.LinearSolver(divMat,Un,iterGMRESMax, precision, "GMRES","ILU")
+        LS=cdmath.LinearSolver(divMat,Un,iterGMRESMax, precision, "GMRES","LU")
     else:
         LS=cdmath.LinearSolver(divMat,Vn,iterGMRESMax, precision, "GMRES","ILU")
     LS.setComputeConditionNumber()
@@ -331,12 +331,12 @@ def solve(my_mesh,meshName,resolution,scaling, meshType, testColor,cfl):
     print "Initial data : ", test_initial_data
     print "Boundary conditions : ",test_bc
     print "Mesh name : ",meshName , ", ", my_mesh.getNumberOfCells(), " cells"
-    if( scaling):
+    if( scaling>0):
         print "Use of scaling strategy for better preconditioning"
 
     # Problem data
     tmax = 1000.
-    ntmax = 10000
+    ntmax = 1#0000
     output_freq = 100
 
     error_p, error_u, nbCells, t_final, ndt_final, max_vel, diag_data_press, diag_data_vel, cond_number = WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,scaling)
