@@ -316,7 +316,7 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,sc
         raise ValueError("Maximum time reached : Stationary state not found !!!!!!!")
 
 
-def solve(my_mesh,meshName,resolution,scaling, meshType, testColor):
+def solve(my_mesh,meshName,resolution,scaling, meshType, testColor,cfl):
     start = time.time()
     test_desc["Mesh_type"]=meshType
     test_desc["Test_color"]=testColor
@@ -337,7 +337,6 @@ def solve(my_mesh,meshName,resolution,scaling, meshType, testColor):
     # Problem data
     tmax = 1000.
     ntmax = 10000
-    cfl = 1./my_mesh.getSpaceDimension()
     output_freq = 100
 
     error_p, error_u, nbCells, t_final, ndt_final, max_vel, diag_data_press, diag_data_vel, cond_number = WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,scaling)
@@ -376,13 +375,13 @@ def solve(my_mesh,meshName,resolution,scaling, meshType, testColor):
     
     return error_p, error_u, nbCells, t_final, ndt_final, max_vel, diag_data_press, diag_data_vel, end - start, cond_number
 
-def solve_file( filename,meshName, resolution,scaling, meshType, testColor):
+def solve_file( filename,meshName, resolution,scaling, meshType, testColor,cfl):
     my_mesh = cdmath.Mesh(filename+".med")
 
-    return solve(my_mesh, meshName+str(my_mesh.getNumberOfCells()),resolution,scaling, meshType, testColor)
+    return solve(my_mesh, meshName+str(my_mesh.getNumberOfCells()),resolution,scaling, meshType, testColor,cfl)
     
 
 if __name__ == """__main__""":
     M1=cdmath.Mesh(0,1,20,0,1,20)
-    
-    solve(M1,"SquareWithSquares",100,2,"Regular squares","Green")
+    cfl=0.5
+    solve(M1,"SquareWithSquares",100,2,"Regular squares","Green",cfl)
