@@ -1,0 +1,11 @@
+,PDE_model,Numerical_method_space_discretization,Numerical_method_name,Mesh_dimension,Mesh_type,Scheme_order,Mesh_cell_type,Color
+0,Poisson,Finite elements,P1 FE,2,Unstructured 3D triangles,0.304571931233,Tetrahedra,Green
+1,Poisson,Finite volumes,VF5,2,Non conforming cartesian locally refined,0.468110555349,Squares,Green
+2,Poisson,Finite elements,P1 FE,2,Unstructured triangles,1.05991473164,Triangles,Green
+3,Poisson,Finite volumes,VF5,3,Regular cubes,0.667623623838,Cubes,Green
+4,Poisson,Finite volumes,VF5,2,Regular squares,1.0049956589,Squares,Green
+5,Poisson,Finite volumes,VF5,2,Non conforming cartesian checkerboard,0.175026915376,Squares,Green
+6,Poisson,Finite volumes,VF5,2,Unstructured triangles,0.306889929049,Squares,Green
+7,Poisson,Finite elements,P1 FE,3,Unstructured tetrahedra,0.329389351177,Tetrahedra,Green
+8,Poisson,Finite volumes,VF5,3,Unstructured tetrahedra,0.270353492629,Tetrahedra,Green
+9,Poisson,Finite volumes,VF5,3,Non conforming cartesian checkerboard,-0.0867208238273,Cubes,"Orange, BC violated. PB with mesh ?"
