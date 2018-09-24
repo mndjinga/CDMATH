@@ -323,7 +323,10 @@ def solve(my_mesh,meshName,resolution,scaling, meshType, testColor,cfl):
     test_name="Resolution of the Wave system in dimension " +str( my_mesh.getMeshDimension())+" on "+str(my_mesh.getNumberOfCells())+ " cells"
     test_name_comment="New scheme for low Mach flows"
     test_model="Wave system"
-    test_method="Pseudo staggered"
+    if(scaling==0):
+        "Pseudo staggered without scaling"
+    else:    
+        "Pseudo staggered with scaling"
     test_initial_data="Constant pressure, divergence free velocity"
     test_bc="Periodic"
     print test_name
