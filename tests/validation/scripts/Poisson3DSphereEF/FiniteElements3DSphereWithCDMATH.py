@@ -193,28 +193,7 @@ def solve(filename,resolution,meshType, testColor):
     #sauvegarde sur le disque dur du résultat dans un fichier paraview
     my_ResultField.writeVTK("FiniteElementsOnSphere"+str(nbNodes))
     
-    #Postprocessing : save 3D picture
-    PV_routines.Save_PV_data_to_picture_file("FiniteElementsOnSphere"+str(nbNodes)+'_0.vtu',"ResultField",'NODES',"FiniteElementsOnSphere"+str(nbNodes))
-    VTK_routines.Clip_VTK_data_to_VTK("FiniteElementsOnSphere"+str(nbNodes)+'_0.vtu',"Clip_VTK_data_to_VTK_"+ "FiniteElementsOnSphere"+str(nbNodes)+'_0.vtu',[0.25,0.25,0.25], [-0.5,-0.5,-0.5],resolution )
-    PV_routines.Save_PV_data_to_picture_file("Clip_VTK_data_to_VTK_"+"FiniteElementsOnSphere"+str(nbNodes)+'_0.vtu',"ResultField",'NODES',"Clip_VTK_data_to_VTK_"+"FiniteElementsOnSphere"+str(nbNodes))
-    
-    finiteElementsOnSphere_0vtu = pvs.XMLUnstructuredGridReader(FileName=["FiniteElementsOnSphere"+str(nbNodes)+'_0.vtu'])
-    slice1 = pvs.Slice(Input=finiteElementsOnSphere_0vtu)
-    slice1.SliceType.Normal = [0.5, 0.5, 0.5]
-    renderView1 = pvs.GetActiveViewOrCreate('RenderView')
-    finiteElementsOnSphere_0vtuDisplay = pvs.Show(finiteElementsOnSphere_0vtu, renderView1)
-    pvs.ColorBy(finiteElementsOnSphere_0vtuDisplay, ('POINTS', 'ResultField'))
-    slice1Display = pvs.Show(slice1, renderView1)
-    pvs.SaveScreenshot("./FiniteElementsOnSphere"+"_Slice_"+str(nbNodes)+'.png', magnification=1, quality=100, view=renderView1)
-    plotOnSortedLines1 = pvs.PlotOnSortedLines(Input=slice1)
-    pvs.SaveData('./FiniteElementsOnSphere_PlotOnSortedLines'+str(nbNodes)+'.csv', proxy=plotOnSortedLines1)
-    lineChartView2 = pvs.CreateView('XYChartView')
-    plotOnSortedLines1Display = pvs.Show(plotOnSortedLines1, lineChartView2)
-    plotOnSortedLines1Display.UseIndexForXAxis = 0
-    plotOnSortedLines1Display.XArrayName = 'arc_length'
-    plotOnSortedLines1Display.SeriesVisibility = ['ResultField (1)']
-    pvs.SaveScreenshot("./FiniteElementsOnSphere"+"_PlotOnSortedLine_"+str(nbNodes)+'.png', magnification=1, quality=100, view=lineChartView2)
-    pvs.Delete(lineChartView2)
+    end = time.time()
 
     print("Integral of the numerical solution", my_ResultField.integral(0))
     print("Numerical solution of poisson equation on a sphere using finite elements done")
@@ -241,10 +220,33 @@ def solve(filename,resolution,meshType, testColor):
     print("Relative error = max(| exact solution - numerical solution |)/max(| exact solution |) = ",erreur_abs/max_abs_sol_exacte)
     print ("Maximum numerical solution = ", max_sol_num, " Minimum numerical solution = ", min_sol_num)
 
-    end = time.time()
     test_desc["Computational_time_taken_by_run"]=end-start
     test_desc["Absolute_error"]=erreur_abs
     test_desc["Relative_error"]=erreur_abs/max_abs_sol_exacte
+
+    #Postprocessing : 
+    #================
+    PV_routines.Save_PV_data_to_picture_file("FiniteElementsOnSphere"+str(nbNodes)+'_0.vtu',"ResultField",'NODES',"FiniteElementsOnSphere"+str(nbNodes))
+    VTK_routines.Clip_VTK_data_to_VTK("FiniteElementsOnSphere"+str(nbNodes)+'_0.vtu',"Clip_VTK_data_to_VTK_"+ "FiniteElementsOnSphere"+str(nbNodes)+'_0.vtu',[0.25,0.25,0.25], [-0.5,-0.5,-0.5],resolution )
+    PV_routines.Save_PV_data_to_picture_file("Clip_VTK_data_to_VTK_"+"FiniteElementsOnSphere"+str(nbNodes)+'_0.vtu',"ResultField",'NODES',"Clip_VTK_data_to_VTK_"+"FiniteElementsOnSphere"+str(nbNodes))
+    
+    finiteElementsOnSphere_0vtu = pvs.XMLUnstructuredGridReader(FileName=["FiniteElementsOnSphere"+str(nbNodes)+'_0.vtu'])
+    slice1 = pvs.Slice(Input=finiteElementsOnSphere_0vtu)
+    slice1.SliceType.Normal = [0.5, 0.5, 0.5]
+    renderView1 = pvs.GetActiveViewOrCreate('RenderView')
+    finiteElementsOnSphere_0vtuDisplay = pvs.Show(finiteElementsOnSphere_0vtu, renderView1)
+    pvs.ColorBy(finiteElementsOnSphere_0vtuDisplay, ('POINTS', 'ResultField'))
+    slice1Display = pvs.Show(slice1, renderView1)
+    pvs.SaveScreenshot("./FiniteElementsOnSphere"+"_Slice_"+str(nbNodes)+'.png', magnification=1, quality=100, view=renderView1)
+    plotOnSortedLines1 = pvs.PlotOnSortedLines(Input=slice1)
+    pvs.SaveData('./FiniteElementsOnSphere_PlotOnSortedLines'+str(nbNodes)+'.csv', proxy=plotOnSortedLines1)
+    lineChartView2 = pvs.CreateView('XYChartView')
+    plotOnSortedLines1Display = pvs.Show(plotOnSortedLines1, lineChartView2)
+    plotOnSortedLines1Display.UseIndexForXAxis = 0
+    plotOnSortedLines1Display.XArrayName = 'arc_length'
+    plotOnSortedLines1Display.SeriesVisibility = ['ResultField (1)']
+    pvs.SaveScreenshot("./FiniteElementsOnSphere"+"_PlotOnSortedLine_"+str(nbNodes)+'.png', magnification=1, quality=100, view=lineChartView2)
+    pvs.Delete(lineChartView2)
 
     with open('test_Poisson'+str(my_mesh.getMeshDimension())+'D_EF_'+str(my_mesh.getNumberOfCells())+ "Cells.json", 'w') as outfile:  
         json.dump(test_desc, outfile)

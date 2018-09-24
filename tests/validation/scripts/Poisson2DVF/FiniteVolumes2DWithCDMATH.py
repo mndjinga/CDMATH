@@ -118,6 +118,8 @@ def solve(my_mesh,filename,resolution, meshType, testColor):
     
     print("Numerical solution of 2D Poisson equation on a square using finite elements done")
     
+    end = time.time()
+
     #Calcul de l'erreur commise par rapport à la solution exacte
     #===========================================================
     #The following formulas use the fact that the exact solution is equal the right hand side divided by 2*pi*pi
@@ -132,11 +134,13 @@ def solve(my_mesh,filename,resolution, meshType, testColor):
     print("Relative error = max(| exact solution - numerical solution |)/max(| exact solution |) = ",erreur_abs/max_abs_sol_exacte)
     print ("Maximum numerical solution = ", max_sol_num, " Minimum numerical solution = ", min_sol_num)
 
-    #Postprocessing : Extraction of the diagonal data
+    #Postprocessing :
+    #================
+	# Extraction of the diagonal data
     diag_data=VTK_routines.Extract_field_data_over_line_to_numpyArray(my_ResultField,[0,1,0],[1,0,0], resolution)
+    # save 2D picture
     PV_routines.Save_PV_data_to_picture_file("FiniteVolumes2D_square_ResultField"+str(nbCells)+'_0.vtu',"ResultField",'CELLS',"FiniteVolumes2D_square_ResultField"+str(nbCells))
 
-    end = time.time()
     test_desc["Computational_time_taken_by_run"]=end-start
     test_desc["Absolute_error"]=erreur_abs
     test_desc["Relative_error"]=erreur_abs/max_abs_sol_exacte

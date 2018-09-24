@@ -192,6 +192,8 @@ def solve(filename,resolution, meshType, testColor):
     print("Numerical solution of 3D Poisson equation on a cube using finite elements done")
     
     
+    end = time.time()
+
     #Calcul de l'erreur commise par rapport à la solution exacte
     #===========================================================
     #The following formulas use the fact that the exact solution is equal the right hand side divided by 3*pi*pi
@@ -206,11 +208,13 @@ def solve(filename,resolution, meshType, testColor):
     print("Relative error = max(| exact solution - numerical solution |)/max(| exact solution |) = ",erreur_abs/max_abs_sol_exacte)
     print ("Maximum numerical solution = ", max_sol_num, " Minimum numerical solution = ", min_sol_num)
     
-    #Postprocessing : Extraction of the diagonal data
+    #Postprocessing : 
+    #================
+	# Extraction of the diagonal data
     diag_data=VTK_routines.Extract_field_data_over_line_to_numpyArray(my_ResultField,[0,0,0],[1,1,1], resolution)
+    # save 2D picture
     PV_routines.Save_PV_data_to_picture_file("FiniteElements3D_cube_ResultField"+str(nbNodes)+'_0.vtu',"ResultField",'NODES',"FiniteElements3D_cube_ResultField"+str(nbNodes))
 
-    end = time.time()
     test_desc["Computational_time_taken_by_run"]=end-start
     test_desc["Absolute_error"]=erreur_abs
     test_desc["Relative_error"]=erreur_abs/max_abs_sol_exacte

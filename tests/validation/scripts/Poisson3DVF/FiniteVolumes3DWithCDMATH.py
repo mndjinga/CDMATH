@@ -135,6 +135,8 @@ def solve(my_mesh, filename,resolution, meshType, testColor):
     
     print("Numerical solution of 3D Poisson equation on a cube using finite elements done")
     
+    end = time.time()
+
     #Calcul de l'erreur commise par rapport à la solution exacte
     #===========================================================
     #The following formulas use the fact that the exact solution is equal to the right hand side divided by 3*pi*pi
