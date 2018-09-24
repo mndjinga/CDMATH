@@ -4,9 +4,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 from math import log10, sqrt
 import sys
-import json
+import time, json
 
 def test_validation2DWaveSystemUpwindTriangles():
+    start = time.time()
     #### 2D triangle mesh
     meshList=['squareWithTriangles_1','squareWithTriangles_2','squareWithTriangles_3','squareWithTriangles_4']
     meshType="Unstructured triangles"
@@ -35,6 +36,8 @@ def test_validation2DWaveSystemUpwindTriangles():
         assert max_vel[i]>0.94 and max_vel[i]<1
         i=i+1
     
+    end = time.time()
+
     # Plot over diagonal line
     for i in range(nbMeshes):
         plt.plot(curv_abs, diag_data_press[i], label= str(mesh_size_tab[i]) + ' cells')
@@ -164,6 +167,7 @@ def test_validation2DWaveSystemUpwindTriangles():
     convergence_synthesis["Scheme_order_press"]=-ap
     convergence_synthesis["Scaling_preconditioner"]="None"
     convergence_synthesis["Test_color"]=testColor
+    convergence_synthesis["Computational_time"]=end-start
 
     with open('Convergence_WaveSystem_2DFV_Upwind_'+mesh_name+'.json', 'w') as outfile:  
         json.dump(convergence_synthesis, outfile)

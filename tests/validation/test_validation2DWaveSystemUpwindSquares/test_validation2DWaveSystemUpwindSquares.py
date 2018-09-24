@@ -4,10 +4,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 from math import log10, sqrt
 import sys
-import json
+import time, json
 
     
 def test_validation2DWaveSystemUpwind_squares():
+    start = time.time()
     #### 2D square mesh
     #meshList=[7,15,31,51,81]#
     meshList=['squareWithSquares_1','squareWithSquares_2','squareWithSquares_3','squareWithSquares_4','squareWithSquares_5']
@@ -37,6 +38,8 @@ def test_validation2DWaveSystemUpwind_squares():
         assert max_vel[i]>0.76 and max_vel[i]<1
         i=i+1
     
+    end = time.time()
+
     # Plot over diagonal line
     for i in range(nbMeshes):
         plt.plot(curv_abs, diag_data_press[i], label= str(mesh_size_tab[i]) + ' cells')
@@ -158,6 +161,7 @@ def test_validation2DWaveSystemUpwind_squares():
     convergence_synthesis["Scheme_order_vel"]=-au
     convergence_synthesis["Scaling_preconditioner"]="None"
     convergence_synthesis["Test_color"]=testColor
+    convergence_synthesis["Computational_time"]=end-start
 
     with open('Convergence_WaveSystem_2DFV_Upwind_'+mesh_name+'.json', 'w') as outfile:  
         json.dump(convergence_synthesis, outfile)

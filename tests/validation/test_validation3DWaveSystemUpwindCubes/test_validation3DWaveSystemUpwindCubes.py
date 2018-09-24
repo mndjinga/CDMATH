@@ -4,10 +4,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 from math import log10, sqrt
 import sys
-import json
+import time, json
 
     
 def test_validation3DWaveSystemUpwind_cubes():
+    start = time.time()
     #### 3D cubic mesh
     meshList=[6,11,21]
     meshType="Regular cubes"
@@ -38,6 +39,8 @@ def test_validation3DWaveSystemUpwind_cubes():
         #assert max_vel[i]>1.95 and max_vel[i]<2
         i=i+1
     
+    end = time.time()
+
     # Plot over diagonal line
     for i in range(nbMeshes):
         plt.plot(curv_abs, diag_data_press[i], label= str(mesh_size_tab[i]) + ' cells')
@@ -159,6 +162,7 @@ def test_validation3DWaveSystemUpwind_cubes():
     convergence_synthesis["Scheme_order_vel"]=-au
     convergence_synthesis["Scaling_preconditioner"]="None"
     convergence_synthesis["Test_color"]=testColor
+    convergence_synthesis["Computational_time"]=end-start
 
     with open('Convergence_WaveSystem_3DFV_Upwind_'+mesh_name+'.json', 'w') as outfile:  
         json.dump(convergence_synthesis, outfile)

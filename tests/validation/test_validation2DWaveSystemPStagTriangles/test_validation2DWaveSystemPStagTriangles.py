@@ -4,10 +4,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 from math import log10, sqrt
 import sys
-import json
+import time, json
 
     
 def test_validation2DWaveSystemPStag_triangles(scaling):
+    start = time.time()
     #### 2D triangular meshes
     meshList=['squareWithTriangles_1','squareWithTriangles_2','squareWithTriangles_3','squareWithTriangles_4']
     meshType="Unstructured triangles"
@@ -42,6 +43,8 @@ def test_validation2DWaveSystemPStag_triangles(scaling):
         time_tab[i]=log10(time_tab[i])
         i=i+1
     
+    end = time.time()
+
     # Plot over diagonal line
     for i in range(nbMeshes):
         if(scaling==0):
@@ -209,6 +212,7 @@ def test_validation2DWaveSystemPStag_triangles(scaling):
     convergence_synthesis["Scaling_preconditioner"]=scaling
     convergence_synthesis["Condition_numbers"]=cond_number
     convergence_synthesis["Test_color"]=testColor
+    convergence_synthesis["Computational_time"]=end-start
 
     with open('Convergence_WaveSystem_2DFV_PStag_'+mesh_name+'.json', 'w') as outfile:  
         json.dump(convergence_synthesis, outfile)

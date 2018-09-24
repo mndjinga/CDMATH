@@ -4,10 +4,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 from math import log10, sqrt
 import sys
-import json
+import time, json
 
     
 def test_validation2DWaveSystemPStag_squares(scaling):
+    start = time.time()
     #### 2D square mesh
     #meshList=[7,15,31,51,81]
     meshList=['squareWithSquares_1','squareWithSquares_2','squareWithSquares_3','squareWithSquares_4','squareWithSquares_5']
@@ -42,6 +43,8 @@ def test_validation2DWaveSystemPStag_squares(scaling):
         time_tab[i]=log10(time_tab[i])
         i=i+1
     
+    end = time.time()
+
     # Plot over diagonal line
     for i in range(nbMeshes):
         if(scaling==0):
@@ -209,7 +212,8 @@ def test_validation2DWaveSystemPStag_squares(scaling):
     convergence_synthesis["Scaling_preconditioner"]=scaling
     convergence_synthesis["Condition_numbers"]=cond_number
     convergence_synthesis["Test_color"]=testColor
-
+    convergence_synthesis["Computational_time"]=end-start
+    
     with open('Convergence_WaveSystem_2DFV_PStag_'+mesh_name+'.json', 'w') as outfile:  
         json.dump(convergence_synthesis, outfile)
 

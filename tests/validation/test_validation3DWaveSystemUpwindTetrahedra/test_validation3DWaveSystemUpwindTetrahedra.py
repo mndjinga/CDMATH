@@ -4,10 +4,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 from math import log10, sqrt
 import sys
-import json
+import time, json
 
 
 def test_validation3DWaveSystemUpwind_tetrahedra():
+    start = time.time()
     #### 3D tetrahedral mesh by simplexization of a cartesian mesh
     meshList=[5,11,21,26]
     meshType="Regular tetrahedra"
@@ -37,6 +38,8 @@ def test_validation3DWaveSystemUpwind_tetrahedra():
         assert max_vel[i]>1.8 and max_vel[i]<2
         i=i+1
     
+    end = time.time()
+
     # Plot over diagonal line
     for i in range(nbMeshes):
         plt.plot(curv_abs, diag_data_press[i], label= str(mesh_size_tab[i]) + ' cells')
@@ -168,6 +171,7 @@ def test_validation3DWaveSystemUpwind_tetrahedra():
     convergence_synthesis["Scheme_order_press"]=-ap
     convergence_synthesis["Scaling_preconditioner"]="None"
     convergence_synthesis["Test_color"]=testColor
+    convergence_synthesis["Computational_time"]=end-start
 
     with open('Convergence_WaveSystem_3DFV_Upwind_'+mesh_name+'.json', 'w') as outfile:  
         json.dump(convergence_synthesis, outfile)
