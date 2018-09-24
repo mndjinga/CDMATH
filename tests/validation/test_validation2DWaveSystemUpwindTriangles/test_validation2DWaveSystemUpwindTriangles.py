@@ -8,7 +8,7 @@ import json
 
 def test_validation2DWaveSystemUpwindTriangles():
     #### 2D triangle mesh
-    meshList=['squareWithTriangles_1','squareWithTriangles_2','squareWithTriangles_3','squareWithTriangles_4','squareWithTriangles_5','squareWithTriangles_6']
+    meshList=['squareWithTriangles_1','squareWithTriangles_2','squareWithTriangles_3','squareWithTriangles_4']
     meshType="Unstructured triangles"
     testColor="Green"
     nbMeshes=len(meshList)
