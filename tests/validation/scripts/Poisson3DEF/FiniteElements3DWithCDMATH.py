@@ -187,7 +187,7 @@ def solve(filename,resolution, meshType, testColor):
     for j in range(nbBoundaryNodes):
         my_ResultField[boundaryNodes[j]]=0;#remplissage des valeurs pour les noeuds frontière (condition limite)
     #sauvegarde sur le disque dur du résultat dans un fichier paraview
-    my_ResultField.writeVTK("FiniteElements3D_cube_ResultField"+str(nbNodes))
+    my_ResultField.writeVTK("FiniteElements3D_CUBE_ResultField"+str(nbNodes))
     
     print("Numerical solution of 3D Poisson equation on a cube using finite elements done")
     
@@ -210,12 +210,12 @@ def solve(filename,resolution, meshType, testColor):
     
     #Postprocessing : 
     #================
-	# Extraction of the diagonal data
+    # Extraction of the diagonal data
     diag_data=VTK_routines.Extract_field_data_over_line_to_numpyArray(my_ResultField,[0,0,0],[1,1,1], resolution)
 
-	# save 3D picture
-	VTK_routines.Clip_VTK_data_to_VTK("FiniteElements3D_CUBE_ResultField"+str(nbNodes)+'_0.vtu',"Clip_VTK_data_to_VTK_"+ "FiniteElements3D_CUBE_ResultField"+str(nbNodes)+'_0.vtu',[0.5,0.5,0.5], [-0.5,-0.5,-0.5],resolution )
-	PV_routines.Save_PV_data_to_picture_file("Clip_VTK_data_to_VTK_"+"FiniteElements3D_CUBE_ResultField"+str(nbNodes)+'_0.vtu',"ResultField",'NODES',"Clip_VTK_data_to_VTK_"+"FiniteElements3D_CUBE_ResultField"+str(nbNodes))
+    # save 3D picture
+    VTK_routines.Clip_VTK_data_to_VTK("FiniteElements3D_CUBE_ResultField"+str(nbNodes)+'_0.vtu',"Clip_VTK_data_to_VTK_"+ "FiniteElements3D_CUBE_ResultField"+str(nbNodes)+'_0.vtu',[0.5,0.5,0.5], [-0.5,-0.5,-0.5],resolution )
+    PV_routines.Save_PV_data_to_picture_file("Clip_VTK_data_to_VTK_"+"FiniteElements3D_CUBE_ResultField"+str(nbNodes)+'_0.vtu',"ResultField",'NODES',"Clip_VTK_data_to_VTK_"+"FiniteElements3D_CUBE_ResultField"+str(nbNodes))
 
     test_desc["Computational_time_taken_by_run"]=end-start
     test_desc["Absolute_error"]=erreur_abs

@@ -324,9 +324,9 @@ def solve(my_mesh,meshName,resolution,scaling, meshType, testColor,cfl):
     test_name_comment="New scheme for low Mach flows"
     test_model="Wave system"
     if(scaling==0):
-        "Pseudo staggered without scaling"
+        test_method="Pseudo staggered without scaling"
     else:    
-        "Pseudo staggered with scaling"
+        test_method="Pseudo staggered with scaling"
     test_initial_data="Constant pressure, divergence free velocity"
     test_bc="Periodic"
     print test_name

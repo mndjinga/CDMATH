@@ -112,6 +112,7 @@ my_ResultField.writeVTK("FiniteVolumes3D_cube_ResultField")
 #Postprocessing 
 #==============
 # save 3D picture
+resolution=100
 VTK_routines.Clip_VTK_data_to_VTK("FiniteVolumes3D_CUBE_ResultField"+'_0.vtu',"Clip_VTK_data_to_VTK_"+ "FiniteVolumes3D_CUBE_ResultField"+'_0.vtu',[0.5,0.5,0.5], [-0.5,-0.5,-0.5],resolution )
 PV_routines.Save_PV_data_to_picture_file("Clip_VTK_data_to_VTK_"+"FiniteVolumes3D_CUBE_ResultField"+'_0.vtu',"ResultField",'CELLS',"Clip_VTK_data_to_VTK_"+"FiniteVolumes3D_CUBE_ResultField")
 
