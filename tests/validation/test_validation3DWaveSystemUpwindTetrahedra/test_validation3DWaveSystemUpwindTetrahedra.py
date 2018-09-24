@@ -34,8 +34,7 @@ def test_validation3DWaveSystemUpwind_tetrahedra():
     for nx in meshList:
         my_mesh=cdmath.Mesh(6,0,1,nx,0,1,nx,0,1,nx)
         error_p_tab[i], error_u_tab[i], mesh_size_tab[i], t_final[i], ndt_final[i], max_vel[i], diag_data_press[i], diag_data_vel[i], time_tab[i] =WaveSystemUpwind.solve(my_mesh, mesh_name+str(my_mesh.getNumberOfCells()), resolution,meshType,testColor,cfl)
-        print max_vel[i]
-        #assert max_vel[i]>1.95 and max_vel[i]<2
+        assert max_vel[i]>1.8 and max_vel[i]<2
         i=i+1
     
     # Plot over diagonal line
@@ -141,7 +140,7 @@ def test_validation3DWaveSystemUpwind_tetrahedra():
 
     convergence_synthesis={}
 
-    convergence_synthesis["PDE_model"]l="Wave system"
+    convergence_synthesis["PDE_model"]="Wave system"
     convergence_synthesis["PDE_is_stationary"]=False
     convergence_synthesis["PDE_search_for_stationary_solution"]=True
     convergence_synthesis["Numerical_method_name"]="Upwind"
@@ -154,7 +153,7 @@ def test_validation3DWaveSystemUpwind_tetrahedra():
     convergence_synthesis["Mesh_dimension"]=3
     convergence_synthesis["Mesh_names"]=meshList
     convergence_synthesis["Mesh_type"]=meshType
-    convergence_synthesis["Mesh_path"]=mesh_path
+    #convergence_synthesis["Mesh_path"]=mesh_path
     convergence_synthesis["Mesh_description"]=mesh_name
     convergence_synthesis["Mesh_sizes"]=mesh_size_tab
     convergence_synthesis["Mesh_cell_type"]="Tetrahedra"
