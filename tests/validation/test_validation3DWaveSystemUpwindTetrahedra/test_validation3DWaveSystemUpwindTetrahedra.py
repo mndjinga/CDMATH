@@ -141,7 +141,7 @@ def test_validation3DWaveSystemUpwind_tetrahedra():
 
     convergence_synthesis={}
 
-    convergence_synthesis["Study_name"]l="Wave system"
+    convergence_synthesis["Study_name"]="Wave system"
     convergence_synthesis["PDE_is_stationary"]=False
     convergence_synthesis["PDE_search_for_stationary_solution"]=True
     convergence_synthesis["Numerical_method_name"]="Upwind"
@@ -154,7 +154,7 @@ def test_validation3DWaveSystemUpwind_tetrahedra():
     convergence_synthesis["Mesh_dimension"]=3
     convergence_synthesis["Mesh_names"]=meshList
     convergence_synthesis["Mesh_type"]=meshType
-    convergence_synthesis["Mesh_path"]=mesh_path
+    #convergence_synthesis["Mesh_path"]=mesh_path
     convergence_synthesis["Mesh_description"]=mesh_name
     convergence_synthesis["Mesh_sizes"]=mesh_size_tab
     convergence_synthesis["Mesh_cell_type"]="Tetrahedra"
