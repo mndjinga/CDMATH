@@ -111,12 +111,13 @@ my_ResultField.writeVTK("FiniteVolumes3D_cube_ResultField")
 
 #Postprocessing 
 #==============
-# save 2D picture
-PV_routines.Save_PV_data_to_picture_file("FiniteVolumes3D_cube_ResultField"+'_0.vtu',"ResultField",'CELLS',"FiniteVolumes3D_cube_ResultField")
+# save 3D picture
+VTK_routines.Clip_VTK_data_to_VTK("FiniteVolumes3D_CUBE_ResultField"+'_0.vtu',"Clip_VTK_data_to_VTK_"+ "FiniteVolumes3D_CUBE_ResultField"+'_0.vtu',[0.5,0.5,0.5], [-0.5,-0.5,-0.5],resolution )
+PV_routines.Save_PV_data_to_picture_file("Clip_VTK_data_to_VTK_"+"FiniteVolumes3D_CUBE_ResultField"+'_0.vtu',"ResultField",'CELLS',"Clip_VTK_data_to_VTK_"+"FiniteVolumes3D_CUBE_ResultField")
 
 # extract and plot diagonal values
 resolution=100
-curv_abs=np.linspace(0,sqrt(2),resolution+1)
+curv_abs=np.linspace(0,sqrt(3),resolution+1)
 diag_data=VTK_routines.Extract_field_data_over_line_to_numpyArray(my_ResultField,[0,1,0],[1,0,0], resolution)
 plt.legend()
 plt.xlabel('Position on diagonal line')

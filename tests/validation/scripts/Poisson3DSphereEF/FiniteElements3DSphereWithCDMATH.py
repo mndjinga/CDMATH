@@ -226,10 +226,12 @@ def solve(filename,resolution,meshType, testColor):
 
     #Postprocessing : 
     #================
+    # save 3D picture
     PV_routines.Save_PV_data_to_picture_file("FiniteElementsOnSphere"+str(nbNodes)+'_0.vtu',"ResultField",'NODES',"FiniteElementsOnSphere"+str(nbNodes))
+    # save 3D clip
     VTK_routines.Clip_VTK_data_to_VTK("FiniteElementsOnSphere"+str(nbNodes)+'_0.vtu',"Clip_VTK_data_to_VTK_"+ "FiniteElementsOnSphere"+str(nbNodes)+'_0.vtu',[0.25,0.25,0.25], [-0.5,-0.5,-0.5],resolution )
     PV_routines.Save_PV_data_to_picture_file("Clip_VTK_data_to_VTK_"+"FiniteElementsOnSphere"+str(nbNodes)+'_0.vtu',"ResultField",'NODES',"Clip_VTK_data_to_VTK_"+"FiniteElementsOnSphere"+str(nbNodes))
-    
+    # save plot around circumference
     finiteElementsOnSphere_0vtu = pvs.XMLUnstructuredGridReader(FileName=["FiniteElementsOnSphere"+str(nbNodes)+'_0.vtu'])
     slice1 = pvs.Slice(Input=finiteElementsOnSphere_0vtu)
     slice1.SliceType.Normal = [0.5, 0.5, 0.5]
@@ -248,10 +250,10 @@ def solve(filename,resolution,meshType, testColor):
     pvs.SaveScreenshot("./FiniteElementsOnSphere"+"_PlotOnSortedLine_"+str(nbNodes)+'.png', magnification=1, quality=100, view=lineChartView2)
     pvs.Delete(lineChartView2)
 
-    with open('test_Poisson'+str(my_mesh.getMeshDimension())+'D_EF_'+str(my_mesh.getNumberOfCells())+ "Cells.json", 'w') as outfile:  
+    with open('test_Poisson'+str(my_mesh.getMeshDimension())+'D_EF_'+str(nbCells)+ "Cells.json", 'w') as outfile:  
         json.dump(test_desc, outfile)
 
-    return erreur_abs/max_abs_sol_exacte, my_mesh.getNumberOfNodes(), min_sol_num, max_sol_num, end - start
+    return erreur_abs/max_abs_sol_exacte, nbNodes, min_sol_num, max_sol_num, end - start
     
 if __name__ == """__main__""":
     solve("meshSphere",100,"Unstructured 3D triangles","Green")

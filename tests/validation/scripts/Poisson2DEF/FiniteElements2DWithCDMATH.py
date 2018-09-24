@@ -203,10 +203,10 @@ def solve(filename,resolution,meshType, testColor):
     test_desc["Absolute_error"]=erreur_abs
     test_desc["Relative_error"]=erreur_abs/max_abs_sol_exacte
 
-    with open('test_Poisson'+str(my_mesh.getMeshDimension())+'D_EF_'+str(my_mesh.getNumberOfCells())+ "Cells.json", 'w') as outfile:  
+    with open('test_Poisson'+str(my_mesh.getMeshDimension())+'D_EF_'+str(nbCells)+ "Cells.json", 'w') as outfile:  
         json.dump(test_desc, outfile)
 
-    return erreur_abs/max_abs_sol_exacte, my_mesh.getNumberOfNodes(), diag_data, min_sol_num, max_sol_num, end - start
+    return erreur_abs/max_abs_sol_exacte, nbNodes, diag_data, min_sol_num, max_sol_num, end - start
 
 if __name__ == """__main__""":
     solve("meshSquare",100,"Unstructured triangles","Green")

@@ -212,17 +212,19 @@ def solve(filename,resolution, meshType, testColor):
     #================
 	# Extraction of the diagonal data
     diag_data=VTK_routines.Extract_field_data_over_line_to_numpyArray(my_ResultField,[0,0,0],[1,1,1], resolution)
-    # save 2D picture
-    PV_routines.Save_PV_data_to_picture_file("FiniteElements3D_cube_ResultField"+str(nbNodes)+'_0.vtu',"ResultField",'NODES',"FiniteElements3D_cube_ResultField"+str(nbNodes))
+
+	# save 3D picture
+	VTK_routines.Clip_VTK_data_to_VTK("FiniteElements3D_CUBE_ResultField"+str(nbNodes)+'_0.vtu',"Clip_VTK_data_to_VTK_"+ "FiniteElements3D_CUBE_ResultField"+str(nbNodes)+'_0.vtu',[0.5,0.5,0.5], [-0.5,-0.5,-0.5],resolution )
+	PV_routines.Save_PV_data_to_picture_file("Clip_VTK_data_to_VTK_"+"FiniteElements3D_CUBE_ResultField"+str(nbNodes)+'_0.vtu',"ResultField",'NODES',"Clip_VTK_data_to_VTK_"+"FiniteElements3D_CUBE_ResultField"+str(nbNodes))
 
     test_desc["Computational_time_taken_by_run"]=end-start
     test_desc["Absolute_error"]=erreur_abs
     test_desc["Relative_error"]=erreur_abs/max_abs_sol_exacte
 
-    with open('test_Poisson'+str(my_mesh.getMeshDimension())+'D_EF_'+str(my_mesh.getNumberOfCells())+ "Cells.json", 'w') as outfile:  
+    with open('test_Poisson'+str(my_mesh.getMeshDimension())+'D_EF_'+str(nbCells)+ "Cells.json", 'w') as outfile:  
         json.dump(test_desc, outfile)
 
-    return erreur_abs/max_abs_sol_exacte, my_mesh.getNumberOfNodes(), diag_data, min_sol_num, max_sol_num, end - start
+    return erreur_abs/max_abs_sol_exacte, nbNodes, diag_data, min_sol_num, max_sol_num, end - start
 
 if __name__ == """__main__""":
     solve("meshCube",100,"Unstructured tetrahedra","Green")
