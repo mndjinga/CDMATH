@@ -204,9 +204,11 @@ def test_validation2DWaveSystemPStag_squares(scaling):
     convergence_synthesis["Max_vel_norm"]=max_vel
     convergence_synthesis["Final_time"]=t_final  
     convergence_synthesis["Final_time_step"]=ndt_final  
+    convergence_synthesis["Scheme_order"]=-au
     convergence_synthesis["Scheme_order_vel"]=-au
     convergence_synthesis["Scaling_preconditioner"]=scaling
     convergence_synthesis["Condition_numbers"]=cond_number
+    convergence_synthesis["Test_color"]=testColor
 
     with open('Convergence_WaveSystem_2DFV_PStag_'+mesh_name+'.json', 'w') as outfile:  
         json.dump(convergence_synthesis, outfile)
