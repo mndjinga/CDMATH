@@ -178,10 +178,13 @@ def test_validation2DWaveSystemPStag_triangles(scaling):
 
     convergence_synthesis={}
 
-    convergence_synthesis["Study_name"]="Wave system"
+    convergence_synthesis["PDE_model"]="Wave system"
     convergence_synthesis["PDE_is_stationary"]=False
     convergence_synthesis["PDE_search_for_stationary_solution"]=True
-    convergence_synthesis["Numerical_method_name"]="Upwind"
+    if(scaling==0):
+        convergence_synthesis["Numerical_method_name"]="PStag no scaling"
+    else:
+        convergence_synthesis["Numerical_method_name"]="PStag scaling"			
     convergence_synthesis["Numerical_method_space_discretization"]="Finite volumes"
     convergence_synthesis["Numerical_method_time_discretization"]="Implicit"
     convergence_synthesis["Initial_data"]="Constant pressure, divergence free velocity"

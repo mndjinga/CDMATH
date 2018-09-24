@@ -132,7 +132,7 @@ def test_validation3DWaveSystemUpwind_cubes():
 
     convergence_synthesis={}
 
-    convergence_synthesis["Study_name"]="Wave system"
+    convergence_synthesis["PDE_model"]="Wave system"
     convergence_synthesis["PDE_is_stationary"]=False
     convergence_synthesis["PDE_search_for_stationary_solution"]=True
     convergence_synthesis["Numerical_method_name"]="Upwind"
