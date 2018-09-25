@@ -48,4 +48,15 @@ scripts)
 
 install(DIRECTORY ${VALIDATION_FOLDERS_TO_INSTALL} DESTINATION share/validation)
 
+install(DIRECTORY ${VALIDATION_FOLDERS_TO_INSTALL} DESTINATION share/doc/validation
+ PATTERN "*.png"
+               PATTERN "*.ipynb"
+               PATTERN "*.py"
+               PATTERN "*.html"
+               PATTERN "*.pdf"
+               PATTERN "*.tex"
+               PATTERN "*.md"
+               PATTERN "*.xlsx"
+               PATTERN "*.csv"
+)
 
