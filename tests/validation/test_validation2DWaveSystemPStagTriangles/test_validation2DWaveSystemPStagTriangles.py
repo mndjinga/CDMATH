@@ -200,7 +200,6 @@ def test_validation2DWaveSystemPStag_triangles(scaling):
     convergence_synthesis["Mesh_description"]=mesh_name
     convergence_synthesis["Mesh_sizes"]=mesh_size_tab
     convergence_synthesis["Mesh_cell_type"]="Triangles"
-    convergence_synthesis["Study_color"]=testColor
     convergence_synthesis["Numerical_error_velocity"]=error_u_tab
     convergence_synthesis["Numerical_error_pressure"]=error_p_tab
     convergence_synthesis["Max_vel_norm"]=max_vel

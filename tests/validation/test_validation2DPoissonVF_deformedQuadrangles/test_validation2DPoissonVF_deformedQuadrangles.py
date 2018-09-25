@@ -3,11 +3,12 @@ import FiniteVolumes2DWithCDMATH
 import matplotlib.pyplot as plt
 import numpy as np
 from math import log10,sqrt
-import json
+import time, json
 
 convergence_synthesis=dict(FiniteVolumes2DWithCDMATH.test_desc)
 
 def test_validation2DVF_deformedQuadrangles():
+    start = time.time()
     ##### 2D FV deformed quadrangles mesh
     meshList=['squareWithDeformedQuadrangles_1','squareWithDeformedQuadrangles_2','squareWithDeformedQuadrangles_3','squareWithDeformedQuadrangles_4','squareWithDeformedQuadrangles_5','squareWithDeformedQuadrangles_6','squareWithDeformedQuadrangles_7']
     meshType="Deformed quadrangles"
@@ -34,6 +35,8 @@ def test_validation2DVF_deformedQuadrangles():
         mesh_size_tab[i] = log10(mesh_size_tab[i])
         i=i+1
         
+    end = time.time()
+
     # Plot over diagonal line
     plt.legend()
     plt.xlabel('Position on diagonal line')
@@ -87,9 +90,10 @@ def test_validation2DVF_deformedQuadrangles():
     convergence_synthesis["Space_dimension"]=2
     convergence_synthesis["Mesh_dimension"]=2
     convergence_synthesis["Mesh_cell_type"]="Squares"
-    convergence_synthesis["Color"]=testColor
     convergence_synthesis["Errors"]=[10**x for x in error_tab]
     convergence_synthesis["Scheme_order"]=-a
+    convergence_synthesis["Test_color"]=testColor
+    convergence_synthesis["Computational_time"]=end-start
 
     with open('Convergence_Poisson_2DVF_'+mesh_name+'.json', 'w') as outfile:  
         json.dump(convergence_synthesis, outfile)

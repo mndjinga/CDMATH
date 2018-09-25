@@ -4,11 +4,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 from math import log10, sqrt
 import sys
-import json
+import time, json
 
 convergence_synthesis=dict(FiniteVolumes3DWithCDMATH.test_desc)
 
 def test_validation3DVF_cubes():
+    start = time.time()
     ### 3D FV rectangular mesh
     meshList=[11,21,41]
     meshType="Regular cubes"
@@ -37,6 +38,8 @@ def test_validation3DVF_cubes():
         mesh_size_tab[i] = log10(mesh_size_tab[i])
         i=i+1
         
+    end = time.time()
+
     # Plot over diagonal line
     plt.legend()
     plt.xlabel('Position on diagonal line')
@@ -90,9 +93,10 @@ def test_validation3DVF_cubes():
     convergence_synthesis["Space_dimension"]=3
     convergence_synthesis["Mesh_dimension"]=3
     convergence_synthesis["Mesh_cell_type"]="Cubes"
-    convergence_synthesis["Color"]=testColor
     convergence_synthesis["Errors"]=[10**x for x in error_tab]
     convergence_synthesis["Scheme_order"]=-a
+    convergence_synthesis["Test_color"]=testColor
+    convergence_synthesis["Computational_time"]=end-start
 
     with open('Convergence_Poisson_3DFV_'+mesh_name+'.json', 'w') as outfile:  
         json.dump(convergence_synthesis, outfile)

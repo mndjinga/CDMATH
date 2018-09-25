@@ -3,11 +3,12 @@ import FiniteVolumes2DWithCDMATH
 import matplotlib.pyplot as plt
 import numpy as np
 from math import log10, sqrt
-import json
+import time, json
 
 convergence_synthesis=dict(FiniteVolumes2DWithCDMATH.test_desc)
 
 def test_validation2DVF_checkerboard():
+    start = time.time()
     ##### 2D FV checkerboard mesh
     meshList=['checkerboard_4x4','checkerboard_8x8','checkerboard_16x16','checkerboard_32x32','checkerboard_64x64','checkerboard_128x128']
     meshType="Non conforming cartesian checkerboard"
@@ -34,6 +35,8 @@ def test_validation2DVF_checkerboard():
         time_tab[i]=log10(time_tab[i])
         i=i+1
         
+    end = time.time()
+
     # Plot over diagonal line
     plt.legend()
     plt.xlabel('Position on diagonal line')
@@ -87,9 +90,10 @@ def test_validation2DVF_checkerboard():
     convergence_synthesis["Space_dimension"]=2
     convergence_synthesis["Mesh_dimension"]=2
     convergence_synthesis["Mesh_cell_type"]="Squares"
-    convergence_synthesis["Color"]=testColor
     convergence_synthesis["Errors"]=[10**x for x in error_tab]
     convergence_synthesis["Scheme_order"]=-a
+    convergence_synthesis["Test_color"]=testColor
+    convergence_synthesis["Computational_time"]=end-start
 
     with open('Convergence_Poisson_2DVF_'+mesh_name+'.json', 'w') as outfile:  
         json.dump(convergence_synthesis, outfile)

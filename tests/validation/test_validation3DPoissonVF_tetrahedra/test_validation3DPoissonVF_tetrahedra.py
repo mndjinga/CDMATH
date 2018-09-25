@@ -3,11 +3,12 @@ import FiniteVolumes3DWithCDMATH
 import matplotlib.pyplot as plt
 import numpy as np
 from math import log10, sqrt
-import json
+import time, json
 
 convergence_synthesis=dict(FiniteVolumes3DWithCDMATH.test_desc)
 
 def test_validation3DVF_tetrahedra():
+    start = time.time()
     #### 3D FV tetrahedra mesh
     meshList=['meshCubeTetrahedra_0','meshCubeTetrahedra_1','meshCubeTetrahedra_2','meshCubeTetrahedra_3','meshCubeTetrahedra_4','meshCubeTetrahedra_5','meshCubeTetrahedra_6']
     meshType="Unstructured tetrahedra"
@@ -34,6 +35,8 @@ def test_validation3DVF_tetrahedra():
         mesh_size_tab[i] = log10(mesh_size_tab[i])
         i=i+1
         
+    end = time.time()
+
     # Plot over diagonal line
     plt.legend()
     plt.xlabel('Position on diagonal line')
@@ -87,9 +90,10 @@ def test_validation3DVF_tetrahedra():
     convergence_synthesis["Space_dimension"]=3
     convergence_synthesis["Mesh_dimension"]=3
     convergence_synthesis["Mesh_cell_type"]="Tetrahedra"
-    convergence_synthesis["Color"]=testColor
     convergence_synthesis["Errors"]=[10**x for x in error_tab]
     convergence_synthesis["Scheme_order"]=-a
+    convergence_synthesis["Test_color"]=testColor
+    convergence_synthesis["Computational_time"]=end-start
 
     with open('Convergence_Poisson_3DFV_'+mesh_name+'.json', 'w') as outfile:  
         json.dump(convergence_synthesis, outfile)

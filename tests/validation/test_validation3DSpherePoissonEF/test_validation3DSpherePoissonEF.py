@@ -3,10 +3,11 @@ import FiniteElements3DSphereWithCDMATH
 import matplotlib.pyplot as plt
 import numpy as np
 from math import log10, sqrt
-import json
+import time, json
 
 convergence_synthesis=dict(FiniteElements3DSphereWithCDMATH.test_desc)
 def test_validation3DSphereEF():
+    start = time.time()
     #### 3D sphere FE triangle mesh
     meshList=['meshSphere_1','meshSphere_2','meshSphere_3','meshSphere_4','meshSphere_5']
     meshType="Unstructured 3D triangles"
@@ -36,6 +37,8 @@ def test_validation3DSphereEF():
         plt.plot(y, x, label= str(mesh_size_tab[i]) + ' cells')
         mesh_size_tab[i] = log10(mesh_size_tab[i])
         i=i+1
+
+    end = time.time()
 
     # Plot over diagonal line
     plt.legend()
@@ -89,10 +92,11 @@ def test_validation3DSphereEF():
     convergence_synthesis["Mesh_sizes"]=[10**x for x in mesh_size_tab]
     convergence_synthesis["Space_dimension"]=3
     convergence_synthesis["Mesh_dimension"]=2
-    convergence_synthesis["Mesh_cell_type"]="Tetrahedra"
-    convergence_synthesis["Color"]=testColor
+    convergence_synthesis["Mesh_cell_type"]="3DTriangles"
     convergence_synthesis["Errors"]=[10**x for x in error_tab]
     convergence_synthesis["Scheme_order"]=-a
+    convergence_synthesis["Test_color"]=testColor
+    convergence_synthesis["Computational_time"]=end-start
 
     with open('Convergence_Poisson_32DFV_'+mesh_name+'.json', 'w') as outfile:  
         json.dump(convergence_synthesis, outfile)

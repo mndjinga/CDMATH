@@ -3,11 +3,12 @@ import FiniteVolumes2DWithCDMATH
 import matplotlib.pyplot as plt
 import numpy as np
 from math import log10, sqrt
-import json
+import time, json
 
 convergence_synthesis=dict(FiniteVolumes2DWithCDMATH.test_desc)
 
 def test_validation2DVF_squares():
+    start = time.time()
     ### 2D FV rectangular mesh
 #    meshList=[11,51,151,201]
     meshList=['squareWithSquares_1','squareWithSquares_2','squareWithSquares_3','squareWithSquares_4','squareWithSquares_5']
@@ -38,6 +39,8 @@ def test_validation2DVF_squares():
         mesh_size_tab[i] = log10(mesh_size_tab[i])
         i=i+1
         
+    end = time.time()
+
     # Plot over diagonal line
     plt.legend()
     plt.xlabel('Position on diagonal line')
@@ -92,9 +95,10 @@ def test_validation2DVF_squares():
     convergence_synthesis["Space_dimension"]=2
     convergence_synthesis["Mesh_dimension"]=2
     convergence_synthesis["Mesh_cell_type"]="Squares"
-    convergence_synthesis["Color"]=testColor
     convergence_synthesis["Errors"]=[10**x for x in error_tab]
     convergence_synthesis["Scheme_order"]=-a
+    convergence_synthesis["Test_color"]=testColor
+    convergence_synthesis["Computational_time"]=end-start
 
     with open('Convergence_Poisson_2DVF_'+mesh_name+'.json', 'w') as outfile:  
         json.dump(convergence_synthesis, outfile)
