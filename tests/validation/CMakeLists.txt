@@ -49,7 +49,7 @@ scripts)
 install(DIRECTORY ${VALIDATION_FOLDERS_TO_INSTALL} DESTINATION share/validation)
 
 install(DIRECTORY ${VALIDATION_FOLDERS_TO_INSTALL} DESTINATION share/doc/validation
- PATTERN "*.png"
+FILES_MATCHING PATTERN "*.png"
                PATTERN "*.ipynb"
                PATTERN "*.py"
                PATTERN "*.html"
