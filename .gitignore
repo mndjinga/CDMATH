@@ -19,7 +19,6 @@
 # Automatically generated documentation files
 doc/*
 pre_requis/MEDFile/doc/*
-*.html
 *.map
 
 # Eclipse files
