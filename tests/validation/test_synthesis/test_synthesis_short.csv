@@ -1,73 +1,95 @@
-,PDE_model,Numerical_method_space_discretization,Numerical_method_name,Mesh_dimension,Mesh_type,Mesh_cell_type,Test_color,Mesh_number_of_elements,Global_name
-0,Wave system,Finite volumes,Upwind,2,Unstructured triangles,Triangles ,Green,104420,Resolution of the Wave system in dimension 3 on 104420 cells
-1,Wave system,Finite volumes,Upwind,2,Unstructured triangles,Triangles ,Green,224,Resolution of the Wave system in dimension 3 on 224 cells
-2,Wave system,Finite volumes,Upwind,2,Unstructured triangles,Triangles ,Green,40,Resolution of the Wave system in dimension 3 on 40 cells
-3,Wave system,Finite volumes,Upwind,2,Unstructured triangles,Triangles ,Green,6422,Resolution of the Wave system in dimension 3 on 6422 cells
-4,Wave system,Finite volumes,Upwind,2,Unstructured triangles,Triangles ,Green,25872,Resolution of the Wave system in dimension 3 on 25872 cells
-5,Wave system,Finite volumes,Upwind,2,Unstructured triangles,Triangles ,Green,934,Resolution of the Wave system in dimension 3 on 934 cells
-6,Poisson,Finite elements,P1 FE,2,Unstructured 3D triangles,Triangles ,Green,288,FE simulation of the Poisson equation on a sphere
-7,Poisson,Finite elements,P1 FE,2,Unstructured 3D triangles,Triangles ,Green,10773,FE simulation of the Poisson equation on a sphere
-8,Poisson,Finite elements,P1 FE,2,Unstructured 3D triangles,Triangles ,Green,1124,FE simulation of the Poisson equation on a sphere
-9,Poisson,Finite elements,P1 FE,2,Unstructured 3D triangles,Triangles ,Green,2638,FE simulation of the Poisson equation on a sphere
-10,Poisson,Finite elements,P1 FE,2,Unstructured 3D triangles,Triangles ,Green,4512,FE simulation of the Poisson equation on a sphere
-11,Wave system,Finite volumes,Upwind,2,Regular squares,Quadrangles ,Green,6561,Resolution of the Wave system in dimension 2 on 6561 cells
-12,Wave system,Finite volumes,Upwind,2,Regular squares,Quadrangles ,Green,225,Resolution of the Wave system in dimension 2 on 225 cells
-13,Wave system,Finite volumes,Upwind,2,Regular squares,Quadrangles ,Green,49,Resolution of the Wave system in dimension 2 on 49 cells
-14,Wave system,Finite volumes,Upwind,2,Regular squares,Quadrangles ,Green,961,Resolution of the Wave system in dimension 2 on 961 cells
-15,Wave system,Finite volumes,Upwind,2,Regular squares,Quadrangles ,Green,2601,Resolution of the Wave system in dimension 2 on 2601 cells
-16,Wave system,Finite volumes,Upwind,3,Regular tetrahedra,Tetrahedra ,Green,750,Resolution of the Wave system in dimension 3 on 750 cells
-17,Wave system,Finite volumes,Upwind,3,Regular tetrahedra,Tetrahedra ,Green,7986,Resolution of the Wave system in dimension 3 on 7986 cells
-18,Wave system,Finite volumes,Upwind,3,Regular tetrahedra,Tetrahedra ,Green,55566,Resolution of the Wave system in dimension 3 on 55566 cells
-19,Wave system,Finite volumes,Upwind,3,Regular tetrahedra,Tetrahedra ,Green,105456,Resolution of the Wave system in dimension 3 on 105456 cells
-20,Poisson,Finite volumes,VF5,2,Non conforming cartesian locally refined,Quadrangles Polygons ,Green,2560,FV simulation of the 2D Poisson equation
-21,Poisson,Finite volumes,VF5,2,Non conforming cartesian locally refined,Quadrangles Polygons ,Green,40,FV simulation of the 2D Poisson equation
-22,Poisson,Finite volumes,VF5,2,Non conforming cartesian locally refined,Quadrangles Polygons ,Green,640,FV simulation of the 2D Poisson equation
-23,Poisson,Finite volumes,VF5,2,Non conforming cartesian locally refined,Quadrangles Polygons ,Green,160,FV simulation of the 2D Poisson equation
-24,Poisson,Finite volumes,VF5,2,Non conforming cartesian locally refined,Quadrangles Polygons ,Green,10240,FV simulation of the 2D Poisson equation
-25,Poisson,Finite volumes,VF5,2,Non conforming cartesian locally refined,Quadrangles Polygons ,Green,163840,FV simulation of the 2D Poisson equation
-26,Poisson,Finite volumes,VF5,2,Non conforming cartesian locally refined,Quadrangles Polygons ,Green,40960,FV simulation of the 2D Poisson equation
-27,Poisson,Finite elements,P1 FE,2,Unstructured triangles,Triangles ,Green,131,FE simulation of the 2D Poisson equation
-28,Poisson,Finite elements,P1 FE,2,Unstructured triangles,Triangles ,Green,29,FE simulation of the 2D Poisson equation
-29,Poisson,Finite elements,P1 FE,2,Unstructured triangles,Triangles ,Green,506,FE simulation of the 2D Poisson equation
-30,Poisson,Finite elements,P1 FE,2,Unstructured triangles,Triangles ,Green,13135,FE simulation of the 2D Poisson equation
-31,Poisson,Finite elements,P1 FE,2,Unstructured triangles,Triangles ,Green,3310,FE simulation of the 2D Poisson equation
-32,Poisson,Finite volumes,VF5,3,Regular cubes,Hexahedra ,Green,9261,FV simulation of the 3D Poisson equation
-33,Poisson,Finite volumes,VF5,3,Regular cubes,Hexahedra ,Green,68921,FV simulation of the 3D Poisson equation
-34,Poisson,Finite volumes,VF5,3,Regular cubes,Hexahedra ,Green,1331,FV simulation of the 3D Poisson equation
-35,Poisson,Finite volumes,VF5,2,Regular squares,Quadrangles ,Green,22801,FV simulation of the 2D Poisson equation
-36,Poisson,Finite volumes,VF5,2,Regular squares,Quadrangles ,Green,2601,FV simulation of the 2D Poisson equation
-37,Poisson,Finite volumes,VF5,2,Regular squares,Quadrangles ,Green,121,FV simulation of the 2D Poisson equation
-38,Poisson,Finite volumes,VF5,2,Regular squares,Quadrangles ,Green,40401,FV simulation of the 2D Poisson equation
-39,Wave system,Finite volumes,Pseudo staggered,2,Regular squares,Quadrangles ,Green,6561,Resolution of the Wave system in dimension 2 on 6561 cells
-40,Wave system,Finite volumes,Pseudo staggered,2,Regular squares,Quadrangles ,Green,2601,Resolution of the Wave system in dimension 2 on 2601 cells
-41,Wave system,Finite volumes,Pseudo staggered,2,Regular squares,Quadrangles ,Green,49,Resolution of the Wave system in dimension 2 on 49 cells
-42,Wave system,Finite volumes,Pseudo staggered,2,Regular squares,Quadrangles ,Green,961,Resolution of the Wave system in dimension 2 on 961 cells
-43,Wave system,Finite volumes,Pseudo staggered,2,Regular squares,Quadrangles ,Green,225,Resolution of the Wave system in dimension 2 on 225 cells
-44,Wave system,Finite volumes,Upwind,3,Regular cubes,Hexahedra ,Green,1331,Resolution of the Wave system in dimension 3 on 1331 cells
-45,Wave system,Finite volumes,Upwind,3,Regular cubes,Hexahedra ,Green,29791,Resolution of the Wave system in dimension 3 on 29791 cells
-46,Wave system,Finite volumes,Upwind,3,Regular cubes,Hexahedra ,Green,9261,Resolution of the Wave system in dimension 3 on 9261 cells
-47,Poisson,Finite volumes,VF5,2,Non conforming cartesian checkerboard,Quadrangles Polygons ,"Orange, dark squares. PB with mesh ?",2560,FV simulation of the 2D Poisson equation
-48,Poisson,Finite volumes,VF5,2,Non conforming cartesian checkerboard,Quadrangles Polygons ,"Orange, dark squares. PB with mesh ?",40,FV simulation of the 2D Poisson equation
-49,Poisson,Finite volumes,VF5,2,Non conforming cartesian checkerboard,Quadrangles Polygons ,"Orange, dark squares. PB with mesh ?",640,FV simulation of the 2D Poisson equation
-50,Poisson,Finite volumes,VF5,2,Non conforming cartesian checkerboard,Quadrangles Polygons ,"Orange, dark squares. PB with mesh ?",160,FV simulation of the 2D Poisson equation
-51,Poisson,Finite volumes,VF5,2,Non conforming cartesian checkerboard,Quadrangles Polygons ,"Orange, dark squares. PB with mesh ?",10240,FV simulation of the 2D Poisson equation
-52,Poisson,Finite volumes,VF5,2,Non conforming cartesian checkerboard,Quadrangles Polygons ,"Orange, dark squares. PB with mesh ?",40960,FV simulation of the 2D Poisson equation
-53,Poisson,Finite volumes,VF5,2,Unstructured triangles,Triangles ,Green,25872,FV simulation of the 2D Poisson equation
-54,Poisson,Finite volumes,VF5,2,Unstructured triangles,Triangles ,Green,40,FV simulation of the 2D Poisson equation
-55,Poisson,Finite volumes,VF5,2,Unstructured triangles,Triangles ,Green,934,FV simulation of the 2D Poisson equation
-56,Poisson,Finite volumes,VF5,2,Unstructured triangles,Triangles ,Green,224,FV simulation of the 2D Poisson equation
-57,Poisson,Finite volumes,VF5,2,Unstructured triangles,Triangles ,Green,6422,FV simulation of the 2D Poisson equation
-58,Poisson,Finite elements,P1 FE,3,Unstructured tetrahedra,Tetrahedra ,Green,12465,FE simulation of the 3D Poisson equation
-59,Poisson,Finite elements,P1 FE,3,Unstructured tetrahedra,Tetrahedra ,Green,1543,FE simulation of the 3D Poisson equation
-60,Poisson,Finite elements,P1 FE,3,Unstructured tetrahedra,Tetrahedra ,Green,5956,FE simulation of the 3D Poisson equation
-61,Poisson,Finite elements,P1 FE,3,Unstructured tetrahedra,Tetrahedra ,Green,74,FE simulation of the 3D Poisson equation
-62,Poisson,Finite elements,P1 FE,3,Unstructured tetrahedra,Tetrahedra ,Green,841,FE simulation of the 3D Poisson equation
-63,Poisson,Finite elements,P1 FE,3,Unstructured tetrahedra,Tetrahedra ,Green,3372,FE simulation of the 3D Poisson equation
-64,Poisson,Finite elements,P1 FE,3,Unstructured tetrahedra,Tetrahedra ,Green,508,FE simulation of the 3D Poisson equation
-65,Poisson,Finite volumes,VF5,3,Unstructured tetrahedra,Tetrahedra ,Green,16834,FV simulation of the 3D Poisson equation
-66,Poisson,Finite volumes,VF5,3,Unstructured tetrahedra,Tetrahedra ,Green,28561,FV simulation of the 3D Poisson equation
-67,Poisson,Finite volumes,VF5,3,Unstructured tetrahedra,Tetrahedra ,Green,63249,FV simulation of the 3D Poisson equation
-68,Poisson,Finite volumes,VF5,3,Unstructured tetrahedra,Tetrahedra ,Green,7629,FV simulation of the 3D Poisson equation
-69,Poisson,Finite volumes,VF5,3,Unstructured tetrahedra,Tetrahedra ,Green,270,FV simulation of the 3D Poisson equation
-70,Poisson,Finite volumes,VF5,3,Unstructured tetrahedra,Tetrahedra ,Green,4077,FV simulation of the 3D Poisson equation
-71,Poisson,Finite volumes,VF5,3,Unstructured tetrahedra,Tetrahedra ,Green,2081,FV simulation of the 3D Poisson equation
+,PDE_model,Numerical_method_name,Mesh_dimension,Mesh_type,Mesh_cell_type,Test_color,Mesh_number_of_elements,Computational_time_taken_by_run
+0,Wave system,Upwind,2,Deformed quadrangles,Quadrangles ,Green,16,0.796339988708
+1,Wave system,Upwind,2,Deformed quadrangles,Quadrangles ,Green,256,0.745651006699
+2,Wave system,Upwind,2,Deformed quadrangles,Quadrangles ,Green,64,0.511260032654
+3,Wave system,Upwind,2,Deformed quadrangles,Quadrangles ,Green,1024,2.0844938755
+4,Wave system,Upwind,2,Regular brick wall,Polygons ,Green,2500,3.9868619442
+5,Wave system,Upwind,2,Regular brick wall,Polygons ,Green,900,1.41768908501
+6,Wave system,Upwind,2,Regular brick wall,Polygons ,Green,225,0.614181995392
+7,Wave system,Upwind,2,Regular brick wall,Polygons ,Green,25,0.948393821716
+8,Poisson,VF5,2,Regular hexagons,Polygons ,Green,25,0.00518012046814
+9,Poisson,VF5,2,Regular hexagons,Polygons ,Green,11500,0.745733976364
+10,Poisson,VF5,2,Regular hexagons,Polygons ,Green,1020,0.0666990280151
+11,Poisson,VF5,2,Regular hexagons,Polygons ,Green,2850,0.181074857712
+12,Poisson,VF5,2,Regular hexagons,Polygons ,Green,255,0.0225410461426
+13,Wave system,Upwind,2,Unstructured triangles,Triangles ,Green,6422,1.83664894104
+14,Wave system,Upwind,2,Unstructured triangles,Triangles ,Green,934,0.766926050186
+15,Wave system,Upwind,2,Unstructured triangles,Triangles ,Green,40,0.894823074341
+16,Wave system,Upwind,2,Unstructured triangles,Triangles ,Green,224,0.566647052765
+17,Poisson,P1 FE,2,Unstructured 3D triangles,Triangles ,Green,10773,2.2600479126
+18,Poisson,P1 FE,2,Unstructured 3D triangles,Triangles ,Green,288,0.0690839290619
+19,Poisson,P1 FE,2,Unstructured 3D triangles,Triangles ,Green,4512,0.969397068024
+20,Poisson,P1 FE,2,Unstructured 3D triangles,Triangles ,Green,1124,0.250603199005
+21,Poisson,P1 FE,2,Unstructured 3D triangles,Triangles ,Green,2638,0.575623035431
+22,Wave system,Upwind,2,Regular squares,Quadrangles ,Green,16,0.877402067184
+23,Wave system,Upwind,2,Regular squares,Quadrangles ,Green,4096,3.24389815331
+24,Wave system,Upwind,2,Regular squares,Quadrangles ,Green,64,0.488038063049
+25,Wave system,Upwind,2,Regular squares,Quadrangles ,Green,1024,0.938258886337
+26,Wave system,Upwind,2,Regular squares,Quadrangles ,Green,256,0.551871061325
+27,Wave system,Upwind,3,Regular tetrahedra,Tetrahedra ,Green,55566,23.3998639584
+28,Wave system,Upwind,3,Regular tetrahedra,Tetrahedra ,Green,7986,3.43224692345
+29,Wave system,Upwind,3,Regular tetrahedra,Tetrahedra ,Green,750,1.10073304176
+30,Wave system,Upwind,3,Regular tetrahedra,Tetrahedra ,Green,105456,48.1737649441
+31,Poisson,VF5,2,Non conforming cartesian locally refined,Quadrangles Polygons ,Green,2560,0.116286039352
+32,Poisson,VF5,2,Non conforming cartesian locally refined,Quadrangles Polygons ,Green,160,0.0125780105591
+33,Poisson,VF5,2,Non conforming cartesian locally refined,Quadrangles Polygons ,Green,640,0.0319800376892
+34,Poisson,VF5,2,Non conforming cartesian locally refined,Quadrangles Polygons ,Green,10240,0.471500873566
+35,Poisson,VF5,2,Non conforming cartesian locally refined,Quadrangles Polygons ,Green,163840,8.70389199257
+36,Poisson,VF5,2,Non conforming cartesian locally refined,Quadrangles Polygons ,Green,40,0.00576305389404
+37,Poisson,VF5,2,Non conforming cartesian locally refined,Quadrangles Polygons ,Green,40960,1.95375680923
+38,Poisson,P1 FE,2,Unstructured triangles,Triangles ,Green,29,0.011482000351
+39,Poisson,P1 FE,2,Unstructured triangles,Triangles ,Green,131,0.0219569206238
+40,Poisson,P1 FE,2,Unstructured triangles,Triangles ,Green,3310,1.97233605385
+41,Poisson,P1 FE,2,Unstructured triangles,Triangles ,Green,13135,27.0529100895
+42,Poisson,P1 FE,2,Unstructured triangles,Triangles ,Green,506,0.0920989513397
+43,Poisson,VF5,3,Regular cubes,Hexahedra ,Green,9261,0.851932048798
+44,Poisson,VF5,3,Regular cubes,Hexahedra ,Green,68921,20.6130290031
+45,Poisson,VF5,3,Regular cubes,Hexahedra ,Green,1331,0.0920269489288
+46,Poisson,VF5,2,Regular squares,Quadrangles ,Green,256,0.0154111385345
+47,Poisson,VF5,2,Regular squares,Quadrangles ,Green,1024,0.0484409332275
+48,Poisson,VF5,2,Regular squares,Quadrangles ,Green,4096,0.181776046753
+49,Poisson,VF5,2,Regular squares,Quadrangles ,Green,16,0.00436592102051
+50,Poisson,VF5,2,Regular squares,Quadrangles ,Green,64,0.00927495956421
+51,Wave system,Pseudo staggered with scaling,2,Regular squares,Quadrangles ,Green,64,0.571124076843
+52,Wave system,Pseudo staggered with scaling,2,Regular squares,Quadrangles ,Green,16,0.929350852966
+53,Wave system,Pseudo staggered with scaling,2,Regular squares,Quadrangles ,Green,256,1.005215168
+54,Wave system,Pseudo staggered with scaling,2,Regular squares,Quadrangles ,Green,1024,5.47803711891
+55,Wave system,Pseudo staggered with scaling,2,Regular squares,Quadrangles ,Green,4096,41.02166605
+56,Wave system,Upwind,3,Regular cubes,Hexahedra ,Green,216,1.05129289627
+57,Wave system,Upwind,3,Regular cubes,Hexahedra ,Green,9261,9.58497810364
+58,Wave system,Upwind,3,Regular cubes,Hexahedra ,Green,1331,1.38059401512
+59,Poisson,VF5,2,Unstructured triangles,Triangles ,Green,6422,0.234560966492
+60,Poisson,VF5,2,Unstructured triangles,Triangles ,Green,224,0.0140569210052
+61,Poisson,VF5,2,Unstructured triangles,Triangles ,Green,25872,0.981840133667
+62,Poisson,VF5,2,Unstructured triangles,Triangles ,Green,40,0.00514698028564
+63,Poisson,VF5,2,Unstructured triangles,Triangles ,Green,934,0.0367488861084
+64,Wave system,Pseudo staggered with scaling,2,Unstructured triangles,Triangles ,Orange,6422,126.844350815
+65,Wave system,Pseudo staggered without scaling,2,Unstructured triangles,Triangles ,Orange,224,1.56525611877
+66,Wave system,Pseudo staggered without scaling,2,Unstructured triangles,Triangles ,Orange,40,1.04213500023
+67,Wave system,Pseudo staggered without scaling,2,Unstructured triangles,Triangles ,Orange,934,32.8240399361
+68,Poisson,P1 FE,3,Unstructured tetrahedra,Tetrahedra ,Green,3372,10.0940032005
+69,Poisson,P1 FE,3,Unstructured tetrahedra,Tetrahedra ,Green,508,0.43309879303
+70,Poisson,P1 FE,3,Unstructured tetrahedra,Tetrahedra ,Green,1543,2.58744311333
+71,Poisson,P1 FE,3,Unstructured tetrahedra,Tetrahedra ,Green,5956,27.8454298973
+72,Poisson,P1 FE,3,Unstructured tetrahedra,Tetrahedra ,Green,12465,120.973486185
+73,Poisson,P1 FE,3,Unstructured tetrahedra,Tetrahedra ,Green,74,0.0496051311493
+74,Poisson,P1 FE,3,Unstructured tetrahedra,Tetrahedra ,Green,841,1.00262308121
+75,Wave system,Upwind,2,Regular hexagons,Polygons ,Green,255,0.68267583847
+76,Wave system,Upwind,2,Regular hexagons,Polygons ,Green,25,0.981824874878
+77,Wave system,Upwind,2,Regular hexagons,Polygons ,Green,1020,1.61876702309
+78,Wave system,Upwind,2,Regular hexagons,Polygons ,Green,2850,4.44275093079
+79,Poisson,VF5,3,Unstructured tetrahedra,Tetrahedra ,Green,7629,0.449550867081
+80,Poisson,VF5,3,Unstructured tetrahedra,Tetrahedra ,Green,16834,1.26619410515
+81,Poisson,VF5,3,Unstructured tetrahedra,Tetrahedra ,Green,63249,13.2956058979
+82,Poisson,VF5,3,Unstructured tetrahedra,Tetrahedra ,Green,4077,0.224781990051
+83,Poisson,VF5,3,Unstructured tetrahedra,Tetrahedra ,Green,28561,3.03826093674
+84,Poisson,VF5,3,Unstructured tetrahedra,Tetrahedra ,Green,270,0.0162899494171
+85,Poisson,VF5,3,Unstructured tetrahedra,Tetrahedra ,Green,2081,0.100481033325
+86,Poisson,VF5,3,Non conforming cartesian checkerboard,Hexahedra Polyhedrons ,"Orange, BC violated. PB with mesh ?",36,0.00720405578613
+87,Poisson,VF5,3,Non conforming cartesian checkerboard,Hexahedra Polyhedrons ,"Orange, BC violated. PB with mesh ?",18432,7.30275583267
+88,Poisson,VF5,3,Non conforming cartesian checkerboard,Hexahedra Polyhedrons ,"Orange, BC violated. PB with mesh ?",2304,0.231024026871
+89,Poisson,VF5,3,Non conforming cartesian checkerboard,Hexahedra Polyhedrons ,"Orange, BC violated. PB with mesh ?",288,0.0270919799805
+90,Wave system,Upwind,2,Regular checkerboard,Quadrangles Polygons ,Green,40,0.811036109924
+91,Wave system,Upwind,2,Regular checkerboard,Quadrangles Polygons ,Green,2560,3.58785009384
+92,Wave system,Upwind,2,Regular checkerboard,Quadrangles Polygons ,Green,160,0.597728013992
+93,Wave system,Upwind,2,Regular checkerboard,Quadrangles Polygons ,Green,640,1.35646700859
