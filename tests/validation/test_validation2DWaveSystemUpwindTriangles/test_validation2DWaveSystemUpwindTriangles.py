@@ -30,9 +30,10 @@ def test_validation2DWaveSystemUpwindTriangles():
     plt.close('all')
     i=0
     cfl=0.5
+    bctype="Periodic"
     # Storing of numerical errors, mesh sizes and diagonal values
     for filename in meshList:
-        error_p_tab[i], error_u_tab[i], mesh_size_tab[i], t_final[i], ndt_final[i], max_vel[i], diag_data_press[i], diag_data_vel[i], time_tab[i] =WaveSystemUpwind.solve_file(mesh_path+filename, mesh_name, resolution,meshType,testColor,cfl)
+        error_p_tab[i], error_u_tab[i], mesh_size_tab[i], t_final[i], ndt_final[i], max_vel[i], diag_data_press[i], diag_data_vel[i], time_tab[i] =WaveSystemUpwind.solve_file(mesh_path+filename, mesh_name, resolution,meshType,testColor,cfl,bctype)
         assert max_vel[i]>0.94 and max_vel[i]<1
         i=i+1
     

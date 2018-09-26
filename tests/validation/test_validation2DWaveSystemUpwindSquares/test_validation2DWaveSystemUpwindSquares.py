@@ -32,9 +32,10 @@ def test_validation2DWaveSystemUpwind_squares():
     plt.close('all')
     i=0
     cfl=0.5
+    bctype="Periodic"
     # Storing of numerical errors, mesh sizes and diagonal values
     for filename in meshList:
-        error_p_tab[i], error_u_tab[i], mesh_size_tab[i], t_final[i], ndt_final[i], max_vel[i], diag_data_press[i], diag_data_vel[i], time_tab[i] =WaveSystemUpwind.solve_file(mesh_path+filename, mesh_name, resolution,meshType,testColor,cfl)
+        error_p_tab[i], error_u_tab[i], mesh_size_tab[i], t_final[i], ndt_final[i], max_vel[i], diag_data_press[i], diag_data_vel[i], time_tab[i] =WaveSystemUpwind.solve_file(mesh_path+filename, mesh_name, resolution,meshType,testColor,cfl,bctype)
         assert max_vel[i]>0.76 and max_vel[i]<1
         i=i+1
     
@@ -69,6 +70,13 @@ def test_validation2DWaveSystemUpwind_squares():
     
     det=a1*a3-a2*a2
     assert det!=0, 'test_validation2DWaveSystemUpwind_squares() : Make sure you use distinct meshes and at least two meshes'
+
+    b1p=np.dot(error_p_tab,mesh_size_tab)   
+    b2p=np.sum(error_p_tab)
+    ap=( a3*b1p-a2*b2p)/det
+    bp=(-a2*b1p+a1*b2p)/det
+    
+    print "FV upwind on 2D square meshes : scheme order for pressure is ", -ap
 
     b1u=np.dot(error_u_tab,mesh_size_tab)   
     b2u=np.sum(error_u_tab)
@@ -156,8 +164,9 @@ def test_validation2DWaveSystemUpwind_squares():
     convergence_synthesis["Max_vel_norm"]=max_vel
     convergence_synthesis["Final_time"]=t_final  
     convergence_synthesis["Final_time_step"]=ndt_final  
-    convergence_synthesis["Scheme_order"]=-au
+    convergence_synthesis["Scheme_order"]=min(-au,-ap)
     convergence_synthesis["Scheme_order_vel"]=-au
+    convergence_synthesis["Scheme_order_press"]=-ap
     convergence_synthesis["Scaling_preconditioner"]="None"
     convergence_synthesis["Test_color"]=testColor
     convergence_synthesis["Computational_time"]=end-start

@@ -6,7 +6,7 @@ from math import log10, sqrt
 import sys
 import time, json
 
-def test_validation2DWaveSystemUpwindCheckerboard():
+def test_validation2DWaveSystemUpwindCheckerboard(bctype):
     start = time.time()
     #### 2D checkerboard mesh
     meshList=['checkerboard_4x4','checkerboard_8x8','checkerboard_16x16','checkerboard_32x32']
@@ -32,8 +32,8 @@ def test_validation2DWaveSystemUpwindCheckerboard():
     cfl=0.5
     # Storing of numerical errors, mesh sizes and diagonal values
     for filename in meshList:
-        error_p_tab[i], error_u_tab[i], mesh_size_tab[i], t_final[i], ndt_final[i], max_vel[i], diag_data_press[i], diag_data_vel[i], time_tab[i] =WaveSystemUpwind.solve_file(mesh_path+filename, mesh_name, resolution,meshType,testColor,cfl)
-        assert max_vel[i]>0.94 and max_vel[i]<1
+        error_p_tab[i], error_u_tab[i], mesh_size_tab[i], t_final[i], ndt_final[i], max_vel[i], diag_data_press[i], diag_data_vel[i], time_tab[i] =WaveSystemUpwind.solve_file(mesh_path+filename, mesh_name, resolution,meshType,testColor,cfl,bctype)
+        assert max_vel[i]>0.007 and max_vel[i]<1
         i=i+1
     
     end = time.time()
@@ -172,4 +172,8 @@ def test_validation2DWaveSystemUpwindCheckerboard():
         json.dump(convergence_synthesis, outfile)
 
 if __name__ == """__main__""":
-    test_validation2DWaveSystemUpwindCheckerboard()
+    if len(sys.argv) >1 :
+        bctype = sys.argv[1]
+        test_validation2DWaveSystemUpwindCheckerboard(bctype)
+    else :
+        raise ValueError("test_validation2DWaveSystemUpwindCheckerboard.py expects a mesh file name")

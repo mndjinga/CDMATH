@@ -30,13 +30,13 @@ def test_validation3DWaveSystemUpwind_cubes():
     plt.close('all')
     i=0
     cfl=1./3
+    bctype="Periodic"
     
     # Storing of numerical errors, mesh sizes and diagonal values
     for nx in meshList:
         my_mesh=cdmath.Mesh(0,1,nx,0,1,nx,0,1,nx)
-        error_p_tab[i], error_u_tab[i], mesh_size_tab[i], t_final[i], ndt_final[i], max_vel[i], diag_data_press[i], diag_data_vel[i], time_tab[i] =WaveSystemUpwind.solve(my_mesh, mesh_name+str(my_mesh.getNumberOfCells()), resolution,meshType,testColor,cfl)
-        print max_vel[i]
-        #assert max_vel[i]>1.95 and max_vel[i]<2
+        error_p_tab[i], error_u_tab[i], mesh_size_tab[i], t_final[i], ndt_final[i], max_vel[i], diag_data_press[i], diag_data_vel[i], time_tab[i] =WaveSystemUpwind.solve(my_mesh, mesh_name+str(my_mesh.getNumberOfCells()), resolution,meshType,testColor,cfl,bctype)
+        assert max_vel[i]>1.5 and max_vel[i]<2
         i=i+1
     
     end = time.time()
@@ -71,12 +71,19 @@ def test_validation3DWaveSystemUpwind_cubes():
     det=a1*a3-a2*a2
     assert det!=0, 'test_validation3DWaveSystem_cubes() : Make sure you use distinct meshes and at least two meshes'
 
+    b1p=np.dot(error_p_tab,mesh_size_tab)   
+    b2p=np.sum(error_p_tab)
+    ap=( a3*b1p-a2*b2p)/det
+    bp=(-a2*b1p+a1*b2p)/det
+    
+    print "FV upwind on 3D cubee meshes : scheme order for pressure is ", -ap
+
     b1u=np.dot(error_u_tab,mesh_size_tab)   
     b2u=np.sum(error_u_tab)
     au=( a3*b1u-a2*b2u)/det
     bu=(-a2*b1u+a1*b2u)/det
     
-    print "FV on 3D cube meshes : scheme order for velocity is ", -au
+    print "FV upwind on 3D cube meshes : scheme order for velocity is ", -au
     
     # Plot of number of time steps
     plt.close()
@@ -157,8 +164,9 @@ def test_validation3DWaveSystemUpwind_cubes():
     convergence_synthesis["Max_vel_norm"]=max_vel
     convergence_synthesis["Final_time"]=t_final  
     convergence_synthesis["Final_time_step"]=ndt_final  
-    convergence_synthesis["Scheme_order"]=-au
+    convergence_synthesis["Scheme_order"]=min(-au,-ap)
     convergence_synthesis["Scheme_order_vel"]=-au
+    convergence_synthesis["Scheme_order_press"]=-ap
     convergence_synthesis["Scaling_preconditioner"]="None"
     convergence_synthesis["Test_color"]=testColor
     convergence_synthesis["Computational_time"]=end-start

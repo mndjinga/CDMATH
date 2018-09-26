@@ -6,10 +6,10 @@ from math import log10, sqrt
 import sys
 import time, json
 
-def test_validation2DWaveSystemUpwindBrickWall():
+def test_validation2DWaveSystemUpwindBrickWall(bctype):
     start = time.time()
     #### 2D brick wall mesh
-    meshList=['squareWithBrickWalls_1','squareWithBrickWall_2','squareWithBrickWall_3','squareWithBrickWall_4']
+    meshList=['squareWithBrickWall_1','squareWithBrickWall_2','squareWithBrickWall_3','squareWithBrickWall_4']
     meshType="Regular brick wall"
     testColor="Green"
     nbMeshes=len(meshList)
@@ -32,8 +32,8 @@ def test_validation2DWaveSystemUpwindBrickWall():
     cfl=0.5
     # Storing of numerical errors, mesh sizes and diagonal values
     for filename in meshList:
-        error_p_tab[i], error_u_tab[i], mesh_size_tab[i], t_final[i], ndt_final[i], max_vel[i], diag_data_press[i], diag_data_vel[i], time_tab[i] =WaveSystemUpwind.solve_file(mesh_path+filename, mesh_name, resolution,meshType,testColor,cfl)
-        assert max_vel[i]>0.94 and max_vel[i]<1
+        error_p_tab[i], error_u_tab[i], mesh_size_tab[i], t_final[i], ndt_final[i], max_vel[i], diag_data_press[i], diag_data_vel[i], time_tab[i] =WaveSystemUpwind.solve_file(mesh_path+filename, mesh_name, resolution,meshType,testColor,cfl,bctype)
+        assert max_vel[i]>0.002 and max_vel[i]<1
         i=i+1
     
     end = time.time()
@@ -172,4 +172,9 @@ def test_validation2DWaveSystemUpwindBrickWall():
         json.dump(convergence_synthesis, outfile)
 
 if __name__ == """__main__""":
-    test_validation2DWaveSystemUpwindBrickWall()
+    if len(sys.argv) >1 :
+        bctype = sys.argv[1]
+        test_validation2DWaveSystemUpwindBrickWall(bctype)
+    else :
+        raise ValueError("test_validation2DWaveSystemUpwindBrickWall.py expects a mesh file name")
+    
