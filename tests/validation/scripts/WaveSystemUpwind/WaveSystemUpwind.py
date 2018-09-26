@@ -57,7 +57,7 @@ def jacobianMatrices(normal, coeff):
     return (A-absA)/2
     
     
-def computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt):
+def computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt,test_bc):
     nbCells = my_mesh.getNumberOfCells()
     dim=my_mesh.getMeshDimension()
     nbComp=dim+1
@@ -94,7 +94,7 @@ def computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt):
                 implMat.addValue(j*nbComp,cellAutre*nbComp,Am)
                 implMat.addValue(j*nbComp,        j*nbComp,Am*(-1.))
             else  :
-                if( Fk.getGroupName() != "Wall" and Fk.getGroupName() != "Paroi" and Fk.getGroupName() != "Neumann"):#Periodic boundary condition unless Wall/Neumann specified explicitly
+                if( test_bc=="Periodic" and Fk.getGroupName() != "Wall" and Fk.getGroupName() != "Paroi" and Fk.getGroupName() != "Neumann"):#Periodic boundary condition unless Wall/Neumann specified explicitly
                     test_desc["Boundary_conditions"]="Periodic"
                     indexFP = my_mesh.getIndexFacePeriodic(indexFace)
                     Fp = my_mesh.getFace(indexFP)
@@ -102,7 +102,7 @@ def computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt):
                     
                     implMat.addValue(j*nbComp,cellAutre*nbComp,Am)
                     implMat.addValue(j*nbComp,        j*nbComp,Am*(-1.))
-                elif( Fk.getGroupName() == "Wall" or Fk.getGroupName() == "Paroi"):#Wall boundary condition
+                elif( test_bc=="Wall" or Fk.getGroupName() == "Wall" or Fk.getGroupName() == "Paroi"):#Wall boundary condition
                     test_desc["Boundary_conditions"]="Wall"
                     v=cdmath.Vector(dim+1)
                     for i in range(dim) :
@@ -111,13 +111,13 @@ def computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt):
                     
                     implMat.addValue(j*nbComp,j*nbComp,Am*(-1.)*idMoinsJacCL)
                     
-                elif(Fk.getGroupName() != "Neumann"):#Nothing to do for Neumann boundary condition
+                elif(test_bc!=Neumann and Fk.getGroupName() != "Neumann"):#Nothing to do for Neumann boundary condition
                     print Fk.getGroupName()
                     raise ValueError("computeFluxes: Unknown boundary condition name");
                 
     return implMat
 
-def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution):
+def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,test_bc):
     dim=my_mesh.getMeshDimension()
     nbCells = my_mesh.getNumberOfCells()
     
@@ -161,7 +161,7 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution):
 
     dt = cfl * dx_min / c0
 
-    divMat=computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt)
+    divMat=computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt,test_bc)
     if(isImplicit):
         #Adding the identity matrix on the diagonal
         for j in range(nbCells*(dim+1)):
@@ -256,7 +256,10 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution):
     elif(isStationary):
         print "Régime stationnaire atteint au pas de temps ", it, ", t= ", time
         assert (total_pressure_initial-pressure_field.integral()).norm()/p0<precision
-        assert (total_velocity_initial-velocity_field.integral()).norm()<2*precision
+        if(test_bc=="Periodic"):
+            assert (total_velocity_initial-velocity_field.integral()).norm()<2*precision
+        else:
+                print "Momentum loss=", (total_velocity_initial-velocity_field.integral()).norm(), "precision=", precision
         print "------------------------------------------------------------------------------------"
 
         pressure_field.setTime(time,0);
@@ -281,7 +284,7 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution):
         raise ValueError("Maximum time reached : Stationary state not found !!!!!!!")
 
 
-def solve(my_mesh,meshName,resolution, meshType, testColor,cfl):
+def solve(my_mesh,meshName,resolution, meshType, testColor,cfl,test_bc):
     start = time.time()
     test_desc["Mesh_type"]=meshType
     test_desc["Test_color"]=testColor
@@ -290,7 +293,6 @@ def solve(my_mesh,meshName,resolution, meshType, testColor,cfl):
     test_model="Wave system"
     test_method="Upwind"
     test_initial_data="Constant pressure, divergence free velocity"
-    test_bc="Periodic"
 
     print test_name
     print "Numerical method : ", test_method
@@ -305,7 +307,7 @@ def solve(my_mesh,meshName,resolution, meshType, testColor,cfl):
     ntmax = 10000
     output_freq = 1000
 
-    error_p, error_u, nbCells, t_final, ndt_final, max_vel, diag_data_press, diag_data_vel = WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution)
+    error_p, error_u, nbCells, t_final, ndt_final, max_vel, diag_data_press, diag_data_vel = WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,test_bc)
     end = time.time()
 
     test_desc["Global_name"]=test_name
@@ -341,17 +343,17 @@ def solve(my_mesh,meshName,resolution, meshType, testColor,cfl):
 
     return error_p, error_u, nbCells, t_final, ndt_final, max_vel, diag_data_press, diag_data_vel, end - start
 
-def solve_file( filename,meshName, resolution, meshType, testColor,cfl):
+def solve_file( filename,meshName, resolution, meshType, testColor,cfl,test_bc):
     my_mesh = cdmath.Mesh(filename+".med")
 
-    return solve(my_mesh, meshName+str(my_mesh.getNumberOfCells()),resolution, meshType, testColor,cfl)
+    return solve(my_mesh, meshName+str(my_mesh.getNumberOfCells()),resolution, meshType, testColor,cfl,test_bc)
     
 
 if __name__ == """__main__""":
     M1=cdmath.Mesh(0,0,1,20,0,1,20)
     cfl=0.5
-    solve(M1,"SquareRegularTriangles",100,"Regular triangles","Green",cfl)
+    solve(M1,"SquareRegularTriangles",100,"Regular triangles","Green",cfl,"Periodic")
 
     M2=cdmath.Mesh(6,0,1,10,0,1,10,0,1,10)
     cfl=1./3
-    solve(M2,"CubeRegularTetrahedra",100,"Regular tetrahedra","Green",cfl)
+    solve(M2,"CubeRegularTetrahedra",100,"Regular tetrahedra","Green",cfl,"Wall")
