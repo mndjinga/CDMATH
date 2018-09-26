@@ -36,7 +36,7 @@ def test_validation3DWaveSystemUpwind_cubes():
     for nx in meshList:
         my_mesh=cdmath.Mesh(0,1,nx,0,1,nx,0,1,nx)
         error_p_tab[i], error_u_tab[i], mesh_size_tab[i], t_final[i], ndt_final[i], max_vel[i], diag_data_press[i], diag_data_vel[i], time_tab[i] =WaveSystemUpwind.solve(my_mesh, mesh_name+str(my_mesh.getNumberOfCells()), resolution,meshType,testColor,cfl,bctype)
-        assert max_vel[i]>1.5 and max_vel[i]<2
+        assert max_vel[i]>1.4 and max_vel[i]<2
         i=i+1
     
     end = time.time()
