@@ -81,6 +81,16 @@ def test_validation2DWaveSystemPStag_squares(scaling):
     det=a1*a3-a2*a2
     assert det!=0, 'test_validation2DWaveSystemSquaresFVPStag_squares() : Make sure you use distinct meshes and at least two meshes'
 
+    b1p=np.dot(error_p_tab,mesh_size_tab)   
+    b2p=np.sum(error_p_tab)
+    ap=( a3*b1p-a2*b2p)/det
+    bp=(-a2*b1p+a1*b2p)/det
+    
+    if(scaling==0):
+        print "FV PStag on 2D square meshes : scheme order for pressure without scaling is ", -ap
+    else:
+        print "FV PStag on 2D square meshes : scheme order for pressure with    scaling is ", -ap
+
     b1u=np.dot(error_u_tab,mesh_size_tab)   
     b2u=np.sum(error_u_tab)
     au=( a3*b1u-a2*b2u)/det
@@ -206,8 +216,9 @@ def test_validation2DWaveSystemPStag_squares(scaling):
     convergence_synthesis["Max_vel_norm"]=max_vel
     convergence_synthesis["Final_time"]=t_final  
     convergence_synthesis["Final_time_step"]=ndt_final  
-    convergence_synthesis["Scheme_order"]=-au
+    convergence_synthesis["Scheme_order"]=min(-au,-ap)
     convergence_synthesis["Scheme_order_vel"]=-au
+    convergence_synthesis["Scheme_order_press"]=-ap
     convergence_synthesis["Scaling_preconditioner"]=scaling
     convergence_synthesis["Condition_numbers"]=cond_number
     convergence_synthesis["Test_color"]=testColor
