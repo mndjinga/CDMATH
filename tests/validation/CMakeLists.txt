@@ -17,6 +17,10 @@ IF (CDMATH_WITH_PYTHON AND CDMATH_WITH_PETSC)
     ADD_SUBDIRECTORY(test_validation2DWaveSystemPStagTriangles)
     ADD_SUBDIRECTORY(test_validation2DWaveSystemUpwindSquares)
     ADD_SUBDIRECTORY(test_validation2DWaveSystemUpwindTriangles)
+    ADD_SUBDIRECTORY(test_validation2DWaveSystemUpwindCheckerboard)
+    ADD_SUBDIRECTORY(test_validation2DWaveSystemUpwindBrickWall)
+    ADD_SUBDIRECTORY(test_validation2DWaveSystemUpwindHexagons)
+    ADD_SUBDIRECTORY(test_validation2DWaveSystemUpwindDeformedQuadrangles)
     ADD_SUBDIRECTORY(test_validation3DWaveSystemUpwindCubes)
     ADD_SUBDIRECTORY(test_validation3DWaveSystemUpwindTetrahedra)
     ADD_SUBDIRECTORY(test_synthesis)
@@ -41,6 +45,10 @@ test_validation2DWaveSystemPStagSquares
 test_validation2DWaveSystemPStagTriangles 
 test_validation2DWaveSystemUpwindSquares 
 test_validation2DWaveSystemUpwindTriangles 
+test_validation2DWaveSystemUpwindCheckerboard
+test_validation2DWaveSystemUpwindBrickWall
+test_validation2DWaveSystemUpwindHexagons
+test_validation2DWaveSystemUpwindDeformedQuadrangles
 test_validation3DWaveSystemUpwindCubes 
 test_validation3DWaveSystemUpwindTetrahedra 
 test_synthesis 
