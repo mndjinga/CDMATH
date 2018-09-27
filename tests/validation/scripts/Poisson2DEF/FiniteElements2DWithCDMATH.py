@@ -84,9 +84,6 @@ def solve(filename,resolution,meshType, testColor):
 
     test_desc["Mesh_max_number_of_neighbours"]=maxNbNeighbours
     
-    # sauvegarde sur le disque dur du second membre discrétisé dans un fichier paraview
-    my_RHSfield.writeVTK("FiniteElements2D_square_RHSField"+str(nbNodes)) 
-    
     print("Right hand side discretisation done")
     print("Number of interior nodes=", nbInteriorNodes)
     print("Number of boundary nodes=", nbBoundaryNodes)

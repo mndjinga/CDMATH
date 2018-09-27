@@ -61,9 +61,6 @@ for i in range(nbCells):
 	# compute maximum number of neighbours
 	maxNbNeighbours= max(1+Ci.getNumberOfFaces(),maxNbNeighbours)
 
-# sauvegarde sur le disque dur du second membre discrétisé dans un fichier paraview
-my_RHSfield.writeVTK("FiniteVolumes3D_cube_RHSField")
-
 print("Right hand side discretisation done")
 print("Maximum number of neighbours=", maxNbNeighbours)
 

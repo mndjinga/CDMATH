@@ -61,9 +61,6 @@ for i in range(nbNodes):
 		nbInteriorNodes=nbInteriorNodes+1
 		maxNbNeighbours= max(1+Ni.getNumberOfEdges(),maxNbNeighbours)
 
-# sauvegarde sur le disque dur du second membre discrétisé dans un fichier paraview
-my_RHSfield.writeVTK("FiniteElements3D_CUBE_RHSField") 
-
 print("Right hand side discretisation done")
 print("Number of interior nodes=", nbInteriorNodes)
 print("Number of boundary nodes=", nbBoundaryNodes)

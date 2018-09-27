@@ -60,9 +60,6 @@ for i in range(nbNodes):
 	else:
 		maxNbNeighbours = max(1+Ni.getNumberOfCells(),maxNbNeighbours)#true only for planar cells, otherwise use function Ni.getNumberOfEdges()
 
-# sauvegarde sur le disque dur du second membre discrétisé dans un fichier paraview
-exactSolField.writeVTK("FiniteElementsExactSolutionField") 
-
 print("Right hand side discretisation done")
 print("Max nb of neighbours=", maxNbNeighbours)
 print("Integral of the RHS", my_RHSfield.integral(0))

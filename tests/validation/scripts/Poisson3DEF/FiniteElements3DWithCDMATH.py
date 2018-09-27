@@ -63,7 +63,6 @@ def solve(filename,resolution, meshType, testColor):
     #Discrétisation du second membre et détermination des noeuds intérieurs
     #======================================================================
     my_RHSfield = cdmath.Field("RHS_field", cdmath.NODES, my_mesh, 1)
-    B = cdmath.Field("EXA_SOL field", cdmath.NODES, my_mesh, 1)
     nbInteriorNodes = 0
     nbBoundaryNodes = 0
     maxNbNeighbours = 0#This is to determine the number of non zero coefficients in the sparse finite element rigidity matrix
@@ -78,7 +77,6 @@ def solve(filename,resolution, meshType, testColor):
         z = Ni.z()
     
         my_RHSfield[i]=3*pi*pi*sin(pi*x)*sin(pi*y)*sin(pi*z)#mettre la fonction definie au second membre de l'edp
-        B[i]=sin(pi*x)*sin(pi*y)*sin(pi*z)
         if my_mesh.isBorderNode(i): # Détection des noeuds frontière
             boundaryNodes.append(i)
             nbBoundaryNodes=nbBoundaryNodes+1
@@ -89,10 +87,6 @@ def solve(filename,resolution, meshType, testColor):
     
     test_desc["Mesh_max_number_of_neighbours"]=maxNbNeighbours
 
-    # sauvegarde sur le disque dur du second membre discrétisé dans un fichier paraview
-    my_RHSfield.writeVTK("FiniteElements3D_cube_RHSField"+str(nbNodes)) 
-    B.writeVTK("FiniteElements3D_cube_EXSOLField"+str(nbNodes)) 
-    
     print("Right hand side discretisation done")
     print("Number of interior nodes=", nbInteriorNodes)
     print("Number of boundary nodes=", nbBoundaryNodes)
