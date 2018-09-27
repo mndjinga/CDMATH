@@ -90,7 +90,7 @@ def test_validation2DVF_hexagons():
     convergence_synthesis["Mesh_sizes"]=[10**x for x in mesh_size_tab]
     convergence_synthesis["Space_dimension"]=2
     convergence_synthesis["Mesh_dimension"]=2
-    convergence_synthesis["Mesh_cell_type"]="Squares"
+    convergence_synthesis["Mesh_cell_type"]="Hexagons"
     convergence_synthesis["Errors"]=[10**x for x in error_tab]
     convergence_synthesis["Scheme_order"]=-a
     convergence_synthesis["Test_color"]=testColor
