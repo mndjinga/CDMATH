@@ -27,7 +27,8 @@ def test_validation2DVF_hexagons():
     # Storing of numerical errors, mesh sizes and diagonal values
     for filename in meshList:
         error_tab[i], mesh_size_tab[i], diag_data[i], min_sol_num, max_sol_num, time_tab[i] =FiniteVolumes2DWithCDMATH.solve_file(mesh_path+filename,resolution,meshType,testColor)
-        assert min_sol_num>-0.01 
+        print min_sol_num
+        assert min_sol_num>-0.03
         assert max_sol_num<1.2
         plt.plot(curv_abs, diag_data[i], label= str(mesh_size_tab[i]) + ' cells')
         error_tab[i]=log10(error_tab[i])
@@ -59,7 +60,7 @@ def test_validation2DVF_hexagons():
     b=(-a2*b1+a1*b2)/det
     
     print "FV on 2D hexagonal mesh : scheme order is ", -a
-    assert abs(a+0.47)<0.1
+    assert abs(a+0.48)<0.01
     
     # Plot of convergence curve
     plt.close()
