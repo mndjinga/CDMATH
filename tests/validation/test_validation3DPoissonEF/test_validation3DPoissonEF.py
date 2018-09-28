@@ -3,11 +3,12 @@ import FiniteElements3DPoisson_CUBE
 import matplotlib.pyplot as plt
 import numpy as np
 from math import log10, sqrt
-import json
+import time, json
 
 convergence_synthesis=dict(FiniteElements3DPoisson_CUBE.test_desc)
 
 def test_validation3DEF():
+    start = time.time()
     #### 3D FE tetrahedra mesh
     meshList=['meshCubeTetrahedra_0','meshCubeTetrahedra_1','meshCubeTetrahedra_2','meshCubeTetrahedra_3','meshCubeTetrahedra_4','meshCubeTetrahedra_5','meshCubeTetrahedra_6']
     meshType="Unstructured tetrahedra"
@@ -34,6 +35,8 @@ def test_validation3DEF():
         mesh_size_tab[i] = log10(mesh_size_tab[i])
         i=i+1
         
+    end = time.time()
+
     # Plot over diagonal line
     plt.legend()
     plt.xlabel('Position on diagonal line')
@@ -90,6 +93,7 @@ def test_validation3DEF():
     convergence_synthesis["Test_color"]=testColor
     convergence_synthesis["Errors"]=[10**x for x in error_tab]
     convergence_synthesis["Scheme_order"]=-a
+    convergence_synthesis["Computational_time"]=end-start
 
     with open('Convergence_Poisson_3DFE_'+mesh_name+'.json', 'w') as outfile:  
         json.dump(convergence_synthesis, outfile)
