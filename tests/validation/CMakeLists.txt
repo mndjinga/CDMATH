@@ -39,8 +39,7 @@ IF (CDMATH_WITH_PYTHON AND CDMATH_WITH_PETSC)
       DESTINATION share/validation/${short_name_dir}
       FILES_MATCHING PATTERN "*.py"
                      PATTERN "*.med"
-                     PATTERN "*.vtu"
-                     PATTERN "*.pvd"
+                     PATTERN "*_0.vtu"
                      PATTERN "*.json"
     )
 
