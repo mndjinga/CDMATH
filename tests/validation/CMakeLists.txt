@@ -32,9 +32,11 @@ IF (CDMATH_WITH_PYTHON AND CDMATH_WITH_PETSC)
 
     ADD_SUBDIRECTORY(${dir})
 
+    string(REPLACE "test_validation" "" short_name_dir ${dir})
+
     install(
       DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${dir}/
-      DESTINATION share/validation/${dir}
+      DESTINATION share/validation/${short_name_dir}
       FILES_MATCHING PATTERN "*.py"
                      PATTERN "*.med"
                      PATTERN "*.vtu"
@@ -44,7 +46,7 @@ IF (CDMATH_WITH_PYTHON AND CDMATH_WITH_PETSC)
 
     install(
       DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${dir}/
-      DESTINATION share/doc/validation/${dir}
+      DESTINATION share/doc/convergence/${short_name_dir}
       FILES_MATCHING PATTERN "*.png"
                      PATTERN "*.ipynb"
                      PATTERN "*.py"
