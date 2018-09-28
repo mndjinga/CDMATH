@@ -87,7 +87,7 @@ def test_validation3DEF():
     convergence_synthesis["Space_dimension"]=3
     convergence_synthesis["Mesh_dimension"]=3
     convergence_synthesis["Mesh_cell_type"]="Tetrahedra"
-    convergence_synthesis["Color"]=testColor
+    convergence_synthesis["Test_color"]=testColor
     convergence_synthesis["Errors"]=[10**x for x in error_tab]
     convergence_synthesis["Scheme_order"]=-a
 
