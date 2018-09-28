@@ -5,7 +5,7 @@ import numpy as np
 from math import log10, sqrt
 import time, json
 
-convergence_synthesis=dict(FiniteVolumes2DPoisson_SQUAREH.test_desc)
+convergence_synthesis=dict(FiniteVolumes2DPoisson_SQUARE.test_desc)
 
 def test_validation2DVF_loc_ref():
     start = time.time()
