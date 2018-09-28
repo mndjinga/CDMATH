@@ -1,11 +1,11 @@
 import cdmath
-import FiniteElements3DWithCDMATH
+import FiniteElements3DPoisson_CUBE
 import matplotlib.pyplot as plt
 import numpy as np
 from math import log10, sqrt
 import json
 
-convergence_synthesis=dict(FiniteElements3DWithCDMATH.test_desc)
+convergence_synthesis=dict(FiniteElements3DPoisson_CUBE.test_desc)
 
 def test_validation3DEF():
     #### 3D FE tetrahedra mesh
@@ -25,7 +25,7 @@ def test_validation3DEF():
     i=0
     # Storing of numerical errors, mesh sizes and diagonal values
     for filename in meshList :
-        error_tab[i], mesh_size_tab[i], diag_data[i], min_sol_num, max_sol_num, time_tab[i] =FiniteElements3DWithCDMATH.solve(mesh_path+filename,resolution,meshType,testColor)
+        error_tab[i], mesh_size_tab[i], diag_data[i], min_sol_num, max_sol_num, time_tab[i] =FiniteElements3DPoisson_CUBE.solve(mesh_path+filename,resolution,meshType,testColor)
         assert min_sol_num>-0.01 
         assert max_sol_num<1.2
         plt.plot(curv_abs, diag_data[i], label= str(mesh_size_tab[i]) + ' nodes')

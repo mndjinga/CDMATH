@@ -1,6 +1,6 @@
 
 SET(SCRIPT
-  ../scripts/Poisson2DVF/FiniteVolumes2DWithCDMATH.py
+  ../scripts/Poisson2DVF/FiniteVolumes2DPoisson_SQUARE.py
   test_validation2DPoissonVF_brickwall.py
   )
 SET(NOTEBOOK ../../doc/2DPoissonVF_brickwall/Convergence_Poisson_FV5_SQUARE_brickwall.ipynb )

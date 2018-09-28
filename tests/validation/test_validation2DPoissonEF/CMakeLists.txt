@@ -1,6 +1,6 @@
 
 SET(SCRIPT
-  ../scripts/Poisson2DEF/FiniteElements2DWithCDMATH.py
+  ../scripts/Poisson2DEF/FiniteElements2DPoisson_SQUARE.py
   test_validation2DPoissonEF.py
   )
 

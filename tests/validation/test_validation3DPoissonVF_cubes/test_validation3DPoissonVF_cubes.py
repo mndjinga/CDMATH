@@ -1,12 +1,12 @@
 import cdmath
-import FiniteVolumes3DWithCDMATH
+import FiniteVolumes3DPoisson_CUBE
 import matplotlib.pyplot as plt
 import numpy as np
 from math import log10, sqrt
 import sys
 import time, json
 
-convergence_synthesis=dict(FiniteVolumes3DWithCDMATH.test_desc)
+convergence_synthesis=dict(FiniteVolumes3DPoisson_CUBE.test_desc)
 
 def test_validation3DVF_cubes():
     start = time.time()
@@ -29,7 +29,7 @@ def test_validation3DVF_cubes():
     # Computation of the numerical error
     for nx in meshList:
         my_mesh=cdmath.Mesh(0,1,nx,0,1,nx,0,1,nx)
-        error_tab[i], mesh_size_tab[i], diag_data[i], min_sol_num, max_sol_num, time_tab[i] =FiniteVolumes3DWithCDMATH.solve(my_mesh,str(nx)+'x'+str(nx)+'x'+str(nx),resolution,meshType,testColor)
+        error_tab[i], mesh_size_tab[i], diag_data[i], min_sol_num, max_sol_num, time_tab[i] =FiniteVolumes3DPoisson_CUBE.solve(my_mesh,str(nx)+'x'+str(nx)+'x'+str(nx),resolution,meshType,testColor)
         assert min_sol_num>-0.01 
         assert max_sol_num<1.2
         plt.plot(curv_abs, diag_data[i], label= str(mesh_size_tab[i]) + ' cells')

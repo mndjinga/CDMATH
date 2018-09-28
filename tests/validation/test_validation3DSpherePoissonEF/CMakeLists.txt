@@ -1,6 +1,6 @@
 
 SET(SCRIPT
-  ../scripts/Poisson3DSphereEF/FiniteElements3DSphereWithCDMATH.py
+  ../scripts/Poisson3DSphereEF/FiniteElements3DPoissonSphere.py
   test_validation3DSpherePoissonEF.py
   )
 

@@ -1,6 +1,6 @@
 
 SET(SCRIPT
-  ../scripts/Poisson2DVF/FiniteVolumes2DWithCDMATH.py
+  ../scripts/Poisson2DVF/FiniteVolumes2DPoisson_SQUARE.py
     test_validation2DPoissonVF_triangles.py
   )
 FILE(GLOB MY_MESHES_AND_PICTURES

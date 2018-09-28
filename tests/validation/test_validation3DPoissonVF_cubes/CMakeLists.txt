@@ -1,6 +1,6 @@
 
 SET(SCRIPT
-  ../scripts/Poisson3DVF/FiniteVolumes3DWithCDMATH.py
+  ../scripts/Poisson3DVF/FiniteVolumes3DPoisson_CUBE.py
   test_validation3DPoissonVF_cubes.py
   )
 
