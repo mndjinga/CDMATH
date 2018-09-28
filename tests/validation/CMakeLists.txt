@@ -72,6 +72,12 @@ notebook COMMAND
 &&   jupyter-nbconvert --to pdf      ${CMAKE_CURRENT_BINARY_DIR}/test_validation2DPoissonVF_brickwall/Convergence_Poisson_FV5_SQUARE_brickwall.ipynb
 &&   jupyter-nbconvert --to latex    ${CMAKE_CURRENT_BINARY_DIR}/test_validation2DPoissonVF_brickwall/Convergence_Poisson_FV5_SQUARE_brickwall.ipynb
 &&   jupyter-nbconvert --to markdown ${CMAKE_CURRENT_BINARY_DIR}/test_validation2DPoissonVF_brickwall/Convergence_Poisson_FV5_SQUARE_brickwall.ipynb
+
+&&   jupyter-nbconvert --to notebook --execute ${CMAKE_CURRENT_BINARY_DIR}/test_validation2DPoissonVF_hexagons/Convergence_Poisson_FV5_SQUARE_hexagons.ipynb
+&&   jupyter-nbconvert --to html     ${CMAKE_CURRENT_BINARY_DIR}/test_validation2DPoissonVF_hexagons/Convergence_Poisson_FV5_SQUARE_hexagons.ipynb
+&&   jupyter-nbconvert --to pdf      ${CMAKE_CURRENT_BINARY_DIR}/test_validation2DPoissonVF_hexagons/Convergence_Poisson_FV5_SQUARE_hexagons.ipynb
+&&   jupyter-nbconvert --to latex    ${CMAKE_CURRENT_BINARY_DIR}/test_validation2DPoissonVF_hexagons/Convergence_Poisson_FV5_SQUARE_hexagons.ipynb
+&&   jupyter-nbconvert --to markdown ${CMAKE_CURRENT_BINARY_DIR}/test_validation2DPoissonVF_hexagons/Convergence_Poisson_FV5_SQUARE_hexagons.ipynb
 )
 
 
