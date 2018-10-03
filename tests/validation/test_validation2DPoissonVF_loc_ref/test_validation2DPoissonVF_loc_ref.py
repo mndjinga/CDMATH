@@ -11,7 +11,7 @@ def test_validation2DVF_loc_ref():
     start = time.time()
     ##### 2D FV refined squares mesh
     meshList=['squareWithLocRefSquares_1','squareWithLocRefSquares_2','squareWithLocRefSquares_3','squareWithLocRefSquares_4','squareWithLocRefSquares_5','squareWithLocRefSquares_6','squareWithLocRefSquares_7']
-    meshType="Non conforming cartesian locally refined"
+    meshType="Non_conforming_locally_refined"
     testColor="Green"
     nbMeshes=len(meshList)
     error_tab=[0]*nbMeshes

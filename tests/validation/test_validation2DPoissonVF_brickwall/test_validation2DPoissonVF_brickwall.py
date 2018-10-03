@@ -11,7 +11,7 @@ def test_validation2DVF_brickwall():
     start = time.time()
     ##### 2D FV brickwall mesh
     meshList=['squareWithBrickWall_1','squareWithBrickWall_2','squareWithBrickWall_3','squareWithBrickWall_4','squareWithBrickWall_5']
-    meshType="Regular brickwall"
+    meshType="Regular_brickwall"
     testColor="Green"
     nbMeshes=len(meshList)
     error_tab=[0]*nbMeshes

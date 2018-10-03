@@ -11,7 +11,7 @@ def test_validation2DVF_deformedQuadrangles():
     start = time.time()
     ##### 2D FV deformed quadrangles mesh
     meshList=['squareWithDeformedQuadrangles_1','squareWithDeformedQuadrangles_2','squareWithDeformedQuadrangles_3','squareWithDeformedQuadrangles_4','squareWithDeformedQuadrangles_5','squareWithDeformedQuadrangles_6','squareWithDeformedQuadrangles_7']
-    meshType="Deformed quadrangles"
+    meshType="Deformed_quadrangles"
     testColor="Green"
     nbMeshes=len(meshList)
     error_tab=[0]*nbMeshes

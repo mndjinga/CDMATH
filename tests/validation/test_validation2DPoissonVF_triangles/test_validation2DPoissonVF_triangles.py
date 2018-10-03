@@ -11,7 +11,7 @@ def test_validation2DVF_triangles():
     start = time.time()
     ##### 2D FV triangle mesh
     meshList=['squareWithTriangles_1','squareWithTriangles_2','squareWithTriangles_3','squareWithTriangles_4','squareWithTriangles_5']
-    meshType="Unstructured triangles"
+    meshType="Unstructured_triangles"
     testColor="Green"
     nbMeshes=len(meshList)
     error_tab=[0]*nbMeshes

@@ -11,7 +11,7 @@ def test_validation2DVF_hexagons():
     start = time.time()
     ##### 2D FV hexagonal mesh
     meshList=['squareWithHexagons_1','squareWithHexagons_2','squareWithHexagons_3','squareWithHexagons_4','squareWithHexagons_5']
-    meshType="Regular hexagons"
+    meshType="Regular_hexagons"
     testColor="Green"
     nbMeshes=len(meshList)
     error_tab=[0]*nbMeshes

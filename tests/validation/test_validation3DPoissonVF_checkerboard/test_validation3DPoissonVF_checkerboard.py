@@ -11,7 +11,7 @@ def test_validation3DVF_checkerboard():
     start = time.time()
     #### 3D FV cartesian non conforming mesh
     meshList=['cubeWithCheckerboardCubes_2x2x2','cubeWithCheckerboardCubes_4x4x4','cubeWithCheckerboardCubes_8x8x8','cubeWithCheckerboardCubes_16x16x16']
-    meshType="Non conforming cartesian checkerboard"
+    meshType="Non_conforming_checkerboard"
     testColor="Orange, BC violated. PB with mesh ?"
     nbMeshes=len(meshList)
     error_tab=[0]*nbMeshes

@@ -13,7 +13,7 @@ def test_validation2DVF_squares():
 #    meshList=[11,51,151,201]
     meshList=['squareWithSquares_1','squareWithSquares_2','squareWithSquares_3','squareWithSquares_4','squareWithSquares_5']
     mesh_path='../../ressources/2DCartesien/'
-    meshType="Regular squares"
+    meshType="Regular_squares"
     testColor="Green"
     nbMeshes=len(meshList)
     error_tab=[0]*nbMeshes

@@ -63,7 +63,7 @@ def solve(my_mesh, filename,resolution, meshType, testColor):
     
     #Discrétisation du second membre et extraction du nb max de voisins d'une cellule
     #================================================================================
-    my_RHSfield = cdmath.Field("RHS field", cdmath.CELLS, my_mesh, 1)
+    my_RHSfield = cdmath.Field("RHS_field", cdmath.CELLS, my_mesh, 1)
     maxNbNeighbours=0#This is to determine the number of non zero coefficients in the sparse finite element rigidity matrix
     #parcours des cellules pour discrétisation du second membre et extraction du nb max de voisins d'une cellule
     for i in range(nbCells): 
@@ -128,7 +128,7 @@ def solve(my_mesh, filename,resolution, meshType, testColor):
     for i in range(nbCells):
         my_ResultField[i]=SolSyst[i];
     #sauvegarde sur le disque dur du résultat dans un fichier paraview
-    my_ResultField.writeVTK("FiniteVolumes3D_CUBE_ResultField"+str(nbCells))
+    my_ResultField.writeVTK("FiniteVolumes3D_CUBE_"+meshType+str(nbCells))
     
     print("Numerical solution of 3D Poisson equation on a cube using finite elements done")
     
@@ -153,14 +153,14 @@ def solve(my_mesh, filename,resolution, meshType, testColor):
     # Extraction of the diagonal data
     diag_data=VTK_routines.Extract_field_data_over_line_to_numpyArray(my_ResultField,[0,0,0],[1,1,1], resolution)
     # save 3D picture
-    VTK_routines.Clip_VTK_data_to_VTK("FiniteVolumes3D_CUBE_ResultField"+str(nbCells)+'_0.vtu',"Clip_VTK_data_to_VTK_"+ "FiniteVolumes3D_CUBE_ResultField"+str(nbCells)+'_0.vtu',[0.5,0.5,0.5], [-0.5,-0.5,-0.5],resolution )
-    PV_routines.Save_PV_data_to_picture_file("Clip_VTK_data_to_VTK_"+"FiniteVolumes3D_CUBE_ResultField"+str(nbCells)+'_0.vtu',"ResultField",'CELLS',"Clip_VTK_data_to_VTK_"+"FiniteVolumes3D_CUBE_ResultField"+str(nbCells))
+    VTK_routines.Clip_VTK_data_to_VTK("FiniteVolumes3D_CUBE_"+meshType+str(nbCells)+'_0.vtu',"Clip_VTK_data_to_VTK_"+ "FiniteVolumes3D_CUBE_"+meshType+str(nbCells)+'_0.vtu',[0.5,0.5,0.5], [-0.5,-0.5,-0.5],resolution )
+    PV_routines.Save_PV_data_to_picture_file("Clip_VTK_data_to_VTK_"+"FiniteVolumes3D_CUBE_"+meshType+str(nbCells)+'_0.vtu',"ResultField",'CELLS',"Clip_VTK_data_to_VTK_"+"FiniteVolumes3D_CUBE_"+meshType+str(nbCells))
 
     test_desc["Computational_time_taken_by_run"]=end-start
     test_desc["Absolute_error"]=erreur_abs
     test_desc["Relative_error"]=erreur_abs/max_abs_sol_exacte
 
-    with open('test_Poisson'+str(my_mesh.getMeshDimension())+'D_VF_'+str(nbCells)+ "Cells.json", 'w') as outfile:  
+    with open('test_Poisson'+str(my_mesh.getMeshDimension())+'D_VF_CUBE_'+meshType+str(nbCells)+ "Cells.json", 'w') as outfile:  
         json.dump(test_desc, outfile)
 
     return erreur_abs/max_abs_sol_exacte, nbCells, diag_data, min_sol_num, max_sol_num, end - start
@@ -172,4 +172,4 @@ def solve_file( filename,resolution, meshType, testColor):
     
 if __name__ == """__main__""":
         mesh51 = cdmath.Mesh(0,1,51,0,1,51,0,1,51)
-        solve(mesh51,'51',100,"Regular cubes","Green")
+        solve(mesh51,'51',100,"Regular_cubes","Green")

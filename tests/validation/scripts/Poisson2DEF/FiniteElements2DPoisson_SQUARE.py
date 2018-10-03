@@ -169,7 +169,7 @@ def solve(filename,resolution,meshType, testColor):
     for j in range(nbBoundaryNodes):
         my_ResultField[boundaryNodes[j]]=0;#remplissage des valeurs pour les noeuds frontière (condition limite)
     #sauvegarde sur le disque dur du résultat dans un fichier paraview
-    my_ResultField.writeVTK("FiniteElements2D_square_ResultField"+str(nbNodes))
+    my_ResultField.writeVTK("FiniteElements2D_SQUARE_"+meshType+str(nbNodes))
     
     print("Numerical solution of 2D Poisson equation on a square using finite elements done")
     
@@ -194,16 +194,16 @@ def solve(filename,resolution,meshType, testColor):
 	# Extraction of the diagonal data
     diag_data=VTK_routines.Extract_field_data_over_line_to_numpyArray(my_ResultField,[0,1,0],[1,0,0], resolution)
     # save 2D picture
-    PV_routines.Save_PV_data_to_picture_file("FiniteElements2D_square_ResultField"+str(nbNodes)+'_0.vtu',"ResultField",'NODES',"FiniteElements2D_square_ResultField"+str(nbNodes))
+    PV_routines.Save_PV_data_to_picture_file("FiniteElements2D_SQUARE_"+meshType+str(nbNodes)+'_0.vtu',"ResultField",'NODES',"FiniteElements2D_SQUARE_"+meshType+str(nbNodes))
     
     test_desc["Computational_time_taken_by_run"]=end-start
     test_desc["Absolute_error"]=erreur_abs
     test_desc["Relative_error"]=erreur_abs/max_abs_sol_exacte
 
-    with open('test_Poisson'+str(my_mesh.getMeshDimension())+'D_EF_'+str(nbCells)+ "Cells.json", 'w') as outfile:  
+    with open('test_Poisson'+str(my_mesh.getMeshDimension())+'D_EF_'+"SQUARE_"+meshType+str(nbCells)+ "Cells.json", 'w') as outfile:  
         json.dump(test_desc, outfile)
 
     return erreur_abs/max_abs_sol_exacte, nbNodes, diag_data, min_sol_num, max_sol_num, end - start
 
 if __name__ == """__main__""":
-    solve("meshSquare",100,"Unstructured triangles","Green")
+    solve("meshSquare",100,"Unstructured_triangles","Green")

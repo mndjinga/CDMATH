@@ -46,7 +46,7 @@ def solve(my_mesh,filename,resolution, meshType, testColor):
     
     #Discrétisation du second membre et extraction du nb max de voisins d'une cellule
     #================================================================================
-    my_RHSfield = cdmath.Field("RHS field", cdmath.CELLS, my_mesh, 1)
+    my_RHSfield = cdmath.Field("RHS_field", cdmath.CELLS, my_mesh, 1)
     maxNbNeighbours=0#This is to determine the number of non zero coefficients in the sparse finite element rigidity matrix
     #parcours des cellules pour discrétisation du second membre et extraction du nb max de voisins d'une cellule
     for i in range(nbCells): 
@@ -115,7 +115,7 @@ def solve(my_mesh,filename,resolution, meshType, testColor):
     for i in range(nbCells):
         my_ResultField[i]=SolSyst[i];
     #sauvegarde sur le disque dur du résultat dans un fichier paraview
-    my_ResultField.writeVTK("FiniteVolumes2D_square_ResultField"+str(nbCells))
+    my_ResultField.writeVTK("FiniteVolumes2D_SQUARE_"+meshType+str(nbCells))
     
     print("Numerical solution of 2D Poisson equation on a square using finite elements done")
     
@@ -140,7 +140,7 @@ def solve(my_mesh,filename,resolution, meshType, testColor):
 	# Extraction of the diagonal data
     diag_data=VTK_routines.Extract_field_data_over_line_to_numpyArray(my_ResultField,[0,1,0],[1,0,0], resolution)
     # save 2D picture
-    PV_routines.Save_PV_data_to_picture_file("FiniteVolumes2D_square_ResultField"+str(nbCells)+'_0.vtu',"ResultField",'CELLS',"FiniteVolumes2D_square_ResultField"+str(nbCells))
+    PV_routines.Save_PV_data_to_picture_file("FiniteVolumes2D_SQUARE_"+meshType+str(nbCells)+'_0.vtu',"ResultField",'CELLS',"FiniteVolumes2D_SQUARE_"+meshType+str(nbCells))
 
     test_desc["Computational_time_taken_by_run"]=end-start
     test_desc["Absolute_error"]=erreur_abs
@@ -158,4 +158,4 @@ def solve_file( filename,resolution, meshType, testColor):
     
 if __name__ == """__main__""":
         mesh51 = cdmath.Mesh(0,1,51,0,1,51)
-        solve(mesh51,'51',100,"Regular squares","Green")
+        solve(mesh51,'51',100,"Regular_squares","Green")

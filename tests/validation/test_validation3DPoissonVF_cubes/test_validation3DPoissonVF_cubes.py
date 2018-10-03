@@ -12,7 +12,7 @@ def test_validation3DVF_cubes():
     start = time.time()
     ### 3D FV rectangular mesh
     meshList=[11,21,41]
-    meshType="Regular cubes"
+    meshType="Regular_cubes"
     testColor="Green"
     nbMeshes=len(meshList)
     error_tab=[0]*nbMeshes

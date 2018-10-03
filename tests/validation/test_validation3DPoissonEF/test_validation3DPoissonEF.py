@@ -11,7 +11,7 @@ def test_validation3DEF():
     start = time.time()
     #### 3D FE tetrahedra mesh
     meshList=['meshCubeTetrahedra_0','meshCubeTetrahedra_1','meshCubeTetrahedra_2','meshCubeTetrahedra_3','meshCubeTetrahedra_4','meshCubeTetrahedra_5','meshCubeTetrahedra_6']
-    meshType="Unstructured tetrahedra"
+    meshType="Unstructured_tetrahedra"
     testColor="Green"
     nbMeshes=len(meshList)
     error_tab=[0]*nbMeshes

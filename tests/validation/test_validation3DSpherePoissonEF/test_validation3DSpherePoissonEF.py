@@ -10,7 +10,7 @@ def test_validation3DSphereEF():
     start = time.time()
     #### 3D sphere FE triangle mesh
     meshList=['meshSphere_1','meshSphere_2','meshSphere_3','meshSphere_4','meshSphere_5']
-    meshType="Unstructured 3D triangles"
+    meshType="Unstructured_3D_triangles"
     testColor="Green"
     nbMeshes=len(meshList)
     error_tab=[0]*nbMeshes
