@@ -1,3 +1,5 @@
+## The script
+
 ```python
 #Discrétisation du second membre et extraction du nb max de voisins d'une cellule
 #================================================================================

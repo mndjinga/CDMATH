@@ -1,3 +1,5 @@
+## The Poisson problem on the square
+
 We consider the following Poisson problem with Dirichlet boundary conditions
 
 $$
