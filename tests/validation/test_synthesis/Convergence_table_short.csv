@@ -1,21 +1,24 @@
 ,PDE_model,Numerical_method_name,Mesh_dimension,Mesh_type,Scheme_order,Mesh_cell_type,Test_color,Computational_time
-0,Wave system,Upwind,2,Deformed quadrangles,-3.48762021246e-09,Deformed quadrangles,Green,4.17491698265
-1,Wave system,Upwind,2,Regular brick wall,-7.02335062508e-06,Squares,Green,7.04821491241
-2,Poisson,VF5,2,Regular hexagons,0.472912732459,Squares,Green,2.91266083717
-3,Wave system,Upwind,2,Unstructured triangles,-8.25752331143e-11,Triangles,Green,4.15922284126
-4,Poisson,P1 FE,2,Unstructured 3D triangles,0.304571931233,3DTriangles,Green,9.07755684853
-5,Wave system,Upwind,2,Regular squares,-3.86440547349e-05,Squares,Green,6.19567918777
-6,Wave system,Upwind,3,Regular tetrahedra,-1.11783491592e-11,Tetrahedra,Green,77.4446561337
-7,Poisson,VF5,2,Non conforming cartesian locally refined,0.468110555349,Squares,Green,19.8319749832
-8,Poisson,P1 FE,2,Unstructured triangles,1.05991473164,Triangles,Green,30.852782011
-9,Poisson,VF5,3,Regular cubes,0.667623623838,Cubes,Green,24.4038691521
-10,Poisson,VF5,2,Regular squares,1.0049956589,Squares,Green,1.46568918228
-11,Wave system,PStag scaling,2,Regular squares,-0.000240328317794,Squares,Green,49.1071360111
-12,Wave system,Upwind,3,Regular cubes,-3.26265785024e-05,Cubes,Green,12.2112810612
-13,Poisson,VF5,2,Unstructured triangles,0.306889929049,Squares,Green,3.17535805702
-14,Wave system,PStag scaling,2,Unstructured triangles,8.01376136056e-05,Triangles,Orange,143.720932961
-15,Poisson,P1 FE,3,Unstructured tetrahedra,0.329389351177,Tetrahedra,,
-16,Wave system,Upwind,2,Regular hexagons,-8.56471405081e-06,Hexagons,Green,7.83158802986
-17,Poisson,VF5,3,Unstructured tetrahedra,0.270353492629,Tetrahedra,Green,37.0353608131
-18,Poisson,VF5,3,Non conforming cartesian checkerboard,-0.0867208238273,Cubes,"Orange, BC violated. PB with mesh ?",13.7195711136
-19,Wave system,Upwind,2,Regular checkerboard,-1.85509623681e-11,Squares,Green,6.41969394684
+0,Wave system,Upwind,2,Deformed quadrangles,-3.48762021246e-09,Deformed quadrangles,Green,3.82816386223
+1,Poisson,VF5,2,Regular brickwall,0.276587579588,Squares,Green,2.76989603043
+2,Wave system,Upwind,2,Regular brick wall,-7.02335062508e-06,Squares,Green,6.77246403694
+3,Poisson,VF5,2,Regular hexagons,0.480939410647,Hexagons,Green,3.25182294846
+4,Wave system,Upwind,2,Unstructured triangles,-8.25752331143e-11,Triangles,Green,4.06240391731
+5,Poisson-Beltrami,P1 FE,2,Unstructured 3D triangles,0.304571931233,3DTriangles,Green,9.05822396278
+6,Wave system,Upwind,2,Regular squares,-3.86440547349e-05,Squares,Green,6.06682300568
+7,Wave system,Upwind,3,Regular tetrahedra,-1.11783491592e-11,Tetrahedra,Green,74.7337751389
+8,Poisson,VF5,2,Non conforming cartesian locally refined,0.468110555349,Squares,Green,21.6176409721
+9,Poisson,P1 FE,2,Unstructured triangles,1.05991473164,Triangles,Green,30.9111449718
+10,Poisson,VF5,3,Regular cubes,0.667623623838,Cubes,Green,24.2829031944
+11,Poisson,VF5,2,Regular squares,1.00499565891,Squares,Green,1.55831003189
+12,Wave system,PStag scaling,2,Regular squares,-0.000240328317794,Squares,Green,46.991519928
+13,Wave system,Upwind,3,Regular cubes,-3.26265785024e-05,Cubes,Green,11.3810310364
+14,Poisson,VF5,2,Non conforming cartesian checkerboard,0.175026915376,Squares,Green,6.63199019432
+15,Poisson,VF5,2,Unstructured triangles,0.306889929049,Triangles,Green,3.1627099514
+16,Wave system,PStag scaling,2,Unstructured triangles,8.01376136056e-05,Triangles,Orange,138.81151104
+17,Poisson,P1 FE,3,Unstructured tetrahedra,0.329389351177,Tetrahedra,Green,
+18,Wave system,Upwind,2,Regular hexagons,-8.56471405081e-06,Hexagons,Green,7.62620282173
+19,Poisson,VF5,3,Unstructured tetrahedra,0.270353492629,Tetrahedra,Green,38.3982930183
+20,Poisson,VF5,3,Non conforming cartesian checkerboard,-0.0867208238273,Cubes,"Orange, BC violated. PB with mesh ?",13.9459519386
+21,Poisson,VF5,2,Deformed quadrangles,0.549857574379,Squares,Green,8.83395600319
+22,Wave system,Upwind,2,Regular checkerboard,-1.85509623681e-11,Squares,Green,6.1073179245
