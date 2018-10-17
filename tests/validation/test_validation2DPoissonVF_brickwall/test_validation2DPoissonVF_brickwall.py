@@ -59,7 +59,7 @@ def test_validation2DVF_brickwall():
     b=(-a2*b1+a1*b2)/det
     
     print "FV on 2D brickwall mesh : scheme order is ", -a
-    assert abs(a+0.54)<0.01
+    assert abs(a+0.94)<0.01
     
     # Plot of convergence curve
     plt.close()
