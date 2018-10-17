@@ -60,7 +60,7 @@ def test_validation2DVF_hexagons():
     b=(-a2*b1+a1*b2)/det
     
     print "FV on 2D hexagonal mesh : scheme order is ", -a
-    assert abs(a+0.96)<0.01
+    assert abs(a+0.96)<0.1
     
     # Plot of convergence curve
     plt.close()

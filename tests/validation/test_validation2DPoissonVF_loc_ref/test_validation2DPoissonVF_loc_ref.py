@@ -59,7 +59,7 @@ def test_validation2DVF_loc_ref():
     b=(-a2*b1+a1*b2)/det
     
     print "FV on 2D refined squares mesh : scheme order is ", -a
-    #assert abs(a-0.23)<0.1 #The scheme is not converging
+    assert abs(a+0.936)<0.001
     
     # Plot of convergence curve
     plt.close()

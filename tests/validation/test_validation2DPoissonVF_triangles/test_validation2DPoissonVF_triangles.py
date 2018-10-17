@@ -59,7 +59,7 @@ def test_validation2DVF_triangles():
     b=(-a2*b1+a1*b2)/det
     
     print "FV on 2D triangle mesh : scheme order is ", -a
-    assert abs(a+0.6)<0.1
+    assert abs(a+0.614)<0.01
     
     # Plot of convergence curve
     plt.close()
