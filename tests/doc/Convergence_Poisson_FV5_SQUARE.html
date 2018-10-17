@@ -11809,7 +11809,7 @@ $$<p>on the square domain $\Omega= [0,1]\times [0,1]$ with
 $$f=2\pi^2 sin(\pi x) sin(\pi y).$$<br>
 The unique solution of the problem is
 $$
-u=-sin(\pi x) sin(\pi y).
+u=sin(\pi x) sin(\pi y).
 $$</p>
 <p>The Poisson equation is a particular case of the diffusion problem
 $$
@@ -11849,25 +11849,22 @@ $$</p>
 
 <div class="output_markdown rendered_html output_subarea ">
 <h2 id="Some-bibliographical-remarks">Some bibliographical remarks<a class="anchor-link" href="#Some-bibliographical-remarks">&#182;</a></h2><ul>
-<li><p>On a triangular meshes the FV5 scheme order is 2 provided</p>
-<ul>
-<li>the center of the circumscribed circle is used instead of the center of mass in each cell</li>
-<li>the Delaunay conditions are satisfied (no neighboring cell is included in the circumscribed circle of an arbitrary cell)</li>
-</ul>
-<p><em>R. Eymard, T. Gallou\"et, R. Herbin, Finite volume methods, Handbook of Numerical Analysis, Vol. VII, 2000</em><br>
-<em>Nicolaides, R.A. (1993) The Covolume Approach to Computing Incompressible Flows, in: Incompressible computational fluid dynamics M.D Gunzburger, R. A. Nicolaides eds, 295–333</em></p>
-</li>
-</ul>
-<ul>
-<li>mailages de plus en plus déformés<br>
-<em>K. Domelevo, P. Omnès, A finite volume method for the Laplace equation on almost arbitrary 2D grids, Mathematical Modelling and Numerical Analysis, 2005</em></li>
-</ul>
-<ul>
-<li>Convergence à l'ordre 1<br>
+<li>Order 1 convergence on triangular meshes<br>
 <em>R. Herbin, An error estimate for a four point finite volume scheme for the convection-diffusion equation on a triangular mesh, Num. Meth. P.D.E., 165-173, 1995.</em></li>
 </ul>
 <ul>
-<li>On perd un ordre de convergence en présence de non conformité le long d'une ligne<br>
+<li>On triangular meshes, the FV5 scheme order is 2 provided <ul>
+<li>the center of the circumscribed circle is used instead of the center of mass in each cell</li>
+<li>the Delaunay conditions are satisfied (no neighboring cell is included in the circumscribed circle of an arbitrary cell)</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li>Non convergence on highly deformed meshes<br>
+<em>K. Domelevo, P. Omnes, A finite volume method for the Laplace equation on almost arbitrary 2D grids, Mathematical Modelling and Numerical Analysis, 2005</em></li>
+</ul>
+<ul>
+<li>The scheme is order 1 if the mesh is conforming except on a line<br>
 <em>J. Droniou, C. Le Potier, Construction and Convergence Study of Schemes Preserving the Elliptic Local Maximum Principle, SIAM Journal on Numerical Analysis, 2011</em></li>
 </ul>
 <ul>
@@ -11878,8 +11875,8 @@ Wsp-approximation properties of elliptic projectors on polynomial spaces, with a
 A Hybrid High-Order method for Leray-Lions elliptic equations on general meshes</li>
 </ul>
 <ul>
-<li>It is possible to converge with order 1 on the gradient, but only order 1 on the function ie there is no equivalent of the Aubin-Nitsche lemma in the finite volume context
-<em>P. Omnès, Error estimates for a finite volume method for the Laplace equation in dimension one through discrete Green functions. International Journal on Finite Volumes 6(1), 18p., electronic only, 2009</em></li>
+<li>It is possible to converge with order 1 on the gradient, but only order 1 on the function ie there is no equivalent of the Aubin-Nitsche lemma in the finite volume context<br>
+<em>P. Omnes, Error estimates for a finite volume method for the Laplace equation in dimension one through discrete Green functions. International Journal on Finite Volumes 6(1), 18p., electronic only, 2009</em></li>
 </ul>
 
 </div>
@@ -11997,7 +11994,7 @@ for a boundary face with center $x_f$, inner cell $i$ anddistance between face a
             <span class="c1">#For the particular case where the mesh boundary does not coincide with the domain boundary</span>
             <span class="n">x</span><span class="o">=</span><span class="n">Fj</span><span class="o">.</span><span class="n">getBarryCenter</span><span class="p">()</span><span class="o">.</span><span class="n">x</span><span class="p">()</span>
             <span class="n">y</span><span class="o">=</span><span class="n">Fj</span><span class="o">.</span><span class="n">getBarryCenter</span><span class="p">()</span><span class="o">.</span><span class="n">y</span><span class="p">()</span>
-            <span class="n">RHS</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">+=-</span><span class="n">coeff</span><span class="o">*</span><span class="n">sin</span><span class="p">(</span><span class="n">pi</span><span class="o">*</span><span class="n">x</span><span class="p">)</span><span class="o">*</span><span class="n">sin</span><span class="p">(</span><span class="n">pi</span><span class="o">*</span><span class="n">y</span><span class="p">)</span><span class="c1">#mettre ici la condition limite du problème de Dirichlet</span>
+            <span class="n">RHS</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">+=</span><span class="n">coeff</span><span class="o">*</span><span class="n">sin</span><span class="p">(</span><span class="n">pi</span><span class="o">*</span><span class="n">x</span><span class="p">)</span><span class="o">*</span><span class="n">sin</span><span class="p">(</span><span class="n">pi</span><span class="o">*</span><span class="n">y</span><span class="p">)</span><span class="c1">#mettre ici la condition limite du problème de Dirichlet</span>
         <span class="n">Rigidite</span><span class="o">.</span><span class="n">addValue</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">i</span><span class="p">,</span><span class="n">coeff</span><span class="p">)</span> <span class="c1"># terme diagonal</span>
 
 
