@@ -11750,6 +11750,27 @@ div#notebook {
   <div tabindex="-1" id="notebook" class="border-box-sizing">
     <div class="container" id="notebook-container">
 
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span></span><span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">display</span><span class="p">,</span> <span class="n">Markdown</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;PoissonProblemOnSquare.md&#39;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file1</span><span class="p">:</span>
+    <span class="n">PoissonProblemOnSquare</span> <span class="o">=</span> <span class="n">file1</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;DescriptionFV5PoissonProblem.md&#39;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file2</span><span class="p">:</span>
+    <span class="n">DescriptionFV5PoissonProblem</span> <span class="o">=</span> <span class="n">file2</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;CodeFV5PoissonProblem.md&#39;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file3</span><span class="p">:</span>
+    <span class="n">CodeFV5PoissonProblem</span> <span class="o">=</span> <span class="n">file3</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;BibliographyFV5.md&#39;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file4</span><span class="p">:</span>
+    <span class="n">BibliographyFV5</span><span class="o">=</span><span class="n">file4</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
 <div class="cell border-box-sizing text_cell rendered">
 <div class="prompt input_prompt">
 </div>
@@ -11759,21 +11780,26 @@ div#notebook {
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
 <div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="The-Poisson-problem-on-the-square">The Poisson problem on the square<a class="anchor-link" href="#The-Poisson-problem-on-the-square">&#182;</a></h2>
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span></span><span class="n">display</span><span class="p">(</span><span class="n">Markdown</span><span class="p">(</span><span class="n">PoissonProblemOnSquare</span><span class="p">))</span>
+</pre></div>
+
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>We consider the following Poisson problem with Dirichlet boundary conditions</p>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt"></div>
+
+<div class="output_markdown rendered_html output_subarea ">
+<h2 id="The-Poisson-problem-on-the-square">The Poisson problem on the square<a class="anchor-link" href="#The-Poisson-problem-on-the-square">&#182;</a></h2><p>We consider the following Poisson problem with Dirichlet boundary conditions</p>
 $$
 \left\{\begin{array}{c}
 -\Delta u=f \textrm{ on } \Omega\\
@@ -11793,25 +11819,97 @@ and the associated diffusion flux is
 $$
 F(u)=K\nabla u.
 $$</p>
+<p>We are in the particular case where $K=1$.</p>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span></span><span class="n">display</span><span class="p">(</span><span class="n">Markdown</span><span class="p">(</span><span class="n">BibliographyFV5</span><span class="p">))</span>
+</pre></div>
 
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt"></div>
+
+<div class="output_markdown rendered_html output_subarea ">
+<h2 id="Some-bibliographical-remarks">Some bibliographical remarks<a class="anchor-link" href="#Some-bibliographical-remarks">&#182;</a></h2><ul>
+<li><p>On a triangular meshes the FV5 scheme order is 2 provided</p>
+<ul>
+<li>the center of the circumscribed circle is used instead of the center of mass in each cell</li>
+<li>the Delaunay conditions are satisfied (no neighboring cell is included in the circumscribed circle of an arbitrary cell)</li>
+</ul>
+<p><em>R. Eymard, T. Gallou\"et, R. Herbin, Finite volume methods, Handbook of Numerical Analysis, Vol. VII, 2000</em><br>
+<em>Nicolaides, R.A. (1993) The Covolume Approach to Computing Incompressible Flows, in: Incompressible computational fluid dynamics M.D Gunzburger, R. A. Nicolaides eds, 295–333</em></p>
+</li>
+</ul>
+<ul>
+<li>mailages de plus en plus déformés<br>
+<em>K. Domelevo, P. Omnès, A finite volume method for the Laplace equation on almost arbitrary 2D grids, Mathematical Modelling and Numerical Analysis, 2005</em></li>
+</ul>
+<ul>
+<li>Convergence à l'ordre 1<br>
+<em>R. Herbin, An error estimate for a four point finite volume scheme for the convection-diffusion equation on a triangular mesh, Num. Meth. P.D.E., 165-173, 1995.</em></li>
+</ul>
+<ul>
+<li>On perd un ordre de convergence en présence de non conformité le long d'une ligne<br>
+<em>J. Droniou, C. Le Potier, Construction and Convergence Study of Schemes Preserving the Elliptic Local Maximum Principle, SIAM Journal on Numerical Analysis, 2011</em></li>
+</ul>
+<ul>
+<li><em>J. Droniou 2017</em> (ordre 2 si condition de type Delaunay)<br>
+A mixed finite element method for a sixth order elliptic problem<br>
+The gradient discretisation method for optimal control problems, with super-convergence for non-conforming finite elements and mixed-hybrid mimetic finite differences<br>
+Wsp-approximation properties of elliptic projectors on polynomial spaces, with application to the error analysis of a Hybrid High-Order discretisation of Leray-Lions problems<br>
+A Hybrid High-Order method for Leray-Lions elliptic equations on general meshes</li>
+</ul>
+<ul>
+<li>It is possible to converge with order 1 on the gradient, but only order 1 on the function ie there is no equivalent of the Aubin-Nitsche lemma in the finite volume context
+<em>P. Omnès, Error estimates for a finite volume method for the Laplace equation in dimension one through discrete Green functions. International Journal on Finite Volumes 6(1), 18p., electronic only, 2009</em></li>
+</ul>
+
 </div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
 <div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="The-FV5-scheme-for-the-Laplace-equation">The FV5 scheme for the Laplace equation<a class="anchor-link" href="#The-FV5-scheme-for-the-Laplace-equation">&#182;</a></h2>
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span></span><span class="n">display</span><span class="p">(</span><span class="n">Markdown</span><span class="p">(</span><span class="n">DescriptionFV5PoissonProblem</span><span class="p">))</span>
+</pre></div>
+
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>The domain $\Omega$ is decomposed into cells $C_i$.</p>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt"></div>
+
+<div class="output_markdown rendered_html output_subarea ">
+<h2 id="The-FV5-scheme-for-the-Laplace-equation">The FV5 scheme for the Laplace equation<a class="anchor-link" href="#The-FV5-scheme-for-the-Laplace-equation">&#182;</a></h2><p>The domain $\Omega$ is decomposed into cells $C_i$.</p>
 <p>$|C_i|$ is the measure of the cell $C_i$.</p>
 <p>$f_{ij}$ is the interface between two cells $C_i$ and $C_j$.</p>
 <p>$s_{ij}$ is the measure of the interface $f_{ij}$.</p>
@@ -11824,29 +11922,45 @@ where
 $u_i$ is the approximation of $u$ in the cell $C_i$,</p>
 <p>$f_i$ is the approximation of $f$ in the cell $C_i$,</p>
 <p>$F_{ij}$ is a numerical approximation of the outward normal diffusion flux from cell $i$ to cell $j$.</p>
-<p>In the case of the scheme FV5, we use the formula
+<p>In the case of the scheme FV5, the flux formula are
 $$
-F_{ij}=\frac{u_j-u_i}{d_{ij}}.
-$$</p>
+F_{ij}=\frac{u_j-u_i}{d_{ij}},
+$$
+for two cells $i$ and $j$ inside the domain,</p>
+<p>and
+$$
+F_{boundary}=\frac{u(x_f)-u_i}{d_{if}},
+$$
+for a boundary face with center $x_f$, inner cell $i$ anddistance between face and cell centers $d_{if}$</p>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span></span><span class="n">display</span><span class="p">(</span><span class="n">Markdown</span><span class="p">(</span><span class="n">CodeFV5PoissonProblem</span><span class="p">))</span>
+</pre></div>
 
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="The-script">The script<a class="anchor-link" href="#The-script">&#182;</a></h2>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<div class="highlight"><pre><span></span><span class="c1">#Discrétisation du second membre et extraction du nb max de voisins d&#39;une cellule</span>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt"></div>
+
+<div class="output_markdown rendered_html output_subarea ">
+<h2 id="The-script">The script<a class="anchor-link" href="#The-script">&#182;</a></h2><div class="highlight"><pre><span></span><span class="c1">#Discrétisation du second membre et extraction du nb max de voisins d&#39;une cellule</span>
 <span class="c1">#================================================================================</span>
 <span class="n">my_RHSfield</span> <span class="o">=</span> <span class="n">cdmath</span><span class="o">.</span><span class="n">Field</span><span class="p">(</span><span class="s2">&quot;RHS_field&quot;</span><span class="p">,</span> <span class="n">cdmath</span><span class="o">.</span><span class="n">CELLS</span><span class="p">,</span> <span class="n">my_mesh</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 <span class="n">maxNbNeighbours</span><span class="o">=</span><span class="mi">0</span><span class="c1">#This is to determine the number of non zero coefficients in the sparse finite element rigidity matrix</span>
@@ -11880,6 +11994,10 @@ $$</p>
             <span class="n">Rigidite</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">k</span><span class="p">,</span><span class="o">-</span><span class="n">coeff</span><span class="p">)</span> <span class="c1"># terme extradiagonal</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">coeff</span><span class="o">=</span><span class="n">Fj</span><span class="o">.</span><span class="n">getMeasure</span><span class="p">()</span><span class="o">/</span><span class="n">Ci</span><span class="o">.</span><span class="n">getMeasure</span><span class="p">()</span><span class="o">/</span><span class="n">Ci</span><span class="o">.</span><span class="n">getBarryCenter</span><span class="p">()</span><span class="o">.</span><span class="n">distance</span><span class="p">(</span><span class="n">Fj</span><span class="o">.</span><span class="n">getBarryCenter</span><span class="p">())</span>
+            <span class="c1">#For the particular case where the mesh boundary does not coincide with the domain boundary</span>
+            <span class="n">x</span><span class="o">=</span><span class="n">Fj</span><span class="o">.</span><span class="n">getBarryCenter</span><span class="p">()</span><span class="o">.</span><span class="n">x</span><span class="p">()</span>
+            <span class="n">y</span><span class="o">=</span><span class="n">Fj</span><span class="o">.</span><span class="n">getBarryCenter</span><span class="p">()</span><span class="o">.</span><span class="n">y</span><span class="p">()</span>
+            <span class="n">RHS</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">+=-</span><span class="n">coeff</span><span class="o">*</span><span class="n">sin</span><span class="p">(</span><span class="n">pi</span><span class="o">*</span><span class="n">x</span><span class="p">)</span><span class="o">*</span><span class="n">sin</span><span class="p">(</span><span class="n">pi</span><span class="o">*</span><span class="n">y</span><span class="p">)</span><span class="c1">#mettre ici la condition limite du problème de Dirichlet</span>
         <span class="n">Rigidite</span><span class="o">.</span><span class="n">addValue</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">i</span><span class="p">,</span><span class="n">coeff</span><span class="p">)</span> <span class="c1"># terme diagonal</span>
 
 
@@ -11890,18 +12008,19 @@ $$</p>
 
 <span class="c1"># Automatic postprocessing :  save 2D picture and plot diagonal data</span>
 <span class="c1">#===========================</span>
+<span class="n">PV_routines</span><span class="o">.</span><span class="n">Save_PV_data_to_picture_file</span><span class="p">(</span><span class="s2">&quot;my_ResultField_0.vtu&#39;,&quot;</span><span class="n">ResultField</span><span class="s2">&quot;,&#39;CELLS&#39;,&quot;</span><span class="n">my_ResultField</span><span class="s2">&quot;)</span>
 <span class="n">diag_data</span><span class="o">=</span><span class="n">VTK_routines</span><span class="o">.</span><span class="n">Extract_field_data_over_line_to_numpyArray</span><span class="p">(</span><span class="n">my_ResultField</span><span class="p">,[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">resolution</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Position on diagonal line&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Value on diagonal line&#39;</span><span class="p">)</span>
-<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span> <span class="o">&gt;</span><span class="mi">1</span> <span class="p">:</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Plot over diagonal line for finite Volumes </span><span class="se">\n</span><span class="s1"> for Laplace operator on a 2D square &#39;</span><span class="o">+</span><span class="n">my_mesh</span><span class="o">.</span><span class="n">getName</span><span class="p">())</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">curv_abs</span><span class="p">,</span> <span class="n">diag_data</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">nbCells</span><span class="p">)</span><span class="o">+</span> <span class="s1">&#39; cells mesh&#39;</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s2">&quot;FiniteVolumes2D_square_ResultField_&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">nbCells</span><span class="p">)</span><span class="o">+</span> <span class="s1">&#39;_cells&#39;</span><span class="o">+</span><span class="s2">&quot;_PlotOverDiagonalLine.png&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">curv_abs</span><span class="p">,</span> <span class="n">diag_data</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">nbCells</span><span class="p">)</span><span class="o">+</span> <span class="s1">&#39; cells mesh&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s2">&quot;FV5_on_square_PlotOverDiagonalLine.png&quot;</span><span class="p">)</span>
 </pre></div>
 
 </div>
+
 </div>
+
+</div>
+</div>
+
 </div>
 <div class="cell border-box-sizing text_cell rendered">
 <div class="prompt input_prompt">
