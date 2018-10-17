@@ -59,7 +59,7 @@ def test_validation2DVF_deformedQuadrangles():
     b=(-a2*b1+a1*b2)/det
     
     print "FV on 2D deformed quadrangles mesh : scheme order is ", -a
-    assert abs(a+0.55)<0.1
+    assert abs(a+1.1)<0.1
     
     # Plot of convergence curve
     plt.close()

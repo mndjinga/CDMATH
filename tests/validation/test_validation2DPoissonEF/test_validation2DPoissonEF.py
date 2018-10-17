@@ -60,7 +60,7 @@ def test_validation2DEF():
     b=(-a2*b1+a1*b2)/det
     
     print "FE on 2D triangle mesh : scheme order is ", -a
-    assert abs(a+1)<0.1
+    assert abs(a+2)<0.1
 
     # Plot of convergence curves
     plt.close()

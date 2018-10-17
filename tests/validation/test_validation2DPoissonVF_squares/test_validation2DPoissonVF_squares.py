@@ -63,7 +63,7 @@ def test_validation2DVF_squares():
     b=(-a2*b1+a1*b2)/det
     
     print "FV on 2D rectangular mesh : scheme order is ", -a
-    assert abs(a+1)<0.1
+    assert abs(a+2)<0.1
     
     # Plot of convergence curve
     plt.close()

@@ -59,7 +59,7 @@ def test_validation2DVF_checkerboard():
     b=(-a2*b1+a1*b2)/det
     
     print "FV on 2D checkerboard mesh : scheme order is ", -a
-    assert abs(a+0.17)<0.1 #The scheme is not converging
+    assert abs(a+0.34)<0.1 #The scheme is not converging
     
     # Plot of convergence curve
     plt.close()
