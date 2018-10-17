@@ -5,7 +5,7 @@
 # Copyright   : CEA Saclay 2016
 # Description : Utilisation de la méthode des volumes finis avec champs u et f discrétisés aux cellules d'un maillage quelconque
 #				Création et sauvegarde du champ résultant ainsi que du champ second membre en utilisant CDMATH
-#               Comparaison de la solution numérique avec la solution exacte u=-sin(pi*x)*sin(pi*y)
+#               Comparaison de la solution numérique avec la solution exacte u=sin(pi*x)*sin(pi*y)
 #================================================================================================================================
 
 import cdmath

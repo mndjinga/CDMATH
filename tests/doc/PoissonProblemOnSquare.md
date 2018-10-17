@@ -13,7 +13,7 @@ on the square domain $\Omega= [0,1]\times [0,1]$ with
 $$f=2\pi^2 sin(\pi x) sin(\pi y).$$  
 The unique solution of the problem is
 $$
-u=-sin(\pi x) sin(\pi y).
+u=sin(\pi x) sin(\pi y).
 $$
 
 The Poisson equation is a particular case of the diffusion problem
