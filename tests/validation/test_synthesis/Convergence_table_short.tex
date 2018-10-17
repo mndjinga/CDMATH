@@ -1,29 +1,23 @@
 \begin{tabular}{lllrlrllr}
 \toprule
-{} &         PDE\_model & Numerical\_method\_name &  Mesh\_dimension &                                 Mesh\_type &  Scheme\_order &        Mesh\_cell\_type &                           Test\_color &  Computational\_time \\
+{} &    PDE\_model & Numerical\_method\_name &  Mesh\_dimension &                       Mesh\_type &  Scheme\_order &        Mesh\_cell\_type & Test\_color &  Computational\_time \\
 \midrule
-0  &       Wave system &                Upwind &               2 &                      Deformed quadrangles & -3.487620e-09 &  Deformed quadrangles &                                Green &            3.828164 \\
-1  &           Poisson &                   VF5 &               2 &                         Regular brickwall &  2.765876e-01 &               Squares &                                Green &            2.769896 \\
-2  &       Wave system &                Upwind &               2 &                        Regular brick wall & -7.023351e-06 &               Squares &                                Green &            6.772464 \\
-3  &           Poisson &                   VF5 &               2 &                          Regular hexagons &  4.809394e-01 &              Hexagons &                                Green &            3.251823 \\
-4  &       Wave system &                Upwind &               2 &                    Unstructured triangles & -8.257523e-11 &             Triangles &                                Green &            4.062404 \\
-5  &  Poisson-Beltrami &                 P1 FE &               2 &                 Unstructured 3D triangles &  3.045719e-01 &           3DTriangles &                                Green &            9.058224 \\
-6  &       Wave system &                Upwind &               2 &                           Regular squares & -3.864405e-05 &               Squares &                                Green &            6.066823 \\
-7  &       Wave system &                Upwind &               3 &                        Regular tetrahedra & -1.117835e-11 &            Tetrahedra &                                Green &           74.733775 \\
-8  &           Poisson &                   VF5 &               2 &  Non conforming cartesian locally refined &  4.681106e-01 &               Squares &                                Green &           21.617641 \\
-9  &           Poisson &                 P1 FE &               2 &                    Unstructured triangles &  1.059915e+00 &             Triangles &                                Green &           30.911145 \\
-10 &           Poisson &                   VF5 &               3 &                             Regular cubes &  6.676236e-01 &                 Cubes &                                Green &           24.282903 \\
-11 &           Poisson &                   VF5 &               2 &                           Regular squares &  1.004996e+00 &               Squares &                                Green &            1.558310 \\
-12 &       Wave system &         PStag scaling &               2 &                           Regular squares & -2.403283e-04 &               Squares &                                Green &           46.991520 \\
-13 &       Wave system &                Upwind &               3 &                             Regular cubes & -3.262658e-05 &                 Cubes &                                Green &           11.381031 \\
-14 &           Poisson &                   VF5 &               2 &     Non conforming cartesian checkerboard &  1.750269e-01 &               Squares &                                Green &            6.631990 \\
-15 &           Poisson &                   VF5 &               2 &                    Unstructured triangles &  3.068899e-01 &             Triangles &                                Green &            3.162710 \\
-16 &       Wave system &         PStag scaling &               2 &                    Unstructured triangles &  8.013761e-05 &             Triangles &                               Orange &          138.811511 \\
-17 &           Poisson &                 P1 FE &               3 &                   Unstructured tetrahedra &  3.293894e-01 &            Tetrahedra &                                Green &                 NaN \\
-18 &       Wave system &                Upwind &               2 &                          Regular hexagons & -8.564714e-06 &              Hexagons &                                Green &            7.626203 \\
-19 &           Poisson &                   VF5 &               3 &                   Unstructured tetrahedra &  2.703535e-01 &            Tetrahedra &                                Green &           38.398293 \\
-20 &           Poisson &                   VF5 &               3 &     Non conforming cartesian checkerboard & -8.672082e-02 &                 Cubes &  Orange, BC violated. PB with mesh ? &           13.945952 \\
-21 &           Poisson &                   VF5 &               2 &                      Deformed quadrangles &  5.498576e-01 &               Squares &                                Green &            8.833956 \\
-22 &       Wave system &                Upwind &               2 &                      Regular checkerboard & -1.855096e-11 &               Squares &                                Green &            6.107318 \\
+15 &      Poisson &                   VF5 &               2 &            Deformed\_quadrangles &  1.099715e+00 &               Squares &      Green &            8.325440 \\
+11 &      Poisson &                   VF5 &               2 &     Non\_conforming\_checkerboard &  3.500538e-01 &               Squares &      Green &            6.347608 \\
+7  &      Poisson &                   VF5 &               2 &  Non\_conforming\_locally\_refined &  9.362211e-01 &               Squares &      Green &           19.864320 \\
+1  &      Poisson &                   VF5 &               2 &               Regular\_brickwall & -2.073892e-01 &               Squares &      Green &            2.677491 \\
+3  &      Poisson &                   VF5 &               2 &                Regular\_hexagons &  1.941637e+00 &              Hexagons &      Green &            3.250872 \\
+8  &      Poisson &                   VF5 &               2 &                 Regular\_squares &  2.009991e+00 &               Squares &      Green &            1.420461 \\
+12 &      Poisson &                   VF5 &               2 &          Unstructured\_triangles &  6.137799e-01 &             Triangles &      Green &            3.168047 \\
+9  &  Wave system &      PStag no scaling &               2 &                 Regular squares & -2.403281e-04 &               Squares &      Green &          137.968286 \\
+13 &  Wave system &      PStag no scaling &               2 &          Unstructured triangles &  8.013775e-05 &             Triangles &     Orange &          388.839814 \\
+0  &  Wave system &                Upwind &               2 &            Deformed quadrangles & -3.487620e-09 &  Deformed quadrangles &      Green &            4.268469 \\
+2  &  Wave system &                Upwind &               2 &              Regular brick wall & -7.023351e-06 &               Squares &      Green &            8.631522 \\
+16 &  Wave system &                Upwind &               2 &            Regular checkerboard & -1.855096e-11 &               Squares &      Green &            6.753997 \\
+14 &  Wave system &                Upwind &               2 &                Regular hexagons & -8.564714e-06 &              Hexagons &      Green &            9.092415 \\
+5  &  Wave system &                Upwind &               2 &                 Regular squares & -3.864405e-05 &               Squares &      Green &            6.354269 \\
+4  &  Wave system &                Upwind &               2 &          Unstructured triangles & -8.257523e-11 &             Triangles &      Green &            4.388074 \\
+10 &  Wave system &                Upwind &               3 &                   Regular cubes & -3.262658e-05 &                 Cubes &      Green &           13.378911 \\
+6  &  Wave system &                Upwind &               3 &              Regular tetrahedra & -1.117835e-11 &            Tetrahedra &      Green &           82.498338 \\
 \bottomrule
 \end{tabular}

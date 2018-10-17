@@ -1,113 +1,82 @@
 ,PDE_model,Numerical_method_name,Mesh_dimension,Mesh_type,Mesh_cell_type,Test_color,Mesh_number_of_elements,Computational_time_taken_by_run
-0,Wave system,Upwind,2,Deformed quadrangles,Quadrangles ,Green,16,0.766927957535
-1,Wave system,Upwind,2,Deformed quadrangles,Quadrangles ,Green,256,0.721154928207
-2,Wave system,Upwind,2,Deformed quadrangles,Quadrangles ,Green,64,0.505857944489
-3,Wave system,Upwind,2,Deformed quadrangles,Quadrangles ,Green,1024,1.7987370491
-4,Poisson,VF5,2,Regular brickwall,Polygons ,Green,25,0.0193400382996
-5,Poisson,VF5,2,Regular brickwall,Polygons ,Green,900,0.0659821033478
-6,Poisson,VF5,2,Regular brickwall,Polygons ,Green,10000,0.651698827744
-7,Poisson,VF5,2,Regular brickwall,Polygons ,Green,225,0.0177218914032
-8,Poisson,VF5,2,Regular brickwall,Polygons ,Green,2500,0.17314696312
-9,Wave system,Upwind,2,Regular brick wall,Polygons ,Green,2500,3.94122505188
-10,Wave system,Upwind,2,Regular brick wall,Polygons ,Green,900,1.37912201881
-11,Wave system,Upwind,2,Regular brick wall,Polygons ,Green,225,0.605664968491
-12,Wave system,Upwind,2,Regular brick wall,Polygons ,Green,25,0.767637014389
-13,Poisson,VF5,2,Regular hexagons,Polygons ,Green,25,0.00795793533325
-14,Poisson,VF5,2,Regular hexagons,Polygons ,Green,11500,0.756925821304
-15,Poisson,VF5,2,Regular hexagons,Polygons ,Green,1020,0.075119972229
-16,Poisson,VF5,2,Regular hexagons,Polygons ,Green,2850,0.188593864441
-17,Poisson,VF5,2,Regular hexagons,Polygons ,Green,255,0.0228140354156
-18,Wave system,Upwind,2,Unstructured triangles,Triangles ,Green,6422,1.83256793022
-19,Wave system,Upwind,2,Unstructured triangles,Triangles ,Green,934,0.767706155777
-20,Wave system,Upwind,2,Unstructured triangles,Triangles ,Green,40,0.793022155762
-21,Wave system,Upwind,2,Unstructured triangles,Triangles ,Green,224,0.576097011566
-22,Poisson-Beltrami,P1 FE,2,Unstructured 3D triangles,Triangles ,Green,10773,2.25899791718
-23,Poisson-Beltrami,P1 FE,2,Unstructured 3D triangles,Triangles ,Green,288,0.0680401325226
-24,Poisson-Beltrami,P1 FE,2,Unstructured 3D triangles,Triangles ,Green,4512,0.953553915024
-25,Poisson-Beltrami,P1 FE,2,Unstructured 3D triangles,Triangles ,Green,1124,0.2592689991
-26,Poisson-Beltrami,P1 FE,2,Unstructured 3D triangles,Triangles ,Green,2638,0.574312925339
-27,Wave system,Upwind,2,Regular squares,Quadrangles ,Green,16,0.751178979874
-28,Wave system,Upwind,2,Regular squares,Quadrangles ,Green,4096,3.25158905983
-29,Wave system,Upwind,2,Regular squares,Quadrangles ,Green,64,0.474369049072
-30,Wave system,Upwind,2,Regular squares,Quadrangles ,Green,1024,0.942301988602
-31,Wave system,Upwind,2,Regular squares,Quadrangles ,Green,256,0.552507162094
-32,Wave system,Upwind,3,Regular tetrahedra,Tetrahedra ,Green,55566,22.8118019104
-33,Wave system,Upwind,3,Regular tetrahedra,Tetrahedra ,Green,7986,3.27519702911
-34,Wave system,Upwind,3,Regular tetrahedra,Tetrahedra ,Green,750,0.991590023041
-35,Wave system,Upwind,3,Regular tetrahedra,Tetrahedra ,Green,105456,46.39290905
-36,Poisson,VF5,2,Non conforming cartesian locally refined,Quadrangles Polygons ,Green,2560,0.125823974609
-37,Poisson,VF5,2,Non conforming cartesian locally refined,Quadrangles Polygons ,Green,160,0.0194380283356
-38,Poisson,VF5,2,Non conforming cartesian locally refined,Quadrangles Polygons ,Green,640,0.0401360988617
-39,Poisson,VF5,2,Non conforming cartesian locally refined,Quadrangles Polygons ,Green,10240,0.480653047562
-40,Poisson,VF5,2,Non conforming cartesian locally refined,Quadrangles Polygons ,Green,163840,8.84723091125
-41,Poisson,VF5,2,Non conforming cartesian locally refined,Quadrangles Polygons ,Green,40,0.156865119934
-42,Poisson,VF5,2,Non conforming cartesian locally refined,Quadrangles Polygons ,Green,40960,1.99418592453
-43,Poisson,P1 FE,2,Unstructured triangles,Triangles ,Green,29,0.0406649112701
-44,Poisson,P1 FE,2,Unstructured triangles,Triangles ,Green,131,0.0212140083313
-45,Poisson,P1 FE,2,Unstructured triangles,Triangles ,Green,3310,2.0234079361
-46,Poisson,P1 FE,2,Unstructured triangles,Triangles ,Green,13135,27.0898280144
-47,Poisson,P1 FE,2,Unstructured triangles,Triangles ,Green,506,0.116595983505
-48,Poisson,VF5,3,Regular cubes,Hexahedra ,Green,9261,0.845069885254
-49,Poisson,VF5,3,Regular cubes,Hexahedra ,Green,68921,20.3829920292
-50,Poisson,VF5,3,Regular cubes,Hexahedra ,Green,1331,0.0895881652832
-51,Poisson,VF5,2,Regular squares,Quadrangles ,Green,256,0.0138409137726
-52,Poisson,VF5,2,Regular squares,Quadrangles ,Green,1024,0.0467171669006
-53,Poisson,VF5,2,Regular squares,Quadrangles ,Green,4096,0.183737039566
-54,Poisson,VF5,2,Regular squares,Quadrangles ,Green,16,0.00342082977295
-55,Poisson,VF5,2,Regular squares,Quadrangles ,Green,64,0.0049250125885
-56,Wave system,Pseudo staggered with scaling,2,Regular squares,Quadrangles ,Green,64,0.557550191879
-57,Wave system,Pseudo staggered with scaling,2,Regular squares,Quadrangles ,Green,16,0.842995166779
-58,Wave system,Pseudo staggered with scaling,2,Regular squares,Quadrangles ,Green,256,0.952723026276
-59,Wave system,Pseudo staggered with scaling,2,Regular squares,Quadrangles ,Green,1024,5.29152798653
-60,Wave system,Pseudo staggered with scaling,2,Regular squares,Quadrangles ,Green,4096,39.2500648499
-61,Wave system,Upwind,3,Regular cubes,Hexahedra ,Green,216,0.843325853348
-62,Wave system,Upwind,3,Regular cubes,Hexahedra ,Green,9261,9.13662910461
-63,Wave system,Upwind,3,Regular cubes,Hexahedra ,Green,1331,1.2410068512
-64,Poisson,VF5,2,Non conforming cartesian checkerboard,Quadrangles Polygons ,Green,2560,0.134359121323
-65,Poisson,VF5,2,Non conforming cartesian checkerboard,Quadrangles Polygons ,Green,160,0.0130641460419
-66,Poisson,VF5,2,Non conforming cartesian checkerboard,Quadrangles Polygons ,Green,640,0.0342869758606
-67,Poisson,VF5,2,Non conforming cartesian checkerboard,Quadrangles Polygons ,Green,10240,0.555690050125
-68,Poisson,VF5,2,Non conforming cartesian checkerboard,Quadrangles Polygons ,Green,40,0.00659489631653
-69,Poisson,VF5,2,Non conforming cartesian checkerboard,Quadrangles Polygons ,Green,40960,2.37907409668
-70,Poisson,VF5,2,Unstructured triangles,Triangles ,Green,6422,0.23015499115
-71,Poisson,VF5,2,Unstructured triangles,Triangles ,Green,224,0.0124061107635
-72,Poisson,VF5,2,Unstructured triangles,Triangles ,Green,25872,0.977384090424
-73,Poisson,VF5,2,Unstructured triangles,Triangles ,Green,40,0.00385808944702
-74,Poisson,VF5,2,Unstructured triangles,Triangles ,Green,934,0.035845041275
-75,Wave system,Pseudo staggered with scaling,2,Unstructured triangles,Triangles ,Orange,6422,123.118424892
-76,Wave system,Pseudo staggered with scaling,2,Unstructured triangles,Triangles ,Orange,224,1.37006115913
-77,Wave system,Pseudo staggered with scaling,2,Unstructured triangles,Triangles ,Orange,40,0.944895982742
-78,Wave system,Pseudo staggered with scaling,2,Unstructured triangles,Triangles ,Orange,934,13.2833859921
-79,Poisson,P1 FE,3,Unstructured tetrahedra,Tetrahedra ,Green,3372,10.0996999741
-80,Poisson,P1 FE,3,Unstructured tetrahedra,Tetrahedra ,Green,508,0.432322025299
-81,Poisson,P1 FE,3,Unstructured tetrahedra,Tetrahedra ,Green,1543,2.50167012215
-82,Poisson,P1 FE,3,Unstructured tetrahedra,Tetrahedra ,Green,5956,27.935970068
-83,Poisson,P1 FE,3,Unstructured tetrahedra,Tetrahedra ,Green,12465,121.309728146
-84,Poisson,P1 FE,3,Unstructured tetrahedra,Tetrahedra ,Green,74,0.0739278793335
-85,Poisson,P1 FE,3,Unstructured tetrahedra,Tetrahedra ,Green,841,0.951027870178
-86,Wave system,Upwind,2,Regular hexagons,Polygons ,Green,255,0.675231933594
-87,Wave system,Upwind,2,Regular hexagons,Polygons ,Green,25,0.809543132782
-88,Wave system,Upwind,2,Regular hexagons,Polygons ,Green,1020,1.60279488564
-89,Wave system,Upwind,2,Regular hexagons,Polygons ,Green,2850,4.43508195877
-90,Poisson,VF5,3,Unstructured tetrahedra,Tetrahedra ,Green,7629,0.446870803833
-91,Poisson,VF5,3,Unstructured tetrahedra,Tetrahedra ,Green,16834,1.27175498009
-92,Poisson,VF5,3,Unstructured tetrahedra,Tetrahedra ,Green,63249,13.3725130558
-93,Poisson,VF5,3,Unstructured tetrahedra,Tetrahedra ,Green,4077,0.224829912186
-94,Poisson,VF5,3,Unstructured tetrahedra,Tetrahedra ,Green,28561,3.10124492645
-95,Poisson,VF5,3,Unstructured tetrahedra,Tetrahedra ,Green,270,0.014454126358
-96,Poisson,VF5,3,Unstructured tetrahedra,Tetrahedra ,Green,2081,0.103269815445
-97,Poisson,VF5,3,Non conforming cartesian checkerboard,Hexahedra Polyhedrons ,"Orange, BC violated. PB with mesh ?",36,0.00492310523987
-98,Poisson,VF5,3,Non conforming cartesian checkerboard,Hexahedra Polyhedrons ,"Orange, BC violated. PB with mesh ?",18432,7.33334708214
-99,Poisson,VF5,3,Non conforming cartesian checkerboard,Hexahedra Polyhedrons ,"Orange, BC violated. PB with mesh ?",2304,0.223586082458
-100,Poisson,VF5,3,Non conforming cartesian checkerboard,Hexahedra Polyhedrons ,"Orange, BC violated. PB with mesh ?",288,0.0265231132507
-101,Poisson,VF5,2,Deformed quadrangles,Quadrangles ,Green,256,0.0138900279999
-102,Poisson,VF5,2,Deformed quadrangles,Quadrangles ,Green,16384,0.7415599823
-103,Poisson,VF5,2,Deformed quadrangles,Quadrangles ,Green,1024,0.0463049411774
-104,Poisson,VF5,2,Deformed quadrangles,Quadrangles ,Green,4096,0.180579900742
-105,Poisson,VF5,2,Deformed quadrangles,Quadrangles ,Green,16,0.00316596031189
-106,Poisson,VF5,2,Deformed quadrangles,Quadrangles ,Green,64,0.00471115112305
-107,Poisson,VF5,2,Deformed quadrangles,Quadrangles ,Green,65536,3.21047210693
-108,Wave system,Upwind,2,Regular checkerboard,Quadrangles Polygons ,Green,40,0.790308952332
-109,Wave system,Upwind,2,Regular checkerboard,Quadrangles Polygons ,Green,2560,3.54668617249
-110,Wave system,Upwind,2,Regular checkerboard,Quadrangles Polygons ,Green,160,0.573576927185
-111,Wave system,Upwind,2,Regular checkerboard,Quadrangles Polygons ,Green,640,1.13331699371
+74,Poisson,VF5,2,Deformed_quadrangles,Quadrangles ,Green,16,0.00337409973145
+75,Poisson,VF5,2,Deformed_quadrangles,Quadrangles ,Green,64,0.00483107566833
+70,Poisson,VF5,2,Deformed_quadrangles,Quadrangles ,Green,256,0.0132279396057
+72,Poisson,VF5,2,Deformed_quadrangles,Quadrangles ,Green,1024,0.0468800067902
+73,Poisson,VF5,2,Deformed_quadrangles,Quadrangles ,Green,4096,0.182585000992
+71,Poisson,VF5,2,Deformed_quadrangles,Quadrangles ,Green,16384,0.74396109581
+76,Poisson,VF5,2,Deformed_quadrangles,Quadrangles ,Green,65536,3.12855482101
+55,Poisson,VF5,2,Non_conforming_checkerboard,Quadrangles Polygons ,Green,40,0.00441694259644
+52,Poisson,VF5,2,Non_conforming_checkerboard,Quadrangles Polygons ,Green,160,0.01176404953
+53,Poisson,VF5,2,Non_conforming_checkerboard,Quadrangles Polygons ,Green,640,0.0348629951477
+51,Poisson,VF5,2,Non_conforming_checkerboard,Quadrangles Polygons ,Green,2560,0.13299703598
+54,Poisson,VF5,2,Non_conforming_checkerboard,Quadrangles Polygons ,Green,10240,0.558738946915
+56,Poisson,VF5,2,Non_conforming_checkerboard,Quadrangles Polygons ,Green,40960,2.36660194397
+36,Poisson,VF5,2,Non_conforming_locally_refined,Quadrangles Polygons ,Green,40,0.00427579879761
+32,Poisson,VF5,2,Non_conforming_locally_refined,Quadrangles Polygons ,Green,160,0.0102341175079
+33,Poisson,VF5,2,Non_conforming_locally_refined,Quadrangles Polygons ,Green,640,0.030464887619
+31,Poisson,VF5,2,Non_conforming_locally_refined,Quadrangles Polygons ,Green,2560,0.116796970367
+34,Poisson,VF5,2,Non_conforming_locally_refined,Quadrangles Polygons ,Green,10240,0.46643781662
+37,Poisson,VF5,2,Non_conforming_locally_refined,Quadrangles Polygons ,Green,40960,1.95507097244
+35,Poisson,VF5,2,Non_conforming_locally_refined,Quadrangles Polygons ,Green,163840,8.74030089378
+4,Poisson,VF5,2,Regular_brickwall,Polygons ,Green,25,0.00432920455933
+7,Poisson,VF5,2,Regular_brickwall,Polygons ,Green,225,0.0202460289001
+5,Poisson,VF5,2,Regular_brickwall,Polygons ,Green,900,0.0682368278503
+8,Poisson,VF5,2,Regular_brickwall,Polygons ,Green,2500,0.186038017273
+6,Poisson,VF5,2,Regular_brickwall,Polygons ,Green,10000,0.689023017883
+13,Poisson,VF5,2,Regular_hexagons,Polygons ,Green,25,0.00448799133301
+17,Poisson,VF5,2,Regular_hexagons,Polygons ,Green,255,0.0205631256104
+15,Poisson,VF5,2,Regular_hexagons,Polygons ,Green,1020,0.0789389610291
+16,Poisson,VF5,2,Regular_hexagons,Polygons ,Green,2850,0.202154159546
+14,Poisson,VF5,2,Regular_hexagons,Polygons ,Green,11500,0.785477876663
+41,Poisson,VF5,2,Regular_squares,Quadrangles ,Green,16,0.00312900543213
+42,Poisson,VF5,2,Regular_squares,Quadrangles ,Green,64,0.00560712814331
+38,Poisson,VF5,2,Regular_squares,Quadrangles ,Green,256,0.0134320259094
+39,Poisson,VF5,2,Regular_squares,Quadrangles ,Green,1024,0.0463538169861
+40,Poisson,VF5,2,Regular_squares,Quadrangles ,Green,4096,0.184284925461
+60,Poisson,VF5,2,Unstructured_triangles,Triangles ,Green,40,0.00396800041199
+58,Poisson,VF5,2,Unstructured_triangles,Triangles ,Green,224,0.0113739967346
+61,Poisson,VF5,2,Unstructured_triangles,Triangles ,Green,934,0.034698009491
+57,Poisson,VF5,2,Unstructured_triangles,Triangles ,Green,6422,0.233506917953
+59,Poisson,VF5,2,Unstructured_triangles,Triangles ,Green,25872,0.984580039978
+44,Wave system,Pseudo staggered without scaling,2,Regular squares,Quadrangles ,Green,16,0.967530012131
+43,Wave system,Pseudo staggered without scaling,2,Regular squares,Quadrangles ,Green,64,0.548666954041
+45,Wave system,Pseudo staggered without scaling,2,Regular squares,Quadrangles ,Green,256,1.16692304611
+46,Wave system,Pseudo staggered without scaling,2,Regular squares,Quadrangles ,Green,1024,12.6160809994
+47,Wave system,Pseudo staggered without scaling,2,Regular squares,Quadrangles ,Green,4096,122.555289984
+64,Wave system,Pseudo staggered without scaling,2,Unstructured triangles,Triangles ,Orange,40,1.00874614716
+63,Wave system,Pseudo staggered without scaling,2,Unstructured triangles,Triangles ,Orange,224,1.53369283676
+65,Wave system,Pseudo staggered without scaling,2,Unstructured triangles,Triangles ,Orange,934,30.2194259167
+62,Wave system,Pseudo staggered without scaling,2,Unstructured triangles,Triangles ,Orange,6422,355.981562138
+0,Wave system,Upwind,2,Deformed quadrangles,Quadrangles ,Green,16,0.923890113831
+2,Wave system,Upwind,2,Deformed quadrangles,Quadrangles ,Green,64,0.568516969681
+1,Wave system,Upwind,2,Deformed quadrangles,Quadrangles ,Green,256,0.781762123108
+3,Wave system,Upwind,2,Deformed quadrangles,Quadrangles ,Green,1024,1.95579886436
+12,Wave system,Upwind,2,Regular brick wall,Polygons ,Green,25,0.979192018509
+11,Wave system,Upwind,2,Regular brick wall,Polygons ,Green,225,0.702623844147
+10,Wave system,Upwind,2,Regular brick wall,Polygons ,Green,900,1.56408596039
+9,Wave system,Upwind,2,Regular brick wall,Polygons ,Green,2500,5.30170297623
+77,Wave system,Upwind,2,Regular checkerboard,Quadrangles Polygons ,Green,40,0.9207239151
+79,Wave system,Upwind,2,Regular checkerboard,Quadrangles Polygons ,Green,160,0.613589048386
+80,Wave system,Upwind,2,Regular checkerboard,Quadrangles Polygons ,Green,640,1.24235796928
+78,Wave system,Upwind,2,Regular checkerboard,Quadrangles Polygons ,Green,2560,3.90796279907
+67,Wave system,Upwind,2,Regular hexagons,Polygons ,Green,25,1.05935001373
+66,Wave system,Upwind,2,Regular hexagons,Polygons ,Green,255,0.719722986221
+68,Wave system,Upwind,2,Regular hexagons,Polygons ,Green,1020,2.01203203201
+69,Wave system,Upwind,2,Regular hexagons,Polygons ,Green,2850,5.16041707993
+22,Wave system,Upwind,2,Regular squares,Quadrangles ,Green,16,0.935477972031
+24,Wave system,Upwind,2,Regular squares,Quadrangles ,Green,64,0.484676122665
+26,Wave system,Upwind,2,Regular squares,Quadrangles ,Green,256,0.561717987061
+25,Wave system,Upwind,2,Regular squares,Quadrangles ,Green,1024,0.962705135345
+23,Wave system,Upwind,2,Regular squares,Quadrangles ,Green,4096,3.3126540184
+20,Wave system,Upwind,2,Unstructured triangles,Triangles ,Green,40,0.919723033905
+21,Wave system,Upwind,2,Unstructured triangles,Triangles ,Green,224,0.595685005188
+19,Wave system,Upwind,2,Unstructured triangles,Triangles ,Green,934,0.775900840759
+18,Wave system,Upwind,2,Unstructured triangles,Triangles ,Green,6422,2.00090622902
+48,Wave system,Upwind,3,Regular cubes,Hexahedra ,Green,216,1.0464849472
+50,Wave system,Upwind,3,Regular cubes,Hexahedra ,Green,1331,1.3331079483
+49,Wave system,Upwind,3,Regular cubes,Hexahedra ,Green,9261,10.8233230114
+29,Wave system,Upwind,3,Regular tetrahedra,Tetrahedra ,Green,750,1.17663311958
+28,Wave system,Upwind,3,Regular tetrahedra,Tetrahedra ,Green,7986,3.53287386894
+27,Wave system,Upwind,3,Regular tetrahedra,Tetrahedra ,Green,55566,25.3330190182
+30,Wave system,Upwind,3,Regular tetrahedra,Tetrahedra ,Green,105456,51.010612011
