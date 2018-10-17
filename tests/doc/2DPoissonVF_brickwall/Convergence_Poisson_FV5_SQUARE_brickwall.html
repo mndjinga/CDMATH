@@ -11755,7 +11755,7 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="FV5-scheme-for-Poisson-equation-on-brick-wall-mesh">FV5 scheme for Poisson equation on brick wall mesh<a class="anchor-link" href="#FV5-scheme-for-Poisson-equation-on-brick-wall-mesh">&#182;</a></h1>
+<h1 id="FV5-scheme-for-Poisson-equation-on-brick-wall-meshes">FV5 scheme for Poisson equation on brick wall meshes<a class="anchor-link" href="#FV5-scheme-for-Poisson-equation-on-brick-wall-meshes">&#182;</a></h1>
 </div>
 </div>
 </div>
@@ -11881,6 +11881,10 @@ $$</p>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">coeff</span><span class="o">=</span><span class="n">Fj</span><span class="o">.</span><span class="n">getMeasure</span><span class="p">()</span><span class="o">/</span><span class="n">Ci</span><span class="o">.</span><span class="n">getMeasure</span><span class="p">()</span><span class="o">/</span><span class="n">Ci</span><span class="o">.</span><span class="n">getBarryCenter</span><span class="p">()</span><span class="o">.</span><span class="n">distance</span><span class="p">(</span><span class="n">Fj</span><span class="o">.</span><span class="n">getBarryCenter</span><span class="p">())</span>
         <span class="n">Rigidite</span><span class="o">.</span><span class="n">addValue</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">i</span><span class="p">,</span><span class="n">coeff</span><span class="p">)</span> <span class="c1"># terme diagonal</span>
+        <span class="c1">#For the particular case where the mesh boundary does not coincide with the domain boundary</span>
+            <span class="n">x</span><span class="o">=</span><span class="n">Fj</span><span class="o">.</span><span class="n">getBarryCenter</span><span class="p">()</span><span class="o">.</span><span class="n">x</span><span class="p">()</span>
+            <span class="n">y</span><span class="o">=</span><span class="n">Fj</span><span class="o">.</span><span class="n">getBarryCenter</span><span class="p">()</span><span class="o">.</span><span class="n">y</span><span class="p">()</span>
+            <span class="n">RHS</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">+=</span><span class="n">coeff</span><span class="o">*</span><span class="n">sin</span><span class="p">(</span><span class="n">pi</span><span class="o">*</span><span class="n">x</span><span class="p">)</span><span class="o">*</span><span class="n">sin</span><span class="p">(</span><span class="n">pi</span><span class="o">*</span><span class="n">y</span><span class="p">)</span><span class="c1">#mettre ici la condition limite du problème de Dirichlet</span>
 
 
 <span class="c1"># Résolution du système linéaire</span>
@@ -11950,7 +11954,7 @@ $$</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Numerical-result">Numerical result<a class="anchor-link" href="#Numerical-result">&#182;</a></h3>
+<h3 id="Numerical-results">Numerical results<a class="anchor-link" href="#Numerical-results">&#182;</a></h3>
 </div>
 </div>
 </div>
@@ -11968,9 +11972,9 @@ $$</p>
 </thead>
 <tbody>
 <tr>
-<td><img src="FiniteVolumes2D_square_ResultField25.png" alt=""></td>
-<td><img src="FiniteVolumes2D_square_ResultField225.png" alt=""></td>
-<td><img src="FiniteVolumes2D_square_ResultField900.png" alt=""> </td>
+<td><img src="FiniteVolumes2D_SQUARE_Regular_brickwall25.png" alt=""></td>
+<td><img src="FiniteVolumes2D_SQUARE_Regular_brickwall225.png" alt=""></td>
+<td><img src="FiniteVolumes2D_SQUARE_Regular_brickwall900.png" alt=""> </td>
 </tr>
 </tbody>
 </table>
@@ -11983,7 +11987,7 @@ $$</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Convergence-curve">Convergence curve<a class="anchor-link" href="#Convergence-curve">&#182;</a></h3>
+<h3 id="Convergence-curves">Convergence curves<a class="anchor-link" href="#Convergence-curves">&#182;</a></h3>
 </div>
 </div>
 </div>
@@ -12003,46 +12007,6 @@ $$</p>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><img src="SquareWithBrickWall_2DPoissonVF_PlotOverDiagonalLine.png" alt=""></p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p><img src="squareWithTriangles_2DPoissonVFns_ConvergenceCurve.png" alt=""></p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p><img src="squareWithTriangles_2DPoissonVFns_PlotOverDiagonalLine.png" alt=""></p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p><img src="meshSquareWithRectanglesFV_2DPoissonFVs_ConvergenceCurve.png" alt=""></p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p><img src="meshSquareWithRectanglesFV_2DPoissonFVs_PlotOverDiagonalLine.png" alt=""></p>
 
 </div>
 </div>
