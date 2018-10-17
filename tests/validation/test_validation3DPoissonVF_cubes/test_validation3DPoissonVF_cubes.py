@@ -35,7 +35,7 @@ def test_validation3DVF_cubes():
         plt.plot(curv_abs, diag_data[i], label= str(mesh_size_tab[i]) + ' cells')
         error_tab[i]=log10(error_tab[i])
         time_tab[i]=log10(time_tab[i])
-        mesh_size_tab[i] = log10(mesh_size_tab[i])
+        mesh_size_tab[i] = 1./3*log10(mesh_size_tab[i])
         i=i+1
         
     end = time.time()
@@ -69,7 +69,7 @@ def test_validation3DVF_cubes():
     plt.plot(mesh_size_tab, error_tab, label='log(|numerical-exact|)')
     plt.plot(mesh_size_tab, a*np.array(mesh_size_tab)+b,label='least square slope : '+'%.3f' % a)
     plt.legend()
-    plt.xlabel('log(number of cells)')
+    plt.xlabel('1/3 log(number of cells)')
     plt.ylabel('log(error)')
     plt.title('Convergence of finite volumes for Laplace operator on 3D cuboid meshes')
     plt.savefig(mesh_name+"_3DPoissonVFs_ConvergenceCurve.png")
@@ -78,7 +78,7 @@ def test_validation3DVF_cubes():
     plt.close()
     plt.plot(mesh_size_tab, time_tab, label='log(cpu time)')
     plt.legend()
-    plt.xlabel('log(number of cells)')
+    plt.xlabel('1/3 log(number of cells)')
     plt.ylabel('log(cpu time)')
     plt.title('Computational time of finite volumes \n for Laplace operator on 3D cuboid meshes')
     plt.savefig(mesh_name+"_3DPoissonVFs_ComputationalTime.png")

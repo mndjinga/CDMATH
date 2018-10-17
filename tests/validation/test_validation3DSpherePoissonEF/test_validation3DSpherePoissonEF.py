@@ -35,7 +35,7 @@ def test_validation3DSphereEF():
             y = [line.split(",")[1] for line in lines[1:]]
 
         plt.plot(y, x, label= str(mesh_size_tab[i]) + ' cells')
-        mesh_size_tab[i] = log10(mesh_size_tab[i])
+        mesh_size_tab[i] = 0.5*log10(mesh_size_tab[i])
         i=i+1
 
     end = time.time()
@@ -69,16 +69,16 @@ def test_validation3DSphereEF():
     plt.plot(mesh_size_tab, error_tab, label='log(|numerical-exact|)')
     plt.plot(mesh_size_tab, a*np.array(mesh_size_tab)+b,label='least square slope : '+'%.3f' % a)
     plt.legend()
-    plt.xlabel('log(number of nodes)')
+    plt.xlabel('log(sqrt(number of nodes))')
     plt.ylabel('log(error)')
     plt.title('Convergence of finite elements for \n Laplace operator on 3D sphere triangular meshes')
     plt.savefig(mesh_name+"_3DSpherePoissonFE_ConvergenceCurve.png")
     
     # Plot of computational time
     plt.close()
-    plt.plot(mesh_size_tab, time_tab, label='log(cpu time)')
+    plt.plot(mesh_size_tab, time_tab, label='log(cpu time))')
     plt.legend()
-    plt.xlabel('log(number of nodes)')
+    plt.xlabel('log(sqrt(number of nodes)')
     plt.ylabel('log(cpu time)')
     plt.title('Computational time of finite elements \n for Laplace operator on 3D sphere triangular meshes')
     plt.savefig(mesh_name+"_3DSpherePoissonFE_ComputationalTime.png")

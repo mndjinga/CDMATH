@@ -32,7 +32,7 @@ def test_validation2DEF():
         plt.plot(curv_abs, diag_data[i], label= str(mesh_size_tab[i]) + ' nodes')
         error_tab[i]=log10(error_tab[i])
         time_tab[i]=log10(time_tab[i])
-        mesh_size_tab[i] = log10(mesh_size_tab[i])
+        mesh_size_tab[i] = 0.5*log10(mesh_size_tab[i])
         i=i+1
     
     end = time.time()
@@ -67,7 +67,7 @@ def test_validation2DEF():
     plt.plot(mesh_size_tab, error_tab, label='log(|numerical-exact|)')
     plt.plot(mesh_size_tab, a*np.array(mesh_size_tab)+b,label='least square slope : '+'%.3f' % a)
     plt.legend()
-    plt.xlabel('log(number of nodes)')
+    plt.xlabel('log(sqrt(number of nodes))')
     plt.ylabel('log(error)')
     plt.title('Convergence of finite elements \n for Laplace operator on 2D triangular meshes')
     plt.savefig(mesh_name+"_2DPoissonEF_ConvergenceCurve.png")
@@ -76,7 +76,7 @@ def test_validation2DEF():
     plt.close()
     plt.plot(mesh_size_tab, time_tab, label='log(cpu time)')
     plt.legend()
-    plt.xlabel('log(number of nodes)')
+    plt.xlabel('log(sqrt(number of nodes))')
     plt.ylabel('log(cpu time)')
     plt.title('Computational time of finite elements \n for Laplace operator on 2D triangular meshes')
     plt.savefig(mesh_name+"_2DPoissonEF_ComputationalTime.png")

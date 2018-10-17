@@ -32,7 +32,7 @@ def test_validation3DEF():
         plt.plot(curv_abs, diag_data[i], label= str(mesh_size_tab[i]) + ' nodes')
         error_tab[i]=log10(error_tab[i])
         time_tab[i]=log10(time_tab[i])
-        mesh_size_tab[i] = log10(mesh_size_tab[i])
+        mesh_size_tab[i] = 1./3*log10(mesh_size_tab[i])
         i=i+1
         
     end = time.time()
@@ -66,7 +66,7 @@ def test_validation3DEF():
     plt.plot(mesh_size_tab, error_tab, label='log(|numerical-exact|)')
     plt.plot(mesh_size_tab, a*np.array(mesh_size_tab)+b,label='least square slope : '+'%.3f' % a)
     plt.legend()
-    plt.xlabel('log(number of nodes)')
+    plt.xlabel('1/3 log(number of nodes)')
     plt.ylabel('log(error)')
     plt.title('Convergence of finite elements for \n Laplace operator on a 3D tetrahedral meshes')
     plt.savefig(mesh_name+"_3DPoissonFE_ConvergenceCurve.png")
@@ -75,7 +75,7 @@ def test_validation3DEF():
     plt.close()
     plt.plot(mesh_size_tab, time_tab, label='log(cpu time)')
     plt.legend()
-    plt.xlabel('log(number of nodes)')
+    plt.xlabel('1/3 log(number of nodes)')
     plt.ylabel('log(cpu time)')
     plt.title('Computational time of finite elements \n for Laplace operator on 2D tetrahedral meshes')
     plt.savefig(mesh_name+"_3DPoissonFE_ComputationalTime.png")
