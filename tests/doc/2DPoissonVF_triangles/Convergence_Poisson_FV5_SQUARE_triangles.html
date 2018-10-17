@@ -11755,7 +11755,7 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="FV5-scheme-for-Poisson-equation-on-triangular-meshes">FV5 scheme for Poisson equation on triangular meshes<a class="anchor-link" href="#FV5-scheme-for-Poisson-equation-on-triangular-meshes">&#182;</a></h1>
+<h1 id="FV5-scheme-for-Poisson-equation-on-unstructured-triangular-meshes">FV5 scheme for Poisson equation on unstructured triangular meshes<a class="anchor-link" href="#FV5-scheme-for-Poisson-equation-on-unstructured-triangular-meshes">&#182;</a></h1>
 </div>
 </div>
 </div>
@@ -11783,7 +11783,7 @@ $$<p>on the square domain $\Omega= [0,1]\times [0,1]$ with
 $$f=2\pi^2 sin(\pi x) sin(\pi y).$$<br>
 The unique solution of the problem is
 $$
-u=-sin(\pi x) sin(\pi y).
+u=sin(\pi x) sin(\pi y).
 $$</p>
 <p>The Poisson equation is a particular case of the diffusion problem
 $$
@@ -11793,6 +11793,7 @@ and the associated diffusion flux is
 $$
 F(u)=K\nabla u.
 $$</p>
+<p>We are in the particular case where $K=1$.</p>
 
 </div>
 </div>
@@ -11968,9 +11969,9 @@ $$</p>
 </thead>
 <tbody>
 <tr>
-<td><img src="FiniteVolumes2D_square_ResultField40.png" alt=""></td>
-<td><img src="FiniteVolumes2D_square_ResultField224.png" alt=""></td>
-<td><img src="FiniteVolumes2D_square_ResultField934.png" alt=""> </td>
+<td><img src="FiniteVolumes2D_SQUARE_Unstructured_triangles40.png" alt=""></td>
+<td><img src="FiniteVolumes2D_SQUARE_Unstructured_triangles224.png" alt=""></td>
+<td><img src="FiniteVolumes2D_SQUARE_Unstructured_triangles934.png" alt=""> </td>
 </tr>
 </tbody>
 </table>
