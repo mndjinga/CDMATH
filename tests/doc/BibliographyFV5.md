@@ -17,11 +17,8 @@
   *J. Droniou, C. Le Potier, Construction and Convergence Study of Schemes Preserving the Elliptic Local Maximum Principle, SIAM Journal on Numerical Analysis, 2011*
 
 
-- *J. Droniou 2017* (ordre 2 si condition de type Delaunay)  
-  A mixed finite element method for a sixth order elliptic problem  
-  The gradient discretisation method for optimal control problems, with super-convergence for non-conforming finite elements and mixed-hybrid mimetic finite differences  
-  Wsp-approximation properties of elliptic projectors on polynomial spaces, with application to the error analysis of a Hybrid High-Order discretisation of Leray-Lions problems  
-  A Hybrid High-Order method for Leray-Lions elliptic equations on general meshes
+- The scheme is order 2 if Delaunay type conditions, $f\in H^1$ and meshes are generated from an initial mesh either by subdivisions,symmetry or translation  
+  *J. Droniou, Improved L^2 estimate for gradient schemes and super-convergence of the TPFA finite volume scheme, 2018*
 
 
 - It is possible to converge with order 1 on the gradient, but only order 1 on the function ie there is no equivalent of the Aubin-Nitsche lemma in the finite volume context  
