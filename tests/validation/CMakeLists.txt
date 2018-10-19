@@ -1,28 +1,28 @@
 
 SET( VALIDATION_FOLDERS
-test_validation2DPoissonEF 
-test_validation2DPoissonVF_checkerboard 
-test_validation2DPoissonVF_loc_ref 
-test_validation2DPoissonVF_triangles 
-test_validation2DPoissonVF_squares 
-test_validation2DPoissonVF_deformedQuadrangles 
-test_validation2DPoissonVF_hexagons 
-test_validation2DPoissonVF_brickwall
-test_validation3DSpherePoissonEF 
-test_validation3DPoissonEF 
-test_validation3DPoissonVF_checkerboard 
-test_validation3DPoissonVF_tetrahedra 
-test_validation3DPoissonVF_cubes 
-test_validation2DWaveSystemPStagSquares 
-test_validation2DWaveSystemPStagTriangles 
-test_validation2DWaveSystemUpwindSquares 
-test_validation2DWaveSystemUpwindTriangles 
-test_validation2DWaveSystemUpwindCheckerboard
-test_validation2DWaveSystemUpwindBrickWall
-test_validation2DWaveSystemUpwindHexagons
-test_validation2DWaveSystemUpwindDeformedQuadrangles
-test_validation3DWaveSystemUpwindCubes 
-test_validation3DWaveSystemUpwindTetrahedra 
+2DPoissonEF 
+2DPoissonVF_checkerboard 
+2DPoissonVF_loc_ref 
+2DPoissonVF_triangles 
+2DPoissonVF_squares 
+2DPoissonVF_deformedQuadrangles 
+2DPoissonVF_hexagons 
+2DPoissonVF_brickwall
+3DSpherePoissonEF 
+3DPoissonEF 
+3DPoissonVF_checkerboard 
+3DPoissonVF_tetrahedra 
+3DPoissonVF_cubes 
+2DWaveSystemPStagSquares 
+2DWaveSystemPStagTriangles 
+2DWaveSystemUpwindSquares 
+2DWaveSystemUpwindTriangles 
+2DWaveSystemUpwindCheckerboard
+2DWaveSystemUpwindBrickWall
+2DWaveSystemUpwindHexagons
+2DWaveSystemUpwindDeformedQuadrangles
+3DWaveSystemUpwindCubes 
+3DWaveSystemUpwindTetrahedra 
 test_synthesis 
 )
 
@@ -67,41 +67,41 @@ notebook COMMAND
 &&   jupyter-nbconvert --to latex    ${CMAKE_CURRENT_BINARY_DIR}/test_synthesis/test_synthesis_nbook.ipynb
 &&   jupyter-nbconvert --to markdown ${CMAKE_CURRENT_BINARY_DIR}/test_synthesis/test_synthesis_nbook.ipynb
 
-&&   jupyter-nbconvert --to notebook --execute ${CMAKE_CURRENT_BINARY_DIR}/test_validation2DPoissonVF_brickwall/Convergence_Poisson_FV5_SQUARE_brickwall.ipynb
-&&   jupyter-nbconvert --to html     ${CMAKE_CURRENT_BINARY_DIR}/test_validation2DPoissonVF_brickwall/Convergence_Poisson_FV5_SQUARE_brickwall.ipynb
-&&   jupyter-nbconvert --to pdf      ${CMAKE_CURRENT_BINARY_DIR}/test_validation2DPoissonVF_brickwall/Convergence_Poisson_FV5_SQUARE_brickwall.ipynb
-&&   jupyter-nbconvert --to latex    ${CMAKE_CURRENT_BINARY_DIR}/test_validation2DPoissonVF_brickwall/Convergence_Poisson_FV5_SQUARE_brickwall.ipynb
-&&   jupyter-nbconvert --to markdown ${CMAKE_CURRENT_BINARY_DIR}/test_validation2DPoissonVF_brickwall/Convergence_Poisson_FV5_SQUARE_brickwall.ipynb
+&&   jupyter-nbconvert --to notebook --execute ${CMAKE_CURRENT_BINARY_DIR}/2DPoissonVF_brickwall/Convergence_Poisson_FV5_SQUARE_brickwall.ipynb
+&&   jupyter-nbconvert --to html     ${CMAKE_CURRENT_BINARY_DIR}/2DPoissonVF_brickwall/Convergence_Poisson_FV5_SQUARE_brickwall.ipynb
+&&   jupyter-nbconvert --to pdf      ${CMAKE_CURRENT_BINARY_DIR}/2DPoissonVF_brickwall/Convergence_Poisson_FV5_SQUARE_brickwall.ipynb
+&&   jupyter-nbconvert --to latex    ${CMAKE_CURRENT_BINARY_DIR}/2DPoissonVF_brickwall/Convergence_Poisson_FV5_SQUARE_brickwall.ipynb
+&&   jupyter-nbconvert --to markdown ${CMAKE_CURRENT_BINARY_DIR}/2DPoissonVF_brickwall/Convergence_Poisson_FV5_SQUARE_brickwall.ipynb
 
-&&   jupyter-nbconvert --to notebook --execute ${CMAKE_CURRENT_BINARY_DIR}/test_validation2DPoissonVF_hexagons/Convergence_Poisson_FV5_SQUARE_hexagons.ipynb
-&&   jupyter-nbconvert --to html     ${CMAKE_CURRENT_BINARY_DIR}/test_validation2DPoissonVF_hexagons/Convergence_Poisson_FV5_SQUARE_hexagons.ipynb
-&&   jupyter-nbconvert --to pdf      ${CMAKE_CURRENT_BINARY_DIR}/test_validation2DPoissonVF_hexagons/Convergence_Poisson_FV5_SQUARE_hexagons.ipynb
-&&   jupyter-nbconvert --to latex    ${CMAKE_CURRENT_BINARY_DIR}/test_validation2DPoissonVF_hexagons/Convergence_Poisson_FV5_SQUARE_hexagons.ipynb
-&&   jupyter-nbconvert --to markdown ${CMAKE_CURRENT_BINARY_DIR}/test_validation2DPoissonVF_hexagons/Convergence_Poisson_FV5_SQUARE_hexagons.ipynb
+&&   jupyter-nbconvert --to notebook --execute ${CMAKE_CURRENT_BINARY_DIR}/2DPoissonVF_hexagons/Convergence_Poisson_FV5_SQUARE_hexagons.ipynb
+&&   jupyter-nbconvert --to html     ${CMAKE_CURRENT_BINARY_DIR}/2DPoissonVF_hexagons/Convergence_Poisson_FV5_SQUARE_hexagons.ipynb
+&&   jupyter-nbconvert --to pdf      ${CMAKE_CURRENT_BINARY_DIR}/2DPoissonVF_hexagons/Convergence_Poisson_FV5_SQUARE_hexagons.ipynb
+&&   jupyter-nbconvert --to latex    ${CMAKE_CURRENT_BINARY_DIR}/2DPoissonVF_hexagons/Convergence_Poisson_FV5_SQUARE_hexagons.ipynb
+&&   jupyter-nbconvert --to markdown ${CMAKE_CURRENT_BINARY_DIR}/2DPoissonVF_hexagons/Convergence_Poisson_FV5_SQUARE_hexagons.ipynb
 
-&&   jupyter-nbconvert --to notebook --execute ${CMAKE_CURRENT_BINARY_DIR}/test_validation2DPoissonVF_squares/Convergence_Poisson_FV5_SQUARE_squares.ipynb
-&&   jupyter-nbconvert --to html     ${CMAKE_CURRENT_BINARY_DIR}/test_validation2DPoissonVF_squares/Convergence_Poisson_FV5_SQUARE_squares.ipynb
-&&   jupyter-nbconvert --to pdf      ${CMAKE_CURRENT_BINARY_DIR}/test_validation2DPoissonVF_squares/Convergence_Poisson_FV5_SQUARE_squares.ipynb
-&&   jupyter-nbconvert --to latex    ${CMAKE_CURRENT_BINARY_DIR}/test_validation2DPoissonVF_squares/Convergence_Poisson_FV5_SQUARE_squares.ipynb
-&&   jupyter-nbconvert --to markdown ${CMAKE_CURRENT_BINARY_DIR}/test_validation2DPoissonVF_squares/Convergence_Poisson_FV5_SQUARE_squares.ipynb
+&&   jupyter-nbconvert --to notebook --execute ${CMAKE_CURRENT_BINARY_DIR}/2DPoissonVF_squares/Convergence_Poisson_FV5_SQUARE_squares.ipynb
+&&   jupyter-nbconvert --to html     ${CMAKE_CURRENT_BINARY_DIR}/2DPoissonVF_squares/Convergence_Poisson_FV5_SQUARE_squares.ipynb
+&&   jupyter-nbconvert --to pdf      ${CMAKE_CURRENT_BINARY_DIR}/2DPoissonVF_squares/Convergence_Poisson_FV5_SQUARE_squares.ipynb
+&&   jupyter-nbconvert --to latex    ${CMAKE_CURRENT_BINARY_DIR}/2DPoissonVF_squares/Convergence_Poisson_FV5_SQUARE_squares.ipynb
+&&   jupyter-nbconvert --to markdown ${CMAKE_CURRENT_BINARY_DIR}/2DPoissonVF_squares/Convergence_Poisson_FV5_SQUARE_squares.ipynb
 
-&&   jupyter-nbconvert --to notebook --execute ${CMAKE_CURRENT_BINARY_DIR}/test_validation2DPoissonVF_triangles/Convergence_Poisson_FV5_SQUARE_triangles.ipynb
-&&   jupyter-nbconvert --to html     ${CMAKE_CURRENT_BINARY_DIR}/test_validation2DPoissonVF_triangles/Convergence_Poisson_FV5_SQUARE_triangles.ipynb
-&&   jupyter-nbconvert --to pdf      ${CMAKE_CURRENT_BINARY_DIR}/test_validation2DPoissonVF_triangles/Convergence_Poisson_FV5_SQUARE_triangles.ipynb
-&&   jupyter-nbconvert --to latex    ${CMAKE_CURRENT_BINARY_DIR}/test_validation2DPoissonVF_triangles/Convergence_Poisson_FV5_SQUARE_triangles.ipynb
-&&   jupyter-nbconvert --to markdown ${CMAKE_CURRENT_BINARY_DIR}/test_validation2DPoissonVF_triangles/Convergence_Poisson_FV5_SQUARE_triangles.ipynb
+&&   jupyter-nbconvert --to notebook --execute ${CMAKE_CURRENT_BINARY_DIR}/2DPoissonVF_triangles/Convergence_Poisson_FV5_SQUARE_triangles.ipynb
+&&   jupyter-nbconvert --to html     ${CMAKE_CURRENT_BINARY_DIR}/2DPoissonVF_triangles/Convergence_Poisson_FV5_SQUARE_triangles.ipynb
+&&   jupyter-nbconvert --to pdf      ${CMAKE_CURRENT_BINARY_DIR}/2DPoissonVF_triangles/Convergence_Poisson_FV5_SQUARE_triangles.ipynb
+&&   jupyter-nbconvert --to latex    ${CMAKE_CURRENT_BINARY_DIR}/2DPoissonVF_triangles/Convergence_Poisson_FV5_SQUARE_triangles.ipynb
+&&   jupyter-nbconvert --to markdown ${CMAKE_CURRENT_BINARY_DIR}/2DPoissonVF_triangles/Convergence_Poisson_FV5_SQUARE_triangles.ipynb
 
-&&   jupyter-nbconvert --to notebook --execute ${CMAKE_CURRENT_BINARY_DIR}/test_validation2DPoissonVF_checkerboard/Convergence_Poisson_FV5_SQUARE_checkerboard.ipynb
-&&   jupyter-nbconvert --to html     ${CMAKE_CURRENT_BINARY_DIR}/test_validation2DPoissonVF_checkerboard/Convergence_Poisson_FV5_SQUARE_checkerboard.ipynb
-&&   jupyter-nbconvert --to pdf      ${CMAKE_CURRENT_BINARY_DIR}/test_validation2DPoissonVF_checkerboard/Convergence_Poisson_FV5_SQUARE_checkerboard.ipynb
-&&   jupyter-nbconvert --to latex    ${CMAKE_CURRENT_BINARY_DIR}/test_validation2DPoissonVF_checkerboard/Convergence_Poisson_FV5_SQUARE_checkerboard.ipynb
-&&   jupyter-nbconvert --to markdown ${CMAKE_CURRENT_BINARY_DIR}/test_validation2DPoissonVF_checkerboard/Convergence_Poisson_FV5_SQUARE_checkerboard.ipynb
+&&   jupyter-nbconvert --to notebook --execute ${CMAKE_CURRENT_BINARY_DIR}/2DPoissonVF_checkerboard/Convergence_Poisson_FV5_SQUARE_checkerboard.ipynb
+&&   jupyter-nbconvert --to html     ${CMAKE_CURRENT_BINARY_DIR}/2DPoissonVF_checkerboard/Convergence_Poisson_FV5_SQUARE_checkerboard.ipynb
+&&   jupyter-nbconvert --to pdf      ${CMAKE_CURRENT_BINARY_DIR}/2DPoissonVF_checkerboard/Convergence_Poisson_FV5_SQUARE_checkerboard.ipynb
+&&   jupyter-nbconvert --to latex    ${CMAKE_CURRENT_BINARY_DIR}/2DPoissonVF_checkerboard/Convergence_Poisson_FV5_SQUARE_checkerboard.ipynb
+&&   jupyter-nbconvert --to markdown ${CMAKE_CURRENT_BINARY_DIR}/2DPoissonVF_checkerboard/Convergence_Poisson_FV5_SQUARE_checkerboard.ipynb
 
-&&   jupyter-nbconvert --to notebook --execute ${CMAKE_CURRENT_BINARY_DIR}/test_validation2DPoissonVF_loc_ref/Convergence_Poisson_FV5_SQUARE_loc_ref.ipynb
-&&   jupyter-nbconvert --to html     ${CMAKE_CURRENT_BINARY_DIR}/test_validation2DPoissonVF_loc_ref/Convergence_Poisson_FV5_SQUARE_loc_ref.ipynb
-&&   jupyter-nbconvert --to pdf      ${CMAKE_CURRENT_BINARY_DIR}/test_validation2DPoissonVF_loc_ref/Convergence_Poisson_FV5_SQUARE_loc_ref.ipynb
-&&   jupyter-nbconvert --to latex    ${CMAKE_CURRENT_BINARY_DIR}/test_validation2DPoissonVF_loc_ref/Convergence_Poisson_FV5_SQUARE_loc_ref.ipynb
-&&   jupyter-nbconvert --to markdown ${CMAKE_CURRENT_BINARY_DIR}/test_validation2DPoissonVF_loc_ref/Convergence_Poisson_FV5_SQUARE_loc_ref.ipynb
+&&   jupyter-nbconvert --to notebook --execute ${CMAKE_CURRENT_BINARY_DIR}/2DPoissonVF_loc_ref/Convergence_Poisson_FV5_SQUARE_loc_ref.ipynb
+&&   jupyter-nbconvert --to html     ${CMAKE_CURRENT_BINARY_DIR}/2DPoissonVF_loc_ref/Convergence_Poisson_FV5_SQUARE_loc_ref.ipynb
+&&   jupyter-nbconvert --to pdf      ${CMAKE_CURRENT_BINARY_DIR}/2DPoissonVF_loc_ref/Convergence_Poisson_FV5_SQUARE_loc_ref.ipynb
+&&   jupyter-nbconvert --to latex    ${CMAKE_CURRENT_BINARY_DIR}/2DPoissonVF_loc_ref/Convergence_Poisson_FV5_SQUARE_loc_ref.ipynb
+&&   jupyter-nbconvert --to markdown ${CMAKE_CURRENT_BINARY_DIR}/2DPoissonVF_loc_ref/Convergence_Poisson_FV5_SQUARE_loc_ref.ipynb
 
 )
 
