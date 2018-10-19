@@ -29,7 +29,7 @@ def test_validation3DSphereEF():
         assert max_sol_num<1.1
         error_tab[i]=log10(error_tab[i])
         time_tab[i]=log10(time_tab[i])
-        with open('./FiniteElementsOnSphere_PlotOnSortedLines'+str(mesh_size_tab[i])+'0.csv') as f:
+        with open('./FiniteElementsOnSphere_PlotOnSortedLines'+meshType+str(mesh_size_tab[i])+'0.csv') as f:
             lines = f.readlines()
             x = [line.split(",")[0] for line in lines[1:]]
             y = [line.split(",")[1] for line in lines[1:]]

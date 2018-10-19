@@ -59,7 +59,7 @@ def test_validation3DVF_checkerboard():
     b=(-a2*b1+a1*b2)/det
     
     print "FV on 3D checkerboard mesh : scheme order is ", -a
-    assert abs(a-0.16)<0.007
+    assert abs(a-0.26)<0.01
     
     # Plot of convergence curve
     plt.close()
