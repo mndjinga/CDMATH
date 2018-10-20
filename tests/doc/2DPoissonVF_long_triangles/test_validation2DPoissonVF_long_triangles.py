@@ -10,7 +10,7 @@ convergence_synthesis=dict(FiniteVolumes2DPoisson_SQUARE.test_desc)
 def test_validation2DVF_long_triangles():
     start = time.time()
     ### 2D FV long triangles mesh
-    meshList=[5,11,21,31]
+    meshList=[5,11,21,31,42]
     #meshList=['squareWithLongRectangles_1','squareWithLongRectangles_2','squareWithLongRectangles_3','squareWithLongRectangles_4','squareWithLongRectangles_5']
     mesh_path='../../ressources/2DLongTriangles/'
     meshType="Regular_long_triangles"
@@ -105,7 +105,6 @@ def test_validation2DVF_long_triangles():
         json.dump(convergence_synthesis, outfile)
 
     import os
-    os.system("jupyter-nbconvert --to notebook --execute Convergence_Poisson_FV5_SQUARE_long_triangles.ipynb")
     os.system("jupyter-nbconvert --to html Convergence_Poisson_FV5_SQUARE_long_triangles.ipynb")
 
 if __name__ == """__main__""":
