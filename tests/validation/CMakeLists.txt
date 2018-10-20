@@ -26,17 +26,15 @@ SET( VALIDATION_FOLDERS
 test_synthesis 
 )
 
-IF (CDMATH_WITH_PYTHON AND CDMATH_WITH_PETSC)
+IF (CDMATH_WITH_PYTHON AND CDMATH_WITH_PETSC AND CDMATH_WITH_POSTPRO)
 
   foreach(dir ${VALIDATION_FOLDERS} )
 
     ADD_SUBDIRECTORY(${dir})
 
-    string(REPLACE "test_validation" "" short_name_dir ${dir})
-
     install(
       DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${dir}/
-      DESTINATION share/validation/${short_name_dir}
+      DESTINATION share/validation/${dir}
       FILES_MATCHING PATTERN "*.py"
                      PATTERN "*.med"
                      PATTERN "*_0.vtu"
@@ -45,7 +43,7 @@ IF (CDMATH_WITH_PYTHON AND CDMATH_WITH_PETSC)
 
     install(
       DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${dir}/
-      DESTINATION share/doc/convergence/${short_name_dir}
+      DESTINATION share/doc/convergence/${dir}
       FILES_MATCHING PATTERN "*.png"
                      PATTERN "*.ipynb"
                      PATTERN "*.py"
@@ -106,5 +104,5 @@ notebook COMMAND
 )
 
 
-ENDIF (CDMATH_WITH_PYTHON AND CDMATH_WITH_PETSC)
+ENDIF (CDMATH_WITH_PYTHON AND CDMATH_WITH_PETSC AND CDMATH_WITH_POSTPRO)
 
