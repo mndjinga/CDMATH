@@ -10,7 +10,7 @@ convergence_synthesis=dict(FiniteVolumes2DPoisson_SQUARE.test_desc)
 def test_validation2DVF_loc_ref():
     start = time.time()
     ##### 2D FV refined squares mesh
-    meshList=['squareWithLocRefSquares_1','squareWithLocRefSquares_2','squareWithLocRefSquares_3','squareWithLocRefSquares_4','squareWithLocRefSquares_5','squareWithLocRefSquares_6','squareWithLocRefSquares_7']
+    meshList=['squareWithLocRefSquares_1','squareWithLocRefSquares_2','squareWithLocRefSquares_3','squareWithLocRefSquares_4','squareWithLocRefSquares_5','squareWithLocRefSquares_6']
     meshType="Non_conforming_locally_refined"
     testColor="Green"
     nbMeshes=len(meshList)
