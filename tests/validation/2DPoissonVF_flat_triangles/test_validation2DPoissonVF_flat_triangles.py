@@ -11,7 +11,7 @@ def test_validation2DVF_flat_triangles():
     start = time.time()
     ### 2D FV flat triangles mesh
     #meshList=[5,9,15,21,31]
-    meshList=['squareWithFlatTriangles_1','squareWithFlatTriangles_2','squareWithFlatTriangles_3']#,'squareWithFlatTriangles_4'
+    meshList=['squareWithFlatTriangles_0','squareWithFlatTriangles_1','squareWithFlatTriangles_2','squareWithFlatTriangles_3']#,'squareWithFlatTriangles_4'
     mesh_path='../../ressources/2DFlatTriangles/'
     meshType="Regular_flat_triangles"
     testColor="Green"

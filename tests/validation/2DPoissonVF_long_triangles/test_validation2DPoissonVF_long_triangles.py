@@ -11,7 +11,7 @@ def test_validation2DVF_long_triangles():
     start = time.time()
     ### 2D FV long triangles mesh
     meshList=[5,9,15,21,31]
-    #meshList=['squareWithLongRectangles_1','squareWithLongRectangles_2','squareWithLongRectangles_3','squareWithLongRectangles_4','squareWithLongRectangles_5']
+    #meshList=['squareWithFlatTriangles_0','squareWithLongRectangles_1','squareWithLongRectangles_2','squareWithLongRectangles_3','squareWithLongRectangles_4','squareWithLongRectangles_5']
     mesh_path='../../ressources/2DLongTriangles/'
     meshType="Regular_long_triangles"
     testColor="Green"
