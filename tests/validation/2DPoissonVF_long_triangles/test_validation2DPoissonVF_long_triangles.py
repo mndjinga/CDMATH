@@ -10,7 +10,7 @@ convergence_synthesis=dict(FiniteVolumes2DPoisson_SQUARE.test_desc)
 def test_validation2DVF_long_triangles():
     start = time.time()
     ### 2D FV long triangles mesh
-    meshList=[5,11,21,31]
+    meshList=[5,9,15,21,31]
     #meshList=['squareWithLongRectangles_1','squareWithLongRectangles_2','squareWithLongRectangles_3','squareWithLongRectangles_4','squareWithLongRectangles_5']
     mesh_path='../../ressources/2DLongTriangles/'
     meshType="Regular_long_triangles"
@@ -31,6 +31,7 @@ def test_validation2DVF_long_triangles():
         my_mesh=cdmath.Mesh(0,0,1,nx,0,1,nx*nx)
         error_tab[i], mesh_size_tab[i], diag_data[i], min_sol_num, max_sol_num, time_tab[i] =FiniteVolumes2DPoisson_SQUARE.solve(my_mesh,str(nx)+'x'+str(nx),resolution,meshType,testColor)
 #        error_tab[i], mesh_size_tab[i], diag_data[i], min_sol_num, max_sol_num, time_tab[i] =FiniteVolumes2DPoisson_SQUARE.solve_file(mesh_path+filename,resolution,meshType,testColor)
+        my_mesh.writeMED("squareWithLongRectangles_"+str(i))
         assert min_sol_num>-0.01 
         assert max_sol_num<1.4
         plt.plot(curv_abs, diag_data[i], label= str(mesh_size_tab[i]) + ' cells')
