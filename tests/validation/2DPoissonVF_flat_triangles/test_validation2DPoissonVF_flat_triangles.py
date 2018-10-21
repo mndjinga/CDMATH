@@ -10,8 +10,8 @@ convergence_synthesis=dict(FiniteVolumes2DPoisson_SQUARE.test_desc)
 def test_validation2DVF_flat_triangles():
     start = time.time()
     ### 2D FV flat triangles mesh
-    meshList=[5,9,15,21,31]
-    #meshList=['squareWithFlatRectangles_1','squareWithFlatRectangles_2','squareWithFlatRectangles_3','squareWithFlatRectangles_4','squareWithFlatRectangles_5']
+    #meshList=[5,9,15,21,31]
+    meshList=['squareWithFlatTriangles_1','squareWithFlatTriangles_2','squareWithFlatTriangles_3']#,'squareWithFlatTriangles_4'
     mesh_path='../../ressources/2DFlatTriangles/'
     meshType="Regular_flat_triangles"
     testColor="Green"
@@ -26,12 +26,11 @@ def test_validation2DVF_flat_triangles():
     plt.close('all')
     i=0
     # Storing of numerical errors, mesh sizes and diagonal values
-    #for filename in meshList:
-    for nx in meshList:
-        my_mesh=cdmath.Mesh(1,0,1,nx,0,1,nx*nx)
-        error_tab[i], mesh_size_tab[i], diag_data[i], min_sol_num, max_sol_num, time_tab[i] =FiniteVolumes2DPoisson_SQUARE.solve(my_mesh,str(nx)+'x'+str(nx),resolution,meshType,testColor)
-#        error_tab[i], mesh_size_tab[i], diag_data[i], min_sol_num, max_sol_num, time_tab[i] =FiniteVolumes2DPoisson_SQUARE.solve_file(mesh_path+filename,resolution,meshType,testColor)
-        my_mesh.writeMED("squareWithLongRectangles_"+str(i))
+    for filename in meshList:
+    #for nx in meshList:
+        #my_mesh=cdmath.Mesh(1,0,1,nx,0,1,nx*nx)
+        #error_tab[i], mesh_size_tab[i], diag_data[i], min_sol_num, max_sol_num, time_tab[i] =FiniteVolumes2DPoisson_SQUARE.solve(my_mesh,str(nx)+'x'+str(nx),resolution,meshType,testColor)
+        error_tab[i], mesh_size_tab[i], diag_data[i], min_sol_num, max_sol_num, time_tab[i] =FiniteVolumes2DPoisson_SQUARE.solve_file(mesh_path+filename,resolution,meshType,testColor)
         assert min_sol_num>-0.01 
         assert max_sol_num<1.4
         plt.plot(curv_abs, diag_data[i], label= str(mesh_size_tab[i]) + ' cells')
