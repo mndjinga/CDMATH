@@ -107,6 +107,7 @@ def test_validation2DVF_long_rectangles():
     import os
     os.system("jupyter-nbconvert --to notebook --execute Convergence_Poisson_FV5_SQUARE_long_rectangles.ipynb")
     os.system("jupyter-nbconvert --to html Convergence_Poisson_FV5_SQUARE_long_rectangles.ipynb")
+    os.system("jupyter-nbconvert --to pdf Convergence_Poisson_FV5_SQUARE_long_rectangles.ipynb")
 
 if __name__ == """__main__""":
     test_validation2DVF_long_rectangles()

@@ -100,7 +100,9 @@ def test_validation2DVF_hexagons():
         json.dump(convergence_synthesis, outfile)
 
     import os
+    os.system("jupyter-nbconvert --to notebook --execute Convergence_Poisson_FV5_SQUARE_hexagons.ipynb")
     os.system("jupyter-nbconvert --to html Convergence_Poisson_FV5_SQUARE_hexagons.ipynb")
+    os.system("jupyter-nbconvert --to pdf Convergence_Poisson_FV5_SQUARE_hexagons.ipynb")
 
 if __name__ == """__main__""":
     test_validation2DVF_hexagons()

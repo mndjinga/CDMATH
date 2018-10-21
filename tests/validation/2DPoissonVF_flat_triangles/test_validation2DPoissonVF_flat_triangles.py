@@ -107,6 +107,7 @@ def test_validation2DVF_flat_triangles():
     import os
     os.system("jupyter-nbconvert --to notebook --execute Convergence_Poisson_FV5_SQUARE_flat_triangles.ipynb")
     os.system("jupyter-nbconvert --to html Convergence_Poisson_FV5_SQUARE_flat_triangles.ipynb")
+    os.system("jupyter-nbconvert --to pdf Convergence_Poisson_FV5_SQUARE_flat_triangles.ipynb")
 
 if __name__ == """__main__""":
     test_validation2DVF_flat_triangles()
