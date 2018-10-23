@@ -21,7 +21,12 @@ if (CDMATH_WITH_PYTHON AND CDMATH_WITH_PETSC AND CDMATH_WITH_POSTPRO)
   #validation tests
   add_subdirectory (validation)
   add_custom_target (validation COMMAND ctest -R validation)# may be replace ctest -R with ctest -L
-  add_custom_target (check COMMAND ctest -E validation)# may be replace ctest -E with ctest -LE
+
+  add_custom_target (check COMMAND ctest -E 'validation|Example')# may be replace ctest -E with ctest -LE
+  add_custom_target (poisson COMMAND ctest -R Poisson)# may be replace ctest -R with ctest -L
+  add_custom_target (wave COMMAND ctest -R WaveSystem)# may be replace ctest -R with ctest -L
+  add_custom_target (upwind COMMAND ctest -R Upwind)# may be replace ctest -R with ctest -L
+  add_custom_target (pstag COMMAND ctest -R PStag)# may be replace ctest -R with ctest -L
 endif ()
 
 
