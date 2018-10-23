@@ -442,6 +442,11 @@ private: //----------------------------------------------------------------
      */
      bool _indexFacePeriodicSet;
      std::map<int,int> _indexFacePeriodicMap;
+    
+    /* List of boundary faces*/
+    std::vector< Face > _boundaryFaces;
+    /* List of boundary nodes*/
+    std::vector< Node > _boundaryNodes;
 };
 
 #endif /* MESH_HXX_ */
