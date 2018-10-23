@@ -25,6 +25,11 @@ class MEDFileUMesh;
 class MEDCouplingMesh;
 class MEDCouplingIMesh;
 class MEDCouplingUMesh;
+class DataArrayInt32;
+}
+namespace ParaMEDMEM
+{
+class DataArrayInt;
 }
 #include <MCAuto.hxx>
 #include "NormalizedGeometricTypes"
@@ -269,16 +274,28 @@ public: //----------------------------------------------------------------
 	MEDCoupling::MCAuto<MEDCoupling::MEDCouplingMesh> getMEDCouplingMesh ( void )  const ;
 
 	/**
-	 * return the list of group names
-	 * return _groupNames
+	 * return the list of face group names
+	 * return _faaceGroupNames
 	 */
-	std::vector<std::string> getNamesOfGroups( void )  const ;
+	std::vector<std::string> getNameOfFaceGroups( void )  const ;
 
 	/**
-	 * return the list of groups
-	 * return _groups
+	 * return the list of node group names
+	 * return _nodeGroupNames
 	 */
-	std::vector<MEDCoupling::MEDCouplingUMesh *> getGroups( void )  const ;
+	std::vector<std::string> getNameOfNodeGroups( void )  const ;
+
+	/**
+	 * return the list of face groups
+	 * return _faceGroups
+	 */
+	std::vector<MEDCoupling::MEDCouplingUMesh *> getFaceGroups( void )  const ;
+
+	/**
+	 * return the list of node groups
+	 * return _nodeGroups
+	 */
+	std::vector<MEDCoupling::DataArrayInt32 *> getNodeGroups( void )  const ;
 
 	/**
 	 * write mesh in the VTK format
@@ -397,14 +414,23 @@ private: //----------------------------------------------------------------
 	int _numberOfEdges;//Useful to deduce the number of non zero coefficients in the finite element matrix 
 
 	/*
-	 * The names of groups.
+	 * The names of face groups.
 	 */
-	std::vector<std::string> _groupNames;
+	std::vector<std::string> _faceGroupNames;
 
 	/*
-	 * The list of groups.
+	 * The names of node groups.
 	 */
-	std::vector<MEDCoupling::MEDCouplingUMesh *> _groups;
+	std::vector<std::string> _nodeGroupNames;
+
+	/*
+	 * The list of face groups.
+	 */
+	std::vector<MEDCoupling::MEDCouplingUMesh *> _faceGroups;
+	/*
+	 * The list of node groups.
+	 */
+	std::vector<MEDCoupling::DataArrayInt32 *> _nodeGroups;
 	/*
 	 * The mesh MEDCoupling
 	 */

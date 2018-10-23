@@ -92,8 +92,8 @@ MeshTests::testClassMesh( void )
 	CPPUNIT_ASSERT(M1.getFace(2).isBorder()==false);
 	CPPUNIT_ASSERT(M1.getFace(3).isBorder()==false);
 	CPPUNIT_ASSERT(M1.getFace(4).isBorder()==true);
-	CPPUNIT_ASSERT(M1.getNamesOfGroups()[0].compare("LeftEdge")==0);
-	CPPUNIT_ASSERT(M1.getNamesOfGroups()[1].compare("RightEdge")==0);
+	CPPUNIT_ASSERT(M1.getNameOfFaceGroups()[0].compare("LeftEdge")==0);
+	CPPUNIT_ASSERT(M1.getNameOfFaceGroups()[1].compare("RightEdge")==0);
     double dx1=M1.minRatioVolSurf();
     CPPUNIT_ASSERT_DOUBLES_EQUAL( dx1, 1., eps  );
 
@@ -133,8 +133,8 @@ MeshTests::testClassMesh( void )
 	M2.setGroupAtPlan(xmin,0,eps,"LeftEdge");
 	M2.setGroupAtPlan(ymin,1,eps,"BottomEdge");
 	M2.setGroupAtPlan(ymax,1,eps,"TopEdge");
-	CPPUNIT_ASSERT_EQUAL( 4, int(M2.getNamesOfGroups().size()) );
-	CPPUNIT_ASSERT(M2.getNamesOfGroups()[2].compare("BottomEdge")==0);
+	CPPUNIT_ASSERT_EQUAL( 4, int(M2.getNameOfFaceGroups().size()) );
+	CPPUNIT_ASSERT(M2.getNameOfFaceGroups()[2].compare("BottomEdge")==0);
 	int nbFaces=M2.getNumberOfFaces();
     M2.setPeriodicFaces();
 	std::map<int,int> indexFaces=M2.getIndexFacePeriodic();
@@ -181,8 +181,8 @@ MeshTests::testClassMesh( void )
 	M2Triangle.setGroupAtPlan(xmin,0,eps,"LeftEdge");
 	M2Triangle.setGroupAtPlan(ymin,1,eps,"BottomEdge");
 	M2Triangle.setGroupAtPlan(ymax,1,eps,"TopEdge");
-	CPPUNIT_ASSERT_EQUAL( 4, int(M2Triangle.getNamesOfGroups().size()) );
-	CPPUNIT_ASSERT(M2Triangle.getNamesOfGroups()[2].compare("BottomEdge")==0);
+	CPPUNIT_ASSERT_EQUAL( 4, int(M2Triangle.getNameOfFaceGroups().size()) );
+	CPPUNIT_ASSERT(M2Triangle.getNameOfFaceGroups()[2].compare("BottomEdge")==0);
 	std::map<int,int> indexFacesTriangle=M2Triangle.getIndexFacePeriodic();
 
     double dx2Triangle=M2Triangle.minRatioVolSurf();
@@ -217,8 +217,8 @@ MeshTests::testClassMesh( void )
 	M3.setGroupAtPlan(ymax,1,eps,"TopEdge");
 	M3.setGroupAtPlan(zmin,2,eps,"DownEdge");
 	M3.setGroupAtPlan(zmax,2,eps,"UpEdge");
-	CPPUNIT_ASSERT_EQUAL( 6, int(M3.getNamesOfGroups().size()) );
-	CPPUNIT_ASSERT(M3.getNamesOfGroups()[4].compare("DownEdge")==0);
+	CPPUNIT_ASSERT_EQUAL( 6, int(M3.getNameOfFaceGroups().size()) );
+	CPPUNIT_ASSERT(M3.getNameOfFaceGroups()[4].compare("DownEdge")==0);
 	nbFaces=M3.getNumberOfFaces();
     M3.setPeriodicFaces();
 	indexFaces=M3.getIndexFacePeriodic();
@@ -306,8 +306,8 @@ MeshTests::testClassMesh( void )
 	M3Tetra.setGroupAtPlan(ymax,1,eps,"TopEdge");
 	M3Tetra.setGroupAtPlan(zmin,2,eps,"DownEdge");
 	M3Tetra.setGroupAtPlan(zmax,2,eps,"UpEdge");
-	CPPUNIT_ASSERT_EQUAL( 6, int(M3Tetra.getNamesOfGroups().size()) );
-	CPPUNIT_ASSERT(M3Tetra.getNamesOfGroups()[4].compare("DownEdge")==0);
+	CPPUNIT_ASSERT_EQUAL( 6, int(M3Tetra.getNameOfFaceGroups().size()) );
+	CPPUNIT_ASSERT(M3Tetra.getNameOfFaceGroups()[4].compare("DownEdge")==0);
 	indexFaces=M3Tetra.getIndexFacePeriodic();
 
     cout<<"Test mesh M3Tetra normals"<<endl;
@@ -315,10 +315,10 @@ MeshTests::testClassMesh( void )
 
     //Testing a 2D unstructured mesh (triangles)
     Mesh M23("meshSquare.med");
-    CPPUNIT_ASSERT(M23.getNamesOfGroups()[0].compare("Bas")==0);
-    CPPUNIT_ASSERT(M23.getNamesOfGroups()[1].compare("Droite")==0);
-    CPPUNIT_ASSERT(M23.getNamesOfGroups()[2].compare("Gauche")==0);
-    CPPUNIT_ASSERT(M23.getNamesOfGroups()[3].compare("Haut")==0);
+    CPPUNIT_ASSERT(M23.getNameOfFaceGroups()[0].compare("Bas")==0);
+    CPPUNIT_ASSERT(M23.getNameOfFaceGroups()[1].compare("Droite")==0);
+    CPPUNIT_ASSERT(M23.getNameOfFaceGroups()[2].compare("Gauche")==0);
+    CPPUNIT_ASSERT(M23.getNameOfFaceGroups()[3].compare("Haut")==0);
     CPPUNIT_ASSERT(M23.isTriangular());
     int nbCellsM23 = M23.getNumberOfCells();
     double areaM23=0;

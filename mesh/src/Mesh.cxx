@@ -50,8 +50,10 @@ Mesh::Mesh( void )
 	_zMax=0.;
     _nxyz.resize(0);
     _dxyz.resize(0.);
-	_groupNames.resize(0);
-	_groups.resize(0);
+	_faceGroupNames.resize(0);
+	_faceGroups.resize(0);
+	_nodeGroupNames.resize(0);
+	_nodeGroups.resize(0);
     _indexFacePeriodicSet=false;
     _name="";
 }
@@ -63,8 +65,8 @@ Mesh::~Mesh( void )
 	delete [] _cells;
 	delete [] _nodes;
 	delete [] _faces;
-	//for(int i=0; i< _groups.size(); i++)
-	//	_groups[i]->decrRef();
+	//for(int i=0; i< _faceGroups.size(); i++)
+	//	_faceGroups[i]->decrRef();
 }
 
 std::string 
@@ -144,8 +146,10 @@ Mesh::Mesh( const Mesh& m )
 	_numberOfFaces = m.getNumberOfFaces();
 	_numberOfCells = m.getNumberOfCells();
 	_numberOfEdges = m.getNumberOfEdges();
-	_groupNames = m.getNamesOfGroups() ;
-	_groups = m.getGroups() ;
+	_faceGroupNames = m.getNameOfFaceGroups() ;
+	_faceGroups = m.getFaceGroups() ;
+	_nodeGroupNames = m.getNameOfNodeGroups() ;
+	_nodeGroups = m.getNodeGroups() ;
 	_nodes   = new Node[_numberOfNodes] ;
 	_faces   = new Face[_numberOfFaces] ;
 	_cells   = new Cell[_numberOfCells] ;
@@ -238,8 +242,11 @@ Mesh::setGroupAtFaceByCoords(double x, double y, double z, double eps, std::stri
 		}
 	}
 	if (flag)
-		_groupNames.push_back(groupName);
-	//To do : update _groups
+    {
+		_faceGroupNames.push_back(groupName);
+		_nodeGroupNames.push_back(groupName);
+        //To do : update _faceGroups
+    }
 }
 
 void
@@ -262,8 +269,11 @@ Mesh::setGroupAtPlan(double value, int direction, double eps, std::string groupN
 		}
 	}
 	if (flag)
-		_groupNames.push_back(groupName);
-	//To do : update _groups
+    {
+		_faceGroupNames.push_back(groupName);
+		_nodeGroupNames.push_back(groupName);
+        //To do : update _faceGroups
+    }
 }
 
 void
@@ -546,8 +556,8 @@ Mesh::setGroups( const MEDFileUMesh* medmesh, MEDCouplingUMesh*  mu)
 		{
 			cout<<"Boundary face group named "<< groupName << " found"<<endl;
 			MEDCouplingUMesh *m=medmesh->getGroup(-1,groupName.c_str());
-			_groups.push_back(m);
-			_groupNames.push_back(groupName);
+			_faceGroups.push_back(m);
+			_faceGroupNames.push_back(groupName);
 			DataArrayDouble *baryCell = m->computeCellCenterOfMass() ;
 			const double *coorBary=baryCell->getConstPointer();
 
@@ -590,6 +600,9 @@ Mesh::setGroups( const MEDFileUMesh* medmesh, MEDCouplingUMesh*  mu)
 		if(nodeids!=NULL)
 		{
 			cout<<"Boundary node group named "<< groupName << " found"<<endl;
+
+			_nodeGroups.push_back(nodeGroup);
+			_nodeGroupNames.push_back(groupName);
 
 			int nbNodesSubMesh=nodeGroup->getNumberOfTuples();//nodeGroup->getNbOfElems();
 
@@ -1840,15 +1853,27 @@ Mesh::getNodes ( void )  const
 }
 
 vector<string>
-Mesh::getNamesOfGroups( void )  const
+Mesh::getNameOfFaceGroups( void )  const
 {
-	return _groupNames;
+	return _faceGroupNames;
 }
 
 vector<MEDCoupling::MEDCouplingUMesh *>
-Mesh::getGroups( void )  const
+Mesh::getFaceGroups( void )  const
 {
-	return _groups;
+	return _faceGroups;
+}
+
+vector<string>
+Mesh::getNameOfNodeGroups( void )  const
+{
+	return _nodeGroupNames;
+}
+
+vector<MEDCoupling::DataArrayInt *>
+Mesh::getNodeGroups( void )  const
+{
+	return _nodeGroups;
 }
 
 //----------------------------------------------------------------------
@@ -1879,8 +1904,10 @@ Mesh::operator= ( const Mesh& mesh )
         _zMin=mesh.getZMin();
         _zMax=mesh.getZMax();
     }
-	_groupNames = mesh.getNamesOfGroups() ;
-	_groups = mesh.getGroups() ;
+	_faceGroupNames = mesh.getNameOfFaceGroups() ;
+	_faceGroups = mesh.getFaceGroups() ;
+	_nodeGroupNames = mesh.getNameOfNodeGroups() ;
+	_nodeGroups = mesh.getNodeGroups() ;
 	if (_nodes)
 	{
 		delete [] _nodes ;
@@ -1986,8 +2013,8 @@ Mesh::writeMED ( const std::string fileName ) const
 
 	//MEDFileUMesh meshMEDFile;
 	//meshMEDFile.setMeshAtLevel(0,mu);
-	//for(int i=0; i< _groups.size(); i++)
-	//meshMEDFile.setMeshAtLevel(-1,_groups[i]);
+	//for(int i=0; i< _faceGroups.size(); i++)
+	//meshMEDFile.setMeshAtLevel(-1,_faceGroups[i]);
 	//if (fromScratch)
 	//MEDCoupling::meshMEDFile.write(fname.c_str(),2)	;
 	//else
