@@ -261,13 +261,15 @@ Mesh::setGroupAtPlan(double value, int direction, double eps, std::string groupN
 		if (abs(cord-value)<eps)
 		{
 			_faces[iface].setGroupName(groupName);
-            _boundaryFaces.push_back(_faces[iface]);
+            if (find(_boundaryFaceIds.begin(), _boundaryFaceIds.end(), iface) != _boundaryFaceIds.end())
+                _boundaryFaceIds.push_back(iface);
 			IntTab nodesID= _faces[iface].getNodesId();
 			int nbNodes = _faces[iface].getNumberOfNodes();
 			for(int inode=0 ; inode<nbNodes ; inode++)
                 {
 				_nodes[nodesID[inode]].setGroupName(groupName);
-                _boundaryNodes.push_back(_nodes[nodesID[inode]]);
+                if (find(_boundaryNodeIds.begin(), _boundaryNodeIds.end(), nodesID[inode]) != _boundaryNodeIds.end())
+                    _boundaryNodeIds.push_back(nodesID[inode]);
                 }
 
 			flag=true;
@@ -581,7 +583,8 @@ Mesh::setGroups( const MEDFileUMesh* medmesh, MEDCouplingUMesh*  mu)
 					if(p1.distance(p2)<1.E-10)
 					{
 						_faces[iface].setGroupName(groupName);
-                        _boundaryFaces.push_back(_faces[iface]);
+                        if (find(_boundaryFaceIds.begin(), _boundaryFaceIds.end(), iface) != _boundaryFaceIds.end())
+                            _boundaryFaceIds.push_back(iface);
 						flag=1;
 						break;
 					}
@@ -629,7 +632,8 @@ Mesh::setGroups( const MEDFileUMesh* medmesh, MEDCouplingUMesh*  mu)
 					if(p1.distance(p2)<1.E-10)
 					{
 						_nodes[inode].setGroupName(groupName);
-                        _boundaryNodes.push_back(_nodes[inode]);
+                        if (find(_boundaryNodeIds.begin(), _boundaryNodeIds.end(), inode) != _boundaryNodeIds.end())
+                            _boundaryNodeIds.push_back(inode);
 						flag=1;
 						break;
 					}

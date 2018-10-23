@@ -444,9 +444,9 @@ private: //----------------------------------------------------------------
      std::map<int,int> _indexFacePeriodicMap;
     
     /* List of boundary faces*/
-    std::vector< Face > _boundaryFaces;
+    std::vector< int > _boundaryFaceIds;
     /* List of boundary nodes*/
-    std::vector< Node > _boundaryNodes;
+    std::vector< int > _boundaryNodeIds;
 };
 
 #endif /* MESH_HXX_ */
