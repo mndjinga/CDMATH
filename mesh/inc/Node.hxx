@@ -35,7 +35,7 @@ class Node
      * @param numberOfFaces : The number of faces allocated for this node
      * @param p : The barycenter of this node
      */
-    Node ( const int numberOfCells, const int numberOfFaces, const int numberOfEdges, const Point p ) ;
+    Node ( const int numberOfCells, const int numberOfFaces, const int numberOfEdges, const Point p) ;
 
     /**
      * constructor by copy
@@ -113,13 +113,13 @@ class Node
      * return True if the node is on the border of domain
      * else False
      */
-    bool isBorder(void) ;
+    bool isBorder(void) const ;
 
     /**
      * @param numFace : index local of face to add in this node
      * @param faceId : index global of face to add in this node
      */
-    void addFaceId (const int numFace, const int faceId ) ;
+    void addFaceId (const int numFace, const int faceId, const bool isBorder=false  ) ;
 
     /**
      * @param numCell : local index of cell to add in this node
@@ -214,6 +214,9 @@ class Node
      * The group names of the Node.
      */
     std::vector<std::string> _groupNames ;
+    
+    /* Is the node a border node ? */
+    bool _isBorder;
 };
 
 #endif /* NODe_HXX_ */

@@ -18,6 +18,7 @@ Node::Node( void )
 	_numberOfEdges = 0 ;
 	_groupNames=std::vector<std::string>(0);
 	_region=-1;
+    _isBorder=false;
 }
 
 //----------------------------------------------------------------------
@@ -38,10 +39,11 @@ Node::Node( const Node& node )
 	_numberOfEdges = node.getNumberOfEdges() ;
 	_groupNames=node.getGroupNames();
 	_region=node.getRegion();
+    _isBorder=node.isBorder();
 }
 
 //----------------------------------------------------------------------
-Node::Node( const int numberOfCells, const int numberOfFaces, const int numberOfEdges, const Point p )
+Node::Node( const int numberOfCells, const int numberOfFaces, const int numberOfEdges, const Point p)
 //----------------------------------------------------------------------
 {
 
@@ -54,6 +56,7 @@ Node::Node( const int numberOfCells, const int numberOfFaces, const int numberOf
 	_neighbourNodesId = IntTab(_numberOfEdges,0);
 	_groupNames=std::vector<std::string>(0);
 	_region=-1;
+    _isBorder=false;
 }
 
 //----------------------------------------------------------------------
@@ -156,9 +159,9 @@ Node::setGroupName(const std::string groupName)
 }
 
 bool
-Node::isBorder(void)
+Node::isBorder(void) const
 {
-	if (_region==0)
+	if (_region==0 | _isBorder)
 		return true;
 	else
 		return false;
@@ -172,10 +175,12 @@ Node::getRegion(void) const
 
 //----------------------------------------------------------------------
 void
-Node::addFaceId (const int numFace, const int faceId )
+Node::addFaceId (const int numFace, const int faceId, bool isBorder  )
 //----------------------------------------------------------------------
 {
 	_facesId(numFace) = faceId ;
+    if(isBorder)
+        _isBorder=true;
 }
 
 //----------------------------------------------------------------------
@@ -245,5 +250,6 @@ Node::operator= ( const Node& node )
    _numberOfFaces = node.getNumberOfFaces() ;
    _numberOfEdges = node.getNumberOfEdges() ;
    _groupNames = node.getGroupNames();	
+   _isBorder=node.isBorder();
 	return *this;
 }

@@ -935,7 +935,70 @@ Mesh::setMesh( void )
 			_cells[id] = ci ;
 		}
 
-		/*Building mesh nodes */
+		MEDCouplingFieldDouble* fieldl=mu2->getMeasureField(true);
+		DataArrayDouble *longueur = fieldl->getArray();
+		const double *lon=longueur->getConstPointer();
+
+		if(_spaceDim!=_meshDim)
+		{
+			/* Since spaceDim!=meshDim, don't build normal to faces */
+			fieldn->decrRef();
+            normal=NULL;
+            tmpNormal=NULL;
+		}
+
+		/*Building mesh faces */
+		for(int id(0), k(0); id<_numberOfFaces; id++, k+=_spaceDim)
+		{
+			vector<double> coorBarySegXyz(3,0);
+			for (int d=0; d<_spaceDim; d++)
+				coorBarySegXyz[d] = coorBarySeg[k+d];
+			Point p(coorBarySegXyz[0],coorBarySegXyz[1],coorBarySegXyz[2]) ;
+			const int *workc=tmpA+tmpAI[id];
+			int nbCells=tmpAI[id+1]-tmpAI[id];
+            
+            if (nbCells>2 && _spaceDim==_meshDim)
+            {
+                cout<<"Warning : nbCells>2, numberOfFaces="<<_numberOfFaces<<endl;
+                cout<<"nbCells= "<<nbCells<<", _spaceDim="<<_spaceDim<<", _meshDim="<<_meshDim<<endl;
+                for(int icell=0; icell<nbCells; icell++)
+                    cout<<workc[icell]<<", ";
+                cout<<endl;
+                throw CdmathException("Wrong mesh : nbCells>2 and spaceDim==meshDim");
+            }
+            if (nbCells==1)
+                _boundaryFaceIds.push_back(id);
+                
+			const int *workv=tmpNE+tmpNEI[id]+1;
+			int nbNodes= tmpNEI[id+1]-tmpNEI[id]-1;
+
+			Face fi;
+			if(_spaceDim==_meshDim)//Euclidean flat mesh geometry
+                if(_spaceDim==2)
+                    fi=Face( nbNodes, nbCells, lon[id], p, tmpNormal[k], tmpNormal[k+1], 0.0) ;
+                else
+                    fi=Face( nbNodes, nbCells, lon[id], p, tmpNormal[k], tmpNormal[k+1], tmpNormal[k+2]) ;
+			else//Curved mesh geometry
+				fi=Face( nbNodes, nbCells, lon[id], p, 0.0, 0.0, 0.0) ;//Since spaceDim!=meshDim, normal to face is not defined
+
+			for(int node_id=0; node_id<nbNodes;node_id++)
+				fi.addNodeId(node_id,workv[node_id]) ;
+
+			fi.addCellId(0,workc[0]) ;
+			for(int cell_id=1; cell_id<nbCells;cell_id++)
+            {
+                int cell_idx=0;
+                if (workc[cell_id]!=workc[cell_id-1])//For some meshes (bad ones) the same cell can appear several times
+                    {
+                    fi.addCellId(cell_idx+1,workc[cell_id]) ;
+                    cell_idx++;
+                    }                
+            }
+            
+			_faces[id] = fi ;
+		}
+
+		/*Building mesh nodes, should be done after building mesh faces in order to detect boundary nodes*/
 		for(int id(0), k(0); id<_numberOfNodes; id++, k+=_spaceDim)
 		{
 			vector<double> coorP(3,0);
@@ -968,72 +1031,20 @@ Mesh::setMesh( void )
 
 			for( int el=0;el<nbCells;el++ )
 				vi.addCellId(el,workc[el]) ;
-			for( int el=0;el<nbFaces;el++ )
-				vi.addFaceId(el,workf[el]) ;
 			for( int el=0;el<nbNeighbourNodes;el++ )
 				vi.addNeighbourNodeId(el,workn[el]) ;
+            //Detection of border nodes    
+            bool isBorder=false;
+			for( int el=0;el<nbFaces;el++ )
+            {
+				vi.addFaceId(el,workf[el],_faces[workf[el]].isBorder()) ;
+                isBorder= isBorder || _faces[workf[el]].isBorder();
+            }
+            if(isBorder)
+                _boundaryNodeIds.push_back(id);
 			_nodes[id] = vi ;
 		}
 
-		MEDCouplingFieldDouble* fieldl=mu2->getMeasureField(true);
-		DataArrayDouble *longueur = fieldl->getArray();
-		const double *lon=longueur->getConstPointer();
-
-		if(_spaceDim!=_meshDim)
-		{
-			/* Since spaceDim!=meshDim, don't build normal to faces */
-			fieldn->decrRef();
-            normal=NULL;
-            tmpNormal=NULL;
-		}
-
-		/*Building mesh faces */
-		for(int id(0), k(0); id<_numberOfFaces; id++, k+=_spaceDim)
-		{
-			vector<double> coorBarySegXyz(3,0);
-			for (int d=0; d<_spaceDim; d++)
-				coorBarySegXyz[d] = coorBarySeg[k+d];
-			Point p(coorBarySegXyz[0],coorBarySegXyz[1],coorBarySegXyz[2]) ;
-			const int *workc=tmpA+tmpAI[id];
-			int nbCells=tmpAI[id+1]-tmpAI[id];
-            
-            if (nbCells>2 && _spaceDim==_meshDim)
-            {
-                cout<<"Warning : nbCells>2, numberOfFaces="<<_numberOfFaces<<endl;
-                cout<<"nbCells= "<<nbCells<<", _spaceDim="<<_spaceDim<<", _meshDim="<<_meshDim<<endl;
-                for(int icell=0; icell<nbCells; icell++)
-                    cout<<workc[icell]<<", ";
-                cout<<endl;
-                throw CdmathException("Wrong mesh : nbCells>2 and spaceDim==meshDim");
-            }
-			const int *workv=tmpNE+tmpNEI[id]+1;
-			int nbNodes= tmpNEI[id+1]-tmpNEI[id]-1;
-
-			Face fi;
-			if(_spaceDim==_meshDim)//Euclidean flat mesh geometry
-                if(_spaceDim==2)
-                    fi=Face( nbNodes, nbCells, lon[id], p, tmpNormal[k], tmpNormal[k+1], 0.0) ;
-                else
-                    fi=Face( nbNodes, nbCells, lon[id], p, tmpNormal[k], tmpNormal[k+1], tmpNormal[k+2]) ;
-			else//Curved mesh geometry
-				fi=Face( nbNodes, nbCells, lon[id], p, 0.0, 0.0, 0.0) ;//Since spaceDim!=meshDim, normal to face is not defined
-
-			for(int node_id=0; node_id<nbNodes;node_id++)
-				fi.addNodeId(node_id,workv[node_id]) ;
-
-			fi.addCellId(0,workc[0]) ;
-			for(int cell_id=1; cell_id<nbCells;cell_id++)
-            {
-                int cell_idx=0;
-                if (workc[cell_id]!=workc[cell_id-1])//For some meshes (bad ones) the same cell can appear several times
-                    {
-                    fi.addCellId(cell_idx+1,workc[cell_id]) ;
-                    cell_idx++;
-                    }                
-            }
-            
-			_faces[id] = fi ;
-		}
 		if(_spaceDim==_meshDim)
 			fieldn->decrRef();
 		fieldl->decrRef();
