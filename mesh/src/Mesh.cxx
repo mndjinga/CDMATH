@@ -341,44 +341,16 @@ Mesh::getIndexFacePeriodic(int indexFace) const
     {
         double x=_faces[indexFace].x();
         double y=_faces[indexFace].y();
-        // pos=0 : bottom
-        // pos=1 : right
-        // pos=2 : top
-        // pos=3 : left
-        if (abs(y-_yMin)<eps)
-            pos=0;
-        if (abs(x-_xMax)<eps)
-            pos=1;
-        if (abs(y-_yMax)<eps)
-            pos=2;
-        if (abs(x-_xMin)<eps)
-            pos=3;
-        if (pos==-1)
-        {
-            cout<<"Pb with indexFace= "<<indexFace<<endl;
-            throw CdmathException("Mesh::getIndexFacePeriodic: border position not found" );
-        }
         
         for (iface=0;iface<_boundaryFaceIds.size();iface++)
         {
             double xi=_faces[_boundaryFaceIds[iface]].x();
             double yi=_faces[_boundaryFaceIds[iface]].y();
-            if (abs(y-yi)<eps && pos==1 && abs(xi-_xMin)<eps)
-            {
-                ifaceOk=_boundaryFaceIds[iface];
-                break;
-            }
-            if (abs(y-yi)<eps && pos==3 && abs(xi-_xMax)<eps)
-            {
-                ifaceOk=_boundaryFaceIds[iface];
-                break;
-            }
-            if (abs(x-xi)<eps && pos==0 && abs(yi-_yMax)<eps)
-            {
-                ifaceOk=_boundaryFaceIds[iface];
-                break;
-            }
-            if (abs(x-xi)<eps && pos==2 && abs(yi-_yMin)<eps)
+            if (  (abs(y-yi)<eps  || abs(x-xi)<eps) 
+               && fabs(_faces[indexFace].getMeasure()-_faces[_boundaryFaceIds[iface]].getMeasure())<eps
+               && fabs(_faces[indexFace].getXN() + _faces[_boundaryFaceIds[iface]].getXN())<eps
+               && fabs(_faces[indexFace].getYN() + _faces[_boundaryFaceIds[iface]].getYN())<eps
+               && fabs(_faces[indexFace].getZN() + _faces[_boundaryFaceIds[iface]].getZN())<eps )
             {
                 ifaceOk=_boundaryFaceIds[iface];
                 break;
