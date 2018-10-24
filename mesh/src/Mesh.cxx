@@ -298,10 +298,6 @@ Mesh::setPeriodicFaces()
     
     _indexFacePeriodicSet=true;    
     }
-            //if (find(_boundaryFaceIds.begin(), _boundaryFaceIds.end(), iface) != _boundaryFaceIds.end())
-            //    _boundaryFaceIds.push_back(iface);
-                //if (find(_boundaryNodeIds.begin(), _boundaryNodeIds.end(), nodesID[inode]) != _boundaryNodeIds.end())
-                //    _boundaryNodeIds.push_back(nodesID[inode]);
 }
 
 std::map<int,int>
@@ -324,8 +320,7 @@ Mesh::getIndexFacePeriodic(int indexFace) const
             throw CdmathException("Mesh::getIndexFacePeriodic: not a periodic face" );
         }
     }
-    
-    
+        
 	if (!_faces[indexFace].isBorder())
         {
             cout<<"Pb with indexFace= "<<indexFace<<endl;
@@ -334,7 +329,6 @@ Mesh::getIndexFacePeriodic(int indexFace) const
         
     double eps=1.E-10;
     int iface=0;
-    int pos=-1;
     int ifaceOk=-1;
 
     if(_meshDim==2)
@@ -356,90 +350,28 @@ Mesh::getIndexFacePeriodic(int indexFace) const
                 break;
             }
         }
-        if( fabs(_faces[indexFace].getMeasure()-_faces[_boundaryFaceIds[iface]].getMeasure())>eps )
-        {
-            std::cout<< "indexFace="<<indexFace<<", measure= "<<_faces[indexFace].getMeasure()<<", periodic face found iface="<<_boundaryFaceIds[iface]<<", measure="<<_faces[_boundaryFaceIds[iface]].getMeasure()<<std::endl;
-            throw CdmathException("Mesh::getIndexFacePeriodic: Periodic face found but measure is different");
-        }
-        if( fabs(_faces[indexFace].getXN()+_faces[_boundaryFaceIds[iface]].getXN())>eps || fabs(_faces[indexFace].getYN()+_faces[_boundaryFaceIds[iface]].getYN())>eps )
-        {
-            std::cout<< "indexFace="<<indexFace<<", XN= "<<_faces[_boundaryFaceIds[indexFace]].getXN()<<", YN= "<<_faces[indexFace].getYN()<<", periodic face found iface="<<iface<<", XN="<<_faces[_boundaryFaceIds[iface]].getXN()<<", YN="<<_faces[_boundaryFaceIds[iface]].getYN()<<std::endl;
-            throw CdmathException("Mesh::getIndexFacePeriodic: Periodic face found but normal vectors are different");
-        }
     }
     else if(_meshDim==3)
     {
         double x=_faces[indexFace].x();
         double y=_faces[indexFace].y();
         double z=_faces[indexFace].z();
-        // pos=0 : bottom
-        // pos=1 : right
-        // pos=2 : top
-        // pos=3 : left
-        // pos=4 : down
-        // pos=5 : up
-        
-        if (abs(y-_yMin)<eps)
-            pos=0;
-        if (abs(x-_xMax)<eps)
-            pos=1;
-        if (abs(y-_yMax)<eps)
-            pos=2;
-        if (abs(x-_xMin)<eps)
-            pos=3;
-        if (abs(z-_zMin)<eps)
-            pos=4;
-        if (abs(z-_zMax)<eps)
-            pos=5;
-        if (pos==-1)
-            throw CdmathException("Mesh::getIndexFacePeriodic: border position not found, pos==-1 " );
     
         for (iface=0;iface<_boundaryFaceIds.size();iface++)
         {
             double xi=_faces[_boundaryFaceIds[iface]].x();
             double yi=_faces[_boundaryFaceIds[iface]].y();
             double zi=_faces[_boundaryFaceIds[iface]].z();
-            if (abs(y-yi)<eps && abs(z-zi)<eps && pos==1 && abs(xi-_xMin)<eps)
-            {
-                ifaceOk=_boundaryFaceIds[iface];
-                break;
-            }
-            if (abs(y-yi)<eps && abs(z-zi)<eps && pos==3 && abs(xi-_xMax)<eps)
-            {
-                ifaceOk=_boundaryFaceIds[iface];
-                break;
-            }
-            if (abs(x-xi)<eps && abs(z-zi)<eps && pos==0 && abs(yi-_yMax)<eps)
-            {
-                ifaceOk=_boundaryFaceIds[iface];
-                break;
-            }
-            if (abs(x-xi)<eps && abs(z-zi)<eps && pos==2 && abs(yi-_yMin)<eps)
-            {
-                ifaceOk=_boundaryFaceIds[iface];
-                break;
-            }
-            if (abs(x-xi)<eps && abs(y-yi)<eps && pos==4 && abs(zi-_zMax)<eps)
-            {
-                ifaceOk=_boundaryFaceIds[iface];
-                break;
-            }
-            if (abs(x-xi)<eps && abs(y-yi)<eps && pos==5 && abs(zi-_zMin)<eps)
+            if (  ((abs(y-yi)<eps && abs(x-xi)<eps) || (abs(x-xi)<eps && abs(z-zi)<eps) || (abs(y-yi)<eps && abs(z-zi)<eps))
+               && fabs(_faces[indexFace].getMeasure()-_faces[_boundaryFaceIds[iface]].getMeasure())<eps
+               && fabs(_faces[indexFace].getXN() + _faces[_boundaryFaceIds[iface]].getXN())<eps
+               && fabs(_faces[indexFace].getYN() + _faces[_boundaryFaceIds[iface]].getYN())<eps
+               && fabs(_faces[indexFace].getZN() + _faces[_boundaryFaceIds[iface]].getZN())<eps )
             {
                 ifaceOk=_boundaryFaceIds[iface];
                 break;
             }
         }    
-        if( fabs(_faces[indexFace].getMeasure()-_faces[_boundaryFaceIds[iface]].getMeasure())>eps )
-        {
-            std::cout<< "indexFace="<<indexFace<<", measure= "<<_faces[indexFace].getMeasure()<<", periodic face found iface="<<_boundaryFaceIds[iface]<<", measure="<<_faces[_boundaryFaceIds[iface]].getMeasure()<<std::endl;
-            throw CdmathException("Mesh::getIndexFacePeriodic: Periodic face found but measure is different");
-        }
-        if( fabs(_faces[indexFace].getXN()+_faces[_boundaryFaceIds[iface]].getXN())>eps || fabs(_faces[indexFace].getYN()+_faces[_boundaryFaceIds[iface]].getYN())>eps || fabs(_faces[indexFace].getZN()+_faces[_boundaryFaceIds[iface]].getZN())>eps)
-        {
-            std::cout<< "indexFace="<<indexFace<<", XN= "<<_faces[indexFace].getXN()<<", YN= "<<_faces[indexFace].getYN()<<", ZN= "<<_faces[indexFace].getZN()<<", periodic face found iface="<<_boundaryFaceIds[iface]<<", XN="<<_faces[_boundaryFaceIds[iface]].getXN()<<", YN="<<_faces[_boundaryFaceIds[iface]].getYN()<<", ZN="<<_faces[_boundaryFaceIds[iface]].getZN()<<std::endl;
-            throw CdmathException("Mesh::getIndexFacePeriodic: Periodic face found but normal vectors are different");
-        }
     }
     else
         throw CdmathException("Mesh::getIndexFacePeriodic: Mesh dimensionshould be 2 or 3");
