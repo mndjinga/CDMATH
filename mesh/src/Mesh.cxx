@@ -261,15 +261,11 @@ Mesh::setGroupAtPlan(double value, int direction, double eps, std::string groupN
 		if (abs(cord-value)<eps)
 		{
 			_faces[iface].setGroupName(groupName);
-            if (find(_boundaryFaceIds.begin(), _boundaryFaceIds.end(), iface) != _boundaryFaceIds.end())
-                _boundaryFaceIds.push_back(iface);
 			IntTab nodesID= _faces[iface].getNodesId();
 			int nbNodes = _faces[iface].getNumberOfNodes();
 			for(int inode=0 ; inode<nbNodes ; inode++)
                 {
 				_nodes[nodesID[inode]].setGroupName(groupName);
-                if (find(_boundaryNodeIds.begin(), _boundaryNodeIds.end(), nodesID[inode]) != _boundaryNodeIds.end())
-                    _boundaryNodeIds.push_back(nodesID[inode]);
                 }
 
 			flag=true;
@@ -288,12 +284,24 @@ Mesh::setPeriodicFaces()
 {
     if(!_indexFacePeriodicSet)
     {
+	for (int iface=0;iface<_numberOfFaces;iface++)
+        if (_faces[iface].isBorder())
+        {
+            _boundaryFaceIds.push_back(iface);
+			IntTab nodesID= _faces[iface].getNodesId();
+			int nbNodes = _faces[iface].getNumberOfNodes();
+			for(int inode=0 ; inode<nbNodes ; inode++)
+				_boundaryNodeIds.push_back(nodesID[inode]);
+        }
 	for (int iface=0;iface<_boundaryFaceIds.size();iface++)
-        if (_faces[_boundaryFaceIds[iface]].isBorder())
-            _indexFacePeriodicMap[_boundaryFaceIds[iface]]=getIndexFacePeriodic(_boundaryFaceIds[iface]);
+        _indexFacePeriodicMap[_boundaryFaceIds[iface]]=getIndexFacePeriodic(_boundaryFaceIds[iface]);
     
     _indexFacePeriodicSet=true;    
     }
+            //if (find(_boundaryFaceIds.begin(), _boundaryFaceIds.end(), iface) != _boundaryFaceIds.end())
+            //    _boundaryFaceIds.push_back(iface);
+                //if (find(_boundaryNodeIds.begin(), _boundaryNodeIds.end(), nodesID[inode]) != _boundaryNodeIds.end())
+                //    _boundaryNodeIds.push_back(nodesID[inode]);
 }
 
 std::map<int,int>
@@ -581,8 +589,6 @@ Mesh::setGroups( const MEDFileUMesh* medmesh, MEDCouplingUMesh*  mu)
 					if(p1.distance(p2)<1.E-10)
 					{
 						_faces[iface].setGroupName(groupName);
-                        if (find(_boundaryFaceIds.begin(), _boundaryFaceIds.end(), iface) != _boundaryFaceIds.end())
-                            _boundaryFaceIds.push_back(iface);
 						flag=1;
 						break;
 					}
@@ -630,8 +636,6 @@ Mesh::setGroups( const MEDFileUMesh* medmesh, MEDCouplingUMesh*  mu)
 					if(p1.distance(p2)<1.E-10)
 					{
 						_nodes[inode].setGroupName(groupName);
-                        if (find(_boundaryNodeIds.begin(), _boundaryNodeIds.end(), inode) != _boundaryNodeIds.end())
-                            _boundaryNodeIds.push_back(inode);
 						flag=1;
 						break;
 					}
