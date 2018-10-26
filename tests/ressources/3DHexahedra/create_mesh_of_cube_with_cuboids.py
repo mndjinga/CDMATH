@@ -90,6 +90,8 @@ def mesh_cube_with_cuboids(xmin,xmax,nx,ymin,ymax,ny,zmin, zmax, nz, mesh_name="
     meshMEDFile.addGroup(-1, arr_right)
     meshMEDFile.addGroup(-1, arr_bottom)
     meshMEDFile.addGroup(-1, arr_top)
+    meshMEDFile.addGroup(-1, arr_back)
+    meshMEDFile.addGroup(-1, arr_front)
     
     # Check that everything is coherent (will throw if not)
     myMesh.checkConsistencyLight()
