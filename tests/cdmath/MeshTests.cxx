@@ -154,7 +154,6 @@ MeshTests::testClassMesh( void )
 		}
 	}
     double dx2=M2.minRatioVolSurf();
-    cout<< dx2 <<", "<< 1./4<<endl;
     CPPUNIT_ASSERT_DOUBLES_EQUAL( dx2, 1./4, eps  );
 
     cout<<"Test mesh M2 normals"<<endl;
@@ -162,7 +161,7 @@ MeshTests::testClassMesh( void )
 
     // Testing 2D simplexization (regular triangle mesh)
     int splittingPolicy =0;
-	Mesh M2Triangle(splittingPolicy,xmin,xmax,4,ymin,ymax,4);
+	Mesh M2Triangle(xmin,xmax,4,ymin,ymax,4,splittingPolicy);
 	CPPUNIT_ASSERT_EQUAL( 4, M2Triangle.getNx() );
 	CPPUNIT_ASSERT_EQUAL( 4, M2Triangle.getNy() );
 	CPPUNIT_ASSERT_EQUAL( 2, M2Triangle.getSpaceDimension() );
@@ -291,7 +290,7 @@ MeshTests::testClassMesh( void )
 
     // Testing 3D simplexization (regular tetrahedra mesh)
     splittingPolicy =INTERP_KERNEL::PLANAR_FACE_6;
-    Mesh M3Tetra(splittingPolicy, xmin,xmax,4,ymin,ymax,4,zmin,zmax,4);
+    Mesh M3Tetra(xmin,xmax,4,ymin,ymax,4,zmin,zmax,4,splittingPolicy);
     CPPUNIT_ASSERT_EQUAL( 3, M3Tetra.getSpaceDimension() );
     CPPUNIT_ASSERT(M3Tetra.isTetrahedral());
     int nbCellsM3Tetra = M3Tetra.getNumberOfCells();

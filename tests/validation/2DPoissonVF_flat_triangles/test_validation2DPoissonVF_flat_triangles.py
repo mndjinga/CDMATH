@@ -28,7 +28,7 @@ def test_validation2DVF_flat_triangles():
     # Storing of numerical errors, mesh sizes and diagonal values
     for filename in meshList:
     #for nx in meshList:
-        #my_mesh=cdmath.Mesh(1,0,1,nx,0,1,nx*nx)
+        #my_mesh=cdmath.Mesh(0,1,nx,0,1,nx*nx)#Use script provided by Adrien to split each quadrangle in 4 triangles
         #error_tab[i], mesh_size_tab[i], diag_data[i], min_sol_num, max_sol_num, time_tab[i] =FiniteVolumes2DPoisson_SQUARE.solve(my_mesh,str(nx)+'x'+str(nx),resolution,meshType,testColor)
         error_tab[i], mesh_size_tab[i], diag_data[i], min_sol_num, max_sol_num, time_tab[i] =FiniteVolumes2DPoisson_SQUARE.solve_file(mesh_path+filename,resolution,meshType,testColor)
         assert min_sol_num>-0.01 

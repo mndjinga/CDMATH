@@ -87,8 +87,9 @@ public: //----------------------------------------------------------------
 	 * @param ymax : maximum y
 	 * @param nx : Number of cells in x direction
 	 * @param ny : Number of cells in y direction
+     * @param split_to_triangles_policy : each rectangle will be split into 2 triangles if value is 0 or 1
 	 */
-	Mesh( double xmin, double xmax, int nx, double ymin, double ymax, int ny, std::string meshName="MESH2D_Regular_Rectangle_Grid") ;
+	Mesh( double xmin, double xmax, int nx, double ymin, double ymax, int ny, int split_to_triangles_policy=-1, std::string meshName="MESH2D_Regular_Rectangle_Grid") ;
 
 	/**
 	 * constructor with data for a regular 3D grid 
@@ -102,32 +103,7 @@ public: //----------------------------------------------------------------
 	 * @param ny : Number of cells in y direction
 	 * @param nz : Number of cells in z direction
 	 */
-	Mesh( double xmin, double xmax, int nx, double ymin, double ymax, int ny, double zmin, double zmax, int nz, std::string meshName="MESH3D_Regular_Cuboid_Grid") ;
-
-	/**
-	 * constructor with data for a regular 2D triangular mesh
-	 * @param xmin : minimum x
-	 * @param xmax : maximum x
-	 * @param ymin : minimum y
-	 * @param ymax : maximum y
-	 * @param nx : Number of square cells in x direction
-	 * @param ny : Number of square cells in y direction
-	 */
-	Mesh( int policy, double xmin, double xmax, int nx, double ymin, double ymax, int ny, std::string meshName="MESH2D_Regular_Triangle") ;
-
-	/**
-	 * constructor with data for a regular 3D hexahedral mesh 
-	 * @param xmin : minimum x
-	 * @param xmax : maximum x
-	 * @param ymin : minimum y
-	 * @param ymax : maximum y
-	 * @param zmin : minimum z
-	 * @param zmax : maximum z
-	 * @param nx : Number of cells in x direction
-	 * @param ny : Number of cells in y direction
-	 * @param nz : Number of cells in z direction
-	 */
-	Mesh( int policy, double xmin, double xmax, int nx, double ymin, double ymax, int ny, double zmin, double zmax, int nz, std::string meshName="MESH3D_Regular_Tetrahedra") ;
+	Mesh( double xmin, double xmax, int nx, double ymin, double ymax, int ny, double zmin, double zmax, int nz, int split_to_tetrahedra_policy=-1, std::string meshName="MESH3D_Regular_Cuboid_Grid") ;
 
 	Mesh( const MEDCoupling::MEDCouplingIMesh* mesh ) ;
 
