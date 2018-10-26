@@ -3,12 +3,12 @@
 import MEDCoupling as MC
 import MEDLoader as ML
 
-## Create a 3D grid mesh of a cube with length x_end-x_start
+## Create a 3D uniform grid mesh of a cube with length x_end-x_start
 # @param nb_segs_x the number of segments on the x-axis of the grid
 # @param x_start the x coordinate of the first point on the x-axis of the grid
 # @param x_end the x coordinate of the last point on the x-axis of the grid
-# @param y_start the y coordinate of the first point on the x-axis of the grid
-# @param z_start the z coordinate of the first point on the x-axis of the grid
+# @param y_start the y coordinate of the first point on the y-axis of the grid
+# @param z_start the z coordinate of the first point on the z-axis of the grid
 # @param mesh_name the name of the mesh
 def createMesh(nb_segs_x, x_start=0., x_end=1., y_start=0., z_start=0., mesh_name="Mesh"):
   mesh_dim = 3
