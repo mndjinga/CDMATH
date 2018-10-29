@@ -55,61 +55,123 @@ def computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt,scaling):
 
     idMoinsJacCL=cdmath.Matrix(nbComp)
     
-    for k in range(nbCells):#On parcourt les cellules
+    if( scaling==0 ):
         if( dim == 1) :    
             nx=NxNyNz[0]
-
-            implMat.insertValue(k,1*nbCells +  k      ,-c*c)
-            implMat.insertValue(k,1*nbCells + (k+1)%nx, c*c)
-
-            implMat.insertValue(  1*nbCells +  k      ,k,  1)
-            implMat.insertValue(  1*nbCells + (k+1)%nx,k, -1)
-
-        if( dim == 2) :# k = j*nx+i
+    
+            for k in range(nbCells):
+                implMat.insertValue(k,1*nbCells +  k      , -c0*c0)
+                implMat.insertValue(k,1*nbCells + (k+1)%nx,  c0*c0)
+    
+                implMat.insertValue(  1*nbCells +  k      ,k,  1)
+                implMat.insertValue(  1*nbCells + (k+1)%nx,k, -1)
+    
+        elif( dim == 2) :# k = j*nx+i
             nx=NxNyNz[0]
             ny=NxNyNz[1]
-            
-            i = k % nx
-            j = k //nx
-
-            implMat.insertValue(k,1*nbCells + j*nx +  i      ,  -c*c)
-            implMat.insertValue(k,1*nbCells + j*nx + (i+1)%nx,   c*c)
-
-            implMat.insertValue(k,2*nbCells +   j       *nx + i,-c*c)
-            implMat.insertValue(k,2*nbCells + ((j+1)%ny)*nx + i, c*c)
-
-            implMat.insertValue(  1*nbCells + j*nx +  i      ,  k,  1)
-            implMat.insertValue(  1*nbCells + j*nx + (i+1)%nx,  k, -1)
-
-            implMat.insertValue(  2*nbCells +   j       *nx + i,k,  1)
-            implMat.insertValue(  2*nbCells + ((j+1)%ny)*nx + i,k, -1)
-
-        if( dim == 2) :# k = l*nx*ny+j*nx+i
+                
+            for k in range(nbCells):
+                i = k % nx
+                j = k //nx
+    
+                implMat.insertValue(k,1*nbCells + j*nx +  i      ,   -c0*c0)
+                implMat.insertValue(k,1*nbCells + j*nx + (i+1)%nx,    c0*c0)
+    
+                implMat.insertValue(k,2*nbCells +   j       *nx + i, -c0*c0)
+                implMat.insertValue(k,2*nbCells + ((j+1)%ny)*nx + i,  c0*c0)
+    
+                implMat.insertValue(  1*nbCells + j*nx +  i      ,  k,  1)
+                implMat.insertValue(  1*nbCells + j*nx + (i+1)%nx,  k, -1)
+    
+                implMat.insertValue(  2*nbCells +   j       *nx + i,k,  1)
+                implMat.insertValue(  2*nbCells + ((j+1)%ny)*nx + i,k, -1)
+    
+        elif( dim == 3) :# k = l*nx*ny+j*nx+i
             nx=NxNyNz[0]
             ny=NxNyNz[1]
             nz=NxNyNz[2]
-            
-            i =  k % nx
-            j = (k //nx)%ny 
-            l =  k //(nx*ny)
-            
-            implMat.insertValue(k,1*nbCells + l*nx*ny + j*nx +  i      , -c*c)
-            implMat.insertValue(k,1*nbCells + l*nx*ny + j*nx + (i+1)%nx,  c*c)
+                
+            for k in range(nbCells):
+                i =  k % nx
+                j = (k //nx)%ny 
+                l =  k //(nx*ny)
+                
+                implMat.insertValue(k,1*nbCells + l*nx*ny + j*nx +  i      ,  -c0*c0)
+                implMat.insertValue(k,1*nbCells + l*nx*ny + j*nx + (i+1)%nx,   c0*c0)
+    
+                implMat.insertValue(k,2*nbCells + l*nx*ny +   j       *nx + i, -c0*c0)
+                implMat.insertValue(k,2*nbCells + l*nx*ny + ((j+1)%ny)*nx + i,  c0*c0)
+    
+                implMat.insertValue(k,3*nbCells +   l*nx*ny        + j*nx + i, -c0*c0)
+                implMat.insertValue(k,3*nbCells + ((l+1)%nz)*nx*ny + j*nx + i,  c0*c0)
+    
+                implMat.insertValue(  1*nbCells + l*nx*ny + j*nx +  i      ,  k,  1)
+                implMat.insertValue(  1*nbCells + l*nx*ny + j*nx + (i+1)%nx,  k, -1)
+    
+                implMat.insertValue(  2*nbCells + l*nx*ny +   j       *nx + i,k,  1)
+                implMat.insertValue(  2*nbCells + l*nx*ny + ((j+1)%ny)*nx + i,k, -1)
+    
+                implMat.insertValue(  3*nbCells +   l*nx*ny        + j*nx + i,k,  1)
+                implMat.insertValue(  3*nbCells + ((l+1)%nz)*nx*ny + j*nx + i,k, -1)
 
-            implMat.insertValue(k,2*nbCells + l*nx*ny +   j       *nx + i,-c*c)
-            implMat.insertValue(k,2*nbCells + l*nx*ny + ((j+1)%ny)*nx + i, c*c)
-
-            implMat.insertValue(k,3*nbCells +   l*nx*ny        + j*nx + i,-c*c)
-            implMat.insertValue(k,3*nbCells + ((l+1)%nz)*nx*ny + j*nx + i, c*c)
-
-            implMat.insertValue(  1*nbCells + l*nx*ny + j*nx +  i      ,  k,  1)
-            implMat.insertValue(  1*nbCells + l*nx*ny + j*nx + (i+1)%nx,  k, -1)
-
-            implMat.insertValue(  2*nbCells + l*nx*ny +   j       *nx + i,k,  1)
-            implMat.insertValue(  2*nbCells + l*nx*ny + ((j+1)%ny)*nx + i,k, -1)
-
-            implMat.insertValue(  3*nbCells +   l*nx*ny        + j*nx + i,k,  1)
-            implMat.insertValue(  3*nbCells + ((l+1)%nz)*nx*ny + j*nx + i,k, -1)
+    else:
+        if( dim == 1) :    
+            nx=NxNyNz[0]
+    
+            for k in range(nbCells):
+                implMat.insertValue(k,1*nbCells +  k      , -c0)
+                implMat.insertValue(k,1*nbCells + (k+1)%nx,  c0)
+    
+                implMat.insertValue(  1*nbCells +  k      ,k,  c0)
+                implMat.insertValue(  1*nbCells + (k+1)%nx,k, -c0)
+    
+        elif( dim == 2) :# k = j*nx+i
+            nx=NxNyNz[0]
+            ny=NxNyNz[1]
+                
+            for k in range(nbCells):
+                i = k % nx
+                j = k //nx
+    
+                implMat.insertValue(k,1*nbCells + j*nx +  i      ,   -c0)
+                implMat.insertValue(k,1*nbCells + j*nx + (i+1)%nx,    c0)
+    
+                implMat.insertValue(k,2*nbCells +   j       *nx + i, -c0)
+                implMat.insertValue(k,2*nbCells + ((j+1)%ny)*nx + i,  c0)
+    
+                implMat.insertValue(  1*nbCells + j*nx +  i      ,  k,  c0)
+                implMat.insertValue(  1*nbCells + j*nx + (i+1)%nx,  k, -c0)
+    
+                implMat.insertValue(  2*nbCells +   j       *nx + i,k,  c0)
+                implMat.insertValue(  2*nbCells + ((j+1)%ny)*nx + i,k, -c0)
+    
+        elif( dim == 3) :# k = l*nx*ny+j*nx+i
+            nx=NxNyNz[0]
+            ny=NxNyNz[1]
+            nz=NxNyNz[2]
+                
+            for k in range(nbCells):
+                i =  k % nx
+                j = (k //nx)%ny 
+                l =  k //(nx*ny)
+                
+                implMat.insertValue(k,1*nbCells + l*nx*ny + j*nx +  i      ,  -c0)
+                implMat.insertValue(k,1*nbCells + l*nx*ny + j*nx + (i+1)%nx,   c0)
+    
+                implMat.insertValue(k,2*nbCells + l*nx*ny +   j       *nx + i, -c0)
+                implMat.insertValue(k,2*nbCells + l*nx*ny + ((j+1)%ny)*nx + i,  c0)
+    
+                implMat.insertValue(k,3*nbCells +   l*nx*ny        + j*nx + i, -c0)
+                implMat.insertValue(k,3*nbCells + ((l+1)%nz)*nx*ny + j*nx + i,  c0)
+    
+                implMat.insertValue(  1*nbCells + l*nx*ny + j*nx +  i      ,  k,  c0)
+                implMat.insertValue(  1*nbCells + l*nx*ny + j*nx + (i+1)%nx,  k, -c0)
+    
+                implMat.insertValue(  2*nbCells + l*nx*ny +   j       *nx + i,k,  c0)
+                implMat.insertValue(  2*nbCells + l*nx*ny + ((j+1)%ny)*nx + i,k, -c0)
+    
+                implMat.insertValue(  3*nbCells +   l*nx*ny        + j*nx + i,k,  c0)
+                implMat.insertValue(  3*nbCells + ((l+1)%nz)*nx*ny + j*nx + i,k, -c0)
 
     return implMat
 
@@ -147,12 +209,12 @@ def WaveSystemStaggered(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolu
             
     #sauvegarde de la donnée initiale
     pressure_field.setTime(time,it);
-    pressure_field.writeVTK("WaveSystem"+str(dim)+"DPStag"+meshName+"_pressure");
+    pressure_field.writeVTK("WaveSystem"+str(dim)+"DStaggered"+meshName+"_pressure");
     velocity_field.setTime(time,it);
-    velocity_field.writeVTK("WaveSystem"+str(dim)+"DPStag"+meshName+"_velocity");
+    velocity_field.writeVTK("WaveSystem"+str(dim)+"DStaggered"+meshName+"_velocity");
     #Postprocessing : save 2D picture
-    PV_routines.Save_PV_data_to_picture_file("WaveSystem"+str(dim)+"DPStag"+meshName+"_pressure"+'_0.vtu',"Pressure",'CELLS',"WaveSystem"+str(dim)+"DPStag"+meshName+"_pressure_initial")
-    PV_routines.Save_PV_data_to_picture_file("WaveSystem"+str(dim)+"DPStag"+meshName+"_velocity"+'_0.vtu',"Velocity",'CELLS',"WaveSystem"+str(dim)+"DPStag"+meshName+"_velocity_initial")
+    PV_routines.Save_PV_data_to_picture_file("WaveSystem"+str(dim)+"DStaggered"+meshName+"_pressure"+'_0.vtu',"Pressure",'CELLS',"WaveSystem"+str(dim)+"DStaggered"+meshName+"_pressure_initial")
+    PV_routines.Save_PV_data_to_picture_file("WaveSystem"+str(dim)+"DStaggered"+meshName+"_velocity"+'_0.vtu',"Velocity",'CELLS',"WaveSystem"+str(dim)+"DStaggered"+meshName+"_velocity_initial")
 
     total_pressure_initial=pressure_field.integral()#For conservation test later
     total_velocity_initial=velocity_field.integral()#For conservation test later
@@ -201,7 +263,7 @@ def WaveSystemStaggered(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolu
                 Vn = Un.deepCopy()
                 for k in range(nbCells):
                     Vn[k*(dim+1)+0] = Vn[k*(dim+1)+0]/(c0*c0)
-        else:#( scaling==2)
+        else:#( scaling > 0)
             LS.setSndMember(Vn)
             Vn=LS.solve()
             Un = Vn.deepCopy()
@@ -250,9 +312,9 @@ def WaveSystemStaggered(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolu
                         delta_v[2]=abs(initial_velocity[k,2]-velocity_field[k,2])
                 
             pressure_field.setTime(time,it);
-            pressure_field.writeVTK("WaveSystem"+str(dim)+"DPStag"+meshName+"_pressure",False);
+            pressure_field.writeVTK("WaveSystem"+str(dim)+"DStaggered"+meshName+"_pressure",False);
             velocity_field.setTime(time,it);
-            velocity_field.writeVTK("WaveSystem"+str(dim)+"DPStag"+meshName+"_velocity",False);
+            velocity_field.writeVTK("WaveSystem"+str(dim)+"DStaggered"+meshName+"_velocity",False);
 
             print "Ecart au stationnaire exact : error_p= ",delta_press/p0," error_||u||= ",delta_v.maxVector()[0]
             print
@@ -271,9 +333,9 @@ def WaveSystemStaggered(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolu
         print "------------------------------------------------------------------------------------"
 
         pressure_field.setTime(time,0);
-        pressure_field.writeVTK("WaveSystem"+str(dim)+"DPStag"+meshName+"_pressure_Stat");
+        pressure_field.writeVTK("WaveSystem"+str(dim)+"DStaggered"+meshName+"_pressure_Stat");
         velocity_field.setTime(time,0);
-        velocity_field.writeVTK("WaveSystem"+str(dim)+"DPStag"+meshName+"_velocity_Stat");
+        velocity_field.writeVTK("WaveSystem"+str(dim)+"DStaggered"+meshName+"_velocity_Stat");
 
         #Postprocessing : Extraction of the diagonal data
         if(dim==2):
@@ -283,8 +345,8 @@ def WaveSystemStaggered(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolu
             diag_data_press=VTK_routines.Extract_field_data_over_line_to_numpyArray(pressure_field,[0,0,0],[1,1,1], resolution)    
             diag_data_vel  =VTK_routines.Extract_field_data_over_line_to_numpyArray(velocity_field,[0,0,0],[1,1,1], resolution)    
         #Postprocessing : save 2D picture
-        PV_routines.Save_PV_data_to_picture_file("WaveSystem"+str(dim)+"DPStag"+meshName+"_pressure_Stat"+'_0.vtu',"Pressure",'CELLS',"WaveSystem"+str(dim)+"DPStag"+meshName+"_pressure_Stat")
-        PV_routines.Save_PV_data_to_picture_file("WaveSystem"+str(dim)+"DPStag"+meshName+"_velocity_Stat"+'_0.vtu',"Velocity",'CELLS',"WaveSystem"+str(dim)+"DPStag"+meshName+"_velocity_Stat")
+        PV_routines.Save_PV_data_to_picture_file("WaveSystem"+str(dim)+"DStaggered"+meshName+"_pressure_Stat"+'_0.vtu',"Pressure",'CELLS',"WaveSystem"+str(dim)+"DStaggered"+meshName+"_pressure_Stat")
+        PV_routines.Save_PV_data_to_picture_file("WaveSystem"+str(dim)+"DStaggered"+meshName+"_velocity_Stat"+'_0.vtu',"Velocity",'CELLS',"WaveSystem"+str(dim)+"DStaggered"+meshName+"_velocity_Stat")
         
         return delta_press/p0, delta_v.maxVector()[0], nbCells, time, it, velocity_field.getNormEuclidean().max(), diag_data_press, diag_data_vel,test_desc["Linear_system_max_actual_condition number"]
     else:
@@ -300,9 +362,9 @@ def solve(my_mesh,meshName,resolution,scaling, meshType, testColor,cfl):
     test_name_comment="New scheme for low Mach flows"
     test_model="Wave system"
     if(scaling==0):
-        test_method="Pseudo staggered without scaling"
+        test_method="Staggered without scaling"
     else:    
-        test_method="Pseudo staggered with scaling"
+        test_method="Staggered with scaling"
     test_initial_data="Constant pressure, divergence free velocity"
     test_bc="Periodic"
     print test_name
@@ -311,7 +373,7 @@ def solve(my_mesh,meshName,resolution,scaling, meshType, testColor,cfl):
     print "Boundary conditions : ",test_bc
     print "Mesh name : ",meshName , ", ", my_mesh.getNumberOfCells(), " cells"
     if( scaling>0):
-        print "Use of scaling strategy for better preconditioning"
+        print "Use of scaling strategy for a better preconditioning"
 
     # Problem data
     tmax = 1000.
@@ -349,7 +411,7 @@ def solve(my_mesh,meshName,resolution,scaling, meshType, testColor,cfl):
     test_desc["Absolute_error"]=max(error_p*p0,error_u)
     test_desc["Relative_error"]=max(error_p,error_u)
 
-    with open('test_WaveSystem'+str(my_mesh.getMeshDimension())+'DPStag_'+meshName+ "Cells.json", 'w') as outfile:  
+    with open('test_WaveSystem'+str(my_mesh.getMeshDimension())+'DStaggered_'+meshName+ "Cells.json", 'w') as outfile:  
         json.dump(test_desc, outfile)
     
     return error_p, error_u, nbCells, t_final, ndt_final, max_vel, diag_data_press, diag_data_vel, end - start, cond_number
