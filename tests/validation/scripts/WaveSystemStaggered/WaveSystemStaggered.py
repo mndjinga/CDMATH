@@ -47,7 +47,7 @@ def computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt,scaling):
     nbComp=dim+1
 
     if(!my_mesh.isStructured()):
-        raise ValueError("WeveSystemStaggered: the mesh should be structured");
+        raise ValueError("WaveSystemStaggered: the mesh should be structured");
 
     NxNyNz=my_mesh.getCellGridStructure()
     
@@ -55,18 +55,61 @@ def computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt,scaling):
 
     idMoinsJacCL=cdmath.Matrix(nbComp)
     
-    for idim in range(dim) :
-        for k in range(nbCells):#On parcourt les cellules
-            i = k% nx
-            j= k//nx
-            implMat.insertValue(i,(idim+1)*nbCells+ i            ,-c*c)
-            implMat.insertValue(i,(idim+1)*nbCells+(i+1)%nx, c*c)
+    for k in range(nbCells):#On parcourt les cellules
+        if( dim == 1) :    
+            nx=NxNyNz[0]
 
-            implMat.insertValue(i,(idim+2)*nbCells+ i           ,-c*c)
-            implMat.insertValue(i,(idim+2)*nbCells+(i+1)%nbCells, c*c)
+            implMat.insertValue(k,1*nbCells +  k      ,-c*c)
+            implMat.insertValue(k,1*nbCells + (k+1)%nx, c*c)
 
-            implMat.insertValue(i,(idim+3)*nbCells+ i               ,-c*c)
-            implMat.insertValue(i,(idim+3)*nbCells+(i+nx*ny)%nbCells, c*c)
+            implMat.insertValue(  1*nbCells +  k      ,k,  1)
+            implMat.insertValue(  1*nbCells + (k+1)%nx,k, -1)
+
+        if( dim == 2) :# k = j*nx+i
+            nx=NxNyNz[0]
+            ny=NxNyNz[1]
+            
+            i = k % nx
+            j = k //nx
+
+            implMat.insertValue(k,1*nbCells + j*nx +  i      ,  -c*c)
+            implMat.insertValue(k,1*nbCells + j*nx + (i+1)%nx,   c*c)
+
+            implMat.insertValue(k,2*nbCells +   j       *nx + i,-c*c)
+            implMat.insertValue(k,2*nbCells + ((j+1)%ny)*nx + i, c*c)
+
+            implMat.insertValue(  1*nbCells + j*nx +  i      ,  k,  1)
+            implMat.insertValue(  1*nbCells + j*nx + (i+1)%nx,  k, -1)
+
+            implMat.insertValue(  2*nbCells +   j       *nx + i,k,  1)
+            implMat.insertValue(  2*nbCells + ((j+1)%ny)*nx + i,k, -1)
+
+        if( dim == 2) :# k = l*nx*ny+j*nx+i
+            nx=NxNyNz[0]
+            ny=NxNyNz[1]
+            nz=NxNyNz[2]
+            
+            i =  k % nx
+            j = (k //nx)%ny 
+            l =  k //(nx*ny)
+            
+            implMat.insertValue(k,1*nbCells + l*nx*ny + j*nx +  i      , -c*c)
+            implMat.insertValue(k,1*nbCells + l*nx*ny + j*nx + (i+1)%nx,  c*c)
+
+            implMat.insertValue(k,2*nbCells + l*nx*ny +   j       *nx + i,-c*c)
+            implMat.insertValue(k,2*nbCells + l*nx*ny + ((j+1)%ny)*nx + i, c*c)
+
+            implMat.insertValue(k,3*nbCells +   l*nx*ny        + j*nx + i,-c*c)
+            implMat.insertValue(k,3*nbCells + ((l+1)%nz)*nx*ny + j*nx + i, c*c)
+
+            implMat.insertValue(  1*nbCells + l*nx*ny + j*nx +  i      ,  k,  1)
+            implMat.insertValue(  1*nbCells + l*nx*ny + j*nx + (i+1)%nx,  k, -1)
+
+            implMat.insertValue(  2*nbCells + l*nx*ny +   j       *nx + i,k,  1)
+            implMat.insertValue(  2*nbCells + l*nx*ny + ((j+1)%ny)*nx + i,k, -1)
+
+            implMat.insertValue(  3*nbCells +   l*nx*ny        + j*nx + i,k,  1)
+            implMat.insertValue(  3*nbCells + ((l+1)%nz)*nx*ny + j*nx + i,k, -1)
 
     return implMat
 
