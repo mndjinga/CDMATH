@@ -15,29 +15,37 @@ c0=1500.#reference sound speed
 p0=rho0*c0*c0#reference pressure
 precision=1e-5
 
-def initial_conditions_wave_system(my_mesh):
+def initial_conditions_wave_system_staggered(my_mesh):
     test_desc["Initial_data"]="Constant pressure, divergence free velocity"
     
     dim     = my_mesh.getMeshDimension()
     nbCells = my_mesh.getNumberOfCells()
+    nbFaces = my_mesh.getNumberOfFaces()
 
     pressure_field = cdmath.Field("Pressure",            cdmath.CELLS, my_mesh, 1)
-    velocity_field = cdmath.Field("Velocity",            cdmath.CELLS, my_mesh, 3)
+    velocity_field = cdmath.Field("Velocity",            cdmath.FACES, my_mesh, 3)
 
     for i in range(nbCells):
-        x = my_mesh.getCell(i).x()
-        y = my_mesh.getCell(i).y()
+        Ci=my_mesh.getCell(i)
+        x = Ci.x()
+        y = Ci.y()
 
         pressure_field[i] = p0
+        
+    for i in range(nbFaces):
+        Fi=my_mesh.getFace(i)
+        x = Fi.x()
+        y = Fi.y()
+
         if(dim==2):
-            velocity_field[i,0] =  sin(pi*x)*cos(pi*y)
-            velocity_field[i,1] = -sin(pi*y)*cos(pi*x)
+            velocity_field[i,0] =  sin(pi*x)*cos(pi*y) * abs(Fi.xN)
+            velocity_field[i,1] = -sin(pi*y)*cos(pi*x) * abs(Fi.yN)
             velocity_field[i,2] = 0
         if(dim==3):
             z = my_mesh.getCell(i).z()
-            velocity_field[i,0] =    sin(pi*x)*cos(pi*y)*cos(pi*z)
-            velocity_field[i,1] =    sin(pi*y)*cos(pi*x)*cos(pi*z)
-            velocity_field[i,2] = -2*sin(pi*z)*cos(pi*x)*cos(pi*y)
+            velocity_field[i,0] =    sin(pi*x)*cos(pi*y)*cos(pi*z) * abs(Fi.xN)
+            velocity_field[i,1] =    sin(pi*y)*cos(pi*x)*cos(pi*z) * abs(Fi.yN)
+            velocity_field[i,2] = -2*sin(pi*z)*cos(pi*x)*cos(pi*y) * abs(Fi.zN)
         
     return pressure_field, velocity_field
     
@@ -193,8 +201,8 @@ def WaveSystemStaggered(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolu
     
     # Initial conditions #
     print("Construction of the initial data …")
-    pressure_field, velocity_field = initial_conditions_wave_system(my_mesh)
-    initial_pressure, initial_velocity = initial_conditions_wave_system(my_mesh)
+    pressure_field, velocity_field = initial_conditions_wave_system_staggered(my_mesh)
+    initial_pressure, initial_velocity = initial_conditions_wave_system_staggered(my_mesh)
 
     for k in range(nbCells):
         Un[k*(dim+1)+0] =      initial_pressure[k]
