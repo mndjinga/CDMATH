@@ -1,8 +1,7 @@
 #!/usr/bin/env python
 # -*-coding:utf-8 -*
 
-from math import sin, cos, pi, sqrt
-from numpy import sign
+from math import sin, cos, pi
 import cdmath
 import PV_routines
 import VTK_routines
@@ -77,7 +76,7 @@ def WaveSystemStaggered(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolu
     it=0;
     isStationary=False;
     
-    nbVoisinsMax=10;
+    nbVoisinsMax=my_mesh.getMaxNbNeighbours(CELLS)
     iterGMRESMax=50
     
     #iteration vectors

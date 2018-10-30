@@ -1,8 +1,7 @@
 #!/usr/bin/env python
 # -*-coding:utf-8 -*
 
-from math import sin, cos, pi, sqrt
-from numpy import sign
+from math import sin, cos, pi
 import time, json
 import cdmath
 import PV_routines
@@ -23,7 +22,7 @@ def initial_conditions_wave_system_staggered(my_mesh):
     nbFaces = my_mesh.getNumberOfFaces()
 
     pressure_field = cdmath.Field("Pressure",            cdmath.CELLS, my_mesh, 1)
-    velocity_field = cdmath.Field("Velocity",            cdmath.FACES, my_mesh, 3)
+    velocity_field = cdmath.Field("Velocity",            cdmath.FACES, my_mesh, 1)
 
     for i in range(nbCells):
         Ci=my_mesh.getCell(i)
@@ -39,14 +38,22 @@ def initial_conditions_wave_system_staggered(my_mesh):
         #We take only the normal component of the velocity on a cartesian grid
         #Warning : boundary values should be the same for left and right as well as top and down (front and back in 3D) boundaries
         if(dim==2):
-            velocity_field[i,0] =  sin(pi*x)*cos(pi*y) * abs(Fi.xN)
-            velocity_field[i,1] = -sin(pi*y)*cos(pi*x) * abs(Fi.yN)
-            velocity_field[i,2] = 0
+            if abs(abs(Fi.xN) -1) < eps :
+                velocity_field[i] =  sin(pi*x)*cos(pi*y) 
+            elif abs(abs(Fi.yN) -1) < eps :
+                velocity_field[i] = -sin(pi*y)*cos(pi*x)
+            else :
+                raise ValueError("initial_conditions_wave_system_staggered: the 2D mesh should be structured");
         if(dim==3):
             z = my_mesh.getCell(i).z()
-            velocity_field[i,0] =    sin(pi*x)*cos(pi*y)*cos(pi*z) * abs(Fi.xN)
-            velocity_field[i,1] =    sin(pi*y)*cos(pi*x)*cos(pi*z) * abs(Fi.yN)
-            velocity_field[i,2] = -2*sin(pi*z)*cos(pi*x)*cos(pi*y) * abs(Fi.zN)
+            if abs(abs(Fi.xN) -1) < eps :
+                velocity_field[i] =    sin(pi*x)*cos(pi*y)*cos(pi*z)
+            elif abs(abs(Fi.yN) -1) < eps :
+                velocity_field[i] =    sin(pi*y)*cos(pi*x)*cos(pi*z)
+            elif abs(abs(Fi.zN) -1) < eps :
+                velocity_field[i] = -2*sin(pi*z)*cos(pi*x)*cos(pi*y)
+            else :
+                raise ValueError("initial_conditions_wave_system_staggered: the 3D mesh should be structured");
         
     return pressure_field, velocity_field
     
@@ -65,24 +72,32 @@ def computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt,scaling):
 
     idMoinsJacCL=cdmath.Matrix(nbComp)
     
-    if( scaling==0 ):
-        if( dim == 1) :    
-            nx=NxNyNz[0]
-            dx=DxDyDz[0]
+    if( dim == 1) :    
+        nx=NxNyNz[0]
+        dx=DxDyDz[0]
             
+        if( scaling==0 ):
             for k in range(nbCells):
                 implMat.insertValue(k,1*nbCells +  k      , -c0*c0/dx)
                 implMat.insertValue(k,1*nbCells + (k+1)%nx,  c0*c0/dx)
     
                 implMat.insertValue(  1*nbCells +  k      ,k,  1/dx)
                 implMat.insertValue(  1*nbCells + (k+1)%nx,k, -1/dx)
+        else : # scaling >0    
+            for k in range(nbCells):
+                implMat.insertValue(k,1*nbCells +  k      , -c0/dx)
+                implMat.insertValue(k,1*nbCells + (k+1)%nx,  c0/dx)
     
-        elif( dim == 2) :# k = j*nx+i
-            nx=NxNyNz[0]
-            ny=NxNyNz[1]
-            dx=DxDyDz[0]
-            dy=DxDyDz[1]
+                implMat.insertValue(  1*nbCells +  k      ,k,  c0/dx)
+                implMat.insertValue(  1*nbCells + (k+1)%nx,k, -c0/dx)
+    
+    elif( dim == 2) :# k = j*nx+i
+        nx=NxNyNz[0]
+        ny=NxNyNz[1]
+        dx=DxDyDz[0]
+        dy=DxDyDz[1]
                 
+        if( scaling==0 ):
             for k in range(nbCells):
                 i = k % nx
                 j = k //nx
@@ -99,14 +114,32 @@ def computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt,scaling):
                 implMat.insertValue(  2*nbCells +   j       *nx + i,k,  1/dy)
                 implMat.insertValue(  2*nbCells + ((j+1)%ny)*nx + i,k, -1/dy)
     
-        elif( dim == 3) :# k = l*nx*ny+j*nx+i
-            nx=NxNyNz[0]
-            ny=NxNyNz[1]
-            nz=NxNyNz[2]
-            dx=DxDyDz[0]
-            dy=DxDyDz[1]
-            dz=DxDyDz[2]
+        else :# scaling >0
+            for k in range(nbCells):
+                i = k % nx
+                j = k //nx
+    
+                implMat.insertValue(k,1*nbCells + j*nx +  i      ,   -c0/dx)
+                implMat.insertValue(k,1*nbCells + j*nx + (i+1)%nx,    c0/dx)
+    
+                implMat.insertValue(k,2*nbCells +   j       *nx + i, -c0/dy)
+                implMat.insertValue(k,2*nbCells + ((j+1)%ny)*nx + i,  c0/dy)
+    
+                implMat.insertValue(  1*nbCells + j*nx +  i      ,  k,  c0/dx)
+                implMat.insertValue(  1*nbCells + j*nx + (i+1)%nx,  k, -c0/dx)
+    
+                implMat.insertValue(  2*nbCells +   j       *nx + i,k,  c0/dy)
+                implMat.insertValue(  2*nbCells + ((j+1)%ny)*nx + i,k, -c0/dy)
+    
+    elif( dim == 3) :# k = l*nx*ny+j*nx+i
+        nx=NxNyNz[0]
+        ny=NxNyNz[1]
+        nz=NxNyNz[2]
+        dx=DxDyDz[0]
+        dy=DxDyDz[1]
+        dz=DxDyDz[2]
                 
+        if( scaling==0 ):
             for k in range(nbCells):
                 i =  k % nx
                 j = (k //nx)%ny 
@@ -130,48 +163,7 @@ def computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt,scaling):
                 implMat.insertValue(  3*nbCells +   l*nx*ny        + j*nx + i,k,  1/dz)
                 implMat.insertValue(  3*nbCells + ((l+1)%nz)*nx*ny + j*nx + i,k, -1/dz)
 
-    else:
-        if( dim == 1) :    
-            nx=NxNyNz[0]
-            dx=DxDyDz[0]
-    
-            for k in range(nbCells):
-                implMat.insertValue(k,1*nbCells +  k      , -c0/dx)
-                implMat.insertValue(k,1*nbCells + (k+1)%nx,  c0/dx)
-    
-                implMat.insertValue(  1*nbCells +  k      ,k,  c0/dx)
-                implMat.insertValue(  1*nbCells + (k+1)%nx,k, -c0/dx)
-    
-        elif( dim == 2) :# k = j*nx+i
-            nx=NxNyNz[0]
-            ny=NxNyNz[1]
-            dx=DxDyDz[0]
-            dy=DxDyDz[1]
-                
-            for k in range(nbCells):
-                i = k % nx
-                j = k //nx
-    
-                implMat.insertValue(k,1*nbCells + j*nx +  i      ,   -c0/dx)
-                implMat.insertValue(k,1*nbCells + j*nx + (i+1)%nx,    c0/dx)
-    
-                implMat.insertValue(k,2*nbCells +   j       *nx + i, -c0/dy)
-                implMat.insertValue(k,2*nbCells + ((j+1)%ny)*nx + i,  c0/dy)
-    
-                implMat.insertValue(  1*nbCells + j*nx +  i      ,  k,  c0/dx)
-                implMat.insertValue(  1*nbCells + j*nx + (i+1)%nx,  k, -c0/dx)
-    
-                implMat.insertValue(  2*nbCells +   j       *nx + i,k,  c0/dy)
-                implMat.insertValue(  2*nbCells + ((j+1)%ny)*nx + i,k, -c0/dy)
-    
-        elif( dim == 3) :# k = l*nx*ny+j*nx+i
-            nx=NxNyNz[0]
-            ny=NxNyNz[1]
-            nz=NxNyNz[2]
-            dx=DxDyDz[0]
-            dy=DxDyDz[1]
-            dz=DxDyDz[2]
-                
+        else:# scaling >0
             for k in range(nbCells):
                 i =  k % nx
                 j = (k //nx)%ny 
@@ -206,7 +198,7 @@ def WaveSystemStaggered(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolu
     it=0;
     isStationary=False;
     
-    nbVoisinsMax=my_mesh.getMaxNbNeighbours(CELLS);
+    nbVoisinsMax=my_mesh.getMaxNbNeighbours(CELLS)
     iterGMRESMax=50
     
     #iteration vectors
