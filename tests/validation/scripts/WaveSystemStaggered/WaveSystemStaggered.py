@@ -19,10 +19,20 @@ def initial_conditions_wave_system_staggered(my_mesh):
     
     dim     = my_mesh.getMeshDimension()
     nbCells = my_mesh.getNumberOfCells()
-    nbFaces = my_mesh.getNumberOfFaces()
+
+    if(!my_mesh.isStructured()):
+        raise ValueError("WaveSystemStaggered: the mesh should be structured");
+
+    NxNyNz=my_mesh.getCellGridStructure()
+    DxDyDz=my_mesh.getDXYZ()
+    dx=DxDyDz[0]
+    if(dim>=2):
+        dy=DxDyDz[1]
+        if(dim==3):
+            dz=DxDyDz[2]
 
     pressure_field = cdmath.Field("Pressure",            cdmath.CELLS, my_mesh, 1)
-    velocity_field = cdmath.Field("Velocity",            cdmath.FACES, my_mesh, 1)
+    velocity_field = cdmath.Field("Velocity",            cdmath.CELLS, my_mesh, 3)
 
     for i in range(nbCells):
         Ci=my_mesh.getCell(i)
@@ -31,27 +41,24 @@ def initial_conditions_wave_system_staggered(my_mesh):
 
         pressure_field[i] = p0
         
-    for i in range(nbFaces):
-        Fi=my_mesh.getFace(i)
-        x = Fi.x()
-        y = Fi.y()
         #We take only the normal component of the velocity on a cartesian grid
+        #We save the x component from the back face, the y component from the left face and the z component from the bottom face
         #Warning : boundary values should be the same for left and right as well as top and down (front and back in 3D) boundaries
         if(dim==2):
-            if abs(abs(Fi.xN) -1) < eps :
-                velocity_field[i] =  sin(pi*x)*cos(pi*y) 
-            elif abs(abs(Fi.yN) -1) < eps :
-                velocity_field[i] = -sin(pi*y)*cos(pi*x)
+            if   abs(abs(Fi.xN) -1) < eps :# Face is normal to the x axis
+                velocity_field[i,0] =  sin(pi*(x-0.5*dx))*cos(pi*y) 
+            elif abs(abs(Fi.yN) -1) < eps :# Face is normal to the y axis
+                velocity_field[i,1] = -sin(pi*(y-0.5*dy))*cos(pi*x)
             else :
                 raise ValueError("initial_conditions_wave_system_staggered: the 2D mesh should be structured");
         if(dim==3):
             z = my_mesh.getCell(i).z()
-            if abs(abs(Fi.xN) -1) < eps :
-                velocity_field[i] =    sin(pi*x)*cos(pi*y)*cos(pi*z)
-            elif abs(abs(Fi.yN) -1) < eps :
-                velocity_field[i] =    sin(pi*y)*cos(pi*x)*cos(pi*z)
-            elif abs(abs(Fi.zN) -1) < eps :
-                velocity_field[i] = -2*sin(pi*z)*cos(pi*x)*cos(pi*y)
+            if   abs(abs(Fi.xN) -1) < eps :# Face is normal to the x axis
+                velocity_field[i,0] =    sin(pi*(x-0.5*dx))*cos(pi*y)*cos(pi*z)
+            elif abs(abs(Fi.yN) -1) < eps :# Face is normal to the y axis
+                velocity_field[i,1] =    sin(pi*(y-0.5*dy))*cos(pi*x)*cos(pi*z)
+            elif abs(abs(Fi.zN) -1) < eps :# Face is normal to the z axis
+                velocity_field[i,2] = -2*sin(pi*(z-0.5*dz))*cos(pi*x)*cos(pi*y)
             else :
                 raise ValueError("initial_conditions_wave_system_staggered: the 3D mesh should be structured");
         
