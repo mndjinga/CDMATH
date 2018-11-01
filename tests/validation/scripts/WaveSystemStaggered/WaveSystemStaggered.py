@@ -37,7 +37,6 @@ def initial_conditions_wave_system_staggered(my_mesh):
     for i in range(nbCells):
         Ci=my_mesh.getCell(i)
         x = Ci.x()
-        y = Ci.y()
 
         pressure_field[i] = p0
         
@@ -45,20 +44,22 @@ def initial_conditions_wave_system_staggered(my_mesh):
         #We save the x component from the back face, the y component from the left face and the z component from the bottom face
         #Warning : boundary values should be the same for left and right as well as top and down (front and back in 3D) boundaries
         if(dim==2):
+            y = Ci.y()
             if   abs(abs(Fi.xN) -1) < eps :# Face is normal to the x axis
-                velocity_field[i,0] =  sin(pi*(x-0.5*dx))*cos(pi*y) 
+                velocity_field[i,0] =  sin(pi*(x-0.5*dx))*cos(pi*y) # value on the left face
             elif abs(abs(Fi.yN) -1) < eps :# Face is normal to the y axis
-                velocity_field[i,1] = -sin(pi*(y-0.5*dy))*cos(pi*x)
+                velocity_field[i,1] = -sin(pi*(y-0.5*dy))*cos(pi*x) # value on the bottom face
             else :
                 raise ValueError("initial_conditions_wave_system_staggered: the 2D mesh should be structured");
         if(dim==3):
-            z = my_mesh.getCell(i).z()
+            y = Ci.y()
+            z = Ci.z()
             if   abs(abs(Fi.xN) -1) < eps :# Face is normal to the x axis
-                velocity_field[i,0] =    sin(pi*(x-0.5*dx))*cos(pi*y)*cos(pi*z)
+                velocity_field[i,0] =    sin(pi*(x-0.5*dx))*cos(pi*y)*cos(pi*z) # value on the back face
             elif abs(abs(Fi.yN) -1) < eps :# Face is normal to the y axis
-                velocity_field[i,1] =    sin(pi*(y-0.5*dy))*cos(pi*x)*cos(pi*z)
+                velocity_field[i,1] =    sin(pi*(y-0.5*dy))*cos(pi*x)*cos(pi*z) # value on the left face
             elif abs(abs(Fi.zN) -1) < eps :# Face is normal to the z axis
-                velocity_field[i,2] = -2*sin(pi*(z-0.5*dz))*cos(pi*x)*cos(pi*y)
+                velocity_field[i,2] = -2*sin(pi*(z-0.5*dz))*cos(pi*x)*cos(pi*y) # value on the bottom face
             else :
                 raise ValueError("initial_conditions_wave_system_staggered: the 3D mesh should be structured");
         
@@ -219,8 +220,8 @@ def WaveSystemStaggered(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolu
 
     for k in range(nbCells):
         Un[k + 0*nbCells] =      initial_pressure[k]
-        Un[k + 1*nbCells] = rho0*initial_velocity[k,0]
-        Un[k + 2*nbCells] = rho0*initial_velocity[k,1]
+        Un[k + 1*nbCells] = rho0*initial_velocity[k,0] # value on the left face
+        Un[k + 2*nbCells] = rho0*initial_velocity[k,1] # value on the bottom face
         if(dim==3):
             Un[k + 3*nbCells] = rho0*initial_velocity[k,2]
     if( scaling>0):
@@ -290,10 +291,10 @@ def WaveSystemStaggered(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolu
         test_desc["Linear_system_max_actual_error"]=max(LS.getResidu(),test_desc["Linear_system_max_actual_error"])
         test_desc["Linear_system_max_actual_condition number"]=max(LS.getConditionNumber(),test_desc["Linear_system_max_actual_condition number"])
 
-        maxVector=dUn.maxVector(dim+1)
-        isStationary= maxVector[0]/p0<precision and maxVector[1]/rho0<precision and maxVector[2]/rho0<precision;
-        if(dim==3):
-            isStationary=isStationary and maxVector[3]/rho0<precision
+        max_dp=max( map(abs,dUn[:nbCells]) )
+        max_dq=max( map(abs,dUn[nbCells:]) )
+        isStationary= max_dp/p0<precision and max_dq/rho0<precision
+
         time=time+dt;
         it=it+1;
     
@@ -306,12 +307,12 @@ def WaveSystemStaggered(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolu
             delta_press=0
             delta_v=cdmath.Vector(dim)
             for k in range(nbCells):
-                pressure_field[k]=Un[k*(dim+1)+0]
-                velocity_field[k,0]=Un[k*(dim+1)+1]/rho0
+                pressure_field[k]=Un[k]
+                velocity_field[k,0]=Un[k+1*nbCells]/rho0
                 if(dim>1):
-                    velocity_field[k,1]=Un[k*(dim+1)+2]/rho0
+                    velocity_field[k,1]=Un[k+2*nbCells]/rho0
                     if(dim>2):
-                        velocity_field[k,2]=Un[k*(dim+1)+3]/rho0
+                        velocity_field[k,2]=Un[k+3*nbCells]/rho0
                 if (abs(initial_pressure[k]-pressure_field[k])>delta_press):
                     delta_press=abs(initial_pressure[k]-pressure_field[k])
                 if (abs(initial_velocity[k,0]-velocity_field[k,0])>delta_v[0]):
@@ -330,7 +331,7 @@ def WaveSystemStaggered(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolu
             print "Ecart au stationnaire exact : error_p= ",delta_press/p0," error_||u||= ",delta_v.maxVector()[0]
             print
     print"-- Iter: " + str(it) + ", Time: " + str(time) + ", dt: " + str(dt)
-    print "Variation temporelle relative : pressure ", maxVector[0]/p0 ,", velocity x", maxVector[1]/rho0 ,", velocity y", maxVector[2]/rho0
+    print "Variation temporelle relative : pressure ", maxVector[0]/p0 ,", velocity ", max_dq/rho0 
     print
 
     if(it>=ntmax):
