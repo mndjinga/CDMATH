@@ -18,6 +18,7 @@ SET( VALIDATION_FOLDERS
 3DPoissonVF_cubes 
 2DWaveSystemPStagSquares 
 2DWaveSystemPStagTriangles 
+2DWaveSystemStaggeredSquares 
 2DWaveSystemUpwindSquares 
 2DWaveSystemUpwindTriangles 
 2DWaveSystemUpwindCheckerboard

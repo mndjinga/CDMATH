@@ -70,6 +70,7 @@ def computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt,scaling):
     nbComp=dim+1
     normal=cdmath.Vector(dim)
 
+    print "nbCells=", nbCells, " nbComp=",nbComp," ,nbVoisinsMax=",nbVoisinsMax
     implMat=cdmath.SparseMatrixPetsc(nbCells*nbComp,nbCells*nbComp,(nbVoisinsMax+1)*nbComp)
 
     idMoinsJacCL=cdmath.Matrix(nbComp)

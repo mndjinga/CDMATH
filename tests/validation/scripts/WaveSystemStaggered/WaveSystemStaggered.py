@@ -20,7 +20,7 @@ def initial_conditions_wave_system_staggered(my_mesh):
     dim     = my_mesh.getMeshDimension()
     nbCells = my_mesh.getNumberOfCells()
 
-    if(!my_mesh.isStructured()):
+    if(not my_mesh.isStructured()):
         raise ValueError("WaveSystemStaggered: the mesh should be structured");
 
     NxNyNz=my_mesh.getCellGridStructure()
@@ -45,23 +45,16 @@ def initial_conditions_wave_system_staggered(my_mesh):
         #Warning : boundary values should be the same for left and right as well as top and down (front and back in 3D) boundaries
         if(dim==2):
             y = Ci.y()
-            if   abs(abs(Fi.xN) -1) < eps :# Face is normal to the x axis
-                velocity_field[i,0] =  sin(pi*(x-0.5*dx))*cos(pi*y) # value on the left face
-            elif abs(abs(Fi.yN) -1) < eps :# Face is normal to the y axis
-                velocity_field[i,1] = -sin(pi*(y-0.5*dy))*cos(pi*x) # value on the bottom face
-            else :
-                raise ValueError("initial_conditions_wave_system_staggered: the 2D mesh should be structured");
-        if(dim==3):
+            velocity_field[i,0] =  sin(pi*(x-0.5*dx))*cos(pi*y) # value on the left face
+            velocity_field[i,1] = -sin(pi*(y-0.5*dy))*cos(pi*x) # value on the bottom face
+        elif(dim==3):
             y = Ci.y()
             z = Ci.z()
-            if   abs(abs(Fi.xN) -1) < eps :# Face is normal to the x axis
-                velocity_field[i,0] =    sin(pi*(x-0.5*dx))*cos(pi*y)*cos(pi*z) # value on the back face
-            elif abs(abs(Fi.yN) -1) < eps :# Face is normal to the y axis
-                velocity_field[i,1] =    sin(pi*(y-0.5*dy))*cos(pi*x)*cos(pi*z) # value on the left face
-            elif abs(abs(Fi.zN) -1) < eps :# Face is normal to the z axis
-                velocity_field[i,2] = -2*sin(pi*(z-0.5*dz))*cos(pi*x)*cos(pi*y) # value on the bottom face
-            else :
-                raise ValueError("initial_conditions_wave_system_staggered: the 3D mesh should be structured");
+            velocity_field[i,0] =    sin(pi*(x-0.5*dx))*cos(pi*y)*cos(pi*z) # value on the back face
+            velocity_field[i,1] =    sin(pi*(y-0.5*dy))*cos(pi*x)*cos(pi*z) # value on the left face
+            velocity_field[i,2] = -2*sin(pi*(z-0.5*dz))*cos(pi*x)*cos(pi*y) # value on the bottom face
+        else :
+                raise ValueError("initial_conditions_wave_system_staggered: the 1D mesh not yet implemented");
         
     return pressure_field, velocity_field
     
@@ -70,7 +63,7 @@ def computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt,scaling):
     dim=my_mesh.getMeshDimension()
     nbComp=dim+1
 
-    if(!my_mesh.isStructured()):
+    if(not my_mesh.isStructured()):
         raise ValueError("WaveSystemStaggered: the mesh should be structured");
 
     NxNyNz=my_mesh.getCellGridStructure()
@@ -206,7 +199,7 @@ def WaveSystemStaggered(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolu
     it=0;
     isStationary=False;
     
-    nbVoisinsMax=my_mesh.getMaxNbNeighbours(CELLS)
+    nbVoisinsMax=my_mesh.getMaxNbNeighbours(cdmath.CELLS)
     iterGMRESMax=50
     
     #iteration vectors
