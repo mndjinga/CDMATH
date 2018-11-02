@@ -69,7 +69,6 @@ def computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt,scaling):
     NxNyNz=my_mesh.getCellGridStructure()
     DxDyDz=my_mesh.getDXYZ()
     
-    print "nbCells=", nbCells, " nbComp=",nbComp," ,nbVoisinsMax=",nbVoisinsMax
     implMat=cdmath.SparseMatrixPetsc(nbCells*nbComp,nbCells*nbComp,(nbVoisinsMax+1)*nbComp)
 
     idMoinsJacCL=cdmath.Matrix(nbComp)
@@ -80,18 +79,18 @@ def computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt,scaling):
             
         if( scaling==0 ):
             for k in range(nbCells):
-                implMat.insertValue(k,1*nbCells +  k      , -c0*c0/dx)
-                implMat.insertValue(k,1*nbCells + (k+1)%nx,  c0*c0/dx)
+                implMat.setValue(k,1*nbCells +  k      , -c0*c0*dt/dx)
+                implMat.setValue(k,1*nbCells + (k+1)%nx,  c0*c0*dt/dx)
     
-                implMat.insertValue(  1*nbCells +  k      ,k,  1/dx)
-                implMat.insertValue(  1*nbCells + (k+1)%nx,k, -1/dx)
+                implMat.setValue(  1*nbCells +  k      ,k,  dt/dx)
+                implMat.setValue(  1*nbCells + (k+1)%nx,k, -dt/dx)
         else : # scaling >0    
             for k in range(nbCells):
-                implMat.insertValue(k,1*nbCells +  k      , -c0/dx)
-                implMat.insertValue(k,1*nbCells + (k+1)%nx,  c0/dx)
+                implMat.setValue(k,1*nbCells +  k      , -c0*dt/dx)
+                implMat.setValue(k,1*nbCells + (k+1)%nx,  c0*dt/dx)
     
-                implMat.insertValue(  1*nbCells +  k      ,k,  c0/dx)
-                implMat.insertValue(  1*nbCells + (k+1)%nx,k, -c0/dx)
+                implMat.setValue(  1*nbCells +  k      ,k,  c0*dt/dx)
+                implMat.setValue(  1*nbCells + (k+1)%nx,k, -c0*dt/dx)
     
     elif( dim == 2) :# k = j*nx+i
         nx=NxNyNz[0]
@@ -104,34 +103,34 @@ def computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt,scaling):
                 i = k % nx
                 j = k //nx
     
-                implMat.insertValue(k,1*nbCells + j*nx +  i      ,   -c0*c0/dx)
-                implMat.insertValue(k,1*nbCells + j*nx + (i+1)%nx,    c0*c0/dx)
+                implMat.setValue(k,1*nbCells + j*nx +  i      ,   -c0*c0*dt/dx)
+                implMat.setValue(k,1*nbCells + j*nx + (i+1)%nx,    c0*c0*dt/dx)
     
-                implMat.insertValue(k,2*nbCells +   j       *nx + i, -c0*c0/dy)
-                implMat.insertValue(k,2*nbCells + ((j+1)%ny)*nx + i,  c0*c0/dy)
+                implMat.setValue(k,2*nbCells +   j       *nx + i, -c0*c0*dt/dy)
+                implMat.setValue(k,2*nbCells + ((j+1)%ny)*nx + i,  c0*c0*dt/dy)
     
-                implMat.insertValue(  1*nbCells + j*nx +  i      ,  k,  1/dx)
-                implMat.insertValue(  1*nbCells + j*nx + (i+1)%nx,  k, -1/dx)
+                implMat.setValue(  1*nbCells + j*nx +  i      ,  k,  dt/dx)
+                implMat.setValue(  1*nbCells + j*nx + (i+1)%nx,  k, -dt/dx)
     
-                implMat.insertValue(  2*nbCells +   j       *nx + i,k,  1/dy)
-                implMat.insertValue(  2*nbCells + ((j+1)%ny)*nx + i,k, -1/dy)
+                implMat.setValue(  2*nbCells +   j       *nx + i,k,  dt/dy)
+                implMat.setValue(  2*nbCells + ((j+1)%ny)*nx + i,k, -dt/dy)
     
         else :# scaling >0
             for k in range(nbCells):
                 i = k % nx
                 j = k //nx
     
-                implMat.insertValue(k,1*nbCells + j*nx +  i      ,   -c0/dx)
-                implMat.insertValue(k,1*nbCells + j*nx + (i+1)%nx,    c0/dx)
+                implMat.setValue(k,1*nbCells + j*nx +  i      ,   -c0*dt/dx)
+                implMat.setValue(k,1*nbCells + j*nx + (i+1)%nx,    c0*dt/dx)
     
-                implMat.insertValue(k,2*nbCells +   j       *nx + i, -c0/dy)
-                implMat.insertValue(k,2*nbCells + ((j+1)%ny)*nx + i,  c0/dy)
+                implMat.setValue(k,2*nbCells +   j       *nx + i, -c0*dt/dy)
+                implMat.setValue(k,2*nbCells + ((j+1)%ny)*nx + i,  c0*dt/dy)
     
-                implMat.insertValue(  1*nbCells + j*nx +  i      ,  k,  c0/dx)
-                implMat.insertValue(  1*nbCells + j*nx + (i+1)%nx,  k, -c0/dx)
+                implMat.setValue(  1*nbCells + j*nx +  i      ,  k,  c0*dt/dx)
+                implMat.setValue(  1*nbCells + j*nx + (i+1)%nx,  k, -c0*dt/dx)
     
-                implMat.insertValue(  2*nbCells +   j       *nx + i,k,  c0/dy)
-                implMat.insertValue(  2*nbCells + ((j+1)%ny)*nx + i,k, -c0/dy)
+                implMat.setValue(  2*nbCells +   j       *nx + i,k,  c0*dt/dy)
+                implMat.setValue(  2*nbCells + ((j+1)%ny)*nx + i,k, -c0*dt/dy)
     
     elif( dim == 3) :# k = l*nx*ny+j*nx+i
         nx=NxNyNz[0]
@@ -147,23 +146,23 @@ def computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt,scaling):
                 j = (k //nx)%ny 
                 l =  k //(nx*ny)
                 
-                implMat.insertValue(k,1*nbCells + l*nx*ny + j*nx +  i      ,  -c0*c0/dx)
-                implMat.insertValue(k,1*nbCells + l*nx*ny + j*nx + (i+1)%nx,   c0*c0/dx)
+                implMat.setValue(k,1*nbCells + l*nx*ny + j*nx +  i      ,  -c0*c0*dt/dx)
+                implMat.setValue(k,1*nbCells + l*nx*ny + j*nx + (i+1)%nx,   c0*c0*dt/dx)
     
-                implMat.insertValue(k,2*nbCells + l*nx*ny +   j       *nx + i, -c0*c0/dy)
-                implMat.insertValue(k,2*nbCells + l*nx*ny + ((j+1)%ny)*nx + i,  c0*c0/dy)
+                implMat.setValue(k,2*nbCells + l*nx*ny +   j       *nx + i, -c0*c0*dt/dy)
+                implMat.setValue(k,2*nbCells + l*nx*ny + ((j+1)%ny)*nx + i,  c0*c0*dt/dy)
     
-                implMat.insertValue(k,3*nbCells +   l*nx*ny        + j*nx + i, -c0*c0/dz)
-                implMat.insertValue(k,3*nbCells + ((l+1)%nz)*nx*ny + j*nx + i,  c0*c0/dz)
+                implMat.setValue(k,3*nbCells +   l*nx*ny        + j*nx + i, -c0*c0*dt/dz)
+                implMat.setValue(k,3*nbCells + ((l+1)%nz)*nx*ny + j*nx + i,  c0*c0*dt/dz)
     
-                implMat.insertValue(  1*nbCells + l*nx*ny + j*nx +  i      ,  k,  1/dx)
-                implMat.insertValue(  1*nbCells + l*nx*ny + j*nx + (i+1)%nx,  k, -1/dx)
+                implMat.setValue(  1*nbCells + l*nx*ny + j*nx +  i      ,  k,  dt/dx)
+                implMat.setValue(  1*nbCells + l*nx*ny + j*nx + (i+1)%nx,  k, -dt/dx)
     
-                implMat.insertValue(  2*nbCells + l*nx*ny +   j       *nx + i,k,  1/dy)
-                implMat.insertValue(  2*nbCells + l*nx*ny + ((j+1)%ny)*nx + i,k, -1/dy)
+                implMat.setValue(  2*nbCells + l*nx*ny +   j       *nx + i,k,  dt/dy)
+                implMat.setValue(  2*nbCells + l*nx*ny + ((j+1)%ny)*nx + i,k, -dt/dy)
     
-                implMat.insertValue(  3*nbCells +   l*nx*ny        + j*nx + i,k,  1/dz)
-                implMat.insertValue(  3*nbCells + ((l+1)%nz)*nx*ny + j*nx + i,k, -1/dz)
+                implMat.setValue(  3*nbCells +   l*nx*ny        + j*nx + i,k,  dt/dz)
+                implMat.setValue(  3*nbCells + ((l+1)%nz)*nx*ny + j*nx + i,k, -dt/dz)
 
         else:# scaling >0
             for k in range(nbCells):
@@ -171,25 +170,30 @@ def computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt,scaling):
                 j = (k //nx)%ny 
                 l =  k //(nx*ny)
                 
-                implMat.insertValue(k,1*nbCells + l*nx*ny + j*nx +  i      ,  -c0/dx)
-                implMat.insertValue(k,1*nbCells + l*nx*ny + j*nx + (i+1)%nx,   c0/dx)
+                implMat.setValue(k,1*nbCells + l*nx*ny + j*nx +  i      ,  -c0*dt/dx)
+                implMat.setValue(k,1*nbCells + l*nx*ny + j*nx + (i+1)%nx,   c0*dt/dx)
     
-                implMat.insertValue(k,2*nbCells + l*nx*ny +   j       *nx + i, -c0/dy)
-                implMat.insertValue(k,2*nbCells + l*nx*ny + ((j+1)%ny)*nx + i,  c0/dy)
+                implMat.setValue(k,2*nbCells + l*nx*ny +   j       *nx + i, -c0*dt/dy)
+                implMat.setValue(k,2*nbCells + l*nx*ny + ((j+1)%ny)*nx + i,  c0*dt/dy)
     
-                implMat.insertValue(k,3*nbCells +   l*nx*ny        + j*nx + i, -c0/dz)
-                implMat.insertValue(k,3*nbCells + ((l+1)%nz)*nx*ny + j*nx + i,  c0/dz)
+                implMat.setValue(k,3*nbCells +   l*nx*ny        + j*nx + i, -c0*dt/dz)
+                implMat.setValue(k,3*nbCells + ((l+1)%nz)*nx*ny + j*nx + i,  c0*dt/dz)
     
-                implMat.insertValue(  1*nbCells + l*nx*ny + j*nx +  i      ,  k,  c0/dx)
-                implMat.insertValue(  1*nbCells + l*nx*ny + j*nx + (i+1)%nx,  k, -c0/dx)
+                implMat.setValue(  1*nbCells + l*nx*ny + j*nx +  i      ,  k,  c0*dt/dx)
+                implMat.setValue(  1*nbCells + l*nx*ny + j*nx + (i+1)%nx,  k, -c0*dt/dx)
     
-                implMat.insertValue(  2*nbCells + l*nx*ny +   j       *nx + i,k,  c0/dy)
-                implMat.insertValue(  2*nbCells + l*nx*ny + ((j+1)%ny)*nx + i,k, -c0/dy)
+                implMat.setValue(  2*nbCells + l*nx*ny +   j       *nx + i,k,  c0*dt/dy)
+                implMat.setValue(  2*nbCells + l*nx*ny + ((j+1)%ny)*nx + i,k, -c0*dt/dy)
     
-                implMat.insertValue(  3*nbCells +   l*nx*ny        + j*nx + i,k,  c0/dz)
-                implMat.insertValue(  3*nbCells + ((l+1)%nz)*nx*ny + j*nx + i,k, -c0/dz)
+                implMat.setValue(  3*nbCells +   l*nx*ny        + j*nx + i,k,  c0*dt/dz)
+                implMat.setValue(  3*nbCells + ((l+1)%nz)*nx*ny + j*nx + i,k, -c0*dt/dz)
 
-    return dt*implMat
+    #Add the identity matrix on the diagonal
+    #divMat.diagonalShift(1)#only after  filling all coefficients
+    for j in range(nbCells*nbComp):
+        implMat.addValue(j,j,1)#/(c0*c0)
+
+    return implMat
 
 def WaveSystemStaggered(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,scaling):
     dim=my_mesh.getMeshDimension()
@@ -240,9 +244,6 @@ def WaveSystemStaggered(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolu
     dt = cfl * dx_min / c0
     divMat=computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt,scaling)
 
-    #Add the identity matrix on the diagonal
-    divMat.diagonalShift(1)#only after  filling all coefficients
-
     if( scaling==0):
         LS=cdmath.LinearSolver(divMat,Un,iterGMRESMax, precision, "GMRES","ILU")
     else:
@@ -285,8 +286,12 @@ def WaveSystemStaggered(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolu
         test_desc["Linear_system_max_actual_error"]=max(LS.getResidu(),test_desc["Linear_system_max_actual_error"])
         test_desc["Linear_system_max_actual_condition number"]=max(LS.getConditionNumber(),test_desc["Linear_system_max_actual_condition number"])
 
-        max_dp=max( map(abs,dUn[:nbCells]) )
-        max_dq=max( map(abs,dUn[nbCells:]) )
+        max_dp=0 ;        max_dq=0
+        for k in range(nbCells):
+            max_dp = max(max_dp,abs(dUn[k]))
+            for i in range(dim):
+                max_dq=max(max_dq,abs(dUn[k+(1+i)*nbCells]))
+                
         isStationary= max_dp/p0<precision and max_dq/rho0<precision
 
         time=time+dt;
@@ -295,7 +300,7 @@ def WaveSystemStaggered(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolu
         #Sauvegardes
         if(it%output_freq==0 or it>=ntmax or isStationary or time >=tmax):
             print"-- Iter: " + str(it) + ", Time: " + str(time) + ", dt: " + str(dt)
-            print "Variation temporelle relative : pressure ", maxVector[0]/p0 ,", velocity x", maxVector[1]/rho0 ,", velocity y", maxVector[2]/rho0
+            print "Variation temporelle relative : pressure ", max_dp/p0 ,", velocity ", max_dq/rho0
             print "Linear system converged in ", LS.getNumberOfIter(), " GMRES iterations"
 
             delta_press=0
@@ -325,7 +330,7 @@ def WaveSystemStaggered(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolu
             print "Ecart au stationnaire exact : error_p= ",delta_press/p0," error_||u||= ",delta_v.maxVector()[0]
             print
     print"-- Iter: " + str(it) + ", Time: " + str(time) + ", dt: " + str(dt)
-    print "Variation temporelle relative : pressure ", maxVector[0]/p0 ,", velocity ", max_dq/rho0 
+    print "Variation temporelle relative : pressure ", max_dp/p0 ,", velocity ", max_dq/rho0 
     print
 
     if(it>=ntmax):
