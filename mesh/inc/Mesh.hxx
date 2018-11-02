@@ -313,7 +313,7 @@ public: //----------------------------------------------------------------
 	/**
 	 * Compute the maximum number of neighbours around an element (cells around a cell or nodes around a node)
 	 */
-    double getMaxNbNeighbours(EntityType type) const;
+    int getMaxNbNeighbours(EntityType type) const;
     
 private: //----------------------------------------------------------------
 

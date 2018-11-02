@@ -1791,7 +1791,7 @@ Mesh::minRatioVolSurf()
     
     return dx_min;
 }
-double 
+int 
 Mesh::getMaxNbNeighbours(EntityType type) const
 {
     double result=0;
