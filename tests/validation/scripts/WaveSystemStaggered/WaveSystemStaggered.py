@@ -69,6 +69,7 @@ def computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt,scaling):
     NxNyNz=my_mesh.getCellGridStructure()
     DxDyDz=my_mesh.getDXYZ()
     
+    print "nbCells=", nbCells, " nbComp=",nbComp," ,nbVoisinsMax=",nbVoisinsMax
     implMat=cdmath.SparseMatrixPetsc(nbCells*nbComp,nbCells*nbComp,(nbVoisinsMax+1)*nbComp)
 
     idMoinsJacCL=cdmath.Matrix(nbComp)
