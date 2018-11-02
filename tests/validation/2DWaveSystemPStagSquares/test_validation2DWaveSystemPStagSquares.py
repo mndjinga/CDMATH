@@ -54,7 +54,7 @@ def test_validation2DWaveSystemPStag_squares(scaling):
     plt.legend()
     plt.xlabel('Position on diagonal line')
     plt.ylabel('Pressure on diagonal line')
-    plt.title('Plot over diagonal line for stationary wave system \n with PStagggered scheme on 2D square meshes')
+    plt.title('Plot over diagonal line for stationary wave system \n with pseudo staggered scheme on 2D square meshes')
     plt.savefig(mesh_name+'_Pressure_2DWaveSystemSquaresPStag_'+"scaling"+str(scaling)+"_PlotOverDiagonalLine.png")
     plt.close()
 
@@ -67,7 +67,7 @@ def test_validation2DWaveSystemPStag_squares(scaling):
     plt.legend()
     plt.xlabel('Position on diagonal line')
     plt.ylabel('Velocity on diagonal line')
-    plt.title('Plot over diagonal line for the stationary wave system \n with PStagggered scheme on 2D square meshes')
+    plt.title('Plot over diagonal line for the stationary wave system \n with pseudo staggered scheme on 2D square meshes')
     plt.savefig(mesh_name+"_Velocity_2DWaveSystemSquaresPStag_"+"scaling"+str(scaling)+"_PlotOverDiagonalLine.png")    
     plt.close()
 
@@ -110,8 +110,8 @@ def test_validation2DWaveSystemPStag_squares(scaling):
     plt.legend()
     plt.xlabel('number of cells')
     plt.ylabel('Max time steps for stationary regime')
-    plt.title('Number of times steps required for the stationary Wave System \n with PStagggered scheme on 2D square meshes')
-    plt.savefig(mesh_name+"_2DWaveSystemSquarePStags_"+"scaling"+str(scaling)+"_TimeSteps.png")
+    plt.title('Number of times steps required for the stationary Wave System \n with pseudo staggered scheme on 2D square meshes')
+    plt.savefig(mesh_name+"_2DWaveSystemSquarePStag_"+"scaling"+str(scaling)+"_TimeSteps.png")
     
     # Plot of number of stationary time
     plt.close()
@@ -122,7 +122,7 @@ def test_validation2DWaveSystemPStag_squares(scaling):
     plt.legend()
     plt.xlabel('number of cells')
     plt.ylabel('Max time for stationary regime')
-    plt.title('Simulated time for the stationary Wave System \n with PStagggered scheme on 2D square meshes')
+    plt.title('Simulated time for the stationary Wave System \n with pseudo staggered scheme on 2D square meshes')
     plt.savefig(mesh_name+"_2DWaveSystemSquaresPStag_"+"scaling"+str(scaling)+"_FinalTime.png")
     
     # Plot of number of maximal velocity norm
@@ -134,7 +134,7 @@ def test_validation2DWaveSystemPStag_squares(scaling):
     plt.legend()
     plt.xlabel('number of cells')
     plt.ylabel('Max velocity norm')
-    plt.title('Maximum velocity norm for the stationary Wave System \n with PStagggered scheme on 2D square meshes')
+    plt.title('Maximum velocity norm for the stationary Wave System \n with pseudo staggered scheme on 2D square meshes')
     plt.savefig(mesh_name+"_2DWaveSystemSquaresPStag_"+"scaling"+str(scaling)+"_MaxVelNorm.png")
     
     # Plot of condition number 
@@ -146,7 +146,7 @@ def test_validation2DWaveSystemPStag_squares(scaling):
     plt.legend()
     plt.xlabel('number of cells')
     plt.ylabel('Condition number')
-    plt.title('Condition number for the stationary Wave System \n with PStagggered scheme on 2D square meshes')
+    plt.title('Condition number for the stationary Wave System \n with pseudo staggered scheme on 2D square meshes')
     plt.savefig(mesh_name+"_2DWaveSystemSquaresPStag_"+"scaling"+str(scaling)+"_condition_number.png")
     
     for i in range(nbMeshes):
@@ -161,7 +161,7 @@ def test_validation2DWaveSystemPStag_squares(scaling):
     plt.legend()
     plt.xlabel('log(number of cells)')
     plt.ylabel('log(|error p|)')
-    plt.title('Convergence of finite volumes for the stationary Wave System \n with PStagggered scheme on 2D square meshes')
+    plt.title('Convergence of finite volumes for the stationary Wave System \n with pseudo staggered scheme on 2D square meshes')
     plt.savefig(mesh_name+"_Pressure_2DWaveSystemSquaresPStag_"+"scaling"+str(scaling)+"_ConvergenceCurve.png")
     
     plt.close()
@@ -172,7 +172,7 @@ def test_validation2DWaveSystemPStag_squares(scaling):
     plt.legend()
     plt.xlabel('log(number of cells)')
     plt.ylabel('log(|error u|)')
-    plt.title('Convergence of finite volumes for the stationary Wave System \n with PStagggered scheme on 2D square meshes')
+    plt.title('Convergence of finite volumes for the stationary Wave System \n with pseudo staggered scheme on 2D square meshes')
     plt.savefig(mesh_name+"_Velocity_2DWaveSystemSquaresPStag_"+"scaling"+str(scaling)+"_ConvergenceCurve.png")
     
     # Plot of computational time
@@ -184,7 +184,7 @@ def test_validation2DWaveSystemPStag_squares(scaling):
     plt.legend()
     plt.xlabel('log(number of cells)')
     plt.ylabel('log(cpu time)')
-    plt.title('Computational time of finite volumes for the stationary Wave System \n with PStagggered scheme on 2D square meshes')
+    plt.title('Computational time of finite volumes for the stationary Wave System \n with pseudo staggered scheme on 2D square meshes')
     plt.savefig(mesh_name+"2DWaveSystemSquaresPStag_"+"scaling"+str(scaling)+"_ComputationalTimeSquares.png")
 
     plt.close('all')
