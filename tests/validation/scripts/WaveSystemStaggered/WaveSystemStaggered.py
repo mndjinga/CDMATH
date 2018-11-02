@@ -339,7 +339,7 @@ def WaveSystemStaggered(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolu
     elif(isStationary):
         print "Régime stationnaire atteint au pas de temps ", it, ", t= ", time
         assert (total_pressure_initial-pressure_field.integral()).norm()/p0<precision
-        #print (total_velocity_initial-velocity_field.integral()).norm()/velocity_field.normL1().norm(), precision
+        print (total_velocity_initial-velocity_field.integral()).norm(),velocity_field.normL1().norm(), precision
         assert (total_velocity_initial-velocity_field.integral()).norm()/velocity_field.normL1().norm()<precision
         print "------------------------------------------------------------------------------------"
 
