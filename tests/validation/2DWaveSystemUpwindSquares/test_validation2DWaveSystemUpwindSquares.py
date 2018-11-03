@@ -10,8 +10,8 @@ import time, json
 def test_validation2DWaveSystemUpwind_squares():
     start = time.time()
     #### 2D square mesh
-    #meshList=[7,15,31,51,81]#
-    meshList=['squareWithSquares_1','squareWithSquares_2','squareWithSquares_3','squareWithSquares_4','squareWithSquares_5']
+    meshList=[7,15,31,51,81]#
+    #meshList=['squareWithSquares_1','squareWithSquares_2','squareWithSquares_3','squareWithSquares_4','squareWithSquares_5']
     mesh_path='../../ressources/2DCartesien/'
     meshType="Regular squares"
     testColor="Green"
@@ -34,10 +34,11 @@ def test_validation2DWaveSystemUpwind_squares():
     cfl=0.5
     bctype="Periodic"
     # Storing of numerical errors, mesh sizes and diagonal values
-    for filename in meshList:
-    #for nx in meshList:
-        #my_mesh=cdmath.Mesh(0,1,nx,0,1,nx)
-        error_p_tab[i], error_u_tab[i], mesh_size_tab[i], t_final[i], ndt_final[i], max_vel[i], diag_data_press[i], diag_data_vel[i], time_tab[i] =WaveSystemUpwind.solve_file(mesh_path+filename, mesh_name, resolution,meshType,testColor,cfl,bctype)
+    #for filename in meshList:
+    for nx in meshList:
+        my_mesh=cdmath.Mesh(0,1,nx,0,1,nx)
+        error_p_tab[i], error_u_tab[i], mesh_size_tab[i], t_final[i], ndt_final[i], max_vel[i], diag_data_press[i], diag_data_vel[i], time_tab[i] =WaveSystemUpwind.solve(my_mesh,str(nx)+'x'+str(nx), resolution,meshType,testColor,cfl,bctype)
+        #error_p_tab[i], error_u_tab[i], mesh_size_tab[i], t_final[i], ndt_final[i], max_vel[i], diag_data_press[i], diag_data_vel[i], time_tab[i] =WaveSystemUpwind.solve_file(mesh_path+filename, mesh_name, resolution,meshType,testColor,cfl,bctype)
         assert max_vel[i]>0.76 and max_vel[i]<1
         i=i+1
     
