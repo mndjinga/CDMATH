@@ -122,7 +122,6 @@ def Save_PV_data_to_picture_file(inputFileName, field_name,
     display.SetScalarBarVisibility(renderView1, True)
 
     if field_name=='Velocity' :
-        print "stream tracer"
         # create a new 'Stream Tracer'
         streamTracer1 = pvs.StreamTracer(Input=reader, SeedType='Point Source')
         streamTracer1.Vectors = ['CELLS', 'Velocity']
