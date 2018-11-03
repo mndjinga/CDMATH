@@ -126,7 +126,7 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,te
     it=0;
     isStationary=False;
     
-    nbVoisinsMax=10;
+    nbVoisinsMax=my_mesh.getMaxNbNeighbours(cdmath.CELLS)
     isImplicit=False
     
     #iteration vectors

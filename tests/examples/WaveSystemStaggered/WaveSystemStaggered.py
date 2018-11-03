@@ -13,6 +13,7 @@ p0=rho0*c0*c0#reference pressure
 precision=1e-5
 
 def initial_conditions_wave_system(my_mesh):
+    print "Spherical wave initial data"
     dim     = my_mesh.getMeshDimension()
     nbCells = my_mesh.getNumberOfCells()
 

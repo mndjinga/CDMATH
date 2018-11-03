@@ -14,6 +14,7 @@ p0=rho0*c0*c0#reference pressure
 precision=1e-5
 
 def initial_conditions_wave_system(my_mesh):
+    print "Spherical wave initial data"
     dim     = my_mesh.getMeshDimension()
     nbCells = my_mesh.getNumberOfCells()
 
@@ -138,7 +139,7 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution):
     it=0;
     isStationary=False;
     
-    nbVoisinsMax=10;
+    nbVoisinsMax=my_mesh.getMaxNbNeighbours(cdmath.CELLS)
     iterGMRESMax=50
     
     #iteration vectors

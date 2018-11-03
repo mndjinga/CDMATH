@@ -13,6 +13,7 @@ p0=rho0*c0*c0#reference pressure
 precision=1e-5
 
 def initial_conditions_wave_system(my_mesh):
+    print "Spherical wave initial data"
     dim     = my_mesh.getMeshDimension()
     nbCells = my_mesh.getNumberOfCells()
 
@@ -175,7 +176,7 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, outputFileName,resoluti
 
     dt = cfl * dx_min / c0
     
-    print("Starting computation of the linear wave system with an UPWIND scheme …")
+    print("Starting computation of the linear wave system with an explicit UPWIND scheme …")
     
     # Starting time loop
     while (it<ntmax and time <= tmax and not isStationary):
