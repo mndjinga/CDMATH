@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*-coding:utf-8 -*
 
-from math import sin, cos, pi
+from math import sin, cos, pi, sqrt
 import cdmath
 import PV_routines
 import VTK_routines
@@ -52,19 +52,142 @@ def initial_conditions_wave_system(my_mesh):
         
     return pressure_field, velocity_field
 
-def computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt):
+def computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt,scaling):
     nbCells = my_mesh.getNumberOfCells()
     dim=my_mesh.getMeshDimension()
     nbComp=dim+1
-    normal=cdmath.Vector(dim)
 
+    if(not my_mesh.isStructured()):
+        raise ValueError("WaveSystemStaggered: the mesh should be structured");
+
+    NxNyNz=my_mesh.getCellGridStructure()
+    DxDyDz=my_mesh.getDXYZ()
+    
     implMat=cdmath.SparseMatrixPetsc(nbCells*nbComp,nbCells*nbComp,(nbVoisinsMax+1)*nbComp)
 
     idMoinsJacCL=cdmath.Matrix(nbComp)
+    
+    if( dim == 1) :    
+        nx=NxNyNz[0]
+        dx=DxDyDz[0]
+            
+        if( scaling==0 ):
+            for k in range(nbCells):
+                implMat.addValue(k,1*nbCells +  k      , -c0*c0*dt/dx)
+                implMat.addValue(k,1*nbCells + (k+1)%nx,  c0*c0*dt/dx)
+    
+                implMat.addValue(  1*nbCells +  k      ,k,  dt/dx)
+                implMat.addValue(  1*nbCells + (k+1)%nx,k, -dt/dx)
+        else : # scaling >0    
+            for k in range(nbCells):
+                implMat.addValue(k,1*nbCells +  k      , -c0*dt/dx)
+                implMat.addValue(k,1*nbCells + (k+1)%nx,  c0*dt/dx)
+    
+                implMat.addValue(  1*nbCells +  k      ,k,  c0*dt/dx)
+                implMat.addValue(  1*nbCells + (k+1)%nx,k, -c0*dt/dx)
+    
+    elif( dim == 2) :# k = j*nx+i
+        nx=NxNyNz[0]
+        ny=NxNyNz[1]
+        dx=DxDyDz[0]
+        dy=DxDyDz[1]
+                
+        if( scaling==0 ):
+            for k in range(nbCells):
+                i = k % nx
+                j = k //nx
+    
+                implMat.addValue(k,1*nbCells + j*nx +  i      ,   -c0*c0*dt/dx)
+                implMat.addValue(k,1*nbCells + j*nx + (i+1)%nx,    c0*c0*dt/dx)
+    
+                implMat.addValue(k,2*nbCells +   j       *nx + i, -c0*c0*dt/dy)
+                implMat.addValue(k,2*nbCells + ((j+1)%ny)*nx + i,  c0*c0*dt/dy)
+    
+                implMat.addValue(  1*nbCells + j*nx +  i      ,  k,  dt/dx)
+                implMat.addValue(  1*nbCells + j*nx + (i+1)%nx,  k, -dt/dx)
+    
+                implMat.addValue(  2*nbCells +   j       *nx + i,k,  dt/dy)
+                implMat.addValue(  2*nbCells + ((j+1)%ny)*nx + i,k, -dt/dy)
+    
+        else :# scaling >0
+            for k in range(nbCells):
+                i = k % nx
+                j = k //nx
+    
+                implMat.addValue(k,1*nbCells + j*nx +  i      ,   -c0*dt/dx)
+                implMat.addValue(k,1*nbCells + j*nx + (i+1)%nx,    c0*dt/dx)
+    
+                implMat.addValue(k,2*nbCells +   j       *nx + i, -c0*dt/dy)
+                implMat.addValue(k,2*nbCells + ((j+1)%ny)*nx + i,  c0*dt/dy)
+    
+                implMat.addValue(  1*nbCells + j*nx +  i      ,  k,  c0*dt/dx)
+                implMat.addValue(  1*nbCells + j*nx + (i+1)%nx,  k, -c0*dt/dx)
+    
+                implMat.addValue(  2*nbCells +   j       *nx + i,k,  c0*dt/dy)
+                implMat.addValue(  2*nbCells + ((j+1)%ny)*nx + i,k, -c0*dt/dy)
+    
+    elif( dim == 3) :# k = l*nx*ny+j*nx+i
+        nx=NxNyNz[0]
+        ny=NxNyNz[1]
+        nz=NxNyNz[2]
+        dx=DxDyDz[0]
+        dy=DxDyDz[1]
+        dz=DxDyDz[2]
+                
+        if( scaling==0 ):
+            for k in range(nbCells):
+                i =  k % nx
+                j = (k //nx)%ny 
+                l =  k //(nx*ny)
+                
+                implMat.addValue(k,1*nbCells + l*nx*ny + j*nx +  i      ,  -c0*c0*dt/dx)
+                implMat.addValue(k,1*nbCells + l*nx*ny + j*nx + (i+1)%nx,   c0*c0*dt/dx)
+    
+                implMat.addValue(k,2*nbCells + l*nx*ny +   j       *nx + i, -c0*c0*dt/dy)
+                implMat.addValue(k,2*nbCells + l*nx*ny + ((j+1)%ny)*nx + i,  c0*c0*dt/dy)
+    
+                implMat.addValue(k,3*nbCells +   l*nx*ny        + j*nx + i, -c0*c0*dt/dz)
+                implMat.addValue(k,3*nbCells + ((l+1)%nz)*nx*ny + j*nx + i,  c0*c0*dt/dz)
+    
+                implMat.addValue(  1*nbCells + l*nx*ny + j*nx +  i      ,  k,  dt/dx)
+                implMat.addValue(  1*nbCells + l*nx*ny + j*nx + (i+1)%nx,  k, -dt/dx)
+    
+                implMat.addValue(  2*nbCells + l*nx*ny +   j       *nx + i,k,  dt/dy)
+                implMat.addValue(  2*nbCells + l*nx*ny + ((j+1)%ny)*nx + i,k, -dt/dy)
+    
+                implMat.addValue(  3*nbCells +   l*nx*ny        + j*nx + i,k,  dt/dz)
+                implMat.addValue(  3*nbCells + ((l+1)%nz)*nx*ny + j*nx + i,k, -dt/dz)
 
-    v0=cdmath.Vector(dim)
-    for i in range(dim) :
-    for j in range(nbCells):#On parcourt les cellules
+        else:# scaling >0
+            for k in range(nbCells):
+                i =  k % nx
+                j = (k //nx)%ny 
+                l =  k //(nx*ny)
+                
+                implMat.addValue(k,1*nbCells + l*nx*ny + j*nx +  i      ,  -c0*dt/dx)
+                implMat.addValue(k,1*nbCells + l*nx*ny + j*nx + (i+1)%nx,   c0*dt/dx)
+    
+                implMat.addValue(k,2*nbCells + l*nx*ny +   j       *nx + i, -c0*dt/dy)
+                implMat.addValue(k,2*nbCells + l*nx*ny + ((j+1)%ny)*nx + i,  c0*dt/dy)
+    
+                implMat.addValue(k,3*nbCells +   l*nx*ny        + j*nx + i, -c0*dt/dz)
+                implMat.addValue(k,3*nbCells + ((l+1)%nz)*nx*ny + j*nx + i,  c0*dt/dz)
+    
+                implMat.addValue(  1*nbCells + l*nx*ny + j*nx +  i      ,  k,  c0*dt/dx)
+                implMat.addValue(  1*nbCells + l*nx*ny + j*nx + (i+1)%nx,  k, -c0*dt/dx)
+    
+                implMat.addValue(  2*nbCells + l*nx*ny +   j       *nx + i,k,  c0*dt/dy)
+                implMat.addValue(  2*nbCells + l*nx*ny + ((j+1)%ny)*nx + i,k, -c0*dt/dy)
+    
+                implMat.addValue(  3*nbCells +   l*nx*ny        + j*nx + i,k,  c0*dt/dz)
+                implMat.addValue(  3*nbCells + ((l+1)%nz)*nx*ny + j*nx + i,k, -c0*dt/dz)
+
+    #Add the identity matrix on the diagonal
+    #divMat.diagonalShift(1)#only after  filling all coefficients
+    for j in range(nbCells*nbComp):
+        implMat.addValue(j,j,1)#/(c0*c0)
+
+    return implMat
                 
     return implMat
 
@@ -77,7 +200,9 @@ def WaveSystemStaggered(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolu
     it=0;
     isStationary=False;
     
-    nbVoisinsMax=my_mesh.getMaxNbNeighbours(CELLS)
+    scaling=0
+    
+    nbVoisinsMax=my_mesh.getMaxNbNeighbours(cdmath.CELLS)
     iterGMRESMax=50
     
     #iteration vectors
@@ -89,26 +214,30 @@ def WaveSystemStaggered(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolu
     pressure_field, velocity_field = initial_conditions_wave_system(my_mesh)
 
     for k in range(nbCells):
-        Un[k*(dim+1)+0] =      pressure_field[k]
-        Un[k*(dim+1)+1] = rho0*velocity_field[k,0]
-        Un[k*(dim+1)+2] = rho0*velocity_field[k,1]
+        Un[k + 0*nbCells] =      pressure_field[k]
+        Un[k + 1*nbCells] = rho0*velocity_field[k,0] # value on the left face
+        Un[k + 2*nbCells] = rho0*velocity_field[k,1] # value on the bottom face
         if(dim==3):
-            Un[k*(dim+1)+3] = rho0*velocity_field[k,2]
+            Un[k + 3*nbCells] = rho0*initial_velocity[k,2]
+    if( scaling>0):
+        Vn = Un.deepCopy()
+        for k in range(nbCells):
+            Vn[k] = Vn[k]/c0
             
     #sauvegarde de la donnée initiale
     pressure_field.setTime(time,it);
-    pressure_field.writeVTK("WaveSystem"+str(dim)+"DPStag"+meshName+"_pressure");
+    pressure_field.writeVTK("WaveSystem"+str(dim)+"DStaggered"+meshName+"_pressure");
     velocity_field.setTime(time,it);
-    velocity_field.writeVTK("WaveSystem"+str(dim)+"DPStag"+meshName+"_velocity");
+    velocity_field.writeVTK("WaveSystem"+str(dim)+"DStaggered"+meshName+"_velocity");
     #Postprocessing : save 2D picture
-    PV_routines.Save_PV_data_to_picture_file("WaveSystem"+str(dim)+"DPStag"+meshName+"_pressure"+'_0.vtu',"Pressure",'CELLS',"WaveSystem"+str(dim)+"DPStag"+meshName+"_pressure_initial")
-    PV_routines.Save_PV_data_to_picture_file("WaveSystem"+str(dim)+"DPStag"+meshName+"_velocity"+'_0.vtu',"Velocity",'CELLS',"WaveSystem"+str(dim)+"DPStag"+meshName+"_velocity_initial")
+    PV_routines.Save_PV_data_to_picture_file("WaveSystem"+str(dim)+"DStaggered"+meshName+"_pressure"+'_0.vtu',"Pressure",'CELLS',"WaveSystem"+str(dim)+"DStaggered"+meshName+"_pressure_initial")
+    PV_routines.Save_PV_data_to_picture_file("WaveSystem"+str(dim)+"DStaggered"+meshName+"_velocity"+'_0.vtu',"Velocity",'CELLS',"WaveSystem"+str(dim)+"DStaggered"+meshName+"_velocity_initial")
     
     dx_min=my_mesh.minRatioVolSurf()
 
     dt = cfl * dx_min / c0
 
-    divMat=computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt)
+    divMat=computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt,scaling)
 
     # Add the identity matrix on the diagonal
     for j in range(nbCells*(dim+1)):
@@ -129,34 +258,38 @@ def WaveSystemStaggered(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolu
             raise ValueError("Pas de convergence du système linéaire");
         dUn-=Un
         
-        maxVector=dUn.maxVector(dim+1)
-        isStationary= maxVector[0]/p0<precision and maxVector[1]/rho0<precision and maxVector[2]/rho0<precision;
-        if(dim==3):
-            isStationary=isStationary and maxVector[3]/rho0<precision
+        max_dp=0 ;        max_dq=0
+        for k in range(nbCells):
+            max_dp = max(max_dp,abs(dUn[k]))
+            for i in range(dim):
+                max_dq=max(max_dq,abs(dUn[k+(1+i)*nbCells]))
+                
+        isStationary= max_dp/p0<precision and max_dq/rho0<precision
+
         time=time+dt;
         it=it+1;
     
         #Sauvegardes
         if(it%output_freq==0 or it>=ntmax or isStationary or time >=tmax):
             print"-- Iter: " + str(it) + ", Time: " + str(time) + ", dt: " + str(dt)
-            print "Variation temporelle relative : pressure ", maxVector[0]/p0 ,", velocity x", maxVector[1]/rho0 ,", velocity y", maxVector[2]/rho0
+            print "Variation temporelle relative : pressure ", max_dp/p0 ,", velocity ", max_dq/rho0
             print "Linear system converged in ", iterGMRES, " GMRES iterations"
 
             for k in range(nbCells):
-                pressure_field[k]=Un[k*(dim+1)+0]
-                velocity_field[k,0]=Un[k*(dim+1)+1]/rho0
+                pressure_field[k]=Un[k]
+                velocity_field[k,0]=Un[k+1*nbCells]/rho0
                 if(dim>1):
-                    velocity_field[k,1]=Un[k*(dim+1)+2]/rho0
+                    velocity_field[k,1]=Un[k+2*nbCells]/rho0
                     if(dim>2):
-                        velocity_field[k,2]=Un[k*(dim+1)+3]/rho0
+                        velocity_field[k,2]=Un[k+3*nbCells]/rho0
                 
             pressure_field.setTime(time,it);
-            pressure_field.writeVTK("WaveSystem"+str(dim)+"DPStag"+meshName+"_pressure",False);
+            pressure_field.writeVTK("WaveSystem"+str(dim)+"DStaggered"+meshName+"_pressure",False);
             velocity_field.setTime(time,it);
-            velocity_field.writeVTK("WaveSystem"+str(dim)+"DPStag"+meshName+"_velocity",False);
+            velocity_field.writeVTK("WaveSystem"+str(dim)+"DStaggered"+meshName+"_velocity",False);
 
     print"-- Iter: " + str(it) + ", Time: " + str(time) + ", dt: " + str(dt)
-    print "Variation temporelle relative : pressure ", maxVector[0]/p0 ,", velocity x", maxVector[1]/rho0 ,", velocity y", maxVector[2]/rho0
+    print "Variation temporelle relative : pressure ", max_dp/p0 ,", velocity ", max_dq/rho0 
     print
 
     if(it>=ntmax):
@@ -166,13 +299,13 @@ def WaveSystemStaggered(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolu
         print "------------------------------------------------------------------------------------"
 
         pressure_field.setTime(time,0);
-        pressure_field.writeVTK("WaveSystem"+str(dim)+"DPStag"+meshName+"_pressure_Stat");
+        pressure_field.writeVTK("WaveSystem"+str(dim)+"DStaggered"+meshName+"_pressure_Stat");
         velocity_field.setTime(time,0);
-        velocity_field.writeVTK("WaveSystem"+str(dim)+"DPStag"+meshName+"_velocity_Stat");
+        velocity_field.writeVTK("WaveSystem"+str(dim)+"DStaggered"+meshName+"_velocity_Stat");
 
         #Postprocessing : save 2D picture
-        PV_routines.Save_PV_data_to_picture_file("WaveSystem"+str(dim)+"DPStag"+meshName+"_pressure_Stat"+'_0.vtu',"Pressure",'CELLS',"WaveSystem"+str(dim)+"DPStag"+meshName+"_pressure_Stat")
-        PV_routines.Save_PV_data_to_picture_file("WaveSystem"+str(dim)+"DPStag"+meshName+"_velocity_Stat"+'_0.vtu',"Velocity",'CELLS',"WaveSystem"+str(dim)+"DPStag"+meshName+"_velocity_Stat")
+        PV_routines.Save_PV_data_to_picture_file("WaveSystem"+str(dim)+"DStaggered"+meshName+"_pressure_Stat"+'_0.vtu',"Pressure",'CELLS',"WaveSystem"+str(dim)+"DStaggered"+meshName+"_pressure_Stat")
+        PV_routines.Save_PV_data_to_picture_file("WaveSystem"+str(dim)+"DStaggered"+meshName+"_velocity_Stat"+'_0.vtu',"Velocity",'CELLS',"WaveSystem"+str(dim)+"DStaggered"+meshName+"_velocity_Stat")
         
     else:
         print "Temps maximum Tmax= ", tmax, " atteint"
@@ -180,9 +313,9 @@ def WaveSystemStaggered(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolu
 
 def solve(my_mesh,meshName,resolution):
     print "Resolution of the Wave system in dimension ", my_mesh.getSpaceDimension()
-    print "Numerical method : immplicit pseudo staggered"
-    print "Initial data : constant pressure, divergence free velocity"
-    print "Wall boundary conditions"
+    print "Numerical method : staggered scheme"
+    print "Initial data : Spherical wave"
+    print "Periodic boundary conditions"
     print "Mesh name : ",meshName , my_mesh.getNumberOfCells(), " cells"
     
     # Problem data
@@ -200,8 +333,10 @@ def solve_file( filename,meshName, resolution):
     
 
 if __name__ == """__main__""":
-	if len(sys.argv) >1 :
-		my_mesh = cdmath.Mesh(sys.argv[1])
-		solve(my_mesh,my_mesh.getName(),100)
-	else :
-		raise ValueError("WaveSystemPStag.py expects a mesh file name")
+    if len(sys.argv) >1 :
+        my_mesh = cdmath.Mesh(sys.argv[1])
+        solve(my_mesh,my_mesh.getName(),100)
+    else :
+        nx=50
+        my_mesh = cdmath.Mesh(0,1,nx,0,1,nx)
+        solve(my_mesh,my_mesh.getName(),100)

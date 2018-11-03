@@ -1,39 +1,9 @@
 
-SET(MESH_MED
-  ../../ressources/meshSquare.med
-  ../../ressources/meshCube.med
-  ../../ressources/squareWithSquares.med
-  ../../ressources/cubeWithCubes.med
-  )
-
-file(COPY ${MESH_MED} DESTINATION ${CMAKE_BINARY_DIR}/tests/examples/WaveSystemStaggered)
-install(FILES ${MESH_MED} DESTINATION share/examples/WaveSystemStaggered)
-
 if (CDMATH_WITH_PYTHON AND CDMATH_WITH_PETSC AND CDMATH_WITH_POSTPRO)
 
-    SET(MESH_FILE  ../../ressources/meshSquare.med  )
-
-    ADD_TEST(ExampleWaveSystem_2DFV_Staggered_SQUARE_triangles ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/WaveSystemStaggered.py  ${MESH_FILE})
-    SET_PROPERTY(TEST ExampleWaveSystem_2DFV_Staggered_SQUARE_triangles PROPERTY ENVIRONMENT "LD_LIBRARY_PATH=${CMAKE_INSTALL_PREFIX}/lib:${CMAKE_INSTALL_PREFIX}/lib/medcoupling:${CMAKE_INSTALL_PREFIX}/lib/med:${PETSC_DIR}/${PETSC_ARCH}/lib:${HDF5_ROOT_DIR}/lib:${PV_LIB_DIR}")
-    SET_PROPERTY(TEST ExampleWaveSystem_2DFV_Staggered_SQUARE_triangles APPEND PROPERTY ENVIRONMENT "PYTHONPATH=${CMAKE_INSTALL_PREFIX}/lib/cdmath:${CMAKE_INSTALL_PREFIX}/bin/cdmath:${CMAKE_INSTALL_PREFIX}/${MEDCOUPLING_INSTALL_PYTHON}:${CMAKE_INSTALL_PREFIX}/bin/cdmath/postprocessing:${PV_PYTHON_DIR}")
-
-    SET(MESH_FILE  ../../ressources/squareWithSquares.med  )
-
-    ADD_TEST(ExampleWaveSystem_2DFV_Staggered_SQUARE_squares ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/WaveSystemStaggered.py  ${MESH_FILE})
+    ADD_TEST(ExampleWaveSystem_2DFV_Staggered_SQUARE_squares ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/WaveSystemStaggered.py )
     SET_PROPERTY(TEST ExampleWaveSystem_2DFV_Staggered_SQUARE_squares PROPERTY ENVIRONMENT "LD_LIBRARY_PATH=${CMAKE_INSTALL_PREFIX}/lib:${CMAKE_INSTALL_PREFIX}/lib/medcoupling:${CMAKE_INSTALL_PREFIX}/lib/med:${PETSC_DIR}/${PETSC_ARCH}/lib:${HDF5_ROOT_DIR}/lib:${PV_LIB_DIR}")
-    SET_PROPERTY(TEST ExampleWaveSystem_2DFV_Staggered_SQUARE_squares APPEND PROPERTY ENVIRONMENT "PYTHONPATH=${CMAKE_INSTALL_PREFIX}/lib/cdmath:${CMAKE_INSTALL_PREFIX}/bin/cdmath:${CMAKE_INSTALL_PREFIX}/${MEDCOUPLING_INSTALL_PYTHON}:${CMAKE_INSTALL_PREFIX}/bin/cdmath/postprocessing:${PV_PYTHON_DIR}")
-
-    SET(MESH_FILE  ../../ressources/meshCube.med  )
-
-    ADD_TEST(ExampleWaveSystem_3DFV_Staggered_CUBE_tetrahedra ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/WaveSystemStaggered.py  ${MESH_FILE})
-    SET_PROPERTY(TEST ExampleWaveSystem_3DFV_Staggered_CUBE_tetrahedra PROPERTY ENVIRONMENT "LD_LIBRARY_PATH=${CMAKE_INSTALL_PREFIX}/lib:${CMAKE_INSTALL_PREFIX}/lib/medcoupling:${CMAKE_INSTALL_PREFIX}/lib/med:${PETSC_DIR}/${PETSC_ARCH}/lib:${HDF5_ROOT_DIR}/lib:${PV_LIB_DIR}")
-    SET_PROPERTY(TEST ExampleWaveSystem_3DFV_Staggered_CUBE_tetrahedra APPEND PROPERTY ENVIRONMENT "PYTHONPATH=${CMAKE_INSTALL_PREFIX}/lib/cdmath:${CMAKE_INSTALL_PREFIX}/bin/cdmath:${CMAKE_INSTALL_PREFIX}/${MEDCOUPLING_INSTALL_PYTHON}:${CMAKE_INSTALL_PREFIX}/bin/cdmath/postprocessing:${PV_PYTHON_DIR}")
-
-    SET(MESH_FILE  ../../ressources/cubeWithCubes.med  )
-
-    ADD_TEST(ExampleWaveSystem_3DFV_Staggered_CUBE_cubes ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/WaveSystemStaggered.py  ${MESH_FILE})
-    SET_PROPERTY(TEST ExampleWaveSystem_3DFV_Staggered_CUBE_cubes PROPERTY ENVIRONMENT "LD_LIBRARY_PATH=${CMAKE_INSTALL_PREFIX}/lib:${CMAKE_INSTALL_PREFIX}/lib/medcoupling:${CMAKE_INSTALL_PREFIX}/lib/med:${PETSC_DIR}/${PETSC_ARCH}/lib:${HDF5_ROOT_DIR}/lib:${PV_LIB_DIR}")
-    SET_PROPERTY(TEST ExampleWaveSystem_3DFV_Staggered_CUBE_cubes APPEND PROPERTY ENVIRONMENT "PYTHONPATH=${CMAKE_INSTALL_PREFIX}/lib/cdmath:${CMAKE_INSTALL_PREFIX}/bin/cdmath:${CMAKE_INSTALL_PREFIX}/${MEDCOUPLING_INSTALL_PYTHON}:${CMAKE_INSTALL_PREFIX}/bin/cdmath/postprocessing:${PV_PYTHON_DIR}")
+    SET_PROPERTY(TEST ExampleWaveSystem_2DFV_Staggered_SQUARE_squares APPEND PROPERTY ENVIRONMENT "PYTHONPATH=${CMAKE_CURRENT_BINARY_DIR}:${CDMATH_BINARY_DIR}/postprocessing:${CMAKE_INSTALL_PREFIX}/${MEDCOUPLING_INSTALL_PYTHON}:${PV_PYTHON_DIR}:${CMAKE_INSTALL_PREFIX}/lib/cdmath:${CMAKE_INSTALL_PREFIX}/bin/cdmath")
 
 endif (CDMATH_WITH_PYTHON AND CDMATH_WITH_PETSC AND CDMATH_WITH_POSTPRO)
 
