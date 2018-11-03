@@ -121,6 +121,42 @@ def Save_PV_data_to_picture_file(inputFileName, field_name,
     # show color bar/color legend
     display.SetScalarBarVisibility(renderView1, True)
 
+    if field_name=='Velocity' :
+        print "stream tracer"
+        # create a new 'Stream Tracer'
+        streamTracer1 = pvs.StreamTracer(Input=reader, SeedType='Point Source')
+        streamTracer1.Vectors = ['CELLS', 'Velocity']
+        
+        # init the 'Point Source' selected for 'SeedType'
+        streamTracer1.SeedType.Center = [0.5, 0.5, 0.0]
+        streamTracer1.SeedType.Radius = 0.0
+        #streamTracer1.SeedType.Resolution = 25# Pb : claims attribute Resolution does not exist
+        
+        # Properties modified on streamTracer1
+        streamTracer1.SeedType = 'High Resolution Line Source'
+        
+        # show data in view
+        streamTracer1Display = pvs.Show(streamTracer1, renderView1)
+        
+        # create a new 'Stream Tracer'
+        streamTracer2 = pvs.StreamTracer(Input=reader, SeedType='Point Source')
+        streamTracer2.Vectors = ['CELLS', 'Velocity']
+        
+        # init the 'Point Source' selected for 'SeedType'
+        streamTracer2.SeedType.Center = [0.5, 0.5, 0.0]
+        streamTracer2.SeedType.Radius = 0.0
+        
+        # Properties modified on streamTracer2
+        streamTracer2.SeedType = 'High Resolution Line Source'
+        
+        # Properties modified on streamTracer2.SeedType
+        streamTracer2.SeedType.Point1 = [0.0, 1.0, 0.0]
+        streamTracer2.SeedType.Point2 = [1.0, 0.0, 0.0]
+        #streamTracer2.SeedType.Resolution = 25# Pb : claims attribute Resolution does not exist
+        
+        # show data in view
+        streamTracer2Display = pvs.Show(streamTracer2, renderView1)
+    
     pvs.SaveScreenshot(outputFileName+".png", magnification=1, quality=100, view=renderView1)
     display.SetScalarBarVisibility(renderView1, False)
     pvs.Delete()
