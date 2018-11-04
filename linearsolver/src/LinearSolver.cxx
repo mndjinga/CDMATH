@@ -499,7 +499,7 @@ LinearSolver::solve( void )
 	KSPConvergedReason reason;
 	KSPGetConvergedReason(_ksp,&reason);
 
-	if (reason==3 )
+	if (reason==2 || reason==3)
 		_convergence=true;
 	else{
 		_convergence=false;
