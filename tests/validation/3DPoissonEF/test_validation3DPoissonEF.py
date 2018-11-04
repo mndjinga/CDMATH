@@ -10,7 +10,7 @@ convergence_synthesis=dict(FiniteElements3DPoisson_CUBE.test_desc)
 def test_validation3DEF():
     start = time.time()
     #### 3D FE tetrahedra mesh
-    meshList=['meshCubeTetrahedra_0','meshCubeTetrahedra_1','meshCubeTetrahedra_2','meshCubeTetrahedra_3','meshCubeTetrahedra_4','meshCubeTetrahedra_5','meshCubeTetrahedra_6']
+    meshList=['meshCubeTetrahedra_0','meshCubeTetrahedra_1','meshCubeTetrahedra_2','meshCubeTetrahedra_3','meshCubeTetrahedra_4','meshCubeTetrahedra_5']#,'meshCubeTetrahedra_6']
     meshType="Unstructured_tetrahedra"
     testColor="Green"
     nbMeshes=len(meshList)
