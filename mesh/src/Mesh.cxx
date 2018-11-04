@@ -340,7 +340,8 @@ Mesh::getIndexFacePeriodic(int indexFace) const
         {
             double xi=_faces[_boundaryFaceIds[iface]].x();
             double yi=_faces[_boundaryFaceIds[iface]].y();
-            if (  (abs(y-yi)<eps  || abs(x-xi)<eps) 
+            if (   (abs(y-yi)<eps || abs(x-xi)<eps // Case of a square geometry
+                 || abs(y+yi) + abs(x+xi)<eps ) // Case of a cercle geometry
                && fabs(_faces[indexFace].getMeasure()-_faces[_boundaryFaceIds[iface]].getMeasure())<eps
                && fabs(_faces[indexFace].getXN() + _faces[_boundaryFaceIds[iface]].getXN())<eps
                && fabs(_faces[indexFace].getYN() + _faces[_boundaryFaceIds[iface]].getYN())<eps
@@ -362,7 +363,8 @@ Mesh::getIndexFacePeriodic(int indexFace) const
             double xi=_faces[_boundaryFaceIds[iface]].x();
             double yi=_faces[_boundaryFaceIds[iface]].y();
             double zi=_faces[_boundaryFaceIds[iface]].z();
-            if (  ((abs(y-yi)<eps && abs(x-xi)<eps) || (abs(x-xi)<eps && abs(z-zi)<eps) || (abs(y-yi)<eps && abs(z-zi)<eps))
+            if (  ((abs(y-yi)<eps && abs(x-xi)<eps) || (abs(x-xi)<eps && abs(z-zi)<eps) || (abs(y-yi)<eps && abs(z-zi)<eps)// Case of a cube geometry
+                 || abs(y+yi) + abs(x+xi)<eps + abs(z+zi)<eps ) // Case of a sphere geometry
                && fabs(_faces[indexFace].getMeasure()-_faces[_boundaryFaceIds[iface]].getMeasure())<eps
                && fabs(_faces[indexFace].getXN() + _faces[_boundaryFaceIds[iface]].getXN())<eps
                && fabs(_faces[indexFace].getYN() + _faces[_boundaryFaceIds[iface]].getYN())<eps
