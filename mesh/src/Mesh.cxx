@@ -86,6 +86,7 @@ Mesh::Mesh( const MEDCoupling::MEDCouplingIMesh* mesh )
 	double* Box0=new double[2*_spaceDim];
 	mesh->getBoundingBox(Box0);
     _name=mesh->getName();
+    _indexFacePeriodicSet=false;
 
 	_xMin=Box0[0];
 	_xMax=Box0[1];
@@ -154,6 +155,9 @@ Mesh::Mesh( const Mesh& m )
 	_nodes   = new Node[_numberOfNodes] ;
 	_faces   = new Face[_numberOfFaces] ;
 	_cells   = new Cell[_numberOfCells] ;
+    _indexFacePeriodicSet= m.isIndexFacePeriodicSet();
+    if(_indexFacePeriodicSet)
+        _indexFacePeriodicMap=m.getIndexFacePeriodic();
 
 	for (int i=0;i<_numberOfNodes;i++)
 		_nodes[i]=m.getNode(i);
@@ -187,6 +191,7 @@ Mesh::readMeshMed( const std::string filename, const int meshLevel)
 	_meshDim=_mesh->getMeshDimension();
 	_spaceDim=_mesh->getSpaceDimension();
     _name=_mesh->getName();
+    _indexFacePeriodicSet=false;
     MEDCoupling::MEDCouplingIMesh* structuredMesh = dynamic_cast<MEDCoupling::MEDCouplingIMesh*> (_mesh.retn());
     if(structuredMesh)
     {
@@ -1341,6 +1346,7 @@ Mesh::Mesh( double xmin, double xmax, int nx, double ymin, double ymax, int ny, 
 	_spaceDim = 2 ;
 	_meshDim  = 2 ;
     _name=meshName;
+    _indexFacePeriodicSet=false;
     _isStructured = true;
 	_nxyz.resize(_spaceDim);
 	_nxyz[0]=nx;
@@ -1404,6 +1410,7 @@ Mesh::Mesh( double xmin, double xmax, int nx, double ymin, double ymax, int ny, 
 	_spaceDim = 3;
 	_meshDim  = 3;
     _name=meshName;
+    _indexFacePeriodicSet=false;
 	_xMin=xmin;
 	_xMax=xmax;
 	_yMin=ymin;
