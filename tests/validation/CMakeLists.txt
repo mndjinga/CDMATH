@@ -19,6 +19,8 @@ SET( VALIDATION_FOLDERS
 2DWaveSystemPStagSquares 
 2DWaveSystemPStagTriangles 
 2DWaveSystemStaggeredSquares 
+2DWaveSystemCenteredSquares 
+2DWaveSystemCenteredTriangles 
 2DWaveSystemUpwindSquares 
 2DWaveSystemUpwindTriangles 
 2DWaveSystemUpwindCheckerboard
