@@ -350,10 +350,10 @@ def solve_file( filename,meshName, resolution, meshType, testColor,cfl,test_bc):
     
 
 if __name__ == """__main__""":
-    M1=cdmath.Mesh(0,0,1,20,0,1,20)
+    M1=cdmath.Mesh(0.,1.,20,0.,1.,20,0)
     cfl=0.5
     solve(M1,"SquareRegularTriangles",100,"Regular triangles","Green",cfl,"Periodic")
 
-    M2=cdmath.Mesh(6,0,1,10,0,1,10,0,1,10)
+    M2=cdmath.Mesh(0.,1.,10,0.,1.,10,0.,1.,10,6)
     cfl=1./3
     solve(M2,"CubeRegularTetrahedra",100,"Regular tetrahedra","Green",cfl,"Wall")
