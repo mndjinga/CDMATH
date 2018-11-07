@@ -87,7 +87,7 @@ Mesh::Mesh( const MEDCoupling::MEDCouplingIMesh* mesh )
 	mesh->getBoundingBox(Box0);
     _name=mesh->getName();
     _indexFacePeriodicSet=false;
-
+    
 	_xMin=Box0[0];
 	_xMax=Box0[1];
 	if (_spaceDim>=2)
@@ -158,7 +158,7 @@ Mesh::Mesh( const Mesh& m )
     _indexFacePeriodicSet= m.isIndexFacePeriodicSet();
     if(_indexFacePeriodicSet)
         _indexFacePeriodicMap=m.getIndexFacePeriodic();
-
+    
 	for (int i=0;i<_numberOfNodes;i++)
 		_nodes[i]=m.getNode(i);
 
@@ -285,23 +285,18 @@ Mesh::setGroupAtPlan(double value, int direction, double eps, std::string groupN
 }
 
 void
-Mesh::setPeriodicFaces()
+Mesh::setBoundaryNodes()
 {
-    if(!_indexFacePeriodicSet)
+    for (int iface=0;iface<_boundaryFaceIds.size();iface++)
     {
-	for (int iface=0;iface<_numberOfFaces;iface++)
-        if (_faces[iface].isBorder())
+        IntTab nodesID= _faces[_boundaryFaceIds[iface]].getNodesId();
+        int nbNodes = _faces[_boundaryFaceIds[iface]].getNumberOfNodes();
+        for(int inode=0 ; inode<nbNodes ; inode++)
         {
-            _boundaryFaceIds.push_back(iface);
-			IntTab nodesID= _faces[iface].getNodesId();
-			int nbNodes = _faces[iface].getNumberOfNodes();
-			for(int inode=0 ; inode<nbNodes ; inode++)
-				_boundaryNodeIds.push_back(nodesID[inode]);
+            std::vector<int>::const_iterator  it = std::find(_boundaryNodeIds.begin(),_boundaryNodeIds.end(),nodesID[inode]);
+            if( it != _boundaryNodeIds.end() )
+                _boundaryNodeIds.push_back(nodesID[inode]);
         }
-	for (int iface=0;iface<_boundaryFaceIds.size();iface++)
-        _indexFacePeriodicMap[_boundaryFaceIds[iface]]=getIndexFacePeriodic(_boundaryFaceIds[iface]);
-    
-    _indexFacePeriodicSet=true;    
     }
 }
 
@@ -311,82 +306,97 @@ Mesh::getIndexFacePeriodic( void ) const
     return _indexFacePeriodicMap;
 }
 
-int
-Mesh::getIndexFacePeriodic(int indexFace) const
+void
+Mesh::setPeriodicFaces()
 {
     if(_indexFacePeriodicSet)
-    {
-        std::map<int,int>::const_iterator  it = _indexFacePeriodicMap.find(indexFace);
-        if( it != _indexFacePeriodicMap.end() )
-            return it->second;
-        else
-        {
-            cout<<"Pb with indexFace= "<<indexFace<<endl;
-            throw CdmathException("Mesh::getIndexFacePeriodic: not a periodic face" );
-        }
-    }
+        return;
         
+    double eps=1.E-10;
+
+    for (int indexFace=0;indexFace<_boundaryFaceIds.size() ; indexFace++)
+    {
+        int iface_perio=-1;
+        if(_meshDim==2)
+        {
+            double x=_faces[_boundaryFaceIds[indexFace]].x();
+            double y=_faces[_boundaryFaceIds[indexFace]].y();
+            
+            for (int iface=0;iface<_boundaryFaceIds.size() ; iface++)
+            {
+                double xi=_faces[_boundaryFaceIds[iface]].x();
+                double yi=_faces[_boundaryFaceIds[iface]].y();
+                if ( iface!=indexFace
+                   &&  (abs(y-yi)<eps || abs(x-xi)<eps )// Case of a square geometry
+                     //|| abs(y+yi) + abs(x+xi)<eps ) // Case of a cercle geometry
+                   && fabs(_faces[_boundaryFaceIds[indexFace]].getMeasure()-_faces[_boundaryFaceIds[iface]].getMeasure())<eps
+                   && fabs(_faces[_boundaryFaceIds[indexFace]].getXN() + _faces[_boundaryFaceIds[iface]].getXN())<eps
+                   && fabs(_faces[_boundaryFaceIds[indexFace]].getYN() + _faces[_boundaryFaceIds[iface]].getYN())<eps
+                   && fabs(_faces[_boundaryFaceIds[indexFace]].getZN() + _faces[_boundaryFaceIds[iface]].getZN())<eps )
+                {
+                    cout<<"indexFace="<<indexFace<<", iface="<<iface<<endl;
+                    iface_perio=_boundaryFaceIds[iface];
+                    break;
+                }
+            }
+        }
+        else if(_meshDim==3)
+        {
+            double x=_faces[_boundaryFaceIds[indexFace]].x();
+            double y=_faces[_boundaryFaceIds[indexFace]].y();
+            double z=_faces[_boundaryFaceIds[indexFace]].z();
+        
+            for (int iface=0;iface<_boundaryFaceIds.size() ; iface++)
+            {
+                double xi=_faces[_boundaryFaceIds[iface]].x();
+                double yi=_faces[_boundaryFaceIds[iface]].y();
+                double zi=_faces[_boundaryFaceIds[iface]].z();
+                if ( iface!=indexFace
+                   && ((abs(y-yi)<eps && abs(x-xi)<eps) || (abs(x-xi)<eps && abs(z-zi)<eps) || (abs(y-yi)<eps && abs(z-zi)<eps))// Case of a cube geometry
+                     //|| abs(y+yi) + abs(x+xi)<eps + abs(z+zi)<eps )// Case of a sphere geometry
+                   && fabs(_faces[_boundaryFaceIds[indexFace]].getMeasure()-_faces[_boundaryFaceIds[iface]].getMeasure())<eps
+                   && fabs(_faces[_boundaryFaceIds[indexFace]].getXN() + _faces[_boundaryFaceIds[iface]].getXN())<eps
+                   && fabs(_faces[_boundaryFaceIds[indexFace]].getYN() + _faces[_boundaryFaceIds[iface]].getYN())<eps
+                   && fabs(_faces[_boundaryFaceIds[indexFace]].getZN() + _faces[_boundaryFaceIds[iface]].getZN())<eps )
+                {
+                    iface_perio=_boundaryFaceIds[iface];
+                    break;
+                }
+            }  
+        }
+        else
+            throw CdmathException("Mesh::setPeriodicFaces: Mesh dimensionshould be 2 or 3");
+        
+        if (iface_perio==-1)
+            throw CdmathException("Mesh::setPeriodicFaces: periodic face not found, iface_perio==-1 " );
+        else
+            _indexFacePeriodicMap[_boundaryFaceIds[indexFace]]=iface_perio;
+    
+        cout<<"indexFace="<<indexFace<<", Face="<< _boundaryFaceIds[indexFace]<< " iface_perio="<< iface_perio << endl;
+    }
+    _indexFacePeriodicSet=true;    
+}
+
+int
+Mesh::getIndexFacePeriodic(int indexFace)
+{
 	if (!_faces[indexFace].isBorder())
         {
             cout<<"Pb with indexFace= "<<indexFace<<endl;
             throw CdmathException("Mesh::getIndexFacePeriodic: not a border face" );
         }
         
-    double eps=1.E-10;
-    int iface=0;
-    int ifaceOk=-1;
+    if(!_indexFacePeriodicSet)
+        setPeriodicFaces();
 
-    if(_meshDim==2)
-    {
-        double x=_faces[indexFace].x();
-        double y=_faces[indexFace].y();
-        
-        for (iface=0;iface<_boundaryFaceIds.size();iface++)
-        {
-            double xi=_faces[_boundaryFaceIds[iface]].x();
-            double yi=_faces[_boundaryFaceIds[iface]].y();
-            if (   (abs(y-yi)<eps || abs(x-xi)<eps // Case of a square geometry
-                 || abs(y+yi) + abs(x+xi)<eps ) // Case of a cercle geometry
-               && fabs(_faces[indexFace].getMeasure()-_faces[_boundaryFaceIds[iface]].getMeasure())<eps
-               && fabs(_faces[indexFace].getXN() + _faces[_boundaryFaceIds[iface]].getXN())<eps
-               && fabs(_faces[indexFace].getYN() + _faces[_boundaryFaceIds[iface]].getYN())<eps
-               && fabs(_faces[indexFace].getZN() + _faces[_boundaryFaceIds[iface]].getZN())<eps )
-            {
-                ifaceOk=_boundaryFaceIds[iface];
-                break;
-            }
-        }
-    }
-    else if(_meshDim==3)
-    {
-        double x=_faces[indexFace].x();
-        double y=_faces[indexFace].y();
-        double z=_faces[indexFace].z();
-    
-        for (iface=0;iface<_boundaryFaceIds.size();iface++)
-        {
-            double xi=_faces[_boundaryFaceIds[iface]].x();
-            double yi=_faces[_boundaryFaceIds[iface]].y();
-            double zi=_faces[_boundaryFaceIds[iface]].z();
-            if (  ((abs(y-yi)<eps && abs(x-xi)<eps) || (abs(x-xi)<eps && abs(z-zi)<eps) || (abs(y-yi)<eps && abs(z-zi)<eps)// Case of a cube geometry
-                 || abs(y+yi) + abs(x+xi)<eps + abs(z+zi)<eps ) // Case of a sphere geometry
-               && fabs(_faces[indexFace].getMeasure()-_faces[_boundaryFaceIds[iface]].getMeasure())<eps
-               && fabs(_faces[indexFace].getXN() + _faces[_boundaryFaceIds[iface]].getXN())<eps
-               && fabs(_faces[indexFace].getYN() + _faces[_boundaryFaceIds[iface]].getYN())<eps
-               && fabs(_faces[indexFace].getZN() + _faces[_boundaryFaceIds[iface]].getZN())<eps )
-            {
-                ifaceOk=_boundaryFaceIds[iface];
-                break;
-            }
-        }    
-    }
+    std::map<int,int>::const_iterator  it = _indexFacePeriodicMap.find(indexFace);
+    if( it != _indexFacePeriodicMap.end() )
+        return it->second;
     else
-        throw CdmathException("Mesh::getIndexFacePeriodic: Mesh dimensionshould be 2 or 3");
-    
-    if (ifaceOk==-1)
-        throw CdmathException("Mesh::getIndexFacePeriodic: periodic face not found, ifaceOk==-1 " );
-
-    return ifaceOk;
+    {
+        cout<<"Pb with indexFace= "<<indexFace<<endl;
+        throw CdmathException("Mesh::getIndexFacePeriodic: not a periodic face" );
+    }
 }
 
 bool
