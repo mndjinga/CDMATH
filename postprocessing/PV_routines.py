@@ -83,6 +83,12 @@ def Save_PV_data_to_picture_file(inputFileName, field_name,
                              ):
     pvs._DisableFirstRenderCameraReset()
 
+    #pvs.HideAll(view=None)#Not available in paraview 5.1.2
+    view = pvs.GetActiveView()
+    sources = pvs.GetSources().values()
+    for aSource in sources:
+        pvs.Hide(aSource, view)
+
     # create a new 'XML Unstructured Grid Reader'
     reader = pvs.XMLUnstructuredGridReader(FileName=[inputFileName])
     if node_or_cell== 'CELLS':
@@ -121,7 +127,14 @@ def Save_PV_data_to_picture_file(inputFileName, field_name,
     # show color bar/color legend
     display.SetScalarBarVisibility(renderView1, True)
 
+    pvs.SaveScreenshot(outputFileName+".png", magnification=1, quality=100, view=renderView1)
+
     if field_name=='Velocity' :
+        #pvs.HideAll(view=None)#Not available in paraview 5.1.2
+        view = pvs.GetActiveView()
+        sources = pvs.GetSources().values()
+        for aSource in sources:
+            pvs.Hide(aSource, view)
         # create a new 'Stream Tracer'
         streamTracer1 = pvs.StreamTracer(Input=reader, SeedType='Point Source')
         streamTracer1.Vectors = ['CELLS', 'Velocity']
@@ -129,11 +142,15 @@ def Save_PV_data_to_picture_file(inputFileName, field_name,
         # init the 'Point Source' selected for 'SeedType'
         streamTracer1.SeedType.Center = [0.5, 0.5, 0.0]
         streamTracer1.SeedType.Radius = 0.0
-        #streamTracer1.SeedType.Resolution = 25# Pb : claims attribute Resolution does not exist
         
         # Properties modified on streamTracer1
         streamTracer1.SeedType = 'High Resolution Line Source'
         
+        # Properties modified on streamTracer1.SeedType
+        streamTracer1.SeedType.Point1 = [0.0, 0.0, 0.0]
+        streamTracer1.SeedType.Point2 = [1.0, 1.0, 0.0]
+        streamTracer1.SeedType.Resolution = 20# Pb : claims attribute Resolution does not exist
+
         # show data in view
         streamTracer1Display = pvs.Show(streamTracer1, renderView1)
         
@@ -151,13 +168,13 @@ def Save_PV_data_to_picture_file(inputFileName, field_name,
         # Properties modified on streamTracer2.SeedType
         streamTracer2.SeedType.Point1 = [0.0, 1.0, 0.0]
         streamTracer2.SeedType.Point2 = [1.0, 0.0, 0.0]
-        #streamTracer2.SeedType.Resolution = 25# Pb : claims attribute Resolution does not exist
+        streamTracer2.SeedType.Resolution = 25# Pb : claims attribute Resolution does not exist
         
         # show data in view
         streamTracer2Display = pvs.Show(streamTracer2, renderView1)
+
+        pvs.SaveScreenshot(outputFileName+"_streamlines.png", magnification=1, quality=100, view=renderView1)
     
-    pvs.SaveScreenshot(outputFileName+".png", magnification=1, quality=100, view=renderView1)
-    display.SetScalarBarVisibility(renderView1, False)
     pvs.Delete()
     
 
