@@ -334,11 +334,6 @@ Mesh::setPeriodicFaces()
                    && fabs(_faces[_boundaryFaceIds[indexFace]].getZN() + _faces[_boundaryFaceIds[iface]].getZN())<eps )
                 {
                     iface_perio=_boundaryFaceIds[iface];
-                    cout<<"indexFace="<<indexFace<<", iface="<<iface<<endl;
-                    cout<<" Face Id ="<< _boundaryFaceIds[indexFace]<< " iface_perio="<< iface_perio << endl;
-                    cout<<_faces[_boundaryFaceIds[indexFace]].getXN() <<", "<< _faces[_boundaryFaceIds[iface]].getXN()<<endl;
-                    cout<<_faces[_boundaryFaceIds[indexFace]].getYN() <<", "<< _faces[_boundaryFaceIds[iface]].getYN()<<endl;
-                    cout<<_faces[_boundaryFaceIds[indexFace]].getZN() <<", "<< _faces[_boundaryFaceIds[iface]].getZN()<<endl;
                     break;
                 }
             }
