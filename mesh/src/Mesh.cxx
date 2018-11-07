@@ -326,16 +326,19 @@ Mesh::setPeriodicFaces()
             {
                 double xi=_faces[_boundaryFaceIds[iface]].x();
                 double yi=_faces[_boundaryFaceIds[iface]].y();
-                if ( iface!=indexFace
-                   &&  (abs(y-yi)<eps || abs(x-xi)<eps )// Case of a square geometry
+                if (   (abs(y-yi)<eps || abs(x-xi)<eps )// Case of a square geometry
                      //|| abs(y+yi) + abs(x+xi)<eps ) // Case of a cercle geometry
                    && fabs(_faces[_boundaryFaceIds[indexFace]].getMeasure()-_faces[_boundaryFaceIds[iface]].getMeasure())<eps
                    && fabs(_faces[_boundaryFaceIds[indexFace]].getXN() + _faces[_boundaryFaceIds[iface]].getXN())<eps
                    && fabs(_faces[_boundaryFaceIds[indexFace]].getYN() + _faces[_boundaryFaceIds[iface]].getYN())<eps
                    && fabs(_faces[_boundaryFaceIds[indexFace]].getZN() + _faces[_boundaryFaceIds[iface]].getZN())<eps )
                 {
-                    cout<<"indexFace="<<indexFace<<", iface="<<iface<<endl;
                     iface_perio=_boundaryFaceIds[iface];
+                    cout<<"indexFace="<<indexFace<<", iface="<<iface<<endl;
+                    cout<<" Face Id ="<< _boundaryFaceIds[indexFace]<< " iface_perio="<< iface_perio << endl;
+                    cout<<_faces[_boundaryFaceIds[indexFace]].getXN() <<", "<< _faces[_boundaryFaceIds[iface]].getXN()<<endl;
+                    cout<<_faces[_boundaryFaceIds[indexFace]].getYN() <<", "<< _faces[_boundaryFaceIds[iface]].getYN()<<endl;
+                    cout<<_faces[_boundaryFaceIds[indexFace]].getZN() <<", "<< _faces[_boundaryFaceIds[iface]].getZN()<<endl;
                     break;
                 }
             }
@@ -351,8 +354,7 @@ Mesh::setPeriodicFaces()
                 double xi=_faces[_boundaryFaceIds[iface]].x();
                 double yi=_faces[_boundaryFaceIds[iface]].y();
                 double zi=_faces[_boundaryFaceIds[iface]].z();
-                if ( iface!=indexFace
-                   && ((abs(y-yi)<eps && abs(x-xi)<eps) || (abs(x-xi)<eps && abs(z-zi)<eps) || (abs(y-yi)<eps && abs(z-zi)<eps))// Case of a cube geometry
+                if ( ((abs(y-yi)<eps && abs(x-xi)<eps) || (abs(x-xi)<eps && abs(z-zi)<eps) || (abs(y-yi)<eps && abs(z-zi)<eps))// Case of a cube geometry
                      //|| abs(y+yi) + abs(x+xi)<eps + abs(z+zi)<eps )// Case of a sphere geometry
                    && fabs(_faces[_boundaryFaceIds[indexFace]].getMeasure()-_faces[_boundaryFaceIds[iface]].getMeasure())<eps
                    && fabs(_faces[_boundaryFaceIds[indexFace]].getXN() + _faces[_boundaryFaceIds[iface]].getXN())<eps
@@ -371,8 +373,6 @@ Mesh::setPeriodicFaces()
             throw CdmathException("Mesh::setPeriodicFaces: periodic face not found, iface_perio==-1 " );
         else
             _indexFacePeriodicMap[_boundaryFaceIds[indexFace]]=iface_perio;
-    
-        cout<<"indexFace="<<indexFace<<", Face="<< _boundaryFaceIds[indexFace]<< " iface_perio="<< iface_perio << endl;
     }
     _indexFacePeriodicSet=true;    
 }
