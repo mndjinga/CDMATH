@@ -9,7 +9,7 @@ import time, json
 def test_validation2DWaveSystemUpwindCheckerboard(bctype):
     start = time.time()
     #### 2D checkerboard mesh
-    meshList=['checkerboard_4x4','checkerboard_8x8','checkerboard_16x16','checkerboard_32x32']
+    meshList=['checkerboard_5x5','checkerboard_9x9','checkerboard_17x17','checkerboard_33x33']
     meshType="Regular checkerboard"
     testColor="Green"
     nbMeshes=len(meshList)
