@@ -6,7 +6,7 @@ from math import log10, sqrt
 import sys
 import time, json
 
-def test_validation2DWaveSystemPStagCheckerboard(bctype):
+def test_validation2DWaveSystemPStagCheckerboard(scaling):
     start = time.time()
     #### 2D checkerboard mesh
     meshList=['checkerboard_5x5','checkerboard_9x9','checkerboard_17x17','checkerboard_33x33']
@@ -26,36 +26,46 @@ def test_validation2DWaveSystemPStagCheckerboard(bctype):
     max_vel=[0]*nbMeshes
     resolution=100
     curv_abs=np.linspace(0,sqrt(2),resolution+1)
+    cond_number=[0]*nbMeshes
 
     plt.close('all')
     i=0
     cfl=0.5
     # Storing of numerical errors, mesh sizes and diagonal values
     for filename in meshList:
-        error_p_tab[i], error_u_tab[i], mesh_size_tab[i], t_final[i], ndt_final[i], max_vel[i], diag_data_press[i], diag_data_vel[i], time_tab[i] =WaveSystemPStag.solve_file(mesh_path+filename, mesh_name, resolution,meshType,testColor,cfl,bctype)
+        error_p_tab[i], error_u_tab[i], mesh_size_tab[i], t_final[i], ndt_final[i], max_vel[i], diag_data_press[i], diag_data_vel[i], time_tab[i], cond_number[i] =WaveSystemPStag.solve_file(mesh_path+filename, mesh_name, resolution,scaling,meshType,testColor,cfl)
         assert max_vel[i]>0.007 and max_vel[i]<1
+        error_p_tab[i]=log10(error_p_tab[i])
+        error_u_tab[i]=log10(error_u_tab[i])
+        time_tab[i]=log10(time_tab[i])
         i=i+1
     
     end = time.time()
 
     # Plot over diagonal line
     for i in range(nbMeshes):
-        plt.plot(curv_abs, diag_data_press[i], label= str(mesh_size_tab[i]) + ' cells')
+        if(scaling==0):
+            plt.plot(curv_abs, diag_data_press[i], label= str(mesh_size_tab[i]) + ' cells - no scaling')
+        else:
+            plt.plot(curv_abs, diag_data_press[i], label= str(mesh_size_tab[i]) + ' cells - with scaling')
     plt.legend()
     plt.xlabel('Position on diagonal line')
     plt.ylabel('Pressure on diagonal line')
     plt.title('Plot over diagonal line for stationary wave system \n with pseudo staggered scheme on 2D checkerboard meshes')
-    plt.savefig(mesh_name+'_Pressure_2DWaveSystemPStag_Checkerboard_'+"PlotOverDiagonalLine.png")
+    plt.savefig(mesh_name+'_Pressure_2DWaveSystemPStag_Checkerboard_'+"scaling"+str(scaling)+"_PlotOverDiagonalLine.png")
     plt.close()
 
     plt.clf()
     for i in range(nbMeshes):
-        plt.plot(curv_abs, diag_data_vel[i],   label= str(mesh_size_tab[i]) + ' cells')
+        if(scaling==0):
+            plt.plot(curv_abs, diag_data_vel[i],   label= str(mesh_size_tab[i]) + ' cells - no scaling')
+        else:
+            plt.plot(curv_abs, diag_data_vel[i],   label= str(mesh_size_tab[i]) + ' cells - with scaling')
     plt.legend()
     plt.xlabel('Position on diagonal line')
     plt.ylabel('Velocity on diagonal line')
     plt.title('Plot over diagonal line for the stationary wave system \n with pseudo staggered scheme on 2D checkerboard meshes')
-    plt.savefig(mesh_name+"_Velocity_2DWaveSystemPStag_Checkerboard_"+"PlotOverDiagonalLine.png")    
+    plt.savefig(mesh_name+"_Velocity_2DWaveSystemPStag_Checkerboard_"+"scaling"+str(scaling)+"_PlotOverDiagonalLine.png")    
     plt.close()
 
     # Least square linear regression
@@ -73,67 +83,103 @@ def test_validation2DWaveSystemPStagCheckerboard(bctype):
     ap=( a3*b1p-a2*b2p)/det
     bp=(-a2*b1p+a1*b2p)/det
     
-    print "FV pseudo staggered on 2D checkerboard meshes : scheme order for pressure is ", -ap
+    if(scaling==0):
+        print "FV pseudo staggered on 2D checkerboard meshes : scheme order for pressure without scaling is ", -ap
+    else:
+        print "FV pseudo staggered on 2D checkerboard meshes : scheme order for pressure with scaling is ", -ap
 
     b1u=np.dot(error_u_tab,mesh_size_tab)   
     b2u=np.sum(error_u_tab)
     au=( a3*b1u-a2*b2u)/det
     bu=(-a2*b1u+a1*b2u)/det
     
-    print "FV pseudo staggered on 2D checkerboard meshes : scheme order for velocity is ", -au
+    if(scaling==0):
+        print "FV pseudo staggered on 2D checkerboard meshes : scheme order for velocity without scaling is ", -au
+    else:
+        print "FV pseudo staggered on 2D checkerboard meshes : scheme order for velocity with scaling is ", -au
     
     # Plot of number of time steps
     plt.close()
-    plt.plot(mesh_size_tab, ndt_final, label='Number of time step to reach stationary regime')
+    if(scaling==0):
+        plt.plot(mesh_size_tab, ndt_final, label='Number of time step to reach stationary regime - no scaling')
+    else:
+        plt.plot(mesh_size_tab, ndt_final, label='Number of time step to reach stationary regime - with scaling')
     plt.legend()
-    plt.xlabel('number of cells')
+    plt.xlabel('Number of cells')
     plt.ylabel('Max time steps for stationary regime')
     plt.title('Number of times steps required for the stationary Wave System \n with pseudo staggered scheme on 2D checkerboard meshes')
-    plt.savefig(mesh_name+"_2DWaveSystemCheckerboardPStag_"+"TimeSteps.png")
+    plt.savefig(mesh_name+"_2DWaveSystemCheckerboardPStag_"+"scaling"+str(scaling)+"_TimeSteps.png")
     
     # Plot of number of stationary time
     plt.close()
-    plt.plot(mesh_size_tab, t_final, label='Time where stationary regime is reached')
+    if(scaling==0):
+        plt.plot(mesh_size_tab, t_final, label='Time where stationary regime is reached - no scaling')
+    else:
+        plt.plot(mesh_size_tab, t_final, label='Time where stationary regime is reached - with scaling')
     plt.legend()
-    plt.xlabel('number of cells')
+    plt.xlabel('Number of cells')
     plt.ylabel('Max time for stationary regime')
     plt.title('Simulated time for the stationary Wave System \n with pseudo staggered scheme on 2D checkerboard meshes')
-    plt.savefig(mesh_name+"_2DWaveSystemCheckerboardPStag_"+"TimeFinal.png")
+    plt.savefig(mesh_name+"_2DWaveSystemCheckerboardPStag_"+"scaling"+str(scaling)+"TimeFinal.png")
     
     # Plot of number of maximal velocity norm
     plt.close()
-    plt.plot(mesh_size_tab, max_vel, label='Maximum velocity norm')
+    if(scaling==0):
+        plt.plot(mesh_size_tab, max_vel, label='Maximum velocity norm - no scaling')
+    else:
+        plt.plot(mesh_size_tab, max_vel, label='Maximum velocity norm - with scaling')
     plt.legend()
-    plt.xlabel('number of cells')
+    plt.xlabel('Number of cells')
     plt.ylabel('Max velocity norm')
     plt.title('Maximum velocity norm for the stationary Wave System \n with pseudo staggered scheme on 2D checkerboard meshes')
-    plt.savefig(mesh_name+"_2DWaveSystemCheckerboardPStag_"+"MaxVelNorm.png")
+    plt.savefig(mesh_name+"_2DWaveSystemCheckerboardPStag_"+"scaling"+str(scaling)+"_MaxVelNorm.png")
     
+    # Plot of condition number 
+    plt.close()
+    if(scaling==0):
+        plt.plot(mesh_size_tab, cond_number, label='Condition number - no scaling')
+    else:
+        plt.plot(mesh_size_tab, cond_number, label='Condition number - with scaling')
+    plt.legend()
+    plt.xlabel('Number of cells')
+    plt.ylabel('Condition number')
+    plt.title('Condition number for the stationary Wave System \n with pseudo staggered scheme on 2D square meshes')
+    plt.savefig(mesh_name+"_2DWaveSystemTrianglesPStag_"+"scaling"+str(scaling)+"_condition_number.png")
+
     # Plot of convergence curves
     plt.close()
-    plt.plot(mesh_size_tab, error_p_tab, label='|error on stationary pressure|')
+    if(scaling==0):
+        plt.plot(mesh_size_tab, error_p_tab, label='|error on stationary pressure| - no scaling')
+    else:
+        plt.plot(mesh_size_tab, error_p_tab, label='|error on stationary pressure| - with scaling')
     plt.legend()
-    plt.xlabel('number of cells')
-    plt.ylabel('error p')
+    plt.xlabel('Number of cells')
+    plt.ylabel('Error p')
     plt.title('Convergence of finite volumes for the stationary Wave System \n with pseudo staggered scheme on 2D checkerboard meshes')
-    plt.savefig(mesh_name+"_Pressure_2DWaveSystemPStag_Checkerboard_"+"ConvergenceCurve.png")
+    plt.savefig(mesh_name+"_Pressure_2DWaveSystemPStag_Checkerboard_"+"scaling"+str(scaling)+"_ConvergenceCurve.png")
     
     plt.close()
-    plt.plot(mesh_size_tab, error_u_tab, label='|error on stationary velocity|')
+    if(scaling==0):
+        plt.plot(mesh_size_tab, error_u_tab, label='log(|error on stationary velocity|) - no scaling')
+    else:
+        plt.plot(mesh_size_tab, error_u_tab, label='log(|error on stationary velocity|) - with scaling')
     plt.legend()
-    plt.xlabel('number of cells')
-    plt.ylabel('error u')
+    plt.xlabel('Number of cells')
+    plt.ylabel('Error u')
     plt.title('Convergence of finite volumes for the stationary Wave System \n with pseudo staggered scheme on 2D checkerboard meshes')
-    plt.savefig(mesh_name+"_Velocity_2DWaveSystemPStag_Checkerboard_"+"ConvergenceCurve.png")
+    plt.savefig(mesh_name+"_Velocity_2DWaveSystemPStag_Checkerboard_"+"scaling"+str(scaling)+"_ConvergenceCurve.png")
     
     # Plot of computational time
     plt.close()
-    plt.plot(mesh_size_tab, time_tab, label='log(cpu time)')
+    if(scaling==0):
+        plt.plot(mesh_size_tab, time_tab, label='log(cpu time) - no scaling')
+    else:
+        plt.plot(mesh_size_tab, time_tab, label='log(cpu time) - with scaling')
     plt.legend()
-    plt.xlabel('number of cells')
+    plt.xlabel('Number of cells')
     plt.ylabel('cpu time')
     plt.title('Computational time of finite volumes for the stationary Wave System \n with pseudo staggered scheme on 2D checkerboard meshes')
-    plt.savefig(mesh_name+"_2DWaveSystemPStag_Checkerboard_ComputationalTime.png")
+    plt.savefig(mesh_name+"_2DWaveSystemPStag_Checkerboard_"+"scaling"+str(scaling)+"_ComputationalTime.png")
     
     plt.close('all')
     
