@@ -111,7 +111,7 @@ def computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt,test_bc):
                     
                     implMat.addValue(j*nbComp,j*nbComp,Am*(-1.)*idMoinsJacCL)
                     
-                elif(test_bc!=Neumann and Fk.getGroupName() != "Neumann"):#Nothing to do for Neumann boundary condition
+                elif(test_bc!="Neumann" and Fk.getGroupName() != "Neumann"):#Nothing to do for Neumann boundary condition
                     print Fk.getGroupName()
                     raise ValueError("computeFluxes: Unknown boundary condition name");
                 
