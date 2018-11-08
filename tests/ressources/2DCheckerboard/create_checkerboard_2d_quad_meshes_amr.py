@@ -43,10 +43,11 @@ def createCheckerboardMesh(nb_segs_x, mesh_name=""):
   
   # généralise avec une double boucle
   for i in range(0, nb_segs_x, 1):
-    for j in range(0, nb_segs_x/2):
-      if i%2 == 0:
+    if i%2 == 0:
+      for j in range(0, (nb_segs_x+1)/2):
         amr.addPatch([(i, i+1), (2*j, 2*j+1)], [2, 2])
-      else:
+    else:
+      for j in range(0, nb_segs_x/2):
         amr.addPatch([(i, i+1), (1+2*j, 2*j+2)], [2, 2])
   
   # Crée un seul maillage avec tous les rafinements
@@ -123,3 +124,8 @@ if __name__ == '__main__':
   createCheckerboardMesh(64)
   createCheckerboardMesh(128)
   createCheckerboardMesh(256)
+  createCheckerboardMesh(5)
+  createCheckerboardMesh(9)
+  createCheckerboardMesh(17)
+  createCheckerboardMesh(33)
+  createCheckerboardMesh(65)
