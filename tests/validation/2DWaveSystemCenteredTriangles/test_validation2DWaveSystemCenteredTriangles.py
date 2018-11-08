@@ -149,7 +149,7 @@ def test_validation2DWaveSystemCentered_triangles(scaling):
         plt.plot(mesh_size_tab, error_p_tab, label='|error on stationary pressure| - with scaling')
     plt.legend()
     plt.xlabel('log(Number of cells)')
-    plt.ylabel('|error p|')
+    plt.ylabel('log(|error p|)')
     plt.title('Convergence of finite volumes for the stationary Wave System \n with centered scheme on 2D triangular meshes')
     plt.savefig(mesh_name+"_Pressure_2DWaveSystemTrianglesCentered_"+"scaling"+str(scaling)+"_ConvergenceCurve.png")
     
@@ -160,7 +160,7 @@ def test_validation2DWaveSystemCentered_triangles(scaling):
         plt.plot(mesh_size_tab, error_u_tab, label='log(|error on stationary velocity|) - with scaling')
     plt.legend()
     plt.xlabel('log(Number of cells)')
-    plt.ylabel('|error u|')
+    plt.ylabel('log(|error u|)')
     plt.title('Convergence of finite volumes for the stationary Wave System \n with centered scheme on 2D triangular meshes')
     plt.savefig(mesh_name+"_Velocity_2DWaveSystemTrianglesCentered_"+"scaling"+str(scaling)+"_ConvergenceCurve.png")
     

@@ -74,36 +74,6 @@ def test_validation2DWaveSystemCentered_squares(scaling):
     plt.savefig(mesh_name+"_Velocity_2DWaveSystemSquaresCentered_"+"scaling"+str(scaling)+"_PlotOverDiagonalLine.png")    
     plt.close()
 
-    # Least square linear regression
-    # Find the best a,b such that f(x)=ax+b best approximates the convergence curve
-    # The vector X=(a,b) solves a symmetric linear system AX=B with A=(a1,a2\\a2,a3), B=(b1,b2)
-    a1=np.dot(mesh_size_tab,mesh_size_tab)
-    a2=np.sum(mesh_size_tab)
-    a3=nbMeshes
-    
-    det=a1*a3-a2*a2
-    assert det!=0, 'test_validation2DWaveSystemSquaresFVCentered_squares() : Make sure you use distinct meshes and at least two meshes'
-
-    b1p=np.dot(error_p_tab,mesh_size_tab)   
-    b2p=np.sum(error_p_tab)
-    ap=( a3*b1p-a2*b2p)/det
-    bp=(-a2*b1p+a1*b2p)/det
-    
-    if(scaling==0):
-        print "FV Centered on 2D square meshes : scheme order for pressure without scaling is ", -ap
-    else:
-        print "FV Centered on 2D square meshes : scheme order for pressure with    scaling is ", -ap
-
-    b1u=np.dot(error_u_tab,mesh_size_tab)   
-    b2u=np.sum(error_u_tab)
-    au=( a3*b1u-a2*b2u)/det
-    bu=(-a2*b1u+a1*b2u)/det
-    
-    if(scaling==0):
-        print "FVCentered on 2D square meshes : scheme order for velocity without scaling is ", -au
-    else:
-        print "FVCentered on 2D square meshes : scheme order for velocity with    scaling is ", -au
-    
     # Plot of number of time steps
     plt.close()
     if(scaling==0):
@@ -155,6 +125,36 @@ def test_validation2DWaveSystemCentered_squares(scaling):
     for i in range(nbMeshes):
         mesh_size_tab[i]=log10(mesh_size_tab[i])
         
+    # Least square linear regression
+    # Find the best a,b such that f(x)=ax+b best approximates the convergence curve
+    # The vector X=(a,b) solves a symmetric linear system AX=B with A=(a1,a2\\a2,a3), B=(b1,b2)
+    a1=np.dot(mesh_size_tab,mesh_size_tab)
+    a2=np.sum(mesh_size_tab)
+    a3=nbMeshes
+    
+    det=a1*a3-a2*a2
+    assert det!=0, 'test_validation2DWaveSystemSquaresFVCentered_squares() : Make sure you use distinct meshes and at least two meshes'
+
+    b1p=np.dot(error_p_tab,mesh_size_tab)   
+    b2p=np.sum(error_p_tab)
+    ap=( a3*b1p-a2*b2p)/det
+    bp=(-a2*b1p+a1*b2p)/det
+    
+    if(scaling==0):
+        print "FV Centered on 2D square meshes : scheme order for pressure without scaling is ", -ap
+    else:
+        print "FV Centered on 2D square meshes : scheme order for pressure with    scaling is ", -ap
+
+    b1u=np.dot(error_u_tab,mesh_size_tab)   
+    b2u=np.sum(error_u_tab)
+    au=( a3*b1u-a2*b2u)/det
+    bu=(-a2*b1u+a1*b2u)/det
+    
+    if(scaling==0):
+        print "FVCentered on 2D square meshes : scheme order for velocity without scaling is ", -au
+    else:
+        print "FVCentered on 2D square meshes : scheme order for velocity with    scaling is ", -au
+    
     # Plot of convergence curves
     plt.close()
     if(scaling==0):

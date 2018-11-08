@@ -35,7 +35,10 @@ def test_validation2DWaveSystemUpwindTriangles():
     for filename in meshList:
         error_p_tab[i], error_u_tab[i], mesh_size_tab[i], t_final[i], ndt_final[i], max_vel[i], diag_data_press[i], diag_data_vel[i], time_tab[i] =WaveSystemUpwind.solve_file(mesh_path+filename, mesh_name, resolution,meshType,testColor,cfl,bctype)
         assert max_vel[i]>0.94 and max_vel[i]<1
-        i=i+1
+        error_p_tab[i]=log10(error_p_tab[i])
+        error_u_tab[i]=log10(error_u_tab[i])
+        time_tab[i]=log10(time_tab[i])
+       i=i+1
     
     end = time.time()
 
@@ -59,30 +62,6 @@ def test_validation2DWaveSystemUpwindTriangles():
     plt.savefig(mesh_name+"_Velocity_2DWaveSystemUpwind_Triangles_"+"PlotOverDiagonalLine.png")    
     plt.close()
 
-    # Least square linear regression
-    # Find the best a,b such that f(x)=ax+b best approximates the convergence curve
-    # The vector X=(a,b) solves a symmetric linear system AX=B with A=(a1,a2\\a2,a3), B=(b1,b2)
-    a1=np.dot(mesh_size_tab,mesh_size_tab)
-    a2=np.sum(mesh_size_tab)
-    a3=nbMeshes
-    
-    det=a1*a3-a2*a2
-    assert det!=0, 'test_validation2DWaveSystemUpwindTrianglesFV() : Make sure you use distinct meshes and at least two meshes'
-
-    b1p=np.dot(error_p_tab,mesh_size_tab)   
-    b2p=np.sum(error_p_tab)
-    ap=( a3*b1p-a2*b2p)/det
-    bp=(-a2*b1p+a1*b2p)/det
-    
-    print "FV upwind on 2D triangle meshes : scheme order for pressure is ", -ap
-
-    b1u=np.dot(error_u_tab,mesh_size_tab)   
-    b2u=np.sum(error_u_tab)
-    au=( a3*b1u-a2*b2u)/det
-    bu=(-a2*b1u+a1*b2u)/det
-    
-    print "FV upwind on 2D triangle meshes : scheme order for velocity is ", -au
-    
     # Plot of number of time steps
     plt.close()
     plt.plot(mesh_size_tab, ndt_final, label='Number of time step to reach stationary regime')
@@ -110,20 +89,47 @@ def test_validation2DWaveSystemUpwindTriangles():
     plt.title('Maximum velocity norm for the stationary Wave System \n with upwind scheme on 2D triangular meshes')
     plt.savefig(mesh_name+"_2DWaveSystemTrianglesUpwind_"+"MaxVelNorm.png")
     
+    for i in range(nbMeshes):
+        mesh_size_tab[i]=log10(mesh_size_tab[i])
+        
+    # Least square linear regression
+    # Find the best a,b such that f(x)=ax+b best approximates the convergence curve
+    # The vector X=(a,b) solves a symmetric linear system AX=B with A=(a1,a2\\a2,a3), B=(b1,b2)
+    a1=np.dot(mesh_size_tab,mesh_size_tab)
+    a2=np.sum(mesh_size_tab)
+    a3=nbMeshes
+    
+    det=a1*a3-a2*a2
+    assert det!=0, 'test_validation2DWaveSystemUpwindTrianglesFV() : Make sure you use distinct meshes and at least two meshes'
+
+    b1p=np.dot(error_p_tab,mesh_size_tab)   
+    b2p=np.sum(error_p_tab)
+    ap=( a3*b1p-a2*b2p)/det
+    bp=(-a2*b1p+a1*b2p)/det
+    
+    print "FV upwind on 2D triangle meshes : scheme order for pressure is ", -ap
+
+    b1u=np.dot(error_u_tab,mesh_size_tab)   
+    b2u=np.sum(error_u_tab)
+    au=( a3*b1u-a2*b2u)/det
+    bu=(-a2*b1u+a1*b2u)/det
+    
+    print "FV upwind on 2D triangle meshes : scheme order for velocity is ", -au
+    
     # Plot of convergence curves
     plt.close()
     plt.plot(mesh_size_tab, error_p_tab, label='|error on stationary pressure|')
     plt.legend()
-    plt.xlabel('number of cells')
-    plt.ylabel('error p')
+    plt.xlabel('log(number of cells)')
+    plt.ylabel('log(error p)')
     plt.title('Convergence of finite volumes for the stationary Wave System \n with upwind scheme on 2D triangular meshes')
     plt.savefig(mesh_name+"_Pressure_2DWaveSystemUpwind_Triangles_"+"ConvergenceCurve.png")
     
     plt.close()
     plt.plot(mesh_size_tab, error_u_tab, label='|error on stationary velocity|')
     plt.legend()
-    plt.xlabel('number of cells')
-    plt.ylabel('error u')
+    plt.xlabel('log(number of cells)')
+    plt.ylabel('log(error u)')
     plt.title('Convergence of finite volumes for the stationary Wave System \n with upwind scheme on 2D triangular meshes')
     plt.savefig(mesh_name+"_Velocity_2DWaveSystemUpwind_Triangles_"+"ConvergenceCurve.png")
     
@@ -131,8 +137,8 @@ def test_validation2DWaveSystemUpwindTriangles():
     plt.close()
     plt.plot(mesh_size_tab, time_tab, label='log(cpu time)')
     plt.legend()
-    plt.xlabel('number of cells')
-    plt.ylabel('cpu time')
+    plt.xlabel('log(number of cells)')
+    plt.ylabel('log(cpu time)')
     plt.title('Computational time of finite volumes for the stationary Wave System \n with upwind scheme on 2D triangular meshes')
     plt.savefig(mesh_name+"_2DWaveSystemUpwind_Triangles_ComputationalTime.png")
     

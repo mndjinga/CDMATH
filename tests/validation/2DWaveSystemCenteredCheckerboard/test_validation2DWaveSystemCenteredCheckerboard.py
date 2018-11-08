@@ -156,8 +156,8 @@ def test_validation2DWaveSystemCenteredCheckerboard(scaling):
     else:
         plt.plot(mesh_size_tab, error_p_tab, label='|error on stationary pressure| - with scaling')
     plt.legend()
-    plt.xlabel('Number of cells')
-    plt.ylabel('Error p')
+    plt.xlabel('log(Number of cells)')
+    plt.ylabel('log(Error p)')
     plt.title('Convergence of finite volumes for the stationary Wave System \n with centered scheme on 2D checkerboard meshes')
     plt.savefig(mesh_name+"_Pressure_2DWaveSystemCentered_Checkerboard_"+"scaling"+str(scaling)+"_ConvergenceCurve.png")
     
@@ -167,8 +167,8 @@ def test_validation2DWaveSystemCenteredCheckerboard(scaling):
     else:
         plt.plot(mesh_size_tab, error_u_tab, label='log(|error on stationary velocity|) - with scaling')
     plt.legend()
-    plt.xlabel('Number of cells')
-    plt.ylabel('Error u')
+    plt.xlabel('log(Number of cells)')
+    plt.ylabel('log(Error u)')
     plt.title('Convergence of finite volumes for the stationary Wave System \n with centered scheme on 2D checkerboard meshes')
     plt.savefig(mesh_name+"_Velocity_2DWaveSystemCentered_Checkerboard_"+"scaling"+str(scaling)+"_ConvergenceCurve.png")
     
@@ -179,8 +179,8 @@ def test_validation2DWaveSystemCenteredCheckerboard(scaling):
     else:
         plt.plot(mesh_size_tab, time_tab, label='log(cpu time) - with scaling')
     plt.legend()
-    plt.xlabel('Number of cells')
-    plt.ylabel('cpu time')
+    plt.xlabel('log(Number of cells)')
+    plt.ylabel('log(cpu time)')
     plt.title('Computational time of finite volumes for the stationary Wave System \n with centered scheme on 2D checkerboard meshes')
     plt.savefig(mesh_name+"_2DWaveSystemCentered_Checkerboard_"+"scaling"+str(scaling)+"_ComputationalTime.png")
     
