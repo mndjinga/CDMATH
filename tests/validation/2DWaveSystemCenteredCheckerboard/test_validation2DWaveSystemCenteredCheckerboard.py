@@ -6,7 +6,7 @@ from math import log10, sqrt
 import sys
 import time, json
 
-def test_validation2DWaveSystemCenteredCheckerboard(bctype):
+def test_validation2DWaveSystemCenteredCheckerboard(scaling):
     start = time.time()
     #### 2D checkerboard mesh
     meshList=['checkerboard_5x5','checkerboard_9x9','checkerboard_17x17','checkerboard_33x33']
