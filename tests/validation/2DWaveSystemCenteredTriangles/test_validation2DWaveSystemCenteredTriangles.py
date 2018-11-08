@@ -70,6 +70,57 @@ def test_validation2DWaveSystemCentered_triangles(scaling):
     plt.savefig(mesh_name+"_Velocity_2DWaveSystemTrianglesCentered_"+"scaling"+str(scaling)+"_PlotOverDiagonalLine.png")    
     plt.close()
 
+    # Plot of number of time steps
+    plt.close()
+    if(scaling==0):
+        plt.plot(mesh_size_tab, ndt_final, label='Number of time step to reach stationary regime - no scaling')
+    else:
+        plt.plot(mesh_size_tab, ndt_final, label='Number of time step to reach stationary regime - with scaling')
+    plt.legend()
+    plt.xlabel('Number of cells')
+    plt.ylabel('Max time steps for stationary regime')
+    plt.title('Number of times steps required for the stationary Wave System \n with centered scheme on 2D triangular meshes')
+    plt.savefig(mesh_name+"_2DWaveSystemSquareCentereds_"+"scaling"+str(scaling)+"_TimeSteps.png")
+    
+    # Plot of number of stationary time
+    plt.close()
+    if(scaling==0):
+        plt.plot(mesh_size_tab, t_final, label='Time where stationary regime is reached - no scaling')
+    else:
+        plt.plot(mesh_size_tab, t_final, label='Time where stationary regime is reached - with scaling')
+    plt.legend()
+    plt.xlabel('Number of cells')
+    plt.ylabel('Max time for stationary regime')
+    plt.title('Simulated time for the stationary Wave System \n with centered scheme on 2D triangular meshes')
+    plt.savefig(mesh_name+"_2DWaveSystemTrianglesCentered_"+"scaling"+str(scaling)+"_FinalTime.png")
+    
+    # Plot of number of maximal velocity norm
+    plt.close()
+    if(scaling==0):
+        plt.plot(mesh_size_tab, max_vel, label='Maximum velocity norm - no scaling')
+    else:
+        plt.plot(mesh_size_tab, max_vel, label='Maximum velocity norm - with scaling')
+    plt.legend()
+    plt.xlabel('Number of cells')
+    plt.ylabel('Max velocity norm')
+    plt.title('Maximum velocity norm for the stationary Wave System \n with centered scheme on 2D triangular meshes')
+    plt.savefig(mesh_name+"_2DWaveSystemTrianglesCentered_"+"scaling"+str(scaling)+"_MaxVelNorm.png")
+    
+    # Plot of condition number 
+    plt.close()
+    if(scaling==0):
+        plt.plot(mesh_size_tab, cond_number, label='Condition number - no scaling')
+    else:
+        plt.plot(mesh_size_tab, cond_number, label='Condition number - with scaling')
+    plt.legend()
+    plt.xlabel('Number of cells')
+    plt.ylabel('Condition number')
+    plt.title('Condition number for the stationary Wave System \n with centered scheme on 2D square meshes')
+    plt.savefig(mesh_name+"_2DWaveSystemTrianglesCentered_"+"scaling"+str(scaling)+"_condition_number.png")
+    
+    for i in range(nbMeshes):
+        mesh_size_tab[i]=log10(mesh_size_tab[i])
+        
     # Least square linear regression
     # Find the best a,b such that f(x)=ax+b best approximates the convergence curve
     # The vector X=(a,b) solves a symmetric linear system AX=B with A=(a1,a2\\a2,a3), B=(b1,b2)
@@ -90,57 +141,6 @@ def test_validation2DWaveSystemCentered_triangles(scaling):
     else:
         print "FVCentered on 2D triangular meshes : scheme order for velocity with scaling is ", -au
     
-    # Plot of number of time steps
-    plt.close()
-    if(scaling==0):
-        plt.plot(mesh_size_tab, ndt_final, label='Number of time step to reach stationary regime - no scaling')
-    else:
-        plt.plot(mesh_size_tab, ndt_final, label='Number of time step to reach stationary regime - with scaling')
-    plt.legend()
-    plt.xlabel('number of cells')
-    plt.ylabel('Max time steps for stationary regime')
-    plt.title('Number of times steps required for the stationary Wave System \n with centered scheme on 2D triangular meshes')
-    plt.savefig(mesh_name+"_2DWaveSystemSquareCentereds_"+"scaling"+str(scaling)+"_TimeSteps.png")
-    
-    # Plot of number of stationary time
-    plt.close()
-    if(scaling==0):
-        plt.plot(mesh_size_tab, t_final, label='Time where stationary regime is reached - no scaling')
-    else:
-        plt.plot(mesh_size_tab, t_final, label='Time where stationary regime is reached - with scaling')
-    plt.legend()
-    plt.xlabel('number of cells')
-    plt.ylabel('Max time for stationary regime')
-    plt.title('Simulated time for the stationary Wave System \n with centered scheme on 2D triangular meshes')
-    plt.savefig(mesh_name+"_2DWaveSystemTrianglesCentered_"+"scaling"+str(scaling)+"_FinalTime.png")
-    
-    # Plot of number of maximal velocity norm
-    plt.close()
-    if(scaling==0):
-        plt.plot(mesh_size_tab, max_vel, label='Maximum velocity norm - no scaling')
-    else:
-        plt.plot(mesh_size_tab, max_vel, label='Maximum velocity norm - with scaling')
-    plt.legend()
-    plt.xlabel('number of cells')
-    plt.ylabel('Max velocity norm')
-    plt.title('Maximum velocity norm for the stationary Wave System \n with centered scheme on 2D triangular meshes')
-    plt.savefig(mesh_name+"_2DWaveSystemTrianglesCentered_"+"scaling"+str(scaling)+"_MaxVelNorm.png")
-    
-    # Plot of condition number 
-    plt.close()
-    if(scaling==0):
-        plt.plot(mesh_size_tab, cond_number, label='Condition number - no scaling')
-    else:
-        plt.plot(mesh_size_tab, cond_number, label='Condition number - with scaling')
-    plt.legend()
-    plt.xlabel('number of cells')
-    plt.ylabel('Condition number')
-    plt.title('Condition number for the stationary Wave System \n with centered scheme on 2D square meshes')
-    plt.savefig(mesh_name+"_2DWaveSystemTrianglesCentered_"+"scaling"+str(scaling)+"_condition_number.png")
-    
-    for i in range(nbMeshes):
-        mesh_size_tab[i]=log10(mesh_size_tab[i])
-        
     # Plot of convergence curves
     plt.close()
     if(scaling==0):
@@ -148,7 +148,7 @@ def test_validation2DWaveSystemCentered_triangles(scaling):
     else:
         plt.plot(mesh_size_tab, error_p_tab, label='|error on stationary pressure| - with scaling')
     plt.legend()
-    plt.xlabel('log(number of cells)')
+    plt.xlabel('log(Number of cells)')
     plt.ylabel('|error p|')
     plt.title('Convergence of finite volumes for the stationary Wave System \n with centered scheme on 2D triangular meshes')
     plt.savefig(mesh_name+"_Pressure_2DWaveSystemTrianglesCentered_"+"scaling"+str(scaling)+"_ConvergenceCurve.png")
@@ -159,7 +159,7 @@ def test_validation2DWaveSystemCentered_triangles(scaling):
     else:
         plt.plot(mesh_size_tab, error_u_tab, label='log(|error on stationary velocity|) - with scaling')
     plt.legend()
-    plt.xlabel('log(number of cells)')
+    plt.xlabel('log(Number of cells)')
     plt.ylabel('|error u|')
     plt.title('Convergence of finite volumes for the stationary Wave System \n with centered scheme on 2D triangular meshes')
     plt.savefig(mesh_name+"_Velocity_2DWaveSystemTrianglesCentered_"+"scaling"+str(scaling)+"_ConvergenceCurve.png")
@@ -171,7 +171,7 @@ def test_validation2DWaveSystemCentered_triangles(scaling):
     else:
         plt.plot(mesh_size_tab, time_tab, label='log(cpu time) - with scaling')
     plt.legend()
-    plt.xlabel('log(number of cells)')
+    plt.xlabel('log(Number of cells)')
     plt.ylabel('log(cpu time)')
     plt.title('Computational time of finite volumes for the stationary Wave System \n with centered scheme on 2D triangular meshes')
     plt.savefig(mesh_name+"2DWaveSystemTrianglesCentered_"+"scaling"+str(scaling)+"_ComputationalTimeTriangles.png")

@@ -68,36 +68,6 @@ def test_validation2DWaveSystemPStagCheckerboard(scaling):
     plt.savefig(mesh_name+"_Velocity_2DWaveSystemPStag_Checkerboard_"+"scaling"+str(scaling)+"_PlotOverDiagonalLine.png")    
     plt.close()
 
-    # Least square linear regression
-    # Find the best a,b such that f(x)=ax+b best approximates the convergence curve
-    # The vector X=(a,b) solves a symmetric linear system AX=B with A=(a1,a2\\a2,a3), B=(b1,b2)
-    a1=np.dot(mesh_size_tab,mesh_size_tab)
-    a2=np.sum(mesh_size_tab)
-    a3=nbMeshes
-    
-    det=a1*a3-a2*a2
-    assert det!=0, 'test_validation2DWaveSystemPStagCheckerboardFV() : Make sure you use distinct meshes and at least two meshes'
-
-    b1p=np.dot(error_p_tab,mesh_size_tab)   
-    b2p=np.sum(error_p_tab)
-    ap=( a3*b1p-a2*b2p)/det
-    bp=(-a2*b1p+a1*b2p)/det
-    
-    if(scaling==0):
-        print "FV pseudo staggered on 2D checkerboard meshes : scheme order for pressure without scaling is ", -ap
-    else:
-        print "FV pseudo staggered on 2D checkerboard meshes : scheme order for pressure with scaling is ", -ap
-
-    b1u=np.dot(error_u_tab,mesh_size_tab)   
-    b2u=np.sum(error_u_tab)
-    au=( a3*b1u-a2*b2u)/det
-    bu=(-a2*b1u+a1*b2u)/det
-    
-    if(scaling==0):
-        print "FV pseudo staggered on 2D checkerboard meshes : scheme order for velocity without scaling is ", -au
-    else:
-        print "FV pseudo staggered on 2D checkerboard meshes : scheme order for velocity with scaling is ", -au
-    
     # Plot of number of time steps
     plt.close()
     if(scaling==0):
@@ -146,6 +116,39 @@ def test_validation2DWaveSystemPStagCheckerboard(scaling):
     plt.title('Condition number for the stationary Wave System \n with pseudo staggered scheme on 2D square meshes')
     plt.savefig(mesh_name+"_2DWaveSystemTrianglesPStag_"+"scaling"+str(scaling)+"_condition_number.png")
 
+    for i in range(nbMeshes):
+        mesh_size_tab[i]=log10(mesh_size_tab[i])
+        
+    # Least square linear regression
+    # Find the best a,b such that f(x)=ax+b best approximates the convergence curve
+    # The vector X=(a,b) solves a symmetric linear system AX=B with A=(a1,a2\\a2,a3), B=(b1,b2)
+    a1=np.dot(mesh_size_tab,mesh_size_tab)
+    a2=np.sum(mesh_size_tab)
+    a3=nbMeshes
+    
+    det=a1*a3-a2*a2
+    assert det!=0, 'test_validation2DWaveSystemPStagCheckerboardFV() : Make sure you use distinct meshes and at least two meshes'
+
+    b1p=np.dot(error_p_tab,mesh_size_tab)   
+    b2p=np.sum(error_p_tab)
+    ap=( a3*b1p-a2*b2p)/det
+    bp=(-a2*b1p+a1*b2p)/det
+    
+    if(scaling==0):
+        print "FV pseudo staggered on 2D checkerboard meshes : scheme order for pressure without scaling is ", -ap
+    else:
+        print "FV pseudo staggered on 2D checkerboard meshes : scheme order for pressure with scaling is ", -ap
+
+    b1u=np.dot(error_u_tab,mesh_size_tab)   
+    b2u=np.sum(error_u_tab)
+    au=( a3*b1u-a2*b2u)/det
+    bu=(-a2*b1u+a1*b2u)/det
+    
+    if(scaling==0):
+        print "FV pseudo staggered on 2D checkerboard meshes : scheme order for velocity without scaling is ", -au
+    else:
+        print "FV pseudo staggered on 2D checkerboard meshes : scheme order for velocity with scaling is ", -au
+    
     # Plot of convergence curves
     plt.close()
     if(scaling==0):

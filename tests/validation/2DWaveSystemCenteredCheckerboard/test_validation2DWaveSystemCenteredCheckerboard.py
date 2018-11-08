@@ -55,49 +55,6 @@ def test_validation2DWaveSystemCenteredCheckerboard(bctype):
     plt.savefig(mesh_name+'_Pressure_2DWaveSystemCentered_Checkerboard_'+"scaling"+str(scaling)+"_PlotOverDiagonalLine.png")
     plt.close()
 
-    plt.clf()
-    for i in range(nbMeshes):
-        if(scaling==0):
-            plt.plot(curv_abs, diag_data_vel[i],   label= str(mesh_size_tab[i]) + ' cells - no scaling')
-        else:
-            plt.plot(curv_abs, diag_data_vel[i],   label= str(mesh_size_tab[i]) + ' cells - with scaling')
-    plt.legend()
-    plt.xlabel('Position on diagonal line')
-    plt.ylabel('Velocity on diagonal line')
-    plt.title('Plot over diagonal line for the stationary wave system \n with centered scheme on 2D checkerboard meshes')
-    plt.savefig(mesh_name+"_Velocity_2DWaveSystemCentered_Checkerboard_"+"scaling"+str(scaling)+"_PlotOverDiagonalLine.png")    
-    plt.close()
-
-    # Least square linear regression
-    # Find the best a,b such that f(x)=ax+b best approximates the convergence curve
-    # The vector X=(a,b) solves a symmetric linear system AX=B with A=(a1,a2\\a2,a3), B=(b1,b2)
-    a1=np.dot(mesh_size_tab,mesh_size_tab)
-    a2=np.sum(mesh_size_tab)
-    a3=nbMeshes
-    
-    det=a1*a3-a2*a2
-    assert det!=0, 'test_validation2DWaveSystemCenteredCheckerboardFV() : Make sure you use distinct meshes and at least two meshes'
-
-    b1p=np.dot(error_p_tab,mesh_size_tab)   
-    b2p=np.sum(error_p_tab)
-    ap=( a3*b1p-a2*b2p)/det
-    bp=(-a2*b1p+a1*b2p)/det
-    
-    if(scaling==0):
-        print "FV Centered on 2D checkerboard meshes : scheme order for pressure without scaling is ", -ap
-    else:
-        print "FV Centered on 2D checkerboard meshes : scheme order for pressure with scaling is ", -ap
-
-    b1u=np.dot(error_u_tab,mesh_size_tab)   
-    b2u=np.sum(error_u_tab)
-    au=( a3*b1u-a2*b2u)/det
-    bu=(-a2*b1u+a1*b2u)/det
-    
-    if(scaling==0):
-        print "FV Centered on 2D checkerboard meshes : scheme order for velocity without scaling is ", -au
-    else:
-        print "FV Centered on 2D checkerboard meshes : scheme order for velocity with scaling is ", -au
-    
     # Plot of number of time steps
     plt.close()
     if(scaling==0):
@@ -146,6 +103,52 @@ def test_validation2DWaveSystemCenteredCheckerboard(bctype):
     plt.title('Condition number for the stationary Wave System \n with centered scheme on 2D square meshes')
     plt.savefig(mesh_name+"_2DWaveSystemTrianglesCentered_"+"scaling"+str(scaling)+"_condition_number.png")
 
+    plt.clf()
+    for i in range(nbMeshes):
+        if(scaling==0):
+            plt.plot(curv_abs, diag_data_vel[i],   label= str(mesh_size_tab[i]) + ' cells - no scaling')
+        else:
+            plt.plot(curv_abs, diag_data_vel[i],   label= str(mesh_size_tab[i]) + ' cells - with scaling')
+    plt.legend()
+    plt.xlabel('Position on diagonal line')
+    plt.ylabel('Velocity on diagonal line')
+    plt.title('Plot over diagonal line for the stationary wave system \n with centered scheme on 2D checkerboard meshes')
+    plt.savefig(mesh_name+"_Velocity_2DWaveSystemCentered_Checkerboard_"+"scaling"+str(scaling)+"_PlotOverDiagonalLine.png")    
+    plt.close()
+
+    for i in range(nbMeshes):
+        mesh_size_tab[i]=log10(mesh_size_tab[i])
+        
+    # Least square linear regression
+    # Find the best a,b such that f(x)=ax+b best approximates the convergence curve
+    # The vector X=(a,b) solves a symmetric linear system AX=B with A=(a1,a2\\a2,a3), B=(b1,b2)
+    a1=np.dot(mesh_size_tab,mesh_size_tab)
+    a2=np.sum(mesh_size_tab)
+    a3=nbMeshes
+    
+    det=a1*a3-a2*a2
+    assert det!=0, 'test_validation2DWaveSystemCenteredCheckerboardFV() : Make sure you use distinct meshes and at least two meshes'
+
+    b1p=np.dot(error_p_tab,mesh_size_tab)   
+    b2p=np.sum(error_p_tab)
+    ap=( a3*b1p-a2*b2p)/det
+    bp=(-a2*b1p+a1*b2p)/det
+    
+    if(scaling==0):
+        print "FV Centered on 2D checkerboard meshes : scheme order for pressure without scaling is ", -ap
+    else:
+        print "FV Centered on 2D checkerboard meshes : scheme order for pressure with scaling is ", -ap
+
+    b1u=np.dot(error_u_tab,mesh_size_tab)   
+    b2u=np.sum(error_u_tab)
+    au=( a3*b1u-a2*b2u)/det
+    bu=(-a2*b1u+a1*b2u)/det
+    
+    if(scaling==0):
+        print "FV Centered on 2D checkerboard meshes : scheme order for velocity without scaling is ", -au
+    else:
+        print "FV Centered on 2D checkerboard meshes : scheme order for velocity with scaling is ", -au
+    
     # Plot of convergence curves
     plt.close()
     if(scaling==0):
