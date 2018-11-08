@@ -30,6 +30,7 @@ if (CDMATH_WITH_PYTHON AND CDMATH_WITH_PETSC AND CDMATH_WITH_POSTPRO)
   add_custom_target (staggered COMMAND ctest -R Staggered)# may be replace ctest -R with ctest -L
   add_custom_target (centered COMMAND ctest -R Centered)# may be replace ctest -R with ctest -L
   add_custom_target (triangles COMMAND ctest -R triangles)# may be replace ctest -R with ctest -L
+  add_custom_target (checkerboard COMMAND ctest -R checkerboard)# may be replace ctest -R with ctest -L
   add_custom_target (squares COMMAND ctest -R squares)# may be replace ctest -R with ctest -L
   add_custom_target (scaling COMMAND ctest -R _scaling)# may be replace ctest -R with ctest -L
   add_custom_target (noscaling COMMAND ctest -R noscaling)# may be replace ctest -R with ctest -L
