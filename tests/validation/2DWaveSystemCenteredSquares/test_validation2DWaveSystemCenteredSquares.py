@@ -111,7 +111,7 @@ def test_validation2DWaveSystemCentered_squares(scaling):
     else:
         plt.plot(mesh_size_tab, ndt_final, label='Number of time step to reach stationary regime - with scaling')
     plt.legend()
-    plt.xlabel('number of cells')
+    plt.xlabel('Number of cells')
     plt.ylabel('Max time steps for stationary regime')
     plt.title('Number of times steps required for the stationary Wave System \n with centered scheme on 2D square meshes')
     plt.savefig(mesh_name+"_2DWaveSystemSquareCentered_"+"scaling"+str(scaling)+"_TimeSteps.png")
@@ -123,7 +123,7 @@ def test_validation2DWaveSystemCentered_squares(scaling):
     else:
         plt.plot(mesh_size_tab, t_final, label='Time where stationary regime is reached - with scaling')
     plt.legend()
-    plt.xlabel('number of cells')
+    plt.xlabel('Number of cells')
     plt.ylabel('Max time for stationary regime')
     plt.title('Simulated time for the stationary Wave System \n with centered scheme on 2D square meshes')
     plt.savefig(mesh_name+"_2DWaveSystemSquaresCentered_"+"scaling"+str(scaling)+"_FinalTime.png")
@@ -135,7 +135,7 @@ def test_validation2DWaveSystemCentered_squares(scaling):
     else:
         plt.plot(mesh_size_tab, max_vel, label='Maximum velocity norm - with scaling')
     plt.legend()
-    plt.xlabel('number of cells')
+    plt.xlabel('Number of cells')
     plt.ylabel('Max velocity norm')
     plt.title('Maximum velocity norm for the stationary Wave System \n with centered scheme on 2D square meshes')
     plt.savefig(mesh_name+"_2DWaveSystemSquaresCentered_"+"scaling"+str(scaling)+"_MaxVelNorm.png")
@@ -147,7 +147,7 @@ def test_validation2DWaveSystemCentered_squares(scaling):
     else:
         plt.plot(mesh_size_tab, cond_number, label='Condition number - with scaling')
     plt.legend()
-    plt.xlabel('number of cells')
+    plt.xlabel('Number of cells')
     plt.ylabel('Condition number')
     plt.title('Condition number for the stationary Wave System \n with centered scheme on 2D square meshes')
     plt.savefig(mesh_name+"_2DWaveSystemSquaresCentered_"+"scaling"+str(scaling)+"_condition_number.png")
@@ -235,4 +235,4 @@ if __name__ == """__main__""":
         scaling = int(sys.argv[1])
         test_validation2DWaveSystemCentered_squares(scaling)
     else :
-        raise ValueError("test_validation2DWaveSystemCenteredSquares.py expects a mesh file name")
+        test_validation2DWaveSystemCentered_squares(2)

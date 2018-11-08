@@ -220,5 +220,5 @@ if __name__ == """__main__""":
         scaling = int(sys.argv[1])
         test_validation2DWaveSystemCentered_triangles(scaling)
     else :
-        raise ValueError("test_validation2DWaveSystemCenteredTriangles.py expects a mesh file name")
+        test_validation2DWaveSystemCentered_triangles(2)
 
