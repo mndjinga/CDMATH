@@ -67,7 +67,7 @@ def test_validation2DWaveSystemCentered_triangles(scaling):
     plt.xlabel('Position on diagonal line')
     plt.ylabel('Velocity on diagonal line')
     plt.title('Plot over diagonal line for the stationary wave system \n with centered scheme on 2D triangular meshes')
-    plt.savefig(mesh_name+"_Velocity_2DWaveSystemSquaresCentered_"+"scaling"+str(scaling)+"_PlotOverDiagonalLine.png")    
+    plt.savefig(mesh_name+"_Velocity_2DWaveSystemTrianglesCentered_"+"scaling"+str(scaling)+"_PlotOverDiagonalLine.png")    
     plt.close()
 
     # Least square linear regression
@@ -78,7 +78,7 @@ def test_validation2DWaveSystemCentered_triangles(scaling):
     a3=nbMeshes
     
     det=a1*a3-a2*a2
-    assert det!=0, 'test_validation2DWaveSystemSquaresFVCentered() : Make sure you use distinct meshes and at least two meshes'
+    assert det!=0, 'test_validation2DWaveSystemTrianglesFVCentered() : Make sure you use distinct meshes and at least two meshes'
 
     b1u=np.dot(error_u_tab,mesh_size_tab)   
     b2u=np.sum(error_u_tab)
@@ -112,7 +112,7 @@ def test_validation2DWaveSystemCentered_triangles(scaling):
     plt.xlabel('number of cells')
     plt.ylabel('Max time for stationary regime')
     plt.title('Simulated time for the stationary Wave System \n with centered scheme on 2D triangular meshes')
-    plt.savefig(mesh_name+"_2DWaveSystemSquaresCentered_"+"scaling"+str(scaling)+"_FinalTime.png")
+    plt.savefig(mesh_name+"_2DWaveSystemTrianglesCentered_"+"scaling"+str(scaling)+"_FinalTime.png")
     
     # Plot of number of maximal velocity norm
     plt.close()
@@ -124,7 +124,7 @@ def test_validation2DWaveSystemCentered_triangles(scaling):
     plt.xlabel('number of cells')
     plt.ylabel('Max velocity norm')
     plt.title('Maximum velocity norm for the stationary Wave System \n with centered scheme on 2D triangular meshes')
-    plt.savefig(mesh_name+"_2DWaveSystemSquaresCentered_"+"scaling"+str(scaling)+"_MaxVelNorm.png")
+    plt.savefig(mesh_name+"_2DWaveSystemTrianglesCentered_"+"scaling"+str(scaling)+"_MaxVelNorm.png")
     
     # Plot of condition number 
     plt.close()
@@ -136,7 +136,7 @@ def test_validation2DWaveSystemCentered_triangles(scaling):
     plt.xlabel('number of cells')
     plt.ylabel('Condition number')
     plt.title('Condition number for the stationary Wave System \n with centered scheme on 2D square meshes')
-    plt.savefig(mesh_name+"_2DWaveSystemSquaresCentered_"+"scaling"+str(scaling)+"_condition_number.png")
+    plt.savefig(mesh_name+"_2DWaveSystemTrianglesCentered_"+"scaling"+str(scaling)+"_condition_number.png")
     
     for i in range(nbMeshes):
         mesh_size_tab[i]=log10(mesh_size_tab[i])
@@ -151,7 +151,7 @@ def test_validation2DWaveSystemCentered_triangles(scaling):
     plt.xlabel('log(number of cells)')
     plt.ylabel('|error p|')
     plt.title('Convergence of finite volumes for the stationary Wave System \n with centered scheme on 2D triangular meshes')
-    plt.savefig(mesh_name+"_Pressure_2DWaveSystemSquaresCentered_"+"scaling"+str(scaling)+"_ConvergenceCurve.png")
+    plt.savefig(mesh_name+"_Pressure_2DWaveSystemTrianglesCentered_"+"scaling"+str(scaling)+"_ConvergenceCurve.png")
     
     plt.close()
     if(scaling==0):
@@ -162,7 +162,7 @@ def test_validation2DWaveSystemCentered_triangles(scaling):
     plt.xlabel('log(number of cells)')
     plt.ylabel('|error u|')
     plt.title('Convergence of finite volumes for the stationary Wave System \n with centered scheme on 2D triangular meshes')
-    plt.savefig(mesh_name+"_Velocity_2DWaveSystemSquaresCentered_"+"scaling"+str(scaling)+"_ConvergenceCurve.png")
+    plt.savefig(mesh_name+"_Velocity_2DWaveSystemTrianglesCentered_"+"scaling"+str(scaling)+"_ConvergenceCurve.png")
     
     # Plot of computational time
     plt.close()
@@ -174,7 +174,7 @@ def test_validation2DWaveSystemCentered_triangles(scaling):
     plt.xlabel('log(number of cells)')
     plt.ylabel('log(cpu time)')
     plt.title('Computational time of finite volumes for the stationary Wave System \n with centered scheme on 2D triangular meshes')
-    plt.savefig(mesh_name+"2DWaveSystemSquaresCentered_"+"scaling"+str(scaling)+"_ComputationalTimeSquares.png")
+    plt.savefig(mesh_name+"2DWaveSystemTrianglesCentered_"+"scaling"+str(scaling)+"_ComputationalTimeTriangles.png")
 
     plt.close('all')
 
