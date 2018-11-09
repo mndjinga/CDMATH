@@ -259,7 +259,7 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,te
         if(test_bc=="Periodic"):
             assert (total_velocity_initial-velocity_field.integral()).norm()<2*precision
         else:
-                print "Momentum loss=", (total_velocity_initial-velocity_field.integral()).norm(), "precision=", precision
+            print "Momentum loss=", (total_velocity_initial-velocity_field.integral()).norm(), "precision=", precision
         print "------------------------------------------------------------------------------------"
 
         pressure_field.setTime(time,0);
