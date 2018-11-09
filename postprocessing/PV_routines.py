@@ -128,6 +128,7 @@ def Save_PV_data_to_picture_file(inputFileName, field_name,
     display.SetScalarBarVisibility(renderView1, True)
 
     pvs.SaveScreenshot(outputFileName+".png", magnification=1, quality=100, view=renderView1)
+    display.SetScalarBarVisibility(renderView1, False)
 
     if field_name=='Velocity' :
         #pvs.HideAll(view=None)#Not available in paraview 5.1.2
