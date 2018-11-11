@@ -124,7 +124,7 @@ def test_validation2DWaveSystemStaggered_squares(scaling):
     plt.savefig(mesh_name+"_2DWaveSystemSquaresStaggered_"+"scaling"+str(scaling)+"_condition_number.png")
     
     for i in range(nbMeshes):
-        mesh_size_tab[i]=log10(mesh_size_tab[i])
+        mesh_size_tab[i]=0.5*log10(mesh_size_tab[i])
         
     # Least square linear regression
     # Find the best a,b such that f(x)=ax+b best approximates the convergence curve
@@ -163,8 +163,8 @@ def test_validation2DWaveSystemStaggered_squares(scaling):
     else:
         plt.plot(mesh_size_tab, error_p_tab, label='|error on stationary pressure| - with scaling')
     plt.legend()
-    plt.xlabel('log(number of cells)')
-    plt.ylabel('log(|error p|)')
+    plt.xlabel('1/2 log(number of cells)')
+    plt.ylabel('|error p|')
     plt.title('Convergence of finite volumes for the stationary Wave System \n with Staggered scheme on 2D square meshes')
     plt.savefig(mesh_name+"_Pressure_2DWaveSystemSquaresStaggered_"+"scaling"+str(scaling)+"_ConvergenceCurve.png")
     
@@ -174,7 +174,7 @@ def test_validation2DWaveSystemStaggered_squares(scaling):
     else:
         plt.plot(mesh_size_tab, error_u_tab, label='log(|error on stationary velocity|) - with scaling')
     plt.legend()
-    plt.xlabel('log(number of cells)')
+    plt.xlabel('1/2 log(number of cells)')
     plt.ylabel('log(|error u|)')
     plt.title('Convergence of finite volumes for the stationary Wave System \n with Staggered scheme on 2D square meshes')
     plt.savefig(mesh_name+"_Velocity_2DWaveSystemSquaresStaggered_"+"scaling"+str(scaling)+"_ConvergenceCurve.png")
@@ -186,7 +186,7 @@ def test_validation2DWaveSystemStaggered_squares(scaling):
     else:
         plt.plot(mesh_size_tab, time_tab, label='log(cpu time) - with scaling')
     plt.legend()
-    plt.xlabel('log(number of cells)')
+    plt.xlabel('1/2 log(number of cells)')
     plt.ylabel('log(cpu time)')
     plt.title('Computational time of finite volumes for the stationary Wave System \n with Staggered scheme on 2D square meshes')
     plt.savefig(mesh_name+"2DWaveSystemSquaresStaggered_"+"scaling"+str(scaling)+"_ComputationalTimeSquares.png")

@@ -95,7 +95,7 @@ def test_validation2DWaveSystemUpwind_squares():
     plt.savefig(mesh_name+"_2DWaveSystemUpwind_"+"MaxVelNorm.png")
     
     for i in range(nbMeshes):
-        mesh_size_tab[i]=log10(mesh_size_tab[i])
+        mesh_size_tab[i]=0.5*log10(mesh_size_tab[i])
         
     # Least square linear regression
     # Find the best a,b such that f(x)=ax+b best approximates the convergence curve
@@ -125,7 +125,7 @@ def test_validation2DWaveSystemUpwind_squares():
     plt.close()
     plt.plot(mesh_size_tab, error_p_tab, label='|error on stationary pressure|')
     plt.legend()
-    plt.xlabel('log(number of cells)')
+    plt.xlabel('1/2 log(number of cells)')
     plt.ylabel('|error p|')
     plt.title('Convergence of finite volumes for the stationary Wave System \n with upwind scheme on 2D square meshes')
     plt.savefig(mesh_name+"_Pressure_2DWaveSystemUpwind_"+"ConvergenceCurve.png")
@@ -133,7 +133,7 @@ def test_validation2DWaveSystemUpwind_squares():
     plt.close()
     plt.plot(mesh_size_tab, error_u_tab, label='log(|error on stationary velocity|)')
     plt.legend()
-    plt.xlabel('log(number of cells)')
+    plt.xlabel('1/2 log(number of cells)')
     plt.ylabel('log(|error u|)')
     plt.title('Convergence of finite volumes for the stationary Wave System\n with upwind scheme  on 2D square meshes')
     plt.savefig(mesh_name+"_Velocity_2DWaveSystemUpwind_"+"ConvergenceCurve.png")
@@ -142,7 +142,7 @@ def test_validation2DWaveSystemUpwind_squares():
     plt.close()
     plt.plot(mesh_size_tab, time_tab, label='log(cpu time)')
     plt.legend()
-    plt.xlabel('log(number of cells)')
+    plt.xlabel('1/2 log(number of cells)')
     plt.ylabel('log(cpu time)')
     plt.title('Computational time of finite volumes for the stationary Wave System \n with upwind scheme on 2D square meshes')
     plt.savefig(mesh_name+"_2DWaveSystemUpwind_ComputationalTimeSquares.png")

@@ -34,6 +34,9 @@ def test_validation2DWaveSystemUpwindBrickWall(bctype):
     for filename in meshList:
         error_p_tab[i], error_u_tab[i], mesh_size_tab[i], t_final[i], ndt_final[i], max_vel[i], diag_data_press[i], diag_data_vel[i], time_tab[i] =WaveSystemUpwind.solve_file(mesh_path+filename, mesh_name, resolution,meshType,testColor,cfl,bctype)
         assert max_vel[i]>0.002 and max_vel[i]<1
+        error_p_tab[i]=log10(error_p_tab[i])
+        error_u_tab[i]=log10(error_u_tab[i])
+        time_tab[i]=log10(time_tab[i])
         i=i+1
     
     end = time.time()
@@ -58,6 +61,36 @@ def test_validation2DWaveSystemUpwindBrickWall(bctype):
     plt.savefig(mesh_name+"_Velocity_2DWaveSystemUpwind_BrickWall_"+"PlotOverDiagonalLine.png")    
     plt.close()
 
+    # Plot of number of time steps
+    plt.close()
+    plt.plot(mesh_size_tab, ndt_final, label='Number of time step to reach stationary regime')
+    plt.legend()
+    plt.xlabel('Number of cells')
+    plt.ylabel('Max time steps for stationary regime')
+    plt.title('Number of times steps required for the stationary Wave System \n with upwind scheme on 2D brick wall meshes')
+    plt.savefig(mesh_name+"_2DWaveSystemBrickWallUpwind_"+"TimeSteps.png")
+    
+    # Plot of number of stationary time
+    plt.close()
+    plt.plot(mesh_size_tab, t_final, label='Time where stationary regime is reached')
+    plt.legend()
+    plt.xlabel('Number of cells')
+    plt.ylabel('Max time for stationary regime')
+    plt.title('Simulated time for the stationary Wave System \n with upwind scheme on 2D brick wall meshes')
+    plt.savefig(mesh_name+"_2DWaveSystemBrickWallUpwind_"+"TimeFinal.png")
+    
+    # Plot of number of maximal velocity norm
+    plt.close()
+    plt.plot(mesh_size_tab, max_vel, label='Maximum velocity norm')
+    plt.legend()
+    plt.xlabel('Number of cells')
+    plt.ylabel('Max velocity norm')
+    plt.title('Maximum velocity norm for the stationary Wave System \n with upwind scheme on 2D brick wall meshes')
+    plt.savefig(mesh_name+"_2DWaveSystemBrickWallUpwind_"+"MaxVelNorm.png")
+    
+    for i in range(nbMeshes):
+        mesh_size_tab[i]=0.5*log10(mesh_size_tab[i])
+        
     # Least square linear regression
     # Find the best a,b such that f(x)=ax+b best approximates the convergence curve
     # The vector X=(a,b) solves a symmetric linear system AX=B with A=(a1,a2\\a2,a3), B=(b1,b2)
@@ -82,47 +115,20 @@ def test_validation2DWaveSystemUpwindBrickWall(bctype):
     
     print "FV upwind on 2D brick wall meshes : scheme order for velocity is ", -au
     
-    # Plot of number of time steps
-    plt.close()
-    plt.plot(mesh_size_tab, ndt_final, label='Number of time step to reach stationary regime')
-    plt.legend()
-    plt.xlabel('number of cells')
-    plt.ylabel('Max time steps for stationary regime')
-    plt.title('Number of times steps required for the stationary Wave System \n with upwind scheme on 2D brick wall meshes')
-    plt.savefig(mesh_name+"_2DWaveSystemBrickWallUpwind_"+"TimeSteps.png")
-    
-    # Plot of number of stationary time
-    plt.close()
-    plt.plot(mesh_size_tab, t_final, label='Time where stationary regime is reached')
-    plt.legend()
-    plt.xlabel('number of cells')
-    plt.ylabel('Max time for stationary regime')
-    plt.title('Simulated time for the stationary Wave System \n with upwind scheme on 2D brick wall meshes')
-    plt.savefig(mesh_name+"_2DWaveSystemBrickWallUpwind_"+"TimeFinal.png")
-    
-    # Plot of number of maximal velocity norm
-    plt.close()
-    plt.plot(mesh_size_tab, max_vel, label='Maximum velocity norm')
-    plt.legend()
-    plt.xlabel('number of cells')
-    plt.ylabel('Max velocity norm')
-    plt.title('Maximum velocity norm for the stationary Wave System \n with upwind scheme on 2D brick wall meshes')
-    plt.savefig(mesh_name+"_2DWaveSystemBrickWallUpwind_"+"MaxVelNorm.png")
-    
     # Plot of convergence curves
     plt.close()
     plt.plot(mesh_size_tab, error_p_tab, label='|error on stationary pressure|')
     plt.legend()
-    plt.xlabel('number of cells')
-    plt.ylabel('error p')
+    plt.xlabel('1/2 log(number of cells)')
+    plt.ylabel('log(error p)')
     plt.title('Convergence of finite volumes for the stationary Wave System \n with upwind scheme on 2D brick wall meshes')
     plt.savefig(mesh_name+"_Pressure_2DWaveSystemUpwind_BrickWall_"+"ConvergenceCurve.png")
     
     plt.close()
     plt.plot(mesh_size_tab, error_u_tab, label='|error on stationary velocity|')
     plt.legend()
-    plt.xlabel('number of cells')
-    plt.ylabel('error u')
+    plt.xlabel('1/2 log(number of cells)')
+    plt.ylabel('log(error u)')
     plt.title('Convergence of finite volumes for the stationary Wave System \n with upwind scheme on 2D brick wall meshes')
     plt.savefig(mesh_name+"_Velocity_2DWaveSystemUpwind_BrickWall_"+"ConvergenceCurve.png")
     
@@ -130,8 +136,8 @@ def test_validation2DWaveSystemUpwindBrickWall(bctype):
     plt.close()
     plt.plot(mesh_size_tab, time_tab, label='log(cpu time)')
     plt.legend()
-    plt.xlabel('number of cells')
-    plt.ylabel('cpu time')
+    plt.xlabel('1/2 log(number of cells)')
+    plt.ylabel('log(cpu time)')
     plt.title('Computational time of finite volumes for the stationary Wave System \n with upwind scheme on 2D brick wall meshes')
     plt.savefig(mesh_name+"_2DWaveSystemUpwind_BrickWall_ComputationalTime.png")
     

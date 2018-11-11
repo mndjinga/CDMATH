@@ -9,7 +9,7 @@ import time, json
 def test_validation2DWaveSystemUpwindTriangles():
     start = time.time()
     #### 2D triangle mesh
-    meshList=['squareWithTriangles_1','squareWithTriangles_2','squareWithTriangles_3','squareWithTriangles_4']
+    meshList=['squareWithTriangles_1','squareWithTriangles_2','squareWithTriangles_3','squareWithTriangles_4','squareWithTriangles_5']
     meshType="Unstructured triangles"
     testColor="Green"
     nbMeshes=len(meshList)
@@ -66,7 +66,7 @@ def test_validation2DWaveSystemUpwindTriangles():
     plt.close()
     plt.plot(mesh_size_tab, ndt_final, label='Number of time step to reach stationary regime')
     plt.legend()
-    plt.xlabel('number of cells')
+    plt.xlabel('Number of cells')
     plt.ylabel('Max time steps for stationary regime')
     plt.title('Number of times steps required for the stationary Wave System \n with upwind scheme on 2D triangular meshes')
     plt.savefig(mesh_name+"_2DWaveSystemTrianglesUpwind_"+"TimeSteps.png")
@@ -75,7 +75,7 @@ def test_validation2DWaveSystemUpwindTriangles():
     plt.close()
     plt.plot(mesh_size_tab, t_final, label='Time where stationary regime is reached')
     plt.legend()
-    plt.xlabel('number of cells')
+    plt.xlabel('Number of cells')
     plt.ylabel('Max time for stationary regime')
     plt.title('Simulated time for the stationary Wave System \n with upwind scheme on 2D triangular meshes')
     plt.savefig(mesh_name+"_2DWaveSystemTrianglesUpwind_"+"TimeFinal.png")
@@ -84,13 +84,13 @@ def test_validation2DWaveSystemUpwindTriangles():
     plt.close()
     plt.plot(mesh_size_tab, max_vel, label='Maximum velocity norm')
     plt.legend()
-    plt.xlabel('number of cells')
+    plt.xlabel('Number of cells')
     plt.ylabel('Max velocity norm')
     plt.title('Maximum velocity norm for the stationary Wave System \n with upwind scheme on 2D triangular meshes')
     plt.savefig(mesh_name+"_2DWaveSystemTrianglesUpwind_"+"MaxVelNorm.png")
     
     for i in range(nbMeshes):
-        mesh_size_tab[i]=log10(mesh_size_tab[i])
+        mesh_size_tab[i]=0.5*log10(mesh_size_tab[i])
         
     # Least square linear regression
     # Find the best a,b such that f(x)=ax+b best approximates the convergence curve
@@ -120,7 +120,7 @@ def test_validation2DWaveSystemUpwindTriangles():
     plt.close()
     plt.plot(mesh_size_tab, error_p_tab, label='|error on stationary pressure|')
     plt.legend()
-    plt.xlabel('log(number of cells)')
+    plt.xlabel('1/2 log(number of cells)')
     plt.ylabel('log(error p)')
     plt.title('Convergence of finite volumes for the stationary Wave System \n with upwind scheme on 2D triangular meshes')
     plt.savefig(mesh_name+"_Pressure_2DWaveSystemUpwind_Triangles_"+"ConvergenceCurve.png")
@@ -128,7 +128,7 @@ def test_validation2DWaveSystemUpwindTriangles():
     plt.close()
     plt.plot(mesh_size_tab, error_u_tab, label='|error on stationary velocity|')
     plt.legend()
-    plt.xlabel('log(number of cells)')
+    plt.xlabel('1/2 log(number of cells)')
     plt.ylabel('log(error u)')
     plt.title('Convergence of finite volumes for the stationary Wave System \n with upwind scheme on 2D triangular meshes')
     plt.savefig(mesh_name+"_Velocity_2DWaveSystemUpwind_Triangles_"+"ConvergenceCurve.png")
@@ -137,7 +137,7 @@ def test_validation2DWaveSystemUpwindTriangles():
     plt.close()
     plt.plot(mesh_size_tab, time_tab, label='log(cpu time)')
     plt.legend()
-    plt.xlabel('log(number of cells)')
+    plt.xlabel('1/2 log(number of cells)')
     plt.ylabel('log(cpu time)')
     plt.title('Computational time of finite volumes for the stationary Wave System \n with upwind scheme on 2D triangular meshes')
     plt.savefig(mesh_name+"_2DWaveSystemUpwind_Triangles_ComputationalTime.png")

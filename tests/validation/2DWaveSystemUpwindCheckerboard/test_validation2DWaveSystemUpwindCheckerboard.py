@@ -89,7 +89,7 @@ def test_validation2DWaveSystemUpwindCheckerboard(bctype):
     plt.savefig(mesh_name+"_2DWaveSystemCheckerboardUpwind_"+"MaxVelNorm.png")
     
     for i in range(nbMeshes):
-        mesh_size_tab[i]=log10(mesh_size_tab[i])
+        mesh_size_tab[i]=0.5*log10(mesh_size_tab[i])
         
     # Least square linear regression
     # Find the best a,b such that f(x)=ax+b best approximates the convergence curve
@@ -119,7 +119,7 @@ def test_validation2DWaveSystemUpwindCheckerboard(bctype):
     plt.close()
     plt.plot(mesh_size_tab, error_p_tab, label='|error on stationary pressure|')
     plt.legend()
-    plt.xlabel('log(Number of cells)')
+    plt.xlabel('1/2 log(Number of cells)')
     plt.ylabel('log(Error p)')
     plt.title('Convergence of finite volumes for the stationary Wave System \n with upwind scheme on 2D checkerboard meshes')
     plt.savefig(mesh_name+"_Pressure_2DWaveSystemUpwind_Checkerboard_"+"ConvergenceCurve.png")
@@ -127,7 +127,7 @@ def test_validation2DWaveSystemUpwindCheckerboard(bctype):
     plt.close()
     plt.plot(mesh_size_tab, error_u_tab, label='|error on stationary velocity|')
     plt.legend()
-    plt.xlabel('log(Number of cells)')
+    plt.xlabel('1/2 log(Number of cells)')
     plt.ylabel('log(Error u)')
     plt.title('Convergence of finite volumes for the stationary Wave System \n with upwind scheme on 2D checkerboard meshes')
     plt.savefig(mesh_name+"_Velocity_2DWaveSystemUpwind_Checkerboard_"+"ConvergenceCurve.png")
@@ -136,7 +136,7 @@ def test_validation2DWaveSystemUpwindCheckerboard(bctype):
     plt.close()
     plt.plot(mesh_size_tab, time_tab, label='log(cpu time)')
     plt.legend()
-    plt.xlabel('log(Number of cells)')
+    plt.xlabel('1/2 log(Number of cells)')
     plt.ylabel('log(cpu time)')
     plt.title('Computational time of finite volumes for the stationary Wave System \n with upwind scheme on 2D checkerboard meshes')
     plt.savefig(mesh_name+"_2DWaveSystemUpwind_Checkerboard_ComputationalTime.png")

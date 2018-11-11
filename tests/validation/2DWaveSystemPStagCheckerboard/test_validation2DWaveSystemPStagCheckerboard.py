@@ -117,7 +117,7 @@ def test_validation2DWaveSystemPStagCheckerboard(scaling):
     plt.savefig(mesh_name+"_2DWaveSystemTrianglesPStag_"+"scaling"+str(scaling)+"_condition_number.png")
 
     for i in range(nbMeshes):
-        mesh_size_tab[i]=log10(mesh_size_tab[i])
+        mesh_size_tab[i]=0.5*log10(mesh_size_tab[i])
         
     # Least square linear regression
     # Find the best a,b such that f(x)=ax+b best approximates the convergence curve
@@ -156,7 +156,7 @@ def test_validation2DWaveSystemPStagCheckerboard(scaling):
     else:
         plt.plot(mesh_size_tab, error_p_tab, label='|error on stationary pressure| - with scaling')
     plt.legend()
-    plt.xlabel('log(Number of cells)')
+    plt.xlabel('1/2 log(Number of cells)')
     plt.ylabel('log(Error p)')
     plt.title('Convergence of finite volumes for the stationary Wave System \n with pseudo staggered scheme on 2D checkerboard meshes')
     plt.savefig(mesh_name+"_Pressure_2DWaveSystemPStag_Checkerboard_"+"scaling"+str(scaling)+"_ConvergenceCurve.png")
@@ -167,7 +167,7 @@ def test_validation2DWaveSystemPStagCheckerboard(scaling):
     else:
         plt.plot(mesh_size_tab, error_u_tab, label='log(|error on stationary velocity|) - with scaling')
     plt.legend()
-    plt.xlabel('log(Number of cells)')
+    plt.xlabel('1/2 log(Number of cells)')
     plt.ylabel('log(Error u)')
     plt.title('Convergence of finite volumes for the stationary Wave System \n with pseudo staggered scheme on 2D checkerboard meshes')
     plt.savefig(mesh_name+"_Velocity_2DWaveSystemPStag_Checkerboard_"+"scaling"+str(scaling)+"_ConvergenceCurve.png")
@@ -179,7 +179,7 @@ def test_validation2DWaveSystemPStagCheckerboard(scaling):
     else:
         plt.plot(mesh_size_tab, time_tab, label='log(cpu time) - with scaling')
     plt.legend()
-    plt.xlabel('log(Number of cells)')
+    plt.xlabel('1/2 log(Number of cells)')
     plt.ylabel('log(cpu time)')
     plt.title('Computational time of finite volumes for the stationary Wave System \n with pseudo staggered scheme on 2D checkerboard meshes')
     plt.savefig(mesh_name+"_2DWaveSystemPStag_Checkerboard_"+"scaling"+str(scaling)+"_ComputationalTime.png")

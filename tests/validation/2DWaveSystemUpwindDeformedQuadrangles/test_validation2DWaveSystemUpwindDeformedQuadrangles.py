@@ -74,7 +74,7 @@ def test_validation2DWaveSystemUpwindDeformedQuadrangles(bctype):
     plt.close()
     plt.plot(mesh_size_tab, t_final, label='Time where stationary regime is reached')
     plt.legend()
-    plt.xlabel('number of cells')
+    plt.xlabel('Number of cells')
     plt.ylabel('Max time for stationary regime')
     plt.title('Simulated time for the stationary Wave System \n with upwind scheme on 2D deformed quadrangular meshes')
     plt.savefig(mesh_name+"_2DWaveSystemDeformedQuadranglesUpwind_"+"TimeFinal.png")
@@ -83,13 +83,13 @@ def test_validation2DWaveSystemUpwindDeformedQuadrangles(bctype):
     plt.close()
     plt.plot(mesh_size_tab, max_vel, label='Maximum velocity norm')
     plt.legend()
-    plt.xlabel('number of cells')
+    plt.xlabel('Number of cells')
     plt.ylabel('Max velocity norm')
     plt.title('Maximum velocity norm for the stationary Wave System \n with upwind scheme on 2D deformed quadrangular meshes')
     plt.savefig(mesh_name+"_2DWaveSystemDeformedQuadranglesUpwind_"+"MaxVelNorm.png")
     
     for i in range(nbMeshes):
-        mesh_size_tab[i]=log10(mesh_size_tab[i])
+        mesh_size_tab[i]=0.5*log10(mesh_size_tab[i])
         
     # Least square linear regression
     # Find the best a,b such that f(x)=ax+b best approximates the convergence curve
@@ -127,7 +127,7 @@ def test_validation2DWaveSystemUpwindDeformedQuadrangles(bctype):
     plt.close()
     plt.plot(mesh_size_tab, error_u_tab, label='|error on stationary velocity|')
     plt.legend()
-    plt.xlabel('log(number of cells)')
+    plt.xlabel('1/2 log(number of cells)')
     plt.ylabel('log(error u)')
     plt.title('Convergence of finite volumes for the stationary Wave System \n with upwind scheme on 2D deformed quadrangular meshes')
     plt.savefig(mesh_name+"_Velocity_2DWaveSystemUpwind_DeformedQuadrangles_"+"ConvergenceCurve.png")
@@ -136,7 +136,7 @@ def test_validation2DWaveSystemUpwindDeformedQuadrangles(bctype):
     plt.close()
     plt.plot(mesh_size_tab, time_tab, label='log(cpu time)')
     plt.legend()
-    plt.xlabel('log(number of cells)')
+    plt.xlabel('1/2 log(number of cells)')
     plt.ylabel('log(cpu time)')
     plt.title('Computational time of finite volumes for the stationary Wave System \n with upwind scheme on 2D deformed quadrangular meshes')
     plt.savefig(mesh_name+"_2DWaveSystemUpwind_DeformedQuadrangles_ComputationalTime.png")
