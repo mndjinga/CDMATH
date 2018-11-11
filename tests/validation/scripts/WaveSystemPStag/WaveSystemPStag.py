@@ -106,16 +106,7 @@ def computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt,scaling):
                 implMat.addValue(j*nbComp,cellAutre*nbComp,Am)
                 implMat.addValue(j*nbComp,        j*nbComp,Am*(-1.))
             else  :
-                if( Fk.getGroupName() != "Wall" and Fk.getGroupName() != "Paroi" and Fk.getGroupName() != "Neumann"):#Periodic boundary condition unless Wall/Neumann specified explicitly
-                    test_desc["Boundary_conditions"]="Periodic"
-                    
-                    indexFP = my_mesh.getIndexFacePeriodic(indexFace)
-                    Fp = my_mesh.getFace(indexFP)
-                    cellAutre = Fp.getCellsId()[0]
-                    
-                    implMat.addValue(j*nbComp,cellAutre*nbComp,Am)
-                    implMat.addValue(j*nbComp,        j*nbComp,Am*(-1.))
-                elif( Fk.getGroupName() == "Wall" or Fk.getGroupName() == "Paroi"):#Wall boundary condition
+                if( Fk.getGroupName() != "Periodic" and Fk.getGroupName() != "Neumann"):#( Fk.getGroupName() == "Wall" or Fk.getGroupName() == "Paroi"):#Wall boundary condition
                     test_desc["Boundary_conditions"]="Wall"
                     
                     v=cdmath.Vector(dim+1)
@@ -125,6 +116,15 @@ def computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt,scaling):
                     
                     implMat.addValue(j*nbComp,j*nbComp,Am*(-1.)*idMoinsJacCL)
                     
+                elif( Fk.getGroupName() != "Wall" and Fk.getGroupName() != "Paroi" and Fk.getGroupName() != "Neumann"):#Periodic boundary condition unless Wall/Neumann specified explicitly
+                    test_desc["Boundary_conditions"]="Periodic"
+                    
+                    indexFP = my_mesh.getIndexFacePeriodic(indexFace)
+                    Fp = my_mesh.getFace(indexFP)
+                    cellAutre = Fp.getCellsId()[0]
+                    
+                    implMat.addValue(j*nbComp,cellAutre*nbComp,Am)
+                    implMat.addValue(j*nbComp,        j*nbComp,Am*(-1.))
                 elif(Fk.getGroupName() != "Neumann"):#Nothing to do for Neumann boundary condition
                     print Fk.getGroupName()
                     raise ValueError("computeFluxes: Unknown boundary condition name");
