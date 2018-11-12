@@ -61,7 +61,7 @@ def jacobianMatrices(normal, coeff, signun,scaling):
     return A/2
     
     
-def computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt,scaling):
+def computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt,scaling,test_bc):
     nbCells = my_mesh.getNumberOfCells()
     dim=my_mesh.getMeshDimension()
     nbComp=dim+1
@@ -179,7 +179,7 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,sc
     dx_min=my_mesh.minRatioVolSurf()
 
     dt = cfl * dx_min / c0
-    divMat=computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt,scaling)
+    divMat=computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt,scaling,test_bc)
 
     #Add the identity matrix on the diagonal
     if( scaling==0 or  scaling==2):
