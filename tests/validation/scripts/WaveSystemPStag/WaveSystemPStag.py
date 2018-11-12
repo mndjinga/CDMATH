@@ -289,9 +289,11 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,sc
         raise ValueError("Maximum number of time steps reached : Stationary state not found !!!!!!!")
     elif(isStationary):
         print "Régime stationnaire atteint au pas de temps ", it, ", t= ", time
+        print "Mass loss: ", (total_pressure_initial-pressure_field.integral()).norm()/p0, " precision required= ", precision
+        print "Momentum loss: ", (total_velocity_initial-velocity_field.integral()).norm()/velocity_field.normL1().norm(), " precision required= ", precision
         assert (total_pressure_initial-pressure_field.integral()).norm()/p0<precision
-        #print (total_velocity_initial-velocity_field.integral()).norm()/velocity_field.normL1().norm(), precision
-        assert (total_velocity_initial-velocity_field.integral()).norm()/velocity_field.normL1().norm()<precision
+        if(test_bc=="Periodic"):
+            assert (total_velocity_initial-velocity_field.integral()).norm()<2*precision
         print "------------------------------------------------------------------------------------"
 
         pressure_field.setTime(time,0);
