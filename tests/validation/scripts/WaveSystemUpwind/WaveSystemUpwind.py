@@ -14,7 +14,7 @@ scaling=False
 rho0=1000#reference density
 c0=1500#reference sound speed
 p0=rho0*c0*c0#reference pressure
-precision=1e-4
+precision=1e-5
 
 def initial_conditions_wave_system(my_mesh):
     test_desc["Initial_data"]="Constant pressure, divergence free velocity"
@@ -303,9 +303,9 @@ def solve(my_mesh,meshName,resolution, meshType, testColor,cfl,test_bc):
         print "Use of scaling strategy for better preconditioning"
     
     # Problem data
-    tmax = 1000.
-    ntmax = 10000
-    output_freq = 1000
+    tmax = 10000.
+    ntmax = 100000
+    output_freq = 10000
 
     error_p, error_u, nbCells, t_final, ndt_final, max_vel, diag_data_press, diag_data_vel = WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,test_bc)
     end = time.time()
