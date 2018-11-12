@@ -8,6 +8,7 @@ SET( VALIDATION_FOLDERS
 2DPoissonVF_deformedQuadrangles 
 2DPoissonVF_hexagons 
 2DPoissonVF_brickwall
+2DPoissonVF_cross_triangles
 2DPoissonVF_long_rectangles
 2DPoissonVF_long_triangles
 2DPoissonVF_flat_triangles
