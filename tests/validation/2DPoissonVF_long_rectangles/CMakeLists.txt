@@ -6,7 +6,7 @@ SET(SCRIPT
 FILE(GLOB MY_MESHES_AND_PICTURES
   "../../ressources/2DLongRectangles/squareWithLongRectangles_*"
 )
-SET(NOTEBOOK ../../doc/2DPoissonVF_long_rectangles/Convergence_Poisson_FV5_SQUARE_long_rectangles.ipynb )
+SET(NOTEBOOK ../../doc/2DPoissonVF/2DPoissonVF_long_rectangles/Convergence_Poisson_FV5_SQUARE_long_rectangles.ipynb )
 
 
 file(COPY ${SCRIPT} ${NOTEBOOK} ${MY_MESHES_AND_PICTURES} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})

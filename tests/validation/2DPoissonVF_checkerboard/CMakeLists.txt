@@ -6,7 +6,7 @@ SET(SCRIPT
 FILE(GLOB MY_MESHES_AND_PICTURES
   "../../ressources/2DCheckerboard/checkerboard_*"
 )
-SET(NOTEBOOK ../../doc/2DPoissonVF_checkerboard/Convergence_Poisson_FV5_SQUARE_checkerboard.ipynb )
+SET(NOTEBOOK ../../doc/2DPoissonVF/2DPoissonVF_checkerboard/Convergence_Poisson_FV5_SQUARE_checkerboard.ipynb )
 
 
 FILE(COPY ${SCRIPT} ${NOTEBOOK} ${MY_MESHES_AND_PICTURES} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
