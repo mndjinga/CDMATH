@@ -103,7 +103,7 @@ def computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt,scaling):
                 implMat.addValue(j*nbComp,cellAutre*nbComp,Am)
                 implMat.addValue(j*nbComp,        j*nbComp,Am*(-1.))
             else  :
-                if( Fk.getGroupName() != "Wall" and Fk.getGroupName() != "Paroi" and Fk.getGroupName() != "Neumann"):#Periodic boundary condition unless Wall/Neumann specified explicitly
+                if( test_bc=="Periodic" and Fk.getGroupName() != "Wall" and Fk.getGroupName() != "Paroi" and Fk.getGroupName() != "Neumann"):#Periodic boundary condition unless Wall/Neumann specified explicitly
                     test_desc["Boundary_conditions"]="Periodic"
                     
                     indexFP = my_mesh.getIndexFacePeriodic(indexFace)
@@ -112,7 +112,7 @@ def computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt,scaling):
                     
                     implMat.addValue(j*nbComp,cellAutre*nbComp,Am)
                     implMat.addValue(j*nbComp,        j*nbComp,Am*(-1.))
-                elif( Fk.getGroupName() == "Wall" or Fk.getGroupName() == "Paroi"):#Wall boundary condition
+                elif( test_bc=="Wall" or Fk.getGroupName() == "Wall" or Fk.getGroupName() == "Paroi"):#Wall boundary condition
                     test_desc["Boundary_conditions"]="Wall"
                     
                     v=cdmath.Vector(dim+1)
@@ -122,13 +122,13 @@ def computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt,scaling):
                     
                     implMat.addValue(j*nbComp,j*nbComp,Am*(-1.)*idMoinsJacCL)
                     
-                elif(Fk.getGroupName() != "Neumann"):#Nothing to do for Neumann boundary condition
+                elif(test_bc!="Neumann" and Fk.getGroupName() != "Neumann"):#Nothing to do for Neumann boundary condition
                     print Fk.getGroupName()
                     raise ValueError("computeFluxes: Unknown boundary condition name");
 
     return implMat
 
-def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,scaling):
+def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,scaling,test_bc):
     dim=my_mesh.getMeshDimension()
     nbCells = my_mesh.getNumberOfCells()
     
@@ -341,7 +341,7 @@ def solve(my_mesh,meshName,resolution,scaling, meshType, testColor,cfl):
     ntmax = 10000
     output_freq = 1000
 
-    error_p, error_u, nbCells, t_final, ndt_final, max_vel, diag_data_press, diag_data_vel, cond_number = WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,scaling)
+    error_p, error_u, nbCells, t_final, ndt_final, max_vel, diag_data_press, diag_data_vel, cond_number = WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,scaling,test_bc)
     end = time.time()
 
     test_desc["Global_name"]=test_name

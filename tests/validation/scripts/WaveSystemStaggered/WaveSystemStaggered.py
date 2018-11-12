@@ -196,7 +196,7 @@ def computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt,scaling):
 
     return implMat
 
-def WaveSystemStaggered(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,scaling):
+def WaveSystemStaggered(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,scaling,test_bc):
     dim=my_mesh.getMeshDimension()
     nbCells = my_mesh.getNumberOfCells()
     
@@ -394,7 +394,7 @@ def solve(my_mesh,meshName,resolution,scaling, meshType, testColor,cfl):
     ntmax = 10000
     output_freq = 1000
 
-    error_p, error_u, nbCells, t_final, ndt_final, max_vel, diag_data_press, diag_data_vel, cond_number = WaveSystemStaggered(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,scaling)
+    error_p, error_u, nbCells, t_final, ndt_final, max_vel, diag_data_press, diag_data_vel, cond_number = WaveSystemStaggered(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,scaling,test_bc)
     end = time.time()
 
     test_desc["Global_name"]=test_name
