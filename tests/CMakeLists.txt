@@ -32,7 +32,7 @@ if (CDMATH_WITH_PYTHON AND CDMATH_WITH_PETSC AND CDMATH_WITH_POSTPRO)
   add_custom_target (triangles COMMAND ctest -R triangles)# may be replace ctest -R with ctest -L
   add_custom_target (checkerboard COMMAND ctest -R checkerboard)# may be replace ctest -R with ctest -L
   add_custom_target (squares COMMAND ctest -R squares)# may be replace ctest -R with ctest -L
-  add_custom_target (scaling COMMAND ctest -R _scaling -E no_scaling)# may be replace ctest -R with ctest -L
+  add_custom_target (scaling COMMAND ctest -R '_scaling|Upwind' -E no_scaling)# may be replace ctest -R with ctest -L
   add_custom_target (noscaling COMMAND ctest -R no_scaling)# may be replace ctest -R with ctest -L
   add_custom_target (2D COMMAND ctest -R 2D)# may be replace ctest -R with ctest -L
   add_custom_target (3D COMMAND ctest -R 3D)# may be replace ctest -R with ctest -L
