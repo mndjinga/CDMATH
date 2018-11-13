@@ -10,7 +10,7 @@ import time, json
 def test_validation2DWaveSystemStaggered_squares(scaling):
     start = time.time()
     #### 2D square mesh
-    meshList=[7,15,31,51,81]
+    meshList=[7,15,31,51,81,101]
     #meshList=['squareWithSquares_1','squareWithSquares_2','squareWithSquares_3','squareWithSquares_4','squareWithSquares_5']
     mesh_path='../../ressources/2DCartesien/'
     meshType="Regular squares"
