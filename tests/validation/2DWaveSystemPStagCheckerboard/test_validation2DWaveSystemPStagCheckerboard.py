@@ -52,7 +52,7 @@ def test_validation2DWaveSystemPStagCheckerboard(scaling):
     plt.xlabel('Position on diagonal line')
     plt.ylabel('Pressure on diagonal line')
     plt.title('Plot over diagonal line for stationary wave system \n with pseudo staggered scheme on 2D checkerboard meshes')
-    plt.savefig(mesh_name+'_Pressure_2DWaveSystemPStag_Checkerboard_'+"scaling"+str(scaling)+"_PlotOverDiagonalLine.png")
+    plt.savefig(mesh_name+'_Pressure_2DWaveSystemPStag_'+"scaling"+str(scaling)+"_PlotOverDiagonalLine.png")
     plt.close()
 
     plt.clf()
@@ -65,7 +65,7 @@ def test_validation2DWaveSystemPStagCheckerboard(scaling):
     plt.xlabel('Position on diagonal line')
     plt.ylabel('Velocity on diagonal line')
     plt.title('Plot over diagonal line for the stationary wave system \n with pseudo staggered scheme on 2D checkerboard meshes')
-    plt.savefig(mesh_name+"_Velocity_2DWaveSystemPStag_Checkerboard_"+"scaling"+str(scaling)+"_PlotOverDiagonalLine.png")    
+    plt.savefig(mesh_name+"_Velocity_2DWaveSystemPStag_"+"scaling"+str(scaling)+"_PlotOverDiagonalLine.png")    
     plt.close()
 
     # Plot of number of time steps
@@ -159,7 +159,7 @@ def test_validation2DWaveSystemPStagCheckerboard(scaling):
     plt.xlabel('1/2 log(Number of cells)')
     plt.ylabel('log(Error p)')
     plt.title('Convergence of finite volumes for the stationary Wave System \n with pseudo staggered scheme on 2D checkerboard meshes')
-    plt.savefig(mesh_name+"_Pressure_2DWaveSystemPStag_Checkerboard_"+"scaling"+str(scaling)+"_ConvergenceCurve.png")
+    plt.savefig(mesh_name+"_Pressure_2DWaveSystemPStag_"+"scaling"+str(scaling)+"_ConvergenceCurve.png")
     
     plt.close()
     if(scaling==0):
@@ -170,7 +170,7 @@ def test_validation2DWaveSystemPStagCheckerboard(scaling):
     plt.xlabel('1/2 log(Number of cells)')
     plt.ylabel('log(Error u)')
     plt.title('Convergence of finite volumes for the stationary Wave System \n with pseudo staggered scheme on 2D checkerboard meshes')
-    plt.savefig(mesh_name+"_Velocity_2DWaveSystemPStag_Checkerboard_"+"scaling"+str(scaling)+"_ConvergenceCurve.png")
+    plt.savefig(mesh_name+"_Velocity_2DWaveSystemPStag_"+"scaling"+str(scaling)+"_ConvergenceCurve.png")
     
     # Plot of computational time
     plt.close()
@@ -182,7 +182,7 @@ def test_validation2DWaveSystemPStagCheckerboard(scaling):
     plt.xlabel('1/2 log(Number of cells)')
     plt.ylabel('log(cpu time)')
     plt.title('Computational time of finite volumes for the stationary Wave System \n with pseudo staggered scheme on 2D checkerboard meshes')
-    plt.savefig(mesh_name+"_2DWaveSystemPStag_Checkerboard_"+"scaling"+str(scaling)+"_ComputationalTime.png")
+    plt.savefig(mesh_name+"_2DWaveSystemPStag_"+"scaling"+str(scaling)+"_ComputationalTime.png")
     
     plt.close('all')
     

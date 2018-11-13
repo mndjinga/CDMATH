@@ -19,7 +19,7 @@ def test_validation2DWaveSystemUpwind_squares():
     error_p_tab=[0]*nbMeshes
     error_u_tab=[0]*nbMeshes
     mesh_size_tab=[0]*nbMeshes
-    mesh_name='meshSquareWithSquares'
+    mesh_name='squareWithSquares'
     diag_data_press=[0]*nbMeshes
     diag_data_vel=[0]*nbMeshes
     time_tab=[0]*nbMeshes

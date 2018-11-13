@@ -11,13 +11,13 @@ def test_validation2DVF_triangles():
     start = time.time()
     ##### 2D FV triangle mesh
     meshList=['squareWithTriangles_1','squareWithTriangles_2','squareWithTriangles_3','squareWithTriangles_4','squareWithTriangles_5']
-    meshType="Unstructured_triangles"
+    meshType="Unstructured_Delaunay_triangles"
     testColor="Green"
     nbMeshes=len(meshList)
     error_tab=[0]*nbMeshes
     mesh_size_tab=[0]*nbMeshes
     mesh_path='../../ressources/2DTriangles/'
-    mesh_name='SquareWithTriangles'
+    mesh_name='squareWithDelaunayTriangles'
     diag_data=[0]*nbMeshes
     time_tab=[0]*nbMeshes
     resolution=100

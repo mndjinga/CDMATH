@@ -17,7 +17,7 @@ def test_validation2DVF_brickwall():
     error_tab=[0]*nbMeshes
     mesh_size_tab=[0]*nbMeshes
     mesh_path='../../ressources/2DBrickWall/'
-    mesh_name='SquareWithBrickWall'
+    mesh_name='squareWithBrickWall'
     diag_data=[0]*nbMeshes
     time_tab=[0]*nbMeshes
     resolution=100

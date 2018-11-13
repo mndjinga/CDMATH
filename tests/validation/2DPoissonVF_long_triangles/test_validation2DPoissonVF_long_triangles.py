@@ -13,12 +13,12 @@ def test_validation2DVF_long_triangles():
     meshList=[5,9,15,21,31]
     #meshList=['squareWithFlatTriangles_0','squareWithLongRectangles_1','squareWithLongRectangles_2','squareWithLongRectangles_3','squareWithLongRectangles_4','squareWithLongRectangles_5']
     mesh_path='../../ressources/2DLongTriangles/'
-    meshType="Regular_long_triangles"
+    meshType="Regular_long_right_triangles"
     testColor="Green"
     nbMeshes=len(meshList)
     error_tab=[0]*nbMeshes
     mesh_size_tab=[0]*nbMeshes
-    mesh_name='SquareWithLongTriangles'
+    mesh_name='squareWithLongRightTriangles'
     diag_data=[0]*nbMeshes
     time_tab=[0]*nbMeshes
     resolution=100

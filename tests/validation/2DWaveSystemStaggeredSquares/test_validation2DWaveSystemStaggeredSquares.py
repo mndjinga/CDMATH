@@ -17,7 +17,7 @@ def test_validation2DWaveSystemStaggered_squares(scaling):
     testColor="Green"
     nbMeshes=len(meshList)
     mesh_size_tab=[0]*nbMeshes
-    mesh_name='SquareWithSquares'
+    mesh_name='squareWithSquares'
     resolution=100
     curv_abs=np.linspace(0,sqrt(2),resolution+1)
 

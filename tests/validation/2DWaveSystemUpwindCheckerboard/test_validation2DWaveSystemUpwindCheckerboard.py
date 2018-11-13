@@ -48,7 +48,7 @@ def test_validation2DWaveSystemUpwindCheckerboard(bctype):
     plt.xlabel('Position on diagonal line')
     plt.ylabel('Pressure on diagonal line')
     plt.title('Plot over diagonal line for stationary wave system \n with upwind scheme on 2D checkerboard meshes')
-    plt.savefig(mesh_name+'_Pressure_2DWaveSystemUpwind_Checkerboard_'+"PlotOverDiagonalLine.png")
+    plt.savefig(mesh_name+'_Pressure_2DWaveSystemUpwind_'+"PlotOverDiagonalLine.png")
     plt.close()
 
     plt.clf()
@@ -58,7 +58,7 @@ def test_validation2DWaveSystemUpwindCheckerboard(bctype):
     plt.xlabel('Position on diagonal line')
     plt.ylabel('Velocity on diagonal line')
     plt.title('Plot over diagonal line for the stationary wave system \n with upwind scheme on 2D checkerboard meshes')
-    plt.savefig(mesh_name+"_Velocity_2DWaveSystemUpwind_Checkerboard_"+"PlotOverDiagonalLine.png")    
+    plt.savefig(mesh_name+"_Velocity_2DWaveSystemUpwind_"+"PlotOverDiagonalLine.png")    
     plt.close()
 
     # Plot of number of time steps
@@ -122,7 +122,7 @@ def test_validation2DWaveSystemUpwindCheckerboard(bctype):
     plt.xlabel('1/2 log(Number of cells)')
     plt.ylabel('log(Error p)')
     plt.title('Convergence of finite volumes for the stationary Wave System \n with upwind scheme on 2D checkerboard meshes')
-    plt.savefig(mesh_name+"_Pressure_2DWaveSystemUpwind_Checkerboard_"+"ConvergenceCurve.png")
+    plt.savefig(mesh_name+"_Pressure_2DWaveSystemUpwind_"+"ConvergenceCurve.png")
     
     plt.close()
     plt.plot(mesh_size_tab, error_u_tab, label='|error on stationary velocity|')
@@ -130,7 +130,7 @@ def test_validation2DWaveSystemUpwindCheckerboard(bctype):
     plt.xlabel('1/2 log(Number of cells)')
     plt.ylabel('log(Error u)')
     plt.title('Convergence of finite volumes for the stationary Wave System \n with upwind scheme on 2D checkerboard meshes')
-    plt.savefig(mesh_name+"_Velocity_2DWaveSystemUpwind_Checkerboard_"+"ConvergenceCurve.png")
+    plt.savefig(mesh_name+"_Velocity_2DWaveSystemUpwind_"+"ConvergenceCurve.png")
     
     # Plot of computational time
     plt.close()
@@ -139,7 +139,7 @@ def test_validation2DWaveSystemUpwindCheckerboard(bctype):
     plt.xlabel('1/2 log(Number of cells)')
     plt.ylabel('log(cpu time)')
     plt.title('Computational time of finite volumes for the stationary Wave System \n with upwind scheme on 2D checkerboard meshes')
-    plt.savefig(mesh_name+"_2DWaveSystemUpwind_Checkerboard_ComputationalTime.png")
+    plt.savefig(mesh_name+"_2DWaveSystemUpwind_ComputationalTime.png")
     
     plt.close('all')
     

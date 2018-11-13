@@ -11,12 +11,12 @@ def test_validation2DWaveSystemPStag_triangles(scaling):
     start = time.time()
     #### 2D triangular meshes
     meshList=['squareWithTriangles_1','squareWithTriangles_2','squareWithTriangles_3','squareWithTriangles_4']
-    meshType="Unstructured triangles"
+    meshType="Unstructured_Delaunay_triangles"
     testColor="Orange"
     nbMeshes=len(meshList)
     mesh_size_tab=[0]*nbMeshes
     mesh_path='../../ressources/2DTriangles/'
-    mesh_name='SquareWithTriangles'
+    mesh_name='squareWithTriangles'
     resolution=100
     curv_abs=np.linspace(0,sqrt(2),resolution+1)
 

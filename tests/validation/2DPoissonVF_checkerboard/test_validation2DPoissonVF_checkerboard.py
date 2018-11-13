@@ -17,7 +17,7 @@ def test_validation2DVF_checkerboard():
     error_tab=[0]*nbMeshes
     mesh_size_tab=[0]*nbMeshes
     mesh_path='../../ressources/2DCheckerboard/'
-    mesh_name='SquareWithCheckerboardRefinement'
+    mesh_name='squareWithCheckerboard'
     diag_data=[0]*nbMeshes
     time_tab=[0]*nbMeshes
     resolution=100

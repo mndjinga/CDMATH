@@ -17,7 +17,7 @@ def test_validation2DWaveSystemUpwindDeformedQuadrangles(bctype):
     error_u_tab=[0]*nbMeshes
     mesh_size_tab=[0]*nbMeshes
     mesh_path='../../ressources/2DDeformedQuadrangles/'
-    mesh_name='SquareWithDeformedQuadrangles'
+    mesh_name='squareWithDeformedQuadrangles'
     diag_data_press=[0]*nbMeshes
     diag_data_vel=[0]*nbMeshes
     time_tab=[0]*nbMeshes

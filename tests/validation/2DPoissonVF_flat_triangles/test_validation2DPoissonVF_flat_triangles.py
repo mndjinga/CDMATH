@@ -13,12 +13,12 @@ def test_validation2DVF_flat_triangles():
     #meshList=[5,9,15,21,31]
     meshList=['squareWithFlatTriangles_0','squareWithFlatTriangles_1','squareWithFlatTriangles_2','squareWithFlatTriangles_3']#,'squareWithFlatTriangles_4'
     mesh_path='../../ressources/2DFlatTriangles/'
-    meshType="Regular_flat_triangles"
+    meshType="Regular_flat_cross_triangles"
     testColor="Green"
     nbMeshes=len(meshList)
     error_tab=[0]*nbMeshes
     mesh_size_tab=[0]*nbMeshes
-    mesh_name='SquareWithFlatTriangles'
+    mesh_name='squareWithFlatCrossTriangles'
     diag_data=[0]*nbMeshes
     time_tab=[0]*nbMeshes
     resolution=100

@@ -18,7 +18,7 @@ def test_validation2DVF_long_rectangles():
     nbMeshes=len(meshList)
     error_tab=[0]*nbMeshes
     mesh_size_tab=[0]*nbMeshes
-    mesh_name='SquareWithLongRectangles'
+    mesh_name='squareWithLongRectangles'
     diag_data=[0]*nbMeshes
     time_tab=[0]*nbMeshes
     resolution=100
