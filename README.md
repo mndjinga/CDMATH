@@ -12,7 +12,7 @@ Create your source directory. For instance:
 * `cd ~/workspace/cdmath`
 
 Download from GitHub. For instance:
-* `wget https://github.com/mndjinga/CDMATH/archive/master.zip`
+* `wget https://github.com/ndjinga/CDMATH/archive/master.zip`
 
 Then unzip the file to a directory cdmath-master
 * `unzip master.zip`
