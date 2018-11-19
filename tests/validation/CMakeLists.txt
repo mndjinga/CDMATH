@@ -40,7 +40,6 @@ test_synthesis
 IF (CDMATH_WITH_PYTHON AND CDMATH_WITH_PETSC AND CDMATH_WITH_POSTPRO)
 
   foreach(dir ${VALIDATION_FOLDERS} )
-
     ADD_SUBDIRECTORY(${dir})
 
     install(
@@ -52,9 +51,17 @@ IF (CDMATH_WITH_PYTHON AND CDMATH_WITH_PETSC AND CDMATH_WITH_POSTPRO)
                      PATTERN "*.json"
     )
 
+    string(FIND ${dir} "2DPoissonVF" is_2DPoissonVF)
+    if(NOT ${is_2DPoissonVF} EQUAL -1)
     install(
       DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${dir}/
-      DESTINATION share/doc/convergence/${dir}
+      DESTINATION share/doc/convergence/2DPoissonVF
+      FILES_MATCHING PATTERN "*.ipynb"
+                     PATTERN "*.pdf"
+    )
+    install(
+      DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${dir}/
+      DESTINATION share/doc/convergence/2DPoissonVF/${dir}
       FILES_MATCHING PATTERN "*.png"
                      PATTERN "*.ipynb"
                      PATTERN "*.py"
@@ -66,6 +73,30 @@ IF (CDMATH_WITH_PYTHON AND CDMATH_WITH_PETSC AND CDMATH_WITH_POSTPRO)
                      PATTERN "*.csv"
                      PATTERN "*.json"
     )
+    endif(NOT ${is_2DPoissonVF} EQUAL -1)
+    string(FIND ${dir} "2DWaveSystem" is_2DWaveSystem)
+    if(NOT ${is_2DWaveSystem} EQUAL -1)
+    install(
+      DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${dir}/
+      DESTINATION share/doc/convergence/2DWaveSystemVF_stationary
+      FILES_MATCHING PATTERN "*.ipynb"
+                     PATTERN "*.pdf"
+    )
+    install(
+      DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${dir}/
+      DESTINATION share/doc/convergence/2DWaveSystemVF_stationary/${dir}
+      FILES_MATCHING PATTERN "*.png"
+                     PATTERN "*.ipynb"
+                     PATTERN "*.py"
+                     PATTERN "*.html"
+                     PATTERN "*.pdf"
+                     PATTERN "*.tex"
+                     PATTERN "*.md"
+                     PATTERN "*.xlsx"
+                     PATTERN "*.csv"
+                     PATTERN "*.json"
+    )
+    endif(NOT ${is_2DWaveSystem} EQUAL -1)
   endforeach(dir)
 
 add_custom_target (
