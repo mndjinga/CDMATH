@@ -6,7 +6,7 @@ from math import log10, sqrt
 import sys
 import time, json
 
-def test_validation2DWaveSystemUpwindHexagons(bctype):
+def test_validation2DWaveSystemUpwindHexagons(bctype,scaling):
     start = time.time()
     #### 2D hexagonal mesh
     meshList=['squareWithHexagons_1','squareWithHexagons_2','squareWithHexagons_3','squareWithHexagons_4','squareWithHexagons_5']
@@ -32,7 +32,7 @@ def test_validation2DWaveSystemUpwindHexagons(bctype):
     cfl=0.5
     # Storing of numerical errors, mesh sizes and diagonal values
     for filename in meshList:
-        error_p_tab[i], error_u_tab[i], mesh_size_tab[i], t_final[i], ndt_final[i], max_vel[i], diag_data_press[i], diag_data_vel[i], time_tab[i] =WaveSystemUpwind.solve_file(mesh_path+filename, mesh_name, resolution,meshType,testColor,cfl,bctype)
+        error_p_tab[i], error_u_tab[i], mesh_size_tab[i], t_final[i], ndt_final[i], max_vel[i], diag_data_press[i], diag_data_vel[i], time_tab[i] =WaveSystemUpwind.solve_file(mesh_path+filename, mesh_name, resolution,scaling, meshType,testColor,cfl,bctype)
         assert max_vel[i]>0.0002 and max_vel[i]<1
         error_p_tab[i]=log10(error_p_tab[i])
         error_u_tab[i]=log10(error_u_tab[i])
@@ -178,8 +178,9 @@ def test_validation2DWaveSystemUpwindHexagons(bctype):
         json.dump(convergence_synthesis, outfile)
 
 if __name__ == """__main__""":
-    if len(sys.argv) >1 :
+    if len(sys.argv) >2 :
         bctype = sys.argv[1]
-        test_validation2DWaveSystemUpwindHexagons(bctype)
+        scaling = int(sys.argv[2])
+        test_validation2DWaveSystemUpwindHexagons(bctype,scaling)
     else :
-        raise ValueError("test_validation2DWaveSystemUpwindHexagons.py expects a mesh file name")
+        raise ValueError("test_validation2DWaveSystemUpwindHexagons.py expects a mesh file name and a scaling parameter")

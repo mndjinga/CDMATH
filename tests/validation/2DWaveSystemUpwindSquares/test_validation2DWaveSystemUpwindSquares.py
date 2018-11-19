@@ -7,7 +7,7 @@ import sys
 import time, json
 
     
-def test_validation2DWaveSystemUpwind_squares():
+def test_validation2DWaveSystemUpwindSquares(bctype,scaling):
     start = time.time()
     #### 2D square mesh
     meshList=[7,15,31,51,81,101]#
@@ -32,13 +32,12 @@ def test_validation2DWaveSystemUpwind_squares():
     plt.close('all')
     i=0
     cfl=0.5
-    bctype="Periodic"
     # Storing of numerical errors, mesh sizes and diagonal values
     #for filename in meshList:
     for nx in meshList:
         my_mesh=cdmath.Mesh(0,1,nx,0,1,nx)
-        error_p_tab[i], error_u_tab[i], mesh_size_tab[i], t_final[i], ndt_final[i], max_vel[i], diag_data_press[i], diag_data_vel[i], time_tab[i] =WaveSystemUpwind.solve(my_mesh,str(nx)+'x'+str(nx), resolution,meshType,testColor,cfl,bctype)
-        #error_p_tab[i], error_u_tab[i], mesh_size_tab[i], t_final[i], ndt_final[i], max_vel[i], diag_data_press[i], diag_data_vel[i], time_tab[i] =WaveSystemUpwind.solve_file(mesh_path+filename, mesh_name, resolution,meshType,testColor,cfl,bctype)
+        error_p_tab[i], error_u_tab[i], mesh_size_tab[i], t_final[i], ndt_final[i], max_vel[i], diag_data_press[i], diag_data_vel[i], time_tab[i] =WaveSystemUpwind.solve(my_mesh,str(nx)+'x'+str(nx), resolution,scaling,meshType,testColor,cfl,bctype)
+        #error_p_tab[i], error_u_tab[i], mesh_size_tab[i], t_final[i], ndt_final[i], max_vel[i], diag_data_press[i], diag_data_vel[i], time_tab[i] =WaveSystemUpwind.solve_file(mesh_path+filename, mesh_name, resolution,scaling,meshType,testColor,cfl,bctype)
         assert max_vel[i]>0.76 and max_vel[i]<1
         error_p_tab[i]=log10(error_p_tab[i])
         error_u_tab[i]=log10(error_u_tab[i])
@@ -184,4 +183,9 @@ def test_validation2DWaveSystemUpwind_squares():
         json.dump(convergence_synthesis, outfile)
 
 if __name__ == """__main__""":
-    test_validation2DWaveSystemUpwind_squares()
+    if len(sys.argv) >2 :
+        bctype = sys.argv[1]
+        scaling = int(sys.argv[2])
+        test_validation2DWaveSystemUpwindSquares(bctype,scaling)
+    else :
+        raise ValueError("test_validation2DWaveSystemUpwindSquares.py expects a mesh file name and a scaling parameter")

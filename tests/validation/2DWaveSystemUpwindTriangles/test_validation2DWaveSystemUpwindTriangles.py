@@ -6,7 +6,7 @@ from math import log10, sqrt
 import sys
 import time, json
 
-def test_validation2DWaveSystemUpwindTriangles():
+def test_validation2DWaveSystemUpwindTriangles(bctype,scaling):
     start = time.time()
     #### 2D triangle mesh
     meshList=['squareWithTriangles_1','squareWithTriangles_2','squareWithTriangles_3','squareWithTriangles_4','squareWithTriangles_5']
@@ -30,10 +30,9 @@ def test_validation2DWaveSystemUpwindTriangles():
     plt.close('all')
     i=0
     cfl=0.5
-    bctype="Periodic"
     # Storing of numerical errors, mesh sizes and diagonal values
     for filename in meshList:
-        error_p_tab[i], error_u_tab[i], mesh_size_tab[i], t_final[i], ndt_final[i], max_vel[i], diag_data_press[i], diag_data_vel[i], time_tab[i] =WaveSystemUpwind.solve_file(mesh_path+filename, mesh_name, resolution,meshType,testColor,cfl,bctype)
+        error_p_tab[i], error_u_tab[i], mesh_size_tab[i], t_final[i], ndt_final[i], max_vel[i], diag_data_press[i], diag_data_vel[i], time_tab[i] =WaveSystemUpwind.solve_file(mesh_path+filename, mesh_name, resolution,scaling,meshType,testColor,cfl,bctype)
         assert max_vel[i]>0.94 and max_vel[i]<1
         error_p_tab[i]=log10(error_p_tab[i])
         error_u_tab[i]=log10(error_u_tab[i])
@@ -179,4 +178,9 @@ def test_validation2DWaveSystemUpwindTriangles():
         json.dump(convergence_synthesis, outfile)
 
 if __name__ == """__main__""":
-    test_validation2DWaveSystemUpwindTriangles()
+    if len(sys.argv) >2 :
+        bctype = sys.argv[1]
+        scaling = int(sys.argv[2])
+        test_validation2DWaveSystemUpwindTriangles(bctype,scaling)
+    else :
+        raise ValueError("test_validation2DWaveSystemUpwindTriangles.py expects a mesh file name and a scaling parameter")
