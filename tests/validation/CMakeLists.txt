@@ -56,8 +56,8 @@ IF (CDMATH_WITH_PYTHON AND CDMATH_WITH_PETSC AND CDMATH_WITH_POSTPRO)
     install(
       DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${dir}/
       DESTINATION share/doc/convergence/2DPoissonVF
-      FILES_MATCHING PATTERN "*.ipynb"
-                     PATTERN "*.pdf"
+      FILES_MATCHING PATTERN "*_SQUARE.ipynb"
+                     PATTERN "*_SQUARE.pdf"
     )
     install(
       DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${dir}/
@@ -79,8 +79,8 @@ IF (CDMATH_WITH_PYTHON AND CDMATH_WITH_PETSC AND CDMATH_WITH_POSTPRO)
     install(
       DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${dir}/
       DESTINATION share/doc/convergence/2DWaveSystemVF_stationary
-      FILES_MATCHING PATTERN "*.ipynb"
-                     PATTERN "*.pdf"
+      FILES_MATCHING PATTERN "*_SQUARE.ipynb"
+                     PATTERN "*_SQUARE.pdf"
     )
     install(
       DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${dir}/
