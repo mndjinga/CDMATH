@@ -28,6 +28,7 @@ SET( VALIDATION_FOLDERS
 2DWaveSystemCenteredBrickWall
 2DWaveSystemUpwindSquares 
 2DWaveSystemUpwindTriangles 
+2DWaveSystemUpwindFlatTriangles 
 2DWaveSystemUpwindCheckerboard
 2DWaveSystemUpwindBrickWall
 2DWaveSystemUpwindHexagons
