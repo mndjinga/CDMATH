@@ -159,7 +159,7 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,sc
         Vn = Un.deepCopy()
         for k in range(nbCells):
             Vn[k*(dim+1)+0] = Vn[k*(dim+1)+0]/(c0*c0)
-    if( scaling==2):
+    elif( scaling==2):
         Vn = Un.deepCopy()
         for k in range(nbCells):
             Vn[k*(dim+1)+0] = Vn[k*(dim+1)+0]/c0
@@ -322,10 +322,7 @@ def solve(my_mesh,meshName,resolution,scaling, meshType, testColor,cfl):
     test_name="Resolution of the Wave system in dimension " +str( my_mesh.getMeshDimension())+" on "+str(my_mesh.getNumberOfCells())+ " cells"
     test_name_comment="No upwinding"
     test_model="Wave system"
-    if(scaling==0):
-        test_method="Centered scheme without scaling"
-    else:    
-        test_method="Centered scheme with scaling"
+    test_method="Centered"
     test_initial_data="Constant pressure, divergence free velocity"
     test_bc="Periodic"
     print test_name
