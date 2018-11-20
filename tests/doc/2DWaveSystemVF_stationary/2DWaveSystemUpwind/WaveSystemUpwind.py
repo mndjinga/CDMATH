@@ -9,12 +9,10 @@ import VTK_routines
 
 test_desc={}
 
-scaling=False
-
 rho0=1000#reference density
 c0=1500#reference sound speed
 p0=rho0*c0*c0#reference pressure
-precision=1e-4
+precision=1e-5
 
 def initial_conditions_wave_system(my_mesh):
     test_desc["Initial_data"]="Constant pressure, divergence free velocity"
@@ -41,7 +39,7 @@ def initial_conditions_wave_system(my_mesh):
         
     return pressure_field, velocity_field
 
-def jacobianMatrices(normal, coeff):
+def jacobianMatrices(normal, coeff,scaling):
     test_desc["Numerical_method_name"]="Upwind"
     dim=normal.size()
     A=cdmath.Matrix(dim+1,dim+1)
@@ -49,15 +47,22 @@ def jacobianMatrices(normal, coeff):
 
     absA[0,0]=c0*coeff
     for i in range(dim):
-        A[i+1,0]=normal[i]*coeff
-        A[0,i+1]=c0*c0*normal[i]*coeff
         for j in range(dim):
             absA[i+1,j+1]=c0*normal[i]*normal[j]*coeff
+        if( scaling==0):
+            A[0,i+1]=c0*c0*normal[i]*coeff
+            A[i+1,0]=      normal[i]*coeff
+        elif( scaling==1):
+            A[0,i+1]=      normal[i]*coeff
+            A[i+1,0]=      normal[i]*coeff
+        else:
+            A[0,i+1]=   c0*normal[i]*coeff
+            A[i+1,0]=   c0*normal[i]*coeff
        
     return (A-absA)/2
     
     
-def computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt,test_bc):
+def computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt,scaling,test_bc):
     nbCells = my_mesh.getNumberOfCells()
     dim=my_mesh.getMeshDimension()
     nbComp=dim+1
@@ -77,7 +82,7 @@ def computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt,test_bc):
             for i in range(dim) :
                 normal[i] = Cj.getNormalVector(k, i);#normale sortante
 
-            Am=jacobianMatrices( normal,dt*Fk.getMeasure()/Cj.getMeasure());
+            Am=jacobianMatrices( normal,dt*Fk.getMeasure()/Cj.getMeasure(),scaling);
 
             cellAutre =-1
             if ( not Fk.isBorder()) :
@@ -117,7 +122,7 @@ def computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt,test_bc):
                 
     return implMat
 
-def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,test_bc):
+def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,scaling,test_bc):
     dim=my_mesh.getMeshDimension()
     nbCells = my_mesh.getNumberOfCells()
     
@@ -144,6 +149,14 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,te
         Un[k*(dim+1)+2] =rho0*initial_velocity[k,1]
         if(dim==3):
             Un[k*(dim+1)+3] =rho0*initial_velocity[k,2]
+    if( scaling==1):
+        Vn = Un.deepCopy()
+        for k in range(nbCells):
+            Vn[k*(dim+1)+0] = Vn[k*(dim+1)+0]/(c0*c0)
+    elif( scaling==2):
+        Vn = Un.deepCopy()
+        for k in range(nbCells):
+            Vn[k*(dim+1)+0] = Vn[k*(dim+1)+0]/c0
             
     #sauvegarde de la donnée initiale
     pressure_field.setTime(time,it);
@@ -161,14 +174,24 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,te
 
     dt = cfl * dx_min / c0
 
-    divMat=computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt,test_bc)
+    divMat=computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt,scaling,test_bc)
     if(isImplicit):
         #Adding the identity matrix on the diagonal
-        for j in range(nbCells*(dim+1)):
-            divMat.addValue(j,j,1)
+        if( scaling==0 or  scaling==2):
+            divMat.diagonalShift(1)#only after  filling all coefficients
+            #for j in range(nbCells*(dim+1)):
+            #    divMat.addValue(j,j,1)
+        else:
+            for j in range(nbCells):
+                divMat.addValue(j*(dim+1),j*(dim+1),1/(c0*c0))#/(c0*c0)
+                for i in range(dim):
+                    divMat.addValue(j*(dim+1)+1+i,j*(dim+1)+1+i,1)
         
         iterGMRESMax=50
-        LS=cdmath.LinearSolver(divMat,Un,iterGMRESMax, precision, "GMRES","ILU")
+        if( scaling==0):
+            LS=cdmath.LinearSolver(divMat,Un,iterGMRESMax, precision, "GMRES","ILU")
+        else:
+            LS=cdmath.LinearSolver(divMat,Vn,iterGMRESMax, precision, "GMRES","ILU")
         LS.setComputeConditionNumber()
         
         test_desc["Linear_solver_algorithm"]=LS.getNameOfMethod()
@@ -189,12 +212,23 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,te
     while (it<ntmax and time <= tmax and not isStationary):
         if(isImplicit):
             dUn=Un.deepCopy()
-            LS.setSndMember(Un)
-            Un=LS.solve();
-            cvgceLS=LS.getStatus();
-            iterGMRES=LS.getNumberOfIter();
-            if(not cvgceLS):
-                print "Linear system did not converge ", iterGMRES, " GMRES iterations"
+            if( scaling==0):
+                LS.setSndMember(Un)
+            else:
+                LS.setSndMember(Vn)
+            if( scaling<2):
+                Un=LS.solve();
+                if( scaling==1):
+                    Vn = Un.deepCopy()
+                    for k in range(nbCells):
+                        Vn[k*(dim+1)+0] = Vn[k*(dim+1)+0]/(c0*c0)
+            else:#( scaling==2)
+                Vn=LS.solve()
+                Un = Vn.deepCopy()
+                for k in range(nbCells):
+                    Un[k*(dim+1)+0] = c0*Vn[k*(dim+1)+0]
+            if(not LS.getStatus()):
+                print "Linear system did not converge ", LS.getNumberOfIter(), " GMRES iterations"
                 raise ValueError("Pas de convergence du système linéaire");
             dUn-=Un
 
@@ -255,11 +289,11 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,te
         raise ValueError("Maximum number of time steps reached : Stationary state not found !!!!!!!")
     elif(isStationary):
         print "Régime stationnaire atteint au pas de temps ", it, ", t= ", time
+        print "Mass loss: ", (total_pressure_initial-pressure_field.integral()).norm()/p0, " precision required= ", precision
+        print "Momentum loss: ", (total_velocity_initial-velocity_field.integral()).norm()/velocity_field.normL1().norm(), " precision required= ", precision
         assert (total_pressure_initial-pressure_field.integral()).norm()/p0<precision
         if(test_bc=="Periodic"):
             assert (total_velocity_initial-velocity_field.integral()).norm()<2*precision
-        else:
-            print "Momentum loss=", (total_velocity_initial-velocity_field.integral()).norm(), "precision=", precision
         print "------------------------------------------------------------------------------------"
 
         pressure_field.setTime(time,0);
@@ -284,7 +318,7 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,te
         raise ValueError("Maximum time reached : Stationary state not found !!!!!!!")
 
 
-def solve(my_mesh,meshName,resolution, meshType, testColor,cfl,test_bc):
+def solve(my_mesh, meshName, resolution, scaling, meshType, testColor, cfl, test_bc):
     start = time.time()
     test_desc["Mesh_type"]=meshType
     test_desc["Test_color"]=testColor
@@ -303,11 +337,11 @@ def solve(my_mesh,meshName,resolution, meshType, testColor,cfl,test_bc):
         print "Use of scaling strategy for better preconditioning"
     
     # Problem data
-    tmax = 1000.
-    ntmax = 10000
-    output_freq = 1000
+    tmax = 10000.
+    ntmax = 30000
+    output_freq = 10000
 
-    error_p, error_u, nbCells, t_final, ndt_final, max_vel, diag_data_press, diag_data_vel = WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,test_bc)
+    error_p, error_u, nbCells, t_final, ndt_final, max_vel, diag_data_press, diag_data_vel = WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution, scaling,test_bc)
     end = time.time()
 
     test_desc["Global_name"]=test_name
@@ -343,10 +377,10 @@ def solve(my_mesh,meshName,resolution, meshType, testColor,cfl,test_bc):
 
     return error_p, error_u, nbCells, t_final, ndt_final, max_vel, diag_data_press, diag_data_vel, end - start
 
-def solve_file( filename,meshName, resolution, meshType, testColor,cfl,test_bc):
+def solve_file( filename,meshName, resolution, scaling, meshType, testColor,cfl,test_bc):
     my_mesh = cdmath.Mesh(filename+".med")
 
-    return solve(my_mesh, meshName+str(my_mesh.getNumberOfCells()),resolution, meshType, testColor,cfl,test_bc)
+    return solve(my_mesh, meshName+str(my_mesh.getNumberOfCells()),resolution, scaling, meshType, testColor,cfl,test_bc)
     
 
 if __name__ == """__main__""":
