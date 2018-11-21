@@ -129,10 +129,10 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,sc
     dt = 0.
     time = 0.
     it=0;
-    isStationary=False;
+    isStationary=False
     
     nbVoisinsMax=my_mesh.getMaxNbNeighbours(cdmath.CELLS)
-    isImplicit=False
+    isImplicit=scaling>0
     
     #iteration vectors
     Un=cdmath.Vector(nbCells*(dim+1))
@@ -252,7 +252,7 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,sc
             print"-- Iter: " + str(it) + ", Time: " + str(time) + ", dt: " + str(dt)
             print "Variation temporelle relative : pressure ", maxVector[0]/p0 ,", velocity x", maxVector[1]/rho0 ,", velocity y", maxVector[2]/rho0
             if(isImplicit):
-                print "Linear system converged in ", iterGMRES, " GMRES iterations"
+                print "Linear system converged in ", LS.getNumberOfIter(), " GMRES iterations"
 
             delta_press=0
             delta_v=cdmath.Vector(dim)
@@ -330,11 +330,16 @@ def solve(my_mesh, meshName, resolution, scaling, meshType, testColor, cfl, test
 
     print test_name
     print "Numerical method : ", test_method
+    if( scaling):
+        print "Time scheme : Implicit"
+        test_desc["Numerical_method_time_discretization"]="Implicit"
+        print "Use of scaling strategy for better preconditioning"
+    else:
+        print "Time scheme : Explicit"
+    test_desc["Numerical_method_time_discretization"]="Explicit"
     print "Initial data : ", test_initial_data
     print "Boundary conditions : ",test_bc
     print "Mesh name : ",meshName , ", ", my_mesh.getNumberOfCells(), " cells"
-    if( scaling):
-        print "Use of scaling strategy for better preconditioning"
     
     # Problem data
     tmax = 10000.
@@ -351,7 +356,6 @@ def solve(my_mesh, meshName, resolution, scaling, meshType, testColor, cfl, test
     test_desc["PDE_search_for_stationary_solution"]=True
     test_desc["Numerical_method_name"]=test_method
     test_desc["Numerical_method_space_discretization"]="Finite volumes"
-    test_desc["Numerical_method_time_discretization"]="Implicit"
     test_desc["Space_dimension"]=my_mesh.getSpaceDimension()
     test_desc["Mesh_dimension"]=my_mesh.getMeshDimension()
     test_desc["Mesh_is_unstructured"]=True
