@@ -7,7 +7,7 @@ import sys
 import time, json
 
     
-def test_validation3DWaveSystemUpwind_cubes():
+def test_validation3DWaveSystemUpwindCubes(bctype,scaling):
     start = time.time()
     #### 3D cubic mesh
     meshList=[6,11,21]
@@ -30,7 +30,6 @@ def test_validation3DWaveSystemUpwind_cubes():
     plt.close('all')
     i=0
     cfl=1./3
-    bctype="Periodic"
     
     # Storing of numerical errors, mesh sizes and diagonal values
     for nx in meshList:
@@ -94,7 +93,7 @@ def test_validation3DWaveSystemUpwind_cubes():
     plt.title('Number of times steps required \n for the stationary Wave System on 3D cube meshes')
     plt.savefig(mesh_name+"_3DWaveSystem_"+"TimeSteps.png")
     
-    # Plot of number of stationary time
+    # Plot of time where stationary regime is reached
     plt.close()
     plt.plot(mesh_size_tab, t_final, label='Time where stationary regime is reached')
     plt.legend()
@@ -136,7 +135,7 @@ def test_validation3DWaveSystemUpwind_cubes():
     plt.xlabel('number of cells')
     plt.ylabel('cpu time')
     plt.title('Computational time of finite volumes \n for the stationary Wave System on 3D cube meshes')
-    plt.savefig(mesh_name+"3DWaveSystem_ComputationalTime.png")
+    plt.savefig(mesh_name+"_scaling_"+str(scaling)+"_3DWaveSystem_ComputationalTime.png")
 
     plt.close('all')
 
@@ -171,8 +170,13 @@ def test_validation3DWaveSystemUpwind_cubes():
     convergence_synthesis["Test_color"]=testColor
     convergence_synthesis["Computational_time"]=end-start
 
-    with open('Convergence_WaveSystem_3DFV_Upwind_'+mesh_name+'.json', 'w') as outfile:  
+    with open('Convergence_WaveSystem_3DFV_Upwind_'+mesh_name+"_scaling_"+str(scaling)+'.json', 'w') as outfile:  
         json.dump(convergence_synthesis, outfile)
 
 if __name__ == """__main__""":
-    test_validation3DWaveSystemUpwind_cubes()
+    if len(sys.argv) >2 :
+        bctype = sys.argv[1]
+        scaling = int(sys.argv[2])
+        test_validation2DWaveSystemUpwindCubes(bctype,scaling)
+    else :
+        raise ValueError("test_validation2DWaveSystemUpwindCubes.py expects a mesh file name and a scaling parameter")
