@@ -7,7 +7,7 @@ import sys
 import time, json
 
 
-def test_validation3DWaveSystemUpwind_tetrahedra():
+def test_validation3DWaveSystemUpwindTetrahedra(bctype,scaling):
     start = time.time()
     #### 3D tetrahedral mesh by simplexization of a cartesian mesh
     meshList=[5,11,21,26]
@@ -30,12 +30,11 @@ def test_validation3DWaveSystemUpwind_tetrahedra():
     plt.close('all')
     i=0
     cfl=1./3
-    bctype="Periodic"
     
     # Storing of numerical errors, mesh sizes and diagonal values
     for nx in meshList:
         my_mesh=cdmath.Mesh(0.,1.,nx,0.,1.,nx,0.,1.,nx,6)
-        error_p_tab[i], error_u_tab[i], mesh_size_tab[i], t_final[i], ndt_final[i], max_vel[i], diag_data_press[i], diag_data_vel[i], time_tab[i] =WaveSystemUpwind.solve(my_mesh, mesh_name+str(my_mesh.getNumberOfCells()), resolution,meshType,testColor,cfl,bctype)
+        error_p_tab[i], error_u_tab[i], mesh_size_tab[i], t_final[i], ndt_final[i], max_vel[i], diag_data_press[i], diag_data_vel[i], time_tab[i] =WaveSystemUpwind.solve(my_mesh, mesh_name+str(my_mesh.getNumberOfCells()), resolution,scaling,meshType,testColor,cfl,bctype)
         assert max_vel[i]>1.8 and max_vel[i]<2
         i=i+1
     
@@ -94,7 +93,7 @@ def test_validation3DWaveSystemUpwind_tetrahedra():
     plt.title('Number of times steps required \n for the stationary Wave System on 3D tetrahedral meshes')
     plt.savefig(mesh_name+"_3DWaveSystemTetrahedra_"+"TimeSteps.png")
     
-    # Plot of number of stationary time
+    # Plot of time where stationary regime is reached
     plt.close()
     plt.plot(mesh_size_tab, t_final, label='Time where stationary regime is reached')
     plt.legend()
@@ -137,7 +136,7 @@ def test_validation3DWaveSystemUpwind_tetrahedra():
     plt.xlabel('number of cells')
     plt.ylabel('cpu time')
     plt.title('Computational time of finite volumes \n for the stationary Wave System on 3D tetrahedral meshes')
-    plt.savefig(mesh_name+"_3DWaveSystem_Tetrahedra_ComputationalTime.png")
+    plt.savefig(mesh_name+"_scaling_"+str(scaling)+"_3DWaveSystem_Tetrahedra_ComputationalTime.png")
     
     plt.close('all')
     
@@ -173,8 +172,13 @@ def test_validation3DWaveSystemUpwind_tetrahedra():
     convergence_synthesis["Test_color"]=testColor
     convergence_synthesis["Computational_time"]=end-start
 
-    with open('Convergence_WaveSystem_3DFV_Upwind_'+mesh_name+'.json', 'w') as outfile:  
+    with open('Convergence_WaveSystem_3DFV_Upwind_'+mesh_name+"_scaling_"+str(scaling)+'.json', 'w') as outfile:  
         json.dump(convergence_synthesis, outfile)
 
 if __name__ == """__main__""":
-    test_validation3DWaveSystemUpwind_tetrahedra()
+    if len(sys.argv) >2 :
+        bctype = sys.argv[1]
+        scaling = int(sys.argv[2])
+        test_validation3DWaveSystemUpwindTetrahedra(bctype,scaling)
+    else :
+        raise ValueError("test_validation3DWaveSystemUpwindTetrahedra.py expects a mesh file name and a scaling parameter")
