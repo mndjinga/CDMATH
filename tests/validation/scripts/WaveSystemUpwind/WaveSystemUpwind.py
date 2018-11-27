@@ -39,6 +39,30 @@ def initial_conditions_wave_system(my_mesh):
         
     return pressure_field, velocity_field
 
+def source_term_wave_system(my_mesh):
+    test_desc["Source_term"]="True"
+    dim     = my_mesh.getMeshDimension()
+    nbCells = my_mesh.getNumberOfCells()
+
+    source_field = cdmath.Vector(nbCells*(dim+1))
+
+    for k in range(nbCells):
+        x = my_mesh.getCell(k).x()
+        y = my_mesh.getCell(k).y()
+        z = my_mesh.getCell(k).z()
+
+        if(dim==2):
+            source_field[k*(dim+1)+0] = -2*pi*pi*sin(pi*x)*sin(pi*y)
+            source_field[k*(dim+1)+1] =       pi*cos(pi*x)*sin(pi*y)
+            source_field[k*(dim+1)+2] =       pi*sin(pi*x)*cos(pi*y)
+        if(dim==3):
+            source_field[k*(dim+1)+0] = -3*pi*pi*sin(pi*x)*sin(pi*y)*sin(pi*z)
+            source_field[k*(dim+1)+1] =       pi*cos(pi*x)*sin(pi*y)*sin(pi*z)
+            source_field[k*(dim+1)+2] =       pi*sin(pi*x)*cos(pi*y)*sin(pi*z)
+            source_field[k*(dim+1)+3] =       pi*sin(pi*x)*sin(pi*y)*cos(pi*z)
+        
+    return source_field
+
 def jacobianMatrices(normal, coeff,scaling):
     test_desc["Numerical_method_name"]="Upwind"
     dim=normal.size()
@@ -122,7 +146,7 @@ def computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt,scaling,test_bc):
                 
     return implMat
 
-def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,scaling,test_bc):
+def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,scaling,test_bc,with_source=False):
     dim=my_mesh.getMeshDimension()
     nbCells = my_mesh.getNumberOfCells()
     
@@ -142,6 +166,11 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,sc
     print("Construction of the initial condition …")
     pressure_field, velocity_field = initial_conditions_wave_system(my_mesh)
     initial_pressure, initial_velocity = initial_conditions_wave_system(my_mesh)
+    
+    if(with_source):
+        S=source_term_wave_system(my_mesh)
+    else:
+        S = cdmath.Vector(nbCells*(dim+1))
 
     for k in range(nbCells):
         Un[k*(dim+1)+0] =     initial_pressure[k]
@@ -153,10 +182,12 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,sc
         Vn = Un.deepCopy()
         for k in range(nbCells):
             Vn[k*(dim+1)+0] = Vn[k*(dim+1)+0]/(c0*c0)
+            S[k*(dim+1)+0] = S[k*(dim+1)+0]/(c0*c0)
     elif( scaling==2):
         Vn = Un.deepCopy()
         for k in range(nbCells):
             Vn[k*(dim+1)+0] = Vn[k*(dim+1)+0]/c0
+            S[k*(dim+1)+0] = S[k*(dim+1)+0]/c0
             
     #sauvegarde de la donnée initiale
     pressure_field.setTime(time,it);
@@ -189,9 +220,9 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,sc
         
         iterGMRESMax=50
         if( scaling==0):
-            LS=cdmath.LinearSolver(divMat,Un,iterGMRESMax, precision, "GMRES","ILU")
+            LS=cdmath.LinearSolver(divMat,Un+dt*S,iterGMRESMax, precision, "GMRES","ILU")
         else:
-            LS=cdmath.LinearSolver(divMat,Vn,iterGMRESMax, precision, "GMRES","ILU")
+            LS=cdmath.LinearSolver(divMat,Vn+dt*S,iterGMRESMax, precision, "GMRES","ILU")
         LS.setComputeConditionNumber()
         
         test_desc["Linear_solver_algorithm"]=LS.getNameOfMethod()
@@ -213,9 +244,9 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,sc
         if(isImplicit):
             dUn=Un.deepCopy()
             if( scaling==0):
-                LS.setSndMember(Un)
+                LS.setSndMember(Un+dt*S)
             else:
-                LS.setSndMember(Vn)
+                LS.setSndMember(Vn+dt*S)
             if( scaling<2):
                 Un=LS.solve();
                 if( scaling==1):
@@ -318,7 +349,7 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,sc
         raise ValueError("Maximum time reached : Stationary state not found !!!!!!!")
 
 
-def solve(my_mesh, meshName, resolution, scaling, meshType, testColor, cfl, test_bc):
+def solve(my_mesh, meshName, resolution, scaling, meshType, testColor, cfl, test_bc, with_source=False):
     start = time.time()
     test_desc["Mesh_type"]=meshType
     test_desc["Test_color"]=testColor
@@ -346,7 +377,7 @@ def solve(my_mesh, meshName, resolution, scaling, meshType, testColor, cfl, test
     ntmax = 30000
     output_freq = 10000
 
-    error_p, error_u, nbCells, t_final, ndt_final, max_vel, diag_data_press, diag_data_vel = WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution, scaling,test_bc)
+    error_p, error_u, nbCells, t_final, ndt_final, max_vel, diag_data_press, diag_data_vel = WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution, scaling,test_bc,with_source)
     end = time.time()
 
     test_desc["Global_name"]=test_name
@@ -381,10 +412,10 @@ def solve(my_mesh, meshName, resolution, scaling, meshType, testColor, cfl, test
 
     return error_p, error_u, nbCells, t_final, ndt_final, max_vel, diag_data_press, diag_data_vel, end - start
 
-def solve_file( filename,meshName, resolution, scaling, meshType, testColor,cfl,test_bc):
+def solve_file( filename,meshName, resolution, scaling, meshType, testColor,cfl,test_bc,with_source=False):
     my_mesh = cdmath.Mesh(filename+".med")
 
-    return solve(my_mesh, meshName+str(my_mesh.getNumberOfCells()),resolution, scaling, meshType, testColor,cfl,test_bc)
+    return solve(my_mesh, meshName+str(my_mesh.getNumberOfCells()),resolution, scaling, meshType, testColor,cfl,test_bc,with_source)
     
 
 if __name__ == """__main__""":
