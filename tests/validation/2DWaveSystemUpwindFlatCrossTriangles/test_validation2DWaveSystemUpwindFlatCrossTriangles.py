@@ -6,9 +6,9 @@ from math import log10, sqrt
 import sys
 import time, json
 
-def test_validation2DWaveSystemUpwindFlatTriangles(bctype,scaling):
+def test_validation2DWaveSystemUpwindFlatCrossTriangles(bctype,scaling):
     start = time.time()
-    #### 2D triangle mesh
+    #### 2D flat cross triangles mesh
     meshList=['squareWithFlatTriangles_0','squareWithFlatTriangles_1','squareWithFlatTriangles_2','squareWithFlatTriangles_3']#,'squareWithFlatTriangles_4'
     mesh_path='../../ressources/2DFlatTriangles/'
     meshType="Regular_flat_cross_triangles"
@@ -47,7 +47,7 @@ def test_validation2DWaveSystemUpwindFlatTriangles(bctype,scaling):
     plt.legend()
     plt.xlabel('Position on diagonal line')
     plt.ylabel('Pressure on diagonal line')
-    plt.title('Plot over diagonal line for stationary wave system \n with upwind scheme on 2D flat triangle meshes')
+    plt.title('Plot over diagonal line for stationary wave system \n with upwind scheme on 2D flat cross triangles meshes')
     plt.savefig(mesh_name+'_Pressure_2DWaveSystemUpwind_'+"PlotOverDiagonalLine.png")
     plt.close()
 
@@ -57,7 +57,7 @@ def test_validation2DWaveSystemUpwindFlatTriangles(bctype,scaling):
     plt.legend()
     plt.xlabel('Position on diagonal line')
     plt.ylabel('Velocity on diagonal line')
-    plt.title('Plot over diagonal line for the stationary wave system \n with upwind scheme on 2D flat triangle meshes')
+    plt.title('Plot over diagonal line for the stationary wave system \n with upwind scheme on 2D flat cross triangles meshes')
     plt.savefig(mesh_name+"_Velocity_2DWaveSystemUpwind_"+"PlotOverDiagonalLine.png")    
     plt.close()
 
@@ -67,8 +67,8 @@ def test_validation2DWaveSystemUpwindFlatTriangles(bctype,scaling):
     plt.legend()
     plt.xlabel('Number of cells')
     plt.ylabel('Max time steps for stationary regime')
-    plt.title('Number of times steps required for the stationary Wave System \n with upwind scheme on 2D flat triangle meshes')
-    plt.savefig(mesh_name+"_2DWaveSystemFlatTrianglesUpwind_"+"TimeSteps.png")
+    plt.title('Number of times steps required for the stationary Wave System \n with upwind scheme on 2D flat cross triangles meshes')
+    plt.savefig(mesh_name+"_2DWaveSystemUpwind_"+"TimeSteps.png")
     
     # Plot of number of stationary time
     plt.close()
@@ -76,8 +76,8 @@ def test_validation2DWaveSystemUpwindFlatTriangles(bctype,scaling):
     plt.legend()
     plt.xlabel('Number of cells')
     plt.ylabel('Max time for stationary regime')
-    plt.title('Simulated time for the stationary Wave System \n with upwind scheme on 2D flat triangle meshes')
-    plt.savefig(mesh_name+"_2DWaveSystemFlatTrianglesUpwind_"+"TimeFinal.png")
+    plt.title('Simulated time for the stationary Wave System \n with upwind scheme on 2D flat cross triangles meshes')
+    plt.savefig(mesh_name+"_2DWaveSystemFUpwind_"+"TimeFinal.png")
     
     # Plot of number of maximal velocity norm
     plt.close()
@@ -85,8 +85,8 @@ def test_validation2DWaveSystemUpwindFlatTriangles(bctype,scaling):
     plt.legend()
     plt.xlabel('Number of cells')
     plt.ylabel('Max velocity norm')
-    plt.title('Maximum velocity norm for the stationary Wave System \n with upwind scheme on 2D flat triangle meshes')
-    plt.savefig(mesh_name+"_2DWaveSystemFlatTrianglesUpwind_"+"MaxVelNorm.png")
+    plt.title('Maximum velocity norm for the stationary Wave System \n with upwind scheme on 2D flat cross triangles meshes')
+    plt.savefig(mesh_name+"_2DWaveSystemUpwind_"+"MaxVelNorm.png")
     
     for i in range(nbMeshes):
         mesh_size_tab[i]=0.5*log10(mesh_size_tab[i])
@@ -99,21 +99,21 @@ def test_validation2DWaveSystemUpwindFlatTriangles(bctype,scaling):
     a3=nbMeshes
     
     det=a1*a3-a2*a2
-    assert det!=0, 'test_validation2DWaveSystemUpwindFlatTrianglesFV() : Make sure you use distinct meshes and at least two meshes'
+    assert det!=0, 'test_validation2DWaveSystemUpwindFlatCrossTrianglesFV() : Make sure you use distinct meshes and at least two meshes'
 
     b1p=np.dot(error_p_tab,mesh_size_tab)   
     b2p=np.sum(error_p_tab)
     ap=( a3*b1p-a2*b2p)/det
     bp=(-a2*b1p+a1*b2p)/det
     
-    print "FV upwind on 2D triangle meshes : scheme order for pressure is ", -ap
+    print "FV upwind on 2D flat cross triangles meshes : scheme order for pressure is ", -ap
 
     b1u=np.dot(error_u_tab,mesh_size_tab)   
     b2u=np.sum(error_u_tab)
     au=( a3*b1u-a2*b2u)/det
     bu=(-a2*b1u+a1*b2u)/det
     
-    print "FV upwind on 2D triangle meshes : scheme order for velocity is ", -au
+    print "FV upwind on 2D flat cross triangles meshes : scheme order for velocity is ", -au
     
     # Plot of convergence curves
     plt.close()
@@ -121,7 +121,7 @@ def test_validation2DWaveSystemUpwindFlatTriangles(bctype,scaling):
     plt.legend()
     plt.xlabel('1/2 log(number of cells)')
     plt.ylabel('log(error p)')
-    plt.title('Convergence of finite volumes for the stationary Wave System \n with upwind scheme on 2D flat triangle meshes')
+    plt.title('Convergence of finite volumes for the stationary Wave System \n with upwind scheme on 2D flat cross triangles meshes')
     plt.savefig(mesh_name+"_Pressure_2DWaveSystemUpwind_"+"ConvergenceCurve.png")
     
     plt.close()
@@ -129,7 +129,7 @@ def test_validation2DWaveSystemUpwindFlatTriangles(bctype,scaling):
     plt.legend()
     plt.xlabel('1/2 log(number of cells)')
     plt.ylabel('log(error u)')
-    plt.title('Convergence of finite volumes for the stationary Wave System \n with upwind scheme on 2D flat triangle meshes')
+    plt.title('Convergence of finite volumes for the stationary Wave System \n with upwind scheme on 2D flat cross triangles meshes')
     plt.savefig(mesh_name+"_Velocity_2DWaveSystemUpwind_"+"ConvergenceCurve.png")
     
     # Plot of computational time
@@ -138,7 +138,7 @@ def test_validation2DWaveSystemUpwindFlatTriangles(bctype,scaling):
     plt.legend()
     plt.xlabel('1/2 log(number of cells)')
     plt.ylabel('log(cpu time)')
-    plt.title('Computational time of finite volumes for the stationary Wave System \n with upwind scheme on 2D flat triangle meshes')
+    plt.title('Computational time of finite volumes for the stationary Wave System \n with upwind scheme on 2D flat cross triangles meshes')
     plt.savefig(mesh_name+"_2DWaveSystemUpwind_ComputationalTime.png")
     
     plt.close('all')
@@ -181,6 +181,6 @@ if __name__ == """__main__""":
     if len(sys.argv) >2 :
         bctype = sys.argv[1]
         scaling = int(sys.argv[2])
-        test_validation2DWaveSystemUpwindFlatTriangles(bctype,scaling)
+        test_validation2DWaveSystemUpwindFlatCrossTriangles(bctype,scaling)
     else :
-        raise ValueError("test_validation2DWaveSystemUpwindFlatTriangles.py expects a mesh file name and a scaling parameter")
+        raise ValueError("test_validation2DWaveSystemUpwindFlatCrossTriangles.py expects a mesh file name and a scaling parameter")
