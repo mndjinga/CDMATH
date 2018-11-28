@@ -1,7 +1,7 @@
 
 SET(SCRIPT
   ../scripts/Poisson2DVF/FiniteVolumes2DPoisson_SQUARE.py
-    test_validation2DPoissonVF_triangles.py
+    test_validation2DPoissonVF_Delaunay_triangles.py
   )
 FILE(GLOB MY_MESHES_AND_PICTURES
   "../../ressources/2DTriangles/squareWithTriangles_*"
@@ -13,7 +13,7 @@ file(COPY ${SCRIPT} ${NOTEBOOK} ${MY_MESHES_AND_PICTURES} DESTINATION ${CMAKE_CU
 
 if (CDMATH_WITH_PYTHON AND CDMATH_WITH_PETSC AND CDMATH_WITH_POSTPRO)
 
-    ADD_TEST(validationPoisson_2DFV_triangles ${PYTHON_EXECUTABLE} test_validation2DPoissonVF_triangles.py)
+    ADD_TEST(validationPoisson_2DFV_triangles ${PYTHON_EXECUTABLE} test_validation2DPoissonVF_Delaunay_triangles.py)
 
     SET_PROPERTY(TEST validationPoisson_2DFV_triangles PROPERTY ENVIRONMENT "LD_LIBRARY_PATH=${CMAKE_INSTALL_PREFIX}/lib:${CMAKE_INSTALL_PREFIX}/lib/medcoupling:${CMAKE_INSTALL_PREFIX}/lib/med:${PETSC_DIR}/${PETSC_ARCH}/lib:${HDF5_ROOT_DIR}/lib:${PV_LIB_DIR}")
 

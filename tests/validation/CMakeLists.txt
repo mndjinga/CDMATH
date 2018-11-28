@@ -3,7 +3,7 @@ SET( VALIDATION_FOLDERS
 2DPoissonEF 
 2DPoissonVF_checkerboard 
 2DPoissonVF_loc_ref 
-2DPoissonVF_triangles 
+2DPoissonVF_Delaunay_triangles 
 2DPoissonVF_squares 
 2DPoissonVF_deformedQuadrangles 
 2DPoissonVF_hexagons 
