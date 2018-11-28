@@ -9,8 +9,8 @@ import VTK_routines
 
 test_desc={}
 
-rho0=1000#reference density
-c0=1500#reference sound speed
+rho0=1000.#reference density
+c0=1500.#reference sound speed
 p0=rho0*c0*c0#reference pressure
 precision=1e-5
 
@@ -239,9 +239,9 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,sc
         
         iterGMRESMax=50
         if( scaling==0):
-            LS=cdmath.LinearSolver(divMat,Un+dt*S,iterGMRESMax, precision, "GMRES","ILU")
+            LS=cdmath.LinearSolver(divMat,Un+S*dt,iterGMRESMax, precision, "GMRES","ILU")
         else:
-            LS=cdmath.LinearSolver(divMat,Vn+dt*S,iterGMRESMax, precision, "GMRES","ILU")
+            LS=cdmath.LinearSolver(divMat,Vn+S*dt,iterGMRESMax, precision, "GMRES","ILU")
         LS.setComputeConditionNumber()
         
         test_desc["Linear_solver_algorithm"]=LS.getNameOfMethod()
@@ -263,9 +263,9 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,sc
         if(isImplicit):
             dUn=Un.deepCopy()
             if( scaling==0):
-                LS.setSndMember(Un+dt*S)
+                LS.setSndMember(Un+S*dt)
             else:
-                LS.setSndMember(Vn+dt*S)
+                LS.setSndMember(Vn+S*dt)
             if( scaling<2):
                 Un=LS.solve();
                 if( scaling==1):
@@ -287,7 +287,7 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,sc
             test_desc["Linear_system_max_actual_condition number"]=max(LS.getConditionNumber(),test_desc["Linear_system_max_actual_condition number"])
 
         else:
-            dUn=divMat*Un
+            dUn=divMat*Un-S*dt
             Un-=dUn
         
         maxVector=dUn.maxVector(dim+1)
@@ -381,13 +381,13 @@ def solve(my_mesh, meshName, resolution, scaling, meshType, testColor, cfl, test
 
     print test_name
     print "Numerical method : ", test_method
-    if( scaling):
+    if( scaling>0):
         print "Time scheme : Implicit"
         test_desc["Numerical_method_time_discretization"]="Implicit"
         print "Use of scaling strategy for better preconditioning"
     else:
         print "Time scheme : Explicit"
-    test_desc["Numerical_method_time_discretization"]="Explicit"
+        test_desc["Numerical_method_time_discretization"]="Explicit"
     print "Initial data : ", test_initial_data
     print "Boundary conditions : ",test_bc
     print "Mesh name : ",meshName , ", ", my_mesh.getNumberOfCells(), " cells"
@@ -441,8 +441,10 @@ def solve_file( filename,meshName, resolution, scaling, meshType, testColor,cfl,
 if __name__ == """__main__""":
     M1=cdmath.Mesh(0.,1.,20,0.,1.,20,0)
     cfl=0.5
-    solve(M1,"SquareRegularTriangles",100,"Regular triangles","Green",cfl,"Periodic")
+    scaling=0
+    solve(M1,"SquareRegularTriangles",100,scaling,"Regular triangles","Green",cfl,"Periodic",True)
 
     M2=cdmath.Mesh(0.,1.,10,0.,1.,10,0.,1.,10,6)
     cfl=1./3
-    solve(M2,"CubeRegularTetrahedra",100,"Regular tetrahedra","Green",cfl,"Wall")
+    scaling=2
+    solve(M2,"CubeRegularTetrahedra",100,scaling,"Regular tetrahedra","Green",cfl,"Wall")
