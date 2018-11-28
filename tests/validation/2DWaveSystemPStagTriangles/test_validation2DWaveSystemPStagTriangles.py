@@ -12,7 +12,7 @@ def test_validation2DWaveSystemPStagTriangles(scaling):
     #### 2D Delaunay triangles meshes
     meshList=['squareWithTriangles_1','squareWithTriangles_2','squareWithTriangles_3','squareWithTriangles_4']
     meshType="Unstructured_Delaunay_triangles"
-    testColor="Orange"
+    testColor="Green"
     nbMeshes=len(meshList)
     mesh_size_tab=[0]*nbMeshes
     mesh_path='../../ressources/2DTriangles/'
