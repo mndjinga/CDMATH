@@ -19,8 +19,8 @@ def initial_conditions_wave_system(my_mesh):
     dim     = my_mesh.getMeshDimension()
     nbCells = my_mesh.getNumberOfCells()
 
-    pressure_field = cdmath.Field("Pressure",            cdmath.CELLS, my_mesh, 1)
-    velocity_field = cdmath.Field("Velocity",            cdmath.CELLS, my_mesh, 3)
+    pressure_field = cdmath.Field("Pressure", cdmath.CELLS, my_mesh, 1)
+    velocity_field = cdmath.Field("Velocity", cdmath.CELLS, my_mesh, 3)
 
     for i in range(nbCells):
         x = my_mesh.getCell(i).x()
@@ -39,12 +39,15 @@ def initial_conditions_wave_system(my_mesh):
         
     return pressure_field, velocity_field
 
-def source_term_wave_system(my_mesh):
+def source_term_and_stat_solution_wave_system(my_mesh):
     test_desc["Source_term"]="True"
     dim     = my_mesh.getMeshDimension()
     nbCells = my_mesh.getNumberOfCells()
 
-    source_field = cdmath.Vector(nbCells*(dim+1))
+    source_vector = cdmath.Vector(nbCells*(dim+1))
+
+    stat_pressure_field = cdmath.Field("Pressure", cdmath.CELLS, my_mesh, 1)
+    stat_velocity_field = cdmath.Field("Velocity", cdmath.CELLS, my_mesh, 3)
 
     for k in range(nbCells):
         x = my_mesh.getCell(k).x()
@@ -52,16 +55,26 @@ def source_term_wave_system(my_mesh):
         z = my_mesh.getCell(k).z()
 
         if(dim==2):
-            source_field[k*(dim+1)+0] = -2*pi*pi*sin(pi*x)*sin(pi*y)
-            source_field[k*(dim+1)+1] =       pi*cos(pi*x)*sin(pi*y)
-            source_field[k*(dim+1)+2] =       pi*sin(pi*x)*cos(pi*y)
+            source_vector[k*(dim+1)+0] = -2*pi*pi*sin(pi*x)*sin(pi*y)
+            source_vector[k*(dim+1)+1] =       pi*cos(pi*x)*sin(pi*y)
+            source_vector[k*(dim+1)+2] =       pi*sin(pi*x)*cos(pi*y)
+
+            stat_pressure_field[k]   =    sin(pi*x)*sin(pi*y)
+            stat_velocity_field[k,1] = pi*cos(pi*x)*sin(pi*y)
+            stat_velocity_field[k,2] = pi*sin(pi*x)*cos(pi*y)
+            stat_velocity_field[k,3] = 0
         if(dim==3):
-            source_field[k*(dim+1)+0] = -3*pi*pi*sin(pi*x)*sin(pi*y)*sin(pi*z)
-            source_field[k*(dim+1)+1] =       pi*cos(pi*x)*sin(pi*y)*sin(pi*z)
-            source_field[k*(dim+1)+2] =       pi*sin(pi*x)*cos(pi*y)*sin(pi*z)
-            source_field[k*(dim+1)+3] =       pi*sin(pi*x)*sin(pi*y)*cos(pi*z)
+            source_vector[k*(dim+1)+0] = -3*pi*pi*sin(pi*x)*sin(pi*y)*sin(pi*z)
+            source_vector[k*(dim+1)+1] =       pi*cos(pi*x)*sin(pi*y)*sin(pi*z)
+            source_vector[k*(dim+1)+2] =       pi*sin(pi*x)*cos(pi*y)*sin(pi*z)
+            source_vector[k*(dim+1)+3] =       pi*sin(pi*x)*sin(pi*y)*cos(pi*z)
         
-    return source_field
+            stat_pressure_field[k]   =    sin(pi*x)*sin(pi*y)*sin(pi*z)
+            stat_velocity_field[k,1] = pi*cos(pi*x)*sin(pi*y)*sin(pi*z)
+            stat_velocity_field[k,2] = pi*sin(pi*x)*cos(pi*y)*sin(pi*z)
+            stat_velocity_field[k,3] = pi*sin(pi*x)*sin(pi*y)*cos(pi*z)
+
+    return source_vector, stat_pressure_field, stat_velocity_field
 
 def jacobianMatrices(normal, coeff,scaling):
     test_desc["Numerical_method_name"]="Upwind"
@@ -159,25 +172,31 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,sc
     isImplicit=scaling>0
     
     #iteration vectors
-    Un=cdmath.Vector(nbCells*(dim+1))
+    Un =cdmath.Vector(nbCells*(dim+1))
     dUn=cdmath.Vector(nbCells*(dim+1))
     
     # Initial conditions #
     print("Construction of the initial condition …")
-    pressure_field, velocity_field = initial_conditions_wave_system(my_mesh)
-    initial_pressure, initial_velocity = initial_conditions_wave_system(my_mesh)
-    
     if(with_source):
-        S=source_term_wave_system(my_mesh)
-    else:
-        S = cdmath.Vector(nbCells*(dim+1))
+        pressure_field = cdmath.Field("Pressure", cdmath.CELLS, my_mesh, 1)
+        velocity_field = cdmath.Field("Velocity", cdmath.CELLS, my_mesh, 3)
+        for k in range(nbCells):# fields initialisation
+            pressure_field[k]   = 0
+            velocity_field[k,0] = 0
+            velocity_field[k,1] = 0
+            velocity_field[k,2] = 0
+        S, stat_pressure, stat_velocity=source_term_and_stat_solution_wave_system(my_mesh)
+    else:#The initial datum is a stationary field
+        pressure_field, velocity_field = initial_conditions_wave_system(my_mesh)
+        for k in range(nbCells):
+            Un[k*(dim+1)+0] =     pressure_field[k]
+            Un[k*(dim+1)+1] =rho0*velocity_field[k,0]
+            Un[k*(dim+1)+2] =rho0*velocity_field[k,1]
+            if(dim==3):
+                Un[k*(dim+1)+3] =rho0*velocity_field[k,2]
+        stat_pressure, stat_velocity   = initial_conditions_wave_system(my_mesh)
+        S = cdmath.Vector(nbCells*(dim+1))#source term is zero
 
-    for k in range(nbCells):
-        Un[k*(dim+1)+0] =     initial_pressure[k]
-        Un[k*(dim+1)+1] =rho0*initial_velocity[k,0]
-        Un[k*(dim+1)+2] =rho0*initial_velocity[k,1]
-        if(dim==3):
-            Un[k*(dim+1)+3] =rho0*initial_velocity[k,2]
     if( scaling==1):
         Vn = Un.deepCopy()
         for k in range(nbCells):
@@ -288,21 +307,21 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,sc
             delta_press=0
             delta_v=cdmath.Vector(dim)
             for k in range(nbCells):
-                pressure_field[k]=Un[k*(dim+1)+0]
+                pressure_field[k]  =Un[k*(dim+1)+0]
                 velocity_field[k,0]=Un[k*(dim+1)+1]/rho0
                 if(dim>1):
                     velocity_field[k,1]=Un[k*(dim+1)+2]/rho0
                     if(dim>2):
                         velocity_field[k,2]=Un[k*(dim+1)+3]/rho0
-                if (abs(initial_pressure[k]-pressure_field[k])>delta_press):
-                    delta_press=abs(initial_pressure[k]-pressure_field[k])
-                if (abs(initial_velocity[k,0]-velocity_field[k,0])>delta_v[0]):
-                    delta_v[0]=abs(initial_velocity[k,0]-velocity_field[k,0])
-                if (abs(initial_velocity[k,1]-velocity_field[k,1])>delta_v[1]):
-                    delta_v[1]=abs(initial_velocity[k,1]-velocity_field[k,1])
+                if (abs(stat_pressure[k]-pressure_field[k])>delta_press):
+                    delta_press=abs(stat_pressure[k]-pressure_field[k])
+                if (abs(stat_velocity[k,0]-velocity_field[k,0])>delta_v[0]):
+                    delta_v[0]=abs(stat_velocity[k,0]-velocity_field[k,0])
+                if (abs(stat_velocity[k,1]-velocity_field[k,1])>delta_v[1]):
+                    delta_v[1]=abs(stat_velocity[k,1]-velocity_field[k,1])
                 if(dim==3):
-                    if (abs(initial_velocity[k,2]-velocity_field[k,2])>delta_v[2]):
-                        delta_v[2]=abs(initial_velocity[k,2]-velocity_field[k,2])
+                    if (abs(stat_velocity[k,2]-velocity_field[k,2])>delta_v[2]):
+                        delta_v[2]=abs(stat_velocity[k,2]-velocity_field[k,2])
                 
             pressure_field.setTime(time,it);
             pressure_field.writeVTK("WaveSystem"+str(dim)+"DUpwind"+meshName+"_pressure",False);
@@ -320,11 +339,12 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,sc
         raise ValueError("Maximum number of time steps reached : Stationary state not found !!!!!!!")
     elif(isStationary):
         print "Régime stationnaire atteint au pas de temps ", it, ", t= ", time
-        print "Mass loss: ", (total_pressure_initial-pressure_field.integral()).norm()/p0, " precision required= ", precision
-        print "Momentum loss: ", (total_velocity_initial-velocity_field.integral()).norm()/velocity_field.normL1().norm(), " precision required= ", precision
-        assert (total_pressure_initial-pressure_field.integral()).norm()/p0<precision
-        if(test_bc=="Periodic"):
-            assert (total_velocity_initial-velocity_field.integral()).norm()<2*precision
+        if(not with_source):
+            print "Mass loss: ", (total_pressure_initial-pressure_field.integral()).norm()/p0, " precision required= ", precision
+            print "Momentum loss: ", (total_velocity_initial-velocity_field.integral()).norm()/velocity_field.normL1().norm(), " precision required= ", precision
+            assert (total_pressure_initial-pressure_field.integral()).norm()/p0<precision
+            if(test_bc=="Periodic"):
+                assert (total_velocity_initial-velocity_field.integral()).norm()<2*precision
         print "------------------------------------------------------------------------------------"
 
         pressure_field.setTime(time,0);
