@@ -21,8 +21,8 @@ def initial_conditions_wave_system(my_mesh):
     dim     = my_mesh.getMeshDimension()
     nbCells = my_mesh.getNumberOfCells()
 
-    pressure_field = cdmath.Field("Pressure",            cdmath.CELLS, my_mesh, 1)
-    velocity_field = cdmath.Field("Velocity",            cdmath.CELLS, my_mesh, 3)
+    pressure_field = cdmath.Field("Pressure", cdmath.CELLS, my_mesh, 1)
+    velocity_field = cdmath.Field("Velocity", cdmath.CELLS, my_mesh, 3)
 
     for i in range(nbCells):
         x = my_mesh.getCell(i).x()
@@ -146,7 +146,7 @@ def computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt,scaling,test_bc):
                 if( test_bc=="Periodic" and Fk.getGroupName() != "Wall" and Fk.getGroupName() != "Paroi" and Fk.getGroupName() != "Neumann"):#Periodic boundary condition unless Wall/Neumann specified explicitly
                     test_desc["Boundary_conditions"]="Periodic"
                     
-                    indexFP = my_mesh.getIndexFacePeriodic(indexFace)
+                    indexFP = my_mesh.getIndexFacePeriodic(indexFace, my_mesh.getName()== "squareWithBrickWall", my_mesh.getName()== "squareWithHexagons")
                     Fp = my_mesh.getFace(indexFP)
                     cellAutre = Fp.getCellsId()[0]
                     
