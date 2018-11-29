@@ -572,6 +572,7 @@ class TestsCDMATHSwig(unittest.TestCase):
         self.assertTrue(M1.getFace(2).isBorder() == False)
         self.assertTrue(M1.getFace(3).isBorder() == False)
         self.assertTrue(M1.getFace(4).isBorder() == True)
+        self.assertTrue(len(M1.getNameOfFaceGroups()) == 2)
         self.assertTrue(M1.getNameOfFaceGroups()[0] == "LeftEdge")
         self.assertTrue(M1.getNameOfFaceGroups()[1] == "RightEdge")
 
@@ -607,6 +608,7 @@ class TestsCDMATHSwig(unittest.TestCase):
         M2.setGroupAtPlan(xinf, 0, eps, "LeftEdge")
         M2.setGroupAtPlan(yinf, 1, eps, "BottomEdge")
         M2.setGroupAtPlan(ysup, 1, eps, "TopEdge")
+        self.assertTrue(len(M2.getNameOfFaceGroups()) == 4)
         self.assertTrue(M2.getNameOfFaceGroups()[2] == "BottomEdge")
         nbFaces = M2.getNumberOfFaces()
         M2.setPeriodicFaces()
@@ -635,10 +637,11 @@ class TestsCDMATHSwig(unittest.TestCase):
         self.assertTrue(40 == M22.getNumberOfFaces())
 
         M23 = Mesh("meshSquare.med")
-        self.assertTrue(M23.getNameOfFaceGroups()[0] == "Bas")
-        self.assertTrue(M23.getNameOfFaceGroups()[1] == "Droite")
-        self.assertTrue(M23.getNameOfFaceGroups()[2] == "Gauche")
-        self.assertTrue(M23.getNameOfFaceGroups()[3] == "Haut")
+        self.assertTrue(len(M23.getNameOfFaceGroups()) == 4)
+        self.assertTrue(M23.getNameOfFaceGroups()[0] == "Bottom")
+        self.assertTrue(M23.getNameOfFaceGroups()[1] == "Left")
+        self.assertTrue(M23.getNameOfFaceGroups()[2] == "Right")
+        self.assertTrue(M23.getNameOfFaceGroups()[3] == "Top")
 
         M3 = M1
         self.assertTrue(1 == M3.getSpaceDimension())
