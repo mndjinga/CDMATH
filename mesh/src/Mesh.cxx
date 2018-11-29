@@ -318,7 +318,16 @@ Mesh::setPeriodicFaces(bool check_groups)
     {
         Face my_face=_faces[_boundaryFaceIds[indexFace]];
         int iface_perio=-1;
-        if(_meshDim==2)
+        if(_meshDim==1)
+        {
+            for (int iface=0;iface<_boundaryFaceIds.size() ; iface++)
+                if(iface!=indexFace)
+                {
+                    iface_perio=_boundaryFaceIds[iface];
+                    break;
+                }
+        }
+        else if(_meshDim==2)
         {
             double x=my_face.x();
             double y=my_face.y();
@@ -367,7 +376,7 @@ Mesh::setPeriodicFaces(bool check_groups)
             }  
         }
         else
-            throw CdmathException("Mesh::setPeriodicFaces: Mesh dimensionshould be 2 or 3");
+            throw CdmathException("Mesh::setPeriodicFaces: Mesh dimension should be 1, 2 or 3");
         
         if (iface_perio==-1)
             throw CdmathException("Mesh::setPeriodicFaces: periodic face not found, iface_perio==-1 " );
@@ -737,6 +746,8 @@ Mesh::setMesh( void )
 
 			_faces[id] = fi ;
 		}
+        _boundaryFaceIds.push_back(0);
+        _boundaryFaceIds.push_back(_numberOfFaces-1);
 	}
 	else if(_spaceDim==2  || _spaceDim==3)
 	{
