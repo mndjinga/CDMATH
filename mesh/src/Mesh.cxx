@@ -316,22 +316,24 @@ Mesh::setPeriodicFaces()
 
     for (int indexFace=0;indexFace<_boundaryFaceIds.size() ; indexFace++)
     {
+        Face my_face=_faces[_boundaryFaceIds[indexFace]];
         int iface_perio=-1;
         if(_meshDim==2)
         {
-            double x=_faces[_boundaryFaceIds[indexFace]].x();
-            double y=_faces[_boundaryFaceIds[indexFace]].y();
+            double x=my_face.x();
+            double y=my_face.y();
             
             for (int iface=0;iface<_boundaryFaceIds.size() ; iface++)
             {
-                double xi=_faces[_boundaryFaceIds[iface]].x();
-                double yi=_faces[_boundaryFaceIds[iface]].y();
+                Face face_i=_faces[_boundaryFaceIds[iface]];
+                double xi=face_i.x();
+                double yi=face_i.y();
                 if (   (abs(y-yi)<eps || abs(x-xi)<eps )// Case of a square geometry
                      //|| abs(y+yi) + abs(x+xi)<eps ) // Case of a cercle geometry
-                   && fabs(_faces[_boundaryFaceIds[indexFace]].getMeasure()-_faces[_boundaryFaceIds[iface]].getMeasure())<eps
-                   && fabs(_faces[_boundaryFaceIds[indexFace]].getXN() + _faces[_boundaryFaceIds[iface]].getXN())<eps
-                   && fabs(_faces[_boundaryFaceIds[indexFace]].getYN() + _faces[_boundaryFaceIds[iface]].getYN())<eps
-                   && fabs(_faces[_boundaryFaceIds[indexFace]].getZN() + _faces[_boundaryFaceIds[iface]].getZN())<eps )
+                   && fabs(my_face.getMeasure() - face_i.getMeasure())<eps
+                   && fabs(my_face.getXN()      + face_i.getXN())<eps
+                   && fabs(my_face.getYN()      + face_i.getYN())<eps
+                   && fabs(my_face.getZN()      + face_i.getZN())<eps )
                 {
                     iface_perio=_boundaryFaceIds[iface];
                     break;
@@ -340,21 +342,22 @@ Mesh::setPeriodicFaces()
         }
         else if(_meshDim==3)
         {
-            double x=_faces[_boundaryFaceIds[indexFace]].x();
-            double y=_faces[_boundaryFaceIds[indexFace]].y();
-            double z=_faces[_boundaryFaceIds[indexFace]].z();
+            double x=my_face.x();
+            double y=my_face.y();
+            double z=my_face.z();
         
             for (int iface=0;iface<_boundaryFaceIds.size() ; iface++)
             {
-                double xi=_faces[_boundaryFaceIds[iface]].x();
-                double yi=_faces[_boundaryFaceIds[iface]].y();
-                double zi=_faces[_boundaryFaceIds[iface]].z();
+                Face face_i=_faces[_boundaryFaceIds[iface]];
+                double xi=face_i.x();
+                double yi=face_i.y();
+                double zi=face_i.z();
                 if ( ((abs(y-yi)<eps && abs(x-xi)<eps) || (abs(x-xi)<eps && abs(z-zi)<eps) || (abs(y-yi)<eps && abs(z-zi)<eps))// Case of a cube geometry
                      //|| abs(y+yi) + abs(x+xi)<eps + abs(z+zi)<eps )// Case of a sphere geometry
-                   && fabs(_faces[_boundaryFaceIds[indexFace]].getMeasure()-_faces[_boundaryFaceIds[iface]].getMeasure())<eps
-                   && fabs(_faces[_boundaryFaceIds[indexFace]].getXN() + _faces[_boundaryFaceIds[iface]].getXN())<eps
-                   && fabs(_faces[_boundaryFaceIds[indexFace]].getYN() + _faces[_boundaryFaceIds[iface]].getYN())<eps
-                   && fabs(_faces[_boundaryFaceIds[indexFace]].getZN() + _faces[_boundaryFaceIds[iface]].getZN())<eps )
+                   && fabs(my_face.getMeasure() - face_i.getMeasure())<eps
+                   && fabs(my_face.getXN()      + face_i.getXN())<eps
+                   && fabs(my_face.getYN()      + face_i.getYN())<eps
+                   && fabs(my_face.getZN()      + face_i.getZN())<eps )
                 {
                     iface_perio=_boundaryFaceIds[iface];
                     break;
