@@ -138,7 +138,7 @@ def computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt,scaling,test_bc):
             else  :
                 if( test_bc=="Periodic" and Fk.getGroupName() != "Wall" and Fk.getGroupName() != "Paroi" and Fk.getGroupName() != "Neumann"):#Periodic boundary condition unless Wall/Neumann specified explicitly
                     test_desc["Boundary_conditions"]="Periodic"
-                    indexFP = my_mesh.getIndexFacePeriodic(indexFace)
+                    indexFP = my_mesh.getIndexFacePeriodic(indexFace, my_mesh.getName()== "squareWithBrickWall")
                     Fp = my_mesh.getFace(indexFP)
                     cellAutre = Fp.getCellsId()[0]
                     
