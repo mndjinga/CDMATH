@@ -314,10 +314,11 @@ MeshTests::testClassMesh( void )
 
     //Testing a 2D unstructured mesh (triangles)
     Mesh M23("meshSquare.med");
-    CPPUNIT_ASSERT(M23.getNameOfFaceGroups()[0].compare("Bas")==0);
-    CPPUNIT_ASSERT(M23.getNameOfFaceGroups()[1].compare("Droite")==0);
-    CPPUNIT_ASSERT(M23.getNameOfFaceGroups()[2].compare("Gauche")==0);
-    CPPUNIT_ASSERT(M23.getNameOfFaceGroups()[3].compare("Haut")==0);
+    CPPUNIT_ASSERT(M23.getNameOfFaceGroups().size() == 4);
+    CPPUNIT_ASSERT(M23.getNameOfFaceGroups()[0].compare("Bottom")==0);
+    CPPUNIT_ASSERT(M23.getNameOfFaceGroups()[1].compare("Left")==0);
+    CPPUNIT_ASSERT(M23.getNameOfFaceGroups()[2].compare("Right")==0);
+    CPPUNIT_ASSERT(M23.getNameOfFaceGroups()[3].compare("Top")==0);
     CPPUNIT_ASSERT(M23.isTriangular());
     int nbCellsM23 = M23.getNumberOfCells();
     double areaM23=0;
