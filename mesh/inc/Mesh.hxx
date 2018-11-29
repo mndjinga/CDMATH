@@ -290,8 +290,8 @@ public: //----------------------------------------------------------------
 	/*
      * Functions to manage periodic boundary condition in square/cubic geometries 
      */
-    void setPeriodicFaces(bool check_groups= false) ;
-    int getIndexFacePeriodic(int indexFace, bool check_groups= false);
+    void setPeriodicFaces(bool check_groups= false, bool use_central_inversion=false) ;
+    int getIndexFacePeriodic(int indexFace, bool check_groups= false, bool use_central_inversion=false);
     void setBoundaryNodes();
     std::map<int,int> getIndexFacePeriodic( void ) const;
     bool isIndexFacePeriodicSet() const ;
