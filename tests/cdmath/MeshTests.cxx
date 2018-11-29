@@ -92,6 +92,7 @@ MeshTests::testClassMesh( void )
 	CPPUNIT_ASSERT(M1.getFace(2).isBorder()==false);
 	CPPUNIT_ASSERT(M1.getFace(3).isBorder()==false);
 	CPPUNIT_ASSERT(M1.getFace(4).isBorder()==true);
+    CPPUNIT_ASSERT(M1.getNameOfFaceGroups().size() == 2);
 	CPPUNIT_ASSERT(M1.getNameOfFaceGroups()[0].compare("LeftEdge")==0);
 	CPPUNIT_ASSERT(M1.getNameOfFaceGroups()[1].compare("RightEdge")==0);
     double dx1=M1.minRatioVolSurf();
@@ -134,6 +135,7 @@ MeshTests::testClassMesh( void )
 	M2.setGroupAtPlan(ymin,1,eps,"BottomEdge");
 	M2.setGroupAtPlan(ymax,1,eps,"TopEdge");
 	CPPUNIT_ASSERT_EQUAL( 4, int(M2.getNameOfFaceGroups().size()) );
+    CPPUNIT_ASSERT(M2.getNameOfFaceGroups().size() == 4);
 	CPPUNIT_ASSERT(M2.getNameOfFaceGroups()[2].compare("BottomEdge")==0);
 	int nbFaces=M2.getNumberOfFaces();
     M2.setPeriodicFaces();
