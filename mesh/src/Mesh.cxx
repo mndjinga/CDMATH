@@ -338,7 +338,7 @@ Mesh::setPeriodicFaces(bool check_groups)
                 double xi=face_i.x();
                 double yi=face_i.y();
                 if (   (abs(y-yi)<eps || abs(x-xi)<eps )// Case of a square geometry
-                    && ( !check_groups || my_face.getGroupName()==face_i.getGroupName()) //In case groups need to be checked
+                    && ( !check_groups || my_face.getGroupName()!=face_i.getGroupName()) //In case groups need to be checked
                      //|| abs(y+yi) + abs(x+xi)<eps ) // Case of a cercle geometry
                    && fabs(my_face.getMeasure() - face_i.getMeasure())<eps
                    && fabs(my_face.getXN()      + face_i.getXN())<eps
@@ -363,7 +363,7 @@ Mesh::setPeriodicFaces(bool check_groups)
                 double yi=face_i.y();
                 double zi=face_i.z();
                 if ( ((abs(y-yi)<eps && abs(x-xi)<eps) || (abs(x-xi)<eps && abs(z-zi)<eps) || (abs(y-yi)<eps && abs(z-zi)<eps))// Case of a cube geometry
-                    && ( !check_groups || my_face.getGroupName()==face_i.getGroupName()) //In case groups need to be checked
+                    && ( !check_groups || my_face.getGroupName()!=face_i.getGroupName()) //In case groups need to be checked
                      //|| abs(y+yi) + abs(x+xi)<eps + abs(z+zi)<eps )// Case of a sphere geometry
                    && fabs(my_face.getMeasure() - face_i.getMeasure())<eps
                    && fabs(my_face.getXN()      + face_i.getXN())<eps
