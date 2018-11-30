@@ -118,5 +118,9 @@ def createBrickWallMesh( xmin=0., xmax=1., nx=15, ymin=0., ymax=1., ny=15,mesh_n
     meshMEDFile.write(filename,2) # 2 stands for write from scratch
 
 if __name__ == '__main__':
-  createBrickWallMesh(0.,1.,300,0.,1.,300)
+  createBrickWallMesh(0.,1.,5 ,0.,1.,5)
+  createBrickWallMesh(0.,1.,15,0.,1.,15)
+  createBrickWallMesh(0.,1.,31,0.,1.,31)
+  createBrickWallMesh(0.,1.,61,0.,1.,61)
+  createBrickWallMesh(0.,1.,101,0.,1.,101)
     
