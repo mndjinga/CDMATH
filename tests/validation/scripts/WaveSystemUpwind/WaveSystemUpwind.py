@@ -28,11 +28,15 @@ def initial_conditions_wave_system(my_mesh):
         z = my_mesh.getCell(i).z()
 
         pressure_field[i] = p0
-        if(dim==2):
+        if(dim==1):
+            velocity_field[i,0] = 1
+            velocity_field[i,1] = 0
+            velocity_field[i,2] = 0
+        elif(dim==2):
             velocity_field[i,0] =  sin(pi*x)*cos(pi*y)
             velocity_field[i,1] = -sin(pi*y)*cos(pi*x)
             velocity_field[i,2] = 0
-        if(dim==3):
+        elif(dim==3):
             velocity_field[i,0] =    sin(pi*x)*cos(pi*y)*cos(pi*z)
             velocity_field[i,1] =    sin(pi*y)*cos(pi*x)*cos(pi*z)
             velocity_field[i,2] = -2*sin(pi*z)*cos(pi*x)*cos(pi*y)
@@ -54,7 +58,15 @@ def source_term_and_stat_solution_wave_system(my_mesh):
         y = my_mesh.getCell(k).y()
         z = my_mesh.getCell(k).z()
 
-        if(dim==2):
+        if(dim==1):
+            source_vector[k*(dim+1)+0] = -pi*pi*sin(pi*x)
+            source_vector[k*(dim+1)+1] =     pi*cos(pi*x)
+
+            stat_pressure_field[k]   =    sin(pi*x)
+            stat_velocity_field[k,1] = pi*cos(pi*x)
+            stat_velocity_field[k,2] = 0
+            stat_velocity_field[k,3] = 0
+        elif(dim==2):
             source_vector[k*(dim+1)+0] = -2*pi*pi*sin(pi*x)*sin(pi*y)
             source_vector[k*(dim+1)+1] =       pi*cos(pi*x)*sin(pi*y)
             source_vector[k*(dim+1)+2] =       pi*sin(pi*x)*cos(pi*y)
@@ -63,7 +75,7 @@ def source_term_and_stat_solution_wave_system(my_mesh):
             stat_velocity_field[k,1] = pi*cos(pi*x)*sin(pi*y)
             stat_velocity_field[k,2] = pi*sin(pi*x)*cos(pi*y)
             stat_velocity_field[k,3] = 0
-        if(dim==3):
+        elif(dim==3):
             source_vector[k*(dim+1)+0] = -3*pi*pi*sin(pi*x)*sin(pi*y)*sin(pi*z)
             source_vector[k*(dim+1)+1] =       pi*cos(pi*x)*sin(pi*y)*sin(pi*z)
             source_vector[k*(dim+1)+2] =       pi*sin(pi*x)*cos(pi*y)*sin(pi*z)
