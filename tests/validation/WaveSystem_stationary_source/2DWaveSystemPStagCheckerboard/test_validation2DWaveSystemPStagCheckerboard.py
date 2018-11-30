@@ -6,7 +6,7 @@ from math import log10, sqrt
 import sys
 import time, json
 
-def test_validation2DWaveSystemPStagCheckerboard(scaling):
+def test_validation2DWaveSystemSourcePStagCheckerboard(scaling):
     start = time.time()
     #### 2D checkerboard mesh
     meshList=['checkerboard_5x5','checkerboard_9x9','checkerboard_17x17','checkerboard_33x33','checkerboard_65x65']
@@ -52,7 +52,7 @@ def test_validation2DWaveSystemPStagCheckerboard(scaling):
     plt.xlabel('Position on diagonal line')
     plt.ylabel('Pressure on diagonal line')
     plt.title('Plot over diagonal line for stationary Wave System with source term \n with pseudo staggered scheme on 2D checkerboard meshes')
-    plt.savefig(mesh_name+'_Pressure_2DWaveSystemPStag_'+"scaling"+str(scaling)+"_PlotOverDiagonalLine.png")
+    plt.savefig(mesh_name+'_Pressure_2DWaveSystemSourcePStag_'+"scaling"+str(scaling)+"_PlotOverDiagonalLine.png")
     plt.close()
 
     plt.clf()
@@ -65,7 +65,7 @@ def test_validation2DWaveSystemPStagCheckerboard(scaling):
     plt.xlabel('Position on diagonal line')
     plt.ylabel('Velocity on diagonal line')
     plt.title('Plot over diagonal line for the stationary Wave System with source term \n with pseudo staggered scheme on 2D checkerboard meshes')
-    plt.savefig(mesh_name+"_Velocity_2DWaveSystemPStag_"+"scaling"+str(scaling)+"_PlotOverDiagonalLine.png")    
+    plt.savefig(mesh_name+"_Velocity_2DWaveSystemSourcePStag_"+"scaling"+str(scaling)+"_PlotOverDiagonalLine.png")    
     plt.close()
 
     # Plot of number of time steps
@@ -78,7 +78,7 @@ def test_validation2DWaveSystemPStagCheckerboard(scaling):
     plt.xlabel('Number of cells')
     plt.ylabel('Max time steps for stationary regime')
     plt.title('Number of times steps required for the stationary Wave System \n with pseudo staggered scheme on 2D checkerboard meshes')
-    plt.savefig(mesh_name+"_2DWaveSystemCheckerboardPStag_"+"scaling"+str(scaling)+"_TimeSteps.png")
+    plt.savefig(mesh_name+"_2DWaveSystemSourcePStag_"+"scaling"+str(scaling)+"_TimeSteps.png")
     
     # Plot of number of stationary time
     plt.close()
@@ -90,7 +90,7 @@ def test_validation2DWaveSystemPStagCheckerboard(scaling):
     plt.xlabel('Number of cells')
     plt.ylabel('Max time for stationary regime')
     plt.title('Simulated time for the stationary Wave System \n with pseudo staggered scheme on 2D checkerboard meshes')
-    plt.savefig(mesh_name+"_2DWaveSystemCheckerboardPStag_"+"scaling"+str(scaling)+"TimeFinal.png")
+    plt.savefig(mesh_name+"_2DWaveSystemSourcePStag_"+"scaling"+str(scaling)+"TimeFinal.png")
     
     # Plot of number of maximal velocity norm
     plt.close()
@@ -102,7 +102,7 @@ def test_validation2DWaveSystemPStagCheckerboard(scaling):
     plt.xlabel('Number of cells')
     plt.ylabel('Max velocity norm')
     plt.title('Maximum velocity norm for the stationary Wave System \n with pseudo staggered scheme on 2D checkerboard meshes')
-    plt.savefig(mesh_name+"_2DWaveSystemCheckerboardPStag_"+"scaling"+str(scaling)+"_MaxVelNorm.png")
+    plt.savefig(mesh_name+"_2DWaveSystemSourcePStag_"+"scaling"+str(scaling)+"_MaxVelNorm.png")
     
     # Plot of condition number 
     plt.close()
@@ -114,7 +114,7 @@ def test_validation2DWaveSystemPStagCheckerboard(scaling):
     plt.xlabel('Number of cells')
     plt.ylabel('Condition number')
     plt.title('Condition number for the stationary Wave System \n with pseudo staggered scheme on 2D square meshes')
-    plt.savefig(mesh_name+"_2DWaveSystemTrianglesPStag_"+"scaling"+str(scaling)+"_condition_number.png")
+    plt.savefig(mesh_name+"_2DWaveSystemSourcePStag_"+"scaling"+str(scaling)+"_condition_number.png")
 
     for i in range(nbMeshes):
         mesh_size_tab[i]=0.5*log10(mesh_size_tab[i])
@@ -159,7 +159,7 @@ def test_validation2DWaveSystemPStagCheckerboard(scaling):
     plt.xlabel('1/2 log(Number of cells)')
     plt.ylabel('log(Error p)')
     plt.title('Convergence of finite volumes for the stationary Wave System \n with pseudo staggered scheme on 2D checkerboard meshes')
-    plt.savefig(mesh_name+"_Pressure_2DWaveSystemPStag_"+"scaling"+str(scaling)+"_ConvergenceCurve.png")
+    plt.savefig(mesh_name+"_Pressure_2DWaveSystemSourcePStag_"+"scaling"+str(scaling)+"_ConvergenceCurve.png")
     
     plt.close()
     if(scaling==0):
@@ -170,7 +170,7 @@ def test_validation2DWaveSystemPStagCheckerboard(scaling):
     plt.xlabel('1/2 log(Number of cells)')
     plt.ylabel('log(Error u)')
     plt.title('Convergence of finite volumes for the stationary Wave System \n with pseudo staggered scheme on 2D checkerboard meshes')
-    plt.savefig(mesh_name+"_Velocity_2DWaveSystemPStag_"+"scaling"+str(scaling)+"_ConvergenceCurve.png")
+    plt.savefig(mesh_name+"_Velocity_2DWaveSystemSourcePStag_"+"scaling"+str(scaling)+"_ConvergenceCurve.png")
     
     # Plot of computational time
     plt.close()
@@ -182,7 +182,7 @@ def test_validation2DWaveSystemPStagCheckerboard(scaling):
     plt.xlabel('1/2 log(Number of cells)')
     plt.ylabel('log(cpu time)')
     plt.title('Computational time of finite volumes for the stationary Wave System \n with pseudo staggered scheme on 2D checkerboard meshes')
-    plt.savefig(mesh_name+"_2DWaveSystemPStag_"+"scaling"+str(scaling)+"_ComputationalTime.png")
+    plt.savefig(mesh_name+"_2DWaveSystemSourcePStag_"+"scaling"+str(scaling)+"_ComputationalTime.png")
     
     plt.close('all')
     
@@ -217,12 +217,12 @@ def test_validation2DWaveSystemPStagCheckerboard(scaling):
     convergence_synthesis["Test_color"]=testColor
     convergence_synthesis["Computational_time"]=end-start
 
-    with open('Convergence_WaveSystem_2DFV_PStag_'+mesh_name+'.json', 'w') as outfile:  
+    with open('Convergence_WaveSystemSource_2DFV_PStag_'+mesh_name+'.json', 'w') as outfile:  
         json.dump(convergence_synthesis, outfile)
 
 if __name__ == """__main__""":
     if len(sys.argv) >1 :
         scaling = int(sys.argv[1])
-        test_validation2DWaveSystemPStagCheckerboard(scaling)
+        test_validation2DWaveSystemSourcePStagCheckerboard(scaling)
     else :
-        test_validation2DWaveSystemPStagCheckerboard(2)
+        test_validation2DWaveSystemSourcePStagCheckerboard(2)

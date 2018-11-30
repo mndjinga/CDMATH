@@ -6,7 +6,7 @@ from math import log10, sqrt
 import sys
 import time, json
 
-def test_validation2DWaveSystemUpwindCheckerboard(bctype,scaling):
+def test_validation2DWaveSystemSourceUpwindCheckerboard(bctype,scaling):
     start = time.time()
     #### 2D checkerboard mesh
     meshList=['checkerboard_5x5','checkerboard_9x9','checkerboard_17x17','checkerboard_33x33','checkerboard_65x65']
@@ -48,7 +48,7 @@ def test_validation2DWaveSystemUpwindCheckerboard(bctype,scaling):
     plt.xlabel('Position on diagonal line')
     plt.ylabel('Pressure on diagonal line')
     plt.title('Plot over diagonal line for stationary Wave System with source term \n with upwind scheme on 2D checkerboard meshes')
-    plt.savefig(mesh_name+'_Pressure_2DWaveSystemUpwind_'+"PlotOverDiagonalLine.png")
+    plt.savefig(mesh_name+'_Pressure_2DWaveSystemSourceUpwind_'+"PlotOverDiagonalLine.png")
     plt.close()
 
     plt.clf()
@@ -58,7 +58,7 @@ def test_validation2DWaveSystemUpwindCheckerboard(bctype,scaling):
     plt.xlabel('Position on diagonal line')
     plt.ylabel('Velocity on diagonal line')
     plt.title('Plot over diagonal line for the stationary Wave System with source term \n with upwind scheme on 2D checkerboard meshes')
-    plt.savefig(mesh_name+"_Velocity_2DWaveSystemUpwind_"+"PlotOverDiagonalLine.png")    
+    plt.savefig(mesh_name+"_Velocity_2DWaveSystemSourceUpwind_"+"PlotOverDiagonalLine.png")    
     plt.close()
 
     # Plot of number of time steps
@@ -68,7 +68,7 @@ def test_validation2DWaveSystemUpwindCheckerboard(bctype,scaling):
     plt.xlabel('Number of cells')
     plt.ylabel('Max time steps for stationary regime')
     plt.title('Number of times steps required for the stationary Wave System \n with upwind scheme on 2D checkerboard meshes')
-    plt.savefig(mesh_name+"_2DWaveSystemCheckerboardUpwind_"+"TimeSteps.png")
+    plt.savefig(mesh_name+"_2DWaveSystemSourceUpwind_"+"TimeSteps.png")
     
     # Plot of number of stationary time
     plt.close()
@@ -77,7 +77,7 @@ def test_validation2DWaveSystemUpwindCheckerboard(bctype,scaling):
     plt.xlabel('Number of cells')
     plt.ylabel('Max time for stationary regime')
     plt.title('Simulated time for the stationary Wave System \n with upwind scheme on 2D checkerboard meshes')
-    plt.savefig(mesh_name+"_2DWaveSystemCheckerboardUpwind_"+"TimeFinal.png")
+    plt.savefig(mesh_name+"_2DWaveSystemSourceUpwind_"+"TimeFinal.png")
     
     # Plot of number of maximal velocity norm
     plt.close()
@@ -86,7 +86,7 @@ def test_validation2DWaveSystemUpwindCheckerboard(bctype,scaling):
     plt.xlabel('Number of cells')
     plt.ylabel('Max velocity norm')
     plt.title('Maximum velocity norm for the stationary Wave System \n with upwind scheme on 2D checkerboard meshes')
-    plt.savefig(mesh_name+"_2DWaveSystemCheckerboardUpwind_"+"MaxVelNorm.png")
+    plt.savefig(mesh_name+"_2DWaveSystemSourceUpwind_"+"MaxVelNorm.png")
     
     for i in range(nbMeshes):
         mesh_size_tab[i]=0.5*log10(mesh_size_tab[i])
@@ -99,7 +99,7 @@ def test_validation2DWaveSystemUpwindCheckerboard(bctype,scaling):
     a3=nbMeshes
     
     det=a1*a3-a2*a2
-    assert det!=0, 'test_validation2DWaveSystemUpwindCheckerboardFV() : Make sure you use distinct meshes and at least two meshes'
+    assert det!=0, 'test_validation2DWaveSystemSourceUpwindCheckerboardFV() : Make sure you use distinct meshes and at least two meshes'
 
     b1p=np.dot(error_p_tab,mesh_size_tab)   
     b2p=np.sum(error_p_tab)
@@ -122,7 +122,7 @@ def test_validation2DWaveSystemUpwindCheckerboard(bctype,scaling):
     plt.xlabel('1/2 log(Number of cells)')
     plt.ylabel('log(Error p)')
     plt.title('Convergence of finite volumes for the stationary Wave System \n with upwind scheme on 2D checkerboard meshes')
-    plt.savefig(mesh_name+"_Pressure_2DWaveSystemUpwind_"+"ConvergenceCurve.png")
+    plt.savefig(mesh_name+"_Pressure_2DWaveSystemSourceUpwind_"+"ConvergenceCurve.png")
     
     plt.close()
     plt.plot(mesh_size_tab, error_u_tab, label='|error on stationary velocity|')
@@ -130,7 +130,7 @@ def test_validation2DWaveSystemUpwindCheckerboard(bctype,scaling):
     plt.xlabel('1/2 log(Number of cells)')
     plt.ylabel('log(Error u)')
     plt.title('Convergence of finite volumes for the stationary Wave System \n with upwind scheme on 2D checkerboard meshes')
-    plt.savefig(mesh_name+"_Velocity_2DWaveSystemUpwind_"+"ConvergenceCurve.png")
+    plt.savefig(mesh_name+"_Velocity_2DWaveSystemSourceUpwind_"+"ConvergenceCurve.png")
     
     # Plot of computational time
     plt.close()
@@ -139,7 +139,7 @@ def test_validation2DWaveSystemUpwindCheckerboard(bctype,scaling):
     plt.xlabel('1/2 log(Number of cells)')
     plt.ylabel('log(cpu time)')
     plt.title('Computational time of finite volumes for the stationary Wave System \n with upwind scheme on 2D checkerboard meshes')
-    plt.savefig(mesh_name+"_2DWaveSystemUpwind_ComputationalTime.png")
+    plt.savefig(mesh_name+"_2DWaveSystemSourceUpwind_ComputationalTime.png")
     
     plt.close('all')
     
@@ -174,13 +174,13 @@ def test_validation2DWaveSystemUpwindCheckerboard(bctype,scaling):
     convergence_synthesis["Test_color"]=testColor
     convergence_synthesis["Computational_time"]=end-start
 
-    with open('Convergence_WaveSystem_2DFV_Upwind_'+mesh_name+'.json', 'w') as outfile:  
+    with open('Convergence_WaveSystemSource_2DFV_Upwind_'+mesh_name+'.json', 'w') as outfile:  
         json.dump(convergence_synthesis, outfile)
 
 if __name__ == """__main__""":
     if len(sys.argv) >2 :
         bctype = sys.argv[1]
         scaling = int(sys.argv[2])
-        test_validation2DWaveSystemUpwindCheckerboard(bctype,scaling)
+        test_validation2DWaveSystemSourceUpwindCheckerboard(bctype,scaling)
     else :
-        raise ValueError("test_validation2DWaveSystemUpwindCheckerboard.py expects a mesh file name and a scaling parameter")
+        raise ValueError("test_validation2DWaveSystemSourceUpwindCheckerboard.py expects a mesh file name and a scaling parameter")

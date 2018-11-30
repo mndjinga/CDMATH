@@ -7,7 +7,7 @@ import sys
 import time, json
 
     
-def test_validation2DWaveSystemPStagCrossTriangles(scaling):
+def test_validation2DWaveSystemSourcePStagCrossTriangles(scaling):
     start = time.time()
     #### 2D cross triangle meshes
     meshList=['squareWithCrossTriangles_0','squareWithCrossTriangles_1','squareWithCrossTriangles_2','squareWithCrossTriangles_3','squareWithCrossTriangles_4']#
@@ -54,7 +54,7 @@ def test_validation2DWaveSystemPStagCrossTriangles(scaling):
     plt.xlabel('Position on diagonal line')
     plt.ylabel('Pressure on diagonal line')
     plt.title('Plot over diagonal line for stationary Wave System with source term \n with PStagggered scheme on 2D cross triangle meshes')
-    plt.savefig(mesh_name+'_Pressure_2DWaveSystemPStag_'+"scaling"+str(scaling)+"_PlotOverDiagonalLine.png")
+    plt.savefig(mesh_name+'_Pressure_2DWaveSystemSourcePStag_'+"scaling"+str(scaling)+"_PlotOverDiagonalLine.png")
     plt.close()
 
     plt.clf()
@@ -67,7 +67,7 @@ def test_validation2DWaveSystemPStagCrossTriangles(scaling):
     plt.xlabel('Position on diagonal line')
     plt.ylabel('Velocity on diagonal line')
     plt.title('Plot over diagonal line for the stationary Wave System with source term \n with PStagggered scheme on 2D cross triangle meshes')
-    plt.savefig(mesh_name+"_Velocity_2DWaveSystemPStag_"+"scaling"+str(scaling)+"_PlotOverDiagonalLine.png")    
+    plt.savefig(mesh_name+"_Velocity_2DWaveSystemSourcePStag_"+"scaling"+str(scaling)+"_PlotOverDiagonalLine.png")    
     plt.close()
 
     # Plot of number of time steps
@@ -80,7 +80,7 @@ def test_validation2DWaveSystemPStagCrossTriangles(scaling):
     plt.xlabel('Number of cells')
     plt.ylabel('Max time steps for stationary regime')
     plt.title('Number of times steps required for the stationary Wave System \n with PStagggered scheme on 2D cross triangle meshes')
-    plt.savefig(mesh_name+"_2DWaveSystemSquarePStags_"+"scaling"+str(scaling)+"_TimeSteps.png")
+    plt.savefig(mesh_name+"_2DWaveSystemSourcePStag_"+"scaling"+str(scaling)+"_TimeSteps.png")
     
     # Plot of number of stationary time
     plt.close()
@@ -92,7 +92,7 @@ def test_validation2DWaveSystemPStagCrossTriangles(scaling):
     plt.xlabel('number of cells')
     plt.ylabel('Max time for stationary regime')
     plt.title('Simulated time for the stationary Wave System \n with PStagggered scheme on 2D cross triangle meshes')
-    plt.savefig(mesh_name+"_2DWaveSystemPStag_"+"scaling"+str(scaling)+"_FinalTime.png")
+    plt.savefig(mesh_name+"_2DWaveSystemSourcePStag_"+"scaling"+str(scaling)+"_FinalTime.png")
     
     # Plot of number of maximal velocity norm
     plt.close()
@@ -104,7 +104,7 @@ def test_validation2DWaveSystemPStagCrossTriangles(scaling):
     plt.xlabel('Number of cells')
     plt.ylabel('Max velocity norm')
     plt.title('Maximum velocity norm for the stationary Wave System \n with PStagggered scheme on 2D cross triangle meshes')
-    plt.savefig(mesh_name+"_2DWaveSystemPStag_"+"scaling"+str(scaling)+"_MaxVelNorm.png")
+    plt.savefig(mesh_name+"_2DWaveSystemSourcePStag_"+"scaling"+str(scaling)+"_MaxVelNorm.png")
     
     # Plot of condition number 
     plt.close()
@@ -116,7 +116,7 @@ def test_validation2DWaveSystemPStagCrossTriangles(scaling):
     plt.xlabel('Number of cells')
     plt.ylabel('Condition number')
     plt.title('Condition number for the stationary Wave System \n with PStagggered scheme on 2D square meshes')
-    plt.savefig(mesh_name+"_2DWaveSystemPStag_"+"scaling"+str(scaling)+"_condition_number.png")
+    plt.savefig(mesh_name+"_2DWaveSystemSourcePStag_"+"scaling"+str(scaling)+"_condition_number.png")
     
     for i in range(nbMeshes):
         mesh_size_tab[i]=0.5*log10(mesh_size_tab[i])
@@ -129,7 +129,7 @@ def test_validation2DWaveSystemPStagCrossTriangles(scaling):
     a3=nbMeshes
     
     det=a1*a3-a2*a2
-    assert det!=0, 'test_validation2DWaveSystemFVPStagCrossTriangles() : Make sure you use distinct meshes and at least two meshes'
+    assert det!=0, 'test_validation2DWaveSystemSourceFVPStagCrossTriangles() : Make sure you use distinct meshes and at least two meshes'
 
     b1u=np.dot(error_u_tab,mesh_size_tab)   
     b2u=np.sum(error_u_tab)
@@ -151,7 +151,7 @@ def test_validation2DWaveSystemPStagCrossTriangles(scaling):
     plt.xlabel('1/2 log(number of cells)')
     plt.ylabel('|error p|')
     plt.title('Convergence of finite volumes for the stationary Wave System \n with PStagggered scheme on 2D cross triangle meshes')
-    plt.savefig(mesh_name+"_Pressure_2DWaveSystemPStag_"+"scaling"+str(scaling)+"_ConvergenceCurve.png")
+    plt.savefig(mesh_name+"_Pressure_2DWaveSystemSourcePStag_"+"scaling"+str(scaling)+"_ConvergenceCurve.png")
     
     plt.close()
     if(scaling==0):
@@ -162,7 +162,7 @@ def test_validation2DWaveSystemPStagCrossTriangles(scaling):
     plt.xlabel('1/2 log(number of cells)')
     plt.ylabel('|error u|')
     plt.title('Convergence of finite volumes for the stationary Wave System \n with PStagggered scheme on 2D cross triangle meshes')
-    plt.savefig(mesh_name+"_Velocity_2DWaveSystemPStag_"+"scaling"+str(scaling)+"_ConvergenceCurve.png")
+    plt.savefig(mesh_name+"_Velocity_2DWaveSystemSourcePStag_"+"scaling"+str(scaling)+"_ConvergenceCurve.png")
     
     # Plot of computational time
     plt.close()
@@ -174,7 +174,7 @@ def test_validation2DWaveSystemPStagCrossTriangles(scaling):
     plt.xlabel('1/2 log(number of cells)')
     plt.ylabel('log(cpu time)')
     plt.title('Computational time of finite volumes for the stationary Wave System \n with PStagggered scheme on 2D cross triangle meshes')
-    plt.savefig(mesh_name+"2DWaveSystemPStag_"+"scaling"+str(scaling)+"_ComputationalTime.png")
+    plt.savefig(mesh_name+"2DWaveSystemSourcePStag_"+"scaling"+str(scaling)+"_ComputationalTime.png")
 
     plt.close('all')
 
@@ -212,13 +212,13 @@ def test_validation2DWaveSystemPStagCrossTriangles(scaling):
     convergence_synthesis["Test_color"]=testColor
     convergence_synthesis["Computational_time"]=end-start
 
-    with open('Convergence_WaveSystem_2DFV_PStag_'+mesh_name+'.json', 'w') as outfile:  
+    with open('Convergence_WaveSystemSource_2DFV_PStag_'+mesh_name+'.json', 'w') as outfile:  
         json.dump(convergence_synthesis, outfile)
 
 if __name__ == """__main__""":
     if len(sys.argv) >1 :
         scaling = int(sys.argv[1])
-        test_validation2DWaveSystemPStagCrossTriangles(scaling)
+        test_validation2DWaveSystemSourcePStagCrossTriangles(scaling)
     else :
-        test_validation2DWaveSystemPStagCrossTriangles(2)
+        test_validation2DWaveSystemSourcePStagCrossTriangles(2)
 
