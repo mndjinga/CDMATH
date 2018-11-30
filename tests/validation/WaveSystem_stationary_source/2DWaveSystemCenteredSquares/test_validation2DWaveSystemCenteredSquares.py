@@ -57,7 +57,7 @@ def test_validation2DWaveSystemCentered_squares(scaling):
     plt.legend()
     plt.xlabel('Position on diagonal line')
     plt.ylabel('Pressure on diagonal line')
-    plt.title('Plot over diagonal line for stationary wave system \n with centered scheme on 2D square meshes')
+    plt.title('Plot over diagonal line for stationary Wave System with source term \n with centered scheme on 2D square meshes')
     plt.savefig(mesh_name+'_Pressure_2DWaveSystemSquaresCentered_'+"scaling"+str(scaling)+"_PlotOverDiagonalLine.png")
     plt.close()
 
@@ -70,7 +70,7 @@ def test_validation2DWaveSystemCentered_squares(scaling):
     plt.legend()
     plt.xlabel('Position on diagonal line')
     plt.ylabel('Velocity on diagonal line')
-    plt.title('Plot over diagonal line for the stationary wave system \n with centered scheme on 2D square meshes')
+    plt.title('Plot over diagonal line for the stationary Wave System with source term \n with centered scheme on 2D square meshes')
     plt.savefig(mesh_name+"_Velocity_2DWaveSystemSquaresCentered_"+"scaling"+str(scaling)+"_PlotOverDiagonalLine.png")    
     plt.close()
 

@@ -47,7 +47,7 @@ def test_validation2DWaveSystemUpwindHexagons(bctype,scaling):
     plt.legend()
     plt.xlabel('Position on diagonal line')
     plt.ylabel('Pressure on diagonal line')
-    plt.title('Plot over diagonal line for stationary wave system \n with upwind scheme on 2D hexagonal meshes')
+    plt.title('Plot over diagonal line for stationary Wave System with source term \n with upwind scheme on 2D hexagonal meshes')
     plt.savefig(mesh_name+'_Pressure_2DWaveSystemUpwind_Hexagonss_'+"PlotOverDiagonalLine.png")
     plt.close()
 
@@ -57,7 +57,7 @@ def test_validation2DWaveSystemUpwindHexagons(bctype,scaling):
     plt.legend()
     plt.xlabel('Position on diagonal line')
     plt.ylabel('Velocity on diagonal line')
-    plt.title('Plot over diagonal line for the stationary wave system \n with upwind scheme on 2D hexagonal meshes')
+    plt.title('Plot over diagonal line for the stationary Wave System with source term \n with upwind scheme on 2D hexagonal meshes')
     plt.savefig(mesh_name+"_Velocity_2DWaveSystemUpwind_Hexagons_"+"PlotOverDiagonalLine.png")    
     plt.close()
 
