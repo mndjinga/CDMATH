@@ -6,7 +6,7 @@ from math import log10, sqrt
 import sys
 import time, json
 
-def test_validation2DWaveSystemUpwindTriangles(bctype,scaling):
+def test_validation2DWaveSystemUpwindDelaunayTriangles(bctype,scaling):
     start = time.time()
     #### 2D Delaunay triangles mesh
     meshList=['squareWithTriangles_1','squareWithTriangles_2','squareWithTriangles_3','squareWithTriangles_4','squareWithTriangles_5']
@@ -181,6 +181,6 @@ if __name__ == """__main__""":
     if len(sys.argv) >2 :
         bctype = sys.argv[1]
         scaling = int(sys.argv[2])
-        test_validation2DWaveSystemUpwindTriangles(bctype,scaling)
+        test_validation2DWaveSystemUpwindDelaunayTriangles(bctype,scaling)
     else :
         raise ValueError("test_validation2DWaveSystemUpwindTriangles.py expects a mesh file name and a scaling parameter")

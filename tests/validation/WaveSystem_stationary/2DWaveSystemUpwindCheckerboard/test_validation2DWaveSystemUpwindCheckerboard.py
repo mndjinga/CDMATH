@@ -68,7 +68,7 @@ def test_validation2DWaveSystemUpwindCheckerboard(bctype,scaling):
     plt.xlabel('Number of cells')
     plt.ylabel('Max time steps for stationary regime')
     plt.title('Number of times steps required for the stationary Wave System \n with upwind scheme on 2D checkerboard meshes')
-    plt.savefig(mesh_name+"_2DWaveSystemCheckerboardUpwind_"+"TimeSteps.png")
+    plt.savefig(mesh_name+"_2DWaveSystemUpwind_"+"TimeSteps.png")
     
     # Plot of number of stationary time
     plt.close()

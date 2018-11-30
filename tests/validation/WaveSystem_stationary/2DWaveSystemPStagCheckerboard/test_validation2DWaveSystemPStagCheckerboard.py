@@ -78,7 +78,7 @@ def test_validation2DWaveSystemPStagCheckerboard(scaling):
     plt.xlabel('Number of cells')
     plt.ylabel('Max time steps for stationary regime')
     plt.title('Number of times steps required for the stationary Wave System \n with pseudo staggered scheme on 2D checkerboard meshes')
-    plt.savefig(mesh_name+"_2DWaveSystemCheckerboardPStag_"+"scaling"+str(scaling)+"_TimeSteps.png")
+    plt.savefig(mesh_name+"_2DWaveSystemPStag_"+"scaling"+str(scaling)+"_TimeSteps.png")
     
     # Plot of number of stationary time
     plt.close()
@@ -90,7 +90,7 @@ def test_validation2DWaveSystemPStagCheckerboard(scaling):
     plt.xlabel('Number of cells')
     plt.ylabel('Max time for stationary regime')
     plt.title('Simulated time for the stationary Wave System \n with pseudo staggered scheme on 2D checkerboard meshes')
-    plt.savefig(mesh_name+"_2DWaveSystemCheckerboardPStag_"+"scaling"+str(scaling)+"TimeFinal.png")
+    plt.savefig(mesh_name+"_2DWaveSystemPStag_"+"scaling"+str(scaling)+"TimeFinal.png")
     
     # Plot of number of maximal velocity norm
     plt.close()
@@ -102,7 +102,7 @@ def test_validation2DWaveSystemPStagCheckerboard(scaling):
     plt.xlabel('Number of cells')
     plt.ylabel('Max velocity norm')
     plt.title('Maximum velocity norm for the stationary Wave System \n with pseudo staggered scheme on 2D checkerboard meshes')
-    plt.savefig(mesh_name+"_2DWaveSystemCheckerboardPStag_"+"scaling"+str(scaling)+"_MaxVelNorm.png")
+    plt.savefig(mesh_name+"_2DWaveSystemCPStag_"+"scaling"+str(scaling)+"_MaxVelNorm.png")
     
     # Plot of condition number 
     plt.close()
@@ -114,7 +114,7 @@ def test_validation2DWaveSystemPStagCheckerboard(scaling):
     plt.xlabel('Number of cells')
     plt.ylabel('Condition number')
     plt.title('Condition number for the stationary Wave System \n with pseudo staggered scheme on 2D square meshes')
-    plt.savefig(mesh_name+"_2DWaveSystemTrianglesPStag_"+"scaling"+str(scaling)+"_condition_number.png")
+    plt.savefig(mesh_name+"_2DWaveSystemPStag_"+"scaling"+str(scaling)+"_condition_number.png")
 
     for i in range(nbMeshes):
         mesh_size_tab[i]=0.5*log10(mesh_size_tab[i])

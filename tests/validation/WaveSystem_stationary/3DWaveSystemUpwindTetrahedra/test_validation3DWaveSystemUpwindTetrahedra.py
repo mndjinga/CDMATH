@@ -47,7 +47,7 @@ def test_validation3DWaveSystemUpwindTetrahedra(bctype,scaling):
     plt.xlabel('Position on diagonal line')
     plt.ylabel('Pressure on diagonal line')
     plt.title('Plot over diagonal line for stationary wave system \n on 3D tetrahedral meshes')
-    plt.savefig(mesh_name+'_Pressure_3DWaveSystem_Tetrahedra_'+"PlotOverDiagonalLine.png")
+    plt.savefig(mesh_name+'_Pressure_3DWaveSystemUpwind_'+"PlotOverDiagonalLine.png")
     plt.close()
 
     plt.clf()
@@ -57,7 +57,7 @@ def test_validation3DWaveSystemUpwindTetrahedra(bctype,scaling):
     plt.xlabel('Position on diagonal line')
     plt.ylabel('Velocity on diagonal line')
     plt.title('Plot over diagonal line for the stationary wave system \n on 3D tetrahedral meshes')
-    plt.savefig(mesh_name+"_Velocity_3DWaveSystem_Tetrahedra_"+"PlotOverDiagonalLine.png")    
+    plt.savefig(mesh_name+"_Velocity_3DWaveSystemUpwind_"+"PlotOverDiagonalLine.png")    
     plt.close()
 
     # Least square linear regression
@@ -68,7 +68,7 @@ def test_validation3DWaveSystemUpwindTetrahedra(bctype,scaling):
     a3=nbMeshes
     
     det=a1*a3-a2*a2
-    assert det!=0, 'test_validation3DWaveSystemSquaresFV() : Make sure you use distinct meshes and at least two meshes'
+    assert det!=0, 'test_validation3DWaveSystemUpwindSquaresFV() : Make sure you use distinct meshes and at least two meshes'
 
     b1p=np.dot(error_p_tab,mesh_size_tab)   
     b2p=np.sum(error_p_tab)
@@ -91,7 +91,7 @@ def test_validation3DWaveSystemUpwindTetrahedra(bctype,scaling):
     plt.xlabel('number of cells')
     plt.ylabel('Max time steps for stationary regime')
     plt.title('Number of times steps required \n for the stationary Wave System on 3D tetrahedral meshes')
-    plt.savefig(mesh_name+"_3DWaveSystemTetrahedra_"+"TimeSteps.png")
+    plt.savefig(mesh_name+"_3DWaveSystemUpwind_"+"TimeSteps.png")
     
     # Plot of time where stationary regime is reached
     plt.close()
@@ -100,7 +100,7 @@ def test_validation3DWaveSystemUpwindTetrahedra(bctype,scaling):
     plt.xlabel('number of cells')
     plt.ylabel('Max time for stationary regime')
     plt.title('Simulated time  \n for the stationary Wave System on 3D tetrahedral meshes')
-    plt.savefig(mesh_name+"_3DWaveSystemTetrahedra_"+"TimeFinal.png")
+    plt.savefig(mesh_name+"_3DWaveSystemUpwind_"+"TimeFinal.png")
     
     # Plot of number of maximal velocity norm
     plt.close()
@@ -109,7 +109,7 @@ def test_validation3DWaveSystemUpwindTetrahedra(bctype,scaling):
     plt.xlabel('number of cells')
     plt.ylabel('Max velocity norm')
     plt.title('Maximum velocity norm  \n for the stationary Wave System on 3D tetrahedral meshes')
-    plt.savefig(mesh_name+"_3DWaveSystemTetrahedra_"+"MaxVelNorm.png")
+    plt.savefig(mesh_name+"_3DWaveSystemUpwind_"+"MaxVelNorm.png")
     
        
     # Plot of convergence curves
@@ -119,7 +119,7 @@ def test_validation3DWaveSystemUpwindTetrahedra(bctype,scaling):
     plt.xlabel('number of cells')
     plt.ylabel('error p')
     plt.title('Convergence of finite volumes for \n the stationary Wave System on 3D tetrahedral meshes')
-    plt.savefig(mesh_name+"_Pressure_3DWaveSystem_Tetrahedra_"+"ConvergenceCurve.png")
+    plt.savefig(mesh_name+"_Pressure_3DWaveSystemUpwind_"+"ConvergenceCurve.png")
     
     plt.close()
     plt.plot(mesh_size_tab, error_u_tab, label='|error on stationary velocity|')
@@ -127,7 +127,7 @@ def test_validation3DWaveSystemUpwindTetrahedra(bctype,scaling):
     plt.xlabel('number of cells')
     plt.ylabel('error p')
     plt.title('Convergence of finite volumes for \n the stationary Wave System on 3D tetrahedral meshes')
-    plt.savefig(mesh_name+"_Velocity_3DWaveSystem_Tetrahedra_"+"ConvergenceCurve.png")
+    plt.savefig(mesh_name+"_Velocity_3DWaveSystemUpwind_"+"ConvergenceCurve.png")
     
     # Plot of computational time
     plt.close()
@@ -136,7 +136,7 @@ def test_validation3DWaveSystemUpwindTetrahedra(bctype,scaling):
     plt.xlabel('number of cells')
     plt.ylabel('cpu time')
     plt.title('Computational time of finite volumes \n for the stationary Wave System on 3D tetrahedral meshes')
-    plt.savefig(mesh_name+"_scaling_"+str(scaling)+"_3DWaveSystem_Tetrahedra_ComputationalTime.png")
+    plt.savefig(mesh_name+"_3DWaveSystemUpwind_"+"_scaling_"+str(scaling)+"_ComputationalTime.png")
     
     plt.close('all')
     

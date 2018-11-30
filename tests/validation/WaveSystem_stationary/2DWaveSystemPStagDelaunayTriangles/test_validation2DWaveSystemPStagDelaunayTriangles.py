@@ -80,7 +80,7 @@ def test_validation2DWaveSystemPStagTriangles(scaling):
     plt.xlabel('Number of cells')
     plt.ylabel('Max time steps for stationary regime')
     plt.title('Number of times steps required for the stationary Wave System \n with PStagggered scheme on 2D Delaunay triangles meshes')
-    plt.savefig(mesh_name+"_2DWaveSystemSquarePStags_"+"scaling"+str(scaling)+"_TimeSteps.png")
+    plt.savefig(mesh_name+"_2DWaveSystemPStag_"+"scaling"+str(scaling)+"_TimeSteps.png")
     
     # Plot of number of stationary time
     plt.close()

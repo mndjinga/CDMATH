@@ -77,7 +77,7 @@ def test_validation2DWaveSystemUpwindFlatCrossTriangles(bctype,scaling):
     plt.xlabel('Number of cells')
     plt.ylabel('Max time for stationary regime')
     plt.title('Simulated time for the stationary Wave System \n with upwind scheme on 2D flat cross triangles meshes')
-    plt.savefig(mesh_name+"_2DWaveSystemFUpwind_"+"TimeFinal.png")
+    plt.savefig(mesh_name+"_2DWaveSystemUpwind_"+"TimeFinal.png")
     
     # Plot of number of maximal velocity norm
     plt.close()

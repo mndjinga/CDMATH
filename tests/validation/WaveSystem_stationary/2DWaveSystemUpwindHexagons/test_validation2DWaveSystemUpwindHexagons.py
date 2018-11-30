@@ -9,7 +9,7 @@ import time, json
 def test_validation2DWaveSystemUpwindHexagons(bctype,scaling):
     start = time.time()
     #### 2D hexagonal mesh
-    meshList=['squareWithHexagons_1','squareWithHexagons_2','squareWithHexagons_3','squareWithHexagons_4','squareWithHexagons_5']
+    meshList=['squareWithHexagons_1','squareWithHexagons_2','squareWithHexagons_3','squareWithHexagons_4']#,'squareWithHexagons_5'
     meshType="Regular hexagons"
     testColor="Green"
     nbMeshes=len(meshList)
@@ -48,7 +48,7 @@ def test_validation2DWaveSystemUpwindHexagons(bctype,scaling):
     plt.xlabel('Position on diagonal line')
     plt.ylabel('Pressure on diagonal line')
     plt.title('Plot over diagonal line for stationary wave system \n with upwind scheme on 2D hexagonal meshes')
-    plt.savefig(mesh_name+'_Pressure_2DWaveSystemUpwind_Hexagonss_'+"PlotOverDiagonalLine.png")
+    plt.savefig(mesh_name+'_Pressure_2DWaveSystemUpwind_'+"PlotOverDiagonalLine.png")
     plt.close()
 
     plt.clf()
@@ -58,7 +58,7 @@ def test_validation2DWaveSystemUpwindHexagons(bctype,scaling):
     plt.xlabel('Position on diagonal line')
     plt.ylabel('Velocity on diagonal line')
     plt.title('Plot over diagonal line for the stationary wave system \n with upwind scheme on 2D hexagonal meshes')
-    plt.savefig(mesh_name+"_Velocity_2DWaveSystemUpwind_Hexagons_"+"PlotOverDiagonalLine.png")    
+    plt.savefig(mesh_name+"_Velocity_2DWaveSystemUpwind_"+"PlotOverDiagonalLine.png")    
     plt.close()
 
     # Plot of number of time steps
@@ -68,7 +68,7 @@ def test_validation2DWaveSystemUpwindHexagons(bctype,scaling):
     plt.xlabel('Number of cells')
     plt.ylabel('Max time steps for stationary regime')
     plt.title('Number of times steps required for the stationary Wave System \n with upwind scheme on 2D hexagonal meshes')
-    plt.savefig(mesh_name+"_2DWaveSystemHexagonsUpwind_"+"TimeSteps.png")
+    plt.savefig(mesh_name+"_2DWaveSystemUpwind_"+"TimeSteps.png")
     
     # Plot of number of stationary time
     plt.close()
@@ -77,7 +77,7 @@ def test_validation2DWaveSystemUpwindHexagons(bctype,scaling):
     plt.xlabel('Number of cells')
     plt.ylabel('Max time for stationary regime')
     plt.title('Simulated time for the stationary Wave System \n with upwind scheme on 2D hexagonal meshes')
-    plt.savefig(mesh_name+"_2DWaveSystemHexagonsUpwind_"+"TimeFinal.png")
+    plt.savefig(mesh_name+"_2DWaveSystemUpwind_"+"TimeFinal.png")
     
     # Plot of number of maximal velocity norm
     plt.close()
@@ -122,7 +122,7 @@ def test_validation2DWaveSystemUpwindHexagons(bctype,scaling):
     plt.xlabel('1/2 log(number of cells)')
     plt.ylabel('log(error p)')
     plt.title('Convergence of finite volumes for the stationary Wave System \n with upwind scheme on 2D hexagonal meshes')
-    plt.savefig(mesh_name+"_Pressure_2DWaveSystemUpwind_Hexagons_"+"ConvergenceCurve.png")
+    plt.savefig(mesh_name+"_Pressure_2DWaveSystemUpwind_"+"ConvergenceCurve.png")
     
     plt.close()
     plt.plot(mesh_size_tab, error_u_tab, label='|error on stationary velocity|')
@@ -130,7 +130,7 @@ def test_validation2DWaveSystemUpwindHexagons(bctype,scaling):
     plt.xlabel('1/2 log(number of cells)')
     plt.ylabel('log(error u)')
     plt.title('Convergence of finite volumes for the stationary Wave System \n with upwind scheme on 2D hexagonal meshes')
-    plt.savefig(mesh_name+"_Velocity_2DWaveSystemUpwind_Hexagons_"+"ConvergenceCurve.png")
+    plt.savefig(mesh_name+"_Velocity_2DWaveSystemUpwind_"+"ConvergenceCurve.png")
     
     # Plot of computational time
     plt.close()
@@ -139,7 +139,7 @@ def test_validation2DWaveSystemUpwindHexagons(bctype,scaling):
     plt.xlabel('1/2 log(number of cells)')
     plt.ylabel('log(cpu time)')
     plt.title('Computational time of finite volumes for the stationary Wave System \n with upwind scheme on 2D hexagonal meshes')
-    plt.savefig(mesh_name+"_2DWaveSystemUpwind_Hexagons_ComputationalTime.png")
+    plt.savefig(mesh_name+"_2DWaveSystemUpwind_ComputationalTime.png")
     
     plt.close('all')
     

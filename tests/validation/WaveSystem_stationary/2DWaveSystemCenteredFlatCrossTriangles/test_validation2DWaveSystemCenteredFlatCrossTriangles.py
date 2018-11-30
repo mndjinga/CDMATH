@@ -80,7 +80,7 @@ def test_validation2DWaveSystemCenteredFlatCrossTriangles(scaling):
     plt.xlabel('Number of cells')
     plt.ylabel('Max time steps for stationary regime')
     plt.title('Number of times steps required for the stationary Wave System \n with centered scheme on 2D flat cross triangle meshes')
-    plt.savefig(mesh_name+"_2DWaveSystemSquareCentereds_"+"scaling"+str(scaling)+"_TimeSteps.png")
+    plt.savefig(mesh_name+"_2DWaveSystemCentered_"+"scaling"+str(scaling)+"_TimeSteps.png")
     
     # Plot of number of stationary time
     plt.close()
