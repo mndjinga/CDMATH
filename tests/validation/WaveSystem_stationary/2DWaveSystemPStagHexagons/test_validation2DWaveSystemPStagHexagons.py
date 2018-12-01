@@ -86,7 +86,7 @@ def test_validation2DWaveSystemPStagHexagons(bctype,scaling):
     plt.xlabel('Number of cells')
     plt.ylabel('Max velocity norm')
     plt.title('Maximum velocity norm for the stationary Wave System \n with PStag scheme on 2D hexagonal meshes')
-    plt.savefig(mesh_name+"_2DWaveSystemHexagonsPStag_"+"MaxVelNorm.png")
+    plt.savefig(mesh_name+"_2DWaveSystemPStag_"+"MaxVelNorm.png")
     
     for i in range(nbMeshes):
         mesh_size_tab[i]=0.5*log10(mesh_size_tab[i])

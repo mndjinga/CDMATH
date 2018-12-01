@@ -86,7 +86,7 @@ def test_validation2DWaveSystemUpwindHexagons(bctype,scaling):
     plt.xlabel('Number of cells')
     plt.ylabel('Max velocity norm')
     plt.title('Maximum velocity norm for the stationary Wave System \n with upwind scheme on 2D hexagonal meshes')
-    plt.savefig(mesh_name+"_2DWaveSystemHexagonsUpwind_"+"MaxVelNorm.png")
+    plt.savefig(mesh_name+"_2DWaveSystemUpwind_"+"MaxVelNorm.png")
     
     for i in range(nbMeshes):
         mesh_size_tab[i]=0.5*log10(mesh_size_tab[i])

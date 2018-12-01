@@ -181,6 +181,6 @@ if __name__ == """__main__""":
     if len(sys.argv) >2 :
         bctype = sys.argv[1]
         scaling = int(sys.argv[2])
-        test_validation2DWaveSystemUpwindHexagons(bctype,scaling)
+        test_validation2DWaveSystemSourceUpwindHexagons(bctype,scaling)
     else :
         raise ValueError("test_validation2DWaveSystemSourceUpwindHexagons.py expects a mesh file name and a scaling parameter")
