@@ -380,7 +380,10 @@ def solve(my_mesh,meshName,resolution,scaling, meshType, testColor,cfl,with_sour
     test_name_comment="No upwinding"
     test_model="Wave system"
     test_method="Centered"
-    test_initial_data="Constant pressure, divergence free velocity"
+    if(with_source):
+        test_initial_data="zero pressure, zero velocity"
+    else:
+        test_initial_data="Constant pressure, divergence free velocity"
     test_bc="Periodic"
     print test_name
     print "Numerical method : ", test_method
