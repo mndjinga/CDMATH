@@ -403,7 +403,7 @@ def solve(my_mesh,meshName,resolution,scaling, meshType, testColor,cfl,with_sour
         print "Use of scaling strategy for better preconditioning"
 
     # Problem data
-    tmax = 1000.
+    tmax = 100000.
     ntmax = 30000
     output_freq = 10000
 
