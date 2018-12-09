@@ -372,7 +372,7 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,sc
         raise ValueError("Maximum time reached : Stationary state not found !!!!!!!")
 
 
-def solve(my_mesh,meshName,resolution,scaling, meshType, testColor,cfl,with_source=False):
+def solve(my_mesh,meshName,resolution,scaling, meshType, testColor,cfl,test_bc,with_source=False):
     start = time.time()
     test_desc["Mesh_type"]=meshType
     test_desc["Test_color"]=testColor
@@ -384,7 +384,6 @@ def solve(my_mesh,meshName,resolution,scaling, meshType, testColor,cfl,with_sour
         test_initial_data="zero pressure, zero velocity"
     else:
         test_initial_data="Constant pressure, divergence free velocity"
-    test_bc="Periodic"
     print test_name
     print "Numerical method : ", test_method
     print "Initial data : ", test_initial_data
@@ -434,14 +433,19 @@ def solve(my_mesh,meshName,resolution,scaling, meshType, testColor,cfl,with_sour
     
     return error_p, error_u, nbCells, t_final, ndt_final, max_vel, diag_data_press, diag_data_vel, end - start, cond_number
 
-def solve_file( filename,meshName, resolution,scaling, meshType, testColor,cfl,with_source=False):
+def solve_file( filename,meshName, resolution,scaling, meshType, testColor,cfl,test_bc,with_source=False):
     my_mesh = cdmath.Mesh(filename+".med")
 
-    return solve(my_mesh, meshName+str(my_mesh.getNumberOfCells()),resolution,scaling, meshType, testColor,cfl,with_source)
+    return solve(my_mesh, meshName+str(my_mesh.getNumberOfCells()),resolution,scaling, meshType, testColor,cfl,test_bc,with_source)
     
 
 if __name__ == """__main__""":
-    M1=cdmath.Mesh(0,1,20,0,1,20)
+    M1=cdmath.Mesh(0.,1.,20,0.,1.,20,0)
     cfl=0.5
     scaling=0
-    solve(M1,"SquareWithSquares",100,scaling,"Regular squares","Green",cfl)
+    solve(M1,"SquareRegularTriangles",100,scaling,"Regular triangles","Green",cfl,"Periodic",True)
+
+    M2=cdmath.Mesh(0.,1.,10,0.,1.,10,0.,1.,10,6)
+    cfl=1./3
+    scaling=2
+    solve(M2,"CubeRegularTetrahedra",100,scaling,"Regular tetrahedra","Green",cfl,"Wall")
