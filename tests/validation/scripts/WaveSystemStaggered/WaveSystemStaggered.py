@@ -388,7 +388,7 @@ def solve(my_mesh,meshName,resolution,scaling, meshType, testColor,cfl):
 
     # Problem data
     tmax = 1000.
-    ntmax = 30000
+    ntmax = 35000
     output_freq = 1000
 
     error_p, error_u, nbCells, t_final, ndt_final, max_vel, diag_data_press, diag_data_vel, cond_number = WaveSystemStaggered(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,scaling,test_bc)

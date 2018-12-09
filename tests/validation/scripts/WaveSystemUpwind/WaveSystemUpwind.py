@@ -409,7 +409,7 @@ def solve(my_mesh, meshName, resolution, scaling, meshType, testColor, cfl, test
     
     # Problem data
     tmax = 10000.
-    ntmax = 30000
+    ntmax = 35000
     output_freq = 10000
 
     error_p, error_u, nbCells, t_final, ndt_final, max_vel, diag_data_press, diag_data_vel = WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution, scaling,test_bc,with_source)
