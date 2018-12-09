@@ -11,7 +11,7 @@ def test_validation2DWaveSystemPStagDeformedQuadrangles(bctype,scaling):
     #### 2D deformed quadrangles mesh
     meshList=['squareWithDeformedQuadrangles_1','squareWithDeformedQuadrangles_2','squareWithDeformedQuadrangles_3','squareWithDeformedQuadrangles_4','squareWithDeformedQuadrangles_5']#,'squareWithDeformedQuadrangles_6'
     meshType="Deformed quadrangles"
-    testColor="Green"
+    testColor="Orange : Pb with wall BC (no mass conservation)"
     nbMeshes=len(meshList)
     error_p_tab=[0]*nbMeshes
     error_u_tab=[0]*nbMeshes
@@ -24,6 +24,7 @@ def test_validation2DWaveSystemPStagDeformedQuadrangles(bctype,scaling):
     t_final=[0]*nbMeshes
     ndt_final=[0]*nbMeshes
     max_vel=[0]*nbMeshes
+    cond_number=[0]*nbMeshes
     resolution=100
     curv_abs=np.linspace(0,sqrt(2),resolution+1)
 
@@ -32,7 +33,7 @@ def test_validation2DWaveSystemPStagDeformedQuadrangles(bctype,scaling):
     cfl=0.5
     # Storing of numerical errors, mesh sizes and diagonal values
     for filename in meshList:
-        error_p_tab[i], error_u_tab[i], mesh_size_tab[i], t_final[i], ndt_final[i], max_vel[i], diag_data_press[i], diag_data_vel[i], time_tab[i] =WaveSystemPStag.solve_file(mesh_path+filename, mesh_name, resolution, scaling,meshType,testColor,cfl,bctype)
+        error_p_tab[i], error_u_tab[i], mesh_size_tab[i], t_final[i], ndt_final[i], max_vel[i], diag_data_press[i], diag_data_vel[i], time_tab[i], cond_number[i] =WaveSystemPStag.solve_file(mesh_path+filename, mesh_name, resolution, scaling,meshType,testColor,cfl,bctype)
         assert max_vel[i]>0.0003 and max_vel[i]<1
         error_p_tab[i]=log10(error_p_tab[i])
         error_u_tab[i]=log10(error_u_tab[i])
