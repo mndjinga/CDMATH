@@ -372,7 +372,7 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,sc
         raise ValueError("Maximum time reached : Stationary state not found !!!!!!!")
 
 
-def solve(my_mesh,meshName,resolution,scaling, meshType, testColor,cfl,test_bc,with_source=False):
+def solve(my_mesh,meshName,resolution,scaling, meshType, testColor,cfl,test_bc="Periodic",with_source=False):
     start = time.time()
     test_desc["Mesh_type"]=meshType
     test_desc["Test_color"]=testColor
