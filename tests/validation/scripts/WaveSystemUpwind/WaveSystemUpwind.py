@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*-coding:utf-8 -*
 
-from math import sin, cos, pi, sqrt
+from math import sin, cos, pi, pow
 import time, json
 import cdmath
 import PV_routines
@@ -193,7 +193,7 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,sc
         pressure_field = cdmath.Field("Pressure", cdmath.CELLS, my_mesh, 1)
         velocity_field = cdmath.Field("Velocity", cdmath.CELLS, my_mesh, 3)
         for k in range(nbCells):# fields initialisation
-            pressure_field[k]   = 0
+            pressure_field[k]   = pow(2./pi,dim)
             velocity_field[k,0] = 0
             velocity_field[k,1] = 0
             velocity_field[k,2] = 0
@@ -249,10 +249,11 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,sc
                 for i in range(dim):
                     divMat.addValue(j*(dim+1)+1+i,j*(dim+1)+1+i,1)
         
+        #Adding the momentumm friction term
         if(with_source):
             for j in range(nbCells):
                 for i in range(dim):
-                    divMat.addValue(j*(dim+1)+1+i,j*(dim+1)+1+i,1)
+                    divMat.addValue(j*(dim+1)+1+i,j*(dim+1)+1+i,dt)
 
         iterGMRESMax=50
         if( scaling==0):
@@ -315,7 +316,7 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,sc
         it=it+1;
     
         #Sauvegardes
-        if(it%output_freq==0 or it>=ntmax or isStationary or time >=tmax):
+        if(it==0 or it%output_freq==0 or it>=ntmax or isStationary or time >=tmax):
             print"-- Iter: " + str(it) + ", Time: " + str(time) + ", dt: " + str(dt)
             print "Variation temporelle relative : pressure ", maxVector[0]/p0 ,", velocity x", maxVector[1]/rho0 ,", velocity y", maxVector[2]/rho0
             if(isImplicit):
