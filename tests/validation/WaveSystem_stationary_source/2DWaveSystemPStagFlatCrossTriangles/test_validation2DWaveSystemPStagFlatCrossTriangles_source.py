@@ -7,7 +7,7 @@ import sys
 import time, json
 
     
-def test_validation2DWaveSystemPStagFlatCrossTriangles(scaling):
+def test_validation2DWaveSystemSourcePStagFlatCrossTriangles(scaling):
     start = time.time()
     #### 2D flat cross triangle meshes
     meshList=['squareWithFlatTriangles_00','squareWithFlatTriangles_0']#,'squareWithFlatTriangles_1','squareWithFlatTriangles_2','squareWithFlatTriangles_3'

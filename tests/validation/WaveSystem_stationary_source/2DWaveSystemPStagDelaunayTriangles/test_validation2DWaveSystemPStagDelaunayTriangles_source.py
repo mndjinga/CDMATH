@@ -7,7 +7,7 @@ import sys
 import time, json
 
     
-def test_validation2DWaveSystemPStagTriangles(scaling):
+def test_validation2DWaveSystemSourcePStagTriangles(scaling):
     start = time.time()
     #### 2D Delaunay triangles meshes
     meshList=['squareWithTriangles_1','squareWithTriangles_2','squareWithTriangles_3','squareWithTriangles_4']
