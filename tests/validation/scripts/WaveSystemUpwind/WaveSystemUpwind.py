@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*-coding:utf-8 -*
 
-from math import sin, cos, pi, pow
+from math import sin, cos, pi
 import time, json
 import cdmath
 import PV_routines
@@ -59,32 +59,32 @@ def source_term_and_stat_solution_wave_system(my_mesh):
         z = my_mesh.getCell(k).z()
 
         if(dim==1):
-            source_vector[k*(dim+1)+0] = c0*c0*pi*pi*sin(pi*x)
+            source_vector[k*(dim+1)+0] = c0*c0*pi*pi*cos(pi*x)
             source_vector[k*(dim+1)+1] = 0
 
-            stat_pressure_field[k]   =     sin(pi*x)
-            stat_velocity_field[k,0] = -pi*cos(pi*x)
+            stat_pressure_field[k]   =    cos(pi*x)
+            stat_velocity_field[k,0] = pi*sin(pi*x)
             stat_velocity_field[k,1] = 0
             stat_velocity_field[k,2] = 0
         elif(dim==2):
-            source_vector[k*(dim+1)+0] = 2*c0*c0*pi*pi*sin(pi*x)*sin(pi*y)
+            source_vector[k*(dim+1)+0] = 2*c0*c0*pi*pi*cos(pi*x)*cos(pi*y)
             source_vector[k*(dim+1)+1] = 0
             source_vector[k*(dim+1)+2] = 0
 
-            stat_pressure_field[k]   =     sin(pi*x)*sin(pi*y)
-            stat_velocity_field[k,0] = -pi*cos(pi*x)*sin(pi*y)
-            stat_velocity_field[k,1] = -pi*sin(pi*x)*cos(pi*y)
+            stat_pressure_field[k]   =    cos(pi*x)*cos(pi*y)
+            stat_velocity_field[k,0] = pi*sin(pi*x)*cos(pi*y)
+            stat_velocity_field[k,1] = pi*cos(pi*x)*sin(pi*y)
             stat_velocity_field[k,2] = 0
         elif(dim==3):
-            source_vector[k*(dim+1)+0] = 3*c0*c0*pi*pi*sin(pi*x)*sin(pi*y)*sin(pi*z)
+            source_vector[k*(dim+1)+0] = 3*c0*c0*pi*pi*cos(pi*x)*cos(pi*y)*cos(pi*z)
             source_vector[k*(dim+1)+1] = 0
             source_vector[k*(dim+1)+2] = 0
             source_vector[k*(dim+1)+3] = 0
         
-            stat_pressure_field[k]   =     sin(pi*x)*sin(pi*y)*sin(pi*z)
-            stat_velocity_field[k,0] = -pi*cos(pi*x)*sin(pi*y)*sin(pi*z)
-            stat_velocity_field[k,1] = -pi*sin(pi*x)*cos(pi*y)*sin(pi*z)
-            stat_velocity_field[k,2] = -pi*sin(pi*x)*sin(pi*y)*cos(pi*z)
+            stat_pressure_field[k]   =    cos(pi*x)*cos(pi*y)*cos(pi*z)
+            stat_velocity_field[k,0] = pi*sin(pi*x)*cos(pi*y)*cos(pi*z)
+            stat_velocity_field[k,1] = pi*cos(pi*x)*sin(pi*y)*cos(pi*z)
+            stat_velocity_field[k,2] = pi*cos(pi*x)*cos(pi*y)*sin(pi*z)
 
     return source_vector, stat_pressure_field, stat_velocity_field
 
@@ -193,7 +193,7 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,sc
         pressure_field = cdmath.Field("Pressure", cdmath.CELLS, my_mesh, 1)
         velocity_field = cdmath.Field("Velocity", cdmath.CELLS, my_mesh, 3)
         for k in range(nbCells):# fields initialisation
-            pressure_field[k]   = pow(2./pi,dim)
+            pressure_field[k]   = 0
             velocity_field[k,0] = 0
             velocity_field[k,1] = 0
             velocity_field[k,2] = 0
