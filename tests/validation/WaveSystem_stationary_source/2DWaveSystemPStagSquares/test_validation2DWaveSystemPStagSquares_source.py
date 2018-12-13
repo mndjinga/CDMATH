@@ -33,7 +33,7 @@ def test_validation2DWaveSystemSourcePStag_squares(scaling):
 
     plt.close('all')
     i=0
-    cfl=100
+    cfl=10000
     # Storing of numerical errors, mesh sizes and diagonal values
     #for filename in meshList:
     for nx in meshList:
