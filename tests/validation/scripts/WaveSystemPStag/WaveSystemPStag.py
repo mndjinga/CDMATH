@@ -61,32 +61,32 @@ def source_term_and_stat_solution_wave_system(my_mesh):
         z = my_mesh.getCell(k).z()
 
         if(dim==1):
-            source_vector[k*(dim+1)+0] = c0*c0*pi*pi*cos(pi*x)
+            source_vector[k*(dim+1)+0] = c0*c0*4*pi*pi*sin(2*pi*x)
             source_vector[k*(dim+1)+1] = 0
 
-            stat_pressure_field[k]   =    cos(pi*x)
-            stat_velocity_field[k,0] = pi*sin(pi*x)
+            stat_pressure_field[k]   =       sin(2*pi*x)
+            stat_velocity_field[k,0] = -2*pi*cos(2*pi*x)
             stat_velocity_field[k,1] = 0
             stat_velocity_field[k,2] = 0
         elif(dim==2):
-            source_vector[k*(dim+1)+0] = 2*c0*c0*pi*pi*cos(pi*x)*cos(pi*y)
+            source_vector[k*(dim+1)+0] = 2*c0*c0*4*pi*pi*sin(2*pi*x)*sin(2*pi*y)
             source_vector[k*(dim+1)+1] = 0
             source_vector[k*(dim+1)+2] = 0
 
-            stat_pressure_field[k]   =    cos(pi*x)*cos(pi*y)
-            stat_velocity_field[k,0] = pi*sin(pi*x)*cos(pi*y)
-            stat_velocity_field[k,1] = pi*cos(pi*x)*sin(pi*y)
+            stat_pressure_field[k]   =       sin(2*pi*x)*sin(2*pi*y)
+            stat_velocity_field[k,0] = -2*pi*cos(2*pi*x)*sin(2*pi*y)
+            stat_velocity_field[k,1] = -2*pi*sin(2*pi*x)*cos(2*pi*y)
             stat_velocity_field[k,2] = 0
         elif(dim==3):
-            source_vector[k*(dim+1)+0] = 3*c0*c0*pi*pi*cos(pi*x)*cos(pi*y)*cos(pi*z)
+            source_vector[k*(dim+1)+0] = 3*c0*c0*4*pi*pi*sin(2*pi*x)*sin(2*pi*y)*sin(2*pi*z)
             source_vector[k*(dim+1)+1] = 0
             source_vector[k*(dim+1)+2] = 0
             source_vector[k*(dim+1)+3] = 0
         
-            stat_pressure_field[k]   =    cos(pi*x)*cos(pi*y)*cos(pi*z)
-            stat_velocity_field[k,0] = pi*sin(pi*x)*cos(pi*y)*cos(pi*z)
-            stat_velocity_field[k,1] = pi*cos(pi*x)*sin(pi*y)*cos(pi*z)
-            stat_velocity_field[k,2] = pi*cos(pi*x)*cos(pi*y)*sin(pi*z)
+            stat_pressure_field[k]   =       sin(2*pi*x)*sin(2*pi*y)*sin(2*pi*z)
+            stat_velocity_field[k,0] = -2*pi*cos(2*pi*x)*sin(2*pi*y)*sin(2*pi*z)
+            stat_velocity_field[k,1] = -2*pi*sin(2*pi*x)*cos(2*pi*y)*sin(2*pi*z)
+            stat_velocity_field[k,2] = -2*pi*sin(2*pi*x)*sin(2*pi*y)*cos(2*pi*z)
 
     return source_vector, stat_pressure_field, stat_velocity_field
 
@@ -207,6 +207,10 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,sc
             velocity_field[k,1] = 0
             velocity_field[k,2] = 0
         S, stat_pressure, stat_velocity=source_term_and_stat_solution_wave_system(my_mesh)
+        print "stat pressure"
+        print stat_pressure
+        print "stat velocity"
+        print stat_velocity
     else:#The initial datum is a stationary field
         pressure_field, velocity_field = initial_conditions_wave_system(my_mesh)
         for k in range(nbCells):
@@ -256,9 +260,13 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,sc
                 divMat.addValue(j*(dim+1)+1+i,j*(dim+1)+1+i,1)
     #Adding the momentumm friction term
     if(with_source):
+        print "Matrice avant friction ", dt
+        #divMat.viewMatrix()
         for j in range(nbCells):
             for i in range(dim):
                 divMat.addValue(j*(dim+1)+1+i,j*(dim+1)+1+i,dt)
+        print "Matrice après friction ", dt
+        #divMat.viewMatrix()
 
     if( scaling==0):
         LS=cdmath.LinearSolver(divMat,Un+S*dt,iterGMRESMax, precision, "GMRES","ILU")
