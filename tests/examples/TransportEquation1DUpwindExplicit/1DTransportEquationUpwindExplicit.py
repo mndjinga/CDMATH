@@ -62,10 +62,10 @@ def Transport1DUpwind(nx,cfl):
         line1, = plt.plot(x, u, label='u') #new picture for video # Returns a tuple of line objects, thus the comma
 
         writer.grab_frame()
-        plt.savefig("ResultField_"+str(it)+".png")
+        plt.savefig("TransportEquation_UpwindScheme_"+str(nx)+"Cells_ResultField_"+str(it)+".png")
     
         print("Saving initial data at T=0")
-        np.savetxt("ResultField_0.txt", u, delimiter="\n")
+        np.savetxt("TransportEquation_UpwindScheme_"+str(nx)+"Cells_ResultField_0.txt", u, delimiter="\n")
 
         ############################# Time loop
         while (it < ntmax and time <= tmax):
@@ -85,8 +85,8 @@ def Transport1DUpwind(nx,cfl):
             writer.grab_frame()
             if (it % output_freq == 0):
                 print("-- Iter: " + str(it) + ", Time: " + str(time) + ", dt: " + str(dt))
-                np.savetxt( "ResultField_"+str(it)+".txt", u, delimiter="\n")
-                plt.savefig("ResultField_"+str(it)+".png")
+                np.savetxt( "TransportEquation_UpwindScheme_"+str(nx)+"Cells_ResultField_"+str(it)+".txt", u, delimiter="\n")
+                plt.savefig("TransportEquation_UpwindScheme_"+str(nx)+"Cells_ResultField_"+str(it)+".png")
                 #plt.show()
                 pass
             pass
