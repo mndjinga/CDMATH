@@ -126,7 +126,7 @@ def WaveSystem1DVF(ntmax, tmax, cfl, my_mesh, output_freq, resolution):
 
     dt = cfl * dx_min / c0
     
-    print("Starting computation of the linear wave system with an UPWIND scheme …")
+    print("Starting computation of the linear wave system with an UPWIND explicit scheme …")
     
     # Starting time loop
     while (it<ntmax and time <= tmax and not isStationary):
@@ -179,7 +179,7 @@ def WaveSystem1DVF(ntmax, tmax, cfl, my_mesh, output_freq, resolution):
 
 
 def solve(my_mesh,resolution):
-    print("Resolution of the 1D Wave system with Upwind scheme:")
+    print("Resolution of the 1D Riemann problem for the Wave system with Upwind explicit scheme:")
 
     # Problem data
     tmax = 1.
