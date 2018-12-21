@@ -7,7 +7,7 @@ import sys
 import time, json
 
     
-def test_validation1DTransportEquationUpwindExplicit(cfl):
+def test_validation1DTransportEquationUpwindExplicit(cfl,isSmooth):
     start = time.time()
     #### 1D regular grid
     meshList=[10,100,500,1000]
@@ -30,7 +30,7 @@ def test_validation1DTransportEquationUpwindExplicit(cfl):
 
     # Storing of numerical errors, mesh sizes and solution
     for nx in meshList:
-        min_u[i], max_u[i], sol_u[i], total_var_u[i], error_u_tab[i], time_tab[i] = 1DTransportEquationUpwindExplicit.solve_file(a,b,mesh_path+filename, mesh_name, resolution,scaling,meshType,testColor,cfl,"Periodic")
+        min_u[i], max_u[i], sol_u[i], total_var_u[i], error_u_tab[i], time_tab[i] = 1DTransportEquationUpwindExplicit.solve_file(nx,cfl,a,b,isSmooth)
         assert max_u[i]>0. and max_u[i]<1.
         error_u_tab[i]=log10(error_u_tab[i])
         time_tab[i]=log10(time_tab[i])
@@ -136,9 +136,10 @@ def test_validation1DTransportEquationUpwindExplicit(cfl):
         json.dump(convergence_synthesis, outfile)
 
 if __name__ == """__main__""":
-    if len(sys.argv) >1 :
+    if len(sys.argv) >2 :
         cfl = float(sys.argv[1])
-        test_validation1DTransportEquationUpwindExplicit(cfl)
+        isSmooth = float(sys.argv[2])
+        test_validation1DTransportEquationUpwindExplicit(cfl,isSmooth)
     else :
-        test_validation1DTransportEquationUpwindExplicit(0.99)
+        test_validation1DTransportEquationUpwindExplicit(0.99,True)
 

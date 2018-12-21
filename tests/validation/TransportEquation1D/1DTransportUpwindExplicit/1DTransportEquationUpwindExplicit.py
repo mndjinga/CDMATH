@@ -15,7 +15,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import sys
 
-def solve(nx,cfl,a,b):
+def solve(nx,cfl,a,b, isSmooth):
     start = time.time()
     ##################### Simulation parameters
     dx = (b - a) / nx #space step
@@ -28,16 +28,18 @@ def solve(nx,cfl,a,b):
     x=[a+0.5*dx + i*dx for i in range(nx)]   # array of cell center (1D mesh)
     
     ########################## Initial data
-    
-    u_initial = [ 0.5*(1+sin(4*pi*xi-pi*.5))*int(xi<0.5)*int(0<xi) + int(0.6<xi)*int(xi<0.85)  for xi in x];# to be used with a=0, b=1
-
+    if(isSmooth):
+        u_initial = [ sin(pi*xi)  for xi in x];# to be used with a=0, b=1
+    else:
+        u_initial = [ int(1./3<xi)*int(xi<2./3)  for xi in x];# to be used with a=0, b=1
+        
     max_initial=max(u_initial)
     min_initial=min(u_initial)
     total_var_initial = np.sum([abs(u_initial[i] - u_initial[(i-1)%nx]) for i in range(nx)])
 
     time = 0.
     it = 0
-    output_freq = 10
+    output_freq = 50
 
     u=u_initial
 
@@ -90,12 +92,13 @@ def solve(nx,cfl,a,b):
 
 
 if __name__ == """__main__""":
-    if len(sys.argv) >2 :
+    if len(sys.argv) >3 :
         nx = int(sys.argv[1])
         cfl = float(sys.argv[2])
-        solve(nx,cfl,0,1)
+        isSmooth=bool(sys.argv[3])
+        solve(nx,cfl,0,1,isSmooth)
     else :
         nx = 50 # number of cells
         cfl = 0.99 # c*dt/dx <= CFL
-        solve(nx,cfl,0,1)
-    
+        isSmooth=True
+        solve(nx,cfl,0,1,isSmooth)
