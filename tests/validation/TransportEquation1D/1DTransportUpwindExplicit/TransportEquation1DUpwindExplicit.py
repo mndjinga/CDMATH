@@ -5,7 +5,7 @@
 # Name        : Résolution VF de l'équation du transport 1D \partial_t u + c \partial_x u = 0 avec conditions aux limites périodiques
 # Author      : Michaël Ndjinga, Katia Ait Ameur
 # Copyright   : CEA Saclay 2018
-# Description : Utilisation de la méthode des volumes P0 avec champs u discrétisé aux cellules d'un maillage 1D régulier
+# Description : Utilisation du schéma upwind explicite sur un maillage 1D régulier
 #		        Création et sauvegarde du champ résultant et des figures
 #================================================================================================================================
 
@@ -56,13 +56,13 @@ def solve(nx,cfl,a,b, isSmooth):
     plt.ylabel('u')
     plt.xlim(a,b)
     plt.ylim( min_initial - 0.1*(max_initial-min_initial), max_initial +  0.1*(max_initial-min_initial) )
-    plt.title('Upwind scheme for transport equation')
+    plt.title('Upwind explicit scheme for transport equation')
     line1, = plt.plot(x, u, label='u') #new picture for video # Returns a tuple of line objects, thus the comma
 
-    plt.savefig("TransportEquation_UpwindScheme_"+str(nx)+"Cells_Smoothness"+str(isSmooth)+"ResultField_"+str(it)+".png")
+    plt.savefig("TransportEquation_UpwindExplicit_"+str(nx)+"Cells_Smoothness"+str(isSmooth)+"ResultField_"+str(it)+".png")
 
     print("Saving initial data at T=0")
-    np.savetxt("TransportEquation_UpwindScheme_"+str(nx)+"Cells_Smoothness"+str(isSmooth)+"ResultField_0.txt", u, delimiter="\n")
+    np.savetxt("TransportEquation_UpwindExplicit_"+str(nx)+"Cells_Smoothness"+str(isSmooth)+"ResultField_0.txt", u, delimiter="\n")
 
     ############################# Time loop
     while (it < ntmax and Time <= tmax):
@@ -76,8 +76,8 @@ def solve(nx,cfl,a,b, isSmooth):
         line1.set_ydata(u)
         if (it % output_freq == 0):
             print("-- Iter: " + str(it) + ", Time: " + str(Time) + ", dt: " + str(dt))
-            np.savetxt( "TransportEquation_UpwindScheme_"+str(nx)+"Cells_Smoothness"+str(isSmooth)+"ResultField_"+str(it)+".txt", u, delimiter="\n")
-            plt.savefig("TransportEquation_UpwindScheme_"+str(nx)+"Cells_Smoothness"+str(isSmooth)+"ResultField_"+str(it)+".png")
+            np.savetxt( "TransportEquation_UpwindExplicit_"+str(nx)+"Cells_Smoothness"+str(isSmooth)+"ResultField_"+str(it)+".txt", u, delimiter="\n")
+            plt.savefig("TransportEquation_UpwindExplicit_"+str(nx)+"Cells_Smoothness"+str(isSmooth)+"ResultField_"+str(it)+".png")
             #plt.show()
             pass
         pass

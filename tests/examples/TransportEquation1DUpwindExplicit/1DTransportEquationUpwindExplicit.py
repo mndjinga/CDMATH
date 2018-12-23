@@ -5,7 +5,7 @@
 # Name        : Résolution VF de l'équation du transport 1D \partial_t u + c \partial_x u = 0 avec conditions aux limites périodiques
 # Author      : Michaël Ndjinga, Katia Ait Ameur
 # Copyright   : CEA Saclay 2018
-# Description : Utilisation de la méthode des volumes P0 avec champs u discrétisé aux cellules d'un maillage 1D régulier
+# Description : Utilisation du schéma upwind implicite sur un maillage 1D régulier
 #		        Création et sauvegarde du champ résultant et des figures
 #               Génération d'une video sauvegardée dans un fichier .mp4
 #================================================================================================================================
@@ -48,9 +48,9 @@ def Transport1DUpwind(nx,cfl):
 
     # Video settings
     FFMpegWriter = manimation.writers['ffmpeg']
-    metadata = dict(title="Upwind scheme for transport equation", artist = "CEA Saclay", comment="Stable if CFL<1")
+    metadata = dict(title="Upwind explicit scheme for transport equation", artist = "CEA Saclay", comment="Stable if CFL<1")
     writer=FFMpegWriter(fps=output_freq, metadata=metadata)
-    with writer.saving(plt.figure(), "1DTransportEquation_Upwind_nx"+str(nx)+"_cfl"+str(cfl)+".mp4", ntmax):
+    with writer.saving(plt.figure(), "1DTransportEquation_UpwindExplicit_nx"+str(nx)+"_cfl"+str(cfl)+".mp4", ntmax):
         ########################### Postprocessing initialisation
         # Picture frame
         plt.legend()
@@ -58,14 +58,14 @@ def Transport1DUpwind(nx,cfl):
         plt.ylabel('u')
         plt.xlim(a,b)
         plt.ylim( min_initial - 0.1*(max_initial-min_initial), max_initial +  0.1*(max_initial-min_initial) )
-        plt.title('Upwind scheme for transport equation')
+        plt.title('Upwind explicit scheme for transport equation')
         line1, = plt.plot(x, u, label='u') #new picture for video # Returns a tuple of line objects, thus the comma
 
         writer.grab_frame()
-        plt.savefig("TransportEquation_UpwindScheme_"+str(nx)+"Cells_ResultField_"+str(it)+".png")
+        plt.savefig("TransportEquation_UpwindExplicit_"+str(nx)+"Cells_ResultField_"+str(it)+".png")
     
         print("Saving initial data at T=0")
-        np.savetxt("TransportEquation_UpwindScheme_"+str(nx)+"Cells_ResultField_0.txt", u, delimiter="\n")
+        np.savetxt("TransportEquation_UpwindExplicit_"+str(nx)+"Cells_ResultField_0.txt", u, delimiter="\n")
 
         ############################# Time loop
         while (it < ntmax and time <= tmax):
@@ -85,8 +85,8 @@ def Transport1DUpwind(nx,cfl):
             writer.grab_frame()
             if (it % output_freq == 0):
                 print("-- Iter: " + str(it) + ", Time: " + str(time) + ", dt: " + str(dt))
-                np.savetxt( "TransportEquation_UpwindScheme_"+str(nx)+"Cells_ResultField_"+str(it)+".txt", u, delimiter="\n")
-                plt.savefig("TransportEquation_UpwindScheme_"+str(nx)+"Cells_ResultField_"+str(it)+".png")
+                np.savetxt( "TransportEquation_UpwindExplicit_"+str(nx)+"Cells_ResultField_"+str(it)+".txt", u, delimiter="\n")
+                plt.savefig("TransportEquation_UpwindExplicit_"+str(nx)+"Cells_ResultField_"+str(it)+".png")
                 #plt.show()
                 pass
             pass
