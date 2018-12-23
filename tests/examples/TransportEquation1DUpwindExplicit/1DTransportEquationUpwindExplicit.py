@@ -64,7 +64,7 @@ def Transport1DUpwindExplicit(nx,cfl):
         print("-- Iter: " + str(it) + ", Time: " + str(time) + ", dt: " + str(dt))
         np.savetxt("TransportEquation_UpwindExplicit_"+str(nx)+"Cells_ResultField_0"+"_cfl"+str(cfl)+".txt", u, delimiter="\n")
         writer.grab_frame()
-        plt.savefig("titi")#"TransportEquation_UpwindExplicit_"+str(nx)+"Cells_ResultField_0"+"_cfl"+str(cfl)+".png")
+        plt.savefig("TransportEquation_UpwindExplicit_"+str(nx)+"Cells_ResultField_0"+"_cfl"+str(cfl)+".png")
 
         ############################# Time loop
         while (it < ntmax and time <= tmax):
