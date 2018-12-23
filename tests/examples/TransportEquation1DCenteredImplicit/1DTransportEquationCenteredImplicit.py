@@ -102,6 +102,13 @@ def Transport1DCenteredImplicit(nx,cfl):
             for i in range(nx):
                 u[i]=Un[i]
     
+            if ( max(u) > max_initial ):
+                print "-- Iter: " + str(it) + " max principle violated : max(t) > max(0) : max(t)= ",max(u), " max(0)= ", max_initial
+            if ( min(u) < min_initial ):
+                print "-- Iter: " + str(it) + " min principle violated : min(t) < min(0) : min(t)= ",min(u), " min(0)= ", min_initial
+            if ( np.sum([abs(u[i] - u[(i-1)%nx]) for i in range(nx)]) > total_var_initial ):
+                print "-- Iter: " + str(it) + " total variation increased : var(t) > var(0) : var(t)= ", np.sum([abs(u[i] - u[(i-1)%nx]) for i in range(nx)]), " var(0)= ", total_var_initial
+
             time += dt
             it += 1
 
