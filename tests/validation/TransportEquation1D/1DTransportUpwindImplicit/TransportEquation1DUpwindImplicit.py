@@ -112,6 +112,10 @@ def solve(nx,cfl,a,b, isSmooth):
             pass
         pass
 
+    assert max(u) <= max_initial+precision
+    assert min(u) >= min_initial-precision
+    assert np.sum([abs(u[i] - u[(i-1)%nx]) for i in range(nx)]) <= total_var_initial+precision
+
     print("Simulation of transport equation with an implicit upwind scheme done.")
     
     end = time.time()
