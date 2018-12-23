@@ -1,4 +1,3 @@
-import cdmath
 import FiniteVolumes3DPoisson_CUBE
 import matplotlib.pyplot as plt
 import numpy as np

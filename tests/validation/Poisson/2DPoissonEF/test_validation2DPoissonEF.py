@@ -1,4 +1,3 @@
-import cdmath
 import FiniteElements2DPoisson_SQUARE
 import matplotlib.pyplot as plt
 import numpy as np

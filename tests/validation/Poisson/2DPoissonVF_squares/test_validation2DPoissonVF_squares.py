@@ -1,4 +1,3 @@
-import cdmath
 import FiniteVolumes2DPoisson_SQUARE
 import matplotlib.pyplot as plt
 import numpy as np
@@ -27,6 +26,7 @@ def test_validation2DVF_squares():
     i=0
     # Storing of numerical errors, mesh sizes and diagonal values
     for filename in meshList:
+        #import cdmath
 #    for nx in meshList:
 #        my_mesh=cdmath.Mesh(0,1,nx,0,1,nx)
 #        error_tab[i], mesh_size_tab[i], diag_data[i], min_sol_num, max_sol_num, time_tab[i] =FiniteVolumes2DPoisson_SQUARE.solve(my_mesh,str(nx)+'x'+str(nx),resolution,meshType,testColor)

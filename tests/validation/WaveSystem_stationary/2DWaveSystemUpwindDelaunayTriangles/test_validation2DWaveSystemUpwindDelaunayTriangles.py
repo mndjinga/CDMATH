@@ -1,4 +1,3 @@
-import cdmath
 import WaveSystemUpwind
 import matplotlib.pyplot as plt
 import numpy as np

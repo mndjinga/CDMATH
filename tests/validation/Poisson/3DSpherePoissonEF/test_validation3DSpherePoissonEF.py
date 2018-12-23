@@ -1,4 +1,3 @@
-import cdmath
 import FiniteElements3DPoissonSphere
 import matplotlib.pyplot as plt
 import numpy as np
