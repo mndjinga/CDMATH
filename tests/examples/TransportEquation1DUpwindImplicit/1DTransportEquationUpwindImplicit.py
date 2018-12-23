@@ -39,6 +39,9 @@ def Transport1DUpwindImplicit(nx,cfl):
     dt = cfl * dx / c
     ntmax = ceil(tmax/dt)
 
+    if(cfl>nx):
+        raise("Impossible to run this simulation with cfl>nx. Choose another value for nx or cfl.")
+        
     x=[a+0.5*dx + i*dx for i in range(nx)]   # array of cell center (1D mesh)
     
     ########################## Initial data
@@ -53,7 +56,7 @@ def Transport1DUpwindImplicit(nx,cfl):
     time = 0.
     it = 0
     output_freq = 10
-
+        
     #Linear system initialisation
     systemMat=upwindSchemeMatrix(nx,cfl)
     iterGMRESMax=50
