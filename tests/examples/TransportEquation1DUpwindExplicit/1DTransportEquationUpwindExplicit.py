@@ -59,13 +59,12 @@ def Transport1DUpwindExplicit(nx,cfl):
         plt.ylim( min_initial - 0.1*(max_initial-min_initial), max_initial +  0.1*(max_initial-min_initial) )
         plt.title('Upwind explicit scheme for transport equation')
         line1, = plt.plot(x, u, label='u') #new picture for video # Returns a tuple of line objects, thus the comma
-
-        writer.grab_frame()
-        plt.savefig("TransportEquation_UpwindExplicit_"+str(nx)+"Cells_ResultField_"+str(it)+".png")
     
         print("Starting time loop")
         print("-- Iter: " + str(it) + ", Time: " + str(time) + ", dt: " + str(dt))
         np.savetxt("TransportEquation_UpwindExplicit_"+str(nx)+"Cells_ResultField_0"+"_cfl"+str(cfl)+".txt", u, delimiter="\n")
+        writer.grab_frame()
+        plt.savefig("titi")#"TransportEquation_UpwindExplicit_"+str(nx)+"Cells_ResultField_0"+"_cfl"+str(cfl)+".png")
 
         ############################# Time loop
         while (it < ntmax and time <= tmax):
@@ -88,8 +87,6 @@ def Transport1DUpwindExplicit(nx,cfl):
                 np.savetxt( "TransportEquation_UpwindExplicit_"+str(nx)+"Cells_ResultField_"+str(it)+"_cfl"+str(cfl)+".txt", u, delimiter="\n")
                 plt.savefig("TransportEquation_UpwindExplicit_"+str(nx)+"Cells_ResultField_"+str(it)+"_cfl"+str(cfl)+".png")
                 #plt.show()
-                pass
-            pass
 
     print "Exact solution minimum   : ", min(u_initial), "Numerical solution minimum   : ",  min(u)
     print "Exact solution maximum   : ", max(u_initial), "Numerical solution maximum   : ",  max(u)
