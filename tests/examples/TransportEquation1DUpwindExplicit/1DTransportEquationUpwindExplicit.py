@@ -19,7 +19,7 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as manimation
 import sys
 
-def Transport1DUpwind(nx,cfl):
+def Transport1DUpwindExplicit(nx,cfl):
     ##################### Simulation parameters
     a = 0.0 # space domain :  a <= x <= b
     b = 1.0
@@ -96,7 +96,7 @@ def Transport1DUpwind(nx,cfl):
     print "Exact solution variation : ", np.sum([abs(u_initial[i] - u_initial[(i-1)%nx]) for i in range(nx)]), "Numerical solution variation : ",  np.sum([abs(u[i] - u[(i-1)%nx]) for i in range(nx)])
     print "l1 numerical error       : ", dx*np.sum([abs(u[i] - u_initial[i]) for i in range(nx)])        
     
-    print("Simulation of transport equation with upwind scheme done.")
+    print("Simulation of transport equation with explicit upwind scheme done.")
     
     #return min, max, total variation and l1 error
     return min(u), max(u), np.sum([abs(u[i] - u[(i-1)%nx]) for i in range(nx)]), dx*np.sum([abs(u[i] - u_initial[i]) for i in range(nx)])
@@ -106,9 +106,9 @@ if __name__ == """__main__""":
     if len(sys.argv) >2 :
         nx = int(sys.argv[1])
         cfl = float(sys.argv[2])
-        Transport1DUpwind(nx,cfl)
+        Transport1DUpwindExplicit(nx,cfl)
     else :
         nx = 50 # number of cells
         cfl = 0.99 # c*dt/dx <= CFL
-        Transport1DUpwind(nx,cfl)
+        Transport1DUpwindExplicit(nx,cfl)
     
