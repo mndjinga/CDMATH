@@ -35,6 +35,7 @@ def Transport1DUpwindExplicit(nx,cfl):
     ########################## Initial data
     
     u_initial = [ 0.5*(1+sin(4*pi*xi-pi*.5))*int(xi<0.5)*int(0<xi) + int(0.6<xi)*int(xi<0.85)  for xi in x];# to be used with a=0, b=1
+    u         = [ 0.5*(1+sin(4*pi*xi-pi*.5))*int(xi<0.5)*int(0<xi) + int(0.6<xi)*int(xi<0.85)  for xi in x];# to be used with a=0, b=1
 
     max_initial=max(u_initial)
     min_initial=min(u_initial)
@@ -43,8 +44,6 @@ def Transport1DUpwindExplicit(nx,cfl):
     time = 0.
     it = 0
     output_freq = 10
-
-    u=u_initial
 
     # Video settings
     FFMpegWriter = manimation.writers['ffmpeg']
