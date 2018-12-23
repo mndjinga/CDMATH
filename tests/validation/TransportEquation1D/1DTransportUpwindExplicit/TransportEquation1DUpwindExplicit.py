@@ -13,10 +13,14 @@
 from math import sin, pi, ceil
 import numpy as np
 import matplotlib.pyplot as plt
-import sys
+
+import time, sys
+
+precision=1e-5
 
 def solve(nx,cfl,a,b, isSmooth):
     start = time.time()
+    print "Transport equation, explicit scheme, nx= ", nx, " cfl= ", cfl
     ##################### Simulation parameters
     dx = (b - a) / nx #space step
 
@@ -29,19 +33,21 @@ def solve(nx,cfl,a,b, isSmooth):
     
     ########################## Initial data
     if(isSmooth):
-        u_initial = [ sin(pi*xi)  for xi in x];# to be used with a=0, b=1
+        print "Smooth initial data"
+        u_initial = [ 0.5*(1+sin(4*pi*xi-pi*.5))  for xi in x];# to be used with a=0, b=1
+        u = [ 0.5*(1+sin(4*pi*xi-pi*.5))  for xi in x];# to be used with a=0, b=1
     else:
+        print "Stiff initial data"
         u_initial = [ int(1./3<xi)*int(xi<2./3)  for xi in x];# to be used with a=0, b=1
+        u = [ int(1./3<xi)*int(xi<2./3)  for xi in x];# to be used with a=0, b=1
         
     max_initial=max(u_initial)
     min_initial=min(u_initial)
     total_var_initial = np.sum([abs(u_initial[i] - u_initial[(i-1)%nx]) for i in range(nx)])
 
-    time = 0.
+    Time = 0.
     it = 0
     output_freq = 50
-
-    u=u_initial
 
     ########################### Postprocessing initialisation
     # Picture frame
@@ -53,35 +59,33 @@ def solve(nx,cfl,a,b, isSmooth):
     plt.title('Upwind scheme for transport equation')
     line1, = plt.plot(x, u, label='u') #new picture for video # Returns a tuple of line objects, thus the comma
 
-    writer.grab_frame()
-    plt.savefig("TransportEquation_UpwindScheme_"+str(nx)+"Cells_ResultField_"+str(it)+".png")
+    plt.savefig("TransportEquation_UpwindScheme_"+str(nx)+"Cells_Smoothness"+str(isSmooth)+"ResultField_"+str(it)+".png")
 
     print("Saving initial data at T=0")
-    np.savetxt("TransportEquation_UpwindScheme_"+str(nx)+"Cells_ResultField_0.txt", u, delimiter="\n")
+    np.savetxt("TransportEquation_UpwindScheme_"+str(nx)+"Cells_Smoothness"+str(isSmooth)+"ResultField_0.txt", u, delimiter="\n")
 
     ############################# Time loop
-    while (it < ntmax and time <= tmax):
+    while (it < ntmax and Time <= tmax):
         for i in reversed(range(nx)):
             u[i] = u[i] - c * dt / dx * (u[i] - u[(i-1)%nx])
 
-        time += dt
+        Time += dt
         it += 1
 
-        if cfl<1 :
         # Postprocessing
         line1.set_ydata(u)
-        writer.grab_frame()
         if (it % output_freq == 0):
-            print("-- Iter: " + str(it) + ", Time: " + str(time) + ", dt: " + str(dt))
-            np.savetxt( "TransportEquation_UpwindScheme_"+str(nx)+"Cells_ResultField_"+str(it)+".txt", u, delimiter="\n")
-            plt.savefig("TransportEquation_UpwindScheme_"+str(nx)+"Cells_ResultField_"+str(it)+".png")
+            print("-- Iter: " + str(it) + ", Time: " + str(Time) + ", dt: " + str(dt))
+            np.savetxt( "TransportEquation_UpwindScheme_"+str(nx)+"Cells_Smoothness"+str(isSmooth)+"ResultField_"+str(it)+".txt", u, delimiter="\n")
+            plt.savefig("TransportEquation_UpwindScheme_"+str(nx)+"Cells_Smoothness"+str(isSmooth)+"ResultField_"+str(it)+".png")
             #plt.show()
             pass
         pass
 
-    assert max(u) <= max_initial
-    assert min(u) >= min_initial
-    assert np.sum([abs(u[i] - u[(i-1)%nx]) for i in range(nx)]) <= total_var_initial
+    if cfl<1 :
+        assert max(u) <= max_initial+precision
+        assert min(u) >= min_initial-precision
+        assert np.sum([abs(u[i] - u[(i-1)%nx]) for i in range(nx)]) <= total_var_initial+precision
 
     print("Simulation of transport equation with upwind scheme done.")
     
