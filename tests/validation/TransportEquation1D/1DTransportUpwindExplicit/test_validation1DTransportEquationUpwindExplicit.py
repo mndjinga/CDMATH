@@ -1,5 +1,4 @@
-import cdmath
-import 1DTransportEquationUpwindExplicit
+import TransportEquation1DUpwindExplicit
 import matplotlib.pyplot as plt
 import numpy as np
 from math import log10, sqrt
@@ -10,14 +9,14 @@ import time, json
 def test_validation1DTransportEquationUpwindExplicit(cfl,isSmooth):
     start = time.time()
     #### 1D regular grid
-    meshList=[10,100,500,1000]
+    meshList=[50,100,200,400]
     meshType="1D regular grid"
     testColor="Green"
     nbMeshes=len(meshList)
-    mesh_size_tab=[0]*nbMeshes
+    mesh_size_tab=meshList
     mesh_name='RegularGrid'
 
-    a=0  ;  b=1
+    a=0.  ;  b=1.
     error_u_tab=[0]*nbMeshes
     sol_u=[0]*nbMeshes
     total_var_u=[0]*nbMeshes
@@ -30,8 +29,8 @@ def test_validation1DTransportEquationUpwindExplicit(cfl,isSmooth):
 
     # Storing of numerical errors, mesh sizes and solution
     for nx in meshList:
-        min_u[i], max_u[i], sol_u[i], total_var_u[i], error_u_tab[i], time_tab[i] = 1DTransportEquationUpwindExplicit.solve_file(nx,cfl,a,b,isSmooth)
-        assert max_u[i]>0. and max_u[i]<1.
+        min_u[i], max_u[i], sol_u[i], total_var_u[i], error_u_tab[i], time_tab[i] = TransportEquation1DUpwindExplicit.solve(nx,cfl,a,b,isSmooth)
+        assert max_u[i]>-1e-5 and max_u[i]<1+1e-5
         error_u_tab[i]=log10(error_u_tab[i])
         time_tab[i]=log10(time_tab[i])
         i=i+1
@@ -121,13 +120,10 @@ def test_validation1DTransportEquationUpwindExplicit(cfl,isSmooth):
     convergence_synthesis["Mesh_dimension"]=2
     convergence_synthesis["Mesh_names"]=meshList
     convergence_synthesis["Mesh_type"]=meshType
-    convergence_synthesis["Mesh_path"]=mesh_path
     convergence_synthesis["Mesh_description"]=mesh_name
     convergence_synthesis["Mesh_sizes"]=mesh_size_tab
     convergence_synthesis["Mesh_cell_type"]="1D regular grid"
     convergence_synthesis["Numerical_ersolution"]=max_u
-    convergence_synthesis["Final_time"]=t_final  
-    convergence_synthesis["Final_time_step"]=ndt_final  
     convergence_synthesis["Scheme_order"]=-au
     convergence_synthesis["Test_color"]=testColor
     convergence_synthesis["Computational_time"]=end-start

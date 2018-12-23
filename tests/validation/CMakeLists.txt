@@ -16,7 +16,8 @@ Poisson/3DSpherePoissonEF
 Poisson/3DPoissonEF 
 Poisson/3DPoissonVF_checkerboard 
 Poisson/3DPoissonVF_tetrahedra 
-Poisson/3DPoissonVF_cubes 
+Poisson/3DPoissonVF_cubes
+TransportEquation1D/1DTransportUpwindExplicit
 WaveSystem_stationary/2DWaveSystemPStagSquares 
 WaveSystem_stationary/2DWaveSystemPStagDelaunayTriangles 
 WaveSystem_stationary/2DWaveSystemPStagCrossTriangles 
