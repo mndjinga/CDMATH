@@ -5,11 +5,11 @@ if (CDMATH_WITH_PYTHON )
 
     SET(CFL  0.99  )#Courant Friedrichs Lewy number
 
-    ADD_TEST(ExampleTransportEquation_1DFV_Upwind_CFL1 ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/1DTransportEquationUpwindExplicit.py ${NX} ${CFL})
+    ADD_TEST(ExampleTransportEquation_1DFV_Upwind_Explicit_CFL1 ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/1DTransportEquationUpwindExplicit.py ${NX} ${CFL})
 
     SET(CFL  0.5  )#Courant Friedrichs Lewy number
 
-    ADD_TEST(ExampleTransportEquation_1DFV_Upwind_CFL0.5 ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/1DTransportEquationUpwindExplicit.py ${NX} ${CFL})
+    ADD_TEST(ExampleTransportEquation_1DFV_Upwind_Explicit_CFL0.5 ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/1DTransportEquationUpwindExplicit.py ${NX} ${CFL})
 
 endif (CDMATH_WITH_PYTHON )
 
