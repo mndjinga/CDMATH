@@ -20,6 +20,8 @@ import sys
 from math import sin, pi, ceil
 import cdmath
 
+precision=1.e-5
+
 def upwindSchemeMatrix(nx,cfl):
     upwindMat=cdmath.SparseMatrixPetsc(nx,nx,2)
     for i in range(nx):
@@ -60,12 +62,10 @@ def Transport1DUpwindImplicit(nx,cfl):
     #Linear system initialisation
     systemMat=upwindSchemeMatrix(nx,cfl)
     iterGMRESMax=50
-    precision=1.e-5
     Un =cdmath.Vector(nx)
     for i in range(nx):
         Un[i]=u[i]
     LS=cdmath.LinearSolver(systemMat,Un,iterGMRESMax, precision, "GMRES","ILU")
-    LS.setComputeConditionNumber()
 
     # Video settings
     FFMpegWriter = manimation.writers['ffmpeg']

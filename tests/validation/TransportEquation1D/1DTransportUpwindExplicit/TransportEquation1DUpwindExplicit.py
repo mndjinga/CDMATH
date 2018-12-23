@@ -59,10 +59,10 @@ def solve(nx,cfl,a,b, isSmooth):
     plt.title('Upwind explicit scheme for transport equation')
     line1, = plt.plot(x, u, label='u') #new picture for video # Returns a tuple of line objects, thus the comma
 
-    plt.savefig("TransportEquation_UpwindExplicit_"+str(nx)+"Cells_Smoothness"+str(isSmooth)+"ResultField_"+str(it)+".png")
-
-    print("Saving initial data at T=0")
+    print("Starting time loop")
+    print("-- Iter: " + str(it) + ", Time: " + str(time) + ", dt: " + str(dt))
     np.savetxt("TransportEquation_UpwindExplicit_"+str(nx)+"Cells_Smoothness"+str(isSmooth)+"ResultField_0.txt", u, delimiter="\n")
+    plt.savefig("TransportEquation_UpwindExplicit_"+str(nx)+"Cells_Smoothness"+str(isSmooth)+"ResultField_"+str(it)+".png")
 
     ############################# Time loop
     while (it < ntmax and Time <= tmax):
@@ -87,7 +87,7 @@ def solve(nx,cfl,a,b, isSmooth):
         assert min(u) >= min_initial-precision
         assert np.sum([abs(u[i] - u[(i-1)%nx]) for i in range(nx)]) <= total_var_initial+precision
 
-    print("Simulation of transport equation with upwind scheme done.")
+    print("Simulation of transport equation with an explicit upwind scheme done.")
     
     end = time.time()
 
