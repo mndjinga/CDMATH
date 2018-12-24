@@ -139,6 +139,41 @@ LinearSolver::LinearSolver( const GenericMatrix& matrix,
 	setLinearSolver(matrix, secondMember);
 }
 
+LinearSolver::LinearSolver( const GenericMatrix& matrix,
+		const std::vector<double>& secondMember,
+		int numberMaxOfIter,
+		double tol,
+		string nameOfMethod,
+		string nameOfPc )
+{
+	_tol = tol;
+	_numberMaxOfIter = numberMaxOfIter;
+	_residu = 1.E30;
+	_convergence = false;
+	_numberOfIter = 0;
+	_isSingular = false;
+	_isSparseMatrix = matrix.isSparseMatrix();
+	_computeConditionNumber=false;
+	_nameOfPc = nameOfPc;
+	_nameOfMethod = nameOfMethod;
+	_mat = NULL;
+	_smb = NULL;
+	_prec = NULL;
+	_ksp = NULL;
+
+	//setTolerance(tol);
+	//setNumberMaxOfIter(numberMaxOfIter);
+	setPreconditioner(nameOfPc);
+	setMethod(nameOfMethod);
+    //converting vector<double> to Vector
+    int size=secondMember.size();
+    Vector secondMemberVector(size);
+ 	for ( int i=0; i<size; i++)
+		secondMemberVector(i)=secondMember[i];
+	_secondMember = secondMemberVector;
+
+	setLinearSolver(matrix, secondMemberVector);
+}
 
 void
 LinearSolver::setPreconditioner(string pc)

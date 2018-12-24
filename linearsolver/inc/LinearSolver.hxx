@@ -9,6 +9,7 @@
 #define LINEARSOLVER_HXX_
 
 #include <string>
+#include <vector>
 
 #include <petsc.h>
 
@@ -26,6 +27,13 @@ public: //----------------------------------------------------------------
 
 	LinearSolver( const GenericMatrix& matrix,
 			const Vector& secondMember,
+			int numberMaxOfIter,
+			double tol,
+			std::string nameOfMethod,
+			std::string nameOfPc="" );
+
+	LinearSolver( const GenericMatrix& matrix,
+			const std::vector<double>& secondMember,
 			int numberMaxOfIter,
 			double tol,
 			std::string nameOfMethod,
