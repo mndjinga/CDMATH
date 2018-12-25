@@ -60,7 +60,7 @@ def solve(nx,cfl,a,b, isSmooth):
     line1, = plt.plot(x, u, label='u') #new picture for video # Returns a tuple of line objects, thus the comma
 
     print("Starting time loop")
-    print("-- Iter: " + str(it) + ", Time: " + str(time) + ", dt: " + str(dt))
+    print("-- Iter: " + str(it) + ", Time: " + str(Time) + ", dt: " + str(dt))
     np.savetxt("TransportEquation_UpwindExplicit_"+str(nx)+"Cells_Smoothness"+str(isSmooth)+"ResultField_0.txt", u, delimiter="\n")
     plt.savefig("TransportEquation_UpwindExplicit_"+str(nx)+"Cells_Smoothness"+str(isSmooth)+"ResultField_"+str(it)+".png")
 
