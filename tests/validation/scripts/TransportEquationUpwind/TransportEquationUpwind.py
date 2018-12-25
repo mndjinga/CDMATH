@@ -66,13 +66,13 @@ def source_term_and_stat_solution_transport_equation(my_mesh,velocity):
 
         if(dim==1):
             source_vector[k] = 2*pi*velocity[0]*cos(2*pi*x)
-            stat_field[k]    = sin(2*pi*x)
+            stat_field[k]    =                  sin(2*pi*x)
         elif(dim==2):
             source_vector[k*(dim+1)+0] = 2*pi*(velocity[0]*cos(2*pi*x)*sin(2*pi*y)+velocity[1]*sin(2*pi*x)*cos(2*pi*y))
             stat_field[k]   =                              sin(2*pi*x)*sin(2*pi*y)
         elif(dim==3):
             source_vector[k*(dim+1)+0] = 2*pi*(velocity[0]*cos(2*pi*x)*sin(2*pi*y)*sin(2*pi*z)+velocity[1]*sin(2*pi*x)*cos(2*pi*y)*sin(2*pi*z)+velocity[2]*sin(2*pi*x)*sin(2*pi*y)*cos(2*pi*z))
-            stat_field[k]   =                     sin(2*pi*x)*sin(2*pi*y)*sin(2*pi*z)
+            stat_field[k]   =                              sin(2*pi*x)*sin(2*pi*y)*sin(2*pi*z)
 
     return source_vector, stat_field
 
@@ -135,7 +135,7 @@ def computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt,test_bc,velocity):
                 
     return implMat
 
-def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,test_bc,velocity,with_source=False):
+def TransportEquationVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,test_bc,velocity,with_source=False):
     dim=my_mesh.getMeshDimension()
     nbCells = my_mesh.getNumberOfCells()
     
@@ -199,7 +199,7 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,te
         test_desc["Linear_system_max_actual_error"]=0
         test_desc["Linear_system_max_actual_condition number"]=0
 
-    print("Starting computation of the linear wave system with an Upwind scheme …")
+    print("Starting computation of the linear transport equation with an Upwind scheme …")
     
     # Starting time loop
     while (it<ntmax and time <= tmax and not isStationary):
@@ -308,7 +308,7 @@ def solve(my_mesh, meshName, resolution, meshType, testColor, cfl, test_bc, with
     
     velocity=cdmath.Vector(dim,1)
 
-    error, nbCells, t_final, ndt_final, max_unknown, diag_data_press, diag_data_vel = WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution, test_bc,velocity,with_source)
+    error, nbCells, t_final, ndt_final, max_unknown, diag_data_press, diag_data_vel = TransportEquationVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution, test_bc,velocity,with_source)
     end = time.time()
 
     test_desc["Global_name"]=test_name
@@ -337,7 +337,7 @@ def solve(my_mesh, meshName, resolution, meshType, testColor, cfl, test_bc, with
     test_desc["Computational_time_taken_by_run"]=end-start
     test_desc["Absolute_error"]=error
 
-    with open('test_WaveSystem'+str(my_mesh.getMeshDimension())+'DUpwind_'+meshName+ "Cells.json", 'w') as outfile:  
+    with open('test_TransportEquation'+str(my_mesh.getMeshDimension())+'DUpwind_'+meshName+ "Cells.json", 'w') as outfile:  
         json.dump(test_desc, outfile)
 
     return error, nbCells, t_final, ndt_final, max_unknown, diag_data_press, diag_data_vel, end - start
