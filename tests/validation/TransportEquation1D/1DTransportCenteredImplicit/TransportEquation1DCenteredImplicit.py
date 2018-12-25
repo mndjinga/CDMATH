@@ -82,7 +82,7 @@ def solve(nx,cfl,a,b, isSmooth):
     line1, = plt.plot(x, u, label='u') #new picture for video # Returns a tuple of line objects, thus the comma
 
     print("Starting time loop")
-    print("-- Iter: " + str(it) + ", Time: " + str(time) + ", dt: " + str(dt))
+    print("-- Iter: " + str(it) + ", Time: " + str(Time) + ", dt: " + str(dt))
     np.savetxt("TransportEquation_CenteredImplicit_"+str(nx)+"Cells_Smoothness"+str(isSmooth)+"ResultField_0.txt", u, delimiter="\n")
     plt.savefig("TransportEquation_CenteredImplicit_"+str(nx)+"Cells_Smoothness"+str(isSmooth)+"ResultField_"+str(it)+".png")
 
@@ -99,6 +99,13 @@ def solve(nx,cfl,a,b, isSmooth):
         for i in range(nx):
             u[i]=Un[i]
 
+        if ( max(u) > max_initial ):
+            print "-- Iter: " + str(it) + " max principle violated : max(t) > max(0) : max(t)= ",max(u), " max(0)= ", max_initial
+        if ( min(u) < min_initial ):
+            print "-- Iter: " + str(it) + " min principle violated : min(t) < min(0) : min(t)= ",min(u), " min(0)= ", min_initial
+        if ( np.sum([abs(u[i] - u[(i-1)%nx]) for i in range(nx)]) > total_var_initial ):
+            print "-- Iter: " + str(it) + " total variation increased : var(t) > var(0) : var(t)= ", np.sum([abs(u[i] - u[(i-1)%nx]) for i in range(nx)]), " var(0)= ", total_var_initial
+
         Time += dt
         it += 1
 
@@ -112,9 +119,10 @@ def solve(nx,cfl,a,b, isSmooth):
             pass
         pass
 
-    assert max(u) <= max_initial+precision
-    assert min(u) >= min_initial-precision
-    assert np.sum([abs(u[i] - u[(i-1)%nx]) for i in range(nx)]) <= total_var_initial+precision
+    print "Exact solution minimum   : ", min(u_initial), "Numerical solution minimum   : ",  min(u)
+    print "Exact solution maximum   : ", max(u_initial), "Numerical solution maximum   : ",  max(u)
+    print "Exact solution variation : ", np.sum([abs(u_initial[i] - u_initial[(i-1)%nx]) for i in range(nx)]), "Numerical solution variation : ",  np.sum([abs(u[i] - u[(i-1)%nx]) for i in range(nx)])
+    print "l1 numerical error       : ", dx*np.sum([abs(u[i] - u_initial[i]) for i in range(nx)])        
 
     print("Simulation of transport equation with an implicit centered scheme done.")
     
