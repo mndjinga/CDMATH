@@ -65,7 +65,7 @@ def source_term_and_stat_solution_wave_system(my_mesh):
             source_vector[k*(dim+1)+1] = 0
 
             stat_pressure_field[k]   =       sin(2*pi*x)
-            stat_velocity_field[k,0] = -2*pi*cos(2*pi*x)
+            stat_velocity_field[k,0] = -2*pi*cos(2*pi*x)/rho0
             stat_velocity_field[k,1] = 0
             stat_velocity_field[k,2] = 0
         elif(dim==2):
@@ -74,8 +74,8 @@ def source_term_and_stat_solution_wave_system(my_mesh):
             source_vector[k*(dim+1)+2] = 0
 
             stat_pressure_field[k]   =       sin(2*pi*x)*sin(2*pi*y)
-            stat_velocity_field[k,0] = -2*pi*cos(2*pi*x)*sin(2*pi*y)
-            stat_velocity_field[k,1] = -2*pi*sin(2*pi*x)*cos(2*pi*y)
+            stat_velocity_field[k,0] = -2*pi*cos(2*pi*x)*sin(2*pi*y)/rho0
+            stat_velocity_field[k,1] = -2*pi*sin(2*pi*x)*cos(2*pi*y)/rho0
             stat_velocity_field[k,2] = 0
         elif(dim==3):
             source_vector[k*(dim+1)+0] = 3*c0*c0*4*pi*pi*sin(2*pi*x)*sin(2*pi*y)*sin(2*pi*z)
@@ -84,9 +84,9 @@ def source_term_and_stat_solution_wave_system(my_mesh):
             source_vector[k*(dim+1)+3] = 0
         
             stat_pressure_field[k]   =       sin(2*pi*x)*sin(2*pi*y)*sin(2*pi*z)
-            stat_velocity_field[k,0] = -2*pi*cos(2*pi*x)*sin(2*pi*y)*sin(2*pi*z)
-            stat_velocity_field[k,1] = -2*pi*sin(2*pi*x)*cos(2*pi*y)*sin(2*pi*z)
-            stat_velocity_field[k,2] = -2*pi*sin(2*pi*x)*sin(2*pi*y)*cos(2*pi*z)
+            stat_velocity_field[k,0] = -2*pi*cos(2*pi*x)*sin(2*pi*y)*sin(2*pi*z)/rho0
+            stat_velocity_field[k,1] = -2*pi*sin(2*pi*x)*cos(2*pi*y)*sin(2*pi*z)/rho0
+            stat_velocity_field[k,2] = -2*pi*sin(2*pi*x)*sin(2*pi*y)*cos(2*pi*z)/rho0
 
     return source_vector, stat_pressure_field, stat_velocity_field
 
@@ -207,10 +207,6 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,sc
             velocity_field[k,1] = 0
             velocity_field[k,2] = 0
         S, stat_pressure, stat_velocity=source_term_and_stat_solution_wave_system(my_mesh)
-        print "stat pressure"
-        print stat_pressure
-        print "stat velocity"
-        print stat_velocity
     else:#The initial datum is a stationary field
         pressure_field, velocity_field = initial_conditions_wave_system(my_mesh)
         for k in range(nbCells):
@@ -260,13 +256,9 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,sc
                 divMat.addValue(j*(dim+1)+1+i,j*(dim+1)+1+i,1)
     #Adding the momentumm friction term
     if(with_source):
-        print "Matrice avant friction ", dt
-        #divMat.viewMatrix()
         for j in range(nbCells):
             for i in range(dim):
                 divMat.addValue(j*(dim+1)+1+i,j*(dim+1)+1+i,dt)
-        print "Matrice après friction ", dt
-        #divMat.viewMatrix()
 
     if( scaling==0):
         LS=cdmath.LinearSolver(divMat,Un+S*dt,iterGMRESMax, precision, "GMRES","ILU")
@@ -317,7 +309,12 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,sc
         test_desc["Linear_system_max_actual_condition number"]=max(LS.getConditionNumber(),test_desc["Linear_system_max_actual_condition number"])
 
         maxVector=dUn.maxVector(dim+1)
-        isStationary= maxVector[0]/p0<precision and maxVector[1]/rho0<precision and maxVector[2]/rho0<precision;
+
+        if(with_source):
+            isStationary =  maxVector[0] < precision    and maxVector[1]/rho0<precision and maxVector[2]/rho0<precision;
+        else:
+            isStationary = maxVector[0]/p0<precision and maxVector[1]/rho0<precision and maxVector[2]/rho0<precision;
+
         if(dim==3):
             isStationary=isStationary and maxVector[3]/rho0<precision
         time=time+dt;
@@ -326,7 +323,10 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,sc
         #Sauvegardes
         if(it==1 or it%output_freq==0 or it>=ntmax or isStationary or time >=tmax):
             print"-- Iter: " + str(it) + ", Time: " + str(time) + ", dt: " + str(dt)
-            print "Variation temporelle relative : pressure ", maxVector[0]/p0 ,", velocity x", maxVector[1]/rho0 ,", velocity y", maxVector[2]/rho0
+            if(with_source):
+                print "Variation temporelle relative : pressure ", maxVector[0]    ,", velocity x", maxVector[1]/rho0 ,", velocity y", maxVector[2]/rho0
+            else:
+                print "Variation temporelle relative : pressure ", maxVector[0]/p0 ,", velocity x", maxVector[1]/rho0 ,", velocity y", maxVector[2]/rho0
             print "Linear system converged in ", LS.getNumberOfIter(), " GMRES iterations"
 
             delta_press=0
@@ -353,10 +353,16 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,sc
             velocity_field.setTime(time,it);
             velocity_field.writeVTK("WaveSystem"+str(dim)+"DPStag"+meshName+"_velocity",False);
 
-            print "Ecart au stationnaire exact : error_p= ",delta_press/p0," error_||u||= ",delta_v.maxVector()[0]
+            if(with_source):
+                print "Ecart au stationnaire exact : error_p= ",delta_press   ," error_||u||= ",delta_v.maxVector()[0]
+            else:
+                print "Ecart au stationnaire exact : error_p= ",delta_press/p0," error_||u||= ",delta_v.maxVector()[0]
             print
     print"-- Iter: " + str(it) + ", Time: " + str(time) + ", dt: " + str(dt)
-    print "Variation temporelle relative : pressure ", maxVector[0]/p0 ,", velocity x", maxVector[1]/rho0 ,", velocity y", maxVector[2]/rho0
+    if(with_source):
+        print "Variation temporelle relative : pressure ", maxVector[0]    ,", velocity x", maxVector[1]/rho0 ,", velocity y", maxVector[2]/rho0
+    else:
+        print "Variation temporelle relative : pressure ", maxVector[0]/p0 ,", velocity x", maxVector[1]/rho0 ,", velocity y", maxVector[2]/rho0
     print
 
     if(it>=ntmax):
@@ -388,7 +394,10 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,sc
         PV_routines.Save_PV_data_to_picture_file("WaveSystem"+str(dim)+"DPStag"+meshName+"_pressure_Stat"+'_0.vtu',"Pressure",'CELLS',"WaveSystem"+str(dim)+"DPStag"+meshName+"_pressure_Stat")
         PV_routines.Save_PV_data_to_picture_file("WaveSystem"+str(dim)+"DPStag"+meshName+"_velocity_Stat"+'_0.vtu',"Velocity",'CELLS',"WaveSystem"+str(dim)+"DPStag"+meshName+"_velocity_Stat")
         
-        return delta_press/p0, delta_v.maxVector()[0], nbCells, time, it, velocity_field.getNormEuclidean().max(), diag_data_press, diag_data_vel,test_desc["Linear_system_max_actual_condition number"]
+        if(not with_source):
+            return delta_press/p0, delta_v.maxVector()[0], nbCells, time, it, velocity_field.getNormEuclidean().max(), diag_data_press, diag_data_vel,test_desc["Linear_system_max_actual_condition number"]
+        else:
+            return delta_press   , delta_v.maxVector()[0], nbCells, time, it, velocity_field.getNormEuclidean().max(), diag_data_press, diag_data_vel,test_desc["Linear_system_max_actual_condition number"]
     else:
         print "Temps maximum Tmax= ", tmax, " atteint"
         raise ValueError("Maximum time reached : Stationary state not found !!!!!!!")
@@ -415,7 +424,7 @@ def solve(my_mesh,meshName,resolution,scaling, meshType, testColor,cfl,test_bc="
         print "Use of scaling strategy for better preconditioning"
 
     # Problem data
-    tmax = 100000.
+    tmax = 1000.
     ntmax = 35000
     output_freq = 10000
 
