@@ -48,7 +48,7 @@ def Transport1DUpwindExplicit(nx,cfl):
     # Video settings
     FFMpegWriter = manimation.writers['ffmpeg']
     metadata = dict(title="Upwind explicit scheme for transport equation", artist = "CEA Saclay", comment="Stable if CFL<1")
-    writer=FFMpegWriter(fps=output_freq, metadata=metadata)
+    writer=FFMpegWriter(fps=output_freq, metadata=metadata, codec='h264')
     with writer.saving(plt.figure(), "1DTransportEquation_UpwindExplicit_nx"+str(nx)+"_cfl"+str(cfl)+".mp4", ntmax):
         ########################### Postprocessing initialisation
         # Picture frame
