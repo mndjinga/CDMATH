@@ -8,8 +8,8 @@ import time, json
 def test_validation2DWaveSystemUpwindFlatCrossTriangles(bctype,scaling):
     start = time.time()
     #### 2D flat cross triangles mesh
-    meshList=['squareWithFlatTriangles_00','squareWithFlatTriangles_0','squareWithFlatTriangles_1','squareWithFlatTriangles_2']#,'squareWithFlatTriangles_3'
-    mesh_path='../../../ressources/2DFlatTriangles/'
+    meshList=['squareWithFlatCrossTriangles_00','squareWithFlatCrossTriangles_0','squareWithFlatCrossTriangles_1','squareWithFlatCrossTriangles_2']#,'squareWithFlatCrossTriangles_3'
+    mesh_path='../../../ressources/2DFlatCrossTriangles/'
     meshType="Regular_flat_cross_triangles"
     testColor="Green"
     nbMeshes=len(meshList)

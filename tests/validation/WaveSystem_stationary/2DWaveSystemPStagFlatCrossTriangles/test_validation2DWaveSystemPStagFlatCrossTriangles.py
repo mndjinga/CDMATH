@@ -9,12 +9,12 @@ import time, json
 def test_validation2DWaveSystemPStagFlatCrossTriangles(scaling):
     start = time.time()
     #### 2D flat cross triangle meshes
-    meshList=['squareWithFlatTriangles_00','squareWithFlatTriangles_0']#,'squareWithFlatTriangles_1','squareWithFlatTriangles_2','squareWithFlatTriangles_3'
+    meshList=['squareWithFlatCrossTriangles_00','squareWithFlatCrossTriangles_0']#,'squareWithFlatCrossTriangles_1','squareWithFlatCrossTriangles_2','squareWithFlatCrossTriangles_3'
     meshType="Unstructured_flat_cross_triangles"
     testColor="Orange (no stationary found on large meshes)"
     nbMeshes=len(meshList)
     mesh_size_tab=[0]*nbMeshes
-    mesh_path='../../../ressources/2DFlatTriangles/'
+    mesh_path='../../../ressources/2DFlatCrossTriangles/'
     mesh_name='squareWithFlatCrossTriangles'
     resolution=100
     curv_abs=np.linspace(0,sqrt(2),resolution+1)
