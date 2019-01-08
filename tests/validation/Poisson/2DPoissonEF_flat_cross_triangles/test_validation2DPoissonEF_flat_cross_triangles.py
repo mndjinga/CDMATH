@@ -48,6 +48,19 @@ def test_validation2DEF_flat_cross_triangles():
     plt.savefig(mesh_name+"_2DPoissonEF_PlotOverDiagonalLine.png")
 
     
+    # Plot of min and max curves
+    plt.close()
+    plt.plot(mesh_size_tab, min_tab, label='Minimum value')
+    plt.plot(mesh_size_tab, max_tab, label='Maximum value')
+    plt.legend()
+    plt.xlabel('Number of nodes')
+    plt.ylabel('Value')
+    plt.title('Min/Max of Finite elements \n for Laplace operator on 2D flat cross triangle meshes')
+    plt.savefig(mesh_name+"_2DPoissonEF_MinMax.png")
+    
+    for i in range(nbMeshes):
+        mesh_size_tab[i] = 0.5*log10(mesh_size_tab[i])
+
     # Least square linear regression
     # Find the best a,b such that f(x)=ax+b best approximates the convergence curve
     # The vector X=(a,b) solves a symmetric linear system AX=B with A=(a1,a2\\a2,a3), B=(b1,b2)
@@ -63,21 +76,7 @@ def test_validation2DEF_flat_cross_triangles():
     b=(-a2*b1+a1*b2)/det
     
     print "FE on 2D flat cross triangle mesh : scheme order is ", -a
-    assert abs(a+2.12)<0.1
-
-
-    # Plot of min and max curves
-    plt.close()
-    plt.plot(mesh_size_tab, min_tab, label='Minimum value')
-    plt.plot(mesh_size_tab, max_tab, label='Maximum value')
-    plt.legend()
-    plt.xlabel('Number of nodes')
-    plt.ylabel('Value')
-    plt.title('Min/Max of Finite elements \n for Laplace operator on 2D flat cross triangle meshes')
-    plt.savefig(mesh_name+"_2DPoissonEF_MinMax.png")
-    
-    for i in range(nbMeshes):
-        mesh_size_tab[i] = 0.5*log10(mesh_size_tab[i])
+    assert abs(a+1.377)<0.1
 
     # Plot of convergence curves
     plt.close()
