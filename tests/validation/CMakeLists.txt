@@ -1,6 +1,6 @@
 
 SET( VALIDATION_FOLDERS
-Poisson/2DPoissonEF 
+Poisson/2DPoissonEF_Delaunay_triangles
 Poisson/2DPoissonEF_flat_cross_triangles 
 Poisson/2DPoissonEF_thin_triangles 
 Poisson/2DPoissonVF_checkerboard 

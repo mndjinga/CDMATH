@@ -29,7 +29,7 @@ def test_validation2DEF_Delaunay_triangles():
     for filename in meshList:
         error_tab[i], mesh_size_tab[i], diag_data[i], min_tab[i], max_tab[i], time_tab[i] =FiniteElements2DPoisson_SQUARE.solve(mesh_path+filename, resolution, meshType, testColor)
         assert min_tab[i]>-0.01 
-        assert max_tab<1.2
+        assert max_tab[i]<1.2
         plt.plot(curv_abs, diag_data[i], label= str(mesh_size_tab[i]) + ' nodes')
         error_tab[i]=log10(error_tab[i])
         time_tab[i]=log10(time_tab[i])
