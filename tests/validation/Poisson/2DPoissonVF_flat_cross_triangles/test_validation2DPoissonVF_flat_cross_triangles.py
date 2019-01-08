@@ -6,9 +6,9 @@ import time, json
 
 convergence_synthesis=dict(FiniteVolumes2DPoisson_SQUARE.test_desc)
 
-def test_validation2DVF_flat_triangles():
+def test_validation2DVF_flat_cross_triangles():
     start = time.time()
-    ### 2D FV flat triangles mesh
+    ### 2D FV flat cross triangles mesh
     #meshList=[5,9,15,21,31]
     meshList=['squareWithFlatTriangles_0','squareWithFlatTriangles_1','squareWithFlatTriangles_2','squareWithFlatTriangles_3']#,'squareWithFlatTriangles_4'
     mesh_path='../../../ressources/2DFlatTriangles/'
@@ -44,7 +44,7 @@ def test_validation2DVF_flat_triangles():
     plt.legend()
     plt.xlabel('Position on diagonal line')
     plt.ylabel('Value on diagonal line')
-    plt.title('Plot over diagonal line for finite volumes \n for Laplace operator on 2D flat triangles meshes')
+    plt.title('Plot over diagonal line for finite volumes \n for Laplace operator on 2D flat cross triangles meshes')
     plt.savefig(mesh_name+"_2DPoissonFV_PlotOverDiagonalLine.png")
 
     # Least square linear regression
@@ -61,7 +61,7 @@ def test_validation2DVF_flat_triangles():
     a=( a3*b1-a2*b2)/det
     b=(-a2*b1+a1*b2)/det
     
-    print "FV on 2D flat triangles mesh : scheme order is ", -a
+    print "FV on 2D flat cross triangles mesh : scheme order is ", -a
     assert abs(a-0.12)<0.1
     
     # Plot of convergence curve
@@ -72,7 +72,7 @@ def test_validation2DVF_flat_triangles():
     plt.plot(mesh_size_tab, error_tab)
     plt.xlabel('log(sqrt(number of cells))')
     plt.ylabel('log(error)')
-    plt.title('Convergence of finite volumes for \n Laplace operator on 2D flat triangles meshes')
+    plt.title('Convergence of finite volumes for \n Laplace operator on 2D flat cross triangles meshes')
     plt.savefig(mesh_name+"_2DPoissonFV_ConvergenceCurve.png")
 
     # Plot of computational time
@@ -81,7 +81,7 @@ def test_validation2DVF_flat_triangles():
     plt.legend()
     plt.xlabel('log(sqrt(number of cells))')
     plt.ylabel('log(cpu time)')
-    plt.title('Computational time of finite volumes \n for Laplace operator on 2D flat triangles meshes')
+    plt.title('Computational time of finite volumes \n for Laplace operator on 2D flat cross triangles meshes')
     plt.savefig(mesh_name+"_2DPoissonFV_ComputationalTime.png")
     
     plt.close('all')
@@ -93,7 +93,7 @@ def test_validation2DVF_flat_triangles():
     convergence_synthesis["Mesh_sizes"]=[10**x for x in mesh_size_tab]
     convergence_synthesis["Space_dimension"]=2
     convergence_synthesis["Mesh_dimension"]=2
-    convergence_synthesis["Mesh_cell_type"]="flat triangles"
+    convergence_synthesis["Mesh_cell_type"]="flat cross triangles"
     convergence_synthesis["Errors"]=[10**x for x in error_tab]
     convergence_synthesis["Scheme_order"]=-a
     convergence_synthesis["Test_color"]=testColor
@@ -108,4 +108,4 @@ def test_validation2DVF_flat_triangles():
     os.system("jupyter-nbconvert --to pdf Convergence_Poisson_FV5_SQUARE_flat_triangles.ipynb")
 
 if __name__ == """__main__""":
-    test_validation2DVF_flat_triangles()
+    test_validation2DVF_flat_cross_triangles()

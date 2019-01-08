@@ -13,7 +13,7 @@ Poisson/2DPoissonVF_brickwall
 Poisson/2DPoissonVF_cross_triangles
 Poisson/2DPoissonVF_long_rectangles
 Poisson/2DPoissonVF_long_triangles
-Poisson/2DPoissonVF_flat_triangles
+Poisson/2DPoissonVF_flat_cross_triangles
 Poisson/3DSpherePoissonEF 
 Poisson/3DPoissonEF 
 Poisson/3DPoissonVF_checkerboard 
