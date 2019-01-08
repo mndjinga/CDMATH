@@ -6,14 +6,14 @@ import time, json
 
 convergence_synthesis=dict(FiniteElements2DPoisson_SQUARE.test_desc)
 
-def test_validation2DEF_thin_triangles():
+def test_validation2DEF_skinny_triangles():
     start = time.time()
-    #### 2D FE thin triangle mesh
+    #### 2D FE skinny triangle mesh
     #meshList=[5,9,15,21,31]
     meshList=['squareWithLongTriangles_0','squareWithLongTriangles_1','squareWithLongTriangles_2','squareWithLongTriangles_3']#,'squareWithLongTriangles_4'
     mesh_path='../../../ressources/2DLongTriangles/'
-    meshType="Regular_thin_triangles"
-    mesh_name='squareWithThinTriangles'
+    meshType="Regular_skinny_triangles"
+    mesh_name='squareWithSkinnyTriangles'
     testColor="Green"
     nbMeshes=len(meshList)
     error_tab=[0]*nbMeshes
@@ -44,7 +44,7 @@ def test_validation2DEF_thin_triangles():
     plt.legend()
     plt.xlabel('Position on diagonal line')
     plt.ylabel('Value on diagonal line')
-    plt.title('Plot over diagonal line for finite elements \n for Laplace operator on 2D thin triangle meshes')
+    plt.title('Plot over diagonal line for finite elements \n for Laplace operator on 2D skinny triangle meshes')
     plt.savefig(mesh_name+"_2DPoissonEF_PlotOverDiagonalLine.png")
 
     
@@ -58,11 +58,11 @@ def test_validation2DEF_thin_triangles():
     b2=np.sum(error_tab)
     
     det=a1*a3-a2*a2
-    assert det!=0, 'test_validation2DEF_thin_triangles() : Make sure you use distinct meshes and at least two meshes'
+    assert det!=0, 'test_validation2DEF_skinny_triangles() : Make sure you use distinct meshes and at least two meshes'
     a=( a3*b1-a2*b2)/det
     b=(-a2*b1+a1*b2)/det
     
-    print "FE on 2D thin triangle mesh : scheme order is ", -a
+    print "FE on 2D skinny triangle mesh : scheme order is ", -a
     assert abs(a+2.12)<0.1
 
 
@@ -73,7 +73,7 @@ def test_validation2DEF_thin_triangles():
     plt.legend()
     plt.xlabel('Number of nodes')
     plt.ylabel('Value')
-    plt.title('Min/Max of Finite elements \n for Laplace operator on 2D thin triangle meshes')
+    plt.title('Min/Max of Finite elements \n for Laplace operator on 2D skinny triangle meshes')
     plt.savefig(mesh_name+"_2DPoissonEF_MinMax.png")
     
     for i in range(nbMeshes):
@@ -86,7 +86,7 @@ def test_validation2DEF_thin_triangles():
     plt.legend()
     plt.xlabel('log(sqrt(number of nodes))')
     plt.ylabel('log(error)')
-    plt.title('Convergence of finite elements \n for Laplace operator on 2D thin triangle meshes')
+    plt.title('Convergence of finite elements \n for Laplace operator on 2D skinny triangle meshes')
     plt.savefig(mesh_name+"_2DPoissonEF_ConvergenceCurve.png")
     
     # Plot of computational time
@@ -95,7 +95,7 @@ def test_validation2DEF_thin_triangles():
     plt.legend()
     plt.xlabel('log(sqrt(number of nodes))')
     plt.ylabel('log(cpu time)')
-    plt.title('Computational time of finite elements \n for Laplace operator on 2D thin triangle meshes')
+    plt.title('Computational time of finite elements \n for Laplace operator on 2D skinny triangle meshes')
     plt.savefig(mesh_name+"_2DPoissonEF_ComputationalTime.png")
     
     plt.close('all')
@@ -117,4 +117,4 @@ def test_validation2DEF_thin_triangles():
         json.dump(convergence_synthesis, outfile)
 
 if __name__ == """__main__""":
-    test_validation2DEF_thin_triangles()
+    test_validation2DEF_skinny_triangles()

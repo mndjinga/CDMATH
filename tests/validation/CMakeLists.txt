@@ -2,7 +2,7 @@
 SET( VALIDATION_FOLDERS
 Poisson/2DPoissonEF_Delaunay_triangles
 Poisson/2DPoissonEF_flat_cross_triangles 
-Poisson/2DPoissonEF_thin_triangles 
+Poisson/2DPoissonEF_skinny_triangles 
 Poisson/2DPoissonVF_checkerboard 
 Poisson/2DPoissonVF_loc_ref 
 Poisson/2DPoissonVF_Delaunay_triangles 
@@ -12,7 +12,7 @@ Poisson/2DPoissonVF_hexagons
 Poisson/2DPoissonVF_brickwall
 Poisson/2DPoissonVF_cross_triangles
 Poisson/2DPoissonVF_long_rectangles
-Poisson/2DPoissonVF_long_triangles
+Poisson/2DPoissonVF_skinny_triangles
 Poisson/2DPoissonVF_flat_cross_triangles
 Poisson/3DSpherePoissonEF 
 Poisson/3DPoissonEF 

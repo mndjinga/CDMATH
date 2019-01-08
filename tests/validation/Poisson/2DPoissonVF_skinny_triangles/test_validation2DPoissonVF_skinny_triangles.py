@@ -7,18 +7,18 @@ import time, json
 
 convergence_synthesis=dict(FiniteVolumes2DPoisson_SQUARE.test_desc)
 
-def test_validation2DVF_long_triangles():
+def test_validation2DVF_skinny_triangles():
     start = time.time()
-    ### 2D FV long triangles mesh
+    ### 2D FV skinny triangles mesh
     meshList=[5,9,15,21,31]
-    #meshList=['squareWithFlatTriangles_0','squareWithLongRectangles_1','squareWithLongRectangles_2','squareWithLongRectangles_3','squareWithLongRectangles_4','squareWithLongRectangles_5']
+    #meshList=['squareWithLongTriangles_0','squareWithLongTriangles_1','squareWithLongTriangles_2','squareWithLongTriangles_3','squareWithLongTriangles_4','squareWithTriangles_5']
     mesh_path='../../../ressources/2DLongTriangles/'
-    meshType="Regular_long_right_triangles"
+    meshType="Regular_skinny_triangles"
     testColor="Green"
     nbMeshes=len(meshList)
     error_tab=[0]*nbMeshes
     mesh_size_tab=[0]*nbMeshes
-    mesh_name='squareWithLongRightTriangles'
+    mesh_name='squareWithSkinnyTriangles'
     diag_data=[0]*nbMeshes
     time_tab=[0]*nbMeshes
     resolution=100
@@ -45,7 +45,7 @@ def test_validation2DVF_long_triangles():
     plt.legend()
     plt.xlabel('Position on diagonal line')
     plt.ylabel('Value on diagonal line')
-    plt.title('Plot over diagonal line for finite volumes \n for Laplace operator on 2D long triangles meshes')
+    plt.title('Plot over diagonal line for finite volumes \n for Laplace operator on 2D skinny triangles meshes')
     plt.savefig(mesh_name+"_2DPoissonFV_PlotOverDiagonalLine.png")
 
     # Least square linear regression
@@ -58,11 +58,11 @@ def test_validation2DVF_long_triangles():
     b2=np.sum(error_tab)
     
     det=a1*a3-a2*a2
-    assert det!=0, 'test_validation2DVF_long_triangles() : Make sure you use distinct meshes and at least two meshes'
+    assert det!=0, 'test_validation2DVF_skinny_triangles() : Make sure you use distinct meshes and at least two meshes'
     a=( a3*b1-a2*b2)/det
     b=(-a2*b1+a1*b2)/det
     
-    print "FV on 2D long triangles mesh : scheme order is ", -a
+    print "FV on 2D skinny triangles mesh : scheme order is ", -a
     assert abs(a-0.12)<0.1
     
     # Plot of convergence curve
@@ -73,7 +73,7 @@ def test_validation2DVF_long_triangles():
     plt.plot(mesh_size_tab, error_tab)
     plt.xlabel('log(sqrt(number of cells))')
     plt.ylabel('log(error)')
-    plt.title('Convergence of finite volumes for \n Laplace operator on 2D long triangles meshes')
+    plt.title('Convergence of finite volumes for \n Laplace operator on 2D skinny triangles meshes')
     plt.savefig(mesh_name+"_2DPoissonFV_ConvergenceCurve.png")
 
     # Plot of computational time
@@ -82,7 +82,7 @@ def test_validation2DVF_long_triangles():
     plt.legend()
     plt.xlabel('log(sqrt(number of cells))')
     plt.ylabel('log(cpu time)')
-    plt.title('Computational time of finite volumes \n for Laplace operator on 2D long triangles meshes')
+    plt.title('Computational time of finite volumes \n for Laplace operator on 2D skinny triangles meshes')
     plt.savefig(mesh_name+"_2DPoissonFV_ComputationalTime.png")
     
     plt.close('all')
@@ -94,7 +94,7 @@ def test_validation2DVF_long_triangles():
     convergence_synthesis["Mesh_sizes"]=[10**x for x in mesh_size_tab]
     convergence_synthesis["Space_dimension"]=2
     convergence_synthesis["Mesh_dimension"]=2
-    convergence_synthesis["Mesh_cell_type"]="Long triangles"
+    convergence_synthesis["Mesh_cell_type"]="Triangles"
     convergence_synthesis["Errors"]=[10**x for x in error_tab]
     convergence_synthesis["Scheme_order"]=-a
     convergence_synthesis["Test_color"]=testColor
@@ -109,4 +109,4 @@ def test_validation2DVF_long_triangles():
     os.system("jupyter-nbconvert --to pdf Convergence_Poisson_FV5_SQUARE_long_triangles.ipynb")
 
 if __name__ == """__main__""":
-    test_validation2DVF_long_triangles()
+    test_validation2DVF_skinny_triangles()
