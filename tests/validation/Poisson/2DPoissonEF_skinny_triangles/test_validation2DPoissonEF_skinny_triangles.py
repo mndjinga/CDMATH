@@ -10,8 +10,8 @@ def test_validation2DEF_skinny_triangles():
     start = time.time()
     #### 2D FE skinny triangle mesh
     #meshList=[5,9,15,21,31]
-    meshList=['squareWithLongTriangles_0','squareWithLongTriangles_1','squareWithLongTriangles_2','squareWithLongTriangles_3']#,'squareWithLongTriangles_4'
-    mesh_path='../../../ressources/2DLongTriangles/'
+    meshList=['squareWithSkinnyTriangles_0','squareWithSkinnyTriangles_1','squareWithSkinnyTriangles_2','squareWithSkinnyTriangles_3']#,'squareWithSkinnyTriangles_4'
+    mesh_path='../../../ressources/2DSkinnyTriangles/'
     meshType="Regular_skinny_triangles"
     mesh_name='squareWithSkinnyTriangles'
     testColor="Green"

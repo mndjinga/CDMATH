@@ -11,8 +11,8 @@ def test_validation2DVF_skinny_triangles():
     start = time.time()
     ### 2D FV skinny triangles mesh
     meshList=[5,9,15,21,31]
-    #meshList=['squareWithLongTriangles_0','squareWithLongTriangles_1','squareWithLongTriangles_2','squareWithLongTriangles_3','squareWithLongTriangles_4','squareWithTriangles_5']
-    mesh_path='../../../ressources/2DLongTriangles/'
+    #meshList=['squareWithSkinnyTriangles_0','squareWithSkinnyTriangles_1','squareWithSkinnyTriangles_2','squareWithSkinnyTriangles_3','squareWithSkinnyTriangles_4','squareWithTriangles_5']
+    mesh_path='../../../ressources/2DSkinnyTriangles/'
     meshType="Regular_skinny_triangles"
     testColor="Green"
     nbMeshes=len(meshList)
