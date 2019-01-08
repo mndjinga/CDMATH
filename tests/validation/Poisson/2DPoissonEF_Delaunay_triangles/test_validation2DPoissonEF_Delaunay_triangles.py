@@ -6,9 +6,9 @@ import time, json
 
 convergence_synthesis=dict(FiniteElements2DPoisson_SQUARE.test_desc)
 
-def test_validation2DEF():
+def test_validation2DEF_Delaunay_triangles():
     start = time.time()
-    #### 2D FE triangle mesh
+    #### 2D FE Delaunay triangle mesh
     meshList=['squareWithTriangles_1','squareWithTriangles_2','squareWithTriangles_3','squareWithTriangles_4','squareWithTriangles_5']
     meshType="Unstructured_triangles"
     testColor="Green"
@@ -16,22 +16,23 @@ def test_validation2DEF():
     error_tab=[0]*nbMeshes
     mesh_size_tab=[0]*nbMeshes
     mesh_path='../../../ressources/2DTriangles/'
-    mesh_name='squareWithTriangles'
+    mesh_name='squareWithDelaunayTriangles'
     diag_data=[0]*nbMeshes
     time_tab=[0]*nbMeshes
+    max_tab=[0]*nbMeshes
+    min_tab=[0]*nbMeshes
     resolution=100
     curv_abs=np.linspace(0,sqrt(2),resolution+1)
     plt.close('all')
     i=0
     # Storing of numerical errors, mesh sizes and diagonal values
     for filename in meshList:
-        error_tab[i], mesh_size_tab[i], diag_data[i], min_sol_num, max_sol_num, time_tab[i] =FiniteElements2DPoisson_SQUARE.solve(mesh_path+filename, resolution, meshType, testColor)
-        assert min_sol_num>-0.01 
-        assert max_sol_num<1.2
+        error_tab[i], mesh_size_tab[i], diag_data[i], min_tab[i], max_tab[i], time_tab[i] =FiniteElements2DPoisson_SQUARE.solve(mesh_path+filename, resolution, meshType, testColor)
+        assert min_tab[i]>-0.01 
+        assert max_tab<1.2
         plt.plot(curv_abs, diag_data[i], label= str(mesh_size_tab[i]) + ' nodes')
         error_tab[i]=log10(error_tab[i])
         time_tab[i]=log10(time_tab[i])
-        mesh_size_tab[i] = 0.5*log10(mesh_size_tab[i])
         i=i+1
     
     end = time.time()
@@ -40,7 +41,7 @@ def test_validation2DEF():
     plt.legend()
     plt.xlabel('Position on diagonal line')
     plt.ylabel('Value on diagonal line')
-    plt.title('Plot over diagonal line for finite elements \n for Laplace operator on 2D triangular meshes')
+    plt.title('Plot over diagonal line for finite elements \n for Laplace operator on 2D Delaunay triangle meshes')
     plt.savefig(mesh_name+"_2DPoissonEF_PlotOverDiagonalLine.png")
 
     
@@ -54,12 +55,25 @@ def test_validation2DEF():
     b2=np.sum(error_tab)
     
     det=a1*a3-a2*a2
-    assert det!=0, 'test_validation2DEF() : Make sure you use distinct meshes and at least two meshes'
+    assert det!=0, 'test_validation2DEF_Delaunay_triangles() : Make sure you use distinct meshes and at least two meshes'
     a=( a3*b1-a2*b2)/det
     b=(-a2*b1+a1*b2)/det
     
-    print "FE on 2D triangle mesh : scheme order is ", -a
+    print "FE on 2D Delaunay triangle mesh : scheme order is ", -a
     assert abs(a+2.12)<0.1
+
+    # Plot of min and max curves
+    plt.close()
+    plt.plot(mesh_size_tab, min_tab, label='Minimum value')
+    plt.plot(mesh_size_tab, max_tab, label='Maximum value')
+    plt.legend()
+    plt.xlabel('Number of nodes')
+    plt.ylabel('Value')
+    plt.title('Min/Max of Finite elements \n for Laplace operator on 2D Delaunay triangle meshes')
+    plt.savefig(mesh_name+"_2DPoissonEF_MinMax.png")
+    
+    for i in range(nbMeshes):
+        mesh_size_tab[i] = 0.5*log10(mesh_size_tab[i])
 
     # Plot of convergence curves
     plt.close()
@@ -68,7 +82,7 @@ def test_validation2DEF():
     plt.legend()
     plt.xlabel('log(sqrt(number of nodes))')
     plt.ylabel('log(error)')
-    plt.title('Convergence of finite elements \n for Laplace operator on 2D triangular meshes')
+    plt.title('Convergence of finite elements \n for Laplace operator on 2D Delaunay triangle meshes')
     plt.savefig(mesh_name+"_2DPoissonEF_ConvergenceCurve.png")
     
     # Plot of computational time
@@ -77,7 +91,7 @@ def test_validation2DEF():
     plt.legend()
     plt.xlabel('log(sqrt(number of nodes))')
     plt.ylabel('log(cpu time)')
-    plt.title('Computational time of finite elements \n for Laplace operator on 2D triangular meshes')
+    plt.title('Computational time of finite elements \n for Laplace operator on 2D Delaunay triangle meshes')
     plt.savefig(mesh_name+"_2DPoissonEF_ComputationalTime.png")
     
     plt.close('all')
@@ -99,4 +113,4 @@ def test_validation2DEF():
         json.dump(convergence_synthesis, outfile)
 
 if __name__ == """__main__""":
-    test_validation2DEF()
+    test_validation2DEF_Delaunay_triangles()
