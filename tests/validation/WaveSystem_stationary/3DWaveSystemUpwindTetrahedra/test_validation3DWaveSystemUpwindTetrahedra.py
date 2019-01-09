@@ -36,6 +36,8 @@ def test_validation3DWaveSystemUpwindTetrahedra(bctype,scaling):
         my_mesh=cdmath.Mesh(0.,1.,nx,0.,1.,nx,0.,1.,nx,6)
         error_p_tab[i], error_u_tab[i], mesh_size_tab[i], t_final[i], ndt_final[i], max_vel[i], diag_data_press[i], diag_data_vel[i], time_tab[i] =WaveSystemUpwind.solve(my_mesh, mesh_name+str(my_mesh.getNumberOfCells()), resolution,scaling,meshType,testColor,cfl,bctype)
         assert max_vel[i]>1.8 and max_vel[i]<2
+        error_p_tab[i]=log10(error_p_tab[i])
+        error_u_tab[i]=log10(error_u_tab[i])
         i=i+1
     
     end = time.time()
@@ -59,6 +61,37 @@ def test_validation3DWaveSystemUpwindTetrahedra(bctype,scaling):
     plt.title('Plot over diagonal line for the stationary wave system \n on 3D tetrahedral meshes')
     plt.savefig(mesh_name+"_Velocity_3DWaveSystemUpwind_"+"PlotOverDiagonalLine.png")    
     plt.close()
+
+    # Plot of number of time steps
+    plt.close()
+    plt.plot(mesh_size_tab, ndt_final, label='Number of time step to reach stationary regime')
+    plt.legend()
+    plt.xlabel('number of cells')
+    plt.ylabel('Max time steps for stationary regime')
+    plt.title('Number of times steps required \n for the stationary Wave System on 3D tetrahedral meshes')
+    plt.savefig(mesh_name+"_3DWaveSystemUpwind_"+"TimeSteps.png")
+    
+    # Plot of time where stationary regime is reached
+    plt.close()
+    plt.plot(mesh_size_tab, t_final, label='Time where stationary regime is reached')
+    plt.legend()
+    plt.xlabel('number of cells')
+    plt.ylabel('Max time for stationary regime')
+    plt.title('Simulated time  \n for the stationary Wave System on 3D tetrahedral meshes')
+    plt.savefig(mesh_name+"_3DWaveSystemUpwind_"+"TimeFinal.png")
+    
+    # Plot of maximal velocity norm
+    plt.close()
+    plt.plot(mesh_size_tab, max_vel, label='Maximum velocity norm')
+    plt.legend()
+    plt.xlabel('number of cells')
+    plt.ylabel('Max velocity norm')
+    plt.title('Maximum velocity norm  \n for the stationary Wave System on 3D tetrahedral meshes')
+    plt.savefig(mesh_name+"_3DWaveSystemUpwind_"+"MaxVelNorm.png")
+    
+       
+    for i in range(nbMeshes):
+        mesh_size_tab[i] = 0.5*log10(mesh_size_tab[i])
 
     # Least square linear regression
     # Find the best a,b such that f(x)=ax+b best approximates the convergence curve
@@ -84,34 +117,6 @@ def test_validation3DWaveSystemUpwindTetrahedra(bctype,scaling):
     
     print "FV on 3D tetrahedral meshes : scheme order for velocity is ", -au
     
-    # Plot of number of time steps
-    plt.close()
-    plt.plot(mesh_size_tab, ndt_final, label='Number of time step to reach stationary regime')
-    plt.legend()
-    plt.xlabel('number of cells')
-    plt.ylabel('Max time steps for stationary regime')
-    plt.title('Number of times steps required \n for the stationary Wave System on 3D tetrahedral meshes')
-    plt.savefig(mesh_name+"_3DWaveSystemUpwind_"+"TimeSteps.png")
-    
-    # Plot of time where stationary regime is reached
-    plt.close()
-    plt.plot(mesh_size_tab, t_final, label='Time where stationary regime is reached')
-    plt.legend()
-    plt.xlabel('number of cells')
-    plt.ylabel('Max time for stationary regime')
-    plt.title('Simulated time  \n for the stationary Wave System on 3D tetrahedral meshes')
-    plt.savefig(mesh_name+"_3DWaveSystemUpwind_"+"TimeFinal.png")
-    
-    # Plot of number of maximal velocity norm
-    plt.close()
-    plt.plot(mesh_size_tab, max_vel, label='Maximum velocity norm')
-    plt.legend()
-    plt.xlabel('number of cells')
-    plt.ylabel('Max velocity norm')
-    plt.title('Maximum velocity norm  \n for the stationary Wave System on 3D tetrahedral meshes')
-    plt.savefig(mesh_name+"_3DWaveSystemUpwind_"+"MaxVelNorm.png")
-    
-       
     # Plot of convergence curves
     plt.close()
     plt.plot(mesh_size_tab, error_p_tab, label='|error on stationary pressure|')
