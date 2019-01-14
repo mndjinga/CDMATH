@@ -14,7 +14,7 @@ ${MED_LOADER_DIR}
 
 FILE(GLOB src_mesh_CXX . *.cxx)
 ADD_LIBRARY(mesh SHARED ${src_mesh_CXX})
-TARGET_LINK_LIBRARIES(mesh base medcoupling medloader )
+TARGET_LINK_LIBRARIES(mesh base medloader )
 
 INSTALL(TARGETS mesh DESTINATION lib)
 
