@@ -380,19 +380,22 @@ Field::readFieldMed( const std::string & fileNameRadical,
 	MEDCoupling::TypeOfField medFieldType[3] = { ON_CELLS, ON_NODES, ON_CELLS };
 	switch (type) {
 	case CELLS:
-		_field = MEDCoupling::ReadField(medFieldType[type], completeFileName,
-				attributedMeshName, 0,
-				attributedFieldName, iteration, order);
+		_field = dynamic_cast< MEDCoupling::MEDCouplingFieldDouble * > ( 
+					MEDCoupling::ReadFieldCell( completeFileName,
+					attributedMeshName, 0,
+					attributedFieldName, iteration, order) );
 		break;
 	case NODES:
-		_field = MEDCoupling::ReadField(medFieldType[type], completeFileName,
-				attributedMeshName, 0,
-				attributedFieldName, iteration, order);
+		_field = dynamic_cast< MEDCoupling::MEDCouplingFieldDouble * > (
+					MEDCoupling::ReadFieldNode( completeFileName,
+					attributedMeshName, 0,
+					attributedFieldName, iteration, order) );
 		break;
 	case FACES:
-		_field = MEDCoupling::ReadField(medFieldType[type], completeFileName,
-				attributedMeshName, -1,
-				attributedFieldName, iteration, order);
+		_field = dynamic_cast< MEDCoupling::MEDCouplingFieldDouble * > ( 
+					MEDCoupling::ReadFieldCell( completeFileName,
+					attributedMeshName, -1,
+					attributedFieldName, iteration, order) );
 		break;
 	}
 }
