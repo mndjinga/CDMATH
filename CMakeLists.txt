@@ -159,8 +159,11 @@ if (CDMATH_WITH_TESTS)
   set (CMAKE_EXE_LINKER_FLAGS "-pg -fprofile-arcs -ftest-coverage -lgcov")
   enable_testing ()
   find_package (CPPUNIT REQUIRED)
-  add_subdirectory (${TESTS_DIR})
 endif ()
+if (CDMATH_WITH_TESTS AND CDMATH_WITH_PYTHON)
+  enable_testing ()
+  add_subdirectory (${TESTS_DIR})#contains c++ and python tests
+endif()
 
 # Packaging
 if (CDMATH_WITH_PACKAGE)
