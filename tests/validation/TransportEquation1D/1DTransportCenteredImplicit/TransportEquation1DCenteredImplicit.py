@@ -137,9 +137,9 @@ if __name__ == """__main__""":
         nx = int(sys.argv[1])
         cfl = float(sys.argv[2])
         isSmooth=bool(sys.argv[3])
-        solve(nx,cfl,0,1,isSmooth)
+        solve(nx,cfl,0.,1.,isSmooth)
     else :
         nx = 50 # number of cells
         cfl = 0.99 # c*dt/dx <= CFL
         isSmooth=True
-        solve(nx,cfl,0,1,isSmooth)
+        solve(nx,cfl,0.,1.,isSmooth)
