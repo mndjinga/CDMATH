@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2016  CEA/DEN, EDF R&D
+// Copyright (C) 2017  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -16,9 +16,7 @@
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// Author : Anthony Geay (CEA/DEN)
-
-%module MEDCoupling
+// Author : Anthony Geay (EDF R&D)
 
 #ifdef WITH_DOCSTRINGS
 %include MEDCoupling_doc.i
@@ -33,6 +31,7 @@
 #include "MEDCouplingMappedExtrudedMesh.hxx"
 #include "MEDCouplingCMesh.hxx"
 #include "MEDCouplingIMesh.hxx"
+#include "MEDCouplingMap.txx"
 #include "MEDCouplingCurveLinearMesh.hxx"
 #include "MEDCoupling1GTUMesh.hxx"
 #include "MEDCouplingField.hxx"
@@ -327,6 +326,7 @@ using namespace INTERP_KERNEL;
 %newobject MEDCoupling::MEDCouplingUMesh::conformize2D;
 %newobject MEDCoupling::MEDCouplingUMesh::conformize3D;
 %newobject MEDCoupling::MEDCouplingUMesh::colinearize2D;
+%newobject MEDCoupling::MEDCouplingUMesh::colinearizeKeepingConform2D;
 %newobject MEDCoupling::MEDCouplingUMesh::rearrange2ConsecutiveCellTypes;
 %newobject MEDCoupling::MEDCouplingUMesh::sortCellsInMEDFileFrmt;
 %newobject MEDCoupling::MEDCouplingUMesh::getRenumArrForMEDFileFrmt;
@@ -363,6 +363,7 @@ using namespace INTERP_KERNEL;
 %newobject MEDCoupling::MEDCouplingUMesh::getBoundingBoxForBBTreeFast;
 %newobject MEDCoupling::MEDCouplingUMesh::getBoundingBoxForBBTree2DQuadratic;
 %newobject MEDCoupling::MEDCouplingUMesh::getBoundingBoxForBBTree1DQuadratic;
+%newobject MEDCoupling::MEDCouplingUMesh::convertDegeneratedCellsAndRemoveFlatOnes;
 %newobject MEDCoupling::MEDCouplingUMeshCellByTypeEntry::__iter__;
 %newobject MEDCoupling::MEDCouplingUMeshCellEntry::__iter__;
 %newobject MEDCoupling::MEDCoupling1GTUMesh::New;
@@ -461,6 +462,8 @@ using namespace INTERP_KERNEL;
 %feature("unref") MEDCouplingFieldDiscretizationGaussNE "$this->decrRef();"
 %feature("unref") MEDCouplingFieldDiscretizationKriging "$this->decrRef();"
 %feature("unref") MEDCouplingFieldDouble "$this->decrRef();"
+%feature("unref") MEDCouplingFieldFloat "$this->decrRef();"
+%feature("unref") MEDCouplingFieldInt "$this->decrRef();"
 %feature("unref") MEDCouplingMultiFields "$this->decrRef();"
 %feature("unref") MEDCouplingFieldTemplate "$this->decrRef();"
 %feature("unref") MEDCouplingMultiFields "$this->decrRef();"
@@ -712,43 +715,36 @@ namespace MEDCoupling
            return ret;
          }
 
-         PyObject *getCellsContainingPoints(PyObject *p, double eps) const throw(INTERP_KERNEL::Exception)
+         PyObject *getCellsContainingPointsLinearPartOnlyOnNonDynType(PyObject *p, int nbOfPoints, double eps) const throw(INTERP_KERNEL::Exception)
          {
-           MCAuto<DataArrayInt> elts,eltsIndex;
+           double val;
+           DataArrayDouble *a;
+           DataArrayDoubleTuple *aa;
+           std::vector<double> bb;
+           int sw;
            int spaceDim=self->getSpaceDimension();
-           void *da=0;
-           int res1=SWIG_ConvertPtr(p,&da,SWIGTYPE_p_MEDCoupling__DataArrayDouble, 0 |  0 );
-           if (!SWIG_IsOK(res1))
-             {
-               int size;
-               INTERP_KERNEL::AutoCPtr<double> tmp=convertPyToNewDblArr2(p,&size);
-               int nbOfPoints=size/spaceDim;
-               if(size%spaceDim!=0)
-                 {
-                   throw INTERP_KERNEL::Exception("MEDCouplingMesh::getCellsContainingPoints : Invalid list length ! Must be a multiple of self.getSpaceDimension() !");
-                 }
-               self->getCellsContainingPoints(tmp,nbOfPoints,eps,elts,eltsIndex);
-             }
-           else
-             {
-               DataArrayDouble *da2=reinterpret_cast< DataArrayDouble * >(da);
-               if(!da2)
-                 throw INTERP_KERNEL::Exception("MEDCouplingMesh::getCellsContainingPoints : Not null DataArrayDouble instance expected !");
-               da2->checkAllocated();
-               int size=da2->getNumberOfTuples();
-               int nbOfCompo=da2->getNumberOfComponents();
-               if(nbOfCompo!=spaceDim)
-                 {
-                   throw INTERP_KERNEL::Exception("MEDCouplingMesh::getCellsContainingPoints : Invalid DataArrayDouble nb of components ! Expected same as self.getSpaceDimension() !");
-                 }
-               self->getCellsContainingPoints(da2->getConstPointer(),size,eps,elts,eltsIndex);
-             }
+           const char msg[]="Python wrap of MEDCouplingMesh::getCellsContainingPointsLinearPartOnlyOnNonDynType : ";
+           const double *pos=convertObjToPossibleCpp5_Safe(p,sw,val,a,aa,bb,msg,nbOfPoints,spaceDim,true);
+           MCAuto<DataArrayInt> elts,eltsIndex;
+           self->getCellsContainingPointsLinearPartOnlyOnNonDynType(pos,nbOfPoints,eps,elts,eltsIndex);
            PyObject *ret=PyTuple_New(2);
            PyTuple_SetItem(ret,0,SWIG_NewPointerObj(SWIG_as_voidptr(elts.retn()),SWIGTYPE_p_MEDCoupling__DataArrayInt, SWIG_POINTER_OWN | 0 ));
            PyTuple_SetItem(ret,1,SWIG_NewPointerObj(SWIG_as_voidptr(eltsIndex.retn()),SWIGTYPE_p_MEDCoupling__DataArrayInt, SWIG_POINTER_OWN | 0 ));
            return ret;
          }
 
+         PyObject *getCellsContainingPoints(PyObject *p, double eps) const throw(INTERP_KERNEL::Exception)
+         {
+           auto getCellsContainingPointsFunc=[self](const double *a, int b,double c, MCAuto<DataArrayInt>& d, MCAuto<DataArrayInt>& e) { self->getCellsContainingPoints(a,b,c,d,e); };
+           return Mesh_getCellsContainingPointsLike(p,eps,self,getCellsContainingPointsFunc);
+         }
+
+         PyObject *getCellsContainingPointsLinearPartOnlyOnNonDynType(PyObject *p, double eps) const throw(INTERP_KERNEL::Exception)
+         {
+           auto getCellsContainingPointsFunc=[self](const double *a, int b,double c, MCAuto<DataArrayInt>& d, MCAuto<DataArrayInt>& e) { self->getCellsContainingPointsLinearPartOnlyOnNonDynType(a,b,c,d,e); };
+           return Mesh_getCellsContainingPointsLike(p,eps,self,getCellsContainingPointsFunc);
+         }
+         
          PyObject *getCellsContainingPoint(PyObject *p, double eps) const throw(INTERP_KERNEL::Exception)
          {
            double val;
@@ -964,12 +960,12 @@ namespace MEDCoupling
           return self->checkTypeConsistencyAndContig(code,idsPerType);
         }
 
-        PyObject *splitProfilePerType(const DataArrayInt *profile) const throw(INTERP_KERNEL::Exception)
+        PyObject *splitProfilePerType(const DataArrayInt *profile, bool smartPflKiller=true) const throw(INTERP_KERNEL::Exception)
         {
           std::vector<int> code;
           std::vector<DataArrayInt *> idsInPflPerType;
           std::vector<DataArrayInt *> idsPerType;
-          self->splitProfilePerType(profile,code,idsInPflPerType,idsPerType);
+          self->splitProfilePerType(profile,code,idsInPflPerType,idsPerType,smartPflKiller);
           PyObject *ret=PyTuple_New(3);
           //
           if(code.size()%3!=0)
@@ -1081,14 +1077,6 @@ namespace MEDCoupling
          {
            std::vector<std::string> littleStrings;
            self->resizeForUnserialization(tinyInfo,a1,a2,littleStrings);
-         }
-         
-         PyObject *__getnewargs__() throw(INTERP_KERNEL::Exception)
-         {// put an empty dict in input to say to __new__ to call __init__...
-           PyObject *ret(PyTuple_New(1));
-           PyObject *ret0(PyDict_New());
-           PyTuple_SetItem(ret,0,ret0);
-           return ret;
          }
          
          PyObject *__getstate__() const throw(INTERP_KERNEL::Exception)
@@ -1234,6 +1222,9 @@ namespace MEDCoupling
     
     void deletePack(const int i, const int j) throw(INTERP_KERNEL::Exception);
     
+    void deleteSimplePack(const int i) throw(INTERP_KERNEL::Exception);
+    void deleteSimplePacks(const DataArrayInt* idx) throw(INTERP_KERNEL::Exception);
+    
     %extend 
     {
       MEDCouplingSkyLineArray() throw(INTERP_KERNEL::Exception)
@@ -1315,6 +1306,13 @@ namespace MEDCoupling
           std::vector<int> vpack;
           convertPyToNewIntArr3(pack,vpack);
           self->replaceSimplePack(idx, vpack.data(), vpack.data()+vpack.size());
+        }
+        
+      void replaceSimplePacks(const DataArrayInt* idx, PyObject *listePacks) throw(INTERP_KERNEL::Exception)
+        {
+          std::vector<const DataArrayInt*> packs;
+          convertFromPyObjVectorOfObj<const MEDCoupling::DataArrayInt*>(listePacks,SWIGTYPE_p_MEDCoupling__DataArrayInt,"DataArrayInt",packs);
+          self->replaceSimplePacks(idx, packs);
         }
         
       void replacePack(const int superIdx, const int idx, PyObject *pack) throw(INTERP_KERNEL::Exception)
@@ -1510,8 +1508,8 @@ namespace MEDCoupling
                DataArrayDoubleTuple *aa,*aa2;
                std::vector<double> bb,bb2;
                int sw;
-               const char msg[]="Python wrap of MEDCouplingPointSet::findNodesOnLine : 1st paramater for point.";
-               const char msg2[]="Python wrap of MEDCouplingPointSet::findNodesOnLine : 2nd paramater for vector.";
+               const char msg[]="Python wrap of MEDCouplingPointSet::findNodesOnLine : 1st parameter for point.";
+               const char msg2[]="Python wrap of MEDCouplingPointSet::findNodesOnLine : 2nd parameter for vector.";
                const double *p=convertObjToPossibleCpp5_Safe(pt,sw,val,a,aa,bb,msg,1,spaceDim,true);
                const double *v=convertObjToPossibleCpp5_Safe(vec,sw,val2,a2,aa2,bb2,msg2,1,spaceDim,true);
                std::vector<int> nodes;
@@ -1529,8 +1527,8 @@ namespace MEDCoupling
                DataArrayDoubleTuple *aa,*aa2;
                std::vector<double> bb,bb2;
                int sw;
-               const char msg[]="Python wrap of MEDCouplingPointSet::findNodesOnPlane : 1st paramater for point.";
-               const char msg2[]="Python wrap of MEDCouplingPointSet::findNodesOnPlane : 2nd paramater for vector.";
+               const char msg[]="Python wrap of MEDCouplingPointSet::findNodesOnPlane : 1st parameter for point.";
+               const char msg2[]="Python wrap of MEDCouplingPointSet::findNodesOnPlane : 2nd parameter for vector.";
                const double *p=convertObjToPossibleCpp5_Safe(pt,sw,val,a,aa,bb,msg,1,spaceDim,true);
                const double *v=convertObjToPossibleCpp5_Safe(vec,sw,val2,a2,aa2,bb2,msg2,1,spaceDim,true);
                std::vector<int> nodes;
@@ -1631,7 +1629,7 @@ namespace MEDCoupling
 
            virtual PyObject *findCommonCells(int compType, int startCellId=0) const throw(INTERP_KERNEL::Exception)
            {
-             DataArrayInt *v0=0,*v1=0;
+             DataArrayInt *v0(nullptr),*v1(nullptr);
              self->findCommonCells(compType,startCellId,v0,v1);
              PyObject *res = PyList_New(2);
              PyList_SetItem(res,0,SWIG_NewPointerObj(SWIG_as_voidptr(v0),SWIGTYPE_p_MEDCoupling__DataArrayInt, SWIG_POINTER_OWN | 0 ));
@@ -1642,8 +1640,17 @@ namespace MEDCoupling
       
            virtual void renumberNodesInConn(PyObject *li) throw(INTERP_KERNEL::Exception)
            {
-             void *da=0;
-             int res1=SWIG_ConvertPtr(li,&da,SWIGTYPE_p_MEDCoupling__DataArrayInt, 0 | 0 );
+             void *da(nullptr);
+             {
+               int res1(SWIG_ConvertPtr(li,&da,SWIGTYPE_p_MEDCoupling__MapII, 0 |  0 ));
+               if(SWIG_IsOK(res1))
+                 {
+                   MapII *da2(reinterpret_cast<MapII *>(da));
+                   self->renumberNodesInConn(da2->data());
+                   return ;
+                 }
+             }
+             int res1(SWIG_ConvertPtr(li,&da,SWIGTYPE_p_MEDCoupling__DataArrayInt, 0 | 0 ));
              if (!SWIG_IsOK(res1))
                {
                  int size;
@@ -1652,7 +1659,7 @@ namespace MEDCoupling
                }
              else
                {
-                 DataArrayInt *da2=reinterpret_cast< DataArrayInt * >(da);
+                 DataArrayInt *da2(reinterpret_cast< DataArrayInt * >(da));
                  if(!da2)
                    throw INTERP_KERNEL::Exception("Not null DataArrayInt instance expected !");
                  da2->checkAllocated();
@@ -1672,7 +1679,7 @@ namespace MEDCoupling
 
            virtual DataArrayInt *fillCellIdsToKeepFromNodeIds(PyObject *li, bool fullyIn) const
            {
-             DataArrayInt *ret=0;
+             DataArrayInt *ret(nullptr);
              //
              int szArr,sw,iTypppArr;
              std::vector<int> stdvecTyyppArr;
@@ -1947,6 +1954,7 @@ namespace MEDCoupling
     DataArrayInt *conformize2D(double eps) throw(INTERP_KERNEL::Exception);
     DataArrayInt *conformize3D(double eps) throw(INTERP_KERNEL::Exception);
     DataArrayInt *colinearize2D(double eps) throw(INTERP_KERNEL::Exception);
+    DataArrayInt *colinearizeKeepingConform2D(double eps) throw(INTERP_KERNEL::Exception);
     void shiftNodeNumbersInConn(int delta) throw(INTERP_KERNEL::Exception);
     std::vector<bool> getQuadraticStatus() const throw(INTERP_KERNEL::Exception);
     DataArrayInt *findCellIdsOnBoundary() const throw(INTERP_KERNEL::Exception);
@@ -1970,6 +1978,8 @@ namespace MEDCoupling
     void convertQuadraticCellsToLinear() throw(INTERP_KERNEL::Exception);
     DataArrayInt *convertLinearCellsToQuadratic(int conversionType=0) throw(INTERP_KERNEL::Exception);
     void convertDegeneratedCells() throw(INTERP_KERNEL::Exception);
+    DataArrayInt *convertDegeneratedCellsAndRemoveFlatOnes() throw(INTERP_KERNEL::Exception);
+    bool removeDegenerated1DCells() throw(INTERP_KERNEL::Exception);
     bool areOnlySimplexCells() const throw(INTERP_KERNEL::Exception);
     MEDCouplingFieldDouble *getEdgeRatioField() const throw(INTERP_KERNEL::Exception);
     MEDCouplingFieldDouble *getAspectRatioField() const throw(INTERP_KERNEL::Exception);
@@ -2005,12 +2015,6 @@ namespace MEDCoupling
       MEDCouplingUMesh(const char *meshName, int meshDim) throw(INTERP_KERNEL::Exception)
       {
         return MEDCouplingUMesh::New(meshName,meshDim);
-      }
-
-      // serialization
-      static PyObject *___new___(PyObject *cls, PyObject *args) throw(INTERP_KERNEL::Exception)
-      {
-        return NewMethWrapCallInitOnlyIfEmptyDictInInput(cls,args,"MEDCouplingUMesh");
       }
 
       std::string __str__() const throw(INTERP_KERNEL::Exception)
@@ -2391,6 +2395,14 @@ namespace MEDCoupling
           default:
             throw INTERP_KERNEL::Exception("MEDCouplingUMesh::duplicateNodesInConn : unrecognized type entered, expected list of int, tuple of int or DataArrayInt !");
           }
+      }
+
+      void attractSeg3MidPtsAroundNodes(double ratio, PyObject *nodeIds) throw(INTERP_KERNEL::Exception)
+      {
+        int szArr,sw,iTypppArr;
+        std::vector<int> stdvecTyyppArr;
+        const int *nodeIdsPtr(convertIntStarLikePyObjToCppIntStar(nodeIds,sw,szArr,iTypppArr,stdvecTyyppArr));
+        self->attractSeg3MidPtsAroundNodes(ratio,nodeIdsPtr,nodeIdsPtr+szArr);
       }
 
       PyObject *getLevArrPerCellTypes(PyObject *li) const throw(INTERP_KERNEL::Exception)
@@ -2937,8 +2949,8 @@ namespace MEDCoupling
         DataArrayDoubleTuple *aa,*aa2;
         std::vector<double> bb,bb2;
         int sw;
-        const char msg[]="Python wrap of MEDCouplingUMesh::buildSlice3D : 1st paramater for origin.";
-        const char msg2[]="Python wrap of MEDCouplingUMesh::buildSlice3D : 2nd paramater for vector.";
+        const char msg[]="Python wrap of MEDCouplingUMesh::buildSlice3D : 1st parameter for origin.";
+        const char msg2[]="Python wrap of MEDCouplingUMesh::buildSlice3D : 2nd parameter for vector.";
         const double *orig=convertObjToPossibleCpp5_Safe(origin,sw,val,a,aa,bb,msg,1,spaceDim,true);
         const double *vect=convertObjToPossibleCpp5_Safe(vec,sw,val2,a2,aa2,bb2,msg2,1,spaceDim,true);
         //
@@ -2960,8 +2972,8 @@ namespace MEDCoupling
         DataArrayDoubleTuple *aa,*aa2;
         std::vector<double> bb,bb2;
         int sw;
-        const char msg[]="Python wrap of MEDCouplingUMesh::buildSlice3DSurf : 1st paramater for origin.";
-        const char msg2[]="Python wrap of MEDCouplingUMesh::buildSlice3DSurf : 2nd paramater for vector.";
+        const char msg[]="Python wrap of MEDCouplingUMesh::buildSlice3DSurf : 1st parameter for origin.";
+        const char msg2[]="Python wrap of MEDCouplingUMesh::buildSlice3DSurf : 2nd parameter for vector.";
         const double *orig=convertObjToPossibleCpp5_Safe(origin,sw,val,a,aa,bb,msg,1,spaceDim,true);
         const double *vect=convertObjToPossibleCpp5_Safe(vec,sw,val2,a2,aa2,bb2,msg2,1,spaceDim,true);
         //
@@ -2980,8 +2992,8 @@ namespace MEDCoupling
         DataArrayDoubleTuple *aa,*aa2;
         std::vector<double> bb,bb2;
         int sw;
-        const char msg[]="Python wrap of MEDCouplingUMesh::clipSingle3DCellByPlane : 1st paramater for origin.";
-        const char msg2[]="Python wrap of MEDCouplingUMesh::clipSingle3DCellByPlane : 2nd paramater for vector.";
+        const char msg[]="Python wrap of MEDCouplingUMesh::clipSingle3DCellByPlane : 1st parameter for origin.";
+        const char msg2[]="Python wrap of MEDCouplingUMesh::clipSingle3DCellByPlane : 2nd parameter for vector.";
         const double *orig=convertObjToPossibleCpp5_Safe(origin,sw,val,a,aa,bb,msg,1,3,true);
         const double *vect=convertObjToPossibleCpp5_Safe(vec,sw,val2,a2,aa2,bb2,msg2,1,3,true);
         MCAuto<MEDCouplingUMesh> ret(self->clipSingle3DCellByPlane(orig,vect,eps));
@@ -2998,8 +3010,8 @@ namespace MEDCoupling
         DataArrayDoubleTuple *aa,*aa2;
         std::vector<double> bb,bb2;
         int sw;
-        const char msg[]="Python wrap of MEDCouplingUMesh::getCellIdsCrossingPlane : 1st paramater for origin.";
-        const char msg2[]="Python wrap of MEDCouplingUMesh::getCellIdsCrossingPlane : 2nd paramater for vector.";
+        const char msg[]="Python wrap of MEDCouplingUMesh::getCellIdsCrossingPlane : 1st parameter for origin.";
+        const char msg2[]="Python wrap of MEDCouplingUMesh::getCellIdsCrossingPlane : 2nd parameter for vector.";
         const double *orig=convertObjToPossibleCpp5_Safe(origin,sw,val,a,aa,bb,msg,1,spaceDim,true);
         const double *vect=convertObjToPossibleCpp5_Safe(vec,sw,val2,a2,aa2,bb2,msg2,1,spaceDim,true);
         return self->getCellIdsCrossingPlane(orig,vect,eps);
@@ -3070,11 +3082,6 @@ namespace MEDCoupling
       MEDCouplingMappedExtrudedMesh()
       {
         return MEDCouplingMappedExtrudedMesh::New();
-      }
-
-      static PyObject *___new___(PyObject *cls, PyObject *args) throw(INTERP_KERNEL::Exception)
-      {
-        return NewMethWrapCallInitOnlyIfEmptyDictInInput(cls,args,"MEDCouplingMappedExtrudedMesh");
       }
       
       std::string __str__() const throw(INTERP_KERNEL::Exception)
@@ -3181,11 +3188,6 @@ namespace MEDCoupling
         return MEDCoupling1SGTUMesh::New(m);
       }
 
-      static PyObject *___new___(PyObject *cls, PyObject *args) throw(INTERP_KERNEL::Exception)
-      {
-        return NewMethWrapCallInitOnlyIfEmptyDictInInput(cls,args,"MEDCoupling1SGTUMesh");
-      }
-
       std::string __str__() const throw(INTERP_KERNEL::Exception)
       {
         return self->simpleRepr();
@@ -3251,11 +3253,6 @@ namespace MEDCoupling
       MEDCoupling1DGTUMesh(const MEDCouplingUMesh *m) throw(INTERP_KERNEL::Exception)
       {
         return MEDCoupling1DGTUMesh::New(m);
-      }
-
-      static PyObject *___new___(PyObject *cls, PyObject *args) throw(INTERP_KERNEL::Exception)
-      {
-        return NewMethWrapCallInitOnlyIfEmptyDictInInput(cls,args,"MEDCoupling1DGTUMesh");
       }
 
       std::string __str__() const throw(INTERP_KERNEL::Exception)
@@ -3602,11 +3599,6 @@ namespace MEDCoupling
       {
         return MEDCouplingCMesh::New(meshName);
       }
-      // serialization
-      static PyObject *___new___(PyObject *cls, PyObject *args) throw(INTERP_KERNEL::Exception)
-      {
-        return NewMethWrapCallInitOnlyIfEmptyDictInInput(cls,args,"MEDCouplingCMesh");
-      }
       std::string __str__() const throw(INTERP_KERNEL::Exception)
       {
         return self->simpleRepr();
@@ -3645,10 +3637,6 @@ namespace MEDCoupling
       MEDCouplingCurveLinearMesh(const std::string& meshName) throw(INTERP_KERNEL::Exception)
       {
         return MEDCouplingCurveLinearMesh::New(meshName);
-      }
-      static PyObject *___new___(PyObject *cls, PyObject *args) throw(INTERP_KERNEL::Exception)
-      {
-        return NewMethWrapCallInitOnlyIfEmptyDictInInput(cls,args,"MEDCouplingCurveLinearMesh");
       }
       std::string __str__() const throw(INTERP_KERNEL::Exception) 
       {
@@ -3725,11 +3713,6 @@ namespace MEDCoupling
       MEDCouplingIMesh(const std::string& meshName, int spaceDim, PyObject *nodeStrct, PyObject *origin, PyObject *dxyz) throw(INTERP_KERNEL::Exception)
       {
         return MEDCoupling_MEDCouplingIMesh_New__SWIG_1(meshName,spaceDim,nodeStrct,origin,dxyz);
-      }
-
-      static PyObject *___new___(PyObject *cls, PyObject *args) throw(INTERP_KERNEL::Exception)
-      {
-        return NewMethWrapCallInitOnlyIfEmptyDictInInput(cls,args,"MEDCouplingIMesh");
       }
 
       void setNodeStruct(PyObject *nodeStrct) throw(INTERP_KERNEL::Exception)
@@ -4019,11 +4002,25 @@ namespace MEDCoupling
          }
        }
   };
+
+  template<class T>
+ class MEDCouplingFieldT : public MEDCoupling::MEDCouplingField
+  {
+  public:
+    TypeOfTimeDiscretization getTimeDiscretization() const throw(INTERP_KERNEL::Exception);
+  protected:
+    MEDCouplingFieldT();
+    ~MEDCouplingFieldT();
+  };
+
+  %template(MEDCouplingFieldTdouble) MEDCoupling::MEDCouplingFieldT<double>;
+  %template(MEDCouplingFieldTfloat) MEDCoupling::MEDCouplingFieldT<float>;
+  %template(MEDCouplingFieldTint) MEDCoupling::MEDCouplingFieldT<int>;
   
   class MEDCouplingFieldInt;
   class MEDCouplingFieldFloat;
   
-  class MEDCouplingFieldDouble : public MEDCoupling::MEDCouplingField
+  class MEDCouplingFieldDouble : public MEDCouplingFieldT<double>
   {
   public:
     static MEDCouplingFieldDouble *New(TypeOfField type, TypeOfTimeDiscretization td=ONE_TIME);
@@ -4046,7 +4043,6 @@ namespace MEDCoupling
     MEDCouplingFieldDouble *buildNewTimeReprFromThis(TypeOfTimeDiscretization td, bool deepCopy) const throw(INTERP_KERNEL::Exception);
     MEDCouplingFieldDouble *nodeToCellDiscretization() const throw(INTERP_KERNEL::Exception);
     MEDCouplingFieldDouble *cellToNodeDiscretization() const throw(INTERP_KERNEL::Exception);
-    TypeOfTimeDiscretization getTimeDiscretization() const throw(INTERP_KERNEL::Exception);
     double getIJ(int tupleId, int compoId) const throw(INTERP_KERNEL::Exception);
     double getIJK(int cellId, int nodeIdInCell, int compoId) const throw(INTERP_KERNEL::Exception);
     void synchronizeTimeWithMesh() throw(INTERP_KERNEL::Exception);
@@ -4102,12 +4098,12 @@ namespace MEDCoupling
     double getMinValue() const throw(INTERP_KERNEL::Exception);
     double getAverageValue() const throw(INTERP_KERNEL::Exception);
     double norm2() const throw(INTERP_KERNEL::Exception);
-    double normMax() const throw(INTERP_KERNEL::Exception);
     //do not put a default value to isWAbs because confusion in python with overloaded getWeightedAverageValue method
     double getWeightedAverageValue(int compId, bool isWAbs) const throw(INTERP_KERNEL::Exception);
     double integral(int compId, bool isWAbs) const throw(INTERP_KERNEL::Exception);
     double normL1(int compId) const throw(INTERP_KERNEL::Exception);
     double normL2(int compId) const throw(INTERP_KERNEL::Exception);
+    double normMax(int compId) const throw(INTERP_KERNEL::Exception);
     DataArrayInt *findIdsInRange(double vmin, double vmax) const throw(INTERP_KERNEL::Exception);
     MEDCouplingFieldDouble *buildSubPartRange(int begin, int end, int step) const throw(INTERP_KERNEL::Exception);
     static MEDCouplingFieldDouble *MergeFields(const MEDCouplingFieldDouble *f1, const MEDCouplingFieldDouble *f2) throw(INTERP_KERNEL::Exception);
@@ -4371,6 +4367,13 @@ namespace MEDCoupling
         self->normL2(tmp);
         return convertDblArrToPyList<double>(tmp,sz);
       }
+      PyObject *normMax() const throw(INTERP_KERNEL::Exception)
+      {
+        int sz=self->getNumberOfComponents();
+        INTERP_KERNEL::AutoPtr<double> tmp=new double[sz];
+        self->normMax(tmp);
+        return convertDblArrToPyList<double>(tmp,sz);
+      }
       void renumberCells(PyObject *li, bool check=true) throw(INTERP_KERNEL::Exception)
       {
         int szArr,sw,iTypppArr;
@@ -4455,8 +4458,8 @@ namespace MEDCoupling
         std::vector<double> bb,bb2;
         int sw;
         int spaceDim=3;
-        const char msg[]="Python wrap of MEDCouplingFieldDouble::extractSlice3D : 1st paramater for origin.";
-        const char msg2[]="Python wrap of MEDCouplingFieldDouble::extractSlice3D : 2nd paramater for vector.";
+        const char msg[]="Python wrap of MEDCouplingFieldDouble::extractSlice3D : 1st parameter for origin.";
+        const char msg2[]="Python wrap of MEDCouplingFieldDouble::extractSlice3D : 2nd parameter for vector.";
         const double *orig=convertObjToPossibleCpp5_Safe(origin,sw,val,a,aa,bb,msg,1,spaceDim,true);
         const double *vect=convertObjToPossibleCpp5_Safe(vec,sw,val2,a2,aa2,bb2,msg2,1,spaceDim,true);
         //
@@ -5057,16 +5060,6 @@ namespace MEDCoupling
         return field_serialize<double>(self);
       }
 
-      static PyObject *___new___(PyObject *cls, PyObject *args) throw(INTERP_KERNEL::Exception)
-      {
-        return NewMethWrapCallInitOnlyIfDictWithSingleEltInInputGeneral<SinglePyObjExpectToBeAListOfSz2>(cls,args,"MEDCouplingFieldDouble");
-      }
-
-      PyObject *__getnewargs__() throw(INTERP_KERNEL::Exception)
-      {// put an empty dict in input to say to __new__ to call __init__...
-        return field__getnewargs__<MEDCouplingFieldDouble>(self);
-      }
-
       PyObject *__getstate__() const throw(INTERP_KERNEL::Exception)
       {
         return field__getstate__<MEDCouplingFieldDouble>(self,MEDCoupling_MEDCouplingFieldDouble_getTinySerializationInformation,MEDCoupling_MEDCouplingFieldDouble_serialize);
@@ -5236,7 +5229,7 @@ namespace MEDCoupling
        }
   };
 
-  class MEDCouplingFieldInt : public MEDCouplingField
+  class MEDCouplingFieldInt : public MEDCouplingFieldT<int>
   {
   public:
     static MEDCouplingFieldInt *New(TypeOfField type, TypeOfTimeDiscretization td=ONE_TIME);
@@ -5326,16 +5319,6 @@ namespace MEDCoupling
         return field_serialize<int>(self);
       }
 
-      static PyObject *___new___(PyObject *cls, PyObject *args) throw(INTERP_KERNEL::Exception)
-      {
-        return NewMethWrapCallInitOnlyIfDictWithSingleEltInInputGeneral<SinglePyObjExpectToBeAListOfSz2>(cls,args,"MEDCouplingFieldInt");
-      }
-
-      PyObject *__getnewargs__() throw(INTERP_KERNEL::Exception)
-      {// put an empty dict in input to say to __new__ to call __init__...
-        return field__getnewargs__<MEDCouplingFieldInt>(self);
-      }
-
       PyObject *__getstate__() const throw(INTERP_KERNEL::Exception)
       {
         return field__getstate__<MEDCouplingFieldInt>(self,MEDCoupling_MEDCouplingFieldInt_getTinySerializationInformation,MEDCoupling_MEDCouplingFieldInt_serialize);
@@ -5348,7 +5331,7 @@ namespace MEDCoupling
     }
   };
 
-  class MEDCouplingFieldFloat : public MEDCouplingField
+  class MEDCouplingFieldFloat : public MEDCouplingFieldT<float>
   {
   public:
     static MEDCouplingFieldFloat *New(TypeOfField type, TypeOfTimeDiscretization td=ONE_TIME);
@@ -5436,16 +5419,6 @@ namespace MEDCoupling
       PyObject *serialize() const throw(INTERP_KERNEL::Exception)
       {
         return field_serialize<float>(self);
-      }
-        
-      static PyObject *___new___(PyObject *cls, PyObject *args) throw(INTERP_KERNEL::Exception)
-      {
-        return NewMethWrapCallInitOnlyIfDictWithSingleEltInInputGeneral<SinglePyObjExpectToBeAListOfSz2>(cls,args,"MEDCouplingFieldFloat");
-      }
-      
-      PyObject *__getnewargs__() throw(INTERP_KERNEL::Exception)
-      {// put an empty dict in input to say to __new__ to call __init__...
-        return field__getnewargs__<MEDCouplingFieldFloat>(self);
       }
       
       PyObject *__getstate__() const throw(INTERP_KERNEL::Exception)
@@ -6055,6 +6028,35 @@ namespace MEDCoupling
     }
   };
 }
+
+%pythoncode %{
+def MEDCouplingUMeshReduce(self):
+    return MEDCouplingStdReduceFunct,(MEDCouplingUMesh,((),(self.__getstate__()),))
+def MEDCouplingCMeshReduce(self):
+    return MEDCouplingStdReduceFunct,(MEDCouplingCMesh,((),(self.__getstate__()),))
+def MEDCouplingIMeshReduce(self):
+    return MEDCouplingStdReduceFunct,(MEDCouplingIMesh,((),(self.__getstate__()),))
+def MEDCouplingMappedExtrudedMeshReduce(self):
+    return MEDCouplingStdReduceFunct,(MEDCouplingMappedExtrudedMesh,((),(self.__getstate__()),))
+def MEDCouplingCurveLinearMeshReduce(self):
+    return MEDCouplingStdReduceFunct,(MEDCouplingCurveLinearMesh,((),(self.__getstate__()),))
+def MEDCoupling1SGTUMeshReduce(self):
+    return MEDCouplingStdReduceFunct,(MEDCoupling1SGTUMesh,((),(self.__getstate__()),))
+def MEDCoupling1DGTUMeshReduce(self):
+    return MEDCouplingStdReduceFunct,(MEDCoupling1DGTUMesh,((),(self.__getstate__()),))
+def MEDCouplingFieldDoubleReduce(self):
+    self.checkConsistencyLight()
+    d=(self.getTypeOfField(),self.getTimeDiscretization())
+    return MEDCouplingStdReduceFunct,(MEDCouplingFieldDouble,(d,(self.__getstate__()),))
+def MEDCouplingFieldIntReduce(self):
+    self.checkConsistencyLight()
+    d=(self.getTypeOfField(),self.getTimeDiscretization())
+    return MEDCouplingStdReduceFunct,(MEDCouplingFieldInt,(d,(self.__getstate__()),))
+def MEDCouplingFieldFloatReduce(self):
+    self.checkConsistencyLight()
+    d=(self.getTypeOfField(),self.getTimeDiscretization())
+    return MEDCouplingStdReduceFunct,(MEDCouplingFieldFloat,(d,(self.__getstate__()),))
+%}
 
 %pythoncode %{
 import os

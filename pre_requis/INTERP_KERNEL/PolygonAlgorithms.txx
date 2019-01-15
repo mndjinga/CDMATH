@@ -37,7 +37,7 @@ namespace INTERP_KERNEL
   /*************************************************************/
   /* Computes the 3D intersection between two COPLANAR         */
   /* Segments [A,B] and [C,D], stores the result in V.         */
-  /* If A belongs to [CD] then the vertex E (preceeding A)     */
+  /* If A belongs to [CD] then the vertex E (preceding A)      */
   /* is used to decide if the crossing is real. If A coincides */
   /* with C or D, a special treatment is performed             */
   /*************************************************************/
@@ -71,7 +71,7 @@ namespace INTERP_KERNEL
             {
               if(distance2<DIM>(A,D)<_epsilon)
                 crossprod<DIM>(A,C,E,_vdouble);//store the crossprod between vectors AC and AE (E=vertex preceding A)                     
-              return false;//case of paralell segments
+              return false;//case of parallel segments
             }
           case 3://beware AB and CD may belong to a vertical plane
             det = determinant(&AB[1],&DC[1]);//determinant of the last two coefficients
@@ -94,7 +94,7 @@ namespace INTERP_KERNEL
                   {
                     if(distance2<DIM>(A,D)<_epsilon)
                       crossprod<DIM>(A,C,E,_vdouble);//store the crossprod between vectors AC and AE (E=vertex preceding A)                     
-                    return false;//case of paralell segments
+                    return false;//case of parallel segments
                   }
               }
           }
@@ -123,7 +123,7 @@ namespace INTERP_KERNEL
                 return true;
               }
             else if( same_side > _epsilon ) _terminus= !_is_in_intersection;//reflexion
-            else //separation of overlaping edges
+            else //separation of overlapping edges
               {
                 if(_Inter.empty() ) _terminus=true;
                 else if(!_is_in_intersection)
@@ -147,7 +147,7 @@ namespace INTERP_KERNEL
                 return true;
               }
             else if(fabs(in_between)<=_epsilon && dotprod<DIM>(Vdoublebis,Vdoublebis) > _epsilon)
-              //ie _vdouble=0, separation of overlaping edges at a double point
+              //ie _vdouble=0, separation of overlapping edges at a double point
               {
                 //crossprod<DIM>(A,E,B,_vdouble); 
                 if(dotprod<DIM>(_vdouble,Vdoublebis) >=_epsilon )//crossing
@@ -269,7 +269,7 @@ namespace INTERP_KERNEL
   /*******************************************************/
   /* adds the possible crossings between segments [A,B] (with end-point global indices i and i_next) */
   /*and segments [C,D] and [E,F] to the list inter and updates _End_segments */
-  /* In cases of ambiguity, the vertex G is used to decide wether the crossing should be accepted */
+  /* In cases of ambiguity, the vertex G is used to decide whether the crossing should be accepted */
   /*******************************************************/
   template<int DIM>
   inline void PolygonAlgorithms<DIM>::addCrossings( const double * A, const double * B, int i , int i_next,
@@ -405,7 +405,7 @@ namespace INTERP_KERNEL
 
     std::multimap< int, std::pair< int,bool> >::iterator mi;
 
-    /********** Initalisation of events with P1 and P2 vertices ************/
+    /********** Initialisation of events with P1 and P2 vertices ************/
     for(i_loc=0;i_loc<N1;i_loc++)
       mmap_events.insert(std::make_pair(&P_1[DIM*i_loc],i_loc));
     for(i_loc=0;i_loc<N2;i_loc++)

@@ -237,7 +237,7 @@ void MEDCouplingMesh::checkFastEquivalWith(const MEDCouplingMesh *other, double 
 }
 
 /*!
- * This method is very poor and looks only if \a this and \a other are candidate for merge of fields lying repectively on them.
+ * This method is very poor and looks only if \a this and \a other are candidate for merge of fields lying respectively on them.
  */
 bool MEDCouplingMesh::areCompatibleForMerge(const MEDCouplingMesh *other) const
 {
@@ -660,6 +660,18 @@ void MEDCouplingMesh::getCellsContainingPoints(const double *pos, int nbOfPoints
       elts->insertAtTheEnd(ret.begin(),ret.end());
       eltsIndexPtr[i+1]=elts->getNumberOfTuples();
     }
+}
+
+/*!
+ * Behaves like MEDCouplingMesh::getCellsContainingPoints for cells in \a this that are linear.
+ * For quadratic cells in \a this, this method behaves by just considering linear part of cells.
+ * This method is here only for backward compatibility (interpolation GaussPoints to GaussPoints).
+ * 
+ * \sa MEDCouplingMesh::getCellsContainingPoints, MEDCouplingRemapper::prepareNotInterpKernelOnlyGaussGauss
+ */
+void MEDCouplingMesh::getCellsContainingPointsLinearPartOnlyOnNonDynType(const double *pos, int nbOfPoints, double eps, MCAuto<DataArrayInt>& elts, MCAuto<DataArrayInt>& eltsIndex) const
+{
+  this->getCellsContainingPoints(pos,nbOfPoints,eps,elts,eltsIndex);
 }
 
 /*!

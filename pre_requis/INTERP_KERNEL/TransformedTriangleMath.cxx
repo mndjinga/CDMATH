@@ -127,7 +127,7 @@ namespace INTERP_KERNEL
           }
       }
   
-    // -- (2) check that each double product statisfies Grandy, [47], else set to 0
+    // -- (2) check that each double product satisfies Grandy, [47], else set to 0
     for(TriSegment seg = PQ ; seg <= RP ; seg = TriSegment(seg + 1))
       {
         for(DoubleProduct dp = C_YZ ; dp <=  C_10 ; dp = DoubleProduct(dp + 1))
@@ -270,7 +270,7 @@ namespace INTERP_KERNEL
           {
             const DoubleProduct dp = DP_FOR_DETERMINANT_EXPANSION[3*corner + (row - 1)];
 
-            // get edge by using correspondance between Double Product and Edge
+            // get edge by using correspondence between Double Product and Edge
             TetraEdge edge = TetraEdge(dp);
            
             // use edge only if it is surrounded by the surface

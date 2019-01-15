@@ -50,7 +50,7 @@ static PyObject *convertArray(MEDCoupling::DataArray *array, int owner)
 }
 
 /*!
- * This method is an extention of PySlice_GetIndices but less
+ * This method is an extension of PySlice_GetIndices but less
  * open than PySlice_GetIndicesEx that accepts too many situations.
  */
 void GetIndicesOfSlice(PyObject *slice, Py_ssize_t length, Py_ssize_t *start, Py_ssize_t *stop, Py_ssize_t *step, const char *msgInCaseOfFailure)
@@ -2157,7 +2157,7 @@ static const double *convertObjToPossibleCpp5_Safe(PyObject *value, int& sw, dou
             return e->getConstPointer();
           else
             {
-              std::ostringstream oss; oss << msg << "nb of tuples expected to be " << nbTuplesExpected << " , and input DataArrayDoubleTuple has always one tuple by contruction !";
+              std::ostringstream oss; oss << msg << "nb of tuples expected to be " << nbTuplesExpected << " , and input DataArrayDoubleTuple has always one tuple by construction !";
               throw INTERP_KERNEL::Exception(oss.str().c_str());
             }
         }
@@ -2467,114 +2467,6 @@ static MEDCoupling::DataArray *CheckAndRetrieveDataArrayInstance(PyObject *obj, 
         }
     }
   return reinterpret_cast< MEDCoupling::DataArray * >(aBasePtrVS);
-}
-
-static PyObject *NewMethWrapCallInitOnlyIfEmptyDictInInput(PyObject *cls, PyObject *args, const char *clsName)
-{
-  if(!PyTuple_Check(args))
-    {
-      std::ostringstream oss; oss << clsName << ".__new__ : the args in input is expected to be a tuple !";
-      throw INTERP_KERNEL::Exception(oss.str().c_str());
-    }
-  PyObject *builtinsd(PyEval_GetBuiltins());//borrowed
-  PyObject *obj(PyDict_GetItemString(builtinsd,"object"));//borrowed
-  PyObject *selfMeth(PyObject_GetAttrString(obj,"__new__"));
-  //
-  PyObject *tmp0(PyTuple_New(1));
-  PyTuple_SetItem(tmp0,0,cls); Py_XINCREF(cls);
-  PyObject *instance(PyObject_CallObject(selfMeth,tmp0));
-  Py_DECREF(tmp0);
-  Py_DECREF(selfMeth);
-  if(PyTuple_Size(args)==2 && PyDict_Check(PyTuple_GetItem(args,1)) && PyDict_Size(PyTuple_GetItem(args,1))==0 )
-    {// NOT general case. only true if in unpickeling context ! call __init__. Because for all other cases, __init__ is called right after __new__ !
-      PyObject *initMeth(PyObject_GetAttrString(instance,"__init__"));
-      PyObject *tmp3(PyTuple_New(0));
-      PyObject *tmp2(PyObject_CallObject(initMeth,tmp3));
-      Py_XDECREF(tmp2);
-      Py_DECREF(tmp3);
-      Py_DECREF(initMeth);
-    }
-  return instance;
-}
-
-template<class T>
-static PyObject *NewMethWrapCallInitOnlyIfDictWithSingleEltInInputGeneral(PyObject *cls, PyObject *args, const char *clsName)
-{
-  if(!PyTuple_Check(args))
-    {
-      std::ostringstream oss; oss << clsName << ".__new__ : the args in input is expected to be a tuple !";
-      throw INTERP_KERNEL::Exception(oss.str().c_str());
-    }
-  PyObject *builtinsd(PyEval_GetBuiltins());//borrowed
-  PyObject *obj(PyDict_GetItemString(builtinsd,"object"));//borrowed
-  PyObject *selfMeth(PyObject_GetAttrString(obj,"__new__"));
-  //
-  PyObject *tmp0(PyTuple_New(1));
-  PyTuple_SetItem(tmp0,0,cls); Py_XINCREF(cls);
-  PyObject *instance(PyObject_CallObject(selfMeth,tmp0));
-  Py_DECREF(tmp0);
-  Py_DECREF(selfMeth);
-  if(PyTuple_Size(args)==2 && PyDict_Check(PyTuple_GetItem(args,1)) && PyDict_Size(PyTuple_GetItem(args,1))==1 )
-    {// NOT general case. only true if in unpickeling context ! call __init__. Because for all other cases, __init__ is called right after __new__ !
-      PyObject *initMeth(PyObject_GetAttrString(instance,"__init__"));
-      PyObject *zeNumpyRepr(0);
-      {
-        PyObject *tmp1(PyInt_FromLong(0));
-       zeNumpyRepr=PyDict_GetItem(PyTuple_GetItem(args,1),tmp1);//borrowed
-        Py_DECREF(tmp1);
-      }
-      if(!zeNumpyRepr)
-        {
-          std::ostringstream oss; oss << clsName << ".__new__ : the args in input is expected to be a tuple !";
-          throw INTERP_KERNEL::Exception(oss.str().c_str());
-        }
-      T tt;
-      {
-        PyObject *tmp3(0);
-        try
-          {
-            tmp3=tt(zeNumpyRepr);
-          }
-        catch(INTERP_KERNEL::Exception& e)
-          {
-            std::ostringstream oss; oss << clsName << ".__new__ : Invalid type in input " << " : " << e.what();
-            throw INTERP_KERNEL::Exception(oss.str());
-          }
-        {
-          PyObject *tmp2(PyObject_CallObject(initMeth,tmp3));
-          Py_XDECREF(tmp2);
-        }
-        Py_DECREF(tmp3);
-      }
-      Py_DECREF(initMeth);
-    }
-  return instance;
-}
-
-struct SinglePyObjToBePutInATuple
-{
-  PyObject *operator()(PyObject *zeNumpyRepr)
-  {
-    PyObject *tmp3(PyTuple_New(1));
-    PyTuple_SetItem(tmp3,0,zeNumpyRepr); Py_XINCREF(zeNumpyRepr);
-    return tmp3;
-  }
-};
-
-struct SinglePyObjExpectToBeAListOfSz2
-{
-  PyObject *operator()(PyObject *uniqueElt)
-  {
-    if(!PyTuple_Check(uniqueElt) || PyTuple_Size(uniqueElt)!=2)
-      throw INTERP_KERNEL::Exception("Not a tuple of size 2 !");
-    Py_XINCREF(uniqueElt);
-    return uniqueElt;
-  }
-};
-
-static PyObject *NewMethWrapCallInitOnlyIfDictWithSingleEltInInput(PyObject *cls, PyObject *args, const char *clsName)
-{
-  return NewMethWrapCallInitOnlyIfDictWithSingleEltInInputGeneral<SinglePyObjToBePutInATuple>(cls,args,clsName);
 }
 
 static PyObject *convertPartDefinition(MEDCoupling::PartDefinition *pd, int owner)
@@ -3137,6 +3029,79 @@ PyObject *DataArrayT__getitem__internal(const typename MEDCoupling::Traits<T>::A
       }
     default:
       throw INTERP_KERNEL::Exception(msg);
+    }
+}
+
+bool isCSRMatrix(PyObject *m)
+{
+#if defined(WITH_NUMPY) && defined(WITH_SCIPY)
+  PyObject* pdict(PyDict_New());
+  PyDict_SetItemString(pdict, "__builtins__", PyEval_GetBuiltins());
+  PyObject *tmp(PyRun_String("from scipy.sparse import csr_matrix", Py_single_input, pdict, pdict));
+  if(!tmp)
+    throw INTERP_KERNEL::Exception("Problem during loading csr_matrix in scipy.sparse ! Is Scipy module available in present ?");
+  PyObject *csrMatrixCls=PyDict_GetItemString(pdict,"csr_matrix");
+  if(!csrMatrixCls)
+    throw INTERP_KERNEL::Exception("csr_matrix not found in scipy.sparse ! Is Scipy module available in present ?");
+  bool ret(PyObject_IsInstance(m,csrMatrixCls));
+  Py_DECREF(pdict); Py_XDECREF(tmp);
+  return ret;
+#else
+  return false;
+#endif
+}
+
+void convertCSR_MCDataToVectMapIntDouble(const MEDCoupling::DataArrayInt *indptrPtr, const MEDCoupling::DataArrayInt *indicesPtr, const MEDCoupling::DataArrayDouble *dataPtr, std::vector<std::map<int,double> >& mCpp)
+{
+  auto nbOfRows(indptrPtr->getNumberOfTuples()-1);
+  if(nbOfRows<0)
+    throw INTERP_KERNEL::Exception("pywrap of MEDCouplingRemapper::setMatrix : input CSR matrix looks bad regarding indptr array !");
+  mCpp.resize(nbOfRows);
+  auto indPtrCPtr(indptrPtr->begin());
+  auto indicesCPtr(indicesPtr->begin());
+  auto dataCPtr(dataPtr->begin());
+  for(auto i=0;i<nbOfRows;i++)
+    {
+      auto& line(mCpp[i]);
+      for(auto j=indPtrCPtr[i];j<indPtrCPtr[i+1];j++)
+        {
+          line[indicesCPtr[j]]=dataCPtr[j];
+        }
+    }
+}
+
+void convertToVectMapIntDouble(PyObject *pyobj, std::vector<std::map<int,double> >& mCpp)
+{
+  if(!PyList_Check(pyobj))
+    throw INTERP_KERNEL::Exception("convertToVectMapIntDouble : input is not a python list !");
+  mCpp.clear();
+  Py_ssize_t sz(PyList_Size(pyobj));
+  mCpp.resize(sz);
+  for(Py_ssize_t i=0;i<sz;i++)
+    {
+      PyObject *elt(PyList_GetItem(pyobj,i));
+      if(!PyDict_Check(elt))
+        {
+          std::ostringstream oss; oss << "convertToVectMapIntDouble : at pos # " << i << " of pylist a dict is exepect !";
+          throw INTERP_KERNEL::Exception(oss.str());
+        }
+      PyObject *key, *value;
+      Py_ssize_t pos(0);
+      std::map<int,double>& mapCpp(mCpp[i]);
+      while(PyDict_Next(elt,&pos,&key,&value))
+        {
+          if(!PyInt_Check(key))
+            {
+              std::ostringstream oss; oss << "convertToVectMapIntDouble : at pos # " << i << " of pylist the dict contains at pos " << pos << " a key not mappable to pyint !";
+              throw INTERP_KERNEL::Exception(oss.str());
+            }
+          if(!PyFloat_Check(value))
+            {
+              std::ostringstream oss; oss << "convertToVectMapIntDouble : at pos # " << i << " of pylist the dict contains at pos " << pos << " the value not mappable to pyfloat !";
+              throw INTERP_KERNEL::Exception(oss.str());
+            }
+          mapCpp[(int)PyInt_AS_LONG(key)]=PyFloat_AS_DOUBLE(value);
+        }
     }
 }
 

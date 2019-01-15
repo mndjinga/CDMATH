@@ -149,6 +149,7 @@ namespace MEDCoupling
     MEDCOUPLING_EXPORT void renumberNodesWithOffsetInConn(int offset);
     MEDCOUPLING_EXPORT void renumberNodesInConn(const INTERP_KERNEL::HashMap<int,int>& newNodeNumbersO2N);
     MEDCOUPLING_EXPORT void renumberNodesInConn(const int *newNodeNumbersO2N);
+    MEDCOUPLING_EXPORT void renumberNodesInConn(const std::map<int,int>& newNodeNumbersO2N) override;
     MEDCOUPLING_EXPORT void shiftNodeNumbersInConn(int delta);
     MEDCOUPLING_EXPORT void duplicateNodesInConn(const int *nodeIdsToDuplicateBg, const int *nodeIdsToDuplicateEnd, int offset);
     MEDCOUPLING_EXPORT void renumberCells(const int *old2NewBg, bool check=true);
@@ -170,7 +171,8 @@ namespace MEDCoupling
     MEDCOUPLING_EXPORT DataArrayDouble *distanceToPoints(const DataArrayDouble *pts, DataArrayInt *& cellIds) const;
     MEDCOUPLING_EXPORT int getCellContainingPoint(const double *pos, double eps) const;
     MEDCOUPLING_EXPORT void getCellsContainingPoint(const double *pos, double eps, std::vector<int>& elts) const;
-    MEDCOUPLING_EXPORT void getCellsContainingPoints(const double *pos, int nbOfPoints, double eps, MCAuto<DataArrayInt>& elts, MCAuto<DataArrayInt>& eltsIndex) const;
+    MEDCOUPLING_EXPORT void getCellsContainingPoints(const double *pos, int nbOfPoints, double eps, MCAuto<DataArrayInt>& elts, MCAuto<DataArrayInt>& eltsIndex) const override;
+    MEDCOUPLING_EXPORT void getCellsContainingPointsLinearPartOnlyOnNonDynType(const double *pos, int nbOfPoints, double eps, MCAuto<DataArrayInt>& elts, MCAuto<DataArrayInt>& eltsIndex) const override;
     MEDCOUPLING_EXPORT void checkButterflyCells(std::vector<int>& cells, double eps=1e-12) const;
     MEDCOUPLING_EXPORT DataArrayInt *convexEnvelop2D();
     MEDCOUPLING_EXPORT DataArrayInt *findAndCorrectBadOriented3DExtrudedCells();
@@ -189,6 +191,8 @@ namespace MEDCoupling
     MEDCOUPLING_EXPORT DataArrayInt *simplexize(int policy);
     MEDCOUPLING_EXPORT bool areOnlySimplexCells() const;
     MEDCOUPLING_EXPORT void convertDegeneratedCells();
+    MEDCOUPLING_EXPORT DataArrayInt *convertDegeneratedCellsAndRemoveFlatOnes();
+    MEDCOUPLING_EXPORT bool removeDegenerated1DCells();
     MEDCOUPLING_EXPORT void are2DCellsNotCorrectlyOriented(const double *vec, bool polyOnly, std::vector<int>& cells) const;
     MEDCOUPLING_EXPORT void orientCorrectly2DCells(const double *vec, bool polyOnly);
     MEDCOUPLING_EXPORT void changeOrientationOfCells();
@@ -196,6 +200,7 @@ namespace MEDCoupling
     MEDCOUPLING_EXPORT void orientCorrectlyPolyhedrons();
     MEDCOUPLING_EXPORT void invertOrientationOfAllCells();
     MEDCOUPLING_EXPORT void getFastAveragePlaneOfThis(double *vec, double *pos) const;
+    MEDCOUPLING_EXPORT void attractSeg3MidPtsAroundNodes(double ratio, const int *nodeIdsBg, const int *nodeIdsEnd);
     //Mesh quality
     MEDCOUPLING_EXPORT MEDCouplingFieldDouble *getEdgeRatioField() const;
     MEDCOUPLING_EXPORT MEDCouplingFieldDouble *getAspectRatioField() const;
@@ -205,7 +210,7 @@ namespace MEDCoupling
     //utilities for MED File RW
     MEDCOUPLING_EXPORT std::vector<int> getDistributionOfTypes() const;
     MEDCOUPLING_EXPORT DataArrayInt *checkTypeConsistencyAndContig(const std::vector<int>& code, const std::vector<const DataArrayInt *>& idsPerType) const;
-    MEDCOUPLING_EXPORT void splitProfilePerType(const DataArrayInt *profile, std::vector<int>& code, std::vector<DataArrayInt *>& idsInPflPerType, std::vector<DataArrayInt *>& idsPerType) const;
+    MEDCOUPLING_EXPORT void splitProfilePerType(const DataArrayInt *profile, std::vector<int>& code, std::vector<DataArrayInt *>& idsInPflPerType, std::vector<DataArrayInt *>& idsPerType, bool smartPflKiller=true) const;
     MEDCOUPLING_EXPORT MEDCouplingUMesh *emulateMEDMEMBDC(const MEDCouplingUMesh *nM1LevMesh, DataArrayInt *desc, DataArrayInt *descIndx, DataArrayInt *&revDesc, DataArrayInt *&revDescIndx, DataArrayInt *& nM1LevMeshIds, DataArrayInt *&meshnM1Old2New) const;
     MEDCOUPLING_EXPORT DataArrayInt *sortCellsInMEDFileFrmt();
     MEDCOUPLING_EXPORT bool checkConsecutiveCellTypes() const;
@@ -234,6 +239,7 @@ namespace MEDCoupling
     MEDCOUPLING_EXPORT DataArrayDouble *computePlaneEquationOf3DFaces() const;
     MEDCOUPLING_EXPORT DataArrayInt *conformize2D(double eps);
     MEDCOUPLING_EXPORT DataArrayInt *colinearize2D(double eps);
+    MEDCOUPLING_EXPORT DataArrayInt *colinearizeKeepingConform2D(double eps);
     MEDCOUPLING_EXPORT DataArrayInt *conformize3D(double eps);
     MEDCOUPLING_EXPORT int split2DCells(const DataArrayInt *desc, const DataArrayInt *descI, const DataArrayInt *subNodesInSeg, const DataArrayInt *subNodesInSegI, const DataArrayInt *midOpt=0, const DataArrayInt *midOptI=0);
     MEDCOUPLING_EXPORT static MEDCouplingUMesh *Build0DMeshFromCoords(DataArrayDouble *da);
@@ -319,7 +325,10 @@ namespace MEDCoupling
     DataArrayInt *buildUnionOf2DMeshQuadratic(const MEDCouplingUMesh *skin, const DataArrayInt *n2o) const;
     template<int SPACEDIM>
     void getCellsContainingPointsAlg(const double *coords, const double *pos, int nbOfPoints,
-                                     double eps, MCAuto<DataArrayInt>& elts, MCAuto<DataArrayInt>& eltsIndex) const;
+                                     double eps, MCAuto<DataArrayInt>& elts, MCAuto<DataArrayInt>& eltsIndex, std::function<bool(INTERP_KERNEL::NormalizedCellType,int)> sensibilityTo2DQuadraticLinearCellsFunc) const;
+    void getCellsContainingPointsZeAlg(const double *pos, int nbOfPoints, double eps,
+                                       MCAuto<DataArrayInt>& elts, MCAuto<DataArrayInt>& eltsIndex,
+                                       std::function<bool(INTERP_KERNEL::NormalizedCellType,int)> sensibilityTo2DQuadraticLinearCellsFunc) const;
 /// @cond INTERNAL
     static MEDCouplingUMesh *MergeUMeshesLL(const std::vector<const MEDCouplingUMesh *>& a);
     typedef int (*DimM1DescNbrer)(int id, unsigned nb, const INTERP_KERNEL::CellModel& cm, bool compute, const int *conn1, const int *conn2);
@@ -349,13 +358,17 @@ namespace MEDCoupling
     void buildSubCellsFromCut(const std::vector< std::pair<int,int> >& cut3DSurf, const int *desc, const int *descIndx, const double *coords, double eps, std::vector<std::vector<int> >& res) const;
     void split2DCellsLinear(const DataArrayInt *desc, const DataArrayInt *descI, const DataArrayInt *subNodesInSeg, const DataArrayInt *subNodesInSegI);
     int split2DCellsQuadratic(const DataArrayInt *desc, const DataArrayInt *descI, const DataArrayInt *subNodesInSeg, const DataArrayInt *subNodesInSegI, const DataArrayInt *mid, const DataArrayInt *midI);
-    static bool Colinearize2DCell(const double *coords, const int *connBg, const int *connEnd, int offset, DataArrayInt *newConnOfCell, DataArrayDouble *appendedCoords);
+    static bool Colinearize2DCell(const double *coords, const int *connBg, const int *connEnd, int offset, const std::map<int, bool>& forbiddenPoints, DataArrayInt *newConnOfCell, DataArrayDouble *appendedCoords);
     static void ComputeAllTypesInternal(std::set<INTERP_KERNEL::NormalizedCellType>& types, const DataArrayInt *nodalConnec, const DataArrayInt *nodalConnecIndex);
     static bool OrderPointsAlongLine(const double * coo, int startNode, int endNode,
                                                 const int * c, const int * cI, const int *idsBg, const int *endBg,
                                                 std::vector<int> & pointIds, std::vector<int> & hitSegs);
     static void ReplaceEdgeInFace(const int * sIdxConn, const int * sIdxConnE, int startNode, int endNode,
                                       const std::vector<int>& insidePoints, std::vector<int>& modifiedFace);
+    void attractSeg3MidPtsAroundNodesUnderground(double ratio, const int *nodeIdsBg, const int *nodeIdsEnd);
+    DataArrayInt *internalColinearize2D(double eps, bool stayConform);
+    template<class MAPCLS>
+    void renumberNodesInConnT(const MAPCLS& newNodeNumbersO2N);
   public:
     MEDCOUPLING_EXPORT static DataArrayInt *ComputeRangesFromTypeDistribution(const std::vector<int>& code);
     MEDCOUPLING_EXPORT static const int N_MEDMEM_ORDER=25;

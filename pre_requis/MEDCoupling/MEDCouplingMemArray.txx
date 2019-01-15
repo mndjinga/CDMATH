@@ -404,7 +404,7 @@ namespace MEDCoupling
   /*!
    * This method performs systematically an allocation of \a newNbOfElements elements in \a this.
    * \a _nb_of_elem and \a _nb_of_elem_alloc will be equal even if only std::min<std::size_t>(_nb_of_elem,newNbOfElements) come from the .
-   * The remaing part of the new allocated chunk are available but not set previouly !
+   * The remaining part of the new allocated chunk are available but not set previously !
    * 
    * So this method should not be confused with MemArray<T>::reserve that is close to MemArray<T>::reAlloc but not same.
    */
@@ -704,7 +704,7 @@ namespace MEDCoupling
   }
   
   /*!
-   * This method desallocated \a this without modification of informations relative to the components.
+   * This method deallocated \a this without modification of information relative to the components.
    * After call of this method, DataArrayDouble::isAllocated will return false.
    * If \a this is already not allocated, \a this is let unchanged.
    */
@@ -718,7 +718,7 @@ namespace MEDCoupling
    * This method reserve nbOfElems elements in memory ( nbOfElems*8 bytes ) \b without impacting the number of tuples in \a this.
    * If \a this has already been allocated, this method checks that \a this has only one component. If not an INTERP_KERNEL::Exception will be thrown.
    * If \a this has not already been allocated, number of components is set to one.
-   * This method allows to reduce number of reallocations on invokation of DataArrayDouble::pushBackSilent and DataArrayDouble::pushBackValsSilent on \a this.
+   * This method allows to reduce number of reallocations on invocation of DataArrayDouble::pushBackSilent and DataArrayDouble::pushBackValsSilent on \a this.
    * 
    * \sa DataArrayDouble::pack, DataArrayDouble::pushBackSilent, DataArrayDouble::pushBackValsSilent
    */
@@ -769,7 +769,7 @@ namespace MEDCoupling
   }
   
   /*!
-   * This method adds at the end of \a this a serie of values [\c valsBg,\c valsEnd). This method do \b not update its time label to avoid useless incrementation
+   * This method adds at the end of \a this a series of values [\c valsBg,\c valsEnd). This method do \b not update its time label to avoid useless incrementation
    * of counter. So the caller is expected to call TimeLabel::declareAsNew on \a this at the end of the push session.
    *
    *  \param [in] valsBg - an array of values to push at the end of \c this.
@@ -2185,6 +2185,7 @@ namespace MEDCoupling
    *  \return double - the maximal value among all values of \a this array.
    *  \throw If \a this->getNumberOfComponents() != 1
    *  \throw If \a this->getNumberOfTuples() < 1
+   *  \sa getMaxAbsValue, getMinValue
    */
   template<class T>
   T DataArrayTemplate<T>::getMaxValue(int& tupleId) const
@@ -2206,6 +2207,7 @@ namespace MEDCoupling
    *  one component.
    *  \return double - the maximal value among all values of \a this array.
    *  \throw If \a this is not allocated.
+   *  \sa getMaxAbsValueInArray, getMinValueInArray
    */
   template<class T>
   T DataArrayTemplate<T>::getMaxValueInArray() const
@@ -2215,6 +2217,50 @@ namespace MEDCoupling
     return *loc;
   }
   
+  /*!
+   * Returns the maximal absolute value in \a this and the first occurrence location associated to it.
+   * \return the element in this (positive or negative) having the max abs value in \a this.
+   *  \throw If \a this is not allocated.
+   *  \throw If \a this is non one component array.
+   *  \throw If \a this is empty.
+   */
+  template<class T>
+  T DataArrayTemplate<T>::getMaxAbsValue(std::size_t& tupleId) const
+  {
+    checkAllocated();
+    if(getNumberOfComponents()!=1)
+      throw INTERP_KERNEL::Exception("DataArrayDouble::getMaxAbsValue : must be applied on DataArrayDouble with only one component, you can call 'rearrange' method before or call 'getMaxValueInArray' method !");
+    std::size_t nbTuples(this->getNumberOfTuples());
+    if(nbTuples==0)
+      throw INTERP_KERNEL::Exception("DataArrayTemplate<T>::getMaxAbsValue : empty array !");
+    T ret((T)-1);
+    tupleId=0;
+    const T *pt(begin());
+    for(std::size_t i=0;i<nbTuples;i++,pt++)
+      {
+        T cand(std::abs(*pt));
+        if(cand>ret)
+          {
+            ret=cand;
+            tupleId=i;
+          }
+      }
+    return this->getIJ(tupleId,0);
+  }
+
+  /*!
+   * Returns the maximal absolute value in \a this.
+   *  \throw If \a this is not allocated.
+   *  \throw If \a this is non one component array.
+   *  \throw If \a this is empty.
+   */
+  template<class T>
+  T DataArrayTemplate<T>::getMaxAbsValueInArray() const
+  {
+    std::size_t dummy;
+    return getMaxAbsValue(dummy);
+  }
+
   /*!
    * Returns the minimal value and its location within \a this one-dimensional array.
    *  \param [out] tupleId - index of the tuple holding the minimal value.

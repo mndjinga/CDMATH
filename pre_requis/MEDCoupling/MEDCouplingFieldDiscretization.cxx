@@ -140,7 +140,7 @@ MEDCouplingFieldDiscretization *MEDCouplingFieldDiscretization::New(TypeOfField 
     case MEDCouplingFieldDiscretizationKriging::TYPE:
       return new MEDCouplingFieldDiscretizationKriging;
     default:
-      throw INTERP_KERNEL::Exception("Choosen discretization is not implemented yet.");
+      throw INTERP_KERNEL::Exception("Chosen discretization is not implemented yet.");
   }
 }
 
@@ -361,7 +361,7 @@ void MEDCouplingFieldDiscretization::finishUnserialization(const std::vector<dou
 
 /*!
  * This method is typically the first step of renumbering. The implementation is empty it is not a bug only gauss is impacted
- * virtualy by this method.
+ * virtually by this method.
  */
 void MEDCouplingFieldDiscretization::renumberCells(const int *old2NewBg, bool check)
 {
@@ -1183,7 +1183,7 @@ bool MEDCouplingFieldDiscretizationPerCell::isEqualWithoutConsideringStr(const M
 
 /*!
  * This method is typically the first step of renumbering. The impact on _discr_per_cell is necessary here.
- * virtualy by this method.
+ * virtually by this method.
  */
 void MEDCouplingFieldDiscretizationPerCell::renumberCells(const int *old2NewBg, bool check)
 {
@@ -1663,7 +1663,7 @@ void MEDCouplingFieldDiscretizationGauss::checkCoherencyBetween(const MEDCouplin
     {
       if(dc[i]>=nbOfDesc)
         {
-          std::ostringstream oss; oss << "Cell # " << i << " of mesh \"" << mesh->getName() << "\" has an undefined gauss location ! Should never happend !";
+          std::ostringstream oss; oss << "Cell # " << i << " of mesh \"" << mesh->getName() << "\" has an undefined gauss location ! Should never happened !";
           throw INTERP_KERNEL::Exception(oss.str().c_str());
         }
       if(dc[i]<0)
@@ -1742,7 +1742,7 @@ void MEDCouplingFieldDiscretizationGauss::getValueOn(const DataArrayDouble *arr,
 
 void MEDCouplingFieldDiscretizationGauss::getValueOnPos(const DataArrayDouble *arr, const MEDCouplingMesh *mesh, int i, int j, int k, double *res) const
 {
-  throw INTERP_KERNEL::Exception("getValueOnPos(i,j,k) : Not applyable for Gauss points !");
+  throw INTERP_KERNEL::Exception("getValueOnPos(i,j,k) : Not applicable for Gauss points !");
 }
 
 DataArrayDouble *MEDCouplingFieldDiscretizationGauss::getValueOnMulti(const DataArrayDouble *arr, const MEDCouplingMesh *mesh, const double *loc, int nbOfPoints) const
@@ -2634,7 +2634,7 @@ void MEDCouplingFieldDiscretizationGaussNE::getValueOn(const DataArrayDouble *ar
 
 void MEDCouplingFieldDiscretizationGaussNE::getValueOnPos(const DataArrayDouble *arr, const MEDCouplingMesh *mesh, int i, int j, int k, double *res) const
 {
-  throw INTERP_KERNEL::Exception("getValueOnPos(i,j,k) : Not applyable for Gauss points !");
+  throw INTERP_KERNEL::Exception("getValueOnPos(i,j,k) : Not applicable for Gauss points !");
 }
 
 DataArrayDouble *MEDCouplingFieldDiscretizationGaussNE::getValueOnMulti(const DataArrayDouble *arr, const MEDCouplingMesh *mesh, const double *loc, int nbOfPoints) const

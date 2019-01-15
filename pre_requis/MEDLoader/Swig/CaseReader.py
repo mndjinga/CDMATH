@@ -23,7 +23,7 @@
 import numpy as np
 from MEDLoader import *
 from CaseIO import CaseIO
-import sys,re
+import sys,re,os
 
 class CaseReader(CaseIO):
     """ Converting a file in the Case format (Ensight) to the MED format.
@@ -38,12 +38,14 @@ class CaseReader(CaseIO):
 
     def __init__(self,fileName):
         """ Constructor """
+        CaseIO.__init__(self)
         self._fileName=fileName
         self._dirName=os.path.dirname(self._fileName)
         pass
 
     def __traduceMesh(self,name,typ,coords,cells):
         """ Convert a CASE mesh into a MEDCouplingUMesh. """
+        name = name.decode("ascii")
         nbCoords=len(coords)
         coo=np.array(coords,dtype="float64") ; coo=coo.reshape(nbCoords,3)
         coo=DataArrayDouble(coo) ; coo=coo.fromNoInterlace()
@@ -77,7 +79,7 @@ class CaseReader(CaseIO):
         arr0mc2=DataArrayInt(len(arr0),2) ; arr0mc2[:,0]=DataArrayInt(arr0)-1 ; arr0mc2[:,1]=1 ; arr0mc2.rearrange(1) ; arr0mc2.computeOffsetsFull()
         arr0mc3=DataArrayInt.Range(0,2*len(arr0),2).buildExplicitArrByRanges(arr0mc2)
         arr1mc0=DataArrayInt(arr1) ; arr1mc0.computeOffsetsFull()
-        arr1mc1=arr1mc0[arr0mc0] ; arr1mc1[1:]+=arr0mc0[1:] 
+        arr1mc1=arr1mc0[arr0mc0] ; arr1mc1[1:]+=arr0mc0[1:]
         arr1mc2=DataArrayInt(arr1).deepCopy() ; arr1mc2+=1 ; arr1mc2.computeOffsetsFull()
         arr2mc0=(arr1mc2[1:])[arr0mc3]
         #
@@ -109,14 +111,14 @@ class CaseReader(CaseIO):
         return m
 
     def __convertGeo2MED(self,geoFileName):
-        """ Convert all the geometry (all the meshes) contained in teh CASE file into MEDCouplingUMesh'es. """
+        """ Convert all the geometry (all the meshes) contained in the CASE file into MEDCouplingUMesh'es. """
         fd=open(os.path.join(self._dirName,geoFileName),"r+b") ; fd.seek(0,2) ; end=fd.tell() ; fd.seek(0) ; title=fd.read(80)
         title=title.strip().lower()
-        if "binary" not in title:
+        if b"binary" not in title:
             raise Exception("Error only binary geo files are supported for the moment !")
             pass
         zeType=True
-        if "fortran" in title:
+        if b"fortran" in title:
             mcmeshes=self.__convertGeo2MEDFortran(fd,end) ; zeType=False
         else:
             mcmeshes=self.__convertGeo2MEDC(fd,end)
@@ -139,15 +141,15 @@ class CaseReader(CaseIO):
         pos=fd.tell()
         elt=fd.read(80) ; elt=elt.strip() ; pos=fd.tell()
         mcmeshes2=[]
-        typ="part"
+        typ=b"part"
         nbOfTurn=0
-        while abs(pos-end)>8 and "part" in typ:
-            if "part" not in elt:
+        while abs(pos-end)>8 and b"part" in typ:
+            if b"part" not in elt:
                 raise Exception("Error on reading mesh fortran #1 !")
             fd.seek(fd.tell()+4)# skip #
             tmp=fd.read(80) ; meshName=tmp.split("P")[-1]
             tmp=fd.read(80)
-            if "coordinates" not in tmp:
+            if b"coordinates" not in tmp:
                 raise Exception("Error on reading mesh fortran #2 !")
             pos=fd.tell() # 644
             if nbOfTurn==0:
@@ -165,7 +167,7 @@ class CaseReader(CaseIO):
             coo=coo.reshape(nbNodes,3)
             pos+=nbNodes*3*4 ; fd.seek(pos)#np.array(0,dtype='float%i'%(typeOfCoo)).nbytes
             typ=fd.read(80).strip() ; pos=fd.tell()
-            zeK=""
+            zeK=b""
             for k in self.dictMCTyp2:
                 if k in typ:
                     zeK=k
@@ -182,7 +184,7 @@ class CaseReader(CaseIO):
             mcmeshes2.append(self.__traduceMesh(meshName,zeK,coo,nodalConn))
             pos+=nbNodesPerCell*nbCellsOfType*4
             if abs(pos-end)>8:
-                fd.seek(pos) ;elt=fd.read(80) ; typ=elt[:] ; pos+=80 
+                fd.seek(pos) ;elt=fd.read(80) ; typ=elt[:] ; pos+=80
                 pass
             nbOfTurn+=1
             pass
@@ -193,17 +195,19 @@ class CaseReader(CaseIO):
         return mcmeshes2
 
     def __convertGeo2MEDC(self,fd,end):
-        fd.readline()
-        name=fd.readline().strip() ; fd.readline() ; fd.readline()
+        #fd.readline()
+        #name=fd.readline().strip() ; fd.readline() ; fd.readline()
+        name=fd.read(80)
+        descrip=fd.read(80).strip() ; fd.read(80) ; fd.read(80)
         pos=fd.tell()
         mcmeshes=[]
         elt=fd.read(80) ; elt=elt.strip() ; pos+=80
         while pos!=end:
-            if "part" not in elt:
+            if b"part" not in elt:
                 raise Exception("Error on reading mesh #1 !")
             fd.seek(fd.tell()+4)
             meshName=fd.read(80).strip()
-            if fd.read(len("coordinates"))!="coordinates":
+            if fd.read(len("coordinates"))!=b"coordinates":
                 raise Exception("Error on reading mesh #2 !")
             pos=fd.tell()
             typeOfCoo=np.memmap(fd,dtype='byte',mode='r',offset=int(pos),shape=(1)).tolist()[0]
@@ -214,8 +218,8 @@ class CaseReader(CaseIO):
             pos+=nbNodes*3*4 ; fd.seek(pos)#np.array(0,dtype='float%i'%(typeOfCoo)).nbytes
             typ=fd.read(80).strip() ; pos=fd.tell()
             mcmeshes2=[]
-            while pos!=end and typ!="part":
-                if typ[0]=='\0': pos+=1; continue
+            while pos!=end and typ!=b"part":
+                if typ[0]==0: pos+=1; continue
                 mctyp=self.dictMCTyp2[typ]
                 nbCellsOfType=np.memmap(fd,dtype='int32',mode='r',offset=int(pos),shape=(1,)).tolist()[0]
                 pos+=4
@@ -254,21 +258,21 @@ class CaseReader(CaseIO):
                 mcmeshes.append(m)
             pass
         return mcmeshes
-        
-    
+
+
     def __convertField(self,mlfields, mcmeshes, fileName, fieldName, discr, nbCompo, locId, it):
         """ Convert the fields. """
         stars=re.search("[\*]+",fileName).group()
         st="%0"+str(len(stars))+"i"
         trueFileName=fileName.replace(stars,st%(it))
         fd=open(os.path.join(self._dirName,trueFileName),"r+b") ; fd.seek(0,2) ; end=fd.tell() ; fd.seek(0)
-        name=fd.readline().strip().split(" ")[0]
+        name=fd.read(80).strip().split(b" ")[0].decode("ascii")
         if name!=fieldName:
             raise Exception("ConvertField : mismatch")
         pos=fd.tell()
         st=fd.read(80) ; st=st.strip() ; pos=fd.tell()
         while pos!=end:
-            if st!="part":
+            if st!=b"part":
                 raise Exception("ConvertField : mismatch #2")
             fdisc=MEDCouplingFieldDiscretization.New(self.discSpatial2[discr])
             meshId=np.memmap(fd,dtype='int32',mode='r',offset=int(pos),shape=(1)).tolist()[0]-1
@@ -279,8 +283,8 @@ class CaseReader(CaseIO):
             fd.seek(pos+4)
             st=fd.read(80).strip() ; pos=fd.tell()
             offset=0
-            while pos!=end and st!="part":
-                if st!="coordinates":
+            while pos!=end and st!=b"part":
+                if st!=b"coordinates":
                     nbOfValsOfTyp=mcmeshes[meshId].getNumberOfCellsWithType(self.dictMCTyp2[st])
                 else:
                     nbOfValsOfTyp=nbOfValues
@@ -313,13 +317,13 @@ class CaseReader(CaseIO):
             raise Exception("ConvertField : mismatch")
         pos=fd.tell()
         st=fd.read(80) ; st=st.strip() ; pos=fd.tell()
-        if "part" not in st:
+        if b"part" not in st:
             raise Exception("ConvertField : mismatch #2")
         st=fd.read(80).strip() ; pos=fd.tell()
         pos+=12 # I love it
         offset=0
         nbTurn=0
-        while pos!=end and "part" not in st:
+        while pos!=end and b"part" not in st:
             fdisc=MEDCouplingFieldDiscretization.New(self.discSpatial2[discr])
             nbOfValues=fdisc.getNumberOfTuples(mcmeshes[nbTurn])
             vals2=DataArrayDouble(nbOfValues,nbCompo)
@@ -351,10 +355,10 @@ class CaseReader(CaseIO):
             nbTurn+=1
             pass
         pass
-    
+
     def loadInMEDFileDS(self):
         """ Load a CASE file into a MEDFileData object. """
-        f=file(self._fileName)
+        f=open(self._fileName)
         lines=f.readlines()
         ind=lines.index("GEOMETRY\n")
         if ind==-1:
@@ -368,16 +372,17 @@ class CaseReader(CaseIO):
             if "TIME\n" in lines:
                 end=lines.index("TIME\n")
                 pass
-            for i in range(ind + 1, end):
-                m=re.match("^([\w]+)[\s]+\per[\s]+([\w]+)[\s]*\:[\s]*([\w]+)[\s]+([\S]+)$",lines[i])
+            for i in range(ind + 1,end):
+                m=re.match("^([\w]+)[\s]+\per[\s]+([\w]+)[\s]*\:[\s]*[0-9]*[\s]*([\w]+)[\s]+([\S]+)$",lines[i])
                 if m:
                     if m.groups()[0]=="constant":
                         continue
                     spatialDisc=m.groups()[1] ; fieldName=m.groups()[2] ; nbOfCompo=self.dictCompo2[m.groups()[0]] ; fieldFileName=m.groups()[3]
-                    fieldsInfo.append((fieldName,spatialDisc,nbOfCompo,fieldFileName))
+                    if "*" in fieldFileName:
+                      fieldsInfo.append((fieldName,spatialDisc,nbOfCompo,fieldFileName))
                     pass
                 pass
-            
+
             expr=re.compile("number[\s]+of[\s]+steps[\s]*\:[\s]*([\d]+)")
             tmp = [line for line in lines if expr.search(line)]
             if tmp:

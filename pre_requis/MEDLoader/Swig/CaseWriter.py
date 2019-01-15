@@ -28,7 +28,7 @@ import sys,re,os,mmap
 
 class CaseWriter(CaseIO):
     """ Converting MED file format in memory to a the Case file format (Ensight).
-    A new file with the same base name and the .case extension is created with its depencies (.geo ...).
+    A new file with the same base name and the .case extension is created with its dependencies (.geo ...).
     """
 
     header="""FORMAT
@@ -158,7 +158,7 @@ time values:
                         typ=MEDCouplingMesh.GetCorrespondingPolyType(typ)
                         pass
                     mp=m[i:i+nbelem]
-                    mm.write(self.__str80(self.dictMCTyp[typ]))
+                    mm.write(self.__str80(self.dictMCTyp_str[typ]))
                     a=np.memmap(f,dtype='int32',mode='w+',offset=mm.tell(),shape=(1,))
                     a[0]=nbelem ; a.flush() ; mm.seek(mm.tell()+4)
                     if typ!=NORM_POLYHED and typ!=NORM_POLYGON:
@@ -201,7 +201,7 @@ time values:
         self._ze_top_dict={}
         its,areForgottenTS=mdfs.getCommonIterations()
         if areForgottenTS:
-            print("WARNING : some iterations are NOT present in all fields ! Kept iterations are : %s !"%(str(its)))
+            print(("WARNING : some iterations are NOT present in all fields ! Kept iterations are : %s !"%(str(its))))
             pass
         TimeValues=""
         for it in its:
@@ -213,10 +213,10 @@ time values:
             if nbCompo not in self.dictCompo:
                 l = [x for x in self.dictCompo if x - nbCompo > 0]
                 if len(l)==0:
-                    print("Field \"%s\" will be ignored because number of components (%i) is too big to be %s supported by case files !"%(mdf.getName(),nbCompo,str(list(self.dictCompo.keys()))))
+                    print(("Field \"%s\" will be ignored because number of components (%i) is too big to be %s supported by case files !"%(mdf.getName(),nbCompo,str(list(self.dictCompo.keys())))))
                     continue
                     pass
-                print("WARNING : Field \"%s\" will have its number of components (%i) set to %i, in order to be supported by case files (must be in %s) !"%(mdf.getName(),nbCompo,l[0],str(list(self.dictCompo.keys()))))
+                print(("WARNING : Field \"%s\" will have its number of components (%i) set to %i, in order to be supported by case files (must be in %s) !"%(mdf.getName(),nbCompo,l[0],str(list(self.dictCompo.keys())))))
                 nbCompo=l[0]
                 pass
             if nbCompo in dictVars:
@@ -270,13 +270,13 @@ time values:
                         if typ==curTyp:
                             arr=ff.getUndergroundDataArray()[bg:end].changeNbOfComponents(nbCompo,0.) ; arr=arr.toNoInterlace()
                             if typ==ON_CELLS:
-                                mm.write(self.__str80(self.dictMCTyp[geo]))
+                                mm.write(self.__str80(self.dictMCTyp_str[geo]))
                                 pass
                             elif typ==ON_NODES:
                                 mm.write(self.__str80("coordinates"))
                                 pass
                             else:
-                                print("UnManaged type of field for field \"%s\" !"%(mdf.getName()))
+                                print(("UnManaged type of field for field \"%s\" !"%(mdf.getName())))
                                 pass
                             a=np.memmap(f,dtype='float32',mode='w+',offset=mm.tell(),shape=(nbCompo,end-bg))
                             b=arr.toNumPyArray() ; b=b.reshape(nbCompo,end-bg)
@@ -319,7 +319,7 @@ time values:
     def __str80(cls,st):
         if len(st)>79:
             raise Exception("String \"%s\" is too long (>79) !"%(st))
-        return st.ljust(79)+"\n"
+        return bytes(str(st).ljust(79)+"\n", "ascii")
 
     def __computeSizeOfGeoFile(self,listOfMeshes,nn):
         sz=0

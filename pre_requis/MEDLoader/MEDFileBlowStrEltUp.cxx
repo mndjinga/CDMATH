@@ -23,6 +23,7 @@
 #include "MEDFileFieldVisitor.hxx"
 #include "MEDCouplingPartDefinition.hxx"
 #include "MCAuto.txx"
+#include <numeric>
 
 using namespace MEDCoupling;
 
@@ -336,7 +337,7 @@ public:
 private:
   void checkUniqueLoc(const std::string& loc) const;
   static MCAuto<DataArrayDouble> BuildMeshFromAngleVrille(INTERP_KERNEL::NormalizedCellType gt, const DataArrayDouble *angleDeVrille, const std::string& pfl, const MEDFileFieldLoc& loc, const MEDFileEltStruct4Mesh *zeStr, const MEDFileUMesh *mesh, const MEDFileUMesh *section, const MEDFileFieldGlobsReal *globs);
-  static MCAuto<DataArrayDouble> BuildMeshFromEpaisseur(INTERP_KERNEL::NormalizedCellType gt, const DataArrayDouble *thikness, const std::string& pfl, const MEDFileFieldLoc& loc, const MEDFileEltStruct4Mesh *zeStr, const MEDFileUMesh *mesh, const MEDFileUMesh *section, const MEDFileFieldGlobsReal *globs);
+  static MCAuto<DataArrayDouble> BuildMeshFromEpaisseur(INTERP_KERNEL::NormalizedCellType gt, const DataArrayDouble *thickness, const std::string& pfl, const MEDFileFieldLoc& loc, const MEDFileEltStruct4Mesh *zeStr, const MEDFileUMesh *mesh, const MEDFileUMesh *section, const MEDFileFieldGlobsReal *globs);
   static MCAuto<DataArrayDouble> BuildMeshPipeSEG3(const DataArrayDouble *angle, const DataArrayDouble *scale, const std::string& pfl, const MEDFileFieldLoc& loc, const MEDFileEltStruct4Mesh *zeStr, const MEDFileUMesh *mesh, const MEDFileUMesh *section, const MEDFileFieldGlobsReal *globs);
   static MCAuto<MEDCouplingUMesh> BuildMeshCommon(INTERP_KERNEL::NormalizedCellType gt, const std::string& pfl, const MEDFileFieldLoc& loc, const MEDFileEltStruct4Mesh *zeStr, const MEDFileUMesh *mesh, const MEDFileUMesh *section, const MEDFileFieldGlobsReal *globs, MCAuto<DataArrayDouble>& ptsForLoc);
   static MCAuto<DataArrayDouble> BuildMeshFromStructure(INTERP_KERNEL::NormalizedCellType gt, const std::string& pfl, const MEDFileFieldLoc& loc, const MEDFileEltStruct4Mesh *zeStr, const MEDFileUMesh *mesh, const MEDFileUMesh *section, const MEDFileFieldGlobsReal *globs);
@@ -458,20 +459,19 @@ MCAuto<DataArrayDouble> LocInfo::BuildMeshFromAngleVrille(INTERP_KERNEL::Normali
   return resu;
 }
 
-MCAuto<DataArrayDouble> LocInfo::BuildMeshFromEpaisseur(INTERP_KERNEL::NormalizedCellType gt, const DataArrayDouble *thikness, const std::string& pfl, const MEDFileFieldLoc& loc, const MEDFileEltStruct4Mesh *zeStr, const MEDFileUMesh *mesh, const MEDFileUMesh *section, const MEDFileFieldGlobsReal *globs)
+MCAuto<DataArrayDouble> LocInfo::BuildMeshFromEpaisseur(INTERP_KERNEL::NormalizedCellType gt, const DataArrayDouble *thickness, const std::string& pfl, const MEDFileFieldLoc& loc, const MEDFileEltStruct4Mesh *zeStr, const MEDFileUMesh *mesh, const MEDFileUMesh *section, const MEDFileFieldGlobsReal *globs)
 {
   MCAuto<DataArrayDouble> ptsForLoc;
   MCAuto<MEDCouplingUMesh> geoMesh(BuildMeshCommon(gt,pfl,loc,zeStr,mesh,section,globs,ptsForLoc));
   int nbSecPts(section->getNumberOfNodes()),nbCells(geoMesh->getNumberOfCells()),nbg(loc.getGaussWeights().size());
-  MCConstAuto<DataArrayDouble> zeThikness;
+  MCConstAuto<DataArrayDouble> zeThickness;
   if(!pfl.empty())
     {
       const DataArrayInt *pflArr(globs->getProfile(pfl));
-      geoMesh=geoMesh->buildPartOfMySelf(pflArr->begin(),pflArr->end(),true);
-      zeThikness=thikness->selectByTupleIdSafe(pflArr->begin(),pflArr->end());
+      zeThickness=thickness->selectByTupleIdSafe(pflArr->begin(),pflArr->end());
     }
   else
-    zeThikness.takeRef(thikness);
+    zeThickness.takeRef(thickness);
   MCAuto<DataArrayDouble> orthoArr;
   {
     MCAuto<MEDCouplingFieldDouble> ortho(geoMesh->buildOrthogonalField());
@@ -483,11 +483,14 @@ MCAuto<DataArrayDouble> LocInfo::BuildMeshFromEpaisseur(INTERP_KERNEL::Normalize
   std::vector< MCAuto<DataArrayDouble> > arrs(nbCells*nbg);
   for(int j=0;j<nbCells;j++)
     {
-      double thck(zeThikness->getIJ(j,0));
-      MCAuto<DataArrayDouble> fact(DataArrayDouble::New()); fact->alloc(1,nbCompo);
+      double thck(zeThickness->getIJ(j,0)),eccentricity(zeThickness->getIJ(j,1));
+      MCAuto<DataArrayDouble> fact(DataArrayDouble::New()),fact2(DataArrayDouble::New()); fact->alloc(1,nbCompo); fact2->alloc(1,nbCompo);
       std::copy(orthoArr->begin()+j*nbCompo,orthoArr->begin()+(j+1)*nbCompo,fact->getPointer());
-      std::transform(fact->begin(),fact->end(),fact->getPointer(),std::bind2nd(std::multiplies<double>(),thck/2.));
+      std::copy(orthoArr->begin()+j*nbCompo,orthoArr->begin()+(j+1)*nbCompo,fact2->getPointer());
+      std::for_each(fact2->rwBegin(),fact2->rwEnd(),[eccentricity](double& val){ val*=eccentricity; });
+      std::transform(fact->begin(),fact->end(),fact->getPointer(),[thck](const double& val){ return val*thck/2.; });
       MCAuto<DataArrayDouble> p(DataArrayDouble::Multiply(secPts,fact));
+      p=DataArrayDouble::Add(p,fact2);
       for(int l=0;l<nbg;l++)
         {
           MCAuto<DataArrayDouble> p2(p->deepCopy());
@@ -511,7 +514,6 @@ MCAuto<DataArrayDouble> LocInfo::BuildMeshPipeSEG3(const DataArrayDouble *angle,
   if(!pfl.empty())
     {
       const DataArrayInt *pflArr(globs->getProfile(pfl));
-      geoMesh=geoMesh->buildPartOfMySelf(pflArr->begin(),pflArr->end(),true);
       zeAngle=angle->selectByTupleIdSafe(pflArr->begin(),pflArr->end());
       zeScale=scale->selectByTupleIdSafe(pflArr->begin(),pflArr->end());
     }
@@ -541,8 +543,20 @@ MCAuto<DataArrayDouble> LocInfo::BuildMeshPipeSEG3(const DataArrayDouble *angle,
   std::vector< MCAuto<DataArrayDouble> > arrs(nbCells*nbg);
   for(int j=0;j<nbCells;j++)
     {
+      constexpr int DIM=3;
       MCAuto<DataArrayDouble> p(secPts->deepCopy());
       double ang0(rot->getIJ(j,2));
+      double rmin(zeScale->getIJ(j,0)),rmax(zeScale->getIJ(j,1));
+      {
+        auto pt(p->rwBegin());
+        for(int i=0;i<nbSecPts;i++)
+          {
+            auto nrm(sqrt(std::accumulate(pt,pt+DIM,0.,[](double sum, double v) { return sum+v*v; } )));
+            auto sca((rmin+2.*(nrm-0.5)*(rmax-rmin))/nrm);
+            std::for_each(pt,pt+3,[sca](double& val) { val*=sca; } );
+            std::advance(pt,DIM);
+          }
+      }
       DataArrayDouble::Rotate3DAlg(CENTER,AX0,ang0,nbSecPts,p->begin(),p->getPointer());
       AX1[0]=-sin(ang0); AX1[1]=cos(ang0);// rot Oy around OZ
       double ang1(M_PI/2.-rot->getIJ(j,1));

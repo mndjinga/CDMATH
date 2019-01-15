@@ -18,7 +18,12 @@
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
 
-from MEDCoupling import *
+
+import sys
+if sys.platform == "win32":
+    from MEDCouplingCompat import *
+else:
+    from MEDCoupling import *
 import unittest
 from math import pi,e,sqrt,cos,sin
 from datetime import datetime
@@ -142,7 +147,184 @@ class MEDCouplingBasicsTest6(unittest.TestCase):
         f2.setArray(DataArrayDouble(list(range(18))))
         f2.checkConsistencyLight()
         pass
+
+    def testSKLAReplaceDeletePacks(self):
+        index=DataArrayInt([0,3,5,6,6])
+        value=DataArrayInt([1,2,3, 2,3, 3  ])
+        sla=MEDCouplingSkyLineArray(index,value)
+        idx=DataArrayInt([0,3])
+        packs=[DataArrayInt([4,5]),DataArrayInt([6,7,8])]
+        sla.replaceSimplePacks(idx,packs)
+        self.assertTrue(sla.getIndexArray().isEqual(DataArrayInt([0,2,4,5,8])))
+        self.assertTrue(sla.getValuesArray().isEqual(DataArrayInt([4,5, 2,3, 3, 6,7,8])))
+        sla.deleteSimplePacks(idx)
+        self.assertTrue(sla.getIndexArray().isEqual(DataArrayInt([0,2,3])))
+        self.assertTrue(sla.getValuesArray().isEqual(DataArrayInt([2,3, 3])))
+        sla.deleteSimplePack(1)
+        self.assertTrue(sla.getIndexArray().isEqual(DataArrayInt([0,2])))
+        self.assertTrue(sla.getValuesArray().isEqual(DataArrayInt([2,3])))
+        pass
+
+    def testDADAsArcOfCircle(self):
+        d=DataArrayDouble([3.06915124862645,2.1464466094067824,2.85355345827285,2.3620444674400574,2.637955532559882,2.1464467447661937],3,2)
+        center,radius,ang=d.asArcOfCircle()
+        self.assertTrue((d-center).magnitude().isUniform(radius,1e-10))
+        self.assertAlmostEqual(ang,-4.712389294301196,12)
+        pass
+
+    def testDAMaxAbsValue(self):
+        d=DataArrayDouble([-2,3,1.2,-2.9])
+        a,b=d.getMaxAbsValue()
+        self.assertAlmostEqual(a,3.,13)
+        self.assertEqual(b,1)
+        a,b=(-d).getMaxAbsValue()
+        self.assertAlmostEqual(a,-3.,13)
+        self.assertEqual(b,1)
+        self.assertAlmostEqual((-d).getMaxAbsValueInArray(),-3.,13)
+        pass
+
+    def testDAIFindIdForEach1(self):
+        a1=DataArrayInt([17,27,2,10,-4,3,12,27,16])
+        b1=DataArrayInt([3,16,-4,27,17])
+        ret=a1.findIdForEach(b1)
+        self.assertTrue(ret.isEqual(DataArrayInt([5,8,4,7,0])))
+        self.assertTrue(a1[ret].isEqual(b1))
+        b2=DataArrayInt([3,16,22,27,17])
+        self.assertRaises(InterpKernelException,a1.findIdForEach,b2) # 22 not in a1 !
+        a1.rearrange(3)
+        self.assertRaises(InterpKernelException,a1.findIdForEach,b1) # a1 is not single component
+        pass
     
+    def testAttractSeg3MidPtsAroundNodes1(self):
+        """ Test of MEDCouplingUMesh.attractSeg3MidPtsAroundNodes methods """
+        ptsExpToBeModified=DataArrayInt([95,96,97,98,101,103,104,106,108,110])
+        eps=1e-12
+        a=2./3.
+        b=1./3.
+        coo=DataArrayDouble([10,0,0,10,10,0,10,0,3.+b,10,0,6.+a,10,10,3.+b,10,10,6.+a,10,3.+b,0,10,6.+a,0,3.+b,0,0,6.+a,0,0,3.+b,10,0,6.+a,10,0,10,3.+b,6.+a,10,6.+a,6.+a,10,3.+b,3.+b,10,6.+a,3.+b,3.+b,0,3.+b,3.+b,0,6.+a,6.+a,0,3.+b,6.+a,0,6.+a,6.+a,10,3.+b,6.+a,10,6.+a,3.+b,10,3.+b,3.+b,10,6.+a,3.+b,3.+b,0,6.+a,3.+b,0,3.+b,6.+a,0,6.+a,6.+a,0,3.+b,3.+b,6.+a,6.+a,3.+b,6.+a,3.+b,6.+a,6.+a,6.+a,6.+a,6.+a,3.+b,3.+b,3.+b,6.+a,3.+b,3.+b,3.+b,6.+a,3.+b,6.+a,6.+a,3.+b,10,0,1.+a,10,0,5.,10,10,1.+a,10,10,5.,10,1.+a,0,10,5.,0,10,8.+b,0,5.,0,0,8.+b,0,0,5.,10,0,8.+b,10,0,10,1.+a,6.+a,10,5.,6.+a,10,8.+b,6.+a,10,1.+a,3.+b,10,3.+b,5.,10,5.,3.+b,10,6.+a,5.,10,8.+b,3.+b,10,3.+b,1.+a,10,6.+a,1.+a,3.+b,0,1.+a,3.+b,0,5.,6.+a,0,1.+a,5.,0,3.+b,6.+a,0,5.,5.,0,6.+a,8.+b,0,3.+b,8.+b,0,6.+a,6.+a,10,1.+a,8.+b,10,3.+b,6.+a,10,5.,8.+b,10,6.+a,3.+b,10,1.+a,5.,10,3.+b,3.+b,10,5.,5.,10,6.+a,3.+b,1.+a,0,5.,3.+b,0,6.+a,1.+a,0,8.+b,3.+b,0,3.+b,5.,0,5.,6.+a,0,6.+a,5.,0,8.+b,6.+a,0,3.+b,8.+b,0,6.+a,8.+b,0,3.+b,1.+a,6.+a,6.+a,1.+a,6.+a,5.,3.+b,6.+a,8.+b,3.+b,6.+a,3.+b,5.,6.+a,6.+a,5.,6.+a,5.,6.+a,6.+a,8.+b,6.+a,6.+a,3.+b,8.+b,6.+a,6.+a,8.+b,6.+a,3.+b,3.+b,5,3.+b,1.+a,3.+b,6.+a,3.+b,5.,6.+a,1.+a,3.+b,5.,3.+b,3.+b,8.+b,3.+b,3.+b,3.+b,6.+a,5.,3.+b,5.,3.+b,6.+a,6.+a,5.,6.+a,5.,3.+b,5.,6.+a,3.+b,8.+b,6.+a,3.+b,3.+b,8.+b,3.+b,6.+a,8.+b,3.+b,3.+b,3.+b,1.+a,6.+a,3.+b,1.+a,3.+b,6.+a,1.+a,6.+a,6.+a,1.+a],111,3)
+        conn=DataArrayInt([30,17,28,32,16,19,29,33,18,83,93,94,58,84,95,96,61,62,85,97,60,30,19,29,33,18,3,12,14,2,84,95,96,61,47,51,50,37,64,86,98,63,30,28,30,34,32,29,31,35,33,87,99,100,93,88,101,102,95,85,89,103,97,30,29,31,35,33,12,13,15,14,88,101,102,95,48,53,52,51,86,90,104,98,30,30,23,22,34,31,21,20,35,91,71,105,99,92,67,106,101,89,72,70,103,30,31,21,20,35,13,5,4,15,92,67,106,101,49,39,54,53,90,68,66,104,30,16,32,24,8,18,33,25,9,94,107,73,57,96,108,75,59,60,97,74,43,30,18,33,25,9,2,14,6,0,96,108,75,59,50,55,40,36,63,98,76,44,30,32,34,26,24,33,35,27,25,100,109,77,107,102,110,79,108,97,103,78,74,30,33,35,27,25,14,15,7,6,102,110,79,108,52,56,41,55,98,104,80,76,30,34,22,10,26,35,20,11,27,105,69,81,109,106,65,82,110,103,70,45,78,30,35,20,11,27,15,4,1,7,106,65,82,110,54,38,42,56,104,66,46,80])
+        connI=DataArrayInt([0,21,42,63,84,105,126,147,168,189,210,231,252])
+        m=MEDCouplingUMesh("mesh",3)
+        m.setConnectivity(conn,connI,True)
+        m.setCoords(coo.deepCopy())# deep copy coo because next line is going to modify it, if it works normaly
+        m.attractSeg3MidPtsAroundNodes(0.1,DataArrayInt([33,35])) # ze call is here !
+        self.assertTrue(not m.getCoords().isEqual(coo,eps)) # some points have had their position changed...
+        ptsExpNotToBeModified=ptsExpToBeModified.buildComplement(len(coo))
+        self.assertTrue(m.getCoords()[ptsExpNotToBeModified].isEqual(coo[ptsExpNotToBeModified],eps))
+        self.assertTrue((m.getCoords()[ptsExpToBeModified]-coo[ptsExpToBeModified]).magnitude().isUniform(4./3.,1e-12))
+        ptsPosExp=DataArrayDouble([6.+a,3.+b,3.+a,6.+a,3.,3.+b,6.+b,3.+b,3.+b,7.,3.+b,3.+b,6.+a,6.+a,3.+a,6.+b,6.+a,3.+b,7.,6.+a,3.+b,6.+a,7.,3.+b,6.+a,3.+b,3.,6.+a,6.+a,3.],10,3)
+        self.assertTrue(m.getCoords()[ptsExpToBeModified].isEqual(ptsPosExp,1e-12))
+        pass
+
+    def testRenumberNodesInConnOpt(self):
+        """ Test of MEDCouplingPointSet.renumberNodesInConn with map as input coming from DataArrayInt.invertArrayN2O2O2NOptimized
+        """
+        m=MEDCouplingUMesh("mesh",2)
+        m.allocateCells()
+        m.insertNextCell(NORM_QUAD4,[10000,10002,10001,10003])
+        coo=DataArrayDouble([(0,0),(1,1),(1,0),(0,1)])
+        m.setCoords(coo)
+        m.checkConsistencyLight()
+        #
+        d=DataArrayInt([10000,10001,10002,10003])
+        myMap=d.invertArrayN2O2O2NOptimized()
+        myMap2=d.giveN2OOptimized()
+        m.checkConsistencyLight()
+        #
+        m.renumberNodesInConn(myMap) # <- test is here for UMesh
+        self.assertTrue(m.getNodalConnectivity().isEqual(DataArrayInt([4,0,2,1,3])))
+        m.renumberNodesInConn(myMap2) # <- test is here for UMesh
+        self.assertTrue(m.getNodalConnectivity().isEqual(DataArrayInt([4,10000,10002,10001,10003])))
+        #
+        m=MEDCoupling1SGTUMesh("mesh",NORM_QUAD4)
+        m.setNodalConnectivity(DataArrayInt([10000,10002,10001,10003]))
+        m.setCoords(coo)
+        m.checkConsistencyLight()
+        m.renumberNodesInConn(myMap) # <- test is here for 1SGTUMesh
+        self.assertTrue(m.getNodalConnectivity().isEqual(DataArrayInt([0,2,1,3])))
+        #
+        m=MEDCoupling1DGTUMesh("mesh",NORM_POLYGON)
+        m.setCoords(coo)
+        m.setNodalConnectivity(DataArrayInt([10000,10002,10001,10003]),DataArrayInt([0,4]))
+        m.checkConsistencyLight()
+        m.renumberNodesInConn(myMap) # <- test is here for 1DGTUMesh
+        self.assertTrue(m.getNodalConnectivity().isEqual(DataArrayInt([0,2,1,3])))
+        self.assertTrue(m.getNodalConnectivityIndex().isEqual(DataArrayInt([0,4])))
+        pass
+
+    def testSeg2bGP(self):
+        """Test of Gauss points on SEG2 using SEG2B style as ref coords
+        """
+        coo=DataArrayDouble([[0.,0.,0.],[1.,1.,1.]])
+        m=MEDCouplingUMesh("mesh",1) ; m.setCoords(coo)
+        m.allocateCells()
+        # the cell description is exactly those described in the description of HEXA27 in MED file 3.0.7 documentation
+        m.insertNextCell(NORM_SEG2,[0,1])
+        refCoo=[0.,1.]
+        weights=[0.8,0.1,0.1]
+        gCoords=[0.2,0.5,0.9]
+        fGauss=MEDCouplingFieldDouble(ON_GAUSS_PT) ; fGauss.setName("fGauss")
+        fGauss.setMesh(m)
+        fGauss.setGaussLocalizationOnType(NORM_SEG2,refCoo,gCoords,weights)
+        arr=DataArrayDouble(fGauss.getNumberOfTuplesExpected()) ; arr.iota()
+        fGauss.setArray(arr)
+        fGauss.checkConsistencyLight()
+        arrOfDisc=fGauss.getLocalizationOfDiscr()
+        self.assertTrue(arrOfDisc.isEqual(DataArrayDouble([0.2,0.2,0.2,0.5,0.5,0.5,0.9,0.9,0.9],3,3),1e-12))
+        pass
+    
+    def testUMeshGetCellsContainingPtOn2DNonDynQuadraticCells(self):
+        """getCellsContainingPoint is now dealing curves of quadratic 2D elements.
+This test is a mesh containing 2 QUAD8 cells. The input point is located at a special loc.
+If true geometry (with curve as edges) is considered the result of getCellsContainingPoint is not the same as if only linear part of cells is considered."""
+        coords=DataArrayDouble([-0.9428090415820631,0.9428090415820631,-1.06066017177982,1.06066017177982,-1.1785113019775801,1.1785113019775801,-1.2963624321753402,1.2963624321753402,-1.4142135623731,1.41421356237309,-0.7653668647301801,1.8477590650225701,-0.6378057206084831,1.53979922085214,-0.510244576486786,1.23183937668172,-0.701586292669331,1.6937791429373599,-0.574025148547635,1.38581929876693,-0.9259503883660041,1.38578268717091,-0.740760310692803,1.10862614973673,-1.1111404660392,1.66293922460509],13,2)
+        m=MEDCouplingUMesh("mesh",2)
+        m.setCoords(coords)
+        m.allocateCells()
+        m.insertNextCell(NORM_QUAD8,[4,2,6,5,3,10,8,12])
+        m.insertNextCell(NORM_QUAD8,[2,0,7,6,1,11,9,10])
+        #
+        zePt=DataArrayDouble([-0.85863751450784975,1.4203162316045934],1,2)
+        a,b=m.getCellsContainingPoints(zePt,1e-12)
+        self.assertTrue(b.isEqual(DataArrayInt([0,1])))
+        self.assertTrue(a.isEqual(DataArrayInt([1]))) # <- test is here. 0 if only linear parts are considered.
+        #
+        a,b=m.getCellsContainingPointsLinearPartOnlyOnNonDynType(zePt,1e-12)
+        self.assertTrue(b.isEqual(DataArrayInt([0,1])))
+        self.assertTrue(a.isEqual(DataArrayInt([0]))) # <- like before
+        pass
+
+    def testComputeIntegralOfSeg2IntoTri3_1(self):
+        seg2 = [(90453.702115782813, 36372.66281307926), (90457.969790110554, 36373.365088601546)]
+        tri3 = [(90466.90625, 36376.9375), (90446.5, 36404), (90453.1875, 36365.75)]
+        a,b=DataArrayDouble.ComputeIntegralOfSeg2IntoTri3(seg2,tri3)
+        self.assertEqual(len(a),3)
+        self.assertAlmostEqual(a[0],0.2460689650955214,12)
+        self.assertAlmostEqual(a[1],0.10875598777133343,12)
+        self.assertAlmostEqual(a[2],0.6451750471331451,12)
+        self.assertAlmostEqual(b,4.32507052854159,12)
+        pass
+
+    def testRemoveDegenerated1DCells1(self):
+        m=MEDCoupling1SGTUMesh("mesh",NORM_SEG2)
+        conn=DataArrayInt([1,2, 3,4, 5,5, 5,6, 6,6, 6,7, 19,19, 7,8])
+        m.setNodalConnectivity(conn) # no coords set. It s not a bug. removeDegenerated1DCells doesn't care
+        m=m.buildUnstructured()
+        aa=m.getNodalConnectivity().getHiddenCppPointer()
+        self.assertTrue(m.removeDegenerated1DCells()) # <- test is here
+        bb=m.getNodalConnectivity().getHiddenCppPointer()
+        self.assertNotEqual(aa,bb)
+        expConn=DataArrayInt([1,1,2,1,3,4,1,5,6,1,6,7,1,7,8])
+        expConnI=DataArrayInt.Range(0,16,3)
+        self.assertTrue(m.getNodalConnectivity().isEqual(expConn))
+        self.assertTrue(m.getNodalConnectivityIndex().isEqual(expConnI))
+        self.assertTrue(not m.removeDegenerated1DCells())
+        cc=m.getNodalConnectivity().getHiddenCppPointer()
+        self.assertEqual(bb,cc)
+        self.assertTrue(m.getNodalConnectivity().isEqual(expConn))
+        self.assertTrue(m.getNodalConnectivityIndex().isEqual(expConnI))
+        pass
+
     pass
 
 if __name__ == '__main__':

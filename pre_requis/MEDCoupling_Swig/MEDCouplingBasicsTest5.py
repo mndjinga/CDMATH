@@ -17,7 +17,13 @@
 #
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
-from MEDCoupling import *
+
+import sys
+if sys.platform == "win32":
+    from MEDCouplingCompat import *
+else:
+    from MEDCoupling import *
+
 import unittest
 from math import pi,e,sqrt,cos,sin
 from datetime import datetime
@@ -1461,7 +1467,7 @@ class MEDCouplingBasicsTest5(unittest.TestCase):
         self.assertEqual(f4.getMesh(),None)
         pass
 
-    # test a simple node to cell convertion of a field
+    # test a simple node to cell conversion of a field
     def testSwig2NodeToCellDiscretization1(self):
         f=MEDCouplingFieldDouble(ON_NODES) ; f.setTime(1.1,2,3)
         a1=DataArrayDouble(4) ; a1.iota()
@@ -1890,7 +1896,7 @@ class MEDCouplingBasicsTest5(unittest.TestCase):
         gaussCoords=refCoords[:] ; gaussCoords[14]=0.9999999999999 # change z of point #4 0.999... instead of 1. because with shape function it leads to division by 0. !
         fGauss.setGaussLocalizationOnType(NORM_PYRA13,refCoords,gaussCoords,weights)
         arrOfDisc2=fGauss.getLocalizationOfDiscr()
-        self.assertTrue(arrOfDisc2.isEqual(coo,1e-10)) # be less exigent 1e-10 instead of 1e-12 due to shape function sensitivity arount 0.,0.,1. !
+        self.assertTrue(arrOfDisc2.isEqual(coo,1e-10)) # be less exigent 1e-10 instead of 1e-12 due to shape function sensitivity around 0.,0.,1. !
         pass
 
     def testSwig2Tri7GP1(self):
@@ -1999,6 +2005,26 @@ class MEDCouplingBasicsTest5(unittest.TestCase):
         self.assertTrue(m.getCoords()[20:].isEqual(DataArrayDouble([(1.,0.),(7.,6.)]),1e-12))
         self.assertTrue(m.getNodalConnectivity().isEqual(DataArrayInt([32,0,3,4,20,21,16])))
         self.assertTrue(m.getNodalConnectivityIndex().isEqual(DataArrayInt([0,7])))
+        pass
+
+    def testSwig2ColinearizeKeepingConform2D1(self):
+        eps = 1.0e-6
+        # Just to get a nice coords array ...
+        mm = MEDCouplingCMesh(); arr = DataArrayDouble([0.0, 1.0,2.0])
+        mm.setCoords(arr, arr);  mm = mm.buildUnstructured();   coo = mm.getCoords()
+         
+        mesh = MEDCouplingUMesh("M", 2)
+        mesh.setCoords(coo)
+        c = [NORM_POLYGON, 0,1,4,7,6,3,  NORM_QUAD4, 1,2,5,4,  NORM_QUAD4,4,5,8,7]
+        cI = [0, 7,12,17]
+        mm.setConnectivity(DataArrayInt(c),DataArrayInt(cI))
+        mm.checkConsistencyLight()
+        
+        mm.colinearizeKeepingConform2D(eps)
+        c = mm.getNodalConnectivity().getValues()
+        cI = mm.getNodalConnectivityIndex().getValues()
+        self.assertEqual(c, [NORM_POLYGON, 0, 1, 4, 7, 6, NORM_POLYGON, 1, 2, 5, 4, NORM_POLYGON, 4, 5, 8, 7])
+        self.assertEqual(cI, [0,6,11,16])
         pass
 
     def testSwig2BoundingBoxForBBTree1(self):
@@ -2122,7 +2148,7 @@ class MEDCouplingBasicsTest5(unittest.TestCase):
         pass
 
     def testSwig2Colinearize2D3(self):
-        """ colinearize was too agressive, potentially producing cells with one edge """
+        """ colinearize was too aggressive, potentially producing cells with one edge """
         # Flat polygon  with 3 edges - nothing should happen (min number of edges for a linear polyg)
         coo = DataArrayDouble([0.0,0.0,  2.0,0.0,   1.5,0.0,  1.0,0.0,  0.5,0.0], 5,2)
         m = MEDCouplingUMesh("m", 2)
@@ -2169,6 +2195,23 @@ class MEDCouplingBasicsTest5(unittest.TestCase):
         self.assertEqual([NORM_QPOLYG, 3,5,  8,4], m.getNodalConnectivity().getValues())
         self.assertTrue( m.getCoords()[8].isEqual( DataArrayDouble([(1.0,0.0)]), 1.0e-12 ) )
         self.assertEqual([0,5], m.getNodalConnectivityIndex().getValues())
+
+    def testSwig2Colinearize2D4(self):
+        """ From ALAMOS. Colinearize around last seg in the connectivity was buggy. """
+        mesh = MEDCouplingUMesh('C3', 2)
+        coo = DataArrayDouble([(-31.838400909874,21.557335816426),(-34.588400909874,16.794196095611),(-33.298676775512,19.225000000000),(-33.547226066398,19.368500000000),(-32.750140188627,22.083728734445),(-35.500140188627,17.320589013630),
+                               (-35.044270549250,17.057392554621),(-32.619779010901,22.008464673393),(-32.554667298175,21.970872408523),(-32.745177043525,22.080863261284),(-32.747658616076,22.082295997864),(-32.682478027213,22.044663967338)])
+        mesh.setCoords(coo)
+        c = DataArrayInt([32, 0, 1, 5, 4, 9, 7, 2, 6, 3, 10, 11, 8])
+        cI = DataArrayInt([0, 13])
+        mesh.setConnectivity(c, cI)
+        mesh.colinearize2D(1.0e-8)
+        coo = mesh.getCoords()
+        self.assertEqual(coo.getNumberOfTuples(), 13)
+        lstPt = coo[12]
+        self.assertAlmostEqual(lstPt[0,0], -32.29427054925)
+        self.assertAlmostEqual(lstPt[0,1], 21.8205322754351)
+        pass
 
     def testSwig2CheckAndPreparePermutation2(self):
         a=DataArrayInt([10003,9999999,5,67])
@@ -4620,8 +4663,16 @@ class MEDCouplingBasicsTest5(unittest.TestCase):
     def testUMeshComputeEnlargedNeighborsOfNodes(self):
         m=MEDCouplingCMesh() ; arr=DataArrayDouble(4) ; arr.iota() ; m.setCoords(arr,arr) ; m=m.buildUnstructured()
         a,b=m.computeEnlargedNeighborsOfNodes()
-        self.assertTrue(a.isEqual(DataArrayInt([1,4,5,0,2,4,5,6,1,3,5,6,7,2,6,7,0,1,5,8,9,0,1,2,4,6,8,9,10,1,2,3,5,7,9,10,11,2,3,6,10,11,4,5,9,12,13,4,5,6,8,10,12,13,14,5,6,7,9,11,13,14,15,6,7,10,14,15,8,9,13,8,9,10,12,14,9,10,11,13,15,10,11,14])))
-        self.assertTrue(b.isEqual(DataArrayInt([0,3,8,13,16,21,29,37,42,47,55,63,68,71,76,81,84])))
+        aExp=DataArrayInt([1,4,5,0,2,4,5,6,1,3,5,6,7,2,6,7,0,1,5,8,9,0,1,2,4,6,8,9,10,1,2,3,5,7,9,10,11,2,3,6,10,11,4,5,9,12,13,4,5,6,8,10,12,13,14,5,6,7,9,11,13,14,15,6,7,10,14,15,8,9,13,8,9,10,12,14,9,10,11,13,15,10,11,14])
+        bExp=DataArrayInt([0,3,8,13,16,21,29,37,42,47,55,63,68,71,76,81,84])
+        self.assertTrue(a.isEqual(aExp))
+        self.assertTrue(b.isEqual(bExp))
+        m2=m[[1,2,3]]
+        c,d=m2.computeEnlargedNeighborsOfNodes()
+        cExp=DataArrayInt([2,5,6,1,3,5,6,7,2,6,7,5,8,9,1,2,4,6,8,9,1,2,3,5,7,2,3,6,4,5,9,4,5,8])
+        dExp=DataArrayInt([0,0,3,8,11,14,20,25,28,31,34,34,34,34,34,34,34])
+        self.assertTrue(c.isEqual(cExp))
+        self.assertTrue(d.isEqual(dExp))
         pass
 
     def testDAIfindIdsExt1(self):

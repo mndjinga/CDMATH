@@ -190,8 +190,8 @@ MEDCouplingFieldDouble *MEDCouplingFieldDouble::buildNewTimeReprFromThis(TypeOfT
 }
 
 /*!
- * This method converts a field on nodes (\a this) to a cell field (returned field). The convertion is a \b non \b conservative remapping !
- * This method is useful only for users that need a fast convertion from node to cell spatial discretization. The algorithm applied is simply to attach
+ * This method converts a field on nodes (\a this) to a cell field (returned field). The conversion is a \b non \b conservative remapping !
+ * This method is useful only for users that need a fast conversion from node to cell spatial discretization. The algorithm applied is simply to attach
  * to each cell the average of values on nodes constituting this cell.
  *
  * \return MEDCouplingFieldDouble* - a new instance of MEDCouplingFieldDouble. The
@@ -246,8 +246,8 @@ MEDCouplingFieldDouble *MEDCouplingFieldDouble::nodeToCellDiscretization() const
 }
 
 /*!
- * This method converts a field on cell (\a this) to a node field (returned field). The convertion is a \b non \b conservative remapping !
- * This method is useful only for users that need a fast convertion from cell to node spatial discretization. The algorithm applied is simply to attach
+ * This method converts a field on cell (\a this) to a node field (returned field). The conversion is a \b non \b conservative remapping !
+ * This method is useful only for users that need a fast conversion from cell to node spatial discretization. The algorithm applied is simply to attach
  * to each node the average of values on cell sharing this node. If \a this lies on a mesh having orphan nodes the values applied on them will be NaN (division by 0.).
  *
  * \return MEDCouplingFieldDouble* - a new instance of MEDCouplingFieldDouble. The
@@ -381,7 +381,7 @@ bool MEDCouplingFieldDouble::areCompatibleForMeld(const MEDCouplingFieldDouble *
  *  \throw If the spatial discretization of \a this field is NULL.
  *  \throw If \a check == \c true and \a old2NewBg contains equal ids.
  *  \throw If mesh nature does not allow renumbering (e.g. structured mesh).
- *  \throw If values at merged nodes deffer more than \a eps.
+ *  \throw If values at merged nodes differ more than \a eps.
  * 
  *  \if ENABLE_EXAMPLES
  *  \ref cpp_mcfielddouble_renumberNodes "Here is a C++ example".<br>
@@ -421,7 +421,7 @@ void MEDCouplingFieldDouble::renumberNodes(const int *old2NewBg, double eps)
  *         the values differ more than \a eps, an exception is thrown.
  *  \throw If the mesh is not set.
  *  \throw If the spatial discretization of \a this field is NULL.
- *  \throw If values at merged nodes deffer more than \a eps.
+ *  \throw If values at merged nodes differ more than \a eps.
  */
 void MEDCouplingFieldDouble::renumberNodesWithoutMesh(const int *old2NewBg, int newNbOfNodes, double eps)
 {
@@ -559,7 +559,7 @@ double MEDCouplingFieldDouble::getMaxValue() const
 /*!
  * Returns the maximal value and all its locations within \a this scalar field.
  * Only the first of available data arrays is checked.
- *  \param [out] tupleIds - a new instance of DataArrayInt containg indices of
+ *  \param [out] tupleIds - a new instance of DataArrayInt containing indices of
  *               tuples holding the maximal value. The caller is to delete it using
  *               decrRef() as it is no more needed.
  *  \return double - the maximal value among all values of the first array of \a this filed.
@@ -623,7 +623,7 @@ double MEDCouplingFieldDouble::getMinValue() const
 /*!
  * Returns the minimal value and all its locations within \a this scalar field.
  * Only the first of available data arrays is checked.
- *  \param [out] tupleIds - a new instance of DataArrayInt containg indices of
+ *  \param [out] tupleIds - a new instance of DataArrayInt containing indices of
  *               tuples holding the minimal value. The caller is to delete it using
  *               decrRef() as it is no more needed.
  *  \return double - the minimal value among all values of the first array of \a this filed.
@@ -683,19 +683,6 @@ double MEDCouplingFieldDouble::norm2() const
   return getArray()->norm2();
 }
 
-/*!
- * This method returns the max norm of \a this field.
- * \f[
- * \max_{0 \leq i < nbOfEntity}{abs(val[i])}
- * \f]
- *  \throw If the data array is not set.
- */
-double MEDCouplingFieldDouble::normMax() const
-{
-  if(getArray()==0)
-    throw INTERP_KERNEL::Exception("MEDCouplingFieldDouble::normMax : no default array defined !");
-  return getArray()->normMax();
-}
 
 /*!
  * Computes the weighted average of values of each component of \a this field, the weights being the
@@ -840,6 +827,48 @@ void MEDCouplingFieldDouble::normL2(double *res) const
   if(_type.isNull())
     throw INTERP_KERNEL::Exception("No spatial discretization underlying this field to perform normL2 !");
   _type->normL2(_mesh,getArray(),res);
+}
+
+/*!
+ * Returns the \c infinite norm of values of a given component of \a this field:
+* \f[
+ * \max_{0 \leq i < nbOfEntity}{abs(val[i])}
+ * \f]
+ *  \param [in] compId - an index of the component of interest.
+ *  \throw If \a compId is not valid.
+           A valid range is ( 0 <= \a compId < \a this->getNumberOfComponents() ).
+ *  \throw If the data array is not set.
+ */
+double MEDCouplingFieldDouble::normMax(int compId) const
+{
+  if(getArray()==0)
+    throw INTERP_KERNEL::Exception("MEDCouplingFieldDouble::normMax : no default array defined !");
+  int nbComps=getArray()->getNumberOfComponents();
+  if(compId<0 || compId>=nbComps)
+    {
+      std::ostringstream oss; oss << "MEDCouplingFieldDouble::normMax : Invalid compId specified : No such nb of components ! Should be in [0," << nbComps << ") !";
+      throw INTERP_KERNEL::Exception(oss.str());
+    }
+  INTERP_KERNEL::AutoPtr<double> res=new double[nbComps];
+  getArray()->normMaxPerComponent(res);
+  return res[compId];
+}
+
+/*!
+ * Returns the \c infinite norm of values of each component of \a this field:
+ * \f[
+ * \max_{0 \leq i < nbOfEntity}{abs(val[i])}
+ * \f]
+ *  \param [out] res - pointer to an array of result values, of size at least \a
+ *         this->getNumberOfComponents(), that is to be allocated by the caller.
+ *  \throw If the data array is not set.
+ *
+ */
+void MEDCouplingFieldDouble::normMax(double *res) const
+{
+  if(getArray()==0)
+    throw INTERP_KERNEL::Exception("MEDCouplingFieldDouble::normMax : no default array defined !");
+  getArray()->normMaxPerComponent(res);
 }
 
 /*!
@@ -1283,7 +1312,7 @@ void MEDCouplingFieldDouble::applyFunc(int nbOfComp, double val)
  *   - "2*x + z"               produces (5.,5.,5.,5.)
  *   - "2*x + 0*y + z"         produces (9.,9.,9.,9.)
  *   - "2*x*IVec + (x+z)*LVec" produces (2.,0.,0.,4.)
- *   - "2*y*IVec + z*KVec + x" produces (7.,1.,1.,4.)
+ *   - "2*y*IVec + z*KVec + x" produces (7.,1.,8.,1.)
  *
  *  \param [in] nbOfComp - the number of components for \a this field to have.
  *  \param [in] func - the function used to compute values of \a this field.
@@ -1323,7 +1352,7 @@ void MEDCouplingFieldDouble::applyFunc(int nbOfComp, const std::string& func)
  *   - "2*x + z"               produces (5.,5.,5.,5.)
  *   - "2*x + 0*y + z"         produces (9.,9.,9.,9.)
  *   - "2*x*IVec + (x+z)*LVec" produces (2.,0.,0.,4.)
- *   - "2*y*IVec + z*KVec + x" produces (7.,1.,1.,4.)
+ *   - "2*y*IVec + z*KVec + x" produces (7.,1.,8.,1.)
  *
  *  \param [in] nbOfComp - the number of components for \a this field to have.
  *  \param [in] func - the function used to compute values of \a this field.
@@ -1587,7 +1616,7 @@ double MEDCouplingFieldDouble::getIJK(int cellId, int nodeIdInCell, int compoId)
  *  \throw If \a other == NULL.
  *  \throw If any of the meshes is not well defined.
  *  \throw If the two meshes do not match.
- *  \throw If field values at merged nodes (if any) deffer more than \a eps.
+ *  \throw If field values at merged nodes (if any) differ more than \a eps.
  *
  *  \if ENABLE_EXAMPLES
  *  \ref cpp_mcfielddouble_changeUnderlyingMesh "Here is a C++ example".<br>
@@ -1635,7 +1664,7 @@ void MEDCouplingFieldDouble::changeUnderlyingMesh(const MEDCouplingMesh *other, 
  *  \throw If any of the meshes is not set or is not well defined.
  *  \throw If the two meshes do not match.
  *  \throw If the two fields are not coherent for merge.
- *  \throw If field values at merged nodes (if any) deffer more than \a eps.
+ *  \throw If field values at merged nodes (if any) differ more than \a eps.
  *
  *  \if ENABLE_EXAMPLES
  *  \ref cpp_mcfielddouble_substractInPlaceDM "Here is a C++ example".<br>
@@ -1668,7 +1697,7 @@ void MEDCouplingFieldDouble::substractInPlaceDM(const MEDCouplingFieldDouble *f,
  *  \throw If the mesh is not well defined.
  *  \throw If the spatial discretization of \a this field is NULL.
  *  \throw If the data array is not set.
- *  \throw If field values at merged nodes (if any) deffer more than \a epsOnVals.
+ *  \throw If field values at merged nodes (if any) differ more than \a epsOnVals.
  */
 bool MEDCouplingFieldDouble::mergeNodes(double eps, double epsOnVals)
 {
@@ -1707,7 +1736,7 @@ bool MEDCouplingFieldDouble::mergeNodes(double eps, double epsOnVals)
  *  \throw If the mesh is not well defined.
  *  \throw If the spatial discretization of \a this field is NULL.
  *  \throw If the data array is not set.
- *  \throw If field values at merged nodes (if any) deffer more than \a epsOnVals.
+ *  \throw If field values at merged nodes (if any) differ more than \a epsOnVals.
  */
 bool MEDCouplingFieldDouble::mergeNodesCenter(double eps, double epsOnVals)
 {
@@ -1744,7 +1773,7 @@ bool MEDCouplingFieldDouble::mergeNodesCenter(double eps, double epsOnVals)
  *  \throw If the mesh is not well defined.
  *  \throw If the spatial discretization of \a this field is NULL.
  *  \throw If the data array is not set.
- *  \throw If field values at merged nodes (if any) deffer more than \a epsOnVals.
+ *  \throw If field values at merged nodes (if any) differ more than \a epsOnVals.
  */
 bool MEDCouplingFieldDouble::zipCoords(double epsOnVals)
 {
@@ -1785,7 +1814,7 @@ bool MEDCouplingFieldDouble::zipCoords(double epsOnVals)
  *  \throw If the mesh is not well defined.
  *  \throw If the spatial discretization of \a this field is NULL.
  *  \throw If the data array is not set.
- *  \throw If field values at merged cells (if any) deffer more than \a epsOnVals.
+ *  \throw If field values at merged cells (if any) differ more than \a epsOnVals.
  */
 bool MEDCouplingFieldDouble::zipConnectivity(int compType, double epsOnVals)
 {
@@ -2013,7 +2042,7 @@ MCAuto<MEDCouplingFieldDouble> MEDCouplingFieldDouble::convertQuadraticCellsToLi
 
 /*!
  * This is expected to be a 3 components vector field on nodes (if not an exception will be thrown). \a this is also expected to lie on a MEDCouplingPointSet mesh.
- * Finaly \a this is also expected to be consistent.
+ * Finally \a this is also expected to be consistent.
  * In these conditions this method returns a newly created field (to be dealed by the caller).
  * The returned field will also 3 compo vector field be on nodes lying on the same mesh than \a this.
  * 

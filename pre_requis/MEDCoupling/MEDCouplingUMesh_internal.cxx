@@ -348,7 +348,7 @@ void MEDCouplingUMesh::tessellate2DCurveInternal(double eps)
   double epsa=fabs(eps);
   if(epsa<std::numeric_limits<double>::min())
     throw INTERP_KERNEL::Exception("MEDCouplingUMesh::tessellate2DCurveInternal : epsilon is null ! Please specify a higher epsilon. If too tiny it can lead to a huge amount of nodes and memory !");
-  INTERP_KERNEL::QuadraticPlanarArcDetectionPrecision arcPrec(1.e-10);  // RAII
+  INTERP_KERNEL::QuadraticPlanarPrecision arcPrec(1.e-10);  // RAII
   int nbCells=getNumberOfCells();
   int nbNodes=getNumberOfNodes();
   const int *conn=_nodal_connec->begin();
@@ -414,7 +414,7 @@ void MEDCouplingUMesh::tessellate2DCurveInternal(double eps)
 
 /*!
  * This private method is used to subdivide edges of a mesh with meshdim==2. If \a this has no a meshdim equal to 2 an exception will be thrown.
- * This method completly ignore coordinates.
+ * This method completely ignores coordinates.
  * \param nodeSubdived is the nodal connectivity of subdivision of edges
  * \param nodeIndxSubdived is the nodal connectivity index of subdivision of edges
  * \param desc is descending connectivity in format specified in MEDCouplingUMesh::buildDescendingConnectivity2
@@ -972,7 +972,7 @@ int MEDCouplingOrientationSensitiveNbrer(int id, unsigned nb, const INTERP_KERNE
 
 
 /*!
- * Implementes \a conversionType 0 for meshes with meshDim = 1, of MEDCouplingUMesh::convertLinearCellsToQuadratic method.
+ * Implements \a conversionType 0 for meshes with meshDim = 1, of MEDCouplingUMesh::convertLinearCellsToQuadratic method.
  * \return a newly created DataArrayInt instance that the caller should deal with containing cell ids of converted cells.
  * \sa MEDCouplingUMesh::convertLinearCellsToQuadratic.
  */
@@ -1060,7 +1060,7 @@ DataArrayInt *MEDCouplingUMesh::convertLinearCellsToQuadratic2DAnd3D0(const MEDC
 }
 
 /*!
- * Implementes \a conversionType 0 for meshes with meshDim = 2, of MEDCouplingUMesh::convertLinearCellsToQuadratic method.
+ * Implements \a conversionType 0 for meshes with meshDim = 2, of MEDCouplingUMesh::convertLinearCellsToQuadratic method.
  * \return a newly created DataArrayInt instance that the caller should deal with containing cell ids of converted cells.
  * \sa MEDCouplingUMesh::convertLinearCellsToQuadratic.
  */
@@ -1124,7 +1124,7 @@ DataArrayInt *MEDCouplingUMesh::convertLinearCellsToQuadratic2D1(DataArrayInt *&
 }
 
 /*!
- * Implementes \a conversionType 0 for meshes with meshDim = 3, of MEDCouplingUMesh::convertLinearCellsToQuadratic method.
+ * Implements \a conversionType 0 for meshes with meshDim = 3, of MEDCouplingUMesh::convertLinearCellsToQuadratic method.
  * \return a newly created DataArrayInt instance that the caller should deal with containing cell ids of converted cells.
  * \sa MEDCouplingUMesh::convertLinearCellsToQuadratic.
  */
@@ -1585,7 +1585,7 @@ void MEDCouplingUMesh::AppendExtrudedCell(const int *connBg, const int *connEnd,
  * This method is part of the Slice3D algorithm. It is the first step of assembly process, ones coordinates have been computed (by MEDCouplingUMesh::split3DCurveWithPlane method).
  * This method allows to compute given the status of 3D curve cells and the descending connectivity 3DSurf->3DCurve to deduce the intersection of each 3D surf cells
  * with a plane. The result will be put in 'cut3DSuf' out parameter.
- * \param [in] cut3DCurve  input paramter that gives for each 3DCurve cell if it owns fully to the plane or partially.
+ * \param [in] cut3DCurve  input parameter that gives for each 3DCurve cell if it owns fully to the plane or partially.
  * \param [out] nodesOnPlane, returns all the nodes that are on the plane.
  * \param [in] nodal3DSurf is the nodal connectivity of 3D surf mesh.
  * \param [in] nodalIndx3DSurf is the nodal connectivity index of 3D surf mesh.
@@ -1663,7 +1663,7 @@ void MEDCouplingUMesh::AssemblyForSplitFrom3DCurve(const std::vector<int>& cut3D
  * This method is part of the Slice3D algorithm. It is the second step of assembly process, ones coordinates have been computed (by MEDCouplingUMesh::split3DCurveWithPlane method).
  * This method allows to compute given the result of 3D surf cells with plane and the descending connectivity 3D->3DSurf to deduce the intersection of each 3D cells
  * with a plane. The result will be put in 'nodalRes' 'nodalResIndx' and 'cellIds' out parameters.
- * \param cut3DSurf  input paramter that gives for each 3DSurf its intersection with plane (result of MEDCouplingUMesh::AssemblyForSplitFrom3DCurve).
+ * \param cut3DSurf  input parameter that gives for each 3DSurf its intersection with plane (result of MEDCouplingUMesh::AssemblyForSplitFrom3DCurve).
  * \param desc is the descending connectivity 3D->3DSurf
  * \param descIndx is the descending connectivity index 3D->3DSurf
  */
@@ -1752,5 +1752,86 @@ void MEDCouplingUMesh::ComputeAllTypesInternal(std::set<INTERP_KERNEL::Normalize
       if(nbOfElem>0)
         for(const int *pt=connIndex;pt!=connIndex+nbOfElem;pt++)
           types.insert((INTERP_KERNEL::NormalizedCellType)conn[*pt]);
+    }
+}
+
+/*!
+ * This method expects that \a this a quadratic 1D, 2D or 3D mesh.
+ * This method will 'attract' middle points of seg3 (deduced from this by explosion if needed) of cells connected to nodes specified in [\a nodeIdsBg, \a nodeIdsEnd )
+ * For those selected mid points, their coordinates will be modified by applying a dilation between node in input [\a nodeIdsBg, \a nodeIdsEnd ) and the corresponding mid points using \a ratio input value.
+ * So this method is non const because coordinates are modified.
+ * If there is a couple of 2 points in [\a nodeIdsBg, \a nodeIdsEnd ) that are boundaries of a seg3, the corresponding mid point will remain untouched.
+ *
+ * \param [in] ratio - ratio of dilation
+ * \param [in] nodeIdsBg - start (included) of input node list
+ * \param [in] nodeIdsEnd - end (excluded) of input node list
+ * \throw if there is a point in [\a nodeIdsBg, \a nodeIdsEnd ) that is a mid point of a seg3
+ * \warning in case of throw the coordinates may be partially modified before the exception arises
+ */
+void MEDCouplingUMesh::attractSeg3MidPtsAroundNodes(double ratio, const int *nodeIdsBg, const int *nodeIdsEnd)
+{
+  checkFullyDefined();
+  int mdim(getMeshDimension());
+  if(mdim==2 || mdim==3)
+    {
+      MCAuto<MEDCouplingUMesh> edges;
+      {
+        MCAuto<DataArrayInt> a,b,c,d;
+        edges=this->explodeIntoEdges(a,b,c,d);
+      }
+      return edges->attractSeg3MidPtsAroundNodesUnderground(ratio,nodeIdsBg,nodeIdsEnd);
+    }
+  if(mdim==1)
+    return attractSeg3MidPtsAroundNodesUnderground(ratio,nodeIdsBg,nodeIdsEnd);
+  throw INTERP_KERNEL::Exception("MEDCouplingUMesh::attractSeg3MidPtsAroundNodes : not managed dimension ! Should be in [1,2,3] !");
+}
+
+/*!
+ * \a this is expected to have meshdim==1.
+ */
+void MEDCouplingUMesh::attractSeg3MidPtsAroundNodesUnderground(double ratio, const int *nodeIdsBg, const int *nodeIdsEnd)
+{
+  int spaceDim(getSpaceDimension());
+  double *coords(getCoords()->getPointer());
+  auto nbNodes(getNumberOfNodes());
+  auto nbCells(getNumberOfCells());
+  std::vector<bool> fastFinder(nbNodes,false);
+  for(auto work=nodeIdsBg;work!=nodeIdsEnd;work++)
+    if(*work>=0 && *work<nbNodes)
+      fastFinder[*work]=true;
+  MCAuto<DataArrayInt> cellsIds(getCellIdsLyingOnNodes(nodeIdsBg,nodeIdsEnd,false));
+  const int *nc(_nodal_connec->begin()),*nci(_nodal_connec_index->begin());
+  for(auto cellId=0;cellId<nbCells;cellId++,nci++)
+    {
+      const int *isSelected(std::find_if(nc+nci[0]+1,nc+nci[1],[&fastFinder](int v) { return fastFinder[v]; }));
+      if(isSelected!=nc+nci[1])
+        {
+          if((INTERP_KERNEL::NormalizedCellType)nc[nci[0]]==INTERP_KERNEL::NORM_SEG3 && nci[1]-nci[0]==4)
+            {
+              bool aa(fastFinder[nc[*nci+1]]),bb(fastFinder[nc[*nci+2]]),cc(fastFinder[nc[*nci+3]]);
+              if(!cc)
+                {
+                  if(aa^bb)
+                    {
+                      auto ptToMove(nc[*nci+3]);
+                      auto attractor(aa?nc[*nci+1]:nc[*nci+2]),endPt(aa?nc[*nci+2]:nc[*nci+1]);
+                      std::transform(coords+spaceDim*attractor,coords+spaceDim*(attractor+1),coords+spaceDim*endPt,
+                                     coords+spaceDim*ptToMove,[ratio](const double& stPt, const double& endPt) { return stPt+ratio*(endPt-stPt); });
+                    }
+                  else
+                    continue;//both 2 boundary nodes of current seg3 are un nodeIds input list -> skip it.
+                }
+              else
+                {
+                  std::ostringstream oss; oss << "MEDCouplingUMesh::attractSeg3MidPtsAroundNodes : cell #" << cellId << " has a mid point " << nc[*nci+3] << " ! This node is in input list !";
+                  throw INTERP_KERNEL::Exception(oss.str());
+                }
+            }
+          else
+            {
+              std::ostringstream oss; oss << "MEDCouplingUMesh::attractSeg3MidPtsAroundNodes : cell #" << cellId << " sharing one of the input nodes list its geo type is NOT SEG3 !";
+              throw INTERP_KERNEL::Exception(oss.str());
+            }
+        }
     }
 }

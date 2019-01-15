@@ -270,7 +270,7 @@ MEDCouplingIMesh *MEDCouplingIMesh::asSingleCell() const
 
 /*!
  * This static method is useful to condense field on cells of a MEDCouplingIMesh instance coming from a refinement ( MEDCouplingIMesh::refineWithFactor for example)
- * to a coarse MEDCouplingIMesh instance. So this method can be seen as a specialization in P0P0 conservative interpolation non overlaping from fine image mesh
+ * to a coarse MEDCouplingIMesh instance. So this method can be seen as a specialization in P0P0 conservative interpolation non overlapping from fine image mesh
  * to a coarse image mesh. Only tuples ( deduced from \a fineLocInCoarse ) of \a coarseDA will be modified. Other tuples of \a coarseDA will be let unchanged.
  *
  * \param [in] coarseSt The cell structure of coarse mesh.
@@ -396,7 +396,7 @@ void MEDCouplingIMesh::CondenseFineToCoarse(const std::vector<int>& coarseSt, co
 
 /*!
  * This static method is useful to condense field on cells of a MEDCouplingIMesh instance coming from a refinement ( MEDCouplingIMesh::refineWithFactor for example)
- * to a coarse MEDCouplingIMesh instance. So this method can be seen as a specialization in P0P0 conservative interpolation non overlaping from fine image mesh
+ * to a coarse MEDCouplingIMesh instance. So this method can be seen as a specialization in P0P0 conservative interpolation non overlapping from fine image mesh
  * to a coarse image mesh. Only tuples ( deduced from \a fineLocInCoarse ) of \a coarseDA will be modified. Other tuples of \a coarseDA will be let unchanged.
  *
  * \param [in] coarseSt The cell structure of coarse mesh.
@@ -1232,7 +1232,7 @@ DataArrayDouble *MEDCouplingIMesh::computeIsoBarycenterOfNodesPerCell() const
 
 void MEDCouplingIMesh::renumberCells(const int *old2NewBg, bool check)
 {
-  throw INTERP_KERNEL::Exception("Functionnality of renumbering cell not available for IMesh !");
+  throw INTERP_KERNEL::Exception("Functionality of renumbering cell not available for IMesh !");
 }
 
 void MEDCouplingIMesh::getTinySerializationInformation(std::vector<double>& tinyInfoD, std::vector<int>& tinyInfo, std::vector<std::string>& littleStrings) const
