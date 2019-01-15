@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head><meta charset="utf-8" />
-<title>Convergence_Poisson_FE_SQUARE</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<title>Convergence_Poisson_FE_SQUARE</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 
 <style type="text/css">
@@ -11,8 +13,8 @@
 *
 */
 /*!
- * Bootstrap v3.3.7 (http://getbootstrap.com)
- * Copyright 2011-2016 Twitter, Inc.
+ * Bootstrap v3.3.6 (http://getbootstrap.com)
+ * Copyright 2011-2015 Twitter, Inc.
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
  */
 /*! normalize.css v3.0.3 | MIT License | github.com/necolas/normalize.css */
@@ -1107,6 +1109,7 @@ a:focus {
   text-decoration: underline;
 }
 a:focus {
+  outline: thin dotted;
   outline: 5px auto -webkit-focus-ring-color;
   outline-offset: -2px;
 }
@@ -2535,6 +2538,7 @@ select[size] {
 input[type="file"]:focus,
 input[type="radio"]:focus,
 input[type="checkbox"]:focus {
+  outline: thin dotted;
   outline: 5px auto -webkit-focus-ring-color;
   outline-offset: -2px;
 }
@@ -3025,6 +3029,7 @@ select[multiple].input-lg {
 .btn.focus,
 .btn:active.focus,
 .btn.active.focus {
+  outline: thin dotted;
   outline: 5px auto -webkit-focus-ring-color;
   outline-offset: -2px;
 }
@@ -8755,9 +8760,6 @@ body > #header .header-bar {
     margin-left: 10px;
   }
 }
-[dir="rtl"] #ipython_notebook {
-  float: right !important;
-}
 #noscript {
   width: auto;
   padding-top: 16px;
@@ -8960,14 +8962,8 @@ span#login_widget > .button .badge,
  *
  * Author: Jupyter Development Team
  */
-[dir="rtl"] #tabs li {
-  float: right;
-}
 ul#tabs {
   margin-bottom: 4px;
-}
-[dir="rtl"] ul#tabs {
-  margin-right: 0px;
 }
 ul#tabs a {
   padding-top: 6px;
@@ -8990,16 +8986,6 @@ ul.breadcrumb span {
 }
 .list_toolbar .tree-buttons {
   padding-top: 1px;
-}
-[dir="rtl"] .list_toolbar .tree-buttons {
-  float: left !important;
-}
-[dir="rtl"] .list_toolbar .pull-right {
-  padding-top: 1px;
-  float: left !important;
-}
-[dir="rtl"] .list_toolbar .pull-left {
-  float: right !important;
 }
 .dynamic-buttons {
   padding-top: 3px;
@@ -9136,9 +9122,6 @@ ul.breadcrumb span {
 #tree-selector {
   padding-right: 0px;
 }
-[dir="rtl"] #tree-selector a {
-  float: right;
-}
 #button-select-all {
   min-width: 50px;
 }
@@ -9228,9 +9211,6 @@ ul#new-menu {
   left: auto;
   right: 0;
 }
-[dir="rtl"] #new-menu {
-  text-align: right;
-}
 .kernel-menu-icon {
   padding-right: 12px;
   width: 24px;
@@ -9275,9 +9255,6 @@ ul#new-menu {
 }
 #running .panel-group .panel .panel-body .list_container .list_item:last-child {
   border-bottom: 0px;
-}
-[dir="rtl"] #running .col-sm-8 {
-  float: right !important;
 }
 .delete-button {
   display: none;
@@ -9574,7 +9551,6 @@ div.cell.selected.jupyter-soft-selected {
   }
 }
 div.inner_cell {
-  min-width: 0;
   /* Old browsers */
   display: -webkit-box;
   -webkit-box-orient: vertical;
@@ -9595,6 +9571,11 @@ div.inner_cell {
   box-flex: 1;
   /* Modern browsers */
   flex: 1;
+}
+@-moz-document url-prefix() {
+  div.inner_cell {
+    overflow-x: hidden;
+  }
 }
 /* input_area and input_prompt must match in top border and margin for alignment */
 div.input_area {
@@ -11265,7 +11246,7 @@ div#pager .ui-resizable-handle::after {
 }
 .shortcut_key {
   display: inline-block;
-  width: 21ex;
+  width: 20ex;
   text-align: right;
   font-family: monospace;
 }
@@ -11577,7 +11558,6 @@ ul.typeahead-list > li > a {
   box-shadow: 0px 0px 12px 1px rgba(87, 87, 87, 0.2);
 }
 .terminal-app .terminal {
-  width: 100%;
   float: left;
   font-family: monospace;
   color: white;
@@ -11591,9 +11571,6 @@ ul.typeahead-list > li > a {
 .terminal-app .terminal dummy-screen {
   line-height: 1em;
   font-size: 14px;
-}
-.terminal-app .terminal .xterm-rows {
-  padding: 10px;
 }
 .terminal-app .terminal-cursor {
   color: black;
@@ -11726,7 +11703,9 @@ body {
 div#notebook {
   overflow: visible;
   border-top: none;
-}@media print {
+}
+
+@media print {
   div.cell {
     display: block;
     page-break-inside: avoid;
@@ -11747,7 +11726,7 @@ div#notebook {
 
 <!-- Loading mathjax macro -->
 <!-- Load mathjax -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_HTML"></script>
+    <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML"></script>
     <!-- MathJax configuration -->
     <script type="text/x-mathjax-config">
     MathJax.Hub.Config({
@@ -11792,11 +11771,12 @@ div#notebook {
 </div>
 
 </div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="P1-FE-scheme-for-the-2D-Poisson-equation">P1 FE scheme for the 2D Poisson equation<a class="anchor-link" href="#P1-FE-scheme-for-the-2D-Poisson-equation">&#194;&#182;</a></h1>
+<h1 id="Linear-finite-elements-method-for-the-2D-Poisson-equation">Linear finite elements method for the 2D Poisson equation<a class="anchor-link" href="#Linear-finite-elements-method-for-the-2D-Poisson-equation">&#182;</a></h1>
 </div>
 </div>
 </div>
@@ -11816,14 +11796,10 @@ div#notebook {
 <div class="output">
 
 
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
+<div class="output_area"><div class="prompt"></div>
 
 <div class="output_markdown rendered_html output_subarea ">
-<h2 id="The-Poisson-problem-on-the-square">The Poisson problem on the square<a class="anchor-link" href="#The-Poisson-problem-on-the-square">&#194;&#182;</a></h2><p>We consider the following Poisson problem with Dirichlet boundary conditions</p>
+<h2 id="The-Poisson-problem-on-the-square">The Poisson problem on the square<a class="anchor-link" href="#The-Poisson-problem-on-the-square">&#182;</a></h2><p>We consider the following Poisson problem with Dirichlet boundary conditions</p>
 $$
 \left\{\begin{array}{c}
 -\Delta u=f \textrm{ on } \Omega\\
@@ -11853,6 +11829,56 @@ $$</p>
 </div>
 
 </div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="The-finite-elements-method-in-2D">The finite elements method in 2D<a class="anchor-link" href="#The-finite-elements-method-in-2D">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span></span><span class="n">display</span><span class="p">(</span><span class="n">Markdown</span><span class="p">(</span><span class="n">DescriptionFEPoissonProblem</span><span class="p">))</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt"></div>
+<div class="output_subarea output_text output_error">
+<pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
+<span class="ansi-green-fg">&lt;ipython-input-4-55c4f49bb278&gt;</span> in <span class="ansi-cyan-fg">&lt;module&gt;</span><span class="ansi-blue-fg">()</span>
+<span class="ansi-green-fg">----&gt; 1</span><span class="ansi-red-fg"> </span>display<span class="ansi-blue-fg">(</span>Markdown<span class="ansi-blue-fg">(</span>DescriptionFEPoissonProblem<span class="ansi-blue-fg">)</span><span class="ansi-blue-fg">)</span>
+
+<span class="ansi-red-fg">NameError</span>: name &#39;DescriptionFEPoissonProblem&#39; is not defined</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Bibliography">Bibliography<a class="anchor-link" href="#Bibliography">&#182;</a></h2>
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[3]:</div>
@@ -11869,16 +11895,12 @@ $$</p>
 <div class="output">
 
 
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
+<div class="output_area"><div class="prompt"></div>
 
 <div class="output_markdown rendered_html output_subarea ">
 <ul>
 <li><p>In 2D the minimum angle condition (1968)<br>
-$\alpha_K\geq\alpha_0&gt;0,\,\forall K\in \mathcal{T}$ where $\alpha_K$ is the minimal angle of $K$<br>
+$\alpha_K\geq\alpha_0>0,\,\forall K\in \mathcal{T}$ where $\alpha_K$ is the minimal angle of $K$<br>
 is sufficient for the convergence of the 2D linear finite element method
 $$
 \lim_{h\to 0} || u - u_h||_{H^1} =0.
@@ -11900,7 +11922,7 @@ See definition 6.3.11 in<br>
 <em>J. Brandts, S. Korotov, M. Křı́žek, On the equivalence of ball conditions for simplicial finite elements in R d , Appl. Math. Lett. 22 (2009), 1210–1212</em></p>
 </li>
 <li><p>The maximum angle condition (1976)<br>
-$\gamma_K\leq\gamma_0&lt;\pi,\,\forall K\in \mathcal{T}$ where $\gamma_K$ is the maximal angle of $K$<br>
+$\gamma_K\leq\gamma_0<\pi,\,\forall K\in \mathcal{T}$ where $\gamma_K$ is the maximal angle of $K$<br>
 is sufficient for the convergence of the quadratic finite element method
 $$
 \exists C,\quad || u - u_h||_1 \leq C h ||u||_2}
@@ -11928,10 +11950,10 @@ See exercice 6.3.13 in
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="n">display</span><span class="p">(</span><span class="n">Markdown</span><span class="p">(</span><span class="n">DescriptionFEPoissonProblem</span><span class="p">))</span>
+<div class=" highlight hl-ipython2"><pre><span></span><span class="n">display</span><span class="p">(</span><span class="n">Markdown</span><span class="p">(</span><span class="n">CodeFEPoissonProblem</span><span class="p">))</span>
 </pre></div>
 
 </div>
@@ -11942,57 +11964,194 @@ See exercice 6.3.13 in
 <div class="output">
 
 
-<div class="output_area">
+<div class="output_area"><div class="prompt"></div>
 
-<div class="prompt"></div>
+<div class="output_markdown rendered_html output_subarea ">
+<h2 id="The-script">The script<a class="anchor-link" href="#The-script">&#182;</a></h2><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cdmath</span>
+<span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">sin</span><span class="p">,</span> <span class="n">pi</span><span class="p">,</span> <span class="n">sqrt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">PV_routines</span>
+<span class="kn">import</span> <span class="nn">VTK_routines</span>
+
+<span class="c1">#Chargement du maillage triangulaire du domaine carré [0,1]x[0,1], définition des bords</span>
+<span class="c1">#=======================================================================================</span>
+<span class="n">my_mesh</span> <span class="o">=</span> <span class="n">cdmath</span><span class="o">.</span><span class="n">Mesh</span><span class="p">(</span><span class="s2">&quot;meshSquare.med&quot;</span><span class="p">)</span>
+<span class="k">if</span><span class="p">(</span><span class="ow">not</span> <span class="n">my_mesh</span><span class="o">.</span><span class="n">isTriangular</span><span class="p">())</span> <span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Wrong cell types : mesh is not made of triangles&quot;</span><span class="p">)</span>
+<span class="n">eps</span><span class="o">=</span><span class="mf">1e-6</span>
+<span class="n">my_mesh</span><span class="o">.</span><span class="n">setGroupAtPlan</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="n">eps</span><span class="p">,</span><span class="s2">&quot;DirichletBorder&quot;</span><span class="p">)</span><span class="c1">#Bord GAUCHE</span>
+<span class="n">my_mesh</span><span class="o">.</span><span class="n">setGroupAtPlan</span><span class="p">(</span><span class="mf">1.</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="n">eps</span><span class="p">,</span><span class="s2">&quot;DirichletBorder&quot;</span><span class="p">)</span><span class="c1">#Bord DROIT</span>
+<span class="n">my_mesh</span><span class="o">.</span><span class="n">setGroupAtPlan</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="n">eps</span><span class="p">,</span><span class="s2">&quot;DirichletBorder&quot;</span><span class="p">)</span><span class="c1">#Bord BAS</span>
+<span class="n">my_mesh</span><span class="o">.</span><span class="n">setGroupAtPlan</span><span class="p">(</span><span class="mf">1.</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="n">eps</span><span class="p">,</span><span class="s2">&quot;DirichletBorder&quot;</span><span class="p">)</span><span class="c1">#Bord HAUT</span>
+
+<span class="n">nbNodes</span> <span class="o">=</span> <span class="n">my_mesh</span><span class="o">.</span><span class="n">getNumberOfNodes</span><span class="p">()</span>
+<span class="n">nbCells</span> <span class="o">=</span> <span class="n">my_mesh</span><span class="o">.</span><span class="n">getNumberOfCells</span><span class="p">()</span>
+
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;Mesh loading done&quot;</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;Number of nodes=&quot;</span><span class="p">,</span> <span class="n">nbNodes</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;Number of cells=&quot;</span><span class="p">,</span> <span class="n">nbCells</span><span class="p">)</span>
+
+<span class="c1">#Discrétisation du second membre et détermination des noeuds intérieurs</span>
+<span class="c1">#======================================================================</span>
+<span class="n">my_RHSfield</span> <span class="o">=</span> <span class="n">cdmath</span><span class="o">.</span><span class="n">Field</span><span class="p">(</span><span class="s2">&quot;RHS_field&quot;</span><span class="p">,</span> <span class="n">cdmath</span><span class="o">.</span><span class="n">NODES</span><span class="p">,</span> <span class="n">my_mesh</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">nbInteriorNodes</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">nbBoundaryNodes</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">maxNbNeighbours</span> <span class="o">=</span> <span class="mi">0</span><span class="c1">#This is to determine the number of non zero coefficients in the sparse finite element rigidity matrix</span>
+<span class="n">interiorNodes</span><span class="o">=</span><span class="p">[]</span>
+<span class="n">boundaryNodes</span><span class="o">=</span><span class="p">[]</span>
+
+<span class="c1">#parcours des noeuds pour discrétisation du second membre et extraction 1) des noeuds intérieur 2) des noeuds frontière 3) du nb max voisins d&#39;un noeud</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nbNodes</span><span class="p">):</span>
+    <span class="n">Ni</span><span class="o">=</span><span class="n">my_mesh</span><span class="o">.</span><span class="n">getNode</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">Ni</span><span class="o">.</span><span class="n">x</span><span class="p">()</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">Ni</span><span class="o">.</span><span class="n">y</span><span class="p">()</span>
+
+    <span class="n">my_RHSfield</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="mi">2</span><span class="o">*</span><span class="n">pi</span><span class="o">*</span><span class="n">pi</span><span class="o">*</span><span class="n">sin</span><span class="p">(</span><span class="n">pi</span><span class="o">*</span><span class="n">x</span><span class="p">)</span><span class="o">*</span><span class="n">sin</span><span class="p">(</span><span class="n">pi</span><span class="o">*</span><span class="n">y</span><span class="p">)</span><span class="c1">#mettre la fonction definie au second membre de l&#39;edp</span>
+    <span class="k">if</span> <span class="n">my_mesh</span><span class="o">.</span><span class="n">isBorderNode</span><span class="p">(</span><span class="n">i</span><span class="p">):</span> <span class="c1"># Détection des noeuds frontière</span>
+        <span class="n">boundaryNodes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="n">nbBoundaryNodes</span><span class="o">=</span><span class="n">nbBoundaryNodes</span><span class="o">+</span><span class="mi">1</span>
+    <span class="k">else</span><span class="p">:</span> <span class="c1"># Détection des noeuds intérieurs</span>
+        <span class="n">interiorNodes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="n">nbInteriorNodes</span><span class="o">=</span><span class="n">nbInteriorNodes</span><span class="o">+</span><span class="mi">1</span>
+        <span class="n">maxNbNeighbours</span><span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">Ni</span><span class="o">.</span><span class="n">getNumberOfCells</span><span class="p">(),</span><span class="n">maxNbNeighbours</span><span class="p">)</span> <span class="c1">#true only in 2D, otherwise use function Ni.getNumberOfEdges()</span>
+
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;Right hand side discretisation done&quot;</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;nb of interior nodes=&quot;</span><span class="p">,</span> <span class="n">nbInteriorNodes</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;nb of boundary nodes=&quot;</span><span class="p">,</span> <span class="n">nbBoundaryNodes</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;Max nb of neighbours=&quot;</span><span class="p">,</span> <span class="n">maxNbNeighbours</span><span class="p">)</span>
+
+<span class="c1"># Construction de la matrice de rigidité et du vecteur second membre du système linéaire</span>
+<span class="c1">#=======================================================================================</span>
+<span class="n">Rigidite</span><span class="o">=</span><span class="n">cdmath</span><span class="o">.</span><span class="n">SparseMatrixPetsc</span><span class="p">(</span><span class="n">nbInteriorNodes</span><span class="p">,</span><span class="n">nbInteriorNodes</span><span class="p">,</span><span class="n">maxNbNeighbours</span><span class="p">)</span><span class="c1"># warning : third argument is max number of non zero coefficients per line of the matrix</span>
+<span class="n">RHS</span><span class="o">=</span><span class="n">cdmath</span><span class="o">.</span><span class="n">Vector</span><span class="p">(</span><span class="n">nbInteriorNodes</span><span class="p">)</span>
+
+<span class="c1"># Vecteurs gradient de la fonction de forme associée à chaque noeud d&#39;un triangle (hypothèse 2D)</span>
+<span class="n">GradShapeFunc0</span><span class="o">=</span><span class="n">cdmath</span><span class="o">.</span><span class="n">Vector</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">GradShapeFunc1</span><span class="o">=</span><span class="n">cdmath</span><span class="o">.</span><span class="n">Vector</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">GradShapeFunc2</span><span class="o">=</span><span class="n">cdmath</span><span class="o">.</span><span class="n">Vector</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="c1">#On parcourt les triangles du domaine</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nbCells</span><span class="p">):</span>
+
+    <span class="n">Ci</span><span class="o">=</span><span class="n">my_mesh</span><span class="o">.</span><span class="n">getCell</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+
+    <span class="c1">#Contribution à la matrice de rigidité</span>
+    <span class="n">nodeId0</span><span class="o">=</span><span class="n">Ci</span><span class="o">.</span><span class="n">getNodeId</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">nodeId1</span><span class="o">=</span><span class="n">Ci</span><span class="o">.</span><span class="n">getNodeId</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">nodeId2</span><span class="o">=</span><span class="n">Ci</span><span class="o">.</span><span class="n">getNodeId</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="n">N0</span><span class="o">=</span><span class="n">my_mesh</span><span class="o">.</span><span class="n">getNode</span><span class="p">(</span><span class="n">nodeId0</span><span class="p">)</span>
+    <span class="n">N1</span><span class="o">=</span><span class="n">my_mesh</span><span class="o">.</span><span class="n">getNode</span><span class="p">(</span><span class="n">nodeId1</span><span class="p">)</span>
+    <span class="n">N2</span><span class="o">=</span><span class="n">my_mesh</span><span class="o">.</span><span class="n">getNode</span><span class="p">(</span><span class="n">nodeId2</span><span class="p">)</span>
+
+    <span class="c1">#Formule des gradients voir EF P1 -&gt; calcul déterminants</span>
+    <span class="n">GradShapeFunc0</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">=</span> <span class="p">(</span><span class="n">N1</span><span class="o">.</span><span class="n">y</span><span class="p">()</span><span class="o">-</span><span class="n">N2</span><span class="o">.</span><span class="n">y</span><span class="p">())</span><span class="o">/</span><span class="mi">2</span>
+    <span class="n">GradShapeFunc0</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">=-</span><span class="p">(</span><span class="n">N1</span><span class="o">.</span><span class="n">x</span><span class="p">()</span><span class="o">-</span><span class="n">N2</span><span class="o">.</span><span class="n">x</span><span class="p">())</span><span class="o">/</span><span class="mi">2</span>
+    <span class="n">GradShapeFunc1</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">=-</span><span class="p">(</span><span class="n">N0</span><span class="o">.</span><span class="n">y</span><span class="p">()</span><span class="o">-</span><span class="n">N2</span><span class="o">.</span><span class="n">y</span><span class="p">())</span><span class="o">/</span><span class="mi">2</span>
+    <span class="n">GradShapeFunc1</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span> <span class="p">(</span><span class="n">N0</span><span class="o">.</span><span class="n">x</span><span class="p">()</span><span class="o">-</span><span class="n">N2</span><span class="o">.</span><span class="n">x</span><span class="p">())</span><span class="o">/</span><span class="mi">2</span>
+    <span class="n">GradShapeFunc2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">=</span> <span class="p">(</span><span class="n">N0</span><span class="o">.</span><span class="n">y</span><span class="p">()</span><span class="o">-</span><span class="n">N1</span><span class="o">.</span><span class="n">y</span><span class="p">())</span><span class="o">/</span><span class="mi">2</span>
+    <span class="n">GradShapeFunc2</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">=-</span><span class="p">(</span><span class="n">N0</span><span class="o">.</span><span class="n">x</span><span class="p">()</span><span class="o">-</span><span class="n">N1</span><span class="o">.</span><span class="n">x</span><span class="p">())</span><span class="o">/</span><span class="mi">2</span>
+
+    <span class="c1">#Création d&#39;un tableau (numéro du noeud, gradient de la fonction de forme</span>
+    <span class="n">GradShapeFuncs</span><span class="o">=</span><span class="p">{</span><span class="n">nodeId0</span> <span class="p">:</span> <span class="n">GradShapeFunc0</span><span class="p">}</span>
+    <span class="n">GradShapeFuncs</span><span class="p">[</span><span class="n">nodeId1</span><span class="p">]</span><span class="o">=</span><span class="n">GradShapeFunc1</span>
+    <span class="n">GradShapeFuncs</span><span class="p">[</span><span class="n">nodeId2</span><span class="p">]</span><span class="o">=</span><span class="n">GradShapeFunc2</span>
 
 
-<div class="output_subarea output_text output_error">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
-<span class="ansi-green-fg">&lt;ipython-input-4-55c4f49bb278&gt;</span> in <span class="ansi-cyan-fg">&lt;module&gt;</span><span class="ansi-blue-fg">()</span>
-<span class="ansi-green-fg">----&gt; 1</span><span class="ansi-red-fg"> </span>display<span class="ansi-blue-fg">(</span>Markdown<span class="ansi-blue-fg">(</span>DescriptionFEPoissonProblem<span class="ansi-blue-fg">)</span><span class="ansi-blue-fg">)</span>
+    <span class="c1"># Remplissage de  la matrice de rigidité et du second membre</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="p">[</span><span class="n">nodeId0</span><span class="p">,</span><span class="n">nodeId1</span><span class="p">,</span><span class="n">nodeId2</span><span class="p">]</span> <span class="p">:</span>
+        <span class="k">if</span> <span class="n">boundaryNodes</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">j</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span> <span class="p">:</span> <span class="c1">#seuls les noeuds intérieurs contribuent au système linéaire (matrice de rigidité et second membre)</span>
+            <span class="n">j_int</span><span class="o">=</span><span class="n">interiorNodes</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">j</span><span class="p">)</span><span class="c1">#indice du noeud j en tant que noeud intérieur</span>
+            <span class="c1">#Ajout de la contribution de la cellule triangulaire i au second membre du noeud j </span>
+            <span class="n">RHS</span><span class="p">[</span><span class="n">j_int</span><span class="p">]</span><span class="o">=</span><span class="n">Ci</span><span class="o">.</span><span class="n">getMeasure</span><span class="p">()</span><span class="o">/</span><span class="mi">3</span><span class="o">*</span><span class="n">my_RHSfield</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">+</span><span class="n">RHS</span><span class="p">[</span><span class="n">j_int</span><span class="p">]</span> <span class="c1"># intégrale dans le triangle du produit f x fonction de base</span>
+            <span class="c1">#Contribution de la cellule triangulaire i à la ligne j_int du système linéaire</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">[</span><span class="n">nodeId0</span><span class="p">,</span><span class="n">nodeId1</span><span class="p">,</span><span class="n">nodeId2</span><span class="p">]</span> <span class="p">:</span> 
+                <span class="k">if</span> <span class="n">boundaryNodes</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span> <span class="p">:</span> <span class="c1">#seuls les noeuds intérieurs contribuent à la matrice du système linéaire</span>
+                    <span class="n">k_int</span><span class="o">=</span><span class="n">interiorNodes</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="c1">#indice du noeud k en tant que noeud intérieur</span>
+                    <span class="n">Rigidite</span><span class="o">.</span><span class="n">addValue</span><span class="p">(</span><span class="n">j_int</span><span class="p">,</span><span class="n">k_int</span><span class="p">,</span><span class="n">GradShapeFuncs</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">*</span><span class="n">GradShapeFuncs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">/</span><span class="n">Ci</span><span class="o">.</span><span class="n">getMeasure</span><span class="p">())</span>
+                <span class="c1">#else: si condition limite non nulle au bord, ajouter la contribution du bord au second membre de la cellule j</span>
 
-<span class="ansi-red-fg">NameError</span>: name &#39;DescriptionFEPoissonProblem&#39; is not defined</pre>
-</div>
-</div>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;Linear system matrix building done&quot;</span><span class="p">)</span>
 
-</div>
-</div>
+<span class="c1"># Résolution du système linéaire</span>
+<span class="c1">#=================================</span>
+<span class="n">LS</span><span class="o">=</span><span class="n">cdmath</span><span class="o">.</span><span class="n">LinearSolver</span><span class="p">(</span><span class="n">Rigidite</span><span class="p">,</span><span class="n">RHS</span><span class="p">,</span><span class="mi">100</span><span class="p">,</span><span class="mf">1.E-6</span><span class="p">,</span><span class="s2">&quot;CG&quot;</span><span class="p">,</span><span class="s2">&quot;ILU&quot;</span><span class="p">)</span><span class="c1">#Remplacer CG par CHOLESKY pour solveur direct</span>
+<span class="n">SolSyst</span><span class="o">=</span><span class="n">LS</span><span class="o">.</span><span class="n">solve</span><span class="p">()</span>
 
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="n">display</span><span class="p">(</span><span class="n">Markdown</span><span class="p">(</span><span class="n">CodeFEPoissonProblem</span><span class="p">))</span>
+<span class="k">print</span> <span class="s2">&quot;Preconditioner used : &quot;</span><span class="p">,</span> <span class="n">LS</span><span class="o">.</span><span class="n">getNameOfPc</span><span class="p">()</span>
+<span class="k">print</span> <span class="s2">&quot;Number of iterations used : &quot;</span><span class="p">,</span> <span class="n">LS</span><span class="o">.</span><span class="n">getNumberOfIter</span><span class="p">()</span>
+<span class="k">print</span> <span class="s2">&quot;Final residual : &quot;</span><span class="p">,</span> <span class="n">LS</span><span class="o">.</span><span class="n">getResidu</span><span class="p">()</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;Linear system solved&quot;</span><span class="p">)</span>
+
+<span class="c1"># Création du champ résultat</span>
+<span class="c1">#===========================</span>
+<span class="n">my_ResultField</span> <span class="o">=</span> <span class="n">cdmath</span><span class="o">.</span><span class="n">Field</span><span class="p">(</span><span class="s2">&quot;ResultField&quot;</span><span class="p">,</span> <span class="n">cdmath</span><span class="o">.</span><span class="n">NODES</span><span class="p">,</span> <span class="n">my_mesh</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nbInteriorNodes</span><span class="p">):</span>
+    <span class="n">my_ResultField</span><span class="p">[</span><span class="n">interiorNodes</span><span class="p">[</span><span class="n">j</span><span class="p">]]</span><span class="o">=</span><span class="n">SolSyst</span><span class="p">[</span><span class="n">j</span><span class="p">];</span><span class="c1">#remplissage des valeurs pour les noeuds intérieurs</span>
+<span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nbBoundaryNodes</span><span class="p">):</span>
+    <span class="n">my_ResultField</span><span class="p">[</span><span class="n">boundaryNodes</span><span class="p">[</span><span class="n">j</span><span class="p">]]</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="c1">#remplissage des valeurs pour les noeuds frontière (condition limite)</span>
+<span class="c1">#sauvegarde sur le disque dur du résultat dans un fichier paraview</span>
+<span class="n">my_ResultField</span><span class="o">.</span><span class="n">writeVTK</span><span class="p">(</span><span class="s2">&quot;FiniteElements2D_square_ResultField&quot;</span><span class="p">)</span>
+
+<span class="c1"># Postprocessing :</span>
+<span class="c1">#=================</span>
+<span class="c1"># save 2D picture</span>
+<span class="n">PV_routines</span><span class="o">.</span><span class="n">Save_PV_data_to_picture_file</span><span class="p">(</span><span class="s2">&quot;FiniteElements2D_square_ResultField&quot;</span><span class="o">+</span><span class="s1">&#39;_0.vtu&#39;</span><span class="p">,</span><span class="s2">&quot;ResultField&quot;</span><span class="p">,</span><span class="s1">&#39;NODES&#39;</span><span class="p">,</span><span class="s2">&quot;FiniteElements2D_square_ResultField&quot;</span><span class="p">)</span>
+
+<span class="c1"># extract and plot diagonal values</span>
+<span class="n">resolution</span><span class="o">=</span><span class="mi">100</span>
+<span class="n">curv_abs</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span><span class="n">resolution</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">diag_data</span><span class="o">=</span><span class="n">VTK_routines</span><span class="o">.</span><span class="n">Extract_field_data_over_line_to_numpyArray</span><span class="p">(</span><span class="n">my_ResultField</span><span class="p">,[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">resolution</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">curv_abs</span><span class="p">,</span> <span class="n">diag_data</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span> <span class="s1">&#39;2D mesh with &#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">nbNodes</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; nodes&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Position on diagonal line&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Value on diagonal line&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Plot over diagonal line for finite elements </span><span class="se">\n</span><span class="s1"> for Laplace operator on a 2D square with triangular mesh&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s2">&quot;FiniteElements2D_square_ResultField_&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">nbNodes</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;_nodes&#39;</span><span class="o">+</span><span class="s2">&quot;_PlotOverDiagonalLine.png&quot;</span><span class="p">)</span>
+
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;Numerical solution of 2D Poisson equation on a square using finite elements done&quot;</span><span class="p">)</span>
+
+<span class="c1">#Calcul de l&#39;erreur commise par rapport à la solution exacte</span>
+<span class="c1">#===========================================================</span>
+<span class="c1">#The following formulas use the fact that the exact solution is equal the right hand side divided by 2*pi*pi</span>
+<span class="n">max_abs_sol_exacte</span><span class="o">=</span><span class="nb">max</span><span class="p">(</span><span class="n">my_RHSfield</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span><span class="o">-</span><span class="n">my_RHSfield</span><span class="o">.</span><span class="n">min</span><span class="p">())</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">pi</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span>
+<span class="n">max_sol_num</span><span class="o">=</span><span class="n">my_ResultField</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+<span class="n">min_sol_num</span><span class="o">=</span><span class="n">my_ResultField</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+<span class="n">erreur_abs</span><span class="o">=</span><span class="mi">0</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nbNodes</span><span class="p">)</span> <span class="p">:</span>
+    <span class="k">if</span> <span class="n">erreur_abs</span> <span class="o">&lt;</span> <span class="nb">abs</span><span class="p">(</span><span class="n">my_RHSfield</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">pi</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span> <span class="o">-</span> <span class="n">my_ResultField</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="p">:</span>
+        <span class="n">erreur_abs</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">my_RHSfield</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">pi</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span> <span class="o">-</span> <span class="n">my_ResultField</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
 </pre></div>
 
 </div>
+
+</div>
+
 </div>
 </div>
 
 </div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p><img src="2DPoissonVF_deformedQuadrangles/SquareWithDeformedQuadrangles_2DPoissonVF_ConvergenceCurve.png" alt=""></p>
-
+<h2 id="Numerical-results">Numerical results<a class="anchor-link" href="#Numerical-results">&#182;</a></h2>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Delaunay-triangular-meshes">Delaunay triangular meshes<a class="anchor-link" href="#Delaunay-triangular-meshes">&#194;&#182;</a></h2>
+<h3 id="Delaunay-triangular-meshes">Delaunay triangular meshes<a class="anchor-link" href="#Delaunay-triangular-meshes">&#182;</a></h3>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
@@ -12015,7 +12174,8 @@ See exercice 6.3.13 in
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
@@ -12038,7 +12198,8 @@ See exercice 6.3.13 in
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
@@ -12047,7 +12208,8 @@ See exercice 6.3.13 in
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
@@ -12056,7 +12218,8 @@ See exercice 6.3.13 in
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
@@ -12065,15 +12228,17 @@ See exercice 6.3.13 in
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Skinny-right-triangle-meshes-(from-a-$(n,n^2)$-rectangular-grid)">Skinny right triangle meshes (from a $(n,n^2)$ rectangular grid)<a class="anchor-link" href="#Skinny-right-triangle-meshes-(from-a-$(n,n^2)$-rectangular-grid)">&#194;&#182;</a></h2>
+<h3 id="Skinny-right-triangle-meshes-(from-a-$(n,n^2)$-rectangular-grid)">Skinny right triangle meshes (from a $(n,n^2)$ rectangular grid)<a class="anchor-link" href="#Skinny-right-triangle-meshes-(from-a-$(n,n^2)$-rectangular-grid)">&#182;</a></h3>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
@@ -12096,7 +12261,8 @@ See exercice 6.3.13 in
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
@@ -12119,7 +12285,8 @@ See exercice 6.3.13 in
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
@@ -12128,7 +12295,8 @@ See exercice 6.3.13 in
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
@@ -12137,15 +12305,17 @@ See exercice 6.3.13 in
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Flat-cross-triangle-meshes-(from-a-$(n,n^2)$-rectangular-grid)">Flat cross triangle meshes (from a $(n,n^2)$ rectangular grid)<a class="anchor-link" href="#Flat-cross-triangle-meshes-(from-a-$(n,n^2)$-rectangular-grid)">&#194;&#182;</a></h2>
+<h3 id="Flat-cross-triangle-meshes-(from-a-$(n,n^2)$-rectangular-grid)">Flat cross triangle meshes (from a $(n,n^2)$ rectangular grid)<a class="anchor-link" href="#Flat-cross-triangle-meshes-(from-a-$(n,n^2)$-rectangular-grid)">&#182;</a></h3>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
@@ -12168,7 +12338,8 @@ See exercice 6.3.13 in
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
@@ -12191,7 +12362,8 @@ See exercice 6.3.13 in
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
@@ -12200,7 +12372,8 @@ See exercice 6.3.13 in
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
@@ -12212,8 +12385,4 @@ See exercice 6.3.13 in
     </div>
   </div>
 </body>
-
- 
-
-
 </html>
