@@ -36,6 +36,7 @@
 #include "Interpolation2D1D.txx"
 #include "Interpolation2D3D.txx"
 #include "Interpolation3D1D.txx"
+#include "Interpolation1D0D.txx"
 #include "InterpolationCU.txx"
 #include "InterpolationCC.txx"
 
@@ -70,14 +71,8 @@ MEDCouplingRemapper::~MEDCouplingRemapper()
  */
 int MEDCouplingRemapper::prepare(const MEDCouplingMesh *srcMesh, const MEDCouplingMesh *targetMesh, const std::string& method)
 {
-  if(!srcMesh || !targetMesh)
-    throw INTERP_KERNEL::Exception("MEDCouplingRemapper::prepare : presence of NULL input pointer !");
-  std::string srcMethod,targetMethod;
-  INTERP_KERNEL::Interpolation<INTERP_KERNEL::Interpolation3D>::CheckAndSplitInterpolationMethod(method,srcMethod,targetMethod);
-  MCAuto<MEDCouplingFieldTemplate> src=MEDCouplingFieldTemplate::New(MEDCouplingFieldDiscretization::GetTypeOfFieldFromStringRepr(srcMethod));
-  src->setMesh(srcMesh);
-  MCAuto<MEDCouplingFieldTemplate> target=MEDCouplingFieldTemplate::New(MEDCouplingFieldDiscretization::GetTypeOfFieldFromStringRepr(targetMethod));
-  target->setMesh(targetMesh);
+  MCAuto<MEDCouplingFieldTemplate> src,target;
+  BuildFieldTemplatesFrom(srcMesh,targetMesh,method,src,target);
   return prepareEx(src,target);
 }
 
@@ -92,17 +87,46 @@ int MEDCouplingRemapper::prepare(const MEDCouplingMesh *srcMesh, const MEDCoupli
  */
 int MEDCouplingRemapper::prepareEx(const MEDCouplingFieldTemplate *src, const MEDCouplingFieldTemplate *target)
 {
-  if(!src || !target)
-    throw INTERP_KERNEL::Exception("MEDCouplingRemapper::prepareEx : presence of NULL input pointer !");
-  if(!src->getMesh() || !target->getMesh())
-    throw INTERP_KERNEL::Exception("MEDCouplingRemapper::prepareEx : presence of NULL mesh pointer in given field template !");
-  releaseData(true);
-  _src_ft=const_cast<MEDCouplingFieldTemplate *>(src); _src_ft->incrRef();
-  _target_ft=const_cast<MEDCouplingFieldTemplate *>(target); _target_ft->incrRef();
+  restartUsing(src,target);
   if(isInterpKernelOnlyOrNotOnly())
     return prepareInterpKernelOnly();
   else
     return prepareNotInterpKernelOnly();
+}
+
+void MEDCouplingRemapper::setCrudeMatrix(const MEDCouplingMesh *srcMesh, const MEDCouplingMesh *targetMesh, const std::string& method, const std::vector<std::map<int,double> >& m)
+{
+  MCAuto<MEDCouplingFieldTemplate> src,target;
+  BuildFieldTemplatesFrom(srcMesh,targetMesh,method,src,target);
+  setCrudeMatrixEx(src,target,m);
+}
+
+void MEDCouplingRemapper::setCrudeMatrixEx(const MEDCouplingFieldTemplate *src, const MEDCouplingFieldTemplate *target, const std::vector<std::map<int,double> >& m)
+{
+  restartUsing(src,target);
+  if(m.size()!=target->getNumberOfTuplesExpected())
+    {
+      std::ostringstream oss; oss << "MEDCouplingRemapper::setMatrixEx : input matrix has " << m.size() << " rows whereas there are " << target->getNumberOfTuplesExpected() << " expected !";
+      throw INTERP_KERNEL::Exception(oss.str());
+    }
+  auto srcNbElem(src->getNumberOfTuplesExpected());
+  for(auto it: m)
+    {
+      for(auto it2: it)
+        {
+          auto idToTest(it2.first);
+          if(idToTest<0 || idToTest>=srcNbElem)
+            {
+              std::ostringstream oss; oss << "MEDCouplingRemapper::setMatrixEx : presence of elt #" << idToTest << " ! not in [0," << srcNbElem << ") !";
+              throw INTERP_KERNEL::Exception(oss.str());
+            }
+        }
+    }
+  _matrix=m;
+  _deno_multiply.clear();
+  _deno_multiply.resize(_matrix.size());
+  _deno_reverse_multiply.clear();
+  _deno_reverse_multiply.resize(srcNbElem);
 }
 
 int MEDCouplingRemapper::prepareInterpKernelOnly()
@@ -311,14 +335,14 @@ bool MEDCouplingRemapper::setOptionString(const std::string& key, const std::str
 }
 
 /*!
- * This method returns the interpolation matrix policy. This policy specifies which interpolation matrix method to keep or prefered.
+ * This method returns the interpolation matrix policy. This policy specifies which interpolation matrix method to keep or preferred.
  * If interpolation matrix policy is :
  *
- * - set to IK_ONLY_PREFERED (0) (the default) : the INTERP_KERNEL only method is prefered. That is to say, if it is possible to treat the case
+ * - set to IK_ONLY_PREFERED (0) (the default) : the INTERP_KERNEL only method is preferred. That is to say, if it is possible to treat the case
  *   regarding spatial discretization of source and target with INTERP_KERNEL only method, INTERP_KERNEL only method will be performed.
  *   If not, the \b not only INTERP_KERNEL method will be attempt.
  * 
- * - set to NOT_IK_ONLY_PREFERED (1) : the \b NOT only INTERP_KERNEL method is prefered. That is to say, if it is possible to treat the case
+ * - set to NOT_IK_ONLY_PREFERED (1) : the \b NOT only INTERP_KERNEL method is preferred. That is to say, if it is possible to treat the case
  *   regarding spatial discretization of source and target with \b NOT only INTERP_KERNEL method, \b NOT only INTERP_KERNEL method, will be performed.
  *   If not, the INTERP_KERNEL only method will be attempt.
  * 
@@ -340,11 +364,11 @@ int MEDCouplingRemapper::getInterpolationMatrixPolicy() const
  *
  * If interpolation matrix policy is :
  *
- * - set to IK_ONLY_PREFERED (0) (the default) : the INTERP_KERNEL only method is prefered. That is to say, if it is possible to treat the case
+ * - set to IK_ONLY_PREFERED (0) (the default) : the INTERP_KERNEL only method is preferred. That is to say, if it is possible to treat the case
  *   regarding spatial discretization of source and target with INTERP_KERNEL only method, INTERP_KERNEL only method will be performed.
  *   If not, the \b not only INTERP_KERNEL method will be attempt.
  * 
- * - set to NOT_IK_ONLY_PREFERED (1) : the \b NOT only INTERP_KERNEL method is prefered. That is to say, if it is possible to treat the case
+ * - set to NOT_IK_ONLY_PREFERED (1) : the \b NOT only INTERP_KERNEL method is preferred. That is to say, if it is possible to treat the case
  *   regarding spatial discretization of source and target with \b NOT only INTERP_KERNEL method, \b NOT only INTERP_KERNEL method, will be performed.
  *   If not, the INTERP_KERNEL only method will be attempt.
  * 
@@ -440,6 +464,15 @@ int MEDCouplingRemapper::prepareInterpKernelOnlyUU()
       INTERP_KERNEL::Interpolation3D1D interpolation(*this);
       nbCols=interpolation.interpolateMeshes(source_mesh_wrapper,target_mesh_wrapper,_matrix,method);
     }
+  else if(srcMeshDim==1 && trgMeshDim==0 && srcSpaceDim==3)
+    {
+      if(getIntersectionType()!=INTERP_KERNEL::PointLocator)
+        throw INTERP_KERNEL::Exception("Invalid interpolation requested between 1D and 0D into 3D space ! Select PointLocator as intersection type !");
+      MEDCouplingNormalizedUnstructuredMesh<3,3> source_mesh_wrapper(src_mesh);
+      MEDCouplingNormalizedUnstructuredMesh<3,3> target_mesh_wrapper(target_mesh);
+      INTERP_KERNEL::Interpolation1D0D interpolation(*this);
+      nbCols=interpolation.interpolateMeshes(source_mesh_wrapper,target_mesh_wrapper,_matrix,method);
+    }
   else if(srcMeshDim==1 && trgMeshDim==3 && srcSpaceDim==3)
     {
       if(getIntersectionType()!=INTERP_KERNEL::PointLocator)
@@ -507,7 +540,7 @@ int MEDCouplingRemapper::prepareInterpKernelOnlyUU()
           INTERP_KERNEL::Interpolation2D1D::DuplicateFacesType duplicateFaces=interpolation.retrieveDuplicateFaces();
           if(!duplicateFaces.empty())
             {
-              std::ostringstream oss; oss << "An unexpected situation happend ! For the following 1D Cells are part of edges shared by 2D cells :\n";
+              std::ostringstream oss; oss << "An unexpected situation happened ! For the following 1D Cells are part of edges shared by 2D cells :\n";
               for(std::map<int,std::set<int> >::const_iterator it=duplicateFaces.begin();it!=duplicateFaces.end();it++)
                 {
                   oss << "1D Cell #" << (*it).first << " is part of common edge of following 2D cells ids : ";
@@ -526,7 +559,7 @@ int MEDCouplingRemapper::prepareInterpKernelOnlyUU()
       INTERP_KERNEL::Interpolation2D3D::DuplicateFacesType duplicateFaces=interpolation.retrieveDuplicateFaces();
       if(!duplicateFaces.empty())
         {
-          std::ostringstream oss; oss << "An unexpected situation happend ! For the following 2D Cells are part of edges shared by 3D cells :\n";
+          std::ostringstream oss; oss << "An unexpected situation happened ! For the following 2D Cells are part of edges shared by 3D cells :\n";
           for(std::map<int,std::set<int> >::const_iterator it=duplicateFaces.begin();it!=duplicateFaces.end();it++)
             {
               oss << "2D Cell #" << (*it).first << " is part of common face of following 3D cells ids : ";
@@ -557,7 +590,7 @@ int MEDCouplingRemapper::prepareInterpKernelOnlyUU()
           INTERP_KERNEL::Interpolation2D3D::DuplicateFacesType duplicateFaces=interpolation.retrieveDuplicateFaces();
           if(!duplicateFaces.empty())
             {
-              std::ostringstream oss; oss << "An unexpected situation happend ! For the following 2D Cells are part of edges shared by 3D cells :\n";
+              std::ostringstream oss; oss << "An unexpected situation happened ! For the following 2D Cells are part of edges shared by 3D cells :\n";
               for(std::map<int,std::set<int> >::const_iterator it=duplicateFaces.begin();it!=duplicateFaces.end();it++)
                 {
                   oss << "2D Cell #" << (*it).first << " is part of common face of following 3D cells ids : ";
@@ -666,14 +699,16 @@ int MEDCouplingRemapper::prepareInterpKernelOnlyUC()
   std::string srcMeth,trgMeth;
   std::string methodCpp=checkAndGiveInterpolationMethodStr(srcMeth,trgMeth);
   if(methodCpp!="P0P0")
-    throw INTERP_KERNEL::Exception("MEDCouplingRemapper::prepareInterpKernelOnlyUC : only P0P0 interpolation supported for the moment !");
+    throw INTERP_KERNEL::Exception("MEDCouplingRemapper::prepareInterpKernelOnlyUC: only P0P0 interpolation supported for the moment !");
+  if(InterpolationOptions::getIntersectionType()!=INTERP_KERNEL::Triangulation)
+      throw INTERP_KERNEL::Exception("MEDCouplingRemapper::prepareInterpKernelOnlyUC: only 'Triangulation' intersection type supported!");
   const MEDCouplingUMesh *src_mesh=static_cast<const MEDCouplingUMesh *>(_src_ft->getMesh());
   const MEDCouplingCMesh *target_mesh=static_cast<const MEDCouplingCMesh *>(_target_ft->getMesh());
   const int srcMeshDim=src_mesh->getMeshDimension();
   const int srcSpceDim=src_mesh->getSpaceDimension();
   const int trgMeshDim=target_mesh->getMeshDimension();
   if(srcMeshDim!=srcSpceDim || srcMeshDim!=trgMeshDim)
-    throw INTERP_KERNEL::Exception("MEDCouplingRemapper::prepareInterpKernelOnlyUC : space dim of src unstructured should be equal to mesh dim of src unstructured and should be equal also equal to trg cartesian dimension !");
+    throw INTERP_KERNEL::Exception("MEDCouplingRemapper::prepareInterpKernelOnlyUC: space dimension of unstructured source mesh should be equal to mesh dimension of unstructured source mesh, and should also be equal to target cartesian dimension!");
   std::vector<std::map<int,double> > res;
   switch(srcMeshDim)
   {
@@ -721,13 +756,15 @@ int MEDCouplingRemapper::prepareInterpKernelOnlyCU()
   std::string methodCpp=checkAndGiveInterpolationMethodStr(srcMeth,trgMeth);
   if(methodCpp!="P0P0")
     throw INTERP_KERNEL::Exception("MEDCouplingRemapper::prepareInterpKernelOnlyCU : only P0P0 interpolation supported for the moment !");
+  if(InterpolationOptions::getIntersectionType()!=INTERP_KERNEL::Triangulation)
+    throw INTERP_KERNEL::Exception("MEDCouplingRemapper::prepareInterpKernelOnlyCU: only 'Triangulation' intersection type supported!");
   const MEDCouplingCMesh *src_mesh=static_cast<const MEDCouplingCMesh *>(_src_ft->getMesh());
   const MEDCouplingUMesh *target_mesh=static_cast<const MEDCouplingUMesh *>(_target_ft->getMesh());
   const int srcMeshDim=src_mesh->getMeshDimension();
   const int trgMeshDim=target_mesh->getMeshDimension();
   const int trgSpceDim=target_mesh->getSpaceDimension();
   if(trgMeshDim!=trgSpceDim || trgMeshDim!=srcMeshDim)
-    throw INTERP_KERNEL::Exception("MEDCouplingRemapper::prepareInterpKernelOnlyCU : space dim of target unstructured should be equal to mesh dim of target unstructured and should be equal also equal to source cartesian dimension !");
+    throw INTERP_KERNEL::Exception("MEDCouplingRemapper::prepareInterpKernelOnlyUC: space dimension of unstructured target mesh should be equal to mesh dimension of unstructured target mesh, and should also be equal to source cartesian dimension!");
   switch(srcMeshDim)
   {
     case 1:
@@ -773,12 +810,14 @@ int MEDCouplingRemapper::prepareInterpKernelOnlyCC()
   std::string methodCpp=checkAndGiveInterpolationMethodStr(srcMeth,trgMeth);
   if(methodCpp!="P0P0")
     throw INTERP_KERNEL::Exception("MEDCouplingRemapper::prepareInterpKernelOnlyCC : only P0P0 interpolation supported for the moment !");
+  if(InterpolationOptions::getIntersectionType()!=INTERP_KERNEL::Triangulation)
+    throw INTERP_KERNEL::Exception("MEDCouplingRemapper::prepareInterpKernelOnlyCC: only 'Triangulation' intersection type supported!");
   const MEDCouplingCMesh *src_mesh=static_cast<const MEDCouplingCMesh *>(_src_ft->getMesh());
   const MEDCouplingCMesh *target_mesh=static_cast<const MEDCouplingCMesh *>(_target_ft->getMesh());
   const int srcMeshDim=src_mesh->getMeshDimension();
   const int trgMeshDim=target_mesh->getMeshDimension();
   if(trgMeshDim!=srcMeshDim)
-    throw INTERP_KERNEL::Exception("MEDCouplingRemapper::prepareInterpKernelOnlyCC : dim of target cartesian should be equal to dim of source cartesian dimension !");
+    throw INTERP_KERNEL::Exception("MEDCouplingRemapper::prepareInterpKernelOnlyCC : dimension of target cartesian mesh should be equal to dimension of source cartesian mesh !");
   switch(srcMeshDim)
   {
     case 1:
@@ -839,7 +878,7 @@ int MEDCouplingRemapper::prepareNotInterpKernelOnlyGaussGauss()
   MCAuto<DataArrayInt> eltsArr,eltsIndexArr;
   int trgNbOfGaussPts=trgLoc->getNumberOfTuples();
   _matrix.resize(trgNbOfGaussPts);
-  _src_ft->getMesh()->getCellsContainingPoints(trgLoc->begin(),trgNbOfGaussPts,getPrecision(),eltsArr,eltsIndexArr);
+  _src_ft->getMesh()->getCellsContainingPointsLinearPartOnlyOnNonDynType(trgLoc->begin(),trgNbOfGaussPts,getPrecision(),eltsArr,eltsIndexArr);
   const int *elts(eltsArr->begin()),*eltsIndex(eltsIndexArr->begin());
   MCAuto<DataArrayInt> nbOfSrcCellsShTrgPts(eltsIndexArr->deltaShiftIndex());
   MCAuto<DataArrayInt> ids0=nbOfSrcCellsShTrgPts->findIdsNotEqual(0);
@@ -951,7 +990,7 @@ void MEDCouplingRemapper::checkPrepare() const
 
 /*!
  * This method builds a code considering already set field discretization int \a this : \a _src_ft and \a _target_ft.
- * This method returns 3 informations (2 in ouput parameters and 1 in return).
+ * This method returns 3 information (2 in output parameters and 1 in return).
  * 
  * \param [out] srcMeth the string code of the discretization of source field template
  * \param [out] trgMeth the string code of the discretization of target field template
@@ -975,6 +1014,18 @@ std::string MEDCouplingRemapper::BuildMethodFrom(const std::string& meth1, const
   return method;
 }
 
+void MEDCouplingRemapper::BuildFieldTemplatesFrom(const MEDCouplingMesh *srcMesh, const MEDCouplingMesh *targetMesh, const std::string& method, MCAuto<MEDCouplingFieldTemplate>& src, MCAuto<MEDCouplingFieldTemplate>& target)
+{
+  if(!srcMesh || !targetMesh)
+    throw INTERP_KERNEL::Exception("MEDCouplingRemapper::BuildFieldTemplatesFrom : presence of NULL input pointer !");
+  std::string srcMethod,targetMethod;
+  INTERP_KERNEL::Interpolation<INTERP_KERNEL::Interpolation3D>::CheckAndSplitInterpolationMethod(method,srcMethod,targetMethod);
+  src=MEDCouplingFieldTemplate::New(MEDCouplingFieldDiscretization::GetTypeOfFieldFromStringRepr(srcMethod));
+  src->setMesh(srcMesh);
+  target=MEDCouplingFieldTemplate::New(MEDCouplingFieldDiscretization::GetTypeOfFieldFromStringRepr(targetMethod));
+  target->setMesh(targetMesh);
+}
+
 void MEDCouplingRemapper::releaseData(bool matrixSuppression)
 {
   _src_ft=0;
@@ -985,6 +1036,17 @@ void MEDCouplingRemapper::releaseData(bool matrixSuppression)
       _deno_multiply.clear();
       _deno_reverse_multiply.clear();
     }
+}
+
+void MEDCouplingRemapper::restartUsing(const MEDCouplingFieldTemplate *src, const MEDCouplingFieldTemplate *target)
+{
+  if(!src || !target)
+    throw INTERP_KERNEL::Exception("MEDCouplingRemapper::restartUsingData : presence of NULL input pointer !");
+  if(!src->getMesh() || !target->getMesh())
+    throw INTERP_KERNEL::Exception("MEDCouplingRemapper::prepareEx : presence of NULL mesh pointer in given field template !");
+  releaseData(true);
+  _src_ft.takeRef(const_cast<MEDCouplingFieldTemplate *>(src));
+  _target_ft.takeRef(const_cast<MEDCouplingFieldTemplate *>(target));
 }
 
 void MEDCouplingRemapper::transferUnderground(const MEDCouplingFieldDouble *srcField, MEDCouplingFieldDouble *targetField, bool isDftVal, double dftValue)

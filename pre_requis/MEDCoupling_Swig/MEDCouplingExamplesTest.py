@@ -18,7 +18,12 @@
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
 
-from MEDCoupling import *
+
+import sys
+if sys.platform == "win32":
+    from MEDCouplingCompat import *
+else:
+    from MEDCoupling import *
 import unittest
 from math import pi, sqrt
 
@@ -2115,11 +2120,13 @@ class MEDCouplingBasicsTest(unittest.TestCase):
 # ! [PySnippetUMeshStdBuild1_2]
 # ! [PySnippetUMeshStdBuild1_3]
         mesh.allocateCells(5)#You can put more than 5 if you want but not less.
+        # adding cells
         mesh.insertNextCell(NORM_QUAD4,nodalConnPerCell[:4])
         mesh.insertNextCell(NORM_TRI3,nodalConnPerCell[4:7])
         mesh.insertNextCell(NORM_TRI3,nodalConnPerCell[7:10])
         mesh.insertNextCell(NORM_QUAD4,nodalConnPerCell[10:14])
         mesh.insertNextCell(NORM_QUAD4,nodalConnPerCell[14:])
+        # compacting
         mesh.finishInsertingCells()
 # ! [PySnippetUMeshStdBuild1_3]
 # ! [PySnippetUMeshStdBuild1_4]
@@ -2127,8 +2134,8 @@ class MEDCouplingBasicsTest(unittest.TestCase):
         mesh.setCoords(coordsArr)#coordsArr contains 9 tuples, that is to say mesh contains 9 nodes.
 # ! [PySnippetUMeshStdBuild1_4]
 # ! [PySnippetUMeshStdBuild1_5]
-# ! [PySnippetUMeshStdBuild1_5]
         mesh.checkConsistencyLight()
+# ! [PySnippetUMeshStdBuild1_5]
         return
 
     def testExampleCMeshStdBuild1(self):
@@ -2220,7 +2227,7 @@ class MEDCouplingBasicsTest(unittest.TestCase):
         fieldOnCells.setName("MyTensorFieldOnCellNoTime")
         fieldOnCells.setMesh(mesh)
         array=DataArrayDouble()
-        array.alloc(fieldOnCells.getMesh().getNumberOfCells(),9) # Implicitely fieldOnCells will be a 9 components field.
+        array.alloc(fieldOnCells.getMesh().getNumberOfCells(),9) # Implicitly fieldOnCells will be a 9 components field.
         array.fillWithValue(7.)
         fieldOnCells.setArray(array)
         # fieldOnCells is now usable
@@ -2252,7 +2259,7 @@ class MEDCouplingBasicsTest(unittest.TestCase):
         fieldOnNodes.setName("MyScalarFieldOnNodeNoTime")
         fieldOnNodes.setMesh(mesh)
         array=DataArrayDouble()
-        array.alloc(fieldOnNodes.getMesh().getNumberOfNodes(),1) # Implicitely fieldOnNodes will be a 1 component field.
+        array.alloc(fieldOnNodes.getMesh().getNumberOfNodes(),1) # Implicitly fieldOnNodes will be a 1 component field.
         array.fillWithValue(7.)
         fieldOnNodes.setArray(array)
         # fieldOnNodes is now usable
@@ -2272,7 +2279,7 @@ class MEDCouplingBasicsTest(unittest.TestCase):
         fieldOnCells.setTime(4.22,2,-1) # Time attached is 4.22 ms, iteration id is 2 and order id (or sub iteration id) is -1
         fieldOnCells.setMesh(mesh)
         array=DataArrayDouble()
-        array.alloc(fieldOnCells.getMesh().getNumberOfCells(),2) # Implicitely fieldOnCells will be a 2 components field.
+        array.alloc(fieldOnCells.getMesh().getNumberOfCells(),2) # Implicitly fieldOnCells will be a 2 components field.
         array.fillWithValue(7.)
         fieldOnCells.setArray(array)
         # fieldOnCells is now usable
@@ -2293,7 +2300,7 @@ class MEDCouplingBasicsTest(unittest.TestCase):
         fieldOnNodes.setEndTime(6.44,4,-1)# fieldOnNodes is defined in interval [4.22 ms,6.44 ms]
         fieldOnNodes.setMesh(mesh)
         array=DataArrayDouble()
-        array.alloc(fieldOnNodes.getMesh().getNumberOfNodes(),3) # Implicitely fieldOnNodes will be a 3 components field.
+        array.alloc(fieldOnNodes.getMesh().getNumberOfNodes(),3) # Implicitly fieldOnNodes will be a 3 components field.
         array.fillWithValue(7.)
         fieldOnNodes.setArray(array)
         # fieldOnNodes is now usable

@@ -106,7 +106,7 @@ namespace
 
   //================================================================================
   /*!
-   * \brief Converts MED long names into SAUVE short ones, returnes a healed long name
+   * \brief Converts MED long names into SAUVE short ones, returns a healed long name
    */
   //================================================================================
 
@@ -559,7 +559,7 @@ int SauvWriter::evaluateNbProfileSubMeshes() const
 
 //================================================================================
 /*!
- * \brief Transorm a profile into ids of mesh elements
+ * \brief Transform a profile into ids of mesh elements
  */
 //================================================================================
 
@@ -725,7 +725,7 @@ void SauvWriter::writeSubMeshes()
 
   writeNames( nameNbMap );
 
-  TFieldCounter fcount( *_sauvFile, 10 ); // 10 intergers per line
+  TFieldCounter fcount( *_sauvFile, 10 ); // 10 integers per line
 
   for ( size_t iSub = 0; iSub < _subs.size(); ++iSub )
     {
@@ -832,7 +832,7 @@ void SauvWriter::writeCompoundSubMesh(int iSub)
              << zeroI8
              << zeroI8 << endl;
 
-  TFieldCounter fcount( *_sauvFile, 10 ); // 10 intergers per line
+  TFieldCounter fcount( *_sauvFile, 10 ); // 10 integers per line
   for ( size_t i = 0; i < subIDs.size(); ++i, fcount++ )
     *_sauvFile << setw(8) << subIDs[i];
 }
@@ -848,7 +848,7 @@ void SauvWriter::writeNodes()
   MCAuto< MEDCouplingMesh > mesh = _fileMesh->getMeshAtLevel( 1 );
   MCAuto< MEDCouplingUMesh > umesh = mesh->buildUnstructured();
 
-  // write the index connecting nodes with their coodrinates
+  // write the index connecting nodes with their coordinates
 
   const int nbNodes = umesh->getNumberOfNodes();
   *_sauvFile << " ENREGISTREMENT DE TYPE   2" << endl
@@ -1170,7 +1170,7 @@ void SauvWriter::writeNodalFields(map<string,int>& fldNamePrefixMap)
               fcount.stop();
             }
         }
-    } // loop on fiels
+    } // loop on files
 }
 
 //================================================================================

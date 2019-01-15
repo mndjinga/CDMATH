@@ -18,7 +18,12 @@
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
 
-from MEDCoupling import *
+
+import sys
+if sys.platform == "win32":
+    from MEDCouplingCompat import *
+else:
+    from MEDCoupling import *
 from MEDCouplingDataForTest import MEDCouplingDataForTest
 
 if MEDCouplingHasNumPyBindings():
@@ -84,7 +89,7 @@ class MEDCouplingPickleTest(unittest.TestCase):
 
     @unittest.skipUnless(MEDCouplingHasNumPyBindings(),"requires numpy")
     def test4(self):
-        """ Idem test3 except that here serialization/deserialization is done explicitely."""
+        """ Idem test3 except that here serialization/deserialization is done explicitly."""
         arr=DataArrayDouble(10) ; arr.iota()
         m=MEDCouplingCMesh() ; m.setCoords(arr,arr,arr)
         m=m.buildUnstructured()

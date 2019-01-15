@@ -60,13 +60,14 @@ namespace MEDCoupling
     MEDCOUPLING_EXPORT double getMinValue2(DataArrayInt*& tupleIds) const;
     MEDCOUPLING_EXPORT double getAverageValue() const;
     MEDCOUPLING_EXPORT double norm2() const;
-    MEDCOUPLING_EXPORT double normMax() const;
     MEDCOUPLING_EXPORT void getWeightedAverageValue(double *res, bool isWAbs=true) const;
     MEDCOUPLING_EXPORT double getWeightedAverageValue(int compId, bool isWAbs=true) const;
     MEDCOUPLING_EXPORT double normL1(int compId) const;
     MEDCOUPLING_EXPORT void normL1(double *res) const;
     MEDCOUPLING_EXPORT double normL2(int compId) const;
     MEDCOUPLING_EXPORT void normL2(double *res) const;
+    MEDCOUPLING_EXPORT double normMax(int compId) const;
+    MEDCOUPLING_EXPORT void normMax(double *res) const;
     MEDCOUPLING_EXPORT double integral(int compId, bool isWAbs) const;
     MEDCOUPLING_EXPORT void integral(bool isWAbs, double *res) const;
     MEDCOUPLING_EXPORT void getValueOnPos(int i, int j, int k, double *res) const;
@@ -153,13 +154,13 @@ namespace MEDCoupling
   protected:
     ~MEDCouplingFieldDouble() { }
   private:
-    MEDCouplingFieldDouble(TypeOfField type, TypeOfTimeDiscretization td);
-    MEDCouplingFieldDouble(const MEDCouplingFieldTemplate& ft, TypeOfTimeDiscretization td);
-    MEDCouplingFieldDouble(const MEDCouplingFieldDouble& other, bool deepCpy);
-    MEDCouplingFieldDouble(NatureOfField n, MEDCouplingTimeDiscretization *td, MEDCouplingFieldDiscretization *type);
-    MCAuto<MEDCouplingFieldDouble> voronoizeGen(const Voronizer *vor, double eps) const;
-    MEDCouplingTimeDiscretization *timeDiscr();
-    const MEDCouplingTimeDiscretization *timeDiscr() const;
+    MEDCOUPLING_EXPORT MEDCouplingFieldDouble(TypeOfField type, TypeOfTimeDiscretization td);
+    MEDCOUPLING_EXPORT MEDCouplingFieldDouble(const MEDCouplingFieldTemplate& ft, TypeOfTimeDiscretization td);
+    MEDCOUPLING_EXPORT MEDCouplingFieldDouble(const MEDCouplingFieldDouble& other, bool deepCpy);
+    MEDCOUPLING_EXPORT MEDCouplingFieldDouble(NatureOfField n, MEDCouplingTimeDiscretization *td, MEDCouplingFieldDiscretization *type);
+    MEDCOUPLING_EXPORT MCAuto<MEDCouplingFieldDouble> voronoizeGen(const Voronizer *vor, double eps) const;
+    MEDCOUPLING_EXPORT MEDCouplingTimeDiscretization *timeDiscr();
+    MEDCOUPLING_EXPORT const MEDCouplingTimeDiscretization *timeDiscr() const;
   };
 }
 

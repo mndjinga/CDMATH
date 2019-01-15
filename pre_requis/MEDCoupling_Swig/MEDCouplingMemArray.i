@@ -93,6 +93,7 @@
 %newobject MEDCoupling::DataArrayInt::findIdsEqualList;
 %newobject MEDCoupling::DataArrayInt::findIdsNotEqualList;
 %newobject MEDCoupling::DataArrayInt::findIdsEqualTuple;
+%newobject MEDCoupling::DataArrayInt::findIdForEach;
 %newobject MEDCoupling::DataArrayInt::sumPerTuple;
 %newobject MEDCoupling::DataArrayInt::negate;
 %newobject MEDCoupling::DataArrayInt::computeAbs;
@@ -800,31 +801,6 @@ namespace MEDCoupling
         return ToNumPyArray<DataArrayFloat,float>(self,NPY_FLOAT,"DataArrayFloat");
       }
 #endif
-
-      // serialization
-      static PyObject *___new___(PyObject *cls, PyObject *args) throw(INTERP_KERNEL::Exception)
-      {
-        return NewMethWrapCallInitOnlyIfDictWithSingleEltInInput(cls,args,"DataArrayFloat");
-      }
-      
-      PyObject *__getnewargs__() throw(INTERP_KERNEL::Exception)
-      {
-#ifdef WITH_NUMPY
-        if(!self->isAllocated())
-          throw INTERP_KERNEL::Exception("PyWrap of DataArrayFloat.__getnewargs__ : self is not allocated !");
-        PyObject *ret(PyTuple_New(1));
-        PyObject *ret0(PyDict_New());
-        PyObject *numpyArryObj(MEDCoupling_DataArrayFloat_toNumPyArray(self));
-        {// create a dict to discriminite in __new__ if __init__ should be called. Not beautiful but not idea ...
-          PyObject *tmp1(PyInt_FromLong(0));
-          PyDict_SetItem(ret0,tmp1,numpyArryObj); Py_DECREF(tmp1); Py_DECREF(numpyArryObj);
-          PyTuple_SetItem(ret,0,ret0);
-        }
-        return ret;
-#else
-        throw INTERP_KERNEL::Exception("PyWrap of DataArrayByte.__getnewargs__ : not implemented because numpy is not active in your configuration ! No serialization/unserialization available without numpy !");
-#endif
-      }
     }
   };
 
@@ -941,9 +917,8 @@ namespace MEDCoupling
     void checkNoNullValues() const throw(INTERP_KERNEL::Exception);
     DataArrayDouble *computeBBoxPerTuple(double epsilon=0.0) const throw(INTERP_KERNEL::Exception);
     void recenterForMaxPrecision(double eps) throw(INTERP_KERNEL::Exception);
-    double getMaxValue(int& tupleId) const throw(INTERP_KERNEL::Exception);
     double getMaxValueInArray() const throw(INTERP_KERNEL::Exception);
-    double getMinValue(int& tupleId) const throw(INTERP_KERNEL::Exception);
+    double getMaxAbsValueInArray() const throw(INTERP_KERNEL::Exception);
     double getMinValueInArray() const throw(INTERP_KERNEL::Exception);
     int count(double value, double eps) const throw(INTERP_KERNEL::Exception);
     double getAverageValue() const throw(INTERP_KERNEL::Exception);
@@ -1070,6 +1045,22 @@ namespace MEDCoupling
           }
       }
 
+      PyObject *asArcOfCircle() const throw(INTERP_KERNEL::Exception)
+      {
+        double center[2],radius,ang;
+        self->asArcOfCircle(center,radius,ang);
+        PyObject *ret(PyTuple_New(3));
+        {
+          PyObject *ret0(PyList_New(2));
+          PyList_SetItem(ret0,0,PyFloat_FromDouble(center[0]));
+          PyList_SetItem(ret0,1,PyFloat_FromDouble(center[1]));
+          PyTuple_SetItem(ret,0,ret0);
+        }
+        PyTuple_SetItem(ret,1,PyFloat_FromDouble(radius));
+        PyTuple_SetItem(ret,2,PyFloat_FromDouble(ang));        
+        return ret;
+      }
+
       DataArrayDoubleIterator *__iter__() throw(INTERP_KERNEL::Exception)
       {
         return self->iterator();
@@ -1153,6 +1144,28 @@ namespace MEDCoupling
         return convertDblArrToPyListOfTuple<double>(vals,nbOfComp,nbOfTuples);
       }
 
+      static PyObject *ComputeIntegralOfSeg2IntoTri3(PyObject *seg2, PyObject *tri3) throw(INTERP_KERNEL::Exception)
+      {
+        const char msg[]="Python wrap of DataArrayDouble::ComputeIntegralOfSeg2IntoTri3 : ";
+        double val,val2;
+        DataArrayDouble *a,*a2;
+        DataArrayDoubleTuple *aa,*aa2;
+        std::vector<double> bb,bb2;
+        int sw;
+        const double *seg2Ptr(convertObjToPossibleCpp5_Safe(seg2,sw,val,a,aa,bb,msg,2,2,true));
+        const double *tri3Ptr(convertObjToPossibleCpp5_Safe(tri3,sw,val2,a2,aa2,bb2,msg,3,2,true));
+        //
+        double res0[3],res1;
+        DataArrayDouble::ComputeIntegralOfSeg2IntoTri3(seg2Ptr,tri3Ptr,res0,res1);
+        PyObject *ret(PyTuple_New(2)),*ret0(PyTuple_New(3));
+        PyTuple_SetItem(ret0,0,PyFloat_FromDouble(res0[0]));
+        PyTuple_SetItem(ret0,1,PyFloat_FromDouble(res0[1]));
+        PyTuple_SetItem(ret0,2,PyFloat_FromDouble(res0[2]));
+        PyTuple_SetItem(ret,0,ret0);
+        PyTuple_SetItem(ret,1,PyFloat_FromDouble(res1));
+        return ret;
+      }
+      
       DataArrayDouble *symmetry3DPlane(PyObject *point, PyObject *normalVector) throw(INTERP_KERNEL::Exception)
       {
         const char msg[]="Python wrap of DataArrayDouble::symmetry3DPlane : ";
@@ -1302,6 +1315,16 @@ namespace MEDCoupling
         return ret;
       }
 
+	  PyObject *getMaxAbsValue() const throw(INTERP_KERNEL::Exception)
+      {
+        std::size_t tmp;
+        double r1=self->getMaxAbsValue(tmp);
+        PyObject *ret=PyTuple_New(2);
+        PyTuple_SetItem(ret,0,PyFloat_FromDouble(r1));
+        PyTuple_SetItem(ret,1,PyInt_FromLong(tmp));
+        return ret;
+      }
+
       PyObject *getMaxValue2() const throw(INTERP_KERNEL::Exception)
       {
         DataArrayInt *tmp;
@@ -1339,6 +1362,14 @@ namespace MEDCoupling
         self->getMinMaxPerComponent(tmp);
         PyObject *ret=convertDblArrToPyListOfTuple<double>(tmp,2,nbOfCompo);
         return ret;
+      }
+      
+      PyObject *normMaxPerComponent() const throw(INTERP_KERNEL::Exception)
+      {
+        int nbOfCompo(self->getNumberOfComponents());
+        INTERP_KERNEL::AutoPtr<double> tmp(new double[nbOfCompo]);
+        self->normMaxPerComponent(tmp);
+        return convertDblArrToPyList<double>(tmp,nbOfCompo);
       }
 
       PyObject *accumulate() const throw(INTERP_KERNEL::Exception)
@@ -1938,31 +1969,6 @@ namespace MEDCoupling
         PyTuple_SetItem(ret,1,SWIG_NewPointerObj(SWIG_as_voidptr(ret1),SWIGTYPE_p_MEDCoupling__DataArrayInt, SWIG_POINTER_OWN | 0 ));
         return ret;
       }
-
-      // serialization
-      static PyObject *___new___(PyObject *cls, PyObject *args) throw(INTERP_KERNEL::Exception)
-      {
-        return NewMethWrapCallInitOnlyIfDictWithSingleEltInInput(cls,args,"DataArrayDouble");
-      }
-
-      PyObject *__getnewargs__() throw(INTERP_KERNEL::Exception)
-      {
-#ifdef WITH_NUMPY
-        if(!self->isAllocated())
-          throw INTERP_KERNEL::Exception("PyWrap of DataArrayDouble.__getnewargs__ : self is not allocated !");
-        PyObject *ret(PyTuple_New(1));
-        PyObject *ret0(PyDict_New());
-        PyObject *numpyArryObj(MEDCoupling_DataArrayDouble_toNumPyArray(self));
-        {// create a dict to discriminite in __new__ if __init__ should be called. Not beautiful but not idea ...
-          PyObject *tmp1(PyInt_FromLong(0));
-          PyDict_SetItem(ret0,tmp1,numpyArryObj); Py_DECREF(tmp1); Py_DECREF(numpyArryObj);
-          PyTuple_SetItem(ret,0,ret0);
-        }
-        return ret;
-#else
-        throw INTERP_KERNEL::Exception("PyWrap of DataArrayDouble.__getnewargs__ : not implemented because numpy is not active in your configuration ! No serialization/unserialization available without numpy !");
-#endif
-      }
     }
   };
 
@@ -2306,6 +2312,7 @@ namespace MEDCoupling
     DataArrayInt *invertArrayN2O2O2N(int oldNbOfElem) const throw(INTERP_KERNEL::Exception);
     DataArrayInt *invertArrayO2N2N2OBis(int newNbOfElem) const throw(INTERP_KERNEL::Exception);
     MCAuto< MapII > invertArrayN2O2O2NOptimized() const throw(INTERP_KERNEL::Exception);
+    MCAuto< MapII > giveN2OOptimized() const throw(INTERP_KERNEL::Exception);
     DataArrayInt *indicesOfSubPart(const DataArrayInt& partOfThis) const throw(INTERP_KERNEL::Exception);
     DataArrayInt *fromNoInterlace() const throw(INTERP_KERNEL::Exception);
     DataArrayInt *toNoInterlace() const throw(INTERP_KERNEL::Exception);
@@ -2347,9 +2354,8 @@ namespace MEDCoupling
     bool presenceOfValue(const std::vector<int>& vals) const throw(INTERP_KERNEL::Exception);
     int count(int value) const throw(INTERP_KERNEL::Exception);
     int accumulate(int compId) const throw(INTERP_KERNEL::Exception);
-    int getMaxValue(int& tupleId) const throw(INTERP_KERNEL::Exception);
     int getMaxValueInArray() const throw(INTERP_KERNEL::Exception);
-    int getMinValue(int& tupleId) const throw(INTERP_KERNEL::Exception);
+    int getMaxAbsValueInArray() const throw(INTERP_KERNEL::Exception);
     int getMinValueInArray() const throw(INTERP_KERNEL::Exception);
     void abs() throw(INTERP_KERNEL::Exception);
     DataArrayInt *computeAbs() const throw(INTERP_KERNEL::Exception);
@@ -2566,6 +2572,15 @@ namespace MEDCoupling
         std::vector<int> val2;
         const int *bg(convertIntStarLikePyObjToCppIntStar(inputTuple,sw,sz,val,val2));
         return self->findIdsEqualTuple(bg,bg+sz);
+      }
+
+      DataArrayInt *findIdForEach(PyObject *vals) const throw(INTERP_KERNEL::Exception)
+      {
+        int sw,sz,val;
+        std::vector<int> val2;
+        const int *bg(convertIntStarLikePyObjToCppIntStar(vals,sw,sz,val,val2));
+        MCAuto<DataArrayInt> ret(self->findIdForEach(bg,bg+sz));
+        return ret.retn();
       }
 
       PyObject *splitInBalancedSlices(int nbOfSlices) const throw(INTERP_KERNEL::Exception)
@@ -2991,6 +3006,16 @@ namespace MEDCoupling
       {
         int tmp;
         int r1=self->getMaxValue(tmp);
+        PyObject *ret=PyTuple_New(2);
+        PyTuple_SetItem(ret,0,PyInt_FromLong(r1));
+        PyTuple_SetItem(ret,1,PyInt_FromLong(tmp));
+        return ret;
+      }
+    
+      PyObject *getMaxAbsValue(std::size_t& tupleId) const throw(INTERP_KERNEL::Exception)
+      {
+      	std::size_t tmp;
+        int r1=self->getMaxAbsValue(tmp);
         PyObject *ret=PyTuple_New(2);
         PyTuple_SetItem(ret,0,PyInt_FromLong(r1));
         PyTuple_SetItem(ret,1,PyInt_FromLong(tmp));
@@ -4296,31 +4321,6 @@ namespace MEDCoupling
         PyTuple_SetItem(pyRet,1,ret1Py);
         return pyRet;
       }
-      
-      // serialization
-      static PyObject *___new___(PyObject *cls, PyObject *args) throw(INTERP_KERNEL::Exception)
-      {
-        return NewMethWrapCallInitOnlyIfDictWithSingleEltInInput(cls,args,"DataArrayInt");
-      }
-      
-      PyObject *__getnewargs__() throw(INTERP_KERNEL::Exception)
-      {
-#ifdef WITH_NUMPY
-        if(!self->isAllocated())
-          throw INTERP_KERNEL::Exception("PyWrap of DataArrayInt.__getnewargs__ : self is not allocated !");
-        PyObject *ret(PyTuple_New(1));
-        PyObject *ret0(PyDict_New());
-        PyObject *numpyArryObj(MEDCoupling_DataArrayInt_toNumPyArray(self));
-        {// create a dict to discriminite in __new__ if __init__ should be called. Not beautiful but not idea ...
-          PyObject *tmp1(PyInt_FromLong(0));
-          PyDict_SetItem(ret0,tmp1,numpyArryObj); Py_DECREF(tmp1); Py_DECREF(numpyArryObj);
-          PyTuple_SetItem(ret,0,ret0);
-        }
-        return ret;
-#else
-        throw INTERP_KERNEL::Exception("PyWrap of DataArrayInt.__getnewargs__ : not implemented because numpy is not active in your configuration ! No serialization/unserialization available without numpy !");
-#endif
-      }
     }
   };
 
@@ -5086,31 +5086,6 @@ namespace MEDCoupling
         return ToNumPyArray<DataArrayByte,char>(self,NPY_INT8,"DataArrayByte");
       }
 #endif
-
-      // serialization
-      static PyObject *___new___(PyObject *cls, PyObject *args) throw(INTERP_KERNEL::Exception)
-      {
-        return NewMethWrapCallInitOnlyIfDictWithSingleEltInInput(cls,args,"DataArrayByte");
-      }
-
-      PyObject *__getnewargs__() throw(INTERP_KERNEL::Exception)
-      {
-#ifdef WITH_NUMPY
-        if(!self->isAllocated())
-          throw INTERP_KERNEL::Exception("PyWrap of DataArrayByte.__getnewargs__ : self is not allocated !");
-        PyObject *ret(PyTuple_New(1));
-        PyObject *ret0(PyDict_New());
-        PyObject *numpyArryObj(MEDCoupling_DataArrayByte_toNumPyArray(self));
-        {// create a dict to discriminite in __new__ if __init__ should be called. Not beautiful but not idea ...
-          PyObject *tmp1(PyInt_FromLong(0));
-          PyDict_SetItem(ret0,tmp1,numpyArryObj); Py_DECREF(tmp1); Py_DECREF(numpyArryObj);
-          PyTuple_SetItem(ret,0,ret0);
-        }
-        return ret;
-#else
-        throw INTERP_KERNEL::Exception("PyWrap of DataArrayByte.__getnewargs__ : not implemented because numpy is not active in your configuration ! No serialization/unserialization available without numpy !");
-#endif
-      }
 
       DataArrayByte *__setitem__(PyObject *obj, PyObject *value) throw(INTERP_KERNEL::Exception)
       {
@@ -5975,3 +5950,32 @@ namespace MEDCoupling
     }
   };
 }
+
+%pythoncode %{
+def MEDCouplingStdReduceFunct(cls,params):
+    a,b=params
+    ret=object.__new__(cls)
+    ret.__init__(*a)
+    ret.__setstate__(b)
+    return ret
+
+def MEDCouplingDataArrayDoubleReduce(self):
+    if not MEDCouplingHasNumPyBindings():
+      raise InterpKernelException("PyWrap of DataArrayDouble.__reduce__ : not implemented because numpy is not active in your configuration ! No serialization/unserialization available without numpy !")
+    return MEDCouplingStdReduceFunct,(DataArrayDouble,((self.toNumPyArray(),),(self.__getstate__()),))
+
+def MEDCouplingDataArrayIntReduce(self):
+    if not MEDCouplingHasNumPyBindings():
+      raise InterpKernelException("PyWrap of DataArrayInt.__reduce__ : not implemented because numpy is not active in your configuration ! No serialization/unserialization available without numpy !")
+    return MEDCouplingStdReduceFunct,(DataArrayInt,((self.toNumPyArray(),),(self.__getstate__()),))
+
+def MEDCouplingDataArrayByteReduce(self):
+    if not MEDCouplingHasNumPyBindings():
+      raise InterpKernelException("PyWrap of DataArrayByte.__reduce__ : not implemented because numpy is not active in your configuration ! No serialization/unserialization available without numpy !")
+    return MEDCouplingStdReduceFunct,(DataArrayByte,((self.toNumPyArray(),),(self.__getstate__()),))
+
+def MEDCouplingDataArrayFloatReduce(self):
+    if not MEDCouplingHasNumPyBindings():
+      raise InterpKernelException("PyWrap of DataArrayFloat.__reduce__ : not implemented because numpy is not active in your configuration ! No serialization/unserialization available without numpy !")
+    return MEDCouplingStdReduceFunct,(DataArrayFloat,((self.toNumPyArray(),),(self.__getstate__()),))
+%}

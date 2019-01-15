@@ -459,8 +459,6 @@ Value *ExprParser::evaluateLowLev(Value *valGen) const
   return stackOfVal.back();
 }
 
-#if __cplusplus >= 201103L
-
 ExprParser::ExprParser(ExprParser&& other):_father(other._father),_leaf(other._leaf),_is_parsing_ok(std::move(other._is_parsing_ok)),_expr(std::move(other._expr)),_sub_expr(std::move(other._sub_expr)),_func_btw_sub_expr(std::move(other._func_btw_sub_expr))
 {
   other._leaf=0;
@@ -479,8 +477,6 @@ ExprParser& ExprParser::operator=(ExprParser&& other)
   return *this;
 }
 
-#endif
-
 void ExprParser::reverseThis()
 {
   if(_leaf)
@@ -489,19 +485,8 @@ void ExprParser::reverseThis()
     (*iter).reverseThis();
   std::size_t sz(_sub_expr.size());
   std::size_t nbOfTurn(sz/2);
-#if __cplusplus >= 201103L
   for(std::size_t i=0;i<nbOfTurn;i++)
     std::swap(_sub_expr[i],_sub_expr[sz-i-1]);
-#else
-  AutoPtr<char> buf(new char[sizeof(ExprParser)]);
-  char *loc(reinterpret_cast<char *>(&_sub_expr[0])),*bufPtr(buf);
-  for(std::size_t i=0;i<nbOfTurn;i++)
-    {
-      std::copy(loc+i*sizeof(ExprParser),loc+(i+1)*sizeof(ExprParser),bufPtr);
-      std::copy(loc+(sz-i-1)*sizeof(ExprParser),loc+(sz-i)*sizeof(ExprParser),loc+i*sizeof(ExprParser));
-      std::copy(bufPtr,bufPtr+sizeof(ExprParser),loc+(sz-i-1)*sizeof(ExprParser));
-    }
-#endif
 }
 
 ExprParserOfEval ExprParser::convertMeTo() const
@@ -547,7 +532,7 @@ void ExprParser::parseDeeper()
 }
 
 /*!
- * This method has the responsability to see if this->_expr can be seen as a unary function of something.
+ * This method has the responsibility to see if this->_expr can be seen as a unary function of something.
  * Something defined as the contain of highest level barckets.
  * Typically '(3*x+2)' and 'cos(4*l+p*n)' will be intercepted by this method whereas '3*x+2' not...etc..
  */
@@ -594,9 +579,9 @@ void ExprParser::parseUnaryFunc()
 }
 
 /*!
- *  This method has the responsability to see if this->_expr is interpretable without any recursion.
+ *  This method has the responsibility to see if this->_expr is interpretable without any recursion.
  * \return true if no recursion needed, false if this->_expr is too complex to be interpreted at this level.
- * \throw exception if this->_expr is simple enough to try to interprate this and this expression contains an error.
+ * \throw exception if this->_expr is simple enough to try to interpret this and this expression contains an error.
  */
 bool ExprParser::tryToInterpALeaf()
 {
@@ -917,7 +902,7 @@ void ExprParser::checkBracketsParity() const
           if(curLevel==0)
             {
               std::ostringstream errMsg;
-              char MSGTYP1[]="Error in brackets : closing brackets ')' before openning '('";
+              char MSGTYP1[]="Error in brackets : closing brackets ')' before opening '('";
               errMsg << EXPR_PARSE_ERR_MSG << MSGTYP1;
               LocateError(errMsg,_expr,(int)std::distance(_expr.begin(),iter));
               throw INTERP_KERNEL::Exception(errMsg.str().c_str());
@@ -941,7 +926,7 @@ void ExprParser::checkBracketsParity() const
  */
 double ExprParser::ReplaceAndTraduce(std::string& expr, int id, std::size_t bg, std::size_t end, int& delta)
 {
-  static const char MSG[]="Interal error : A string expected to be a float is not one ! Bug to signal !";
+  static const char MSG[]="Internal error : A string expected to be a float is not one ! Bug to signal !";
   std::istringstream stream;
   std::ostringstream oss;
   std::size_t end2=end!=std::string::npos?end-bg:end;

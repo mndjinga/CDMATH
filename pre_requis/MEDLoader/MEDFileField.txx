@@ -199,6 +199,16 @@ namespace MEDCoupling
       }
   }
 
+  template<class T>
+  void MEDFileField1TSTemplateWithoutSDA<T>::copyTimeInfoFrom(const typename Traits<T>::FieldType *mcf)
+  {
+    if(!mcf)
+      throw INTERP_KERNEL::Exception("MEDFileField1TSTemplateWithoutSDA<T>::copyTimeInfoFrom : input field is nullptr !");
+    int b(0),c(0);
+    double a(mcf->getTime(b,c));
+    setTime(b,c,a);
+  }
+
   ///////////////////////////////////////////////////////
 
   template<class T>
@@ -398,6 +408,12 @@ namespace MEDCoupling
   }
 
   template<class T>
+  void MEDFileTemplateField1TS<T>::setArray(DataArray *arr)
+  {
+    return contentNotNull()->setArray(arr);
+  }
+
+  template<class T>
   typename Traits<T>::ArrayType *MEDFileTemplateField1TS<T>::getUndergroundDataArray() const
   {
     return contentNotNull()->getUndergroundDataArrayTemplate();
@@ -436,6 +452,12 @@ namespace MEDCoupling
     MCAuto<MEDCouplingFieldDouble> ret(MEDCouplingFieldDouble::New(*ft));
     ret->setTime(t0,t1,t2); ret->setTimeUnit(tu);
     return ret.retn();
+  }
+
+  template<class T>
+  void MEDFileTemplateField1TS<T>::copyTimeInfoFrom(const typename Traits<T>::FieldType *mcf)
+  {
+    contentNotNull()->copyTimeInfoFrom(mcf);
   }
 
   /*!
@@ -660,16 +682,32 @@ namespace MEDCoupling
    *  \throw If the data array of \a this is already allocated but has different number of
    *         components than \a field.
    *  \throw If elements in \a mesh are not in the order suitable for writing to the MED file.
-   *  \sa setFieldNoProfileSBT()
+   *  \sa setFieldNoProfileSBT, setFieldProfileFlatly
    */
   template<class T>
   void MEDFileTemplateField1TS<T>::setFieldProfile(const typename Traits<T>::FieldType *field, const MEDFileMesh *mesh, int meshDimRelToMax, const DataArrayInt *profile)
   {
-    setFileName("");
-    MCAuto<MEDCouplingFieldTemplate> ft(MEDCouplingFieldTemplate::NewWithoutCheck(*field));
-    contentNotNull()->setFieldProfile(field->timeDiscrSafe(),ft,field->getArray(),mesh,meshDimRelToMax,profile,*this,*contentNotNull());
+    setFieldProfileGeneral(field,mesh,meshDimRelToMax,profile,true);
   }
 
+  /*!
+   * Same as setFieldProfile except that here profile will be created unconditionally
+   * \sa setFieldProfile
+   */
+  template<class T>
+  void MEDFileTemplateField1TS<T>::setFieldProfileFlatly(const typename Traits<T>::FieldType *field, const MEDFileMesh *mesh, int meshDimRelToMax, const DataArrayInt *profile)
+  {
+    setFieldProfileGeneral(field,mesh,meshDimRelToMax,profile,false);
+  }
+
+  template<class T>
+  void MEDFileTemplateField1TS<T>::setFieldProfileGeneral(const typename Traits<T>::FieldType *field, const MEDFileMesh *mesh, int meshDimRelToMax, const DataArrayInt *profile, bool smartPflKiller)
+  {
+    setFileName("");
+    MCAuto<MEDCouplingFieldTemplate> ft(MEDCouplingFieldTemplate::NewWithoutCheck(*field));
+    contentNotNull()->setFieldProfile(field->timeDiscrSafe(),ft,field->getArray(),mesh,meshDimRelToMax,profile,*this,*contentNotNull(),smartPflKiller);
+  }
+  
   /*!
    * Return an extraction of \a this using \a extractDef map to specify the extraction.
    * The keys of \a extractDef is level relative to max ext of \a mm mesh.
@@ -1200,18 +1238,33 @@ namespace MEDCoupling
    *  \throw If the data array of \a this is already allocated but has different number of
    *         components than \a field.
    *  \throw If elements in \a mesh are not in the order suitable for writing to the MED file.
-   *  \sa setFieldNoProfileSBT()
+   *  \sa setFieldNoProfileSBT, appendFieldProfileFlatly
    */
   template<class T>
   void MEDFileTemplateFieldMultiTS<T>::appendFieldProfile(const typename Traits<T>::FieldType *field, const MEDFileMesh *mesh, int meshDimRelToMax, const DataArrayInt *profile)
+  {
+    appendFieldProfileGeneral(field,mesh,meshDimRelToMax,profile,true);
+  }
+
+  /*!
+   * same as appendFieldProfile except that here profile is created unconditionaly
+   */
+  template<class T>
+  void MEDFileTemplateFieldMultiTS<T>::appendFieldProfileFlatly(const typename Traits<T>::FieldType *field, const MEDFileMesh *mesh, int meshDimRelToMax, const DataArrayInt *profile)
+  {
+    appendFieldProfileGeneral(field,mesh,meshDimRelToMax,profile,false);
+  }
+
+  template<class T>
+  void MEDFileTemplateFieldMultiTS<T>::appendFieldProfileGeneral(const typename Traits<T>::FieldType *field, const MEDFileMesh *mesh, int meshDimRelToMax, const DataArrayInt *profile, bool smartPflKiller)
   {
     const typename Traits<T>::ArrayType *arr(NULL);
     if(field)
       arr=field->getArray();
     MCAuto<MEDCouplingFieldDouble> field2(MEDFileTemplateField1TS<T>::ToFieldTemplateWithTime(field));
-    contentNotNull()->appendFieldProfile(field2,arr,mesh,meshDimRelToMax,profile,*this);
+    contentNotNull()->appendFieldProfile(field2,arr,mesh,meshDimRelToMax,profile,*this,smartPflKiller);
   }
-
+  
   template<class T>
   const typename MLFieldTraits<T>::FMTSWSDAType *MEDFileTemplateFieldMultiTS<T>::contentNotNull() const
   {
@@ -1272,7 +1325,7 @@ namespace MEDCoupling
     typename Traits<T>::ArrayType *ret2(dynamic_cast<typename Traits<T>::ArrayType *>(ret));
     if(!ret2)
       {
-        std::ostringstream oss; oss << "MEDFileTemplateFieldMultiTS<T>::getUndergroundDataArray : invalid type of data dectected ! Expecting " << MLFieldTraits<T>::F1TSWSDAType::TYPE_STR;
+        std::ostringstream oss; oss << "MEDFileTemplateFieldMultiTS<T>::getUndergroundDataArray : invalid type of data detected ! Expecting " << MLFieldTraits<T>::F1TSWSDAType::TYPE_STR;
         throw INTERP_KERNEL::Exception(oss.str());
       }
     return ret2;
@@ -1287,7 +1340,7 @@ namespace MEDCoupling
     typename Traits<T>::ArrayType *ret2(dynamic_cast<typename Traits<T>::ArrayType *>(ret));
     if(!ret2)
       {
-        std::ostringstream oss; oss << "MEDFileTemplateFieldMultiTS<T>::getUndergroundDataArrayExt : invalid type of data dectected ! Expecting " << MLFieldTraits<T>::F1TSWSDAType::TYPE_STR;
+        std::ostringstream oss; oss << "MEDFileTemplateFieldMultiTS<T>::getUndergroundDataArrayExt : invalid type of data detected ! Expecting " << MLFieldTraits<T>::F1TSWSDAType::TYPE_STR;
         throw INTERP_KERNEL::Exception(oss.str());
       }
     return ret2;

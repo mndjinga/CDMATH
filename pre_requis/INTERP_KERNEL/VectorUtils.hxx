@@ -20,11 +20,13 @@
 #ifndef __VECTORUTILS_HXX__
 #define __VECTORUTILS_HXX__
 
+#include <algorithm>
 #include <sstream>
 #include <numeric>
 #include <string>
 #include <cmath>
 #include <map>
+
 
 namespace INTERP_KERNEL
 {
@@ -181,6 +183,23 @@ namespace INTERP_KERNEL
     const double relError = std::fabs((x - y) / std::max(std::fabs(x), std::fabs(y)));
 
     return relError < relTol;
+  }
+
+  inline double sumOfAbsoluteValues(const double row[3])
+  {
+    double ret(0.);
+    std::for_each(row,row+3,[&ret](double v) { ret += std::abs(v); });
+    return ret;
+  }
+
+  /*!
+   * Returns the infinite norm of a 3x3 input matrix \a mat.
+   * The max of absolute value of row sum.
+   */
+  inline double normInf(const double mat[9])
+  {
+    double ret(std::max(sumOfAbsoluteValues(mat),sumOfAbsoluteValues(mat+3)));
+    return std::max(ret,sumOfAbsoluteValues(mat+6));
   }
 
 }

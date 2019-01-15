@@ -374,7 +374,7 @@ void MEDCouplingTimeDiscretization::setSelectedComponents(const MEDCouplingTimeD
       if(arrays1[i]!=0 && arrays2[i]!=0)
         arrays1[i]->setSelectedComponents(arrays2[i],compoIds);
       else if(arrays1[i]!=0 || arrays2[i]!=0)
-        throw INTERP_KERNEL::Exception("TimeDiscretization::setSelectedComponents : some time array in correspondance are not defined symetrically !");
+        throw INTERP_KERNEL::Exception("TimeDiscretization::setSelectedComponents : some time array in correspondence are not defined symmetrically !");
     }
 }
 
@@ -710,7 +710,7 @@ MEDCouplingTimeDiscretizationInt *MEDCouplingTimeDiscretizationInt::New(TypeOfTi
     case MEDCouplingTimeDiscretizationInt::DISCRETIZATION:
       return new MEDCouplingTimeDiscretizationInt;
     default:
-      throw INTERP_KERNEL::Exception("Time discretization not implemented yet for intergers !");
+      throw INTERP_KERNEL::Exception("Time discretization not implemented yet for integers !");
   }
 }
 
@@ -771,7 +771,7 @@ MEDCouplingTimeDiscretizationFloat *MEDCouplingTimeDiscretizationFloat::New(Type
     case MEDCouplingTimeDiscretizationFloat::DISCRETIZATION:
       return new MEDCouplingTimeDiscretizationFloat;
     default:
-      throw INTERP_KERNEL::Exception("Time discretization not implemented yet for intergers !");
+      throw INTERP_KERNEL::Exception("Time discretization not implemented yet for integers !");
   }
 }
 

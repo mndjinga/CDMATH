@@ -51,14 +51,14 @@ namespace MEDCoupling
   class MEDCouplingPointer
   {
   public:
-    MEDCouplingPointer():_internal(0),_external(0) { }
-    void null() { _internal=0; _external=0; }
-    bool isNull() const { return _internal==0 && _external==0; }
-    void setInternal(T *pointer);
-    void setExternal(const T *pointer);
-    const T *getConstPointer() const { if(_internal) return _internal; else return _external; }
-    const T *getConstPointerLoc(std::size_t offset) const { if(_internal) return _internal+offset; else return _external+offset; }
-    T *getPointer() { if(_internal) return _internal; if(_external) throw INTERP_KERNEL::Exception("Trying to write on an external pointer."); else return 0; }
+    MEDCOUPLING_EXPORT MEDCouplingPointer():_internal(0),_external(0) { }
+    MEDCOUPLING_EXPORT void null() { _internal=0; _external=0; }
+    MEDCOUPLING_EXPORT bool isNull() const { return _internal==0 && _external==0; }
+    MEDCOUPLING_EXPORT void setInternal(T *pointer);
+    MEDCOUPLING_EXPORT void setExternal(const T *pointer);
+    MEDCOUPLING_EXPORT const T *getConstPointer() const { if(_internal) return _internal; else return _external; }
+    MEDCOUPLING_EXPORT const T *getConstPointerLoc(std::size_t offset) const { if(_internal) return _internal+offset; else return _external+offset; }
+    MEDCOUPLING_EXPORT T *getPointer() { if(_internal) return _internal; if(_external) throw INTERP_KERNEL::Exception("Trying to write on an external pointer."); else return 0; }
   private:
     T *_internal;
     const T *_external;
@@ -70,45 +70,45 @@ namespace MEDCoupling
   public:
     typedef void (*Deallocator)(void *,void *);
   public:
-    MemArray():_nb_of_elem(0),_nb_of_elem_alloc(0),_ownership(false),_dealloc(0),_param_for_deallocator(0) { }
-    MemArray(const MemArray<T>& other);
-    bool isNull() const { return _pointer.isNull(); }
-    const T *getConstPointerLoc(std::size_t offset) const { return _pointer.getConstPointerLoc(offset); }
-    const T *getConstPointer() const { return _pointer.getConstPointer(); }
-    std::size_t getNbOfElem() const { return _nb_of_elem; }
-    std::size_t getNbOfElemAllocated() const { return _nb_of_elem_alloc; }
-    T *getPointer() { return _pointer.getPointer(); }
-    MemArray<T> &operator=(const MemArray<T>& other);
-    T operator[](std::size_t id) const { return _pointer.getConstPointer()[id]; }
-    T& operator[](std::size_t id) { return _pointer.getPointer()[id]; }
-    bool isEqual(const MemArray<T>& other, T prec, std::string& reason) const;
-    void repr(int sl, std::ostream& stream) const;
-    bool reprHeader(int sl, std::ostream& stream) const;
-    void reprZip(int sl, std::ostream& stream) const;
-    void reprNotTooLong(int sl, std::ostream& stream) const;
-    void fillWithValue(const T& val);
-    T *fromNoInterlace(int nbOfComp) const;
-    T *toNoInterlace(int nbOfComp) const;
-    void sort(bool asc);
-    void reverse(int nbOfComp);
-    void alloc(std::size_t nbOfElements);
-    void reserve(std::size_t newNbOfElements);
-    void reAlloc(std::size_t newNbOfElements);
-    void useArray(const T *array, bool ownership, DeallocType type, std::size_t nbOfElem);
-    void useExternalArrayWithRWAccess(const T *array, std::size_t nbOfElem);
-    void writeOnPlace(std::size_t id, T element0, const T *others, std::size_t sizeOfOthers);
+    MEDCOUPLING_EXPORT MemArray():_nb_of_elem(0),_nb_of_elem_alloc(0),_ownership(false),_dealloc(0),_param_for_deallocator(0) { }
+    MEDCOUPLING_EXPORT MemArray(const MemArray<T>& other);
+    MEDCOUPLING_EXPORT bool isNull() const { return _pointer.isNull(); }
+    MEDCOUPLING_EXPORT const T *getConstPointerLoc(std::size_t offset) const { return _pointer.getConstPointerLoc(offset); }
+    MEDCOUPLING_EXPORT const T *getConstPointer() const { return _pointer.getConstPointer(); }
+    MEDCOUPLING_EXPORT std::size_t getNbOfElem() const { return _nb_of_elem; }
+    MEDCOUPLING_EXPORT std::size_t getNbOfElemAllocated() const { return _nb_of_elem_alloc; }
+    MEDCOUPLING_EXPORT T *getPointer() { return _pointer.getPointer(); }
+    MEDCOUPLING_EXPORT MemArray<T> &operator=(const MemArray<T>& other);
+    MEDCOUPLING_EXPORT T operator[](std::size_t id) const { return _pointer.getConstPointer()[id]; }
+    MEDCOUPLING_EXPORT T& operator[](std::size_t id) { return _pointer.getPointer()[id]; }
+    MEDCOUPLING_EXPORT bool isEqual(const MemArray<T>& other, T prec, std::string& reason) const;
+    MEDCOUPLING_EXPORT void repr(int sl, std::ostream& stream) const;
+    MEDCOUPLING_EXPORT bool reprHeader(int sl, std::ostream& stream) const;
+    MEDCOUPLING_EXPORT void reprZip(int sl, std::ostream& stream) const;
+    MEDCOUPLING_EXPORT void reprNotTooLong(int sl, std::ostream& stream) const;
+    MEDCOUPLING_EXPORT void fillWithValue(const T& val);
+    MEDCOUPLING_EXPORT T *fromNoInterlace(int nbOfComp) const;
+    MEDCOUPLING_EXPORT T *toNoInterlace(int nbOfComp) const;
+    MEDCOUPLING_EXPORT void sort(bool asc);
+    MEDCOUPLING_EXPORT void reverse(int nbOfComp);
+    MEDCOUPLING_EXPORT void alloc(std::size_t nbOfElements);
+    MEDCOUPLING_EXPORT void reserve(std::size_t newNbOfElements);
+    MEDCOUPLING_EXPORT void reAlloc(std::size_t newNbOfElements);
+    MEDCOUPLING_EXPORT void useArray(const T *array, bool ownership, DeallocType type, std::size_t nbOfElem);
+    MEDCOUPLING_EXPORT void useExternalArrayWithRWAccess(const T *array, std::size_t nbOfElem);
+    MEDCOUPLING_EXPORT void writeOnPlace(std::size_t id, T element0, const T *others, std::size_t sizeOfOthers);
     template<class InputIterator>
     void insertAtTheEnd(InputIterator first, InputIterator last);
-    void pushBack(T elem);
-    T popBack();
-    void pack() const;
-    bool isDeallocatorCalled() const { return _ownership; }
-    Deallocator getDeallocator() const { return _dealloc; }
-    void setSpecificDeallocator(Deallocator dealloc) { _dealloc=dealloc; }
-    void setParameterForDeallocator(void *param) { _param_for_deallocator=param; }
-    void *getParameterForDeallocator() const { return _param_for_deallocator; }
-    void destroy();
-    ~MemArray() { destroy(); }
+    MEDCOUPLING_EXPORT void pushBack(T elem);
+    MEDCOUPLING_EXPORT T popBack();
+    MEDCOUPLING_EXPORT void pack() const;
+    MEDCOUPLING_EXPORT bool isDeallocatorCalled() const { return _ownership; }
+    MEDCOUPLING_EXPORT Deallocator getDeallocator() const { return _dealloc; }
+    MEDCOUPLING_EXPORT void setSpecificDeallocator(Deallocator dealloc) { _dealloc=dealloc; }
+    MEDCOUPLING_EXPORT void setParameterForDeallocator(void *param) { _param_for_deallocator=param; }
+    MEDCOUPLING_EXPORT void *getParameterForDeallocator() const { return _param_for_deallocator; }
+    MEDCOUPLING_EXPORT void destroy();
+    MEDCOUPLING_EXPORT ~MemArray() { destroy(); }
   public:
     static void CPPDeallocator(void *pt, void *param);
     static void CDeallocator(void *pt, void *param);
@@ -229,64 +229,68 @@ namespace MEDCoupling
     //
     MEDCOUPLING_EXPORT std::size_t getNumberOfTuples() const { return _info_on_compo.empty()?0:_mem.getNbOfElem()/getNumberOfComponents(); }
     MEDCOUPLING_EXPORT std::size_t getNbOfElems() const { return _mem.getNbOfElem(); }
-    bool empty() const;
+    MEDCOUPLING_EXPORT bool empty() const;
     MEDCOUPLING_EXPORT void *getVoidStarPointer() { return getPointer(); }
     MEDCOUPLING_EXPORT const T *getConstPointer() const { return _mem.getConstPointer(); }
     MEDCOUPLING_EXPORT const T *begin() const { return getConstPointer(); }
     MEDCOUPLING_EXPORT const T *end() const { return getConstPointer()+getNbOfElems(); }
-    void alloc(std::size_t nbOfTuple, std::size_t nbOfCompo=1);
-    void useArray(const T *array, bool ownership, DeallocType type, int nbOfTuple, int nbOfCompo);
-    void useExternalArrayWithRWAccess(const T *array, int nbOfTuple, int nbOfCompo);
-    T getIJSafe(int tupleId, int compoId) const;
+    MEDCOUPLING_EXPORT T *rwBegin() { return getPointer(); }
+    MEDCOUPLING_EXPORT T *rwEnd() { return getPointer()+getNbOfElems(); }
+    MEDCOUPLING_EXPORT void alloc(std::size_t nbOfTuple, std::size_t nbOfCompo=1);
+    MEDCOUPLING_EXPORT void useArray(const T *array, bool ownership, DeallocType type, int nbOfTuple, int nbOfCompo);
+    MEDCOUPLING_EXPORT void useExternalArrayWithRWAccess(const T *array, int nbOfTuple, int nbOfCompo);
+    MEDCOUPLING_EXPORT T getIJSafe(int tupleId, int compoId) const;
     MEDCOUPLING_EXPORT T getIJ(int tupleId, int compoId) const { return _mem[tupleId*_info_on_compo.size()+compoId]; }
     MEDCOUPLING_EXPORT void setIJ(int tupleId, int compoId, T newVal) { _mem[tupleId*_info_on_compo.size()+compoId]=newVal; declareAsNew(); }
     MEDCOUPLING_EXPORT void setIJSilent(int tupleId, int compoId, T newVal) { _mem[tupleId*_info_on_compo.size()+compoId]=newVal; }
     MEDCOUPLING_EXPORT T *getPointer() { return _mem.getPointer(); declareAsNew(); }
-    void pack() const;
-    bool isAllocated() const;
-    void checkAllocated() const;
-    void desallocate();
-    void reserve(std::size_t nbOfElems);
-    void rearrange(int newNbOfCompo);
-    void transpose();
-    void pushBackSilent(T val);
-    void pushBackValsSilent(const T *valsBg, const T *valsEnd);
-    T popBackSilent();
-    T front() const;
-    T back() const;
-    std::size_t getNbOfElemAllocated() const { return _mem.getNbOfElemAllocated(); }
-    void allocIfNecessary(int nbOfTuple, int nbOfCompo);
-    void deepCopyFrom(const DataArrayTemplate<T>& other);
-    void reverse();
-    void fillWithValue(T val);
-    void reAlloc(std::size_t newNbOfTuple);
-    void renumberInPlace(const int *old2New);
-    void renumberInPlaceR(const int *new2Old);
-    void sort(bool asc=true);
-    typename Traits<T>::ArrayType *renumber(const int *old2New) const;
-    typename Traits<T>::ArrayType *renumberR(const int *new2Old) const;
-    typename Traits<T>::ArrayType *renumberAndReduce(const int *old2New, int newNbOfTuple) const;
-    typename Traits<T>::ArrayType *changeNbOfComponents(int newNbOfComp, T dftValue) const;
-    typename Traits<T>::ArrayType *subArray(int tupleIdBg, int tupleIdEnd=-1) const;
-    MCAuto<typename Traits<T>::ArrayTypeCh> selectPartDef(const PartDefinition* pd) const;
-    void circularPermutation(int nbOfShift=1);
-    void circularPermutationPerTuple(int nbOfShift=1);
-    void reversePerTuple();
-    void setPartOfValues1(const typename Traits<T>::ArrayType *a, int bgTuples, int endTuples, int stepTuples, int bgComp, int endComp, int stepComp, bool strictCompoCompare=true);
-    void setPartOfValuesSimple1(T a, int bgTuples, int endTuples, int stepTuples, int bgComp, int endComp, int stepComp);
-    void setPartOfValues2(const typename Traits<T>::ArrayType *a, const int *bgTuples, const int *endTuples, const int *bgComp, const int *endComp, bool strictCompoCompare=true);
-    void setPartOfValuesSimple2(T a, const int *bgTuples, const int *endTuples, const int *bgComp, const int *endComp);
-    void setPartOfValues3(const typename Traits<T>::ArrayType *a, const int *bgTuples, const int *endTuples, int bgComp, int endComp, int stepComp, bool strictCompoCompare=true);
-    void setPartOfValuesSimple3(T a, const int *bgTuples, const int *endTuples, int bgComp, int endComp, int stepComp);
-    void setPartOfValues4(const typename Traits<T>::ArrayType *a, int bgTuples, int endTuples, int stepTuples, const int *bgComp, const int *endComp, bool strictCompoCompare=true);
-    void setPartOfValuesSimple4(T a, int bgTuples, int endTuples, int stepTuples, const int *bgComp, const int *endComp);
-    void setPartOfValuesAdv(const typename Traits<T>::ArrayType *a, const DataArrayInt32 *tuplesSelec);
-    void setContigPartOfSelectedValues(int tupleIdStart, const DataArray *aBase, const DataArrayInt32 *tuplesSelec);
-    void setContigPartOfSelectedValuesSlice(int tupleIdStart, const DataArray *aBase, int bg, int end2, int step);
-    T getMaxValue(int& tupleId) const;
-    T getMaxValueInArray() const;
-    T getMinValue(int& tupleId) const;
-    T getMinValueInArray() const;
+    MEDCOUPLING_EXPORT void pack() const;
+    MEDCOUPLING_EXPORT bool isAllocated() const;
+    MEDCOUPLING_EXPORT void checkAllocated() const;
+    MEDCOUPLING_EXPORT void desallocate();
+    MEDCOUPLING_EXPORT void reserve(std::size_t nbOfElems);
+    MEDCOUPLING_EXPORT void rearrange(int newNbOfCompo);
+    MEDCOUPLING_EXPORT void transpose();
+    MEDCOUPLING_EXPORT void pushBackSilent(T val);
+    MEDCOUPLING_EXPORT void pushBackValsSilent(const T *valsBg, const T *valsEnd);
+    MEDCOUPLING_EXPORT T popBackSilent();
+    MEDCOUPLING_EXPORT T front() const;
+    MEDCOUPLING_EXPORT T back() const;
+    MEDCOUPLING_EXPORT std::size_t getNbOfElemAllocated() const { return _mem.getNbOfElemAllocated(); }
+    MEDCOUPLING_EXPORT void allocIfNecessary(int nbOfTuple, int nbOfCompo);
+    MEDCOUPLING_EXPORT void deepCopyFrom(const DataArrayTemplate<T>& other);
+    MEDCOUPLING_EXPORT void reverse();
+    MEDCOUPLING_EXPORT void fillWithValue(T val);
+    MEDCOUPLING_EXPORT void reAlloc(std::size_t newNbOfTuple);
+    MEDCOUPLING_EXPORT void renumberInPlace(const int *old2New);
+    MEDCOUPLING_EXPORT void renumberInPlaceR(const int *new2Old);
+    MEDCOUPLING_EXPORT void sort(bool asc=true);
+    MEDCOUPLING_EXPORT typename Traits<T>::ArrayType *renumber(const int *old2New) const;
+    MEDCOUPLING_EXPORT typename Traits<T>::ArrayType *renumberR(const int *new2Old) const;
+    MEDCOUPLING_EXPORT typename Traits<T>::ArrayType *renumberAndReduce(const int *old2New, int newNbOfTuple) const;
+    MEDCOUPLING_EXPORT typename Traits<T>::ArrayType *changeNbOfComponents(int newNbOfComp, T dftValue) const;
+    MEDCOUPLING_EXPORT typename Traits<T>::ArrayType *subArray(int tupleIdBg, int tupleIdEnd=-1) const;
+    MEDCOUPLING_EXPORT MCAuto<typename Traits<T>::ArrayTypeCh> selectPartDef(const PartDefinition* pd) const;
+    MEDCOUPLING_EXPORT void circularPermutation(int nbOfShift=1);
+    MEDCOUPLING_EXPORT void circularPermutationPerTuple(int nbOfShift=1);
+    MEDCOUPLING_EXPORT void reversePerTuple();
+    MEDCOUPLING_EXPORT void setPartOfValues1(const typename Traits<T>::ArrayType *a, int bgTuples, int endTuples, int stepTuples, int bgComp, int endComp, int stepComp, bool strictCompoCompare=true);
+    MEDCOUPLING_EXPORT void setPartOfValuesSimple1(T a, int bgTuples, int endTuples, int stepTuples, int bgComp, int endComp, int stepComp);
+    MEDCOUPLING_EXPORT void setPartOfValues2(const typename Traits<T>::ArrayType *a, const int *bgTuples, const int *endTuples, const int *bgComp, const int *endComp, bool strictCompoCompare=true);
+    MEDCOUPLING_EXPORT void setPartOfValuesSimple2(T a, const int *bgTuples, const int *endTuples, const int *bgComp, const int *endComp);
+    MEDCOUPLING_EXPORT void setPartOfValues3(const typename Traits<T>::ArrayType *a, const int *bgTuples, const int *endTuples, int bgComp, int endComp, int stepComp, bool strictCompoCompare=true);
+    MEDCOUPLING_EXPORT void setPartOfValuesSimple3(T a, const int *bgTuples, const int *endTuples, int bgComp, int endComp, int stepComp);
+    MEDCOUPLING_EXPORT void setPartOfValues4(const typename Traits<T>::ArrayType *a, int bgTuples, int endTuples, int stepTuples, const int *bgComp, const int *endComp, bool strictCompoCompare=true);
+    MEDCOUPLING_EXPORT void setPartOfValuesSimple4(T a, int bgTuples, int endTuples, int stepTuples, const int *bgComp, const int *endComp);
+    MEDCOUPLING_EXPORT void setPartOfValuesAdv(const typename Traits<T>::ArrayType *a, const DataArrayInt32 *tuplesSelec);
+    MEDCOUPLING_EXPORT void setContigPartOfSelectedValues(int tupleIdStart, const DataArray *aBase, const DataArrayInt32 *tuplesSelec);
+    MEDCOUPLING_EXPORT void setContigPartOfSelectedValuesSlice(int tupleIdStart, const DataArray *aBase, int bg, int end2, int step);
+    MEDCOUPLING_EXPORT T getMaxValue(int& tupleId) const;
+    MEDCOUPLING_EXPORT T getMaxValueInArray() const;
+    MEDCOUPLING_EXPORT T getMaxAbsValue(std::size_t& tupleId) const;
+    MEDCOUPLING_EXPORT T getMaxAbsValueInArray() const;
+    MEDCOUPLING_EXPORT T getMinValue(int& tupleId) const;
+    MEDCOUPLING_EXPORT T getMinValueInArray() const;
     MEDCOUPLING_EXPORT void getTuple(int tupleId, T *res) const { std::copy(_mem.getConstPointerLoc(tupleId*_info_on_compo.size()),_mem.getConstPointerLoc((tupleId+1)*_info_on_compo.size()),res); }
     template<class InputIterator>
     void insertAtTheEnd(InputIterator first, InputIterator last);
@@ -444,6 +448,7 @@ namespace MEDCoupling
     MEDCOUPLING_EXPORT double getAverageValue() const;
     MEDCOUPLING_EXPORT double norm2() const;
     MEDCOUPLING_EXPORT double normMax() const;
+    MEDCOUPLING_EXPORT void normMaxPerComponent(double * res) const;
     MEDCOUPLING_EXPORT double normMin() const;
     MEDCOUPLING_EXPORT void accumulate(double *res) const;
     MEDCOUPLING_EXPORT double accumulate(int compId) const;
@@ -470,6 +475,7 @@ namespace MEDCoupling
     MEDCOUPLING_EXPORT DataArrayDouble *maxPerTupleWithCompoId(DataArrayInt32* &compoIdOfMaxPerTuple) const;
     MEDCOUPLING_EXPORT DataArrayDouble *buildEuclidianDistanceDenseMatrix() const;
     MEDCOUPLING_EXPORT DataArrayDouble *buildEuclidianDistanceDenseMatrixWith(const DataArrayDouble *other) const;
+    MEDCOUPLING_EXPORT void asArcOfCircle(double center[2], double& radius, double& ang) const;
     MEDCOUPLING_EXPORT void sortPerTuple(bool asc);
     MEDCOUPLING_EXPORT void applyInv(double numerator);
     MEDCOUPLING_EXPORT void applyPow(double val);
@@ -498,6 +504,7 @@ namespace MEDCoupling
     MEDCOUPLING_EXPORT static void Rotate3DAlg(const double *center, const double *vect, double angle, int nbNodes, const double *coordsIn, double *coordsOut);
     MEDCOUPLING_EXPORT static void Symmetry3DPlane(const double point[3], const double normalVector[3], int nbNodes, const double *coordsIn, double *coordsOut);
     MEDCOUPLING_EXPORT static void GiveBaseForPlane(const double normalVector[3], double baseOfPlane[9]);
+    MEDCOUPLING_EXPORT static void ComputeIntegralOfSeg2IntoTri3(const double seg2[4], const double tri3[6], double coeffs[3], double& length);
   public:
     MEDCOUPLING_EXPORT void getTinySerializationIntInformation(std::vector<int>& tinyInfo) const;
     MEDCOUPLING_EXPORT void getTinySerializationStrInformation(std::vector<std::string>& tinyInfo) const;
@@ -573,6 +580,7 @@ namespace MEDCoupling
     MEDCOUPLING_EXPORT DataArrayInt32 *invertArrayO2N2N2O(int newNbOfElem) const;
     MEDCOUPLING_EXPORT DataArrayInt32 *invertArrayN2O2O2N(int oldNbOfElem) const;
     MEDCOUPLING_EXPORT MCAuto< MapKeyVal<int> > invertArrayN2O2O2NOptimized() const;
+    MEDCOUPLING_EXPORT MCAuto< MapKeyVal<int> > giveN2OOptimized() const;
     MEDCOUPLING_EXPORT DataArrayInt32 *invertArrayO2N2N2OBis(int newNbOfElem) const;
     MEDCOUPLING_EXPORT DataArrayInt32 *selectByTupleId(const int *new2OldBg, const int *new2OldEnd) const { return DataArrayTemplate<int>::mySelectByTupleId(new2OldBg,new2OldEnd); }
     MEDCOUPLING_EXPORT DataArrayInt32 *selectByTupleId(const DataArrayInt32& di) const { return DataArrayTemplate<int>::mySelectByTupleId(di); }
@@ -596,6 +604,7 @@ namespace MEDCoupling
     MEDCOUPLING_EXPORT DataArrayInt32 *findIdsEqualList(const int *valsBg, const int *valsEnd) const;
     MEDCOUPLING_EXPORT DataArrayInt32 *findIdsNotEqualList(const int *valsBg, const int *valsEnd) const;
     MEDCOUPLING_EXPORT DataArrayInt32 *findIdsEqualTuple(const int *tupleBg, const int *tupleEnd) const;
+    MEDCOUPLING_EXPORT MCAuto<DataArrayInt32> findIdForEach(const int *valsBg, const int *valsEnd) const;
     MEDCOUPLING_EXPORT int changeValue(int oldValue, int newValue);
     MEDCOUPLING_EXPORT int findIdFirstEqualTuple(const std::vector<int>& tupl) const;
     MEDCOUPLING_EXPORT int findIdFirstEqual(int value) const;

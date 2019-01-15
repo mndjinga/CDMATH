@@ -1108,7 +1108,7 @@ class MEDCouplingBasicsTest(unittest.TestCase):
         pass
 
     def testP0P0WithHEXGP12(self):
-        """ Test that HEXGP12 are correclty remapped (elements with polygonal faces were not properly handled) """
+        """ Test that HEXGP12 are correctly remapped (elements with polygonal faces were not properly handled) """
         # From Astrid, two disjoint hexagonal prisms:
         coo1 = [-4.991193077144312, 8.644999999999998, 0.0, -9.982386154288623, 6.112246755425186e-16, 0.0, -4.991193077144315, -8.644999999999998, 0.0, 4.991193077144309, -8.645000000000005, 0.0, 9.982386154288626, 1.1651321638577316e-15, 0.0, 4.991193077144314, 8.645, 0.0, -4.991193077144312, 8.644999999999998, 7.561799999999991, -9.982386154288623, 6.112246755425186e-16, 7.561799999999991, -4.991193077144315, -8.644999999999998, 7.561799999999991, 4.991193077144309, -8.645000000000005, 7.561799999999991, 9.982386154288626, 1.1651321638577316e-15, 7.561799999999991, 4.991193077144314, 8.645, 7.561799999999991]
         coo2 = [-4.991193077144313, -8.645, 0.0, -9.982386154288626, -1.3992140779350848e-15, 0.0, -19.964772308577256, 0.0, 0.0, -24.95596538572157, -8.644999999999998, 0.0, -19.96477230857726, -17.289999999999996, 0.0, -9.982386154288626, -17.289999999999996, 0.0, -4.991193077144313, -8.645, 5.041200000000004, -9.982386154288626, -1.3992140779350848e-15, 5.041200000000004, -19.964772308577256, 0.0, 5.041200000000004, -24.95596538572157, -8.644999999999998, 5.041200000000004, -19.96477230857726, -17.289999999999996, 5.041200000000004, -9.982386154288626, -17.289999999999996, 5.041200000000004]
@@ -1155,6 +1155,151 @@ class MEDCouplingBasicsTest(unittest.TestCase):
         self.assertEqual(1, len(rmp.getCrudeMatrix()[0]))
         pass
 
+    @unittest.skipUnless(MEDCouplingHasNumPyBindings() and MEDCouplingHasSciPyBindings(),"requires numpy AND scipy AND C++11")
+    def testP1P1PL3DSpaceFrom1DTo0D(self):
+        from scipy.sparse import csr_matrix
+        from numpy import array
+
+        def generateTrg(eps):
+            trgArr=DataArrayDouble([(0.5,0.5,0.5),(0.2,0.2,0.2),(0.9,0.9,0.9),(0.7+eps*sqrt(3),0.7-eps*sqrt(3),0.7)])
+            trg=MEDCouplingUMesh("trg",0) ; trg.setCoords(trgArr)
+            trg.allocateCells()
+            RenumTrg=[2,3,0,1]
+            for rt in RenumTrg:
+                trg.insertNextCell(NORM_POINT1,[rt])
+            return trg
+
+        srcArr=DataArrayDouble([(0.,0.,1.),(0.,0.,0.),(1.,1.,1.)])
+        src=MEDCouplingUMesh("src",1) ; src.setCoords(srcArr)
+        src.allocateCells()
+        src.insertNextCell(NORM_SEG2,[1,2])
+        #
+        trg=generateTrg(1e-7)# trg point 3 of trg cell 1 is NOT closer enough to source edge #1 -> not intercepted
+        #
+        rem=MEDCouplingRemapper()
+        rem.setIntersectionType(PointLocator)
+        self.assertEqual(rem.prepare(src,trg,"P1P1"),1)
+        mat=rem.getCrudeCSRMatrix()
+        row=array([2,2, 0,0, 1,1]) # here no ref to point 3 !
+        col=array([1,2, 1,2, 1,2])
+        data=array([0.1,0.9, 0.5,0.5, 0.8,0.2])
+        mExp=csr_matrix((data,(row,col)),shape=(4,3))
+        delta=abs(mExp-mat)
+        self.assertAlmostEqual(delta.sum(),0.,14)
+        #
+        trg=generateTrg(1e-14) # trg point 3 of trg cell 1 is closer enough to source edge #1 -> intercepted
+        rem=MEDCouplingRemapper()
+        rem.setIntersectionType(PointLocator)
+        self.assertEqual(rem.prepare(src,trg,"P1P1"),1)
+        mat=rem.getCrudeCSRMatrix()
+        row=array([2,2, 3,3, 0,0, 1,1]) # here ref to target point 3 
+        col=array([1,2, 1,2, 1,2, 1,2])
+        data=array([0.1,0.9, 0.3,0.7, 0.5,0.5, 0.8,0.2])
+        mExp2=csr_matrix((data,(row,col)),shape=(4,3))
+        delta2=abs(mExp2-mat)
+        self.assertAlmostEqual(delta2.sum(),0.,14)
+        pass
+
+    def testSetMatrix1(self):
+        """ Remapper has now setCrudeMatrix method to reload matrix to skip prepare phase """
+        cooS=DataArrayDouble([1,1, 7,1, 7,2, 1,2],4,2)
+        cooT=DataArrayDouble([0,0, 3,0, 3,3, 0,3, 6,0, 12,0, 12,3, 6,3],8,2)
+        ms=MEDCouplingUMesh("source",2) ; ms.allocateCells(1) ; ms.insertNextCell(NORM_QUAD4,[0,1,2,3]) ; ms.setCoords(cooS)
+        mt=MEDCouplingUMesh("target",2) ; mt.allocateCells(2) ; mt.insertNextCell(NORM_QUAD4,[0,1,2,3]) ; mt.insertNextCell(NORM_QUAD4,[4,5,6,7]) ; mt.setCoords(cooT)
+        rem=MEDCouplingRemapper()
+        self.assertEqual(rem.prepare(ms,mt,"P0P0"),1) # [{0: 2.0}, {0: 1.0}]
+        fs=MEDCouplingFieldDouble(ON_CELLS)
+        fs.setMesh(ms)
+        fs.setArray(DataArrayDouble([10]))
+        fs.checkConsistencyLight()
+        #
+        fs.setNature(ExtensiveConservation)
+        self.assertTrue(rem.transferField(fs,1e300).getArray().isEqual(DataArrayDouble([20./3,10./3.]),1e-12))# sum is equal to 10. First value is twice than second value
+        #
+        fs.setNature(ExtensiveMaximum)
+        self.assertTrue(rem.transferField(fs,1e300).getArray().isEqual(DataArrayDouble([20./6.,10./6.]),1e-12))#sum is equal to 5 (10/2. because only half part on input cell is intercepted by the target cells). First value is twice than second value
+        #
+        fs.setNature(IntensiveConservation)
+        self.assertTrue(rem.transferField(fs,1e300).getArray().isEqual(DataArrayDouble([2./9.*10.,1./18.*10.]),1e-12))#
+        #
+        fs.setNature(IntensiveMaximum)
+        self.assertTrue(rem.transferField(fs,1e300).getArray().isEqual(DataArrayDouble([10.,10.]),1e-12))#
+        ####
+        rem2=MEDCouplingRemapper()
+        rem2.setCrudeMatrix(ms,mt,"P0P0",rem.getCrudeMatrix())
+        fs.setNature(ExtensiveConservation)
+        self.assertTrue(rem2.transferField(fs,1e300).getArray().isEqual(DataArrayDouble([20./3,10./3.]),1e-12))
+        #
+        fs.setNature(ExtensiveMaximum)
+        self.assertTrue(rem2.transferField(fs,1e300).getArray().isEqual(DataArrayDouble([20./6.,10./6.]),1e-12))
+        #
+        fs.setNature(IntensiveConservation)
+        self.assertTrue(rem2.transferField(fs,1e300).getArray().isEqual(DataArrayDouble([2./9.*10.,1./18.*10.]),1e-12))
+        #
+        fs.setNature(IntensiveMaximum)
+        self.assertTrue(rem2.transferField(fs,1e300).getArray().isEqual(DataArrayDouble([10.,10.]),1e-12))
+        #
+        srcFt=MEDCouplingFieldTemplate.New(ON_CELLS);
+        trgFt=MEDCouplingFieldTemplate.New(ON_CELLS);
+        srcFt.setMesh(ms);
+        trgFt.setMesh(mt);
+        rem3=MEDCouplingRemapper()
+        rem3.setCrudeMatrixEx(srcFt,trgFt,rem.getCrudeMatrix())
+        fs.setNature(ExtensiveConservation)
+        self.assertTrue(rem3.transferField(fs,1e300).getArray().isEqual(DataArrayDouble([20./3,10./3.]),1e-12))
+        pass
+
+    @unittest.skipUnless(MEDCouplingHasNumPyBindings() and MEDCouplingHasSciPyBindings(),"requires numpy AND scipy")
+    def testSetMatrix2(self):
+        """ Remapper has now setCrudeMatrix method to reload matrix to skip prepare phase. Same as testSetMatrix1 but with CSR scipy matrix """
+        arrx_s=DataArrayDouble(6) ; arrx_s.iota()
+        arry_s=DataArrayDouble(6) ; arry_s.iota()
+        ms=MEDCouplingCMesh() ; ms.setCoords(arrx_s,arry_s)
+        ms=ms.buildUnstructured()
+        #
+        arrx_t=DataArrayDouble([2.5,4.5,5.5])
+        arry_t=DataArrayDouble([2.5,3.5,5.5])
+        mt=MEDCouplingCMesh() ; mt.setCoords(arrx_t,arry_t)
+        mt=mt.buildUnstructured()
+        #
+        rem=MEDCouplingRemapper()
+        self.assertEqual(rem.prepare(ms,mt,"P0P0"),1)
+        #
+        fs=MEDCouplingFieldDouble(ON_CELLS)
+        fs.setMesh(ms)
+        arr=DataArrayDouble(25) ; arr.iota()
+        fs.setArray(arr)
+        fs.checkConsistencyLight()
+        #
+        fs.setNature(ExtensiveConservation)
+        self.assertTrue(rem.transferField(fs,1e300).getArray().isEqual(DataArrayDouble([54.25,11.75,79.25,16.75]),1e-12))
+        mat=rem.getCrudeCSRMatrix()
+        rem2=MEDCouplingRemapper()
+        rem2.setCrudeMatrix(ms,mt,"P0P0",mat)
+        self.assertTrue(rem2.transferField(fs,1e300).getArray().isEqual(DataArrayDouble([54.25,11.75,79.25,16.75]),1e-12))
+        pass
+
+    def testSmallTetraCell(self):
+        """This test is a non regression test. When using tetra/tetra P0P0 interpolation on very small cells the
+        3x3 matrix in the TetraAffine contains very small values and so the determinant is small (cubic).
+        So the tetra was detected as flat. Now the infinite norm of matrix is considered to establish if matrix is inversible or not."""
+        coords = [(-0.019866666666666668, 0.02, 0.002), (-0.020000073463967143, 0.019999926535763005, 0.0018666666666666673), (-0.020000073463967143, 0.019999926535763005, 0.002), (-0.020000072974206463, 0.019866593202430387, 0.002)]
+        m=MEDCouplingUMesh("mesh",3)
+        m.allocateCells()
+        m.insertNextCell(NORM_TETRA4,[0,1,2,3])
+        m.setCoords(DataArrayDouble(coords))
+        rem=MEDCouplingRemapper()
+        rem.setPrecision(1e-12)
+        rem.prepare(m,m,"P0P0")
+        mat=rem.getCrudeMatrix()
+        self.assertTrue(len(mat)==1)
+        self.assertTrue(len(mat[0])==1)
+        self.assertTrue(list(mat[0].keys())==[0])
+        res=list(mat[0].values())[0]
+        ref=float(m.getMeasureField(True).getArray())
+        self.assertTrue(abs(res-ref)/ref<1e-12)
+        pass
+        
     def checkMatrix(self,mat1,mat2,nbCols,eps):
         self.assertEqual(len(mat1),len(mat2))
         for i in range(len(mat1)):

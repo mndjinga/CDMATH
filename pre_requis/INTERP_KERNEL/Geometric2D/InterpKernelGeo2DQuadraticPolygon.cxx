@@ -267,11 +267,11 @@ double QuadraticPolygon::intersectWithAbs(QuadraticPolygon& other)
 }
 
 /*!
- * This method splits 'this' with 'other' into smaller pieces localizable. 'mapThis' is a map that gives the correspondance
+ * This method splits 'this' with 'other' into smaller pieces localizable. 'mapThis' is a map that gives the correspondence
  * between nodes contained in 'this' and node ids in a global mesh.
- * In the same way, 'mapOther' gives the correspondance between nodes contained in 'other' and node ids in a
- * global mesh from wich 'other' is extracted.
- * This method has 1 out paramater : 'edgesThis', After the call of this method, it contains the nodal connectivity (including type)
+ * In the same way, 'mapOther' gives the correspondence between nodes contained in 'other' and node ids in a
+ * global mesh from which 'other' is extracted.
+ * This method has 1 out parameter : 'edgesThis', After the call of this method, it contains the nodal connectivity (including type)
  * of 'this' into globlal "this mesh".
  * This method has 2 in/out parameters : 'subDivOther' and 'addCoo'.'otherEdgeIds' is useful to put values in
  * 'edgesThis', 'subDivOther' and 'addCoo'.
@@ -293,6 +293,7 @@ void QuadraticPolygon::splitAbs(QuadraticPolygon& other,
 {
   double xBaryBB, yBaryBB;
   double fact=normalizeExt(&other, xBaryBB, yBaryBB);
+
   //
   IteratorOnComposedEdge it1(this),it3(&other);
   MergePoints merge;
@@ -300,13 +301,13 @@ void QuadraticPolygon::splitAbs(QuadraticPolygon& other,
   ComposedEdge *c2=new ComposedEdge;
   int i=0;
   std::map<INTERP_KERNEL::Node *,int> mapAddCoo;
-  for(it3.first();!it3.finished();it3.next(),i++)//iteration over 'other' _sub_edges
+  for(it3.first();!it3.finished();it3.next(),i++)//iteration over 'other->_sub_edges'
     {
       QuadraticPolygon otherTmp;
       ElementaryEdge* curE3=it3.current();
       otherTmp.pushBack(new ElementaryEdge(curE3->getPtr(),curE3->getDirection())); curE3->getPtr()->incrRef();
       IteratorOnComposedEdge it2(&otherTmp);
-      for(it2.first();!it2.finished();it2.next())//iteration on subedges of 'other->_sub_edge'
+      for(it2.first();!it2.finished();it2.next())//iteration on subedges of 'otherTmp->_sub_edge'
         {
           ElementaryEdge* curE2=it2.current();
           if(!curE2->isThereStartPoint())
@@ -1090,7 +1091,7 @@ bool QuadraticPolygon::haveIAChanceToBeCompletedBy(const QuadraticPolygon& pol1S
     }
   if(!found)
     throw Exception("Internal error: polygons incompatible with each others. Should never happen!");
-  //Ok we found correspondance between this and pol1. Searching for right direction to close polygon.
+  //Ok we found correspondence between this and pol1. Searching for right direction to close polygon.
   ElementaryEdge *e=_sub_edges.back();
   if(e->getLoc()==FULL_ON_1)
     {
@@ -1140,7 +1141,7 @@ std::list<QuadraticPolygon *>::iterator QuadraticPolygon::fillAsMuchAsPossibleWi
   if(!direction)
     it.previousLoop();
   Node *nodeToTest;
-  int szMax(pol1Splitted.size()+1),ii(0);// here a protection against agressive users of IntersectMeshes of invalid input meshes
+  int szMax(pol1Splitted.size()+1),ii(0);// here a protection against aggressive users of IntersectMeshes of invalid input meshes
   std::list<QuadraticPolygon *>::iterator ret;
   do
     {
@@ -1157,7 +1158,7 @@ std::list<QuadraticPolygon *>::iterator QuadraticPolygon::fillAsMuchAsPossibleWi
       ii++;
     }
   while(ret==iEnd && ii<szMax);
-  if(ii==szMax)// here a protection against agressive users of IntersectMeshes of invalid input meshes
+  if(ii==szMax)// here a protection against aggressive users of IntersectMeshes of invalid input meshes
     throw INTERP_KERNEL::Exception("QuadraticPolygon::fillAsMuchAsPossibleWith : Something is invalid with input polygons !");
   return ret;
 }
@@ -1217,6 +1218,8 @@ void QuadraticPolygon::ComputeResidual(const QuadraticPolygon& pol1, const std::
   for(std::list<QuadraticPolygon *>::const_iterator itMNT=pol1Zip.begin();itMNT!=pol1Zip.end();itMNT++,iiMNT++)
     nbOfTurn+=(*itMNT)->size();
   maxNbOfTurn=maxNbOfTurn*nbOfTurn; maxNbOfTurn*=maxNbOfTurn;
+  // [ABN] at least 3 turns for very small cases (typically one (quad) edge against one (quad or lin) edge forming a new cell)!
+  maxNbOfTurn = maxNbOfTurn<3 ? 3 : maxNbOfTurn;
   nbOfTurn=0;
   while(nbOfTurn<maxNbOfTurn && ((!pol1Zip.empty() || !edgesInPol2OnBoundaryL.empty())))
     {

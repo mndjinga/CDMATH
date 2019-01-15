@@ -37,10 +37,10 @@ namespace INTERP_KERNEL
     InterpolationPlanar();
     InterpolationPlanar(const InterpolationOptions & io);
 
-    // geometric precision, debug print level, coice of the median plane, intersection etc ...
+    // geometric precision, debug print level, choice of the median plane, intersection etc ...
     void setOptions(double precision, int printLevel,
                     IntersectionType intersectionType, int orientation=0);
-    
+
     // Main function to interpolate triangular and quadratic meshes
     template<class MyMeshType, class MatrixType>
     int interpolateMeshes(const MyMeshType& meshS, const MyMeshType& meshT, MatrixType& result, const std::string& method);

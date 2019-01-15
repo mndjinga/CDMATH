@@ -178,7 +178,7 @@ MEDCouplingMappedExtrudedMesh *MEDCouplingMappedExtrudedMesh::clone(bool recDeep
 
 const DataArrayDouble *MEDCouplingMappedExtrudedMesh::getDirectAccessOfCoordsArrIfInStructure() const
 {
-  throw INTERP_KERNEL::Exception("MEDCouplingMappedExtrudedMesh::getDirectAccessOfCoordsArrIfInStructure : no direct acess of DataArrayDouble holding nodes !");
+  throw INTERP_KERNEL::Exception("MEDCouplingMappedExtrudedMesh::getDirectAccessOfCoordsArrIfInStructure : no direct access of DataArrayDouble holding nodes !");
 }
 
 bool MEDCouplingMappedExtrudedMesh::isEqualIfNotWhy(const MEDCouplingMesh *other, double prec, std::string& reason) const
@@ -442,7 +442,7 @@ void MEDCouplingMappedExtrudedMesh::updateTime() const
 
 void MEDCouplingMappedExtrudedMesh::renumberCells(const int *old2NewBg, bool check)
 {
-  throw INTERP_KERNEL::Exception("Functionnality of renumbering cells unavailable for ExtrudedMesh");
+  throw INTERP_KERNEL::Exception("Functionality of renumbering cells unavailable for ExtrudedMesh");
 }
 
 /*!
@@ -709,7 +709,7 @@ DataArrayInt *MEDCouplingMappedExtrudedMesh::checkTypeConsistencyAndContig(const
   throw INTERP_KERNEL::Exception("Not implemented yet !");
 }
 
-void MEDCouplingMappedExtrudedMesh::splitProfilePerType(const DataArrayInt *profile, std::vector<int>& code, std::vector<DataArrayInt *>& idsInPflPerType, std::vector<DataArrayInt *>& idsPerType) const
+void MEDCouplingMappedExtrudedMesh::splitProfilePerType(const DataArrayInt *profile, std::vector<int>& code, std::vector<DataArrayInt *>& idsInPflPerType, std::vector<DataArrayInt *>& idsPerType, bool smartPflKiller) const
 {
   throw INTERP_KERNEL::Exception("Not implemented yet !");
 }

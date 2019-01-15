@@ -18,7 +18,12 @@
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
 
-from MEDCoupling import *
+
+import sys
+if sys.platform == "win32":
+    from MEDCouplingCompat import *
+else:
+    from MEDCoupling import *
 
 if MEDCouplingHasNumPyBindings():
     from numpy import *
@@ -386,7 +391,7 @@ class MEDCouplingNumPyTest(unittest.TestCase):
     def test19(self):
         sz=20
         a=array(0,dtype=int32)
-        a.resize(sz/2,2)
+        a.resize(sz//2,2)
         a[:]=4
         self.assertEqual(getrefcount(a),2)
         d=DataArrayInt(a)
@@ -405,7 +410,7 @@ class MEDCouplingNumPyTest(unittest.TestCase):
     def test20(self):
         sz=20
         a=array(0,dtype=float64)
-        a.resize(sz/2,2)
+        a.resize(sz//2,2)
         a[:]=4
         self.assertEqual(getrefcount(a),2)
         d=DataArrayDouble(a)
@@ -422,7 +427,7 @@ class MEDCouplingNumPyTest(unittest.TestCase):
 
     @unittest.skipUnless(MEDCouplingHasNumPyBindings(),"requires numpy")
     def test21(self):
-        #tests that only DataArray*(npArray) contructor is available
+        #tests that only DataArray*(npArray) constructor is available
         a=array(0,dtype=int32)
         a.resize(20)
         DataArrayInt(a)
@@ -918,7 +923,7 @@ class MEDCouplingNumPyTest(unittest.TestCase):
         """Same as test20 with float32"""
         sz=20
         a=array(0,dtype=float32)
-        a.resize(sz/2,2)
+        a.resize(sz//2,2)
         a[:]=4
         self.assertEqual(getrefcount(a),2)
         d=DataArrayFloat(a)

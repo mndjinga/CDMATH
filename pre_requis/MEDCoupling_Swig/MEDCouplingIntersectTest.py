@@ -18,7 +18,12 @@
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
 
-from MEDCoupling import *
+
+import sys
+if sys.platform == "win32":
+    from MEDCouplingCompat import *
+else:
+    from MEDCoupling import *
 import unittest
 from math import pi,e,sqrt,cos,sin
 from datetime import datetime
@@ -332,10 +337,11 @@ class MEDCouplingIntersectTest(unittest.TestCase):
         exp_coo = [9.48750000000001, 9.48750000000001, 10.75249999999975, 9.48749999999955, 10.80629999999976, 9.48749999999955, 9.48749999999961, 10.75249999999971, 10.75249999999338, 10.75249999999338, 10.32506096654411, 10.32506096654411, 9.91493903345591, 10.32506096654411, 9.91493903345591, 9.91493903345591, 10.32506096654411, 9.91493903345591, 10.38162950903903, 10.38162950903903, 9.85837049096099, 10.38162950903903, 9.85837049096099, 9.85837049096099, 10.38162950903903, 9.85837049096099, 10.80629999999339, 10.75249999999338, 9.48749999999961, 10.80629999999971, 10.75249999999338, 10.80629999999339, 10.80629999999339, 10.80629999999339, 9.830000000000023, 10.120000000000008, 10.120000000000008, 10.410000000000004, 10.41000000000001, 10.120000000000008, 10.120000000000008, 9.830000000000013, 9.886654762208451, 10.353345237791569, 9.830000000000023, 10.120000000000008, 9.886654762208451, 9.886654762208451, 9.750000000000005, 10.12000000000001, 9.487499999999809, 10.11999999999986, 9.6729352454803, 10.56706475451937, 9.750000000000005, 10.12000000000001, 9.672935245480499, 9.672935245480499, 9.886654762208451, 9.886654762208451, 10.120000000000008, 9.830000000000013, 10.41000000000001, 10.120000000000008, 10.120000000000008, 10.410000000000004, 9.886654762208451, 10.353345237791569, 10.120000000000013, 10.490000000000004, 10.489999999999988, 10.120000000000013, 10.120000000000017, 9.750000000000021, 10.119999999996494, 10.752499999996544, 10.752499999996566, 10.119999999996466, 10.11999999999988, 9.48749999999978, 9.672935245480499, 9.672935245480499, 10.120000000000017, 9.750000000000021, 10.489999999999988, 10.120000000000013, 10.120000000000013, 10.490000000000004, 9.6729352454803, 10.56706475451937]
         e1 = [0, 0, 0, 0, 0, 1, 2, 3]
         e2 = [3, 4, 5, 6, 7, 8, 1, 2]
-        valuesExpected=DataArrayDouble(exp_coo, len(exp_coo)/2, 2)
+        valuesExpected=DataArrayDouble(exp_coo, len(exp_coo)//2, 2)
         self.assertTrue(result.getCoords().isEqual(valuesExpected,1e-12))
         self.assertEqual(e1, mapResToInit.getValues())
         self.assertEqual(e2, mapResToRef.getValues())
+        pass
 
     def testIntersect2DMeshes8(self):
         """ Quadratic precision values were improperly reset before testing colinearities 
@@ -358,10 +364,80 @@ class MEDCouplingIntersectTest(unittest.TestCase):
         exp_coo = [9.48749999999998, -10.75249999999999, 9.48750000000018, -10.80629999999998, 10.75250000000047, -10.75250000000063, 10.75249999999318, -10.80629999999318, 10.80630000000048, -10.75250000000063, 10.80629999999318, -10.80629999999318, 9.48750000000001, -9.48750000000001, 10.75249999999975, -9.48750000000004, 10.32506096654408, -9.91493903345589, 9.91493903345589, -9.91493903345589, 9.91493903345589, -10.32506096654409, 10.32506096654408, -10.32506096654409, 10.80629999999976, -9.48750000000004, 10.119999999999989, -10.409999999999961, 9.829999999999997, -10.11999999999999, 10.119999999999983, -9.830000000000005, 10.409999999999968, -10.119999999999987, 9.487499999999994, -10.120000000000001, 9.70121951672795, -9.70121951672795, 9.829999999999997, -10.11999999999999, 9.701219516727935, -10.53878048327204, 10.11999999999988, -9.487500000000026, 10.752500000000111, -10.120000000000335, 10.120000000000225, -10.75250000000031, 9.701219516727935, -10.53878048327204, 10.119999999999989, -10.409999999999961, 10.409999999999968, -10.119999999999987, 10.119999999999983, -9.830000000000005, 9.70121951672795, -9.70121951672795]
         e1 = [0, 1, 2, 2, 2, 3]
         e2 = [0, 1, 2, 3, 4, 5]
-        valuesExpected=DataArrayDouble(exp_coo, len(exp_coo)/2, 2)
+        valuesExpected=DataArrayDouble(exp_coo, len(exp_coo)//2, 2)
         self.assertTrue(result.getCoords().isEqual(valuesExpected,1e-10))
         self.assertEqual(e1, mapResToInit.getValues())
         self.assertEqual(e2, mapResToRef.getValues())
+        pass
+
+    def testIntersect2DMeshes9(self):
+        """ Last part of the intersection algorithm was not properly dealing with residual cells when 
+        it was a quad polygon just made of 2 edges. Was throwing an exception. """
+        eps = 1e-6
+        back = MEDCouplingUMesh('crh7_rse1', 2)
+        coo = DataArrayDouble([(71.6187499999999915,-10.6521000000000008),(71.0937370510802538,-12.6114750000000022),(71.4852218317702608,-11.6663471329955062),(72.0541666666666600,-10.6521000000000008),(71.8364583333333258,-10.6521000000000008),(71.4708189456447371,-12.8291833333333365),(71.2822779983625026,-12.7203291666666694),(71.9058020353005816,-11.7790412588839590)])
+        back.setCoords(coo)
+        c = DataArrayInt([32, 1, 0, 3, 5, 2, 4, 7, 6])
+        cI = DataArrayInt([0, 9])
+        back.setConnectivity(c, cI)
+        tool = MEDCouplingUMesh('merge', 2)
+        coo = DataArrayDouble([(71.5737767246627783,-14.0122818133993299),(72.5920244490449136,-7.0390015370978469),(47.7780086628800404,-4.6328708831306278)])
+        tool.setCoords(coo)
+        c = DataArrayInt([5, 1, 0, 2])
+        cI = DataArrayInt([0, 4])
+        tool.setConnectivity(c, cI)
+
+        result, res2Back, res2Tool = MEDCouplingUMesh.Intersect2DMeshes(back, tool, eps)
+        exp_coo = [71.61874999999999, -10.6521, 71.09373705108025, -12.611475000000002, 71.48522183177026, -11.666347132995506, 72.05416666666666, -10.6521, 71.83645833333333, -10.6521, 71.47081894564474, -12.829183333333336, 71.2822779983625, -12.72032916666667, 71.90580203530058, -11.779041258883959, 71.57377672466278, -14.01228181339933, 72.59202444904491, -7.039001537097847, 47.77800866288004, -4.632870883130628, 72.05352566581652, -10.726810361986129, 71.8931109163297, -11.825380957175156, 71.71347100577636, -12.340536509586565, 71.2822779983625, -12.72032916666667, 71.48522183177026, -11.666347132995508, 71.83645833333333, -10.6521, 72.0540064135051, -10.689456555884437, 71.97331829107311, -11.276095659580642, 72.0084757809432, -11.281229403333473, 71.97331829107311, -11.276095659580642]
+        c = [32, 12, 5, 1, 0, 3, 11, 13, 14, 15, 16, 17, 18, 32, 11, 12, 19, 20]
+        cI = [0, 13, 18]
+        e1 = [0, 0]
+        e2 = [0, -1]
+        valuesExpected = DataArrayDouble(exp_coo, len(exp_coo)//2, 2)
+        self.assertTrue(result.getCoords().isEqual(valuesExpected,1e-10))
+        self.assertEqual(c, result.getNodalConnectivity().getValues())
+        self.assertEqual(cI, result.getNodalConnectivityIndex().getValues())
+        self.assertEqual(e1, res2Back.getValues())
+        self.assertEqual(e2, res2Tool.getValues())
+        pass
+
+    def testIntersect2DMeshes10(self):
+        """ Edge::sortIdAbs() was merging points too agressively. This is not the job of the intersector,
+        user should call mergeNodes afterwards. Was throwing an exception later in the algorithm because
+        it had to deal with a degenerated cell.
+        """
+        eps = 1e-6
+        back = MEDCouplingUMesh('crh7_rse1', 2)
+        coo = DataArrayDouble([(-31.31375453845049250,-32.51281383633234157),(-31.69083643301495812,-32.73052216966566874),(-31.50229548573272353,-32.62166800299900871),(-31.53146287178381968,-32.88989573089681073),(-31.62164061609212951,-32.82069991397399633),(-31.42260870511715609,-32.70135478361457615)])
+        back.setCoords(coo)
+        c = DataArrayInt([32, 0, 3, 1, 5, 4, 2])
+        cI = DataArrayInt([0, 7])
+        back.setConnectivity(c, cI)
+        tool = MEDCouplingUMesh('merge', 2)
+        coo = DataArrayDouble([(-29.70769086373595513,-38.08598700945959337),(-27.13627518201525746,-36.53626696210140778),(-35.49132481798474714,-28.48933303789858940)])
+        tool.setCoords(coo)
+        c = DataArrayInt([5, 0, 2, 1])
+        cI = DataArrayInt([0, 4])
+        tool.setConnectivity(c, cI)
+
+        result, res2Back, res2Tool = MEDCouplingUMesh.Intersect2DMeshes(back, tool, eps)
+#         print result.getCoords().getValues()
+#         print result.getNodalConnectivity().getValues()
+#         print result.getNodalConnectivityIndex().getValues()
+#         print res2Back.getValues()
+#         print res2Tool.getValues()
+        exp_coo = [-31.313754538450493, -32.51281383633234, -31.690836433014958, -32.73052216966567, -31.502295485732724, -32.62166800299901, -31.53146287178382, -32.88989573089681, -31.62164061609213, -32.820699913973996, -31.422608705117156, -32.701354783614576, -29.707690863735955, -38.08598700945959, -27.136275182015257, -36.53626696210141, -35.49132481798475, -28.48933303789859, -31.31376565042576, -32.51283308283808, -31.313773979690932, -32.51282506073775, -31.42261426110479, -32.70136440686744, -31.62164061609211, -32.82069991397398, -31.502305206352943, -32.62167361520171, -31.313769815058347, -32.51282907178791]
+        c = [32, 9, 3, 1, 10, 11, 12, 13, 14, 5, 10, 0, 9]
+        cI = [0, 9, 13]
+        e1 = [0, 0]
+        e2 = [0, -1]
+        valuesExpected = DataArrayDouble(exp_coo, len(exp_coo)//2, 2)
+        self.assertTrue(result.getCoords().isEqual(valuesExpected,1e-10))
+        self.assertEqual(c, result.getNodalConnectivity().getValues())
+        self.assertEqual(cI, result.getNodalConnectivityIndex().getValues())
+        self.assertEqual(e1, res2Back.getValues())
+        self.assertEqual(e2, res2Tool.getValues())
+        pass
 
     def testSwig2Intersect2DMeshesQuadra1(self):
         import cmath
@@ -414,6 +490,7 @@ class MEDCouplingIntersectTest(unittest.TestCase):
         m5.mergeNodes(eps)
         # Check coordinates:
         self.assertTrue(m3.getCoords().isEqual(m5.getCoords(), eps))
+        pass
 
     def testIntersect2DMeshesTmp7(self):
         eps = 1.0e-8
@@ -427,7 +504,7 @@ class MEDCouplingIntersectTest(unittest.TestCase):
         m1.finishInsertingCells()
 
         m2 = MEDCouplingDataForTest.buildCircle(0.25, 0.2, 0.4)
-        # Was looping indefinitly:
+        # Was looping indefinitely:
         m_intersec, resToM1, resToM2 = MEDCouplingUMesh.Intersect2DMeshes(m1, m2, eps)
         m_intersec.zipCoords()
         coo_tgt = DataArrayDouble([-0.5, -0.5, -0.5, 0.5, 0.5, 0.5, 0.5, -0.5, -0.03284271247461901, 0.4828427124746191,
@@ -438,11 +515,38 @@ class MEDCouplingIntersectTest(unittest.TestCase):
         connI_tgt = [0, 9, 22]
         res1_tgt  = [0, 0]
         res2_tgt = [0, -1]
-        self.assert_(coo_tgt.isEqualWithoutConsideringStr(m_intersec.getCoords(), 1e-12))
+        self.assertTrue(coo_tgt.isEqualWithoutConsideringStr(m_intersec.getCoords(), 1e-12))
         self.assertEqual(conn_tgt, m_intersec.getNodalConnectivity().getValues())
         self.assertEqual(connI_tgt, m_intersec.getNodalConnectivityIndex().getValues())
         self.assertEqual(res1_tgt, resToM1.getValues())
         self.assertEqual(res2_tgt, resToM2.getValues())
+        pass
+
+    def testIntersect2DMeshesTmp8(self):
+        """ Arc of circle #5 in m2 was wrongly linearized and this was crashing the intersector. """
+        m1 = MEDCouplingUMesh('mesh', 2)
+        coo = DataArrayDouble([(-18.20296424065728,-16.39845900000000),(-18.15483625715243,-16.37067229576792),(-18.17890024890485,-16.38456564788396),(-18.86345900000000,-13.93345900000000),(-18.80788559153584,-13.93345900000000),(-18.64179353311466,-15.19505343584364),(-18.83567229576791,-13.93345900000000),(-18.69547332360511,-15.20943689235543)])
+        m1.setCoords(coo)
+        c = DataArrayInt([32, 0, 3, 4, 1, 7, 6, 5, 2])
+        cI = DataArrayInt([0, 9])
+        m1.setConnectivity(c, cI)
+
+        m2 = MEDCouplingUMesh('tool', 2)
+        coo = DataArrayDouble([-18.863459, -13.933459, -18.71895791290684, -15.11832192648871, -18.76569937343606, -12.95654908944806, -9.00470518045063,
+                                  -13.8226177338691, -17.88089225139922, -16.8868757883568, -18.3878542250287, -16.04610264700759, -18.71815899226182, -15.12154400708064,
+                                  -18.83895821216178, -13.44256442936377, -18.15535493732867, -16.47914057756773, -18.57607919534293, -15.59206616319266, -18.82720039287268, -14.53027989414214, -18.71855872378567, -15.11993303402953,
+                                  0.,0.,0.,0.], 14, 2)
+        m2.setCoords(coo)
+        c = DataArrayInt([32, 1, 0, 2, 4, 5, 6,      #  offset 8:  9, 8, 10, 12, 13, 14
+                            10, 7, 3, 8, 9, 11])     #            18, 15, 11, 16, 17, 19
+        cI = DataArrayInt([0, 13])
+        m2.setConnectivity(c, cI)
+        inter, map1, map2 = MEDCouplingUMesh.Intersect2DMeshes(m1, m2, 1.0e-8)
+        self.assertEqual(inter.getNodalConnectivity().getValues(), [32, 13, 14, 9, 8, 4, 1, 0, 22, 23, 24, 25, 26, 27, 28])
+        self.assertEqual(inter.getNodalConnectivityIndex().getValues(), [0,15])
+        self.assertEqual(map1.getValues(), [0])
+        self.assertEqual(map2.getValues(), [0])
+        pass
 
     def testSwig2Intersect2DMeshWith1DLine1(self):
         """A basic test with no colinearity between m1 and m2."""
@@ -892,6 +996,61 @@ class MEDCouplingIntersectTest(unittest.TestCase):
         self.assertTrue([0,1,2], c.getValues())
         self.assertEqual([2,1], d.getValues())
 
+    def testSwig2Intersect2DMeshWith1DLine18(self):
+        """ Rare case: a *closed* line used as a tool, with the closing point inside a 2D cell ... """
+        tool = MEDCouplingUMesh('circle', 1)
+        coo = DataArrayDouble([(39.35,0),(27.8247,27.8247),(2.40949e-15,39.35),(-27.8247,27.8247),(-39.35,4.81899e-15),(-27.8247,-27.8247),(-7.22848e-15,-39.35),(27.8247,-27.8247),(39.35,7.39805e-15)])
+        tool.setCoords(coo)
+        c = DataArrayInt([2, 3, 5, 8,    2, 5, 3, 4])
+        cI = DataArrayInt([0, 4, 8])
+        tool.setConnectivity(c, cI)
+
+        meh = MEDCouplingUMesh('meh', 2)
+        coo = DataArrayDouble([(-26.4275,36.6199),(-23.5868,31.6996),(-34.1861,41.0993),(-30.3383,25.0214),(-40.1861,30.707),(-35.2622,27.8642),(-37.1861,35.9032),(-30.3068,38.8596),(-25.0071,34.1598),(-26.9625,28.3605),(-25.7138,32.5128),(-27.354,36.4726),(-36.9138,32.5128),(-27.354,28.553),(-26.8908,36.5462),(-28.8461,26.7872)])
+        meh.setCoords(coo)
+        c = DataArrayInt([32, 0, 1, 3, 13, 11, 8, 9, 15, 10, 14,
+                             32, 3, 4, 2, 0, 11, 13, 5, 6, 7, 14, 12, 15])
+        cI = DataArrayInt([0, 11, 24])
+        meh.setConnectivity(c, cI)
+
+        res2D, res1D, m1, m2 = MEDCouplingUMesh.Intersect2DMeshWith1DLine(meh, tool, 1e-12)
+        self.assertEqual(4, res2D.getNumberOfCells())
+        self.assertEqual(res2D.getNodalConnectivity().getValues(),[32, 13, 11, 0, 1, 25, 19, 26, 33, 34, 35, 36, 37, 38, 39, 32, 3, 26, 19, 25, 40, 41, 42, 43,
+                                                                   32, 4, 2, 0, 11, 13, 26, 27, 44, 45, 46, 47, 48, 49, 50, 32, 3, 27, 26, 51, 52, 53])
+        self.assertEqual(res2D.getNodalConnectivityIndex().getValues(),[0, 15, 24, 39, 46])
+        self.assertEqual(res1D.getNodalConnectivity().getValues(),[2, 19, 25, 28, 2, 25, 21, 29, 2, 21, 27, 30, 2, 27, 26, 31, 2, 26, 19, 32])
+        self.assertEqual(res1D.getNodalConnectivityIndex().getValues(),[0, 4, 8, 12, 16, 20])
+        self.assertEqual(m1.getValues(), [0,0,1,1])
+        self.assertEqual(m2.getValues(), [0,1,   -1,-1,  -1,-1,   2,3,  0,1])
+
+    def testSwig2Intersect2DMeshWith1DLine19(self):
+        """ Intersection arc of circle / segment was not properly detecting tangent cases """
+        eps=1.0e-5  # was working at 1.0e-8, but should also really work with 1.0e-5
+        mesh = MEDCouplingUMesh('layer_1', 2)
+        coo = DataArrayDouble([(55.4,3.7239),(61.4,7.188),(61.4,13.943),(49.55,7.1014),
+                                  (61.4,10.5655),(58.4,5.45595),(52.475,5.41265),(55.475,10.5222),
+                                  (56.9,9.34),(56.3343,7.97431),(56.9,7.74),(57.4657,7.97431),(59.4328,7.58116),
+                                  (55.8672,5.84911),    (0.,0.)])
+        mesh.setCoords(coo)
+        c = DataArrayInt([32, 0, 3, 2, 1, 11, 9,     6, 7, 4, 12, 8, 13])
+        cI = DataArrayInt([0, 13])
+        mesh.setConnectivity(c, cI)
+        tool = MEDCouplingUMesh('segment', 1)
+        coo = DataArrayDouble([(-166.611,-119.951),(269.611,131.902)])
+        tool.setCoords(coo)
+        c = DataArrayInt([1, 0, 1])
+        cI = DataArrayInt([0, 3])
+        tool.setConnectivity(c, cI)
+
+        res2D, res1D, m1, m2 = MEDCouplingUMesh.Intersect2DMeshWith1DLine(mesh, tool, eps)
+
+        self.assertEqual(res2D.getNodalConnectivity().getValues(),[32, 19, 17, 3, 2, 18, 20, 33, 34, 35, 36, 37, 38, 32, 1, 11, 20, 18, 39, 40, 41, 42, 32, 9, 0, 17, 19, 29, 30, 31, 32])
+        self.assertEqual(res2D.getNodalConnectivityIndex().getValues(),[0, 13, 22, 31])
+        self.assertEqual(res1D.getNodalConnectivity().getValues(),[1, 15, 17, 1, 17, 19, 1, 19, 20, 1, 20, 18, 1, 18, 16])
+        self.assertEqual(res1D.getNodalConnectivityIndex().getValues(),[0, 3, 6, 9, 12, 15])
+        self.assertEqual(m1.getValues(), [0, 0, 0])
+        self.assertEqual(m2.getValues(), [-1, -1, 0, 2, -1, -1, 0, 1, -1, -1])
+
     def testSwig2Conformize2D1(self):
         eps = 1.0e-8
         coo = [0.,-0.5,0.,0.,0.5,0.,0.5,-0.5,0.25,
@@ -986,6 +1145,23 @@ class MEDCouplingIntersectTest(unittest.TestCase):
         self.assertTrue(m.getCoords().isEqual(DataArrayDouble([2.,2.,2.,-6.,10.,-2.,-2.,-2.,6.,0.,6.,-4.,2.,7.,2.,4.5,-1.4641016151377544,0.,-1.950753362380551,-1.3742621398390762,-7.,-3.,-0.8284271247461898,-4.82842712474619,0.2679491924311228,3.5,8.881784197001252e-16,1.4641016151377548,-4.4753766811902755,-2.187131069919538,-3.914213562373095,-3.914213562373095,-1.8042260651806146,-3.236067977499789,-1.7705659643687133,-0.6647725630649153,0.46926627053963865,-5.695518130045146],19,2),1e-12))
         self.assertTrue(m.getNodalConnectivity().isEqual(DataArrayInt([32,1,2,0,8,9,11,5,4,13,17,16,18,6,8,6,0,12,7,13,6,11,9,10,16,14,15])))
         self.assertTrue(m.getNodalConnectivityIndex().isEqual(DataArrayInt([0,13,20,27])))
+        pass
+
+    def testSwig2Conformize2D6(self):
+        """ Was raising an internal error on the tiny cell #1. SegSegIntersector was faulty (eps misinterpreted)."""
+        eps=1.0e-6
+        mesh = MEDCouplingUMesh('Intersect2D', 2)
+        coo = DataArrayDouble([(-8.575398341058831,39.144034061751867),(-7.163839075265572,39.460696499553713),(-8.555240716524352,39.000452491656162),(-8.575381177420400,39.143911806168589),(-8.575389759239616,39.143972933960228),(-8.565310946972376,39.072182148912376),(-8.429007892596994,39.323429450193125),(-7.276475921428452,39.552916149667766),(-7.853580170499488,39.442382740946520),(-8.501337660834821,39.233025525494369),(-8.451698830704938,39.023021732647329),(-8.575293095466966,39.143931102458232),(-7.321160265208347,39.250835031152391),(-7.193377962393479,39.421292562742188),(-8.503477261299500,39.011771463728323),(-7.257269113800913,39.336063796947286),(-8.575337136449106,39.143921454338184),(-8.513495963085951,39.083476417552781),(-7.178608518829526,39.440994531147950),(-8.575345718262898,39.143982582105053),(-7.887252103212342,39.141010366774864),(-7.885555090015171,39.288688127112323),(-7.223911296170824,39.502221445493511)])
+        mesh.setCoords(coo)
+        c = DataArrayInt([32, 2, 3, 11, 10, 5, 16, 17, 14, 32, 3, 0, 11, 4, 19, 16, 32, 13, 12, 10, 11, 15, 20, 17, 21, 32, 7, 1, 13, 11, 0, 6, 22, 18, 21, 19, 9, 8])
+        cI = DataArrayInt([0, 9, 16, 25, 38])
+        mesh.setConnectivity(c, cI)
+
+        mesh.conformize2D(eps)  # internal error was here
+
+        c2, cI2 = mesh.getNodalConnectivity().getValues(), mesh.getNodalConnectivityIndex().getValues()
+        self.assertEqual(c2, c.getValues())
+        self.assertEqual(cI2, cI.getValues())
         pass
 
     def testSwig2Conformize3D1(self):

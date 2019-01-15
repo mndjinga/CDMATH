@@ -68,7 +68,7 @@ namespace INTERP_KERNEL
   /*   calcul la surface d'un triangle                  */
   /*_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ */
 
-  inline double Surf_Tri(const double* P_1,const double* P_2,const double* P_3)
+  inline double Surf_Tri(const double *P_1,const double *P_2,const double *P_3)
   {
     double A=(P_3[1]-P_1[1])*(P_2[0]-P_1[0])-(P_2[1]-P_1[1])*(P_3[0]-P_1[0]);
     double Surface = 0.5*fabs(A);
@@ -83,9 +83,9 @@ namespace INTERP_KERNEL
   //fonction qui calcul le determinant des vecteurs: P3P1 et P3P2
   //(cf doc CGAL).
 
-  inline double mon_determinant(const double* P_1,
-                                const double*  P_2,
-                                const double* P_3)
+  inline double mon_determinant(const double *P_1,
+                                const double *P_2,
+                                const double *P_3)
   {
     double mon_det=(P_1[0]-P_3[0])*(P_2[1]-P_3[1])-(P_2[0]-P_3[0])*(P_1[1]-P_3[1]);
     return mon_det;
@@ -98,8 +98,13 @@ namespace INTERP_KERNEL
   {
     double X=P_1[0]-P_2[0];
     double Y=P_1[1]-P_2[1];
-    double norme=sqrt(X*X+Y*Y);
-    return norme;
+    return sqrt(X*X+Y*Y);
+  }
+
+  inline void mid_of_seg2(const double P1[2], const double P2[2], double MID[2])
+  {
+    MID[0]=(P1[0]+P2[0])/2.;
+    MID[1]=(P1[1]+P1[1])/2.;
   }
 
   /*_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ */
@@ -407,7 +412,7 @@ namespace INTERP_KERNEL
     double t11 = T22, t12 = -T12, t21 = -T21, t22 = T11;
     // vector
     double r11 = p[0]-triaCoords[2*SPACEDIM], r12 = p[1]-triaCoords[2*SPACEDIM+1];
-    // barycentric coordinates: mutiply matrix by vector
+    // barycentric coordinates: multiply matrix by vector
     bc[0] = (t11 * r11 + t12 * r12)/Tdet;
     bc[1] = (t21 * r11 + t22 * r12)/Tdet;
     bc[2] = 1. - bc[0] - bc[1];
@@ -449,7 +454,7 @@ namespace INTERP_KERNEL
           double t11 = T22, t12 = -T12, t21 = -T21, t22 = T11;
           // vector
           double r11 = p[_XX]-n[2][_XX], r12 = p[_YY]-n[2][_YY];
-          // barycentric coordinates: mutiply matrix by vector
+          // barycentric coordinates: multiply matrix by vector
           bc[0] = (t11 * r11 + t12 * r12)/Tdet;
           bc[1] = (t21 * r11 + t22 * r12)/Tdet;
           bc[2] = 1. - bc[0] - bc[1];
@@ -534,6 +539,29 @@ namespace INTERP_KERNEL
       default:
         throw INTERP_KERNEL::Exception("INTERP_KERNEL::barycentric_coords : unrecognized simplex !");
       }
+  }
+
+  /*!
+   * Compute barycentric coords of point \a point relative to segment S [segStart,segStop] in 3D space.
+   * If point \a point is further from S than eps false is returned.
+   * If point \a point projection on S is outside S false is also returned.
+   * If point \a point is closer from S than eps and its projection inside S true is returned and \a bc0 and \a bc1 output parameter set.
+   */
+  inline bool IsPointOn3DSeg(const double segStart[3], const double segStop[3], const double point[3], double eps, double& bc0, double& bc1)
+  {
+    double AB[3]={segStop[0]-segStart[0],segStop[1]-segStart[1],segStop[2]-segStart[2]},AP[3]={point[0]-segStart[0],point[1]-segStart[1],point[2]-segStart[2]};
+    double l_AB(sqrt(AB[0]*AB[0]+AB[1]*AB[1]+AB[2]*AB[2]));
+    double AP_dot_AB((AP[0]*AB[0]+AP[1]*AB[1]+AP[2]*AB[2])/(l_AB*l_AB));
+    double projOfPOnAB[3]={segStart[0]+AP_dot_AB*AB[0],segStart[1]+AP_dot_AB*AB[1],segStart[2]+AP_dot_AB*AB[2]};
+    double V_dist_P_AB[3]={point[0]-projOfPOnAB[0],point[1]-projOfPOnAB[1],point[2]-projOfPOnAB[2]};
+    double dist_P_AB(sqrt(V_dist_P_AB[0]*V_dist_P_AB[0]+V_dist_P_AB[1]*V_dist_P_AB[1]+V_dist_P_AB[2]*V_dist_P_AB[2]));
+    if(dist_P_AB>=eps)
+      return false;//to far from segment [segStart,segStop]
+    if(AP_dot_AB<-eps || AP_dot_AB>1.+eps)
+      return false;
+    AP_dot_AB=std::max(AP_dot_AB,0.); AP_dot_AB=std::min(AP_dot_AB,1.);
+    bc0=1.-AP_dot_AB; bc1=AP_dot_AB;
+    return true;
   }
 
   /*!
@@ -837,7 +865,7 @@ namespace INTERP_KERNEL
   }
 
   /*! Function that compares two angles from the values of the pairs (sin,cos)*/
-  /*! Angles are considered in [0, 2Pi] bt are not computed explicitely */
+  /*! Angles are considered in [0, 2Pi] bt are not computed explicitly */
   class AngleLess
   {
   public:
@@ -1048,9 +1076,9 @@ namespace INTERP_KERNEL
     // just to be able to compile
   }
   
-  /*_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _*/
-  /* Checks wether point A is inside the quadrangle BCDE */
-  /*_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _*/  
+  /*_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ */
+  /* Checks whether point A is inside the quadrangle BCDE */
+  /*_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ */
 
   template<int dim> inline double check_inside(const double* A,const double* B,const double* C,const double* D,
                                                const double* E,double* ABC, double* ADE)
@@ -1186,7 +1214,7 @@ namespace INTERP_KERNEL
       (XA[0]*XB[1]-XA[1]*XB[0])*XC[2];
   }
   
-  /*! Subroutine of checkEqualPolygins that tests if two list of nodes (not necessarily distincts) describe the same polygon, assuming they share a comon point.*/
+  /*! Subroutine of checkEqualPolygins that tests if two list of nodes (not necessarily distincts) describe the same polygon, assuming they share a common point.*/
   /*! Indexes istart1 and istart2 designate two points P1 in L1 and P2 in L2 that have identical coordinates. Generally called with istart1=0.*/
   /*! Integer sign ( 1 or -1) indicate the direction used in going all over L2. */
   template<class T, int dim> 

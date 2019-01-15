@@ -513,7 +513,7 @@ std::vector<std::string> MEDFileMesh::getFamiliesNames() const
  * Returns names of all families of \a this mesh but like they would be in file.
  * This method is here only for MED file families gurus. If you are a kind user forget this method :-)
  * This method is only useful for aggressive users that want to have in their file a same family lying both on cells and on nodes. This is not a good idea for lisibility !
- * For your information internaly in memory such families are renamed to have a nicer API.
+ * For your information internally in memory such families are renamed to have a nicer API.
  */
 std::vector<std::string> MEDFileMesh::getFamiliesNamesWithFilePointOfView() const
 {
@@ -673,6 +673,35 @@ std::vector<std::string> MEDFileMesh::removeEmptyGroups()
   return ret;
 }
 
+void MEDFileMesh::removeGroupAtLevel(int meshDimRelToMaxExt, const std::string& name)
+{
+  std::map<std::string, std::vector<std::string> >::iterator it(_groups.find(name));
+  std::vector<std::string> grps(getGroupsNames());
+  if(it==_groups.end())
+    {
+      std::ostringstream oss; oss << "No such groupname \"" << name << "\" !\nAvailable groups are :";
+      std::copy(grps.begin(),grps.end(),std::ostream_iterator<std::string>(oss," "));
+      throw INTERP_KERNEL::Exception(oss.str().c_str());
+    }
+  const std::vector<std::string> &famsOnGrp((*it).second);
+  std::vector<int> famIds(getFamiliesIdsOnGroup(name));
+  const DataArrayInt *famArr(getFamilyFieldAtLevel(meshDimRelToMaxExt));
+  if(!famArr)
+    return ;
+  MCAuto<DataArrayInt> vals(famArr->getDifferentValues());
+  MCAuto<DataArrayInt> famIds2(DataArrayInt::NewFromStdVector(famIds));
+  MCAuto<DataArrayInt> idsToKill(famIds2->buildIntersection(vals));
+  if(idsToKill->empty())
+    return ;
+  std::vector<std::string> newFamsOnGrp;
+  for(std::vector<std::string>::const_iterator it=famsOnGrp.begin();it!=famsOnGrp.end();it++)
+    {
+      if(!idsToKill->presenceOfValue(getFamilyId(*it)))
+         newFamsOnGrp.push_back(*it);
+    }
+  (*it).second=newFamsOnGrp;
+}
+
 /*!
  * Removes a group from \a this mesh.
  *  \param [in] name - the name of the group to remove.
@@ -680,9 +709,8 @@ std::vector<std::string> MEDFileMesh::removeEmptyGroups()
  */
 void MEDFileMesh::removeGroup(const std::string& name)
 {
-  std::string oname(name);
-  std::map<std::string, std::vector<std::string> >::iterator it=_groups.find(oname);
-  std::vector<std::string> grps=getGroupsNames();
+  std::map<std::string, std::vector<std::string> >::iterator it=_groups.find(name);
+  std::vector<std::string> grps(getGroupsNames());
   if(it==_groups.end())
     {
       std::ostringstream oss; oss << "No such groupname \"" << name << "\" !\nAvailable groups are :";
@@ -795,9 +823,11 @@ void MEDFileMesh::removeFamiliesReferedByNoGroups()
 }
 
 /*!
- * This method has no impact on groups. This method only works on families. This method firstly removes families not refered by any groups in \a this, then all unused entities
+ * This method has no impact on groups. This method only works on families. This method firstly removes families not referred by any groups in \a this, then all unused entities
  * are put as belonging to family 0 ("FAMILLE_ZERO"). Finally, all orphanFamilies are killed.
  * This method raises an exception if "FAMILLE_ZERO" is already belonging to a group.
+ * 
+ * This method also raises an exception if a family belonging to a group has also id 0 (which is not right in MED file format). You should never encounter this case using addGroup method.
  *
  * \sa MEDFileMesh::removeOrphanFamilies
  */
@@ -809,7 +839,17 @@ void MEDFileMesh::rearrangeFamilies()
   std::vector<int> levels(getNonEmptyLevelsExt());
   std::set<int> idsRefed;
   for(std::map<std::string,int>::const_iterator it=_families.begin();it!=_families.end();it++)
-    idsRefed.insert((*it).second);
+    {
+      idsRefed.insert((*it).second);
+      if((*it).second==0)
+        {
+          if(!getGroupsOnFamily((*it).first).empty())
+            {
+              std::ostringstream oss; oss << "MEDFileMesh::rearrangeFamilies : Not orphan family \"" << (*it).first << "\" has id 0 ! This method may alterate groups in this for such a case !";
+              throw INTERP_KERNEL::Exception(oss.str());
+            }
+        }
+    }
   for(std::vector<int>::const_iterator it=levels.begin();it!=levels.end();it++)
     {
       const DataArrayInt *fams(0);
@@ -1256,6 +1296,19 @@ void MEDFileMesh::addFamilyOnAllGroupsHaving(const std::string& famName, const s
     }
 }
 
+void MEDFileMesh::checkNoGroupClash(const DataArrayInt *famArr, const std::string& grpName) const
+{
+  std::vector<std::string> grpsNames(getGroupsNames());
+  if(std::find(grpsNames.begin(),grpsNames.end(),grpName)==grpsNames.end())
+    return ;
+  std::vector<int> famIds(getFamiliesIdsOnGroup(grpName));
+  if(famArr->presenceOfValue(famIds))
+    {
+      std::ostringstream oss; oss << "MEDFileUMesh::addGroup : Group with name \"" << grpName << "\" already exists at specified level ! Destroy it before calling this method !";
+      throw INTERP_KERNEL::Exception(oss.str().c_str());
+    }
+}
+
 /*!
  * \param [in] ids ids and group name of the new group to add. The ids should be sorted and different each other (MED file norm).
  * \parma [in,out] famArr family array on level of interest to be renumbered. The input pointer should be not \c NULL (no check of that will be performed)
@@ -1268,13 +1321,8 @@ void MEDFileMesh::addGroupUnderground(bool isNodeGroup, const DataArrayInt *ids,
   if(grpName.empty())
     throw INTERP_KERNEL::Exception("MEDFileUMesh::addGroup : empty group name ! MED file format do not accept empty group name !");
   ids->checkStrictlyMonotonic(true);
-  famArr->incrRef(); MCAuto<DataArrayInt> famArrTmp(famArr);
-  std::vector<std::string> grpsNames=getGroupsNames();
-  if(std::find(grpsNames.begin(),grpsNames.end(),grpName)!=grpsNames.end())
-    {
-      std::ostringstream oss; oss << "MEDFileUMesh::addGroup : Group with name \"" << grpName << "\" already exists ! Destroy it before calling this method !";
-      throw INTERP_KERNEL::Exception(oss.str().c_str());
-    }
+  checkNoGroupClash(famArr,grpName);
+  MCAuto<DataArrayInt> famArrTmp; famArrTmp.takeRef(famArr);
   std::list< MCAuto<DataArrayInt> > allFamIds(getAllNonNullFamilyIds());
   allFamIds.erase(std::find(allFamIds.begin(),allFamIds.end(),famArrTmp));
   MCAuto<DataArrayInt> famIds=famArr->selectByTupleIdSafe(ids->begin(),ids->end());
@@ -1297,7 +1345,7 @@ void MEDFileMesh::addGroupUnderground(bool isNodeGroup, const DataArrayInt *ids,
           bool isFamPresent=false;
           for(std::list< MCAuto<DataArrayInt> >::const_iterator itl=allFamIds.begin();itl!=allFamIds.end() && !isFamPresent;itl++)
             isFamPresent=(*itl)->presenceOfValue(*famId);
-          if(!isFamPresent)
+          if(!isFamPresent && *famId!=0)
             { familyIds.push_back(*famId); idsPerfamiliyIds.push_back(ret0); fams.push_back(FindOrCreateAndGiveFamilyWithId(families,*famId,created)); } // adding *famId in grp
           else
             {
@@ -1331,8 +1379,15 @@ void MEDFileMesh::addGroupUnderground(bool isNodeGroup, const DataArrayInt *ids,
       famArr->setPartOfValuesSimple3(familyIds[i],da->begin(),da->end(),0,1,1);
     }
   _families=families;
+  std::map<std::string, std::vector<std::string> >::iterator itt(groups.find(grpName));
+  if(itt!=groups.end())
+    {
+      std::vector<std::string>& famsOnGrp((*itt).second);
+      famsOnGrp.insert(famsOnGrp.end(),fams.begin(),fams.end());
+    }
+  else
+    groups[grpName]=fams;
   _groups=groups;
-  _groups[grpName]=fams;
 }
 
 void MEDFileMesh::changeAllGroupsContainingFamily(const std::string& familyNameToChange, const std::vector<std::string>& newFamiliesNames)
@@ -2282,7 +2337,7 @@ MEDFileUMesh *MEDFileUMesh::New(med_idt fid, MEDFileMeshReadSelector *mrs)
 }
 
 /*!
- * \b WARNING this implementation is dependant from MEDCouplingMappedExtrudedMesh::buildUnstructured !
+ * \b WARNING this implementation is dependent from MEDCouplingMappedExtrudedMesh::buildUnstructured !
  * \sa MEDCouplingMappedExtrudedMesh::buildUnstructured , MEDCouplingMappedExtrudedMesh::build3DUnstructuredMesh
  */
 MEDFileUMesh *MEDFileUMesh::New(const MEDCouplingMappedExtrudedMesh *mem)
@@ -2776,7 +2831,7 @@ void MEDFileMesh::checkCartesian() const
   if(getAxisType()!=AX_CART)
     {
       std::ostringstream oss; oss << "MEDFileMesh::checkCartesian : request for method that is dedicated to a cartesian convention ! But you are not in cartesian convention (" << DataArray::GetAxisTypeRepr(getAxisType()) << ").";
-      oss << std::endl << "To perform operation you have two possiblities :" << std::endl;
+      oss << std::endl << "To perform operation you have two possibilities :" << std::endl;
       oss << " - call setAxisType(AX_CART)" << std::endl;
       oss << " - call cartesianize()";
       throw INTERP_KERNEL::Exception(oss.str().c_str());
@@ -3635,7 +3690,7 @@ MEDCouplingUMesh *MEDFileUMesh::getLevelM3Mesh(bool renum) const
 /*!
  * This method is for advanced users. There is two storing strategy of mesh in \a this.
  * Either MEDCouplingUMesh, or vector of MEDCoupling1GTUMesh instances.
- * When assignement is done the first one is done, which is not optimal in write mode for MED file.
+ * When assignment is done the first one is done, which is not optimal in write mode for MED file.
  * This method allows to switch from MEDCouplingUMesh mode to MEDCoupling1GTUMesh mode.
  */
 void MEDFileUMesh::forceComputationOfParts() const
@@ -3944,7 +3999,7 @@ void MEDFileUMesh::buildInnerBoundaryAlongM1Group(const std::string& grpNameM1, 
 
   std::vector<int> levs=getNonEmptyLevels();
   if(std::find(levs.begin(),levs.end(),0)==levs.end() || std::find(levs.begin(),levs.end(),-1)==levs.end())
-    throw INTERP_KERNEL::Exception("MEDFileUMesh::buildInnerBoundaryAlongM1Group : This method works only for mesh definied on level 0 and -1 !");
+    throw INTERP_KERNEL::Exception("MEDFileUMesh::buildInnerBoundaryAlongM1Group : This method works only for mesh defined on level 0 and -1 !");
   MUMesh m0=getMeshAtLevel(0);
   MUMesh m1=getMeshAtLevel(-1);
   int nbNodes=m0->getNumberOfNodes();
@@ -4133,12 +4188,12 @@ struct MEDLoaderAccVisit1
 /*! \endcond */
 
 /*!
- * Array returned is the correspondance in \b old \b to \b new format. The returned array is newly created and should be dealt by the caller.
+ * Array returned is the correspondence in \b old \b to \b new format. The returned array is newly created and should be dealt by the caller.
  * The maximum value stored in returned array is the number of nodes of \a this minus 1 after call of this method.
  * The size of returned array is the number of nodes of the old (previous to the call of this method) number of nodes.
  * -1 values in returned array means that the corresponding old node is no more used.
  *
- * \return newly allocated array containing correspondance in \b old \b to \b new format. If all nodes in \a this are fetched \c NULL pointer is returned and nothing
+ * \return newly allocated array containing correspondence in \b old \b to \b new format. If all nodes in \a this are fetched \c NULL pointer is returned and nothing
  *         is modified in \a this.
  * \throw If no coordinates are set in \a this or if there is in any available mesh in \a this a cell having a nodal connectivity containing a node id not in the range of
  *  set coordinates.
@@ -4874,7 +4929,7 @@ void MEDFileUMesh::addNodeGroup(const DataArrayInt *ids)
   if(!coords)
     throw INTERP_KERNEL::Exception("MEDFileUMesh::addNodeGroup : no coords set !");
   int nbOfNodes(coords->getNumberOfTuples());
-  if(!((DataArrayInt *)_fam_coords))
+  if(_fam_coords.isNull())
     { _fam_coords=DataArrayInt::New(); _fam_coords->alloc(nbOfNodes,1); _fam_coords->fillWithZero(); }
   //
   addGroupUnderground(true,ids,_fam_coords);
@@ -5005,7 +5060,7 @@ MCAuto<MEDFileUMeshSplitL1>& MEDFileUMesh::checkAndGiveEntryInSplitL1(int meshDi
  *
  * \param [in] ms - List of unstructured meshes lying on the same coordinates and having different mesh dimesnion.
  * \param [in] renum - the parameter (set to false by default) that tells the beheviour if there is a mesh on \a ms that is not geo type sorted.
- *                     If false, an exception ois thrown. If true the mesh is reordered automatically. It is highly recommanded to let this parameter to false.
+ *                     If false, an exception is thrown. If true the mesh is reordered automatically. It is highly recommended to let this parameter to false.
  *
  * \throw If \a there is a null pointer in \a ms.
  * \sa MEDFileUMesh::setMeshAtLevel
@@ -6095,7 +6150,7 @@ void MEDFileStructuredMesh::deepCpyAttributes()
 }
 
 /*!
- * Returns a pointer to mesh at the specified level (here 0 is compulsary for cartesian mesh).
+ * Returns a pointer to mesh at the specified level (here 0 is compulsory for cartesian mesh).
  * 
  * \return a pointer to cartesian mesh that need to be managed by the caller.
  * \warning the returned pointer has to be managed by the caller.
