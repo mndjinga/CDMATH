@@ -38,13 +38,17 @@ def test_validation1DTransportEquationUpwindExplicit(cfl,isSmooth):
     end = time.time()
 
     # Plot of solution
+    plt.close()
     for i in range(nbMeshes):
         plt.plot(np.linspace(a,b,meshList[i]), sol_u[i],   label= str(mesh_size_tab[i]) + ' cells')
-    plt.legend()
     plt.xlabel('x')
     plt.ylabel('u')
     plt.title('Plot of the numerical solution of the transport equation \n with explicit upwind scheme on a 1D regular grid')
-    plt.savefig(mesh_name+"_1DTransportEquationUpwind"+"_PlotOfSolution.png")    
+    plt.legend()
+    if(isSmooth):
+        plt.savefig(mesh_name+"_1DTransportEquation_UpwindExplicit_CFL"+str(cfl)+"_Smooth_PlotOfSolution.png")    
+    else:
+        plt.savefig(mesh_name+"_1DTransportEquation_UpwindExplicit_CFL"+str(cfl)+"_Stiff_PlotOfSolution.png")    
     plt.close()
 
     # Plot of maximal value
@@ -54,7 +58,10 @@ def test_validation1DTransportEquationUpwindExplicit(cfl,isSmooth):
     plt.xlabel('Number of cells')
     plt.ylabel('Max |u|')
     plt.title('Maximum velocity norm of the transport equation \n with explicit upwind scheme on a 1D regular grid')
-    plt.savefig(mesh_name+"_1DTransportEquationUpwind"+"_MaxSolution.png")
+    if(isSmooth):
+        plt.savefig(mesh_name+"_1DTransportEquationUpwindExplicit_CFL"+str(cfl)+"_Smooth_MaxSolution.png")
+    else:
+        plt.savefig(mesh_name+"_1DTransportEquationUpwindExplicit_CFL"+str(cfl)+"_Stiff_MaxSolution.png")
     
     # Plot of total variation
     plt.close()
@@ -63,7 +70,10 @@ def test_validation1DTransportEquationUpwindExplicit(cfl,isSmooth):
     plt.xlabel('Number of cells')
     plt.ylabel('Var(u)')
     plt.title('Total variation for the transport equation \n with explicit upwind scheme on a 1D regular grid')
-    plt.savefig(mesh_name+"_1DTransportEquationUpwind"+"_TotalVariation.png")
+    if(isSmooth):
+        plt.savefig(mesh_name+"_1DTransportEquationUpwindExplicit_CFL"+str(cfl)+"_Smooth_TotalVariation.png")
+    else:
+        plt.savefig(mesh_name+"_1DTransportEquationUpwindExplicit_CFL"+str(cfl)+"_Stiff_TotalVariation.png")
     
     for i in range(nbMeshes):
         mesh_size_tab[i]=log10(mesh_size_tab[i])
@@ -76,7 +86,7 @@ def test_validation1DTransportEquationUpwindExplicit(cfl,isSmooth):
     a3=nbMeshes
     
     det=a1*a3-a2*a2
-    assert det!=0, 'test_validation1DTransportEquationUpwind() : Make sure you use distinct meshes and at least two meshes'
+    assert det!=0, 'test_validation1DTransportEquationUpwindExplicit() : Make sure you use distinct meshes and at least two meshes'
 
     b1u=np.dot(error_u_tab,mesh_size_tab)   
     b2u=np.sum(error_u_tab)
@@ -93,7 +103,10 @@ def test_validation1DTransportEquationUpwindExplicit(cfl,isSmooth):
     plt.xlabel('log(Number of cells)')
     plt.ylabel('log(|error u|)')
     plt.title('Convergence of finite volumes for the transport equation \n with explicit upwind scheme on a 1D regular grid')
-    plt.savefig(mesh_name+"1DTransportEquationUpwind_"+"_ConvergenceCurve.png")
+    if(isSmooth):
+        plt.savefig(mesh_name+"1DTransportEquationUpwindExplicit_CFL"+str(cfl)+"_Smooth_ConvergenceCurve.png")
+    else:
+        plt.savefig(mesh_name+"1DTransportEquationUpwindExplicit_CFL"+str(cfl)+"_Stiff_ConvergenceCurve.png")
     
     # Plot of computational time
     plt.close()
@@ -102,7 +115,10 @@ def test_validation1DTransportEquationUpwindExplicit(cfl,isSmooth):
     plt.xlabel('log(Number of cells)')
     plt.ylabel('log(cpu time)')
     plt.title('Computational time of finite volumes for the transport equation \n with explicit upwind scheme on a 1D regular grid')
-    plt.savefig(mesh_name+"1DTransportEquationUpwind_"+"_ComputationalTime.png")
+    if(isSmooth):
+        plt.savefig(mesh_name+"1DTransportEquationUpwindExplicit_CFL"+str(cfl)+"_Smooth_ComputationalTime.png")
+    else:
+        plt.savefig(mesh_name+"1DTransportEquationUpwindExplicit_CFL"+str(cfl)+"_Stiff_ComputationalTime.png")
 
     plt.close('all')
 
