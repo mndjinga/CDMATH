@@ -47,8 +47,8 @@ def solve(nx,cfl,a,b, isSmooth):
     ########################## Initial data
     if(isSmooth):
         print "Smooth initial data"
-        u_initial = [ 0.5*(1+sin(4*pi*xi-pi*.5))  for xi in x];# to be used with a=0, b=1
-        u = [ 0.5*(1+sin(4*pi*xi-pi*.5))  for xi in x];# to be used with a=0, b=1
+        u_initial = [ 0.5*(1+sin(2*pi*xi-pi*.5))  for xi in x];# to be used with a=0, b=1
+        u = [ 0.5*(1+sin(2*pi*xi-pi*.5))  for xi in x];# to be used with a=0, b=1
     else:
         print "Stiff initial data"
         u_initial = [ int(1./3<xi)*int(xi<2./3)  for xi in x];# to be used with a=0, b=1
@@ -83,8 +83,8 @@ def solve(nx,cfl,a,b, isSmooth):
 
     print("Starting time loop")
     print("-- Iter: " + str(it) + ", Time: " + str(Time) + ", dt: " + str(dt))
-    np.savetxt("TransportEquation_UpwindImplicit_"+str(nx)+"Cells_Smoothness"+str(isSmooth)+"ResultField_0.txt", u, delimiter="\n")
-    plt.savefig("TransportEquation_UpwindImplicit_"+str(nx)+"Cells_Smoothness"+str(isSmooth)+"ResultField_"+str(it)+".png")
+    np.savetxt("TransportEquation_UpwindImplicit_"+str(nx)+"Cells_Smoothness"+str(isSmooth)+"_CFL"+str(cfl)+"_ResultField_0.txt", u, delimiter="\n")
+    plt.savefig("TransportEquation_UpwindImplicit_"+str(nx)+"Cells_Smoothness"+str(isSmooth)+"_CFL"+str(cfl)+"_ResultField_"+str(it)+".png")
 
     ############################# Time loop
     while (it < ntmax and Time <= tmax):
@@ -106,8 +106,8 @@ def solve(nx,cfl,a,b, isSmooth):
         line1.set_ydata(u)
         if (it % output_freq == 0):
             print("-- Iter: " + str(it) + ", Time: " + str(Time) + ", dt: " + str(dt))
-            np.savetxt( "TransportEquation_UpwindImplicit_"+str(nx)+"Cells_Smoothness"+str(isSmooth)+"ResultField_"+str(it)+".txt", u, delimiter="\n")
-            plt.savefig("TransportEquation_UpwindImplicit_"+str(nx)+"Cells_Smoothness"+str(isSmooth)+"ResultField_"+str(it)+".png")
+            np.savetxt( "TransportEquation_UpwindImplicit_"+str(nx)+"Cells_Smoothness"+str(isSmooth)+"_CFL"+str(cfl)+"_ResultField_"+str(it)+".txt", u, delimiter="\n")
+            plt.savefig("TransportEquation_UpwindImplicit_"+str(nx)+"Cells_Smoothness"+str(isSmooth)+"_CFL"+str(cfl)+"_ResultField_"+str(it)+".png")
             #plt.show()
             pass
         pass
