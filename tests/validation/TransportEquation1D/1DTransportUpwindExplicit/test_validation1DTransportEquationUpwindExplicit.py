@@ -9,7 +9,7 @@ import time, json
 def test_validation1DTransportEquationUpwindExplicit(cfl,isSmooth):
     start = time.time()
     #### 1D regular grid
-    meshList=[50,100,200,400]
+    meshList=[50,100,200,400,800]
     meshType="1D regular grid"
     testColor="Green"
     nbMeshes=len(meshList)
@@ -88,6 +88,7 @@ def test_validation1DTransportEquationUpwindExplicit(cfl,isSmooth):
     # Plot of convergence curve
     plt.close()
     plt.plot(mesh_size_tab, error_u_tab, label='log(|error|)')
+    plt.plot(mesh_size_tab, a*np.array(mesh_size_tab)+b,label='least square slope : '+'%.3f' % a)
     plt.legend()
     plt.xlabel('log(Number of cells)')
     plt.ylabel('log(|error u|)')
