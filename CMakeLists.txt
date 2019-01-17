@@ -45,12 +45,12 @@ set (CPACK_RPM_PACKAGE_REQUIRES "hdf5-devel")
 if (CDMATH_WITH_PETSC)
     message ( STATUS "Checking variable PETSC_DIR : " $ENV{PETSC_DIR} )
 
-  if ( DEFINED ENV{PETSC_DIR})
+  if ( DEFINED ENV{PETSC_DIR} )
 
     find_package (PETSc 3.4 REQUIRED)
     petsc_get_version ()
 
-  else ()
+  else ( DEFINED ENV{PETSC_DIR} )
     message ( STATUS "PETSC_DIR not set, searching petsc in the system" )
 
     if ( IS_DIRECTORY "/usr/include/petsc/" AND EXISTS "/usr/lib64/libpetsc.so")  #Case fedora/redhat system install
@@ -80,18 +80,18 @@ if (CDMATH_WITH_PETSC)
     #  set(PETSC_VERSION "3.8") #value for Ubuntu 16.04 
 
     else ()  # No petsc in system, do compile petsc
-      message (STATUS "PETSC not found in the system, petsc 3.8.0 will be installed" )
+      message (STATUS "PETSC not found in the system, petsc 3.10.3 will be installed" )
       set(PETSC_SRC ${CDMATH_SOURCE_DIR}/pre_requis/PETSc)
-      set(PETSC_DIR ${CMAKE_INSTALL_PREFIX}/share/petsc-3.8.0) # Location of the final install 
+      set(PETSC_DIR ${CMAKE_INSTALL_PREFIX}/share/petsc-3.10.3) # Location of the final install 
       set(PETSC_INCLUDES  ${PETSC_DIR}/include/  ${PETSC_DIR}/include/petsc/mpiuni)
       set(PETSC_LIBRARIES ${PETSC_DIR}/lib/libpetsc.so)
-      set(PETSC_VERSION "3.8.0")  
+      set(PETSC_VERSION "3.10.3")  
 
       include(ExternalProject)
 
       ExternalProject_Add (PETSc
-      URL               ${PETSC_SRC}/petsc-lite-3.8.0.tar.gz   
-      SOURCE_DIR        ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/petsc-3.8.0
+      URL               ${PETSC_SRC}/petsc-lite-3.10.3.tar.gz   
+      SOURCE_DIR        ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/petsc-3.10.3
       BUILD_IN_SOURCE   TRUE
       CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=${PETSC_DIR} --with-debugging=0 --with-mpi=0 --download-fblaslapack=${PETSC_SRC}/fblaslapack-3.4.2.tar.gz
       BUILD_COMMAND     make all
@@ -107,13 +107,13 @@ if (CDMATH_WITH_PETSC)
        )
 
     endif ()
-  endif ()
+  endif ( DEFINED ENV{PETSC_DIR} )
 
-  if (${PETSC_VERSION} VERSION_GREATER 3.5)
+  if( ${PETSC_VERSION} VERSION_GREATER 3.5 )
     add_definitions(-DPETSC_VERSION_GREATER_3_5)
-  endif ()
+  endif( ${PETSC_VERSION} VERSION_GREATER 3.5 )
 
-endif ()
+endif( CDMATH_WITH_PETSC )
 
 # Paraview
 if (CDMATH_WITH_PYTHON AND CDMATH_WITH_POSTPRO)
