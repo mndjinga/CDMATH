@@ -58,7 +58,7 @@ def test_validation2DVF_deformedQuadrangles():
     b=(-a2*b1+a1*b2)/det
     
     print "FV for diffusion on 2D deformed quadrangles meshes : scheme order is ", -a
-    assert abs(a+1.1)<0.1
+    assert abs(a+0.944)<0.001
     
     # Plot of convergence curve
     plt.close()
@@ -96,11 +96,6 @@ def test_validation2DVF_deformedQuadrangles():
 
     with open('Convergence_Diffusion_2DVF_'+mesh_name+'.json', 'w') as outfile:  
         json.dump(convergence_synthesis, outfile)
-
-    import os
-    os.system("jupyter-nbconvert --to notebook --execute Convergence_Diffusion_FV5_SQUARE_deformedQuadrangles.ipynb")
-    os.system("jupyter-nbconvert --to html Convergence_Diffusion_FV5_SQUARE_deformedQuadrangles.ipynb")
-    os.system("jupyter-nbconvert --to pdf Convergence_Diffusion_FV5_SQUARE_deformedQuadrangles.ipynb")
 
 if __name__ == """__main__""":
     test_validation2DVF_deformedQuadrangles()

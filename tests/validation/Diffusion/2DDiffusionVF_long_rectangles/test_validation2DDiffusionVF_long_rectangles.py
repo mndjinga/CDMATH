@@ -1,11 +1,11 @@
-Diffusion cdmath
-Diffusion FiniteVolumes2DPoisson_SQUARE
-Diffusion matplotlib.pyplot as plt
-Diffusion numpy as np
-from math Diffusion log10, sqrt
-Diffusion time, json
+import cdmath
+import FiniteVolumes2DDiffusion_SQUARE
+import matplotlib.pyplot as plt
+import numpy as np
+from math import log10, sqrt
+import time, json
 
-convergence_synthesis=dict(FiniteVolumes2DPoisson_SQUARE.test_desc)
+convergence_synthesis=dict(FiniteVolumes2DDiffusion_SQUARE.test_desc)
 
 def test_validation2DVF_long_rectangles():
     start = time.time()
@@ -29,8 +29,8 @@ def test_validation2DVF_long_rectangles():
     #for filename in meshList:
     for nx in meshList:
         my_mesh=cdmath.Mesh(0,1,nx,0,1,nx*nx)
-        error_tab[i], mesh_size_tab[i], diag_data[i], min_sol_num, max_sol_num, time_tab[i] =FiniteVolumes2DPoisson_SQUARE.solve(my_mesh,str(nx)+'x'+str(nx),resolution,meshType,testColor)
-#        error_tab[i], mesh_size_tab[i], diag_data[i], min_sol_num, max_sol_num, time_tab[i] =FiniteVolumes2DPoisson_SQUARE.solve_file(mesh_path+filename,resolution,meshType,testColor)
+        error_tab[i], mesh_size_tab[i], diag_data[i], min_sol_num, max_sol_num, time_tab[i] =FiniteVolumes2DDiffusion_SQUARE.solve(my_mesh,str(nx)+'x'+str(nx),resolution,meshType,testColor)
+#        error_tab[i], mesh_size_tab[i], diag_data[i], min_sol_num, max_sol_num, time_tab[i] =FiniteVolumes2DDiffusion_SQUARE.solve_file(mesh_path+filename,resolution,meshType,testColor)
         assert min_sol_num>-0.01 
         assert max_sol_num<1.2
         plt.plot(curv_abs, diag_data[i], label= str(mesh_size_tab[i]) + ' cells')
@@ -46,7 +46,7 @@ def test_validation2DVF_long_rectangles():
     plt.xlabel('Position on diagonal line')
     plt.ylabel('Value on diagonal line')
     plt.title('Plot over diagonal line for finite volumes \n for Laplace operator on 2D long rectangles meshes')
-    plt.savefig(mesh_name+"_2DPoissonFV_PlotOverDiagonalLine.png")
+    plt.savefig(mesh_name+"_2DDiffusionFV_PlotOverDiagonalLine.png")
 
     # Least square linear regression
     # Find the best a,b such that f(x)=ax+b best approximates the convergence curve
@@ -63,7 +63,7 @@ def test_validation2DVF_long_rectangles():
     b=(-a2*b1+a1*b2)/det
     
     print "FV for diffusion on 2D long rectangles meshes : scheme order is ", -a
-    assert abs(a+1.33)<0.1
+    assert abs(a+1.488)<0.1
     
     # Plot of convergence curve
     plt.close()
@@ -74,7 +74,7 @@ def test_validation2DVF_long_rectangles():
     plt.xlabel('log(sqrt(number of cells))')
     plt.ylabel('log(error)')
     plt.title('Convergence of finite volumes for \n Laplace operator on 2D long rectangles meshes')
-    plt.savefig(mesh_name+"_2DPoissonFV_ConvergenceCurve.png")
+    plt.savefig(mesh_name+"_2DDiffusionFV_ConvergenceCurve.png")
 
     # Plot of computational time
     plt.close()
@@ -83,7 +83,7 @@ def test_validation2DVF_long_rectangles():
     plt.xlabel('log(sqrt(number of cells))')
     plt.ylabel('log(cpu time)')
     plt.title('Computational time of finite volumes \n for Laplace operator on 2D long rectangles meshes')
-    plt.savefig(mesh_name+"_2DPoissonFV_ComputationalTime.png")
+    plt.savefig(mesh_name+"_2DDiffusionFV_ComputationalTime.png")
     
     plt.close('all')
 
@@ -100,13 +100,8 @@ def test_validation2DVF_long_rectangles():
     convergence_synthesis["Test_color"]=testColor
     convergence_synthesis["Computational_time"]=end-start
 
-    with open('Convergence_Poisson_2DVF_'+mesh_name+'.json', 'w') as outfile:  
+    with open('Convergence_Diffusion_2DVF_'+mesh_name+'.json', 'w') as outfile:  
         json.dump(convergence_synthesis, outfile)
-
-    Diffusion os
-    os.system("jupyter-nbconvert --to notebook --execute Convergence_Poisson_FV5_SQUARE_long_rectangles.ipynb")
-    os.system("jupyter-nbconvert --to html Convergence_Poisson_FV5_SQUARE_long_rectangles.ipynb")
-    os.system("jupyter-nbconvert --to pdf Convergence_Poisson_FV5_SQUARE_long_rectangles.ipynb")
 
 if __name__ == """__main__""":
     test_validation2DVF_long_rectangles()

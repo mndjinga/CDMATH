@@ -26,7 +26,7 @@ def test_validation2DVF_brickwall():
     # Storing of numerical errors, mesh sizes and diagonal values
     for filename in meshList:
         error_tab[i], mesh_size_tab[i], diag_data[i], min_sol_num, max_sol_num, time_tab[i] =FiniteVolumes2DDiffusion_SQUARE.solve_file(mesh_path+filename,resolution,meshType,testColor)
-        assert min_sol_num>-0.016 
+        assert min_sol_num>-0.022 
         assert max_sol_num<1.2
         plt.plot(curv_abs, diag_data[i], label= str(mesh_size_tab[i]) + ' cells')
         error_tab[i]=log10(error_tab[i])
@@ -58,7 +58,7 @@ def test_validation2DVF_brickwall():
     b=(-a2*b1+a1*b2)/det
     
     print "FV for diffusion on 2D brickwall meshes : scheme order is ", -a
-    assert abs(a-0.2)<0.01
+    assert abs(a-0.13)<0.01
     
     # Plot of convergence curve
     plt.close()
@@ -96,11 +96,6 @@ def test_validation2DVF_brickwall():
 
     with open('Convergence_Diffusion_2DVF_'+mesh_name+'.json', 'w') as outfile:  
         json.dump(convergence_synthesis, outfile)
-
-    import os
-    os.system("jupyter-nbconvert --to notebook --execute Convergence_Diffusion_FV5_SQUARE_brickwall.ipynb")
-    os.system("jupyter-nbconvert --to html Convergence_Diffusion_FV5_SQUARE_brickwall.ipynb")
-    os.system("jupyter-nbconvert --to pdf Convergence_Diffusion_FV5_SQUARE_brickwall.ipynb")
 
 if __name__ == """__main__""":
     test_validation2DVF_brickwall()

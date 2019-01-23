@@ -32,7 +32,7 @@ def test_validation2DVF_skinny_triangles():
         error_tab[i], mesh_size_tab[i], diag_data[i], min_sol_num, max_sol_num, time_tab[i] =FiniteVolumes2DDiffusion_SQUARE.solve(my_mesh,str(nx)+'x'+str(nx),resolution,meshType,testColor)
 #        error_tab[i], mesh_size_tab[i], diag_data[i], min_sol_num, max_sol_num, time_tab[i] =FiniteVolumes2DDiffusion_SQUARE.solve_file(mesh_path+filename,resolution,meshType,testColor)
         assert min_sol_num>-0.01 
-        assert max_sol_num<1.4
+        assert max_sol_num<6.9
         plt.plot(curv_abs, diag_data[i], label= str(mesh_size_tab[i]) + ' cells')
         error_tab[i]=log10(error_tab[i])
         time_tab[i]=log10(time_tab[i])
@@ -63,7 +63,7 @@ def test_validation2DVF_skinny_triangles():
     b=(-a2*b1+a1*b2)/det
     
     print "FV for diffusion on 2D skinny triangles meshes : scheme order is ", -a
-    assert abs(a-0.12)<0.1
+    assert abs(a-0.442)<0.01
     
     # Plot of convergence curve
     plt.close()
@@ -102,11 +102,6 @@ def test_validation2DVF_skinny_triangles():
 
     with open('Convergence_Diffusion_2DVF_'+mesh_name+'.json', 'w') as outfile:  
         json.dump(convergence_synthesis, outfile)
-
-    import os
-    os.system("jupyter-nbconvert --to notebook --execute Convergence_Diffusion_FV5_SQUARE_long_triangles.ipynb")
-    os.system("jupyter-nbconvert --to html Convergence_Diffusion_FV5_SQUARE_long_triangles.ipynb")
-    os.system("jupyter-nbconvert --to pdf Convergence_Diffusion_FV5_SQUARE_long_triangles.ipynb")
 
 if __name__ == """__main__""":
     test_validation2DVF_skinny_triangles()
