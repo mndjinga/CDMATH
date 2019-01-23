@@ -1,6 +1,6 @@
 
 SET(MESH_MED
-  ../../ressources/meshSquare.med
+  ../../ressources/squareWithTriangles.med
   )
 
 file(COPY ${MESH_MED} DESTINATION ${CMAKE_BINARY_DIR}/tests/examples/Poisson2DEF)

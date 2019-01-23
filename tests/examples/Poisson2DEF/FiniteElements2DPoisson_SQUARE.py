@@ -17,7 +17,7 @@ import VTK_routines
 
 #Chargement du maillage triangulaire du domaine carré [0,1]x[0,1], définition des bords
 #=======================================================================================
-my_mesh = cdmath.Mesh("meshSquare.med")
+my_mesh = cdmath.Mesh("squareWithTriangles.med")
 if( my_mesh.getSpaceDimension()!=2 or my_mesh.getMeshDimension()!=2) :
     raise ValueError("Wrong space or mesh dimension : space and mesh dimensions should be 2")
 if(not my_mesh.isTriangular()) :
