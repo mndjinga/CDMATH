@@ -80,7 +80,7 @@ def solve(my_mesh,filename,resolution, meshType, testColor):
         for j in range(Ci.getNumberOfFaces()):# parcours des faces voisinnes
             Fj=my_mesh.getFace(Ci.getFaceId(j))
             for idim in range(dim) :
-                normal[idim] = Ci.getNormalVector(k, idim);#normale sortante
+                normal[idim] = Ci.getNormalVector(j, idim);#normale sortante
             if not Fj.isBorder():
                 k=Fj.getCellId(0)
                 if k==i :
