@@ -64,6 +64,8 @@ if (CDMATH_WITH_PYTHON AND CDMATH_WITH_PETSC AND CDMATH_WITH_POSTPRO)
 
   add_custom_target (check COMMAND ctest -E 'validation|Example')# may be replace ctest -E with ctest -LE
   add_custom_target (poisson COMMAND ctest -R Poisson)# may be replace ctest -R with ctest -L
+  add_custom_target (diffusion COMMAND ctest -R Diffusion)# may be replace ctest -R with ctest -L
+  add_custom_target (transport COMMAND ctest -R Transport)# may be replace ctest -R with ctest -L
   add_custom_target (wave COMMAND ctest -R WaveSystem)# may be replace ctest -R with ctest -L
   add_custom_target (upwind COMMAND ctest -R Upwind)# may be replace ctest -R with ctest -L
   add_custom_target (pstag COMMAND ctest -R PStag)# may be replace ctest -R with ctest -L
