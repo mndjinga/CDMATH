@@ -9,7 +9,7 @@
 #================================================================================================================================
 
 import cdmath
-from math import sin, pi, sqrt
+from math import sin, cos, pi, sqrt, atan2
 import numpy as np
 import matplotlib.pyplot as plt
 import PV_routines
@@ -123,8 +123,8 @@ if len(sys.argv) >1 :
     plt.savefig("FiniteVolumes3DPoisson_BALL_ResultField_"+str(nbCells)+ '_cells'+"_PlotOverDiagonalLine.png")
 else :   
     plt.title('Plot over diagonal line for finite volumes \n for Laplace operator on a 3D BALL with a rectangular grid')
-    plt.plot(curv_abs, diag_data, label= str(nx) +'x'+str(ny)+ ' cells mesh')
-    plt.savefig("FiniteVolumes3DPoisson_BALL_ResultField_"+str(nx) +'x'+str(ny)+ '_cells'+"_PlotOverDiagonalLine.png")
+    plt.plot(curv_abs, diag_data, label= str(nbCells)+ ' cells mesh')
+    plt.savefig("FiniteVolumes3DPoisson_BALL_ResultField_"+str(nbCells)+ '_cells'+"_PlotOverDiagonalLine.png")
 
 print("Numerical solution of 3D poisson equation on a 3D ball using finite volumes done")
 
@@ -134,7 +134,7 @@ max_abs_sol_exacte=max(my_ExactSol.max(),-my_ExactSol.min())
 max_sol_num=my_ResultField.max()
 min_sol_num=my_ResultField.min()
 erreur_abs=0
-for i in range(nbNodes) :
+for i in range(nbCells) :
     if erreur_abs < abs(my_ExactSol[i] - my_ResultField[i]) :
         erreur_abs = abs(my_ExactSol[i] - my_ResultField[i])
 
