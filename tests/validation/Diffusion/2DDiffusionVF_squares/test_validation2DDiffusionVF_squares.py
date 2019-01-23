@@ -103,10 +103,5 @@ def test_validation2DVF_squares():
     with open('Convergence_Diffusion_2DVF_'+mesh_name+'.json', 'w') as outfile:  
         json.dump(convergence_synthesis, outfile)
 
-    import os
-    os.system("jupyter-nbconvert --to notebook --execute Convergence_Diffusion_FV5_SQUARE_squares.ipynb")
-    os.system("jupyter-nbconvert --to html Convergence_Diffusion_FV5_SQUARE_squares.ipynb")
-    os.system("jupyter-nbconvert --to pdf Convergence_Diffusion_FV5_SQUARE_squares.ipynb")
-
 if __name__ == """__main__""":
     test_validation2DVF_squares()
