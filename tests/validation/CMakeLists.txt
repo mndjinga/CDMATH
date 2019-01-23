@@ -1,5 +1,8 @@
 
 SET( VALIDATION_FOLDERS
+TransportEquation1D/1DTransportUpwindExplicit
+TransportEquation1D/1DTransportUpwindImplicit
+TransportEquation1D/1DTransportCenteredImplicit
 Poisson/2DPoissonEF_Delaunay_triangles
 Poisson/2DPoissonEF_flat_cross_triangles 
 Poisson/2DPoissonEF_skinny_triangles 
@@ -19,9 +22,17 @@ Poisson/3DPoissonEF
 Poisson/3DPoissonVF_checkerboard 
 Poisson/3DPoissonVF_tetrahedra 
 Poisson/3DPoissonVF_cubes
-TransportEquation1D/1DTransportUpwindExplicit
-TransportEquation1D/1DTransportUpwindImplicit
-TransportEquation1D/1DTransportCenteredImplicit
+Diffusion/2DDiffusionVF_checkerboard 
+Diffusion/2DDiffusionVF_loc_ref 
+Diffusion/2DDiffusionVF_Delaunay_triangles 
+Diffusion/2DDiffusionVF_squares 
+Diffusion/2DDiffusionVF_deformedQuadrangles 
+Diffusion/2DDiffusionVF_hexagons 
+Diffusion/2DDiffusionVF_brickwall
+Diffusion/2DDiffusionVF_cross_triangles
+Diffusion/2DDiffusionVF_long_rectangles
+Diffusion/2DDiffusionVF_skinny_triangles
+Diffusion/2DDiffusionVF_flat_cross_triangles
 WaveSystem_stationary/2DWaveSystemPStagSquares 
 WaveSystem_stationary/2DWaveSystemPStagDelaunayTriangles 
 WaveSystem_stationary/2DWaveSystemPStagCrossTriangles 
