@@ -37,8 +37,11 @@ def solve(filename,resolution, meshType, testColor):
     #Chargement du maillage tétraédrique du domaine cubique [0,1]x[0,1]x[0,1], définition des bords
     #==============================================================================================
     my_mesh = cdmath.Mesh(filename+".med")
+    if( my_mesh.getSpaceDimension()!=3 or my_mesh.getMeshDimension()!=3) :
+        raise ValueError("Wrong space or mesh dimension : space and mesh dimensions should be 3")
     if(not my_mesh.isTetrahedral()) :
         raise ValueError("Wrong cell types : mesh is not made of tetrahedra")
+
     eps=1e-6
     my_mesh.setGroupAtPlan(0.,0,eps,"DirichletBorder")#Bord GAUCHE
     my_mesh.setGroupAtPlan(1.,0,eps,"DirichletBorder")#Bord DROIT
@@ -181,7 +184,7 @@ def solve(filename,resolution, meshType, testColor):
     for j in range(nbBoundaryNodes):
         my_ResultField[boundaryNodes[j]]=0;#remplissage des valeurs pour les noeuds frontière (condition limite)
     #sauvegarde sur le disque dur du résultat dans un fichier paraview
-    my_ResultField.writeVTK("FiniteElements3D_CUBE_"+meshType+str(nbNodes))
+    my_ResultField.writeVTK("FiniteElements3DPoisson_CUBE_"+meshType+str(nbNodes))
     
     print("Numerical solution of 3D Poisson equation on a cube using finite elements done")
     
@@ -208,8 +211,8 @@ def solve(filename,resolution, meshType, testColor):
     diag_data=VTK_routines.Extract_field_data_over_line_to_numpyArray(my_ResultField,[0,0,0],[1,1,1], resolution)
 
     # save 3D picture
-    VTK_routines.Clip_VTK_data_to_VTK("FiniteElements3D_CUBE_"+meshType+str(nbNodes)+'_0.vtu',"Clip_VTK_data_to_VTK_"+ "FiniteElements3D_CUBE"+meshType+str(nbNodes)+'_0.vtu',[0.5,0.5,0.5], [-0.5,-0.5,-0.5],resolution )
-    PV_routines.Save_PV_data_to_picture_file("Clip_VTK_data_to_VTK_"+"FiniteElements3D_CUBE"+meshType+str(nbNodes)+'_0.vtu',"ResultField",'NODES',"Clip_VTK_data_to_VTK_"+"FiniteElements3D_CUBE"+meshType+str(nbNodes))
+    VTK_routines.Clip_VTK_data_to_VTK("FiniteElements3DPoisson_CUBE_"+meshType+str(nbNodes)+'_0.vtu',"Clip_VTK_data_to_VTK_"+ "FiniteElements3DPoisson_CUBE"+meshType+str(nbNodes)+'_0.vtu',[0.5,0.5,0.5], [-0.5,-0.5,-0.5],resolution )
+    PV_routines.Save_PV_data_to_picture_file("Clip_VTK_data_to_VTK_"+"FiniteElements3DPoisson_CUBE"+meshType+str(nbNodes)+'_0.vtu',"ResultField",'NODES',"Clip_VTK_data_to_VTK_"+"FiniteElements3DPoisson_CUBE"+meshType+str(nbNodes))
 
     test_desc["Computational_time_taken_by_run"]=end-start
     test_desc["Absolute_error"]=erreur_abs

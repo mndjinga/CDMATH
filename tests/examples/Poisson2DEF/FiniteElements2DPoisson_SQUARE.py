@@ -18,6 +18,8 @@ import VTK_routines
 #Chargement du maillage triangulaire du domaine carré [0,1]x[0,1], définition des bords
 #=======================================================================================
 my_mesh = cdmath.Mesh("meshSquare.med")
+if( my_mesh.getSpaceDimension()!=2 or my_mesh.getMeshDimension()!=2) :
+    raise ValueError("Wrong space or mesh dimension : space and mesh dimensions should be 2")
 if(not my_mesh.isTriangular()) :
 	raise ValueError("Wrong cell types : mesh is not made of triangles")
 eps=1e-6
@@ -133,12 +135,12 @@ for j in range(nbInteriorNodes):
 for j in range(nbBoundaryNodes):
     my_ResultField[boundaryNodes[j]]=0;#remplissage des valeurs pour les noeuds frontière (condition limite)
 #sauvegarde sur le disque dur du résultat dans un fichier paraview
-my_ResultField.writeVTK("FiniteElements2D_square_ResultField")
+my_ResultField.writeVTK("FiniteElements2DPoisson_SQUARE_ResultField")
 
 # Postprocessing :
 #=================
 # save 2D picture
-PV_routines.Save_PV_data_to_picture_file("FiniteElements2D_square_ResultField"+'_0.vtu',"ResultField",'NODES',"FiniteElements2D_square_ResultField")
+PV_routines.Save_PV_data_to_picture_file("FiniteElements2DPoisson_SQUARE_ResultField"+'_0.vtu',"ResultField",'NODES',"FiniteElements2DPoisson_SQUARE_ResultField")
 
 # extract and plot diagonal values
 resolution=100
@@ -149,7 +151,7 @@ plt.legend()
 plt.xlabel('Position on diagonal line')
 plt.ylabel('Value on diagonal line')
 plt.title('Plot over diagonal line for finite elements \n for Laplace operator on a 2D square with triangular mesh')
-plt.savefig("FiniteElements2D_square_ResultField_"+str(nbNodes) + '_nodes'+"_PlotOverDiagonalLine.png")
+plt.savefig("FiniteElements2DPoisson_SQUARE_ResultField_"+str(nbNodes) + '_nodes'+"_PlotOverDiagonalLine.png")
 
 print("Numerical solution of 2D Poisson equation on a square using finite elements done")
 

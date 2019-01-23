@@ -39,6 +39,9 @@ else :   #rectangular mesh
 
 nbCells = my_mesh.getNumberOfCells()
 
+if( my_mesh.getSpaceDimension()!=2 or my_mesh.getMeshDimension()!=2) :
+    raise ValueError("Wrong space or mesh dimension : space and mesh dimensions should be 2")
+
 print "Mesh loading done"
 print "Number of cells  = ", nbCells
 
@@ -105,12 +108,12 @@ my_ResultField = cdmath.Field("ResultField", cdmath.CELLS, my_mesh, 1)
 for i in range(nbCells):
     my_ResultField[i]=SolSyst[i];
 #sauvegarde sur le disque dur du résultat dans un fichier paraview
-my_ResultField.writeVTK("FiniteVolumes2D_DISK_square_ResultField")
+my_ResultField.writeVTK("FiniteVolumes2DPoisson_DISK_square_ResultField")
 
 #Postprocessing : 
 #===============
 # save 2D picture
-PV_routines.Save_PV_data_to_picture_file("FiniteVolumes2D_DISK_square_ResultField"+'_0.vtu',"ResultField",'CELLS',"FiniteVolumes2D_DISK_square_ResultField")
+PV_routines.Save_PV_data_to_picture_file("FiniteVolumes2DPoisson_DISK_square_ResultField"+'_0.vtu',"ResultField",'CELLS',"FiniteVolumes2DPoisson_DISK_square_ResultField")
 
 # extract and plot diagonal values
 resolution=100
@@ -122,11 +125,11 @@ plt.ylabel('Value on diagonal line')
 if len(sys.argv) >1 :
     plt.title('Plot over diagonal line for finite Volumes \n for Laplace operator on a 2D disk mesh '+my_mesh.getName())
     plt.plot(curv_abs, diag_data, label= str(nbCells)+ ' cells mesh')
-    plt.savefig("FiniteVolumes2D_DISK_square_ResultField_"+str(nbCells)+ '_cells'+"_PlotOverDiagonalLine.png")
+    plt.savefig("FiniteVolumes2DPoisson_DISK_square_ResultField_"+str(nbCells)+ '_cells'+"_PlotOverDiagonalLine.png")
 else :   
     plt.title('Plot over diagonal line for finite Volumes \n for Laplace operator on a 2D disk with a rectangular grid')
     plt.plot(curv_abs, diag_data, label= str(nx) +'x'+str(ny)+ ' cells mesh')
-    plt.savefig("FiniteVolumes2D_DISK_square_ResultField_"+str(nx) +'x'+str(ny)+ '_cells'+"_PlotOverDiagonalLine.png")
+    plt.savefig("FiniteVolumes2DPoisson_DISK_square_ResultField_"+str(nx) +'x'+str(ny)+ '_cells'+"_PlotOverDiagonalLine.png")
 
 print("Numerical solution of 2D Poisson equation on a disk using finite volumes done")
 

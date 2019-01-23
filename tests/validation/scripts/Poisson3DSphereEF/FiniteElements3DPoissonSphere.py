@@ -188,7 +188,7 @@ def solve(filename,resolution,meshType, testColor):
     for j in range(nbNodes):
         my_ResultField[j]=SolSyst[j];#remplissage des valeurs pour les noeuds intérieurs
     #sauvegarde sur le disque dur du résultat dans un fichier paraview
-    my_ResultField.writeVTK("FiniteElementsOnSphere_"+meshType+str(nbNodes))
+    my_ResultField.writeVTK("FiniteElementsOnSpherePoisson_"+meshType+str(nbNodes))
     
     end = time.time()
 
@@ -224,27 +224,27 @@ def solve(filename,resolution,meshType, testColor):
     #Postprocessing : 
     #================
     # save 3D picture
-    PV_routines.Save_PV_data_to_picture_file("FiniteElementsOnSphere_"+meshType+str(nbNodes)+'_0.vtu',"ResultField",'NODES',"FiniteElementsOnSphere_"+meshType+str(nbNodes))
+    PV_routines.Save_PV_data_to_picture_file("FiniteElementsOnSpherePoisson_"+meshType+str(nbNodes)+'_0.vtu',"ResultField",'NODES',"FiniteElementsOnSpherePoisson_"+meshType+str(nbNodes))
     # save 3D clip
-    VTK_routines.Clip_VTK_data_to_VTK("FiniteElementsOnSphere_"+meshType+str(nbNodes)+'_0.vtu',"Clip_VTK_data_to_VTK_"+ "FiniteElementsOnSphere_"+meshType+str(nbNodes)+'_0.vtu',[0.25,0.25,0.25], [-0.5,-0.5,-0.5],resolution )
-    PV_routines.Save_PV_data_to_picture_file("Clip_VTK_data_to_VTK_"+"FiniteElementsOnSphere_"+meshType+str(nbNodes)+'_0.vtu',"ResultField",'NODES',"Clip_VTK_data_to_VTK_"+"FiniteElementsOnSphere_"+meshType+str(nbNodes))
+    VTK_routines.Clip_VTK_data_to_VTK("FiniteElementsOnSpherePoisson_"+meshType+str(nbNodes)+'_0.vtu',"Clip_VTK_data_to_VTK_"+ "FiniteElementsOnSpherePoisson_"+meshType+str(nbNodes)+'_0.vtu',[0.25,0.25,0.25], [-0.5,-0.5,-0.5],resolution )
+    PV_routines.Save_PV_data_to_picture_file("Clip_VTK_data_to_VTK_"+"FiniteElementsOnSpherePoisson_"+meshType+str(nbNodes)+'_0.vtu',"ResultField",'NODES',"Clip_VTK_data_to_VTK_"+"FiniteElementsOnSpherePoisson_"+meshType+str(nbNodes))
     # save plot around circumference
-    finiteElementsOnSphere_0vtu = pvs.XMLUnstructuredGridReader(FileName=["FiniteElementsOnSphere_"+meshType+str(nbNodes)+'_0.vtu'])
+    finiteElementsOnSphere_0vtu = pvs.XMLUnstructuredGridReader(FileName=["FiniteElementsOnSpherePoisson_"+meshType+str(nbNodes)+'_0.vtu'])
     slice1 = pvs.Slice(Input=finiteElementsOnSphere_0vtu)
     slice1.SliceType.Normal = [0.5, 0.5, 0.5]
     renderView1 = pvs.GetActiveViewOrCreate('RenderView')
     finiteElementsOnSphere_0vtuDisplay = pvs.Show(finiteElementsOnSphere_0vtu, renderView1)
     pvs.ColorBy(finiteElementsOnSphere_0vtuDisplay, ('POINTS', 'ResultField'))
     slice1Display = pvs.Show(slice1, renderView1)
-    pvs.SaveScreenshot("./FiniteElementsOnSphere"+"_Slice_"+meshType+str(nbNodes)+'.png', magnification=1, quality=100, view=renderView1)
+    pvs.SaveScreenshot("./FiniteElementsOnSpherePoisson"+"_Slice_"+meshType+str(nbNodes)+'.png', magnification=1, quality=100, view=renderView1)
     plotOnSortedLines1 = pvs.PlotOnSortedLines(Input=slice1)
-    pvs.SaveData('./FiniteElementsOnSphere_PlotOnSortedLines'+meshType+str(nbNodes)+'.csv', proxy=plotOnSortedLines1)
+    pvs.SaveData('./FiniteElementsOnSpherePoisson_PlotOnSortedLines'+meshType+str(nbNodes)+'.csv', proxy=plotOnSortedLines1)
     lineChartView2 = pvs.CreateView('XYChartView')
     plotOnSortedLines1Display = pvs.Show(plotOnSortedLines1, lineChartView2)
     plotOnSortedLines1Display.UseIndexForXAxis = 0
     plotOnSortedLines1Display.XArrayName = 'arc_length'
     plotOnSortedLines1Display.SeriesVisibility = ['ResultField (1)']
-    pvs.SaveScreenshot("./FiniteElementsOnSphere"+"_PlotOnSortedLine_"+meshType+str(nbNodes)+'.png', magnification=1, quality=100, view=lineChartView2)
+    pvs.SaveScreenshot("./FiniteElementsOnSpherePoisson"+"_PlotOnSortedLine_"+meshType+str(nbNodes)+'.png', magnification=1, quality=100, view=lineChartView2)
     pvs.Delete(lineChartView2)
 
     with open('test_Poisson'+str(my_mesh.getMeshDimension())+'D_EF_'+meshType+str(nbCells)+ "Cells.json", 'w') as outfile:  

@@ -36,6 +36,9 @@ def solve(my_mesh,filename,resolution, meshType, testColor):
     
     nbCells = my_mesh.getNumberOfCells()
     
+    if( my_mesh.getSpaceDimension()!=2 or my_mesh.getMeshDimension()!=2) :
+        raise ValueError("Wrong space or mesh dimension : space and mesh dimensions should be 2")
+
     test_desc["Space_dimension"]=my_mesh.getSpaceDimension()
     test_desc["Mesh_dimension"]=my_mesh.getMeshDimension()
     test_desc["Mesh_number_of_elements"]=my_mesh.getNumberOfCells()
@@ -115,7 +118,7 @@ def solve(my_mesh,filename,resolution, meshType, testColor):
     for i in range(nbCells):
         my_ResultField[i]=SolSyst[i];
     #sauvegarde sur le disque dur du résultat dans un fichier paraview
-    my_ResultField.writeVTK("FiniteVolumes2D_SQUARE_"+meshType+str(nbCells))
+    my_ResultField.writeVTK("FiniteVolumes2DPoisson_SQUARE_"+meshType+str(nbCells))
     
     print("Numerical solution of 2D Poisson equation on a square using finite elements done")
     
@@ -140,7 +143,7 @@ def solve(my_mesh,filename,resolution, meshType, testColor):
 	# Extraction of the diagonal data
     diag_data=VTK_routines.Extract_field_data_over_line_to_numpyArray(my_ResultField,[0,1,0],[1,0,0], resolution)
     # save 2D picture
-    PV_routines.Save_PV_data_to_picture_file("FiniteVolumes2D_SQUARE_"+meshType+str(nbCells)+'_0.vtu',"ResultField",'CELLS',"FiniteVolumes2D_SQUARE_"+meshType+str(nbCells))
+    PV_routines.Save_PV_data_to_picture_file("FiniteVolumes2DPoisson_SQUARE_"+meshType+str(nbCells)+'_0.vtu',"ResultField",'CELLS',"FiniteVolumes2DPoisson_SQUARE_"+meshType+str(nbCells))
 
     test_desc["Computational_time_taken_by_run"]=end-start
     test_desc["Absolute_error"]=erreur_abs

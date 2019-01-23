@@ -34,6 +34,10 @@ else :   #rectangular mesh
     nz=21
     
     my_mesh = cdmath.Mesh(xmin,xmax,nx,ymin,ymax,ny,zmin,zmax,nz)
+
+if( my_mesh.getSpaceDimension()!=3 or my_mesh.getMeshDimension()!=3) :
+    raise ValueError("Wrong space or mesh dimension : space and mesh dimensions should be 3")
+
 eps=1e-6
 my_mesh.setGroupAtPlan(0,0,eps,"DirichletBorder")#Bord GAUCHE
 my_mesh.setGroupAtPlan(1,0,eps,"DirichletBorder")#Bord DROIT
@@ -104,14 +108,14 @@ my_ResultField = cdmath.Field("ResultField", cdmath.CELLS, my_mesh, 1)
 for i in range(nbCells):
     my_ResultField[i]=SolSyst[i];
 #sauvegarde sur le disque dur du résultat dans un fichier paraview
-my_ResultField.writeVTK("FiniteVolumes3D_cube_ResultField")
+my_ResultField.writeVTK("FiniteVolumes3DPoisson_CUBE_ResultField")
 
 #Postprocessing 
 #==============
 # save 3D picture
 resolution=100
-VTK_routines.Clip_VTK_data_to_VTK("FiniteVolumes3D_CUBE_ResultField"+'_0.vtu',"Clip_VTK_data_to_VTK_"+ "FiniteVolumes3D_CUBE_ResultField"+'_0.vtu',[0.5,0.5,0.5], [-0.5,-0.5,-0.5],resolution )
-PV_routines.Save_PV_data_to_picture_file("Clip_VTK_data_to_VTK_"+"FiniteVolumes3D_CUBE_ResultField"+'_0.vtu',"ResultField",'CELLS',"Clip_VTK_data_to_VTK_"+"FiniteVolumes3D_CUBE_ResultField")
+VTK_routines.Clip_VTK_data_to_VTK("FiniteVolumes3DPoisson_CUBE_ResultField"+'_0.vtu',"Clip_VTK_data_to_VTK_"+ "FiniteVolumes3DPoisson_CUBE_ResultField"+'_0.vtu',[0.5,0.5,0.5], [-0.5,-0.5,-0.5],resolution )
+PV_routines.Save_PV_data_to_picture_file("Clip_VTK_data_to_VTK_"+"FiniteVolumes3DPoisson_CUBE_ResultField"+'_0.vtu',"ResultField",'CELLS',"Clip_VTK_data_to_VTK_"+"FiniteVolumes3DPoisson_CUBE_ResultField")
 
 # extract and plot diagonal values
 resolution=100
@@ -123,11 +127,11 @@ plt.ylabel('Value on diagonal line')
 if len(sys.argv) >1 :
     plt.title('Plot over diagonal line for finite Volumes \n for Laplace operator on a 3D cube with  mesh '+my_mesh.getName())
     plt.plot(curv_abs, diag_data, label= str(nbCells)+ ' cells mesh')
-    plt.savefig("FiniteVolumes3D_cube_ResultField_"+str(nbCells)+ '_cells'+"_PlotOverDiagonalLine.png")
+    plt.savefig("FiniteVolumes3DPoisson_CUBE_ResultField_"+str(nbCells)+ '_cells'+"_PlotOverDiagonalLine.png")
 else :   
     plt.title('Plot over diagonal line for finite Volumes \n for Laplace operator on a 3D cube with a rectangular grid')
     plt.plot(curv_abs, diag_data, label= str(nx) +'x'+str(ny)+ ' cells mesh')
-    plt.savefig("FiniteVolumes3D_cube_ResultField_"+str(nx) +'x'+str(ny)+ '_cells'+"_PlotOverDiagonalLine.png")
+    plt.savefig("FiniteVolumes3DPoisson_CUBE_ResultField_"+str(nx) +'x'+str(ny)+ '_cells'+"_PlotOverDiagonalLine.png")
 
 print("Numerical solution of 3D poisson equation using finite volumes done")
 

@@ -18,6 +18,8 @@ import VTK_routines
 #Chargement du maillage tétraédrique du domaine cubique [0,1]x[0,1]x[0,1], définition des bords
 #==============================================================================================
 my_mesh = cdmath.Mesh("ballWithTetrahedra.med")
+if( my_mesh.getSpaceDimension()!=3 or my_mesh.getMeshDimension()!=3) :
+    raise ValueError("Wrong space or mesh dimension : space and mesh dimensions should be 3")
 if(not my_mesh.isTetrahedral()) :
 	raise ValueError("Wrong cell types : mesh is not made of tetrahedra")
 
@@ -143,14 +145,14 @@ for j in range(nbInteriorNodes):
 for j in range(nbBoundaryNodes):
     my_ResultField[boundaryNodes[j]]=0;#remplissage des valeurs pour les noeuds frontière (condition limite)
 #sauvegarde sur le disque dur du résultat dans un fichier paraview
-my_ResultField.writeVTK("FiniteElements3D_BALL_ResultField")
+my_ResultField.writeVTK("FiniteElements3DPoisson_BALL_ResultField")
 
 #Postprocessing :
 #================
 # save 3D picture
 resolution=100
-VTK_routines.Clip_VTK_data_to_VTK("FiniteElements3D_BALL_ResultField"+'_0.vtu',"Clip_VTK_data_to_VTK_"+ "FiniteElements3D_BALL_ResultField"+'_0.vtu',[0.5,0.5,0.5], [-0.5,-0.5,-0.5],resolution )
-PV_routines.Save_PV_data_to_picture_file("Clip_VTK_data_to_VTK_"+"FiniteElements3D_BALL_ResultField"+'_0.vtu',"ResultField",'NODES',"Clip_VTK_data_to_VTK_"+"FiniteElements3D_BALL_ResultField")
+VTK_routines.Clip_VTK_data_to_VTK("FiniteElements3DPoisson_BALL_ResultField"+'_0.vtu',"Clip_VTK_data_to_VTK_"+ "FiniteElements3DPoisson_BALL_ResultField"+'_0.vtu',[0.5,0.5,0.5], [-0.5,-0.5,-0.5],resolution )
+PV_routines.Save_PV_data_to_picture_file("Clip_VTK_data_to_VTK_"+"FiniteElements3DPoisson_BALL_ResultField"+'_0.vtu',"ResultField",'NODES',"Clip_VTK_data_to_VTK_"+"FiniteElements3DPoisson_BALL_ResultField")
 
 # extract and plot diagonal values
 curv_abs=np.linspace(0,sqrt(3),resolution+1)
@@ -160,14 +162,13 @@ plt.legend()
 plt.xlabel('Position on diagonal line')
 plt.ylabel('Value on diagonal line')
 plt.title('Plot over diagonal line for finite elements \n for Laplace operator on a 3D ball tetrahedral mesh')
-plt.savefig("FiniteElements3D_BALL_ResultField_"+str(nbNodes) + '_nodes'+"_PlotOverDiagonalLine.png")
+plt.savefig("FiniteElements3DPoisson_BALL_ResultField_"+str(nbNodes) + '_nodes'+"_PlotOverDiagonalLine.png")
 
-print("Numerical solution of 3D Poisson equation on a ball using finite elements done")
+print("Numerical solution of 3D Poisson equation on a 3D ball using finite elements done")
 
 
 #Calcul de l'erreur commise par rapport à la solution exacte
 #===========================================================
-#The following formulas use the fact that the exact solution is equal the right hand side divided by 3*pi*pi
 max_abs_sol_exacte=max(my_ExactSol.max(),-my_ExactSol.min())
 max_sol_num=my_ResultField.max()
 min_sol_num=my_ResultField.min()

@@ -38,6 +38,8 @@ def solve(filename,resolution,meshType, testColor):
     #Chargement du maillage triangulaire du domaine carré [0,1]x[0,1], définition des bords
     #=======================================================================================
     my_mesh = cdmath.Mesh(filename+".med")
+    if( my_mesh.getSpaceDimension()!=2 or my_mesh.getMeshDimension()!=2) :
+        raise ValueError("Wrong space or mesh dimension : space and mesh dimensions should be 2")
     if(not my_mesh.isTriangular()) :
         raise ValueError("Wrong cell types : mesh is not made of triangles")
     eps=1e-6
@@ -169,7 +171,7 @@ def solve(filename,resolution,meshType, testColor):
     for j in range(nbBoundaryNodes):
         my_ResultField[boundaryNodes[j]]=0;#remplissage des valeurs pour les noeuds frontière (condition limite)
     #sauvegarde sur le disque dur du résultat dans un fichier paraview
-    my_ResultField.writeVTK("FiniteElements2D_SQUARE_"+meshType+str(nbNodes))
+    my_ResultField.writeVTK("FiniteElements2DPoisson_SQUARE_"+meshType+str(nbNodes))
     
     print("Numerical solution of 2D Poisson equation on a square using finite elements done")
     
@@ -194,7 +196,7 @@ def solve(filename,resolution,meshType, testColor):
 	# Extraction of the diagonal data
     diag_data=VTK_routines.Extract_field_data_over_line_to_numpyArray(my_ResultField,[0,1,0],[1,0,0], resolution)
     # save 2D picture
-    PV_routines.Save_PV_data_to_picture_file("FiniteElements2D_SQUARE_"+meshType+str(nbNodes)+'_0.vtu',"ResultField",'NODES',"FiniteElements2D_SQUARE_"+meshType+str(nbNodes))
+    PV_routines.Save_PV_data_to_picture_file("FiniteElements2DPoisson_SQUARE_"+meshType+str(nbNodes)+'_0.vtu',"ResultField",'NODES',"FiniteElements2DPoisson_SQUARE_"+meshType+str(nbNodes))
     
     test_desc["Computational_time_taken_by_run"]=end-start
     test_desc["Absolute_error"]=erreur_abs

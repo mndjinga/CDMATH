@@ -18,6 +18,8 @@ import VTK_routines
 #Chargement du maillage triangulaire du disque unité
 #=======================================================================================
 my_mesh = cdmath.Mesh("diskWithTriangles.med")
+if( my_mesh.getSpaceDimension()!=2 or my_mesh.getMeshDimension()!=2) :
+    raise ValueError("Wrong space or mesh dimension : space and mesh dimensions should be 2")
 if(not my_mesh.isTriangular()) :
 	raise ValueError("Wrong cell types : mesh is not made of triangles")
 
@@ -134,12 +136,12 @@ for j in range(nbInteriorNodes):
 for j in range(nbBoundaryNodes):
     my_ResultField[boundaryNodes[j]]=0;#remplissage des valeurs pour les noeuds frontière (condition limite)
 #sauvegarde sur le disque dur du résultat dans un fichier paraview
-my_ResultField.writeVTK("FiniteElements2D_disk_ResultField")
+my_ResultField.writeVTK("FiniteElements2DPoisson_DISK_ResultField")
 
 # Postprocessing :
 #=================
 # save 2D picture
-PV_routines.Save_PV_data_to_picture_file("FiniteElements2D_disk_ResultField"+'_0.vtu',"ResultField",'NODES',"FiniteElements2D_disk_ResultField")
+PV_routines.Save_PV_data_to_picture_file("FiniteElements2DPoisson_DISK_ResultField"+'_0.vtu',"ResultField",'NODES',"FiniteElements2DPoisson_DISK_ResultField")
 
 # extract and plot diagonal values
 resolution=100
@@ -150,7 +152,7 @@ plt.legend()
 plt.xlabel('Position on diagonal line')
 plt.ylabel('Value on diagonal line')
 plt.title('Plot over diagonal line for finite elements \n for Laplace operator on a 2D disk triangular mesh')
-plt.savefig("FiniteElements2D_disk_ResultField_"+str(nbNodes) + '_nodes'+"_PlotOverDiagonalLine.png")
+plt.savefig("FiniteElements2DPoisson_DISK_ResultField_"+str(nbNodes) + '_nodes'+"_PlotOverDiagonalLine.png")
 
 print("Numerical solution of 2D Poisson equation on a disk using finite elements done")
 

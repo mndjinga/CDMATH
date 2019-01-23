@@ -153,32 +153,32 @@ my_ResultField = cdmath.Field("ResultField", cdmath.NODES, my_mesh, 1)
 for j in range(nbNodes):
     my_ResultField[j]=SolSyst[j];#remplissage des valeurs pour les noeuds intérieurs
 #sauvegarde sur le disque dur du résultat dans un fichier paraview
-my_ResultField.writeVTK("FiniteElementsOnSphere")
+my_ResultField.writeVTK("FiniteElementsOnSpherePoisson")
 
 #Postprocessing :
 #================
 # save 3D picture
-PV_routines.Save_PV_data_to_picture_file("FiniteElementsOnSphere"+'_0.vtu',"ResultField",'NODES',"FiniteElementsOnSphere")
+PV_routines.Save_PV_data_to_picture_file("FiniteElementsOnSpherePoisson"+'_0.vtu',"ResultField",'NODES',"FiniteElementsOnSpherePoisson")
 resolution=100
-VTK_routines.Clip_VTK_data_to_VTK("FiniteElementsOnSphere"+'_0.vtu',"Clip_VTK_data_to_VTK_"+ "FiniteElementsOnSphere"+'_0.vtu',[0.25,0.25,0.25], [-0.5,-0.5,-0.5],resolution )
-PV_routines.Save_PV_data_to_picture_file("Clip_VTK_data_to_VTK_"+"FiniteElementsOnSphere"+'_0.vtu',"ResultField",'NODES',"Clip_VTK_data_to_VTK_"+"FiniteElementsOnSphere")
+VTK_routines.Clip_VTK_data_to_VTK("FiniteElementsOnSpherePoisson"+'_0.vtu',"Clip_VTK_data_to_VTK_"+ "FiniteElementsOnSpherePoisson"+'_0.vtu',[0.25,0.25,0.25], [-0.5,-0.5,-0.5],resolution )
+PV_routines.Save_PV_data_to_picture_file("Clip_VTK_data_to_VTK_"+"FiniteElementsOnSpherePoisson"+'_0.vtu',"ResultField",'NODES',"Clip_VTK_data_to_VTK_"+"FiniteElementsOnSpherePoisson")
 
 # Plot  over slice circle
-finiteElementsOnSphere_0vtu = pvs.XMLUnstructuredGridReader(FileName=["FiniteElementsOnSphere"+'_0.vtu'])
+finiteElementsOnSphere_0vtu = pvs.XMLUnstructuredGridReader(FileName=["FiniteElementsOnSpherePoisson"+'_0.vtu'])
 slice1 = pvs.Slice(Input=finiteElementsOnSphere_0vtu)
 slice1.SliceType.Normal = [0.5, 0.5, 0.5]
 renderView1 = pvs.GetActiveViewOrCreate('RenderView')
 finiteElementsOnSphere_0vtuDisplay = pvs.Show(finiteElementsOnSphere_0vtu, renderView1)
 pvs.ColorBy(finiteElementsOnSphere_0vtuDisplay, ('POINTS', 'ResultField'))
 slice1Display = pvs.Show(slice1, renderView1)
-pvs.SaveScreenshot("./FiniteElementsOnSphere"+"_Slice"+'.png', magnification=1, quality=100, view=renderView1)
+pvs.SaveScreenshot("./FiniteElementsOnSpherePoisson"+"_Slice"+'.png', magnification=1, quality=100, view=renderView1)
 plotOnSortedLines1 = pvs.PlotOnSortedLines(Input=slice1)
 lineChartView2 = pvs.CreateView('XYChartView')
 plotOnSortedLines1Display = pvs.Show(plotOnSortedLines1, lineChartView2)
 plotOnSortedLines1Display.UseIndexForXAxis = 0
 plotOnSortedLines1Display.XArrayName = 'arc_length'
 plotOnSortedLines1Display.SeriesVisibility = ['ResultField (1)']
-pvs.SaveScreenshot("./FiniteElementsOnSphere"+"_PlotOnSortedLine_"+'.png', magnification=1, quality=100, view=lineChartView2)
+pvs.SaveScreenshot("./FiniteElementsOnSpherePoisson"+"_PlotOnSortedLine_"+'.png', magnification=1, quality=100, view=lineChartView2)
 pvs.Delete(lineChartView2)
 
 print("Integral of the numerical solution", my_ResultField.integral(0))

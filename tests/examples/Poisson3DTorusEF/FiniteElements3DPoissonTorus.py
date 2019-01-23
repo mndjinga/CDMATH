@@ -162,7 +162,7 @@ my_ResultField = cdmath.Field("Numerical result field", cdmath.NODES, my_mesh, 1
 for j in range(nbNodes):
     my_ResultField[j]=SolSyst[j];#remplissage des valeurs pour les noeuds intérieurs
 #sauvegarde sur le disque dur du résultat dans un fichier paraview
-my_ResultField.writeVTK("FiniteElementsOnTorus")
+my_ResultField.writeVTK("FiniteElementsOnTorusPoisson")
 
 print("Integral of the numerical solution", my_ResultField.integral(0))
 print("Numerical solution of Poisson equation on a torus using finite elements done")
@@ -181,25 +181,25 @@ assert erreur_max/max_sol_exacte <1.
 #Postprocessing : 
 #================
 # Save 3D picture
-PV_routines.Save_PV_data_to_picture_file("FiniteElementsOnTorus"+'_0.vtu',"Numerical result field",'NODES',"FiniteElementsOnTorus")
+PV_routines.Save_PV_data_to_picture_file("FiniteElementsOnTorusPoisson"+'_0.vtu',"Numerical result field",'NODES',"FiniteElementsOnTorusPoisson")
 resolution=100
-VTK_routines.Clip_VTK_data_to_VTK("FiniteElementsOnTorus"+'_0.vtu',"Clip_VTK_data_to_VTK_"+ "FiniteElementsOnTorus"+'_0.vtu',[0.25,0.25,0.25], [-0.5,-0.5,-0.5],resolution )
-PV_routines.Save_PV_data_to_picture_file("Clip_VTK_data_to_VTK_"+"FiniteElementsOnTorus"+'_0.vtu',"Numerical result field",'NODES',"Clip_VTK_data_to_VTK_"+"FiniteElementsOnTorus")
+VTK_routines.Clip_VTK_data_to_VTK("FiniteElementsOnTorusPoisson"+'_0.vtu',"Clip_VTK_data_to_VTK_"+ "FiniteElementsOnTorusPoisson"+'_0.vtu',[0.25,0.25,0.25], [-0.5,-0.5,-0.5],resolution )
+PV_routines.Save_PV_data_to_picture_file("Clip_VTK_data_to_VTK_"+"FiniteElementsOnTorusPoisson"+'_0.vtu',"Numerical result field",'NODES',"Clip_VTK_data_to_VTK_"+"FiniteElementsOnTorusPoisson")
 
 # Plot  over slice circle
-finiteElementsOnTorus_0vtu = pvs.XMLUnstructuredGridReader(FileName=["FiniteElementsOnTorus"+'_0.vtu'])
+finiteElementsOnTorus_0vtu = pvs.XMLUnstructuredGridReader(FileName=["FiniteElementsOnTorusPoisson"+'_0.vtu'])
 slice1 = pvs.Slice(Input=finiteElementsOnTorus_0vtu)
 slice1.SliceType.Normal = [0.5, 0.5, 0.5]
 renderView1 = pvs.GetActiveViewOrCreate('RenderView')
 finiteElementsOnTorus_0vtuDisplay = pvs.Show(finiteElementsOnTorus_0vtu, renderView1)
 pvs.ColorBy(finiteElementsOnTorus_0vtuDisplay, ('POINTS', 'Numerical result field'))
 slice1Display = pvs.Show(slice1, renderView1)
-pvs.SaveScreenshot("./FiniteElementsOnTorus"+"_Slice"+'.png', magnification=1, quality=100, view=renderView1)
+pvs.SaveScreenshot("./FiniteElementsOnTorusPoisson"+"_Slice"+'.png', magnification=1, quality=100, view=renderView1)
 plotOnSortedLines1 = pvs.PlotOnSortedLines(Input=slice1)
 lineChartView2 = pvs.CreateView('XYChartView')
 plotOnSortedLines1Display = pvs.Show(plotOnSortedLines1, lineChartView2)
 plotOnSortedLines1Display.UseIndexForXAxis = 0
 plotOnSortedLines1Display.XArrayName = 'arc_length'
 plotOnSortedLines1Display.SeriesVisibility = ['Numerical result field (1)']
-pvs.SaveScreenshot("./FiniteElementsOnTorus"+"_PlotOnSortedLine_"+'.png', magnification=1, quality=100, view=lineChartView2)
+pvs.SaveScreenshot("./FiniteElementsOnTorusPoisson"+"_PlotOnSortedLine_"+'.png', magnification=1, quality=100, view=lineChartView2)
 pvs.Delete(lineChartView2)

@@ -51,6 +51,9 @@ def solve(my_mesh, filename,resolution, meshType, testColor):
     my_mesh.setGroupAtPlan(0,2,eps,"DirichletBorder")#Bord AVANT
     my_mesh.setGroupAtPlan(1,2,eps,"DirichletBorder")#Bord ARRIERE
     
+    if( my_mesh.getSpaceDimension()!=3 or my_mesh.getMeshDimension()!=3) :
+        raise ValueError("Wrong space or mesh dimension : space and mesh dimensions should be 3")
+
     nbCells = my_mesh.getNumberOfCells()
     
     test_desc["Space_dimension"]=my_mesh.getSpaceDimension()
@@ -128,7 +131,7 @@ def solve(my_mesh, filename,resolution, meshType, testColor):
     for i in range(nbCells):
         my_ResultField[i]=SolSyst[i];
     #sauvegarde sur le disque dur du résultat dans un fichier paraview
-    my_ResultField.writeVTK("FiniteVolumes3D_CUBE_"+meshType+str(nbCells))
+    my_ResultField.writeVTK("FiniteVolumes3DPoisson_CUBE_"+meshType+str(nbCells))
     
     print("Numerical solution of 3D Poisson equation on a cube using finite elements done")
     
@@ -153,8 +156,8 @@ def solve(my_mesh, filename,resolution, meshType, testColor):
     # Extraction of the diagonal data
     diag_data=VTK_routines.Extract_field_data_over_line_to_numpyArray(my_ResultField,[0,0,0],[1,1,1], resolution)
     # save 3D picture
-    VTK_routines.Clip_VTK_data_to_VTK("FiniteVolumes3D_CUBE_"+meshType+str(nbCells)+'_0.vtu',"Clip_VTK_data_to_VTK_"+ "FiniteVolumes3D_CUBE_"+meshType+str(nbCells)+'_0.vtu',[0.5,0.5,0.5], [-0.5,-0.5,-0.5],resolution )
-    PV_routines.Save_PV_data_to_picture_file("Clip_VTK_data_to_VTK_"+"FiniteVolumes3D_CUBE_"+meshType+str(nbCells)+'_0.vtu',"ResultField",'CELLS',"Clip_VTK_data_to_VTK_"+"FiniteVolumes3D_CUBE_"+meshType+str(nbCells))
+    VTK_routines.Clip_VTK_data_to_VTK("FiniteVolumes3DPoisson_CUBE_"+meshType+str(nbCells)+'_0.vtu',"Clip_VTK_data_to_VTK_"+ "FiniteVolumes3DPoisson_CUBE_"+meshType+str(nbCells)+'_0.vtu',[0.5,0.5,0.5], [-0.5,-0.5,-0.5],resolution )
+    PV_routines.Save_PV_data_to_picture_file("Clip_VTK_data_to_VTK_"+"FiniteVolumes3DPoisson_CUBE_"+meshType+str(nbCells)+'_0.vtu',"ResultField",'CELLS',"Clip_VTK_data_to_VTK_"+"FiniteVolumes3DPoisson_CUBE_"+meshType+str(nbCells))
 
     test_desc["Computational_time_taken_by_run"]=end-start
     test_desc["Absolute_error"]=erreur_abs
