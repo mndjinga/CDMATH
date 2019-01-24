@@ -35,11 +35,11 @@ def Burgers1D():
     ##################### Simulation parameters
     a = 0.0 # space domain :  a <= x <= b
     b = 1.
-    nx=200
+    nx=100
     dx = (b - a) / nx #space step
 
     tmax = 0.9 # runs the simulation for 0 <= t <= tMax
-    ntmax=1000
+    ntmax=100
     cfl=0.95
 
     x=[a+0.5*dx + i*dx for i in range(nx)]   # array of cell center (1D mesh)
@@ -70,7 +70,7 @@ def Burgers1D():
         plt.ylabel('u')
         plt.xlim(a,b)
         plt.ylim( min_initial - 0.1*(max_initial-min_initial), max_initial +  0.1*(max_initial-min_initial) )
-        plt.title('Finite folume schemes for Burgers equation')
+        plt.title('Finite volume schemes for Burgers equation')
         line1, = plt.plot(x, u_godunov, label='Godunov scheme') #new picture for video # Returns a tuple of line objects, thus the comma
     
         print("Starting time loop")
