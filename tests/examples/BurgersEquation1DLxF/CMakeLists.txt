@@ -1,0 +1,8 @@
+
+if (CDMATH_WITH_PYTHON )
+
+    ADD_TEST(ExampleBurgersEquation_1DFV_LxF ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/1DBurgersEquationLxF.py )
+
+endif (CDMATH_WITH_PYTHON )
+
+
