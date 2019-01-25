@@ -24,12 +24,23 @@ def Flux_Godunov(u_l, u_r):
     if (u_l==u_r):
         flux = 0.5*u_l*u_l
     elif (u_l<0 and 0<u_r):
-        fluxs = 0.;
+        flux = 0.;
     elif (u_l<u_r):
         flux = min(0.5*u_l*u_l,0.5*u_r*u_r);
     elif (u_l>u_r):
         flux = max(0.5*u_l*u_l,0.5*u_r*u_r);
+    
     return flux
+
+def Du_ncsv(u_l, u_i, u_r):
+    if (u_i<0):
+        Du= u_r-u_i
+    elif (0<u_i):
+        Du= u_i-u_l
+    else:
+        Du= u_r-u_l/2
+    
+    return Du
 
 def Burgers1D():
     ##################### Simulation parameters
@@ -48,7 +59,8 @@ def Burgers1D():
     xa=0.1
     xb=0.5
     u_initial = [ (xi<xa)+(xa<=xi)*(xi<=xb)*(np.cos(np.pi*(xa-xi)/(xa-xb))+1.0)*0.5  for xi in x];# to be used with a=0, b=1
-    u_godunov        = [ (xi<xa)+(xa<=xi)*(xi<=xb)*(np.cos(np.pi*(xa-xi)/(xa-xb))+1.0)*0.5  for xi in x];# to be used with a=0, b=1
+    u_godunov = [ (xi<xa)+(xa<=xi)*(xi<=xb)*(np.cos(np.pi*(xa-xi)/(xa-xb))+1.0)*0.5  for xi in x];# to be used with a=0, b=1
+    u_ncsv    = [ (xi<xa)+(xa<=xi)*(xi<=xb)*(np.cos(np.pi*(xa-xi)/(xa-xb))+1.0)*0.5  for xi in x];# to be used with a=0, b=1
     Unp1        = [ (xi<xa)+(xa<=xi)*(xi<=xb)*(np.cos(np.pi*(xa-xi)/(xa-xb))+1.0)*0.5  for xi in x];# to be used with a=0, b=1
 
     max_initial=max(u_initial)
@@ -65,19 +77,21 @@ def Burgers1D():
     with writer.saving(plt.figure(), "1DBurgersEquation_FV"+".mp4", ntmax):
         ########################### Postprocessing initialisation
         # Picture frame
-        plt.legend()
         plt.xlabel('x')
         plt.ylabel('u')
         plt.xlim(a,b)
         plt.ylim( min_initial - 0.1*(max_initial-min_initial), max_initial +  0.1*(max_initial-min_initial) )
         plt.title('Finite volume schemes for Burgers equation')
         line1, = plt.plot(x, u_godunov, label='Godunov scheme') #new picture for video # Returns a tuple of line objects, thus the comma
+        line2, = plt.plot(x, u_ncsv,    label='Non conservative scheme') #new picture for video # Returns a tuple of line objects, thus the comma
+        plt.legend()
     
         print("Starting time loop")
         print("-- Iter: " + str(it) + ", Time: " + str(time) )
         np.savetxt("BurgersEquation_FVGodunov_ResultField_0"+".txt", u_godunov, delimiter="\n")
+        np.savetxt("BurgersEquation_FVNonCons_ResultField_0"+".txt", u_ncsv, delimiter="\n")
         writer.grab_frame()
-        plt.savefig("BurgersEquation_FVGodunov_ResultField_0"+".png")
+        plt.savefig("BurgersEquation_FV_ResultField_0"+".png")
 
         ############################# Time loop
         while (it < ntmax and time <= tmax):
@@ -94,19 +108,31 @@ def Burgers1D():
                 pass
                 Unp1[i] = u_godunov[i] - dt/dx*(flux_iplus-flux_iminus);
                 flux_iminus = flux_iplus;
-            pass
             u_godunov = Unp1
     
+            for i in xrange(0,nx):
+                if (i==0):
+                    Du = Du_ncsv(u_ncsv[0],    u_ncsv[0],    u_ncsv[1])# Neumann boundary condition
+                elif (i==nx-1):
+                    Du = Du_ncsv(u_ncsv[nx-2], u_ncsv[nx-1], u_ncsv[nx-1])# Neumann boundary condition
+                else:
+                    Du = Du_ncsv(u_ncsv[i-1],    u_ncsv[i],    u_ncsv[i+1]) 
+                pass
+                Unp1[i] = u_ncsv[i] - dt/dx*u_ncsv[i]*Du
+            u_ncsv = Unp1
+
             time += dt
             it += 1
 
             # Postprocessing
             line1.set_ydata(u_godunov)
+            line2.set_ydata(u_ncsv)
             writer.grab_frame()
             if (it % output_freq == 0):
                 print("-- Iter: " + str(it) + ", Time: " + str(time) + ", dt: " + str(dt))
                 np.savetxt( "BurgersEquation_FVGodunov_ResultField_"+str(it)+".txt", u_godunov, delimiter="\n")
-                plt.savefig("BurgersEquation_FVGodunov_ResultField_"+str(it)+".png")
+                np.savetxt( "BurgersEquation_FVNonCons_ResultField_"+str(it)+".txt", u_ncsv,    delimiter="\n")
+                plt.savefig("BurgersEquation_FV_ResultField_"+str(it)+".png")
                 #plt.show()
     
     print("Simulation of Burgers equation with finite volume schemes done.")
