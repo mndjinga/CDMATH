@@ -14,6 +14,7 @@
 
 from math import sin, cos, pi
 import numpy as np
+from copy import deepcopy
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
@@ -29,6 +30,16 @@ def Flux_Godunov(u_l, u_r):
         flux = min(0.5*u_l*u_l,0.5*u_r*u_r);
     elif (u_l>u_r):
         flux = max(0.5*u_l*u_l,0.5*u_r*u_r);
+    
+    return flux
+
+def Flux_Godunov2(u_l, u_r):
+    if (u_l==u_r):
+        flux = 1./3.*u_l*u_l*u_l
+    elif (u_l*u_l<u_r*u_r):
+        flux = min(1./3.*u_l*u_l*u_l,1./3.*u_r*u_r*u_r);
+    elif (u_l*u_l>u_r*u_r):
+        flux = max(1./3.*u_l*u_l*u_l,1./3.*u_r*u_r*u_r);
     
     return flux
 
@@ -61,8 +72,10 @@ def Burgers1D():
     u_initial = [ (xi<xa)+(xa<=xi)*(xi<=xb)*(np.cos(np.pi*(xa-xi)/(xa-xb))+1.0)*0.5  for xi in x];# to be used with a=0, b=1
     u_godunov = [ (xi<xa)+(xa<=xi)*(xi<=xb)*(np.cos(np.pi*(xa-xi)/(xa-xb))+1.0)*0.5  for xi in x];# to be used with a=0, b=1
     u_ncsv    = [ (xi<xa)+(xa<=xi)*(xi<=xb)*(np.cos(np.pi*(xa-xi)/(xa-xb))+1.0)*0.5  for xi in x];# to be used with a=0, b=1
-    Unp1      = [ (xi<xa)+(xa<=xi)*(xi<=xb)*(np.cos(np.pi*(xa-xi)/(xa-xb))+1.0)*0.5  for xi in x];# to be used with a=0, b=1
-    Unp1_ncsv = [ (xi<xa)+(xa<=xi)*(xi<=xb)*(np.cos(np.pi*(xa-xi)/(xa-xb))+1.0)*0.5  for xi in x];# to be used with a=0, b=1
+    u_csv2    = [ ui*ui  for ui in u_godunov];# to be used with a=0, b=1
+    Unp1      = [0]*nx
+    Unp1_ncsv = [0]*nx
+    Unp1_csv2 = deepcopy(u_csv2)
     
     max_initial=max(u_initial)
     min_initial=min(u_initial)
