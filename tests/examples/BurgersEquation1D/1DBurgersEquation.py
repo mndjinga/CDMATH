@@ -12,7 +12,7 @@
 #================================================================================================================================
 
 
-from math import sin, cos, pi
+from math import sin, cos, pi, sqrt
 import numpy as np
 from copy import deepcopy
 import matplotlib
@@ -37,10 +37,11 @@ def Flux_Godunov2(u_l, u_r):
     if (u_l==u_r):
         flux = 1./3.*u_l*u_l*u_l
     elif (u_l*u_l<u_r*u_r):
-        flux = min(1./3.*u_l*u_l*u_l,1./3.*u_r*u_r*u_r);
+        flux = min(1./3.*u_l*u_l*u_l,1./3.*u_r*u_r*u_r)
     elif (u_l*u_l>u_r*u_r):
-        flux = max(1./3.*u_l*u_l*u_l,1./3.*u_r*u_r*u_r);
-    
+        flux = max(1./3.*u_l*u_l*u_l,1./3.*u_r*u_r*u_r)
+    else:
+        print "u_l ",u_l, " u_r ", u_r
     return flux
 
 def Du_ncsv(u_l, u_i, u_r):
@@ -60,7 +61,7 @@ def Burgers1D():
     nx=100
     dx = (b - a) / nx #space step
 
-    tmax = 0.9 # runs the simulation for 0 <= t <= tMax
+    tmax = 1.5 # runs the simulation for 0 <= t <= tMax
     ntmax=100
     cfl=0.95
 
@@ -72,10 +73,10 @@ def Burgers1D():
     u_initial = [ (xi<xa)+(xa<=xi)*(xi<=xb)*(np.cos(np.pi*(xa-xi)/(xa-xb))+1.0)*0.5  for xi in x];# to be used with a=0, b=1
     u_godunov = [ (xi<xa)+(xa<=xi)*(xi<=xb)*(np.cos(np.pi*(xa-xi)/(xa-xb))+1.0)*0.5  for xi in x];# to be used with a=0, b=1
     u_ncsv    = [ (xi<xa)+(xa<=xi)*(xi<=xb)*(np.cos(np.pi*(xa-xi)/(xa-xb))+1.0)*0.5  for xi in x];# to be used with a=0, b=1
-    u_csv2    = [ ui*ui  for ui in u_godunov];# to be used with a=0, b=1
+    u_csv2    = deepcopy(u_initial)# to be used with a=0, b=1
     Unp1      = [0]*nx
     Unp1_ncsv = [0]*nx
-    Unp1_csv2 = deepcopy(u_csv2)
+    Unp1_csv2 = [0]*nx
     
     max_initial=max(u_initial)
     min_initial=min(u_initial)
@@ -96,14 +97,16 @@ def Burgers1D():
         plt.xlim(a,b)
         plt.ylim( min_initial - 0.1*(max_initial-min_initial), max_initial +  0.3*(max_initial-min_initial) )
         plt.title('Finite volume schemes for Burgers equation')
-        line1, = plt.plot(x, u_godunov, label='Godunov scheme') #new picture for video # Returns a tuple of line objects, thus the comma
+        line1, = plt.plot(x, u_godunov, label='Conservative (Godunov) scheme') #new picture for video # Returns a tuple of line objects, thus the comma
         line2, = plt.plot(x, u_ncsv,    label='Non conservative scheme') #new picture for video # Returns a tuple of line objects, thus the comma
+        line3, = plt.plot(x, u_csv2,    label='Alternative conservative scheme') #new picture for video # Returns a tuple of line objects, thus the comma
         plt.legend()
     
         print("Starting time loop")
         print("-- Iter: " + str(it) + ", Time: " + str(time) )
         np.savetxt("BurgersEquation_FVGodunov_ResultField_0"+".txt", u_godunov, delimiter="\n")
         np.savetxt("BurgersEquation_FVNonCons_ResultField_0"+".txt", u_ncsv, delimiter="\n")
+        np.savetxt("BurgersEquation_FVAltCons_ResultField_0"+".txt", u_csv2, delimiter="\n")
         writer.grab_frame()
         plt.savefig("BurgersEquation_FV_ResultField_0"+".png")
 
@@ -135,17 +138,31 @@ def Burgers1D():
                 Unp1_ncsv[i] = u_ncsv[i] - dt/dx*u_ncsv[i]*Du
             u_ncsv = Unp1_ncsv
 
+            for i in xrange(0,nx):
+                if (i==0):
+                    flux_iminus = 1./3.*u_csv2[0]*u_csv2[0]*u_csv2[0]#Flux at the left Neumann boundary
+                if (i==nx-1):
+                    flux_iplus  = 1./3.*u_csv2[nx-1]*u_csv2[nx-1]*u_csv2[nx-1]#Flux at the right Neumann boundary
+                else:
+                    flux_iplus = Flux_Godunov2(u_csv2[i],u_csv2[i+1])
+                pass
+                Unp1_csv2[i] = sqrt(u_csv2[i]*u_csv2[i] - dt/dx*(flux_iplus-flux_iminus))
+                flux_iminus = flux_iplus;
+            u_csv2 = Unp1_csv2
+    
             time += dt
             it += 1
 
             # Postprocessing
             line1.set_ydata(u_godunov)
             line2.set_ydata(u_ncsv)
+            line3.set_ydata(u_csv2)
             writer.grab_frame()
             if (it % output_freq == 0):
                 print("-- Iter: " + str(it) + ", Time: " + str(time) + ", dt: " + str(dt))
                 np.savetxt( "BurgersEquation_FVGodunov_ResultField_"+str(it)+".txt", u_godunov, delimiter="\n")
                 np.savetxt( "BurgersEquation_FVNonCons_ResultField_"+str(it)+".txt", u_ncsv,    delimiter="\n")
+                np.savetxt( "BurgersEquation_FVAltCons_ResultField_"+str(it)+".txt", u_ncsv,    delimiter="\n")
                 plt.savefig("BurgersEquation_FV_ResultField_"+str(it)+".png")
                 #plt.show()
     
