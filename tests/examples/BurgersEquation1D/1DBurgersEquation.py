@@ -61,8 +61,9 @@ def Burgers1D():
     u_initial = [ (xi<xa)+(xa<=xi)*(xi<=xb)*(np.cos(np.pi*(xa-xi)/(xa-xb))+1.0)*0.5  for xi in x];# to be used with a=0, b=1
     u_godunov = [ (xi<xa)+(xa<=xi)*(xi<=xb)*(np.cos(np.pi*(xa-xi)/(xa-xb))+1.0)*0.5  for xi in x];# to be used with a=0, b=1
     u_ncsv    = [ (xi<xa)+(xa<=xi)*(xi<=xb)*(np.cos(np.pi*(xa-xi)/(xa-xb))+1.0)*0.5  for xi in x];# to be used with a=0, b=1
-    Unp1        = [ (xi<xa)+(xa<=xi)*(xi<=xb)*(np.cos(np.pi*(xa-xi)/(xa-xb))+1.0)*0.5  for xi in x];# to be used with a=0, b=1
-
+    Unp1      = [ (xi<xa)+(xa<=xi)*(xi<=xb)*(np.cos(np.pi*(xa-xi)/(xa-xb))+1.0)*0.5  for xi in x];# to be used with a=0, b=1
+    Unp1_ncsv = [ (xi<xa)+(xa<=xi)*(xi<=xb)*(np.cos(np.pi*(xa-xi)/(xa-xb))+1.0)*0.5  for xi in x];# to be used with a=0, b=1
+    
     max_initial=max(u_initial)
     min_initial=min(u_initial)
 
@@ -118,8 +119,8 @@ def Burgers1D():
                 else:
                     Du = Du_ncsv(u_ncsv[i-1],    u_ncsv[i],    u_ncsv[i+1]) 
                 pass
-                Unp1[i] = u_ncsv[i] - dt/dx*u_ncsv[i]*Du
-            u_ncsv = Unp1
+                Unp1_ncsv[i] = u_ncsv[i] - dt/dx*u_ncsv[i]*Du
+            u_ncsv = Unp1_ncsv
 
             time += dt
             it += 1
