@@ -31,4 +31,4 @@ and
 $$
 F_{boundary}=\frac{u(x_f)-u_i}{d_{if}},
 $$
-for a boundary face with center $x_f$, inner cell $i$ anddistance between face and cell centers $d_{if}$
+for a boundary face with center $x_f$, inner cell $i$ and distance between face and cell centers $d_{if}$

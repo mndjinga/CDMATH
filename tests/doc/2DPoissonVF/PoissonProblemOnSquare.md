@@ -9,20 +9,23 @@ u=0 \textrm{ on } \partial\Omega
 \end{array}\right.
 $$
 
-on the square domain $\Omega= [0,1]\times [0,1]$ with 
+on the square domain $\Omega= [0,1]\times [0,1]$ with  
+
 $$f=2\pi^2 sin(\pi x) sin(\pi y).$$  
-The unique solution of the problem is
+The unique solution of the problem is  
+
 $$
 u=sin(\pi x) sin(\pi y).
 $$
 
 The Poisson equation is a particular case of the diffusion problem
 $$
--\nabla\cdot(K\vec\nabla u)=f
+-\nabla\cdot(D\vec\nabla u)=f
 $$
 and the associated diffusion flux is
 $$
-F(u)=K\nabla u.
+F(u)=D\nabla u,
 $$
+where $D$ is the diffusion matrix.  
 
-We are in the particular case where $K=1$.
+We investigate the particular case where $D$ is the identity matrix.
