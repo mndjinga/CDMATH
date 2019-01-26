@@ -40,7 +40,7 @@ def test_validation2DVF_deformedQuadrangles():
     plt.legend()
     plt.xlabel('Position on diagonal line')
     plt.ylabel('Value on diagonal line')
-    plt.title('Plot over diagonal line for finite volumes \n for Laplace operator on 2D deformed quadrangles meshes')
+    plt.title('Plot over diagonal line for finite volumes \n for the diffusion equation on 2D deformed quadrangles meshes')
     plt.savefig(mesh_name+"_2DDiffusionVF_PlotOverDiagonalLine.png")
 
     # Least square linear regression
@@ -67,7 +67,7 @@ def test_validation2DVF_deformedQuadrangles():
     plt.legend()
     plt.xlabel('log(sqrt(number of cells))')
     plt.ylabel('log(error)')
-    plt.title('Convergence of finite volumes \n for Laplace operator on a 2D deformed quadrangles meshes')
+    plt.title('Convergence of finite volumes \n for the diffusion equation on a 2D deformed quadrangles meshes')
     plt.savefig(mesh_name+"_2DDiffusionVF_ConvergenceCurve.png")
 
     # Plot of computational time
@@ -76,7 +76,7 @@ def test_validation2DVF_deformedQuadrangles():
     plt.legend()
     plt.xlabel('log(sqrt(number of cells))')
     plt.ylabel('log(cpu time)')
-    plt.title('Computational time of finite volumes \n for Laplace operator on 2D meshes')
+    plt.title('Computational time of finite volumes \n for the diffusion equation on 2D meshes')
     plt.savefig(mesh_name+"_2DpoissonVF_ComputationalTime.png")
     
     plt.close('all')

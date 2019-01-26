@@ -40,7 +40,7 @@ def test_validation2DVF_loc_ref():
     plt.legend()
     plt.xlabel('Position on diagonal line')
     plt.ylabel('Value on diagonal line')
-    plt.title('Plot over diagonal line for finite volumes \n for Laplace operator on 2D refined squares meshes')
+    plt.title('Plot over diagonal line for finite volumes \n for the diffusion equation on 2D refined squares meshes')
     plt.savefig(mesh_name+"_2DDiffusionVF_PlotOverDiagonalLine.png")
 
     # Least square linear regression
@@ -67,7 +67,7 @@ def test_validation2DVF_loc_ref():
     plt.legend()
     plt.xlabel('log(sqrt(number of cells))')
     plt.ylabel('log(error)')
-    plt.title('Convergence of finite volumes for \n Laplace operator on 2D refined squares meshes')
+    plt.title('Convergence of finite volumes for \n the diffusion equation on 2D refined squares meshes')
     plt.savefig(mesh_name+"_2DDiffusionVF_ConvergenceCurve.png")
 
     # Plot of computational time
@@ -76,7 +76,7 @@ def test_validation2DVF_loc_ref():
     plt.legend()
     plt.xlabel('log(sqrt(number of cells))')
     plt.ylabel('log(cpu time)')
-    plt.title('Computational time of finite volumes \n for Laplace operator on 2D refined squares meshes')
+    plt.title('Computational time of finite volumes \n for the diffusion equation on 2D refined squares meshes')
     plt.savefig(mesh_name+"_2DDiffusionVF_ComputationalTime.png")
     
     plt.close('all')
