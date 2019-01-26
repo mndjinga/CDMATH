@@ -143,6 +143,30 @@ IF (CDMATH_WITH_PYTHON AND CDMATH_WITH_PETSC AND CDMATH_WITH_POSTPRO)
                      PATTERN "*.json"
     )
     endif(NOT ${is_2DWaveSystem} EQUAL -1)
+
+    string(FIND ${dir} "2DDiffusionVF" is_2DDiffusion)
+    if(NOT ${is_2DDiffusion} EQUAL -1)
+    install(
+      DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${dir}/
+      DESTINATION share/doc/convergence/2DDiffusionVF
+      FILES_MATCHING PATTERN "*_SQUARE.ipynb"
+                     PATTERN "*_SQUARE.pdf"
+    )
+    install(
+      DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${dir}/
+      DESTINATION share/doc/convergence/is_2DDiffusionVF/${dir}
+      FILES_MATCHING PATTERN "*.png"
+                     PATTERN "*.ipynb"
+                     PATTERN "*.py"
+                     PATTERN "*.html"
+                     PATTERN "*.pdf"
+                     PATTERN "*.tex"
+                     PATTERN "*.md"
+                     PATTERN "*.xlsx"
+                     PATTERN "*.csv"
+                     PATTERN "*.json"
+    )
+    endif(NOT ${is_2DDiffusion} EQUAL -1)
   endforeach(dir)
 
 add_custom_target (
