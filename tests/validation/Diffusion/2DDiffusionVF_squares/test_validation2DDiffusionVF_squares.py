@@ -46,7 +46,7 @@ def test_validation2DVF_squares():
     plt.xlabel('Position on diagonal line')
     plt.ylabel('Value on diagonal line')
     plt.title('Plot over diagonal line for finite volumes \n for the diffusion equation on 2D rectangular meshes')
-    plt.savefig(mesh_name+"_2DDiffusionFV_PlotOverDiagonalLine.png")
+    plt.savefig(mesh_name+"_2DDiffusionFV_PlotOverDiagonalLine.png", dpi='figure')
 
     # Least square linear regression
     # Find the best a,b such that f(x)=ax+b best approximates the convergence curve
@@ -74,7 +74,7 @@ def test_validation2DVF_squares():
     plt.xlabel('log(sqrt(number of cells))')
     plt.ylabel('log(error)')
     plt.title('Convergence of finite volumes for \n the diffusion equation on 2D rectangular meshes')
-    plt.savefig(mesh_name+"_2DDiffusionFV_ConvergenceCurve.png")
+    plt.savefig(mesh_name+"_2DDiffusionFV_ConvergenceCurve.png", dpi='figure')
 
     # Plot of computational time
     plt.close()
@@ -83,7 +83,7 @@ def test_validation2DVF_squares():
     plt.xlabel('log(sqrt(number of cells))')
     plt.ylabel('log(cpu time)')
     plt.title('Computational time of finite volumes \n for the diffusion equation on 2D rectangular meshes')
-    plt.savefig(mesh_name+"_2DDiffusionFV_ComputationalTime.png")
+    plt.savefig(mesh_name+"_2DDiffusionFV_ComputationalTime.png", dpi='figure')
     
     plt.close('all')
 
