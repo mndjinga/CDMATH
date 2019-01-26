@@ -154,7 +154,7 @@ IF (CDMATH_WITH_PYTHON AND CDMATH_WITH_PETSC AND CDMATH_WITH_POSTPRO)
     )
     install(
       DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${dir}/
-      DESTINATION share/doc/convergence/is_2DDiffusionVF/${dir}
+      DESTINATION share/doc/convergence/2DDiffusionVF/${dir}
       FILES_MATCHING PATTERN "*.png"
                      PATTERN "*.ipynb"
                      PATTERN "*.py"
