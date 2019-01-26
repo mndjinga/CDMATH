@@ -11773,7 +11773,7 @@ div#notebook {
 
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">display</span><span class="p">,</span> <span class="n">Markdown</span>
@@ -11802,7 +11802,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="prompt input_prompt">In&nbsp;[7]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="n">display</span><span class="p">(</span><span class="n">Markdown</span><span class="p">(</span><span class="n">PoissonProblemOnSquare</span><span class="p">))</span>
@@ -11829,21 +11829,21 @@ $$
 -\Delta u=f \textrm{ on } \Omega\\
 u=0 \textrm{ on } \partial\Omega
 \end{array}\right.
-$$<p>on the square domain $\Omega= [0,1]\times [0,1]$ with 
-$$f=2\pi^2 sin(\pi x) sin(\pi y).$$<br>
-The unique solution of the problem is
+$$<p>on the square domain $\Omega= [0,1]\times [0,1]$ with</p>
+$$f=2\pi^2 sin(\pi x) sin(\pi y).$$<p><br>
+The unique solution of the problem is</p>
 $$
 u=sin(\pi x) sin(\pi y).
-$$</p>
-<p>The Poisson equation is a particular case of the diffusion problem
+$$<p>The Poisson equation is a particular case of the diffusion problem
 $$
--\nabla\cdot(K\vec\nabla u)=f
+-\nabla\cdot(D\vec\nabla u)=f
 $$
 and the associated diffusion flux is
 $$
-F(u)=K\nabla u.
-$$</p>
-<p>We are in the particular case where $K=1$.</p>
+F(u)=D\nabla u,
+$$
+where $D$ is the diffusion matrix.</p>
+<p>We investigate the particular case where $D$ is the identity matrix.</p>
 
 </div>
 
@@ -11855,7 +11855,7 @@ $$</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="prompt input_prompt">In&nbsp;[8]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="n">display</span><span class="p">(</span><span class="n">Markdown</span><span class="p">(</span><span class="n">BibliographyFV5</span><span class="p">))</span>
@@ -11914,7 +11914,7 @@ $$</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="prompt input_prompt">In&nbsp;[9]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="n">display</span><span class="p">(</span><span class="n">Markdown</span><span class="p">(</span><span class="n">DescriptionFV5PoissonProblem</span><span class="p">))</span>
@@ -11957,7 +11957,7 @@ for two cells $i$ and $j$ inside the domain,</p>
 $$
 F_{boundary}=\frac{u(x_f)-u_i}{d_{if}},
 $$
-for a boundary face with center $x_f$, inner cell $i$ anddistance between face and cell centers $d_{if}$</p>
+for a boundary face with center $x_f$, inner cell $i$ and distance between face and cell centers $d_{if}$</p>
 
 </div>
 
@@ -11969,7 +11969,7 @@ for a boundary face with center $x_f$, inner cell $i$ anddistance between face a
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="prompt input_prompt">In&nbsp;[10]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="n">display</span><span class="p">(</span><span class="n">Markdown</span><span class="p">(</span><span class="n">CodeFV5PoissonProblem</span><span class="p">))</span>
