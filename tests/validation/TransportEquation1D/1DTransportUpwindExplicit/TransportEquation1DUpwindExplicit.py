@@ -61,7 +61,7 @@ def solve(nx,cfl,a,b, isSmooth):
 
     print("Starting time loop")
     print("-- Iter: " + str(it) + ", Time: " + str(Time) + ", dt: " + str(dt))
-    np.savetxt("TransportEquation_UpwindExplicit_"+str(nx)+"Cells_Smoothness"+str(isSmooth)+"_CFL"+str(cfl)+"_ResultField_0.txt", u, delimiter="\n")
+    np.savetxt( "TransportEquation_UpwindExplicit_"+str(nx)+"Cells_Smoothness"+str(isSmooth)+"_CFL"+str(cfl)+"_ResultField_0.txt", u, delimiter="\n")
     plt.savefig("TransportEquation_UpwindExplicit_"+str(nx)+"Cells_Smoothness"+str(isSmooth)+"_CFL"+str(cfl)+"_ResultField_"+str(it)+".png")
 
     ############################# Time loop
