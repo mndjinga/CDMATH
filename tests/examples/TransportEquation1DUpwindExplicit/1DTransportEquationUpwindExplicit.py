@@ -5,7 +5,7 @@
 # Name        : Résolution VF de l'équation du transport 1D \partial_t u + c \partial_x u = 0 avec conditions aux limites périodiques
 # Author      : Michaël Ndjinga, Katia Ait Ameur
 # Copyright   : CEA Saclay 2018
-# Description : Utilisation du schéma upwind implicite sur un maillage 1D régulier
+# Description : Utilisation du schéma upwind explicite sur un maillage 1D régulier
 #		        Création et sauvegarde du champ résultant et des figures
 #               Génération d'une video sauvegardée dans un fichier .mp4
 #================================================================================================================================
@@ -18,6 +18,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import matplotlib.animation as manimation
 import sys
+from copy import deepcopy
 
 def Transport1DUpwindExplicit(nx,cfl):
     ##################### Simulation parameters
@@ -62,14 +63,15 @@ def Transport1DUpwindExplicit(nx,cfl):
     
         print("Starting time loop")
         print("-- Iter: " + str(it) + ", Time: " + str(time) + ", dt: " + str(dt))
-        np.savetxt("TransportEquation_UpwindExplicit_"+str(nx)+"Cells_ResultField_0"+"_cfl"+str(cfl)+".txt", u, delimiter="\n")
+        np.savetxt( "TransportEquation_UpwindExplicit_"+str(nx)+"Cells_CFL"+str(cfl)+"_ResultField_0.txt", u, delimiter="\n")
         writer.grab_frame()
-        plt.savefig("TransportEquation_UpwindExplicit_"+str(nx)+"Cells_ResultField_0"+"_cfl"+str(cfl)+".png")
+        plt.savefig("TransportEquation_UpwindExplicit_"+str(nx)+"Cells_CFL"+str(cfl)+"_ResultField_0.png")
 
         ############################# Time loop
         while (it < ntmax and time <= tmax):
-            for i in reversed(range(nx)):
-                u[i] = u[i] - c * dt / dx * (u[i] - u[(i-1)%nx])
+            un=deepcopy(u)
+            for i in range(nx):
+                u[i] = un[i] - c * dt / dx * (un[i] - un[(i-1)%nx])
     
             time += dt
             it += 1
@@ -84,8 +86,8 @@ def Transport1DUpwindExplicit(nx,cfl):
             writer.grab_frame()
             if (it % output_freq == 0):
                 print("-- Iter: " + str(it) + ", Time: " + str(time) + ", dt: " + str(dt))
-                np.savetxt( "TransportEquation_UpwindExplicit_"+str(nx)+"Cells_ResultField_"+str(it)+"_cfl"+str(cfl)+".txt", u, delimiter="\n")
-                plt.savefig("TransportEquation_UpwindExplicit_"+str(nx)+"Cells_ResultField_"+str(it)+"_cfl"+str(cfl)+".png")
+                np.savetxt( "TransportEquation_UpwindExplicit_"+str(nx)+"Cells_CFL"+str(cfl)+"_ResultField_"+str(it)+".txt", u, delimiter="\n")
+                plt.savefig("TransportEquation_UpwindExplicit_"+str(nx)+"Cells_CFL"+str(cfl)+"_ResultField_"+str(it)+".png")
                 #plt.show()
 
     print "Exact solution minimum   : ", min(u_initial), "Numerical solution minimum   : ",  min(u)
