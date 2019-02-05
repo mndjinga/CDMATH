@@ -1,8 +1,17 @@
 CDMATH
 ======
 
-CDMATH is a geometrical and numerical toolbox designed for numerical analysts who work on the discretisation of partial differential equations on general shapes and meshes and who would rather focus on high-level scripting. The library originates from [CDMATH](http://cdmath.jimdo.com), a collaborative workgroup with the same name. It is based on the [MEDcoupling](http://docs.salome-platform.org/latest/dev/MEDCoupling/index.html) library of the [SALOME](http://www.salome-platform.org/) project for the handling of meshes and fields, and on the library [PETSC](https://www.mcs.anl.gov/petsc/) for the handling of matrices and linear solvers. The library currently developed for linux distributions and is maintained on Ubuntu 16.04 LTS, as well as on Fedora 24, 25 and 26.
+CDMATH is a geometrical and numerical toolbox designed for numerical analysts who work on the discretisation of partial differential equations on general shapes and meshes and who would rather focus on high-level scripting. The library originates from [CDMATH](http://cdmath.jimdo.com), a collaborative workgroup with the same name. It is based on the [MEDcoupling](https://docs.salome-platform.org/latest/dev/MEDCoupling/tutorial/index.html) C++/python library of the [SALOME](http://www.salome-platform.org/) project for the handling of meshes and fields, and on the C++ library [PETSC](https://www.mcs.anl.gov/petsc/) for the handling of matrices and linear solvers. The library currently developed for linux distributions and is maintained on Ubuntu 16.04 LTS and 18.04 LTS, as well as on Fedora 24, 25 and 26.
 
+Examples of use
+---------------
+- [Examples of stable methods for the 1D linear transport equation](tests/doc/1DTransportEquation/RegularGrid/TransportEquation1D_RegularGrid.ipynb)
+- [Example of unstable numerical methods for the 1D linear transport equation](tests/doc/1DTransportEquation/UnstableSchemes/TransportEquation1D_UnstableSchemes.ipynb)
+- [Shock formation and capture issues for the 1D Burgers' equations](tests/doc/1DBurgersEquation/BurgersEquation1D.ipynb)
+- [Convergence and maximum principle analysis for the linear finite element method applied to the 2D Poisson equation](tests/doc/2DPoissonEF/Convergence_Poisson_FE_SQUARE.ipynb)
+- [Convergence analysis for the finite volume method applied to the 2D Poisson equation](tests/doc/2DPoissonVF/Convergence_Poisson_FV5_SQUARE.ipynb)
+- [Convergence analysis for the finite volume method applied to a 2D anisotropic diffusion equation](tests/doc/2DPoissonVF/Convergence_Diffusion_FV5_SQUARE.ipynb)
+- [Low Mach precision issue for the upwind finite volume method applied to the 2D wave system](tests/doc/2DWaveSystemVF_stationary/Convergence_WaveSystem_Upwind_SQUARE.ipynb)
 
 Download CDMATH sources to compile
 ----------------------------------
@@ -20,16 +29,16 @@ Then unzip the file to a directory cdmath-master
 
 Set environment for the compilation of CDMATH
 ---------------------------------------------
-Dependencies. The following packages list is sufficient on Ubuntu 14.04, Ubuntu 16.04 :
+Dependencies. The following packages list is sufficient on Ubuntu 14.04, Ubuntu 16.04, Ubuntu 18.04 :
 
  - `cmake` (mandatory)
  - `g++` or another C++ compiler (mandatory)
  - `libhdf5-dev` (mandatory)
- - `python-dev`, `python-numpy` and `swig`, if you want to generate Python executables and libraries of CDMATH (highly recommended). Use the compilation option `-DCDMATH_WITH_PYTHON=ON`.
+ - `python-dev`, `python-numpy` and `swig`, if you want to use CDMATH commands in yous Python scritps. Use the compilation option `-DCDMATH_WITH_PYTHON=ON`. (highly recommended)
  - `python-matplotlib` and `paraview` for postprocessing tools such as plotting curves (matplotlib) or generating 3D views (paraview). Use the compilation option `-DCDMATH_WITH_POSTPRO=ON` (recommended).
- - `petsc` if you want to solve large spase linear system. Typically required for implicit methods (recommended).
- - `jupyter`, in order to generate nice reports from test case simulations
- - `doxygen`, `graphviz` and `mscgen`, if you want to generate a nice code source documentation in `~/workspace/cdmath/cdmath_install/doc/` (recommended). Use the compilation option `-DCDMATH_WITH_DOCUMENTATION=ON`.
+ - `petsc` if you want to solve large spase linear system. Typically required for implicit methods. Use the compilation option `-DCDMATH_WITH_DOCUMENTATION=ON` (recommended).
+ - `jupyter`, in order to generate and visualise nice reports from test case simulations (optional)
+ - `doxygen`, `graphviz` and `mscgen`, if you want to generate a nice source code documentation in `~/workspace/cdmath/cdmath_install/doc/`. Use the compilation option `-DCDMATH_WITH_PETSC=ON`. (optional)
  - `libcppunit-dev`, if you want to generate unit tests. Use the compilation option `-DCDMATH_WITH_TESTS=ON` (optional).
  - `libopenmpi-dev`, in particular if you need to use the compilation option `-DMEDFILE_USE_MPI=ON` (optional).
  - `rpm`, if you want to generate RPM installation packages. Use the compilation option `-DCDMATH_WITH_PACKAGE=ON` (optional).
@@ -65,15 +74,18 @@ Notes for compilation options:
 * MPI: On some systems (not Ubuntu 14.04, nor Ubuntu 16.04), you may have to use the compilation option `-DMPI_ROOT_DIR=/path/to/mpi/library` too. You may also have to set the environment variable `export MPI_ROOT_DIR=/path/to/mpi/library`. Moreover, on some systems (not Ubuntu 14.04, nor Ubuntu 16.04), the compilation option `-DMEDFILE_USE_MPI=ON` may be mandatory and be set to `ON`.
 * PETSc: If the library Petsc is already installed in your system (packages libpetsc-dev for ubuntu and petsc-devel for fedora 25 and 26), you may save time and disk space by using the installed library instead of installing a new one. In order to do so use the compilation options `-DPETSC_DIR=/path/to/petsc/installation/petsc -DPETSC_ARCH=arch-linux2-c-opt`. If you prefer to compile PETSc yourself from the sources you may follow the instructions given in [the official documentation](http://www.mcs.anl.gov/petsc/documentation/installation.html).
 
+Use of CDMATH
+-------------
+We recommend using CDMATH in python scripts which avoids the hassle of having to edit Makefile files and compiling every C++ scripts.
 
-Use CDMATH
-----------
-To use CDMATH with your C++ code `main.cxx`:
+To use CDMATH with your Python code, you can load the CDMATH environment in your terminal using the command
+ * source `~/workspace/cdmath/cdmath_install/env_CDMATH.sh`
+Then in your terminal simply type
+- `python main.py `
+
+If performance or parallelism is an issue for your simulations, you can use CDMATH librairies with your C++ code :
  * C++ libraries: `export LD_LIBRARY_PATH=~/workspace/cdmath/cdmath_install/lib`
  * To know how to include the right libraries for compilation, see the makefiles of the examples. They include the list `-linterpkernel -lmedC -lmedloader -lmedcoupling -lbase -lmesh -llinearsolver`.
-
-To use CDMATH with your Python code `main.py`, you can load the CDMATH environment in your terminal using the command
- * source `~/workspace/cdmath/cdmath_install/env_CDMATH.sh`
 
 The CDMATH environment variables consist in :
  * C++ libraries: `export LD_LIBRARY_PATH=~/workspace/cdmath/cdmath_install/lib`
@@ -81,7 +93,7 @@ The CDMATH environment variables consist in :
 
 Create Linux installation packages for CDMATH
 ---------------------------------------------
-After popular request, here is how you can create packages for Ubuntu 14.04 and Ubuntu 16.04 and Red Hat-based Linux distributions:
+After popular request, here is how you can create packages for Debian and Red Hat-based Linux distributions:
 
 1. Download CDMATH as explained hereabove.
 2. Set the environment as explained hereabove (in particular, make sure you have `rpm` installed).
