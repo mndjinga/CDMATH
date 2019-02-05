@@ -38,7 +38,7 @@ def Transport1DCenteredExplicit(nx,cfl, isSmooth):
     if(isSmooth):
         print "Smooth initial data"
         u_initial = [ sin(2*pi*xi)  for xi in x];# to be used with a=0, b=1
-        tmax = (b-a)/c # runs the simulation for 0 <= t <= tMax
+        tmax = 4*(b-a)/c # runs the simulation for 0 <= t <= tMax
         ntmax = ceil(tmax/dt)
     else:
         print "Stiff initial data"
@@ -64,7 +64,7 @@ def Transport1DCenteredExplicit(nx,cfl, isSmooth):
         plt.xlabel('x')
         plt.ylabel('u')
         plt.xlim(a,b)
-        plt.ylim( min_initial - 0.1*(max_initial-min_initial), max_initial +  0.1*(max_initial-min_initial) )
+        plt.ylim( min_initial - 0.5*(max_initial-min_initial), max_initial +  0.5*(max_initial-min_initial) )
         plt.title('Centered explicit scheme for transport equation')
         line1, = plt.plot(x, u, label='u') #new picture for video # Returns a tuple of line objects, thus the comma
     
@@ -78,7 +78,7 @@ def Transport1DCenteredExplicit(nx,cfl, isSmooth):
         while (it < ntmax and time <= tmax):
             un=deepcopy(u)
             for i in range(nx):
-                u[i] = un[i] - c * dt / dx * (un[i] - un[(i-1)%nx])
+                u[i] = un[i] - c * dt / dx * (un[(i+1)%nx] - un[(i-1)%nx])/2
     
             time += dt
             it += 1
@@ -108,7 +108,6 @@ if __name__ == """__main__""":
         nx = int(sys.argv[1])
         cfl = float(sys.argv[2])
         isSmooth=bool(int(sys.argv[3]))
-        print "##########",isSmooth,sys.argv[3] 
         Transport1DCenteredExplicit(nx,cfl,isSmooth)
     else :
         nx = 50 # number of cells
