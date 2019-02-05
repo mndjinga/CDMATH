@@ -38,6 +38,8 @@ def Transport1DCenteredExplicit(nx,cfl, isSmooth):
     if(isSmooth):
         print "Smooth initial data"
         u_initial = [ sin(2*pi*xi)  for xi in x];# to be used with a=0, b=1
+        tmax = (b-a)/c # runs the simulation for 0 <= t <= tMax
+        ntmax = ceil(tmax/dt)
     else:
         print "Stiff initial data"
         u_initial = [ int(1./3<xi)*int(xi<2./3)  for xi in x];# to be used with a=0, b=1
@@ -49,13 +51,13 @@ def Transport1DCenteredExplicit(nx,cfl, isSmooth):
 
     time = 0.
     it = 0
-    output_freq = 10
+    output_freq = int(10/cfl)
 
     # Video settings
     FFMpegWriter = manimation.writers['ffmpeg']
-    metadata = dict(title="Centered explicit scheme for transport equation", artist = "CEA Saclay", comment="Stable if CFL<1")
+    metadata = dict(title="Centered explicit scheme for transport equation", artist = "CEA Saclay", comment="CFL="+str(cfl)+", Stable if CFL<1")
     writer=FFMpegWriter(fps=output_freq, metadata=metadata, codec='h264')
-    with writer.saving(plt.figure(), "1DTransportEquation_CenteredExplicit_nx"+str(nx)+"_cfl"+str(cfl)+".mp4", ntmax):
+    with writer.saving(plt.figure(), "1DTransportEquation_CenteredExplicit_"+str(nx)+"Cells_Smoothness"+str(isSmooth)+"_CFL"+str(cfl)+".mp4", ntmax):
         ########################### Postprocessing initialisation
         # Picture frame
         plt.legend()
@@ -105,7 +107,8 @@ if __name__ == """__main__""":
     if len(sys.argv) >3 :
         nx = int(sys.argv[1])
         cfl = float(sys.argv[2])
-        isSmooth=bool(sys.argv[3])
+        isSmooth=bool(int(sys.argv[3]))
+        print "##########",isSmooth,sys.argv[3] 
         Transport1DCenteredExplicit(nx,cfl,isSmooth)
     else :
         nx = 50 # number of cells

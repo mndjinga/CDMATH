@@ -151,7 +151,7 @@ def test_validation1DTransportEquationUpwindImplicit(cfl,isSmooth):
 if __name__ == """__main__""":
     if len(sys.argv) >2 :
         cfl = float(sys.argv[1])
-        isSmooth = float(sys.argv[2])
+        isSmooth = bool(int(sys.argv[2]))
         test_validation1DTransportEquationUpwindImplicit(cfl,isSmooth)
     else :
         test_validation1DTransportEquationUpwindImplicit(0.99,True)

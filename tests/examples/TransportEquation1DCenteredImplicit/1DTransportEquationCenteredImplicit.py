@@ -70,9 +70,9 @@ def Transport1DCenteredImplicit(nx,cfl):
 
     # Video settings
     FFMpegWriter = manimation.writers['ffmpeg']
-    metadata = dict(title="Centered implicit scheme for transport equation", artist = "CEA Saclay", comment="Stable for any CFL>0")
+    metadata = dict(title="Centered implicit scheme for transport equation", artist = "CEA Saclay", comment="CFL="+str(cfl)+", Stable for any CFL>0")
     writer=FFMpegWriter(fps=output_freq, metadata=metadata, codec='h264')
-    with writer.saving(plt.figure(), "1DTransportEquation_CenteredImplicit_nx"+str(nx)+"_cfl"+str(cfl)+".mp4", ntmax):
+    with writer.saving(plt.figure(), "1DTransportEquation_CenteredImplicit_"+str(nx)+"Cells_CFL"+str(cfl)+".mp4", ntmax):
         ########################### Postprocessing initialisation
         # Picture frame
         plt.legend()
@@ -85,9 +85,9 @@ def Transport1DCenteredImplicit(nx,cfl):
 
         print("Starting time loop")
         print("-- Iter: " + str(it) + ", Time: " + str(time) + ", dt: " + str(dt))
-        np.savetxt("TransportEquation_CenteredImplicit_"+str(nx)+"Cells_ResultField_0"+"_cfl"+str(cfl)+".txt", u, delimiter="\n")
+        np.savetxt( "TransportEquation_CenteredImplicit_"+str(nx)+"Cells_CFL"+str(cfl)+"_ResultField_0.txt", u, delimiter="\n")
         writer.grab_frame()
-        plt.savefig("TransportEquation_CenteredImplicit_"+str(nx)+"Cells_ResultField_0"+"_cfl"+str(cfl)+".png")
+        plt.savefig("TransportEquation_CenteredImplicit_"+str(nx)+"Cells_CFL"+str(cfl)+"_ResultField_0.png")
     
         ############################# Time loop
         while (it < ntmax and time <= tmax):
@@ -117,8 +117,8 @@ def Transport1DCenteredImplicit(nx,cfl):
             writer.grab_frame()
             if (it % output_freq == 0):
                 print("-- Iter: " + str(it) + ", Time: " + str(time) + ", dt: " + str(dt))
-                np.savetxt( "TransportEquation_CenteredImplicit_"+str(nx)+"Cells_ResultField_"+str(it)+"_cfl"+str(cfl)+".txt", u, delimiter="\n")
-                plt.savefig("TransportEquation_CenteredImplicit_"+str(nx)+"Cells_ResultField_"+str(it)+"_cfl"+str(cfl)+".png")
+                np.savetxt( "TransportEquation_CenteredImplicit_"+str(nx)+"Cells_CFL"+str(cfl)+"_ResultField_"+str(it)+".txt", u, delimiter="\n")
+                plt.savefig("TransportEquation_CenteredImplicit_"+str(nx)+"Cells_CFL"+str(cfl)+"_ResultField_"+str(it)+".png")
                 #plt.show()
 
     print "Exact solution minimum   : ", min(u_initial), "Numerical solution minimum   : ",  min(u)

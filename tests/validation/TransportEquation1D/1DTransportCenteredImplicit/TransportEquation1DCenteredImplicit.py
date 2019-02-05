@@ -83,7 +83,7 @@ def solve(nx,cfl,a,b, isSmooth):
 
     print("Starting time loop")
     print("-- Iter: " + str(it) + ", Time: " + str(Time) + ", dt: " + str(dt))
-    np.savetxt("TransportEquation_CenteredImplicit_"+str(nx)+"Cells_Smoothness"+str(isSmooth)+"_CFL"+str(cfl)+"_ResultField_0.txt", u, delimiter="\n")
+    np.savetxt( "TransportEquation_CenteredImplicit_"+str(nx)+"Cells_Smoothness"+str(isSmooth)+"_CFL"+str(cfl)+"_ResultField_0.txt", u, delimiter="\n")
     plt.savefig("TransportEquation_CenteredImplicit_"+str(nx)+"Cells_Smoothness"+str(isSmooth)+"_CFL"+str(cfl)+"_ResultField_"+str(it)+".png")
 
     ############################# Time loop
@@ -136,7 +136,7 @@ if __name__ == """__main__""":
     if len(sys.argv) >3 :
         nx = int(sys.argv[1])
         cfl = float(sys.argv[2])
-        isSmooth=bool(sys.argv[3])
+        isSmooth=bool(int(sys.argv[3]))
         solve(nx,cfl,0.,1.,isSmooth)
     else :
         nx = 50 # number of cells
