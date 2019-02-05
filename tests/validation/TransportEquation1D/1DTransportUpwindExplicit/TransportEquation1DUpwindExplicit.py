@@ -66,8 +66,9 @@ def solve(nx,cfl,a,b, isSmooth):
 
     ############################# Time loop
     while (it < ntmax and Time <= tmax):
-        for i in reversed(range(nx)):
-            u[i] = u[i] - c * dt / dx * (u[i] - u[(i-1)%nx])
+        un=deepcopy(u)
+        for i in range(nx):
+            u[i] = un[i] - c * dt / dx * (un[i] - un[(i-1)%nx])
 
         Time += dt
         it += 1
