@@ -1,5 +1,5 @@
-Examples of notebooks
-=====================
+Examples of notebooks created using CDMATH numerical results
+============================================================
 
 - [Examples of stable numerical methods for the 1D linear transport equation](1DTransportEquation/RegularGrid/TransportEquation1D_RegularGrid.ipynb)
 - [Example of unstable numerical methods for the 1D linear transport equation](1DTransportEquation/UnstableSchemes/TransportEquation1D_UnstableSchemes.ipynb)
