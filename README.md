@@ -5,12 +5,12 @@ CDMATH is a geometrical and numerical toolbox designed for numerical analysts wh
 
 Examples of use
 ---------------
-- [Examples of stable methods for the 1D linear transport equation](tests/doc/1DTransportEquation/RegularGrid/TransportEquation1D_RegularGrid.ipynb)
+- [Examples of stable numerical methods for the 1D linear transport equation](tests/doc/1DTransportEquation/RegularGrid/TransportEquation1D_RegularGrid.ipynb)
 - [Example of unstable numerical methods for the 1D linear transport equation](tests/doc/1DTransportEquation/UnstableSchemes/TransportEquation1D_UnstableSchemes.ipynb)
 - [Shock formation and numerical capture issues for the 1D Burgers' equations](tests/doc/1DBurgersEquation/BurgersEquation1D.ipynb)
 - [Numerical convergence and maximum principle analysis for the linear finite element method applied to the 2D Poisson equation](tests/doc/2DPoissonEF/Convergence_Poisson_FE_SQUARE.ipynb)
-- [Numerical convergence analysis for the finite volume method applied to the 2D Poisson equation](tests/doc/2DPoissonVF/Convergence_Poisson_FV5_SQUARE.ipynb)
-- [Numerical convergence analysis for the finite volume method applied to a 2D anisotropic diffusion equation](tests/doc/2DDiffusionVF/Convergence_Diffusion_FV5_SQUARE.ipynb)
+- [Numerical convergence analysis for the FV5 finite volume method applied to the 2D Poisson equation](tests/doc/2DPoissonVF/Convergence_Poisson_FV5_SQUARE.ipynb)
+- [Numerical convergence analysis for the FV5 finite volume method applied to a 2D anisotropic diffusion equation](tests/doc/2DDiffusionVF/Convergence_Diffusion_FV5_SQUARE.ipynb)
 - [Influence of the mesh on the convergence and low Mach precision for the UPWIND finite volume method applied to the 2D wave system](tests/doc/2DWaveSystemVF_stationary/Convergence_WaveSystem_Upwind_SQUARE.ipynb)
 - [Influence of the mesh on the convergence and low Mach precision  for the CENTERED finite volume method applied to the 2D wave system](tests/doc/2DWaveSystemVF_stationary/Convergence_WaveSystem_Centered_SQUARE.ipynb)
 - [Influence of the mesh on the convergence and low Mach precision  for the STAGGERED finite volume method applied to the 2D wave system](tests/doc/2DWaveSystemVF_stationary/Convergence_WaveSystem_Staggered_SQUARE_squares.ipynb)
