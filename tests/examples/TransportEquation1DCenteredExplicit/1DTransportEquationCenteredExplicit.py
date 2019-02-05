@@ -113,5 +113,5 @@ if __name__ == """__main__""":
         nx = 50 # number of cells
         cfl = 0.99 # c*dt/dx <= CFL
         isSmooth=True
-        Transport1DCentereddExplicit(nx,cfl,isSmooth)
+        Transport1DCenteredExplicit(nx,cfl,isSmooth)
     
