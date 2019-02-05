@@ -1,7 +1,7 @@
 
 if (CDMATH_WITH_PYTHON )
 
-    SET(NX 50 )#Number of cells
+    SET(NX 100 )#Number of cells
 
     SET(CFL  0.99  )#Courant Friedrichs Lewy number
 
