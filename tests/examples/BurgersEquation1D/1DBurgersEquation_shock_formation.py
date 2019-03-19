@@ -5,8 +5,12 @@
 # Name        : Résolution VF de l'équation du Burgers 1D \partial_t u + 1/2 \partial_x u^2 = 0 
 # Author      : Michaël Ndjinga
 # Copyright   : CEA Saclay 2019
-# Description : Utilisation du schéma de Godunov explicite sur un maillage 1D régulier
+# Description : Comparaison du schéma de Godunov explicite avec des schémas alternatifs sur un maillage 1D régulier
+#               Premier schéma alternatif = Godunov sur l'équation conservative \partial_t u^3 + 1/3 \partial_x u^3 = 0 
+#               Deuxième schéma alternatif = Upwind sur l'équation non conservative \partial_t u + u \partial_x u = 0 
+#               Donnée initiale continue générant une onde de choc
 #               Conditions aux limites de Neumann
+#               Conclusion : 1) le choc ne peut être capturé qu'avec un schéma conservatif 2) la vitesse du choc dépend de la formulation conservative employée
 #		        Création et sauvegarde du champ résultant et des figures
 #               Génération d'une video sauvegardée dans un fichier .mp4
 #================================================================================================================================
@@ -87,7 +91,7 @@ def Burgers1D():
 
     # Video settings
     FFMpegWriter = manimation.writers['ffmpeg']
-    metadata = dict(title="Finite volumes schemes for Burgers equation", artist = "CEA Saclay", comment="Non linear wave propagation")
+    metadata = dict(title="Finite volumes schemes for Burgers equation", artist = "CEA Saclay", comment="Shock formation")
     writer=FFMpegWriter(fps=output_freq, metadata=metadata, codec='h264')
     with writer.saving(plt.figure(), "1DBurgersEquation_FV"+".mp4", ntmax):
         ########################### Postprocessing initialisation
@@ -108,7 +112,7 @@ def Burgers1D():
         np.savetxt("BurgersEquation_FVNonCons_ResultField_0"+".txt", u_ncsv, delimiter="\n")
         np.savetxt("BurgersEquation_FVAltCons_ResultField_0"+".txt", u_csv2, delimiter="\n")
         writer.grab_frame()
-        plt.savefig("BurgersEquation_FV_ResultField_0"+".png")
+        plt.savefig("BurgersEquation_FV_Shock_ResultField_0"+".png")
 
         ############################# Time loop
         while (it < ntmax and time <= tmax):
@@ -162,11 +166,11 @@ def Burgers1D():
                 print("-- Iter: " + str(it) + ", Time: " + str(time) + ", dt: " + str(dt))
                 np.savetxt( "BurgersEquation_FVGodunov_ResultField_"+str(it)+".txt", u_godunov, delimiter="\n")
                 np.savetxt( "BurgersEquation_FVNonCons_ResultField_"+str(it)+".txt", u_ncsv,    delimiter="\n")
-                np.savetxt( "BurgersEquation_FVAltCons_ResultField_"+str(it)+".txt", u_ncsv,    delimiter="\n")
-                plt.savefig("BurgersEquation_FV_ResultField_"+str(it)+".png")
+                np.savetxt( "BurgersEquation_FVAltCons_ResultField_"+str(it)+".txt", u_csv2,    delimiter="\n")
+                plt.savefig("BurgersEquation_FV_Shock_ResultField_"+str(it)+".png")
                 #plt.show()
     
-    print("Simulation of Burgers equation with finite volume schemes done.")
+    print("Simulation of shock formation on Burgers' equation with finite volume schemes done.")
     
     return
 
