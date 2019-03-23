@@ -87,7 +87,7 @@ public: //----------------------------------------------------------------
 	 * @param ymax : maximum y
 	 * @param nx : Number of cells in x direction
 	 * @param ny : Number of cells in y direction
-     * @param split_to_triangles_policy : each rectangle will be split into 2 triangles if value is 0 or 1
+     * @param split_to_triangles_policy : each rectangle will be split into 2 triangles with orientation of the cut depending if value is 0 or 1
 	 */
 	Mesh( double xmin, double xmax, int nx, double ymin, double ymax, int ny, int split_to_triangles_policy=-1, std::string meshName="MESH2D_Regular_Rectangle_Grid") ;
 
@@ -102,6 +102,7 @@ public: //----------------------------------------------------------------
 	 * @param nx : Number of cells in x direction
 	 * @param ny : Number of cells in y direction
 	 * @param nz : Number of cells in z direction
+     * @param split_to_tetrahedra_policy : each cuboid will be split into 5 tetrahedra if value is INTERP_KERNEL::PLANAR_FACE_5 or 6 tetrahedra if the value is INTERP_KERNEL::PLANAR_FACE_6
 	 */
 	Mesh( double xmin, double xmax, int nx, double ymin, double ymax, int ny, double zmin, double zmax, int nz, int split_to_tetrahedra_policy=-1, std::string meshName="MESH3D_Regular_Cuboid_Grid") ;
 
