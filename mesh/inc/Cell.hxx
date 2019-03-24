@@ -10,8 +10,8 @@
 
 /**
  * Cell class is defined by
- * - number of nodes allocated for this cell
- * - number of faces allocated for this cell
+ * - nodes surounding this cell
+ * - faces surounding this cell
  * - measure of this cell
  * - barycenter of this cell
  */
