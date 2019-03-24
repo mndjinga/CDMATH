@@ -336,7 +336,7 @@ private: //----------------------------------------------------------------
 	int _meshDim ;
     
     /*
-     * Structured mes parameters
+     * Structured mesh parameters
      */
 
     bool _isStructured;
