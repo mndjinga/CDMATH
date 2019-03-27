@@ -33,8 +33,11 @@ INCLUDE_DIRECTORIES(
   ${INTERP_KERNEL_DIR}/GaussPoints
   ${MED_LOADER_DIR}
 )
-
-SWIG_ADD_LIBRARY(cdmath SHARED LANGUAGE python SOURCES ${CMAKE_BINARY_DIR}/swig/cdmath.i)
+IF(${CMAKE_VERSION} VERSION_LESS "3.8.0") 
+  SWIG_ADD_MODULE(cdmath python ${CMAKE_BINARY_DIR}/swig/cdmath.i)
+ELSE()
+  SWIG_ADD_LIBRARY(cdmath SHARED LANGUAGE python SOURCES ${CMAKE_BINARY_DIR}/swig/cdmath.i)
+ENDIF()
 SWIG_LINK_LIBRARIES(cdmath ${PYTHON_LIBS} base mesh medloader ${_extra_lib_SWIG})
 
 INSTALL(TARGETS _cdmath DESTINATION lib/cdmath)
