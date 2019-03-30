@@ -219,4 +219,4 @@ class Node
     bool _isBorder;
 };
 
-#endif /* NODe_HXX_ */
+#endif /* NODE_HXX_ */
