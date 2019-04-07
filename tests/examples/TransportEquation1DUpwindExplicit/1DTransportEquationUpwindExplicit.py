@@ -79,7 +79,7 @@ def Transport1DUpwindExplicit(nx,cfl):
             if cfl<1 :
                 assert max(u) <= max_initial
                 assert min(u) >= min_initial
-                assert np.sum([abs(u[i] - u[(i-1)%nx]) for i in range(nx)]) <= total_var_initial
+                assert np.sum([abs(u[i] - u[(i-1)%nx]) for i in range(nx)]) <= total_var_initial + 1e-15#Tiny margin required
 
             # Postprocessing
             line1.set_ydata(u)
