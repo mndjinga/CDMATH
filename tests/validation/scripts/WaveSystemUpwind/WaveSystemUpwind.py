@@ -14,8 +14,31 @@ c0=1500.#reference sound speed
 p0=rho0*c0*c0#reference pressure
 precision=1e-5
 
+def initial_condition_vortex_disc(my_mesh):
+    print "Disc vortex initial data"
+    dim     = my_mesh.getMeshDimension()
+    nbCells = my_mesh.getNumberOfCells()
+
+    if(dim!=2):
+        raise ValueError("Wave system on disk : mesh dimension should be 2")
+        
+    pressure_field = cdmath.Field("Pressure",            cdmath.CELLS, my_mesh, 1)
+    velocity_field = cdmath.Field("Velocity",            cdmath.CELLS, my_mesh, 3)
+
+    for i in range(nbCells):
+        x = my_mesh.getCell(i).x()
+        y = my_mesh.getCell(i).y()
+
+        pressure_field[i] = p0
+
+        velocity_field[i,0] = -y
+        velocity_field[i,1] =  x
+        velocity_field[i,2] = 0
+
+    return pressure_field, velocity_field
+
 def initial_conditions_wave_system(my_mesh):
-    test_desc["Initial_data"]="Constant pressure, divergence free velocity"
+    test_desc["Initial_data"]="Square vortex (Constant pressure, divergence free velocity)"
     dim     = my_mesh.getMeshDimension()
     nbCells = my_mesh.getNumberOfCells()
 
@@ -199,7 +222,12 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,sc
             velocity_field[k,2] = 0
         S, stat_pressure, stat_velocity=source_term_and_stat_solution_wave_system(my_mesh)
     else:#The initial datum is a stationary field
-        pressure_field, velocity_field = initial_conditions_wave_system(my_mesh)
+        if(meshName.find("square")>-1):
+            pressure_field, velocity_field = initial_conditions_wave_system(my_mesh)
+        elif(meshName.find("disk")>-1):
+            pressure_field, velocity_field = initial_conditions_vortex_disk(my_mesh)
+        else:
+            raise ValueError("Mesh name should contain substring square or disk")
         for k in range(nbCells):
             Un[k*(dim+1)+0] =     pressure_field[k]
             Un[k*(dim+1)+1] =rho0*velocity_field[k,0]
