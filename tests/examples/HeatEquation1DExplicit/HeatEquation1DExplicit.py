@@ -49,7 +49,7 @@ def HeatEquation1DExplicit(nx,cfl):
 
     # Video settings
     FFMpegWriter = manimation.writers['ffmpeg']
-    metadata = dict(title="Explicit scheme for heat equation", artist = "CEA Saclay", comment="CFL="+str(cfl)+", Stable if CFL<1")
+    metadata = dict(title="Explicit scheme for heat equation, "+"CFL="+str(cfl), artist = "CEA Saclay", comment=", Stable if CFL<1")
     writer=FFMpegWriter(fps=output_freq, metadata=metadata, codec='h264')
     with writer.saving(plt.figure(), "HeatEquation1D_Explicit_"+str(nx)+"Cells_CFL"+str(cfl)+".mp4", ntmax):
         ########################### Postprocessing initialisation
