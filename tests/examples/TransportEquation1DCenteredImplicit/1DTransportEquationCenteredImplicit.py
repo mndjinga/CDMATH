@@ -6,6 +6,7 @@
 # Author      : Michaël Ndjinga, Katia Ait Ameur
 # Copyright   : CEA Saclay 2018
 # Description : Utilisation du schéma centré implicite sur un maillage 1D régulier
+#               Schéma à 3 points implicite
 #		        Création et sauvegarde du champ résultant et des figures
 #               Génération d'une video sauvegardée dans un fichier .mp4
 #================================================================================================================================
