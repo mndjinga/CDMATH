@@ -79,7 +79,7 @@ def Transport1DUpwindImplicit(nx,cfl):
         plt.ylabel('u')
         plt.xlim(a,b)
         plt.ylim( min_initial - 0.1*(max_initial-min_initial), max_initial +  0.1*(max_initial-min_initial) )
-        plt.title('Upwind implicit scheme for transport equation')
+        plt.title("Upwind implicit scheme for transport equation, "+"CFL="+str(cfl))
         line1, = plt.plot(x, u, label='u') #new picture for video # Returns a tuple of line objects, thus the comma
 
         print("Starting time loop")
