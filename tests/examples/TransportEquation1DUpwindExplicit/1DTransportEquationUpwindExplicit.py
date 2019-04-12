@@ -48,7 +48,7 @@ def Transport1DUpwindExplicit(nx,cfl):
 
     # Video settings
     FFMpegWriter = manimation.writers['ffmpeg']
-    metadata = dict(title="Upwind explicit scheme for transport equation", artist = "CEA Saclay", comment="CFL="+str(cfl)+", Stable if CFL<1")
+    metadata = dict(title="Upwind explicit scheme for transport equation, CFL="+str(cfl), artist = "CEA Saclay", comment="Stable if CFL<1")
     writer=FFMpegWriter(fps=output_freq, metadata=metadata, codec='h264')
     with writer.saving(plt.figure(), "1DTransportEquation_UpwindExplicit_"+str(nx)+"Cells_CFL"+str(cfl)+".mp4", ntmax):
         ########################### Postprocessing initialisation
@@ -58,7 +58,7 @@ def Transport1DUpwindExplicit(nx,cfl):
         plt.ylabel('u')
         plt.xlim(a,b)
         plt.ylim( min_initial - 0.1*(max_initial-min_initial), max_initial +  0.1*(max_initial-min_initial) )
-        plt.title('Upwind explicit scheme for transport equation')
+        plt.title("Upwind explicit scheme for transport equation, CFL="+str(cfl))
         line1, = plt.plot(x, u, label='u') #new picture for video # Returns a tuple of line objects, thus the comma
     
         print("Starting time loop")
