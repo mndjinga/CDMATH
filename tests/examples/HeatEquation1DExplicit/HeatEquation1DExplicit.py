@@ -2,10 +2,11 @@
 # -*-coding:utf-8 -*
 
 #===============================================================================================================================
-# Name        : Résolution VF de l'équation de la chaleur 1D \partial_t u = d \partial_xx u avec conditions aux limites périodiques
+# Name        : Résolution VF explicite de l'équation de la chaleur 1D \partial_t u = d \partial_xx u avec conditions aux limites périodiques
 # Author      : Michaël Ndjinga
 # Copyright   : CEA Saclay 2019
 # Description : Maillage 1D régulier
+#               Schéma à 3 points explicite
 #		        Création et sauvegarde du champ résultant et des figures
 #               Génération d'une video sauvegardée dans un fichier .mp4
 #================================================================================================================================
