@@ -267,9 +267,14 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,sc
     divMat=computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt,scaling,test_bc)
     #Adding the momentumm friction term
     if(with_source):
-        for j in range(nbCells):
-            for i in range(dim):
-                divMat.addValue(j*(dim+1)+1+i,j*(dim+1)+1+i,dt)
+		if(isImplicit):
+			for j in range(nbCells):
+				for i in range(dim):
+					divMat.addValue(j*(dim+1)+1+i,j*(dim+1)+1+i,dt)
+		else:
+			for j in range(nbCells):
+				for i in range(dim):
+					divMat.addValue(j*(dim+1)+1+i,j*(dim+1)+1+i,-dt)
 
     if(isImplicit):
         #Adding the identity matrix on the diagonal
