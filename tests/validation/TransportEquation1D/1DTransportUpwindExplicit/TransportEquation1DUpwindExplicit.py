@@ -13,7 +13,7 @@
 from math import sin, pi, ceil
 import numpy as np
 import matplotlib.pyplot as plt
-
+from copy import deepcopy
 import time, sys
 
 precision=1e-5
