@@ -10,7 +10,7 @@ import time, json
 def test_validation2DWaveSystemUpwindSquares_DISK(bctype,scaling):
     start = time.time()
     #### 2D DISK mesh
-    meshList=['diskWithSquares_1','diskWithSquares_2','diskWithSquares_3','diskWithSquares_4','diskWithSquares_5']
+    meshList=['diskWithSquares_1','diskWithSquares_2','diskWithSquares_3','diskWithSquares_4']#,'diskWithSquares_5'
     mesh_path='../../../ressources/2DdiskWithSquares/'
     meshType="Regular squares"
     testColor="Green"
