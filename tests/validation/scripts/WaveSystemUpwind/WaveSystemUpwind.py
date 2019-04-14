@@ -14,8 +14,8 @@ c0=1500.#reference sound speed
 p0=rho0*c0*c0#reference pressure
 precision=1e-5
 
-def initial_condition_disk_vortex(my_mesh):
-    print "Disc vortex initial data"
+def initial_conditions_disk_vortex(my_mesh):
+    print "Disk vortex initial data"
     dim     = my_mesh.getMeshDimension()
     nbCells = my_mesh.getNumberOfCells()
 
