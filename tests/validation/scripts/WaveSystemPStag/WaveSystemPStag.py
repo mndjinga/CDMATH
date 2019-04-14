@@ -15,8 +15,31 @@ c0=1500.#reference sound speed
 p0=rho0*c0*c0#reference pressure
 precision=1e-5
 
+def initial_conditions_disk_vortex(my_mesh):
+    print "Disk vortex initial data"
+    dim     = my_mesh.getMeshDimension()
+    nbCells = my_mesh.getNumberOfCells()
+
+    if(dim!=2):
+        raise ValueError("Wave system on disk : mesh dimension should be 2")
+        
+    pressure_field = cdmath.Field("Pressure",            cdmath.CELLS, my_mesh, 1)
+    velocity_field = cdmath.Field("Velocity",            cdmath.CELLS, my_mesh, 3)
+
+    for i in range(nbCells):
+        x = my_mesh.getCell(i).x()
+        y = my_mesh.getCell(i).y()
+
+        pressure_field[i] = p0
+
+        velocity_field[i,0] = -y
+        velocity_field[i,1] =  x
+        velocity_field[i,2] = 0
+
+    return pressure_field, velocity_field
+
 def initial_conditions_wave_system(my_mesh):
-    test_desc["Initial_data"]="Constant pressure, divergence free velocity"
+    test_desc["Initial_data"]="Square vortex (Constant pressure, divergence free velocity)"
     
     dim     = my_mesh.getMeshDimension()
     nbCells = my_mesh.getNumberOfCells()
@@ -150,7 +173,7 @@ def computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt,scaling,test_bc):
                     # hypothese non verifiée 
                     cellAutre = Fk.getCellsId()[0];
                 else :
-                    raise ValueError("computeFluxes: problem with mesh, unknown cel number")
+                    raise ValueError("computeFluxes: problem with mesh, unknown cell number")
                     
                 implMat.addValue(j*nbComp,cellAutre*nbComp,Am)
                 implMat.addValue(j*nbComp,        j*nbComp,Am*(-1.))
@@ -198,7 +221,9 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,sc
     
     # Initial conditions #
     print("Construction of the initial condition …")
-    if(with_source):
+    if(with_source):#Trivial initial datum
+        if(meshName.find("square")==-1):
+            raise ValueError("Mesh name should contain substring square to use wave system with source term")
         pressure_field = cdmath.Field("Pressure", cdmath.CELLS, my_mesh, 1)
         velocity_field = cdmath.Field("Velocity", cdmath.CELLS, my_mesh, 3)
         for k in range(nbCells):# fields initialisation
@@ -208,14 +233,20 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,sc
             velocity_field[k,2] = 0
         S, stat_pressure, stat_velocity=source_term_and_stat_solution_wave_system(my_mesh)
     else:#The initial datum is a stationary field
-        pressure_field, velocity_field = initial_conditions_wave_system(my_mesh)
+        if(meshName.find("square")>-1):
+            pressure_field, velocity_field = initial_conditions_square_vortex(my_mesh)
+            stat_pressure, stat_velocity   = initial_conditions_square_vortex(my_mesh)
+        elif(meshName.find("disk")>-1):
+            pressure_field, velocity_field = initial_conditions_disk_vortex(my_mesh)
+            stat_pressure, stat_velocity   = initial_conditions_disk_vortex(my_mesh)
+        else:
+            raise ValueError("Mesh name should contain substring square or disk")
         for k in range(nbCells):
             Un[k*(dim+1)+0] =     pressure_field[k]
             Un[k*(dim+1)+1] =rho0*velocity_field[k,0]
             Un[k*(dim+1)+2] =rho0*velocity_field[k,1]
             if(dim==3):
                 Un[k*(dim+1)+3] =rho0*velocity_field[k,2]
-        stat_pressure, stat_velocity   = initial_conditions_wave_system(my_mesh)
         S = cdmath.Vector(nbCells*(dim+1))#source term is zero
             
     if( scaling==1):
@@ -247,10 +278,14 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,sc
     divMat=computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt,scaling,test_bc)
     #Adding the momentumm friction term
     if(with_source):
-        for j in range(nbCells):
-            for i in range(dim):
-                divMat.addValue(j*(dim+1)+1+i,j*(dim+1)+1+i,dt)
-
+		if(isImplicit):
+			for j in range(nbCells):
+				for i in range(dim):
+					divMat.addValue(j*(dim+1)+1+i,j*(dim+1)+1+i,dt)
+		else:
+			for j in range(nbCells):
+				for i in range(dim):
+					divMat.addValue(j*(dim+1)+1+i,j*(dim+1)+1+i,-dt)
 
     #Add the identity matrix on the diagonal
     if( scaling==0 or  scaling==2):
@@ -414,7 +449,7 @@ def solve(my_mesh,meshName,resolution,scaling, meshType, testColor,cfl,test_bc="
     if(with_source):
         test_initial_data="zero pressure, zero velocity"
     else:
-        test_initial_data="Constant pressure, divergence free velocity"
+        test_initial_data="Vortex (Constant pressure, divergence free velocity)"
     print test_name
     print "Numerical method : ", test_method
     print "Initial data : ", test_initial_data
@@ -445,7 +480,10 @@ def solve(my_mesh,meshName,resolution,scaling, meshType, testColor,cfl,test_bc="
     test_desc["Mesh_cell_type"]=my_mesh.getElementTypes()
     test_desc["Mesh_number_of_elements"]=my_mesh.getNumberOfCells()
     test_desc["Mesh_max_number_of_neighbours"]=10
-    test_desc["Geometry"]="Square"
+    if(meshName.find("square")>-1):
+        test_desc["Geometry"]="Square"
+    elif(meshName.find("disk")>-1):
+        test_desc["Geometry"]="Disk"
     test_desc["Boundary_conditions"]=test_bc
     test_desc["Initial_data"]=test_initial_data
     test_desc["Part_of_mesh_convergence_analysis"]=True
