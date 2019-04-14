@@ -166,7 +166,7 @@ def computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt,scaling,test_bc):
                     # hypothese non verifiée 
                     cellAutre = Fk.getCellsId()[0];
                 else :
-                    raise ValueError("computeFluxes: problem with mesh, unknown cel number")
+                    raise ValueError("computeFluxes: problem with mesh, unknown cell number")
                     
                 implMat.addValue(j*nbComp,cellAutre*nbComp,Am)
                 implMat.addValue(j*nbComp,        j*nbComp,Am*(-1.))
@@ -451,7 +451,7 @@ def solve(my_mesh, meshName, resolution, scaling, meshType, testColor, cfl, test
     if(with_source):
         test_initial_data="zero pressure, zero velocity"
     else:
-        test_initial_data="Constant pressure, divergence free velocity"
+        test_initial_data="Vortex (Constant pressure, divergence free velocity)"
 
     print test_name
     print "Numerical method : ", test_method
