@@ -118,7 +118,7 @@ def test_validation2DWaveSystemUpwindSquares(bctype,scaling):
     au=( a3*b1u-a2*b2u)/det
     bu=(-a2*b1u+a1*b2u)/det
     
-    print "FV on 2D square meshes : scheme order for velocity is ", -au
+    print "FV upwind on 2D square meshes : scheme order for velocity is ", -au
     
     # Plot of convergence curves
     plt.close()

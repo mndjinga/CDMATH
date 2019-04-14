@@ -8,7 +8,7 @@ import time, json
     
 def test_validation2DWaveSystemCentered_brickwall(scaling):
     start = time.time()
-    #### 2D triangular meshes
+    #### 2D brick wall meshes
     meshList=['squareWithBrickWall_1','squareWithBrickWall_2','squareWithBrickWall_3','squareWithBrickWall_4']
     meshType="Unstructured brick wall"
     testColor="Green"
@@ -52,7 +52,7 @@ def test_validation2DWaveSystemCentered_brickwall(scaling):
     plt.legend()
     plt.xlabel('Position on diagonal line')
     plt.ylabel('Pressure on diagonal line')
-    plt.title('Plot over diagonal line for stationary wave system \n with centered scheme on 2D triangular meshes')
+    plt.title('Plot over diagonal line for stationary wave system \n with centered scheme on 2D brick wall meshes')
     plt.savefig(mesh_name+'_Pressure_2DWaveSystemCentered_'+"scaling"+str(scaling)+"_PlotOverDiagonalLine.png")
     plt.close()
 
@@ -65,7 +65,7 @@ def test_validation2DWaveSystemCentered_brickwall(scaling):
     plt.legend()
     plt.xlabel('Position on diagonal line')
     plt.ylabel('Velocity on diagonal line')
-    plt.title('Plot over diagonal line for the stationary wave system \n with centered scheme on 2D triangular meshes')
+    plt.title('Plot over diagonal line for the stationary wave system \n with centered scheme on 2D brick wall meshes')
     plt.savefig(mesh_name+"_Velocity_2DWaveSystemCentered_"+"scaling"+str(scaling)+"_PlotOverDiagonalLine.png")    
     plt.close()
 
@@ -78,7 +78,7 @@ def test_validation2DWaveSystemCentered_brickwall(scaling):
     plt.legend()
     plt.xlabel('Number of cells')
     plt.ylabel('Max time steps for stationary regime')
-    plt.title('Number of times steps required for the stationary Wave System \n with centered scheme on 2D triangular meshes')
+    plt.title('Number of times steps required for the stationary Wave System \n with centered scheme on 2D brick wall meshes')
     plt.savefig(mesh_name+"_2DWaveSystemCentered_"+"scaling"+str(scaling)+"_TimeSteps.png")
     
     # Plot of number of stationary time
@@ -90,7 +90,7 @@ def test_validation2DWaveSystemCentered_brickwall(scaling):
     plt.legend()
     plt.xlabel('Number of cells')
     plt.ylabel('Max time for stationary regime')
-    plt.title('Simulated time for the stationary Wave System \n with centered scheme on 2D triangular meshes')
+    plt.title('Simulated time for the stationary Wave System \n with centered scheme on 2D brick wall meshes')
     plt.savefig(mesh_name+"_2DWaveSystemCentered_"+"scaling"+str(scaling)+"_FinalTime.png")
     
     # Plot of number of maximal velocity norm
@@ -102,7 +102,7 @@ def test_validation2DWaveSystemCentered_brickwall(scaling):
     plt.legend()
     plt.xlabel('Number of cells')
     plt.ylabel('Max velocity norm')
-    plt.title('Maximum velocity norm for the stationary Wave System \n with centered scheme on 2D triangular meshes')
+    plt.title('Maximum velocity norm for the stationary Wave System \n with centered scheme on 2D brick wall meshes')
     plt.savefig(mesh_name+"_2DWaveSystemCentered_"+"scaling"+str(scaling)+"_MaxVelNorm.png")
     
     # Plot of condition number 
@@ -114,7 +114,7 @@ def test_validation2DWaveSystemCentered_brickwall(scaling):
     plt.legend()
     plt.xlabel('Number of cells')
     plt.ylabel('Condition number')
-    plt.title('Condition number for the stationary Wave System \n with centered scheme on 2D square meshes')
+    plt.title('Condition number for the stationary Wave System \n with centered scheme on 2D brick wall meshes')
     plt.savefig(mesh_name+"_2DWaveSystemCentered_"+"scaling"+str(scaling)+"_condition_number.png")
     
     for i in range(nbMeshes):
@@ -130,15 +130,25 @@ def test_validation2DWaveSystemCentered_brickwall(scaling):
     det=a1*a3-a2*a2
     assert det!=0, 'test_validation2DWaveSystemBrickWallFVCentered() : Make sure you use distinct meshes and at least two meshes'
 
+    b1p=np.dot(error_p_tab,mesh_size_tab)   
+    b2p=np.sum(error_p_tab)
+    ap=( a3*b1p-a2*b2p)/det
+    bp=(-a2*b1p+a1*b2p)/det
+    
+    if(scaling==0):
+        print "FV Centered on 2D brick wall meshes : scheme order for pressure without scaling is ", -ap
+    else:
+        print "FV Centered on 2D brick wall meshes : scheme order for pressure with    scaling is ", -ap
+
     b1u=np.dot(error_u_tab,mesh_size_tab)   
     b2u=np.sum(error_u_tab)
     au=( a3*b1u-a2*b2u)/det
     bu=(-a2*b1u+a1*b2u)/det
     
     if(scaling==0):
-        print "FVCentered on 2D triangular meshes : scheme order for velocity without scaling is ", -au
+        print "FV Centered on 2D brick wall meshes : scheme order for velocity without scaling is ", -au
     else:
-        print "FVCentered on 2D triangular meshes : scheme order for velocity with scaling is ", -au
+        print "FV Centered on 2D brick wall meshes : scheme order for velocity with scaling is ", -au
     
     # Plot of convergence curves
     plt.close()
@@ -149,7 +159,7 @@ def test_validation2DWaveSystemCentered_brickwall(scaling):
     plt.legend()
     plt.xlabel('1/2 log(Number of cells)')
     plt.ylabel('log(|error p|)')
-    plt.title('Convergence of finite volumes for the stationary Wave System \n with centered scheme on 2D triangular meshes')
+    plt.title('Convergence of finite volumes for the stationary Wave System \n with centered scheme on 2D brick wall meshes')
     plt.savefig(mesh_name+"_Pressure_2DWaveSystemCentered_"+"scaling"+str(scaling)+"_ConvergenceCurve.png")
     
     plt.close()
@@ -160,7 +170,7 @@ def test_validation2DWaveSystemCentered_brickwall(scaling):
     plt.legend()
     plt.xlabel('1/2 log(Number of cells)')
     plt.ylabel('log(|error u|)')
-    plt.title('Convergence of finite volumes for the stationary Wave System \n with centered scheme on 2D triangular meshes')
+    plt.title('Convergence of finite volumes for the stationary Wave System \n with centered scheme on 2D brick wall meshes')
     plt.savefig(mesh_name+"_Velocity_2DWaveSystemCentered_"+"scaling"+str(scaling)+"_ConvergenceCurve.png")
     
     # Plot of computational time
@@ -172,7 +182,7 @@ def test_validation2DWaveSystemCentered_brickwall(scaling):
     plt.legend()
     plt.xlabel('1/2 log(Number of cells)')
     plt.ylabel('log(cpu time)')
-    plt.title('Computational time of finite volumes for the stationary Wave System \n with centered scheme on 2D triangular meshes')
+    plt.title('Computational time of finite volumes for the stationary Wave System \n with centered scheme on 2D brick wall meshes')
     plt.savefig(mesh_name+"2DWaveSystemCentered_"+"scaling"+str(scaling)+"_ComputationalTime.png")
 
     plt.close('all')
@@ -206,6 +216,7 @@ def test_validation2DWaveSystemCentered_brickwall(scaling):
     convergence_synthesis["Final_time_step"]=ndt_final  
     convergence_synthesis["Scheme_order"]=-au
     convergence_synthesis["Scheme_order_vel"]=-au
+    convergence_synthesis["Scheme_order_press"]=-ap
     convergence_synthesis["Scaling_preconditioner"]=scaling
     convergence_synthesis["Condition_numbers"]=cond_number
     convergence_synthesis["Test_color"]=testColor

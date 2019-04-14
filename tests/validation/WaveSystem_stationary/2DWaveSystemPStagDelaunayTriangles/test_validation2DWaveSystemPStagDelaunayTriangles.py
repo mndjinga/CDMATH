@@ -130,15 +130,22 @@ def test_validation2DWaveSystemPStagTriangles(scaling):
     det=a1*a3-a2*a2
     assert det!=0, 'test_validation2DWaveSystemFVPStag() : Make sure you use distinct meshes and at least two meshes'
 
+    b1p=np.dot(error_p_tab,mesh_size_tab)   
+    b2p=np.sum(error_p_tab)
+    ap=( a3*b1p-a2*b2p)/det
+    bp=(-a2*b1p+a1*b2p)/det
+    
+    print "FV PStag on 2D Delaunay triangles meshes : scheme order for pressure is ", -ap
+
     b1u=np.dot(error_u_tab,mesh_size_tab)   
     b2u=np.sum(error_u_tab)
     au=( a3*b1u-a2*b2u)/det
     bu=(-a2*b1u+a1*b2u)/det
     
     if(scaling==0):
-        print "FVPStag on 2D Delaunay triangles meshes : scheme order for velocity without scaling is ", -au
+        print "FV PStag on 2D Delaunay triangles meshes : scheme order for velocity without scaling is ", -au
     else:
-        print "FVPStag on 2D Delaunay triangles meshes : scheme order for velocity with scaling is ", -au
+        print "FV PStag on 2D Delaunay triangles meshes : scheme order for velocity with scaling is ", -au
     
     # Plot of convergence curves
     plt.close()
@@ -206,6 +213,7 @@ def test_validation2DWaveSystemPStagTriangles(scaling):
     convergence_synthesis["Final_time_step"]=ndt_final  
     convergence_synthesis["Scheme_order"]=-au
     convergence_synthesis["Scheme_order_vel"]=-au
+    convergence_synthesis["Scheme_order_press"]=-ap
     convergence_synthesis["Scaling_preconditioner"]=scaling
     convergence_synthesis["Condition_numbers"]=cond_number
     convergence_synthesis["Test_color"]=testColor

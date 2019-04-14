@@ -52,7 +52,7 @@ def test_validation2DWaveSystemCenteredCrossTriangles(scaling):
     plt.legend()
     plt.xlabel('Position on diagonal line')
     plt.ylabel('Pressure on diagonal line')
-    plt.title('Plot over diagonal line for stationary wave system \n with centered scheme on 2D cross triangular meshes')
+    plt.title('Plot over diagonal line for stationary wave system \n with centered scheme on 2D cross triangle meshes')
     plt.savefig(mesh_name+'_Pressure_2DWaveSystemCentered_'+"scaling"+str(scaling)+"_PlotOverDiagonalLine.png")
     plt.close()
 
@@ -130,15 +130,25 @@ def test_validation2DWaveSystemCenteredCrossTriangles(scaling):
     det=a1*a3-a2*a2
     assert det!=0, 'test_validation2DWaveSystemFVCentered() : Make sure you use distinct meshes and at least two meshes'
 
+    b1p=np.dot(error_p_tab,mesh_size_tab)   
+    b2p=np.sum(error_p_tab)
+    ap=( a3*b1p-a2*b2p)/det
+    bp=(-a2*b1p+a1*b2p)/det
+    
+    if(scaling==0):
+        print "FV Centered on 2D checkerboard meshes : scheme order for pressure without scaling is ", -ap
+    else:
+        print "FV Centered on 2D checkerboard meshes : scheme order for pressure with scaling is ", -ap
+
     b1u=np.dot(error_u_tab,mesh_size_tab)   
     b2u=np.sum(error_u_tab)
     au=( a3*b1u-a2*b2u)/det
     bu=(-a2*b1u+a1*b2u)/det
     
     if(scaling==0):
-        print "FVCentered on 2D cross triangle meshes : scheme order for velocity without scaling is ", -au
+        print "FV Centered on 2D cross triangle meshes : scheme order for velocity without scaling is ", -au
     else:
-        print "FVCentered on 2D cross triangle meshes : scheme order for velocity with scaling is ", -au
+        print "FV Centered on 2D cross triangle meshes : scheme order for velocity with scaling is ", -au
     
     # Plot of convergence curves
     plt.close()
@@ -205,6 +215,7 @@ def test_validation2DWaveSystemCenteredCrossTriangles(scaling):
     convergence_synthesis["Final_time"]=t_final  
     convergence_synthesis["Final_time_step"]=ndt_final  
     convergence_synthesis["Scheme_order"]=-au
+    convergence_synthesis["Scheme_order_press"]=-ap
     convergence_synthesis["Scheme_order_vel"]=-au
     convergence_synthesis["Scaling_preconditioner"]=scaling
     convergence_synthesis["Condition_numbers"]=cond_number
