@@ -213,7 +213,7 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,sc
     # Initial conditions #
     print("Construction of the initial condition …")
     if(with_source):#Trivial initial datum
-        if(meshName.find("square")==-1):
+        if(meshName.find("square")==-1 and meshName.find("Square")==-1):
             raise ValueError("Mesh name should contain substring square to use wave system with source term")
         pressure_field = cdmath.Field("Pressure", cdmath.CELLS, my_mesh, 1)
         velocity_field = cdmath.Field("Velocity", cdmath.CELLS, my_mesh, 3)
@@ -224,33 +224,34 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,sc
             velocity_field[k,2] = 0
         S, stat_pressure, stat_velocity=source_term_and_stat_solution_wave_system(my_mesh)
     else:#The initial datum is a stationary field
-        if(meshName.find("square")>-1):
+        if(meshName.find("square")>-1 or meshName.find("Square")>-1):
             pressure_field, velocity_field = initial_conditions_square_vortex(my_mesh)
             stat_pressure, stat_velocity   = initial_conditions_square_vortex(my_mesh)
-        elif(meshName.find("disk")>-1):
+        elif(meshName.find("disk")>-1 or meshName.find("Disk")>-1):
             pressure_field, velocity_field = initial_conditions_disk_vortex(my_mesh)
             stat_pressure, stat_velocity   = initial_conditions_disk_vortex(my_mesh)
         else:
             raise ValueError("Mesh name should contain substring square or disk")
-        for k in range(nbCells):
-            Un[k*(dim+1)+0] =     pressure_field[k]
-            Un[k*(dim+1)+1] =rho0*velocity_field[k,0]
-            Un[k*(dim+1)+2] =rho0*velocity_field[k,1]
-            if(dim==3):
-                Un[k*(dim+1)+3] =rho0*velocity_field[k,2]
         S = cdmath.Vector(nbCells*(dim+1))#source term is zero
+
+    for k in range(nbCells):
+        Un[k*(dim+1)+0] =     pressure_field[k]
+        Un[k*(dim+1)+1] =rho0*velocity_field[k,0]
+        Un[k*(dim+1)+2] =rho0*velocity_field[k,1]
+        if(dim==3):
+            Un[k*(dim+1)+3] =rho0*velocity_field[k,2]
 
     if( scaling==1):
         Vn = Un.deepCopy()
         for k in range(nbCells):
             Vn[k*(dim+1)+0] = Vn[k*(dim+1)+0]/(c0*c0)
-            S[k*(dim+1)+0] = S[k*(dim+1)+0]/(c0*c0)
+            S[ k*(dim+1)+0] = S[ k*(dim+1)+0]/(c0*c0)
     elif( scaling==2):
         Vn = Un.deepCopy()
         for k in range(nbCells):
             Vn[k*(dim+1)+0] = Vn[k*(dim+1)+0]/c0
-            S[k*(dim+1)+0] = S[k*(dim+1)+0]/c0
-            
+            S[ k*(dim+1)+0] = S[ k*(dim+1)+0]/c0
+
     #sauvegarde de la donnée initiale
     pressure_field.setTime(time,it);
     pressure_field.writeVTK("WaveSystem"+str(dim)+"DUpwind"+meshName+"_pressure");
@@ -268,18 +269,13 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,sc
     dt = cfl * dx_min / c0
 
     divMat=computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt,scaling,test_bc)
-    #Adding the momentumm friction term
+    #Adding the momentum friction term
     if(with_source):
-		if(isImplicit):
-			for j in range(nbCells):
-				for i in range(dim):
-					divMat.addValue(j*(dim+1)+1+i,j*(dim+1)+1+i,dt)
-		else:
-			for j in range(nbCells):
-				for i in range(dim):
-					divMat.addValue(j*(dim+1)+1+i,j*(dim+1)+1+i,-dt)
+        for j in range(nbCells):
+            for i in range(dim):
+                divMat.addValue(j*(dim+1)+1+i,j*(dim+1)+1+i,dt)
 
-    if(isImplicit):
+    if( isImplicit):
         #Adding the identity matrix on the diagonal
         if( scaling==0 or  scaling==2):
             divMat.diagonalShift(1)#only after  filling all coefficients
@@ -347,7 +343,7 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,sc
         maxVector=dUn.maxVector(dim+1)
 
         if(with_source):
-            isStationary =  maxVector[0] < precision    and maxVector[1]/rho0<precision and maxVector[2]/rho0<precision;
+            isStationary = maxVector[0]  < precision and maxVector[1]/rho0<precision and maxVector[2]/rho0<precision;
         else:
             isStationary = maxVector[0]/p0<precision and maxVector[1]/rho0<precision and maxVector[2]/rho0<precision;
 
@@ -487,11 +483,10 @@ def solve(my_mesh, meshName, resolution, scaling, meshType, testColor, cfl, test
     test_desc["Mesh_cell_type"]=my_mesh.getElementTypes()
     test_desc["Mesh_number_of_elements"]=my_mesh.getNumberOfCells()
     test_desc["Mesh_max_number_of_neighbours"]=10
-    if(meshName.find("square")>-1):
+    if(meshName.find("square")>-1 or meshName.find("Square")>-1):
         test_desc["Geometry"]="Square"
-    elif(meshName.find("disk")>-1):
+    elif(meshName.find("disk")>-1 or meshName.find("Disk")>-1):
         test_desc["Geometry"]="Disk"
-    test_desc["Geometry"]="Square"
     test_desc["Boundary_conditions"]=test_bc
     test_desc["Initial_data"]=test_initial_data
     test_desc["Part_of_mesh_convergence_analysis"]=True
