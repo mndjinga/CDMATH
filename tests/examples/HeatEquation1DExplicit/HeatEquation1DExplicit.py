@@ -2,11 +2,10 @@
 # -*-coding:utf-8 -*
 
 #===============================================================================================================================
-# Name        : Résolution VF explicite de l'équation de la chaleur 1D \partial_t u = d \partial_xx u avec conditions aux limites périodiques
+# Name        : Résolution VF de l'équation de la chaleur 1D \partial_t u = d \partial_xx u avec conditions aux limites périodiques
 # Author      : Michaël Ndjinga
 # Copyright   : CEA Saclay 2019
 # Description : Maillage 1D régulier
-#               Schéma à 3 points explicite
 #		        Création et sauvegarde du champ résultant et des figures
 #               Génération d'une video sauvegardée dans un fichier .mp4
 #================================================================================================================================
@@ -49,7 +48,7 @@ def HeatEquation1DExplicit(nx,cfl):
 
     # Video settings
     FFMpegWriter = manimation.writers['ffmpeg']
-    metadata = dict(title="Explicit scheme for heat equation, "+"CFL="+str(cfl), artist = "CEA Saclay", comment=", Stable if CFL<1")
+    metadata = dict(title="Explicit scheme for heat equation", artist = "CEA Saclay", comment="CFL="+str(cfl)+", Stable if CFL<1")
     writer=FFMpegWriter(fps=output_freq, metadata=metadata, codec='h264')
     with writer.saving(plt.figure(), "HeatEquation1D_Explicit_"+str(nx)+"Cells_CFL"+str(cfl)+".mp4", ntmax):
         ########################### Postprocessing initialisation
@@ -59,7 +58,7 @@ def HeatEquation1DExplicit(nx,cfl):
         plt.ylabel('u')
         plt.xlim(a,b)
         plt.ylim( min_initial - 0.1*(max_initial-min_initial), max_initial +  0.1*(max_initial-min_initial) )
-        plt.title("Explicit scheme for heat equation, "+"CFL="+str(cfl))
+        plt.title("Explicit scheme for the heat equation, CFL="+str(cfl))
         line1, = plt.plot(x, u, label='u') #new picture for video # Returns a tuple of line objects, thus the comma
     
         print("Starting time loop")
@@ -109,6 +108,6 @@ if __name__ == """__main__""":
         HeatEquation1DExplicit(nx,cfl)
     else :
         nx = 50 # number of cells
-        cfl = 0.99 # c*dt/dx <= CFL
+        cfl = 1 # c*dt/dx <= CFL
         HeatEquation1DExplicit(nx,cfl)
     
