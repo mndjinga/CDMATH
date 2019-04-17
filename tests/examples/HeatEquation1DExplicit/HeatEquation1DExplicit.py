@@ -27,9 +27,9 @@ def HeatEquation1DExplicit(nx,cfl):
     dx = (b - a) / nx #space step
 
     d = 1. # thermal diffusivity
-    tmax = 5*(b-a)/d # runs the simulation for 0 <= t <= tMax
-    dt = cfl * dx *dx/ d
-    ntmax = 200
+    tmax = (b-a)/d # runs the simulation for 0 <= t <= tMax
+    dt = cfl * dx *dx/ (2*d)
+    ntmax = 100
 
     x=[a+0.5*dx + i*dx for i in range(nx)]   # array of cell center (1D mesh)
     
@@ -108,6 +108,6 @@ if __name__ == """__main__""":
         HeatEquation1DExplicit(nx,cfl)
     else :
         nx = 50 # number of cells
-        cfl = 1 # c*dt/dx <= CFL
+        cfl = 1 # c*dt/(2*dx) <= CFL
         HeatEquation1DExplicit(nx,cfl)
     
