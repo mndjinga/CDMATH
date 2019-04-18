@@ -3,7 +3,7 @@
 
 #===============================================================================================================================
 # Name        : Résolution VF du système des ondes 2D avec terme source régulier
-#                \partial_t p + c^2 \div q = c^2*sign(x-1/2)*sign(y-1/2)
+#                \partial_t p + c^2 \div q = c^2*(sign(x-1./2)*(y-1./2)*abs(y-1./2) + (x-1./2)*abs(x-1./2)*sign(y-1./2))
 #                \partial_t q +    \grad p =-q
 # Author      : Michaël Ndjinga
 # Copyright   : CEA Saclay 2019
@@ -20,6 +20,7 @@ import time, json
 import cdmath
 import PV_routines
 import VTK_routines
+from numpy import sign
 
 test_desc={}
 
@@ -36,7 +37,7 @@ def source_term_and_stat_solution_wave_system(my_mesh):
     source_vector = cdmath.Vector(nbCells*(dim+1))
 
     stat_pressure_field = cdmath.Field("Pressure", cdmath.CELLS, my_mesh, 1)
-    stat_momentum_field = cdmath.Field("Velocity", cdmath.CELLS, my_mesh, 3)
+    stat_momentum_field = cdmath.Field("Momentum", cdmath.CELLS, my_mesh, 3)
 
     for k in range(nbCells):
         x = my_mesh.getCell(k).x()
@@ -44,7 +45,7 @@ def source_term_and_stat_solution_wave_system(my_mesh):
         z = my_mesh.getCell(k).z()
 
         if(dim==1):
-            source_vector[k*(dim+1)+0] = -2*sign(x-1./2)
+            source_vector[k*(dim+1)+0] = -2*c0*c0*sign(x-1./2)
             source_vector[k*(dim+1)+1] = 0
 
             stat_pressure_field[k]   =    abs(x-1./2)*(x-1./2)
@@ -52,24 +53,24 @@ def source_term_and_stat_solution_wave_system(my_mesh):
             stat_momentum_field[k,1] = 0
             stat_momentum_field[k,2] = 0
         elif(dim==2):
-            source_vector[k*(dim+1)+0] = (x-1./2)*abs(x-1./2)*(y-1./2)*abs(y-1./2)
+            source_vector[k*(dim+1)+0] = -2*c0*c0*(sign(x-1./2)*(y-1./2)*abs(y-1./2) + (x-1./2)*abs(x-1./2)*sign(y-1./2))
             source_vector[k*(dim+1)+1] = 0
             source_vector[k*(dim+1)+2] = 0
 
-            stat_pressure_field[k]   = -2*        sign(x-1./2)*(y-1./2)*abs(y-1./2) -2*(x-1./2)*abs(x-1./2)*sign(y-1./2)
+            stat_pressure_field[k]   =    (x-1./2)*abs(x-1./2)*(y-1./2)*abs(y-1./2)
             stat_momentum_field[k,0] = -2*         abs(x-1./2)*(y-1./2)*abs(y-1./2)
             stat_momentum_field[k,1] = -2*(x-1./2)*abs(x-1./2)         *abs(y-1./2)
             stat_momentum_field[k,2] = 0
         elif(dim==3):
-            source_vector[k*(dim+1)+0] = (x-1./2)*abs(x-1./2)*(y-1./2)*abs(y-1./2)*(z-1./2)*abs(z-1./2)
+            source_vector[k*(dim+1)+0] = -2*c0*c0*(sign(x-1./2)*(y-1./2)*abs(y-1./2)*(z-1./2)*abs(z-1./2)+(x-1./2)*abs(x-1./2)*sign(y-1./2)*(z-1./2)*abs(z-1./2)+(x-1./2)*abs(x-1./2)*(y-1./2)*abs(y-1./2)*sign(z-1./2))
             source_vector[k*(dim+1)+1] = 0
             source_vector[k*(dim+1)+2] = 0
             source_vector[k*(dim+1)+3] = 0
         
             stat_pressure_field[k]   =       (x-1./2)*abs(x-1./2)*(y-1./2)*abs(y-1./2)*(z-1./2)*abs(z-1./2)
-            stat_momentum_field[k,0] = -2*sign(x-1./2)*(y-1./2)*abs(y-1./2)*(z-1./2)*abs(z-1./2)
-            stat_momentum_field[k,1] = -2*(x-1./2)*abs(x-1./2)*sign(y-1./2)*(z-1./2)*abs(z-1./2)
-            stat_momentum_field[k,2] = -2*(x-1./2)*abs(x-1./2)*(y-1./2)*abs(y-1./2)*sign(z-1./2)
+            stat_momentum_field[k,0] = -2*abs(x-1./2)*(y-1./2)*abs(y-1./2)*(z-1./2)*abs(z-1./2)
+            stat_momentum_field[k,1] = -2*(x-1./2)*abs(x-1./2)*abs(y-1./2)*(z-1./2)*abs(z-1./2)
+            stat_momentum_field[k,2] = -2*(x-1./2)*abs(x-1./2)*(y-1./2)*abs(y-1./2)*abs(z-1./2)
 
     return source_vector, stat_pressure_field, stat_momentum_field
 
@@ -156,7 +157,7 @@ def computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt,scaling,test_bc):
                 
     return implMat
 
-def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,scaling,test_bc,with_source=False):
+def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,scaling,test_bc):
     dim=my_mesh.getMeshDimension()
     nbCells = my_mesh.getNumberOfCells()
     
@@ -174,17 +175,13 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,sc
     
     # Initial conditions #
     print("Construction of the initial condition …")
-    if(meshName.find("square")==-1 and meshName.find("Square")==-1):
+    if(meshName.find("square")==-1 and meshName.find("Square")==-1 and meshName.find("cube")==-1 and meshName.find("Cube")==-1):
         raise ValueError("Mesh name should contain substring square to use wave system with source term")
-    pressure_field = cdmath.Field("Pressure", cdmath.CELLS, my_mesh, 1)
-    momentum_field = cdmath.Field("Velocity", cdmath.CELLS, my_mesh, 3)
-    for k in range(nbCells):# fields initialisation
-        pressure_field[k]   = 0
-        momentum_field[k,0] = 0
-        momentum_field[k,1] = 0
-        momentum_field[k,2] = 0
-    S, stat_pressure, stat_momentum=source_term_and_stat_solution_wave_system(my_mesh)
-
+    else:
+        S, stat_pressure, stat_momentum=source_term_and_stat_solution_wave_system(my_mesh)
+        pressure_field = stat_pressure.deepCopy()
+        momentum_field = stat_momentum.deepCopy()
+        
     for k in range(nbCells):
         Un[k*(dim+1)+0] =     pressure_field[k]
         Un[k*(dim+1)+1] =     momentum_field[k,0]
@@ -210,7 +207,7 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,sc
     momentum_field.writeVTK("WaveSystem"+str(dim)+"DUpwind"+meshName+"_momentum");
     #Postprocessing : save 2D picture
     PV_routines.Save_PV_data_to_picture_file("WaveSystem"+str(dim)+"DUpwind"+meshName+"_pressure"+'_0.vtu',"Pressure",'CELLS',"WaveSystem"+str(dim)+"DUpwind"+meshName+"_pressure_initial")
-    PV_routines.Save_PV_data_to_picture_file("WaveSystem"+str(dim)+"DUpwind"+meshName+"_momentum"+'_0.vtu',"Velocity",'CELLS',"WaveSystem"+str(dim)+"DUpwind"+meshName+"_momentum_initial")
+    PV_routines.Save_PV_data_to_picture_file("WaveSystem"+str(dim)+"DUpwind"+meshName+"_momentum"+'_0.vtu',"Momentum",'CELLS',"WaveSystem"+str(dim)+"DUpwind"+meshName+"_momentum_initial")
 
     total_pressure_initial=pressure_field.integral()#For conservation test later
     total_momentum_initial=momentum_field.integral()#For conservation test later
@@ -310,11 +307,11 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,sc
             delta_q=cdmath.Vector(dim)
             for k in range(nbCells):
                 pressure_field[k]  =Un[k*(dim+1)+0]
-                momentum_field[k,0]=Un[k*(dim+1)+1]/rho0
+                momentum_field[k,0]=Un[k*(dim+1)+1]
                 if(dim>1):
-                    momentum_field[k,1]=Un[k*(dim+1)+2]/rho0
+                    momentum_field[k,1]=Un[k*(dim+1)+2]
                     if(dim>2):
-                        momentum_field[k,2]=Un[k*(dim+1)+3]/rho0
+                        momentum_field[k,2]=Un[k*(dim+1)+3]
                 if (abs(stat_pressure[k]-pressure_field[k])>delta_press):
                     delta_press=abs(stat_pressure[k]-pressure_field[k])
                 if (abs(stat_momentum[k,0]-momentum_field[k,0])>delta_q[0]):
@@ -357,7 +354,7 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,sc
             diag_data_vel  =VTK_routines.Extract_field_data_over_line_to_numpyArray(momentum_field,[0,0,0],[1,1,1], resolution)    
         #Postprocessing : save 2D picture
         PV_routines.Save_PV_data_to_picture_file("WaveSystem"+str(dim)+"DUpwind"+meshName+"_pressure_Stat"+'_0.vtu',"Pressure",'CELLS',"WaveSystem"+str(dim)+"DUpwind"+meshName+"_pressure_Stat")
-        PV_routines.Save_PV_data_to_picture_file("WaveSystem"+str(dim)+"DUpwind"+meshName+"_momentum_Stat"+'_0.vtu',"Velocity",'CELLS',"WaveSystem"+str(dim)+"DUpwind"+meshName+"_momentum_Stat")
+        PV_routines.Save_PV_data_to_picture_file("WaveSystem"+str(dim)+"DUpwind"+meshName+"_momentum_Stat"+'_0.vtu',"Momentum",'CELLS',"WaveSystem"+str(dim)+"DUpwind"+meshName+"_momentum_Stat")
         
         return delta_press   , delta_q.maxVector()[0], nbCells, time, it, momentum_field.getNormEuclidean().max(), diag_data_press, diag_data_vel
     else:
@@ -373,7 +370,7 @@ def solve(my_mesh, meshName, resolution, scaling, meshType, testColor, cfl, test
     test_name_comment="Classical characteristic based scheme"
     test_model="Wave system"
     test_method="Upwind"
-    test_initial_data="zero pressure, zero velocity"
+    test_initial_data="Stiff stationary state"
 
     print test_name
     print "Numerical method : ", test_method
@@ -438,12 +435,12 @@ def solve_file( filename,meshName, resolution, scaling, meshType, testColor,cfl,
     
 
 if __name__ == """__main__""":
-    M1=cdmath.Mesh(0.,1.,20,0.,1.,20,0)
+    M1=cdmath.Mesh(0.,1.,20,0.,1.,20)
     cfl=0.5
     scaling=0
-    solve(M1,"SquareRegularTriangles",100,scaling,"Regular triangles","Green",cfl,"Periodic",True)
+    solve(M1,"SquareRegularSquares",100,scaling,"Regular_squares","Green",cfl,"Periodic")
 
     M2=cdmath.Mesh(0.,1.,10,0.,1.,10,0.,1.,10,6)
     cfl=1./3
     scaling=2
-    solve(M2,"CubeRegularTetrahedra",100,scaling,"Regular tetrahedra","Green",cfl,"Wall")
+    solve(M2,"CubeRegularTetrahedra",100,scaling,"Regular_tetrahedra","Green",cfl,"Wall")

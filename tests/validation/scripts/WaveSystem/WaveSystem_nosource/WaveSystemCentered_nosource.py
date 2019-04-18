@@ -181,7 +181,7 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,sc
     
     # Initial conditions #
     print("Construction of the initial condition …")
-    if(meshName.find("square")>-1 or meshName.find("Square")>-1):
+    if(meshName.find("square")>-1 or meshName.find("Square")>-1 or meshName.find("cube")>-1 or meshName.find("Cube")>-1):
         pressure_field, velocity_field = initial_conditions_square_vortex(my_mesh)
         stat_pressure, stat_velocity   = initial_conditions_square_vortex(my_mesh)
     elif(meshName.find("disk")>-1 or meshName.find("Disk")>-1):
@@ -431,12 +431,12 @@ def solve_file( filename,meshName, resolution,scaling, meshType, testColor,cfl,t
     
 
 if __name__ == """__main__""":
-    M1=cdmath.Mesh(0.,1.,20,0.,1.,20,0)
+    M1=cdmath.Mesh(0.,1.,20,0.,1.,20)
     cfl=0.5
     scaling=0
-    solve(M1,"SquareRegularTriangles",100,scaling,"Regular triangles","Green",cfl,"Periodic",True)
+    solve(M1,"SquareRegularSquares",100,scaling,"Regular_squares","Green",cfl,"Periodic")
 
     M2=cdmath.Mesh(0.,1.,10,0.,1.,10,0.,1.,10,6)
     cfl=1./3
     scaling=2
-    solve(M2,"CubeRegularTetrahedra",100,scaling,"Regular tetrahedra","Green",cfl,"Wall")
+    solve(M2,"CubeRegularTetrahedra",100,scaling,"Regular_tetrahedra","Green",cfl,"Wall")
