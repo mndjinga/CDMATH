@@ -233,14 +233,15 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,sc
             velocity_field[k,2] = 0
         S, stat_pressure, stat_velocity=source_term_and_stat_solution_wave_system(my_mesh)
     else:#The initial datum is a stationary field
-        if(meshName.find("square")>-1 or meshName.find("Square")>-1):
+        if(meshName.find("square")>-1 or meshName.find("Square")>-1 or meshName.find("cube")>-1 or meshName.find("Cube")>-1):
             pressure_field, velocity_field = initial_conditions_square_vortex(my_mesh)
             stat_pressure, stat_velocity   = initial_conditions_square_vortex(my_mesh)
         elif(meshName.find("disk")>-1 or meshName.find("Disk")>-1):
             pressure_field, velocity_field = initial_conditions_disk_vortex(my_mesh)
             stat_pressure, stat_velocity   = initial_conditions_disk_vortex(my_mesh)
         else:
-            raise ValueError("Mesh name should contain substring square or disk")
+            print "Mesh name : ", meshName
+            raise ValueError("Mesh name should contain substring, cube square or disk")
         S = cdmath.Vector(nbCells*(dim+1))#source term is zero
 
     for k in range(nbCells):

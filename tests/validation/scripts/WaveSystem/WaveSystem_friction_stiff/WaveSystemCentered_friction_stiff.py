@@ -175,7 +175,8 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,sc
     # Initial conditions #
     print("Construction of the initial condition …")
     if(meshName.find("square")==-1 and meshName.find("Square")==-1 and meshName.find("cube")==-1 and meshName.find("Cube")==-1):
-        raise ValueError("Mesh name should contain substring square to use wave system with source term")
+        print "Mesh name : ", meshName
+        raise ValueError("Mesh name should contain substring square or cube to use wave system with stiff source term")
     else:
         S, stat_pressure, stat_momentum=source_term_and_stat_solution_wave_system(my_mesh)
         pressure_field = stat_pressure.deepCopy()

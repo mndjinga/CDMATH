@@ -197,7 +197,9 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,sc
         pressure_field, velocity_field = initial_conditions_disk_vortex(my_mesh)
         stat_pressure, stat_velocity   = initial_conditions_disk_vortex(my_mesh)
     else:
-        raise ValueError("Mesh name should contain substring square or disk")
+        print "Mesh name : ", meshName
+        raise ValueError("Mesh name should contain substring square, cube or disk")
+
     S = cdmath.Vector(nbCells*(dim+1))#source term is zero
 
     for k in range(nbCells):
