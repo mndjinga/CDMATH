@@ -13,8 +13,31 @@ c0=1500#reference sound speed
 p0=rho0*c0*c0#reference pressure
 precision=1e-5
 
-def initial_conditions_wave_system(my_mesh):
-    print "Spherical wave initial data"
+def initial_conditions_disk_vortex(my_mesh):
+    print "Disk vortex initial data"
+    dim     = my_mesh.getMeshDimension()
+    nbCells = my_mesh.getNumberOfCells()
+
+    if(dim!=2):
+        raise ValueError("Wave system on disk : mesh dimension should be 2")
+        
+    pressure_field = cdmath.Field("Pressure",            cdmath.CELLS, my_mesh, 1)
+    velocity_field = cdmath.Field("Velocity",            cdmath.CELLS, my_mesh, 3)
+
+    for i in range(nbCells):
+        x = my_mesh.getCell(i).x()
+        y = my_mesh.getCell(i).y()
+
+        pressure_field[i] = p0
+
+        velocity_field[i,0] = -y
+        velocity_field[i,1] =  x
+        velocity_field[i,2] = 0
+
+    return pressure_field, velocity_field
+
+def initial_conditions_square_shock(my_mesh):
+    print "Spherical wave in a square : initial data"
     dim     = my_mesh.getMeshDimension()
     nbCells = my_mesh.getNumberOfCells()
 
@@ -130,9 +153,10 @@ def computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt):
                 
     return implMat
 
-def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution):
+def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, filename,resolution):
     dim=my_mesh.getMeshDimension()
     nbCells = my_mesh.getNumberOfCells()
+    meshName=my_mesh.getName()
     
     dt = 0.
     time = 0.
@@ -148,7 +172,13 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution):
     
     # Initial conditions #
     print("Construction of the initial condition …")
-    pressure_field, velocity_field = initial_conditions_wave_system(my_mesh)
+    if(filename.find("square")>-1 or filename.find("Square")>-1 or filename.find("cube")>-1 or filename.find("Cube")>-1):
+        pressure_field, velocity_field = initial_conditions_square_shock(my_mesh)
+    elif(filename.find("disk")>-1 or filename.find("Disk")>-1):
+        pressure_field, velocity_field = initial_conditions_disk_vortex(my_mesh)
+    else:
+        print "Mesh name : ", filename
+        raise ValueError("Mesh name should contain substring square, cube or disk")
 
     for k in range(nbCells):
         Un[k*(dim+1)+0] =      pressure_field[k]
@@ -258,12 +288,13 @@ def solve(my_mesh,meshName,resolution):
 def solve_file( filename,meshName, resolution):
     my_mesh = cdmath.Mesh(filename+".med")
 
-    return solve(my_mesh, meshName+str(my_mesh.getNumberOfCells()),resolution)
+    return solve(my_mesh, filename+str(my_mesh.getNumberOfCells()),resolution)
     
 
 if __name__ == """__main__""":
-	if len(sys.argv) >1 :
-		my_mesh = cdmath.Mesh(sys.argv[1])
-		solve(my_mesh,my_mesh.getName(),100)
-	else :
-		raise ValueError("WaveSystemPStag.py expects a mesh file name")
+    if len(sys.argv) >1 :
+        filename=sys.argv[1]
+        my_mesh = cdmath.Mesh(filename)
+        solve(my_mesh,filename,100)
+    else :
+        raise ValueError("WaveSystemUpwind.py expects a mesh file name")
