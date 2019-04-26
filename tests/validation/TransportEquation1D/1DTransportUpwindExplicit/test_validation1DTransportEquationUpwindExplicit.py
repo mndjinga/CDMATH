@@ -9,7 +9,7 @@ import time, json
 def test_validation1DTransportEquationUpwindExplicit(cfl,isSmooth):
     start = time.time()
     #### 1D regular grid
-    meshList=[50,100,200,400,800]
+    meshList=[10,20,50,100]
     meshType="1D regular grid"
     testColor="Green"
     nbMeshes=len(meshList)
@@ -57,7 +57,7 @@ def test_validation1DTransportEquationUpwindExplicit(cfl,isSmooth):
     plt.legend()
     plt.xlabel('Number of cells')
     plt.ylabel('Max |u|')
-    plt.title('Maximum velocity norm of the transport equation \n with explicit upwind scheme on a 1D regular grid')
+    plt.title('Maximum solution norm of the transport equation \n with explicit upwind scheme on a 1D regular grid')
     if(isSmooth):
         plt.savefig(mesh_name+"_1DTransportEquationUpwindExplicit_CFL"+str(cfl)+"_Smooth_MaxSolution.png")
     else:
@@ -90,15 +90,17 @@ def test_validation1DTransportEquationUpwindExplicit(cfl,isSmooth):
 
     b1u=np.dot(error_u_tab,mesh_size_tab)   
     b2u=np.sum(error_u_tab)
-    au=( a3*b1u-a2*b2u)/det
-    bu=(-a2*b1u+a1*b2u)/det
+    a=( a3*b1u-a2*b2u)/det
+    b=(-a2*b1u+a1*b2u)/det
     
-    print "Explicit Upwind scheme for Transport Equation on 1D regular grid : scheme order is ", -au
+    assert -a>1 and -a<1.02
+    
+    print "Explicit Upwind scheme for Transport Equation on 1D regular grid : scheme order is ", -a
     
     # Plot of convergence curve
     plt.close()
     plt.plot(mesh_size_tab, error_u_tab, label='log(|error|)')
-    plt.plot(mesh_size_tab, a*np.array(mesh_size_tab)+b,label='least square slope : '+'%.3f' % a)
+    plt.plot(mesh_size_tab, a*np.array(mesh_size_tab)+b,label='straight line with slope : '+'%.3f' % a)
     plt.legend()
     plt.xlabel('log(Number of cells)')
     plt.ylabel('log(|error u|)')
@@ -141,7 +143,7 @@ def test_validation1DTransportEquationUpwindExplicit(cfl,isSmooth):
     convergence_synthesis["Mesh_sizes"]=mesh_size_tab
     convergence_synthesis["Mesh_cell_type"]="1D regular grid"
     convergence_synthesis["Numerical_ersolution"]=max_u
-    convergence_synthesis["Scheme_order"]=-au
+    convergence_synthesis["Scheme_order"]=-a
     convergence_synthesis["Test_color"]=testColor
     convergence_synthesis["Computational_time"]=end-start
 

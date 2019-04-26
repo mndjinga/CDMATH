@@ -47,7 +47,7 @@ def solve(nx,cfl,a,b, isSmooth):
 
     Time = 0.
     it = 0
-    output_freq = 50
+    output_freq = ntmax
 
     ########################### Postprocessing initialisation
     # Picture frame
@@ -72,7 +72,7 @@ def solve(nx,cfl,a,b, isSmooth):
 
         Time += dt
         it += 1
-
+        
         # Postprocessing
         line1.set_ydata(u)
         if (it % output_freq == 0):
@@ -81,7 +81,6 @@ def solve(nx,cfl,a,b, isSmooth):
             plt.savefig("TransportEquation_UpwindExplicit_"+str(nx)+"Cells_Smoothness"+str(isSmooth)+"_CFL"+str(cfl)+"_ResultField_"+str(it)+".png")
             #plt.show()
             pass
-        pass
 
     if cfl<1 :
         assert max(u) <= max_initial+precision
@@ -104,6 +103,6 @@ if __name__ == """__main__""":
         solve(nx,cfl,0.,1.,isSmooth)
     else :
         nx = 50 # number of cells
-        cfl = 0.99 # c*dt/dx <= CFL
+        cfl = 1 # c*dt/dx <= CFL
         isSmooth=True
         solve(nx,cfl,0.,1.,isSmooth)

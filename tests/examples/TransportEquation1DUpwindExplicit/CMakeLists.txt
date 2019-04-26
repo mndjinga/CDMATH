@@ -3,7 +3,7 @@ if (CDMATH_WITH_PYTHON )
 
     SET(NX 100 )#Number of cells
 
-    SET(CFL  0.99  )#Courant Friedrichs Lewy number
+    SET(CFL  0.9999  )#Courant Friedrichs Lewy number
 
     ADD_TEST(ExampleTransportEquation_1DFV_Upwind_Explicit_CFL1 ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/1DTransportEquationUpwindExplicit.py ${NX} ${CFL})
 
