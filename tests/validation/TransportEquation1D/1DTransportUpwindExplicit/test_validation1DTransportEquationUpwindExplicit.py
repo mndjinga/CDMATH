@@ -44,6 +44,7 @@ def test_validation1DTransportEquationUpwindExplicit(cfl,isSmooth):
     plt.xlabel('x')
     plt.ylabel('u')
     plt.title('Plot of the numerical solution of the transport equation \n with explicit upwind scheme on a 1D regular grid')
+    plt.ylim( - 0.1, 1.1 )
     plt.legend()
     if(isSmooth):
         plt.savefig(mesh_name+"_1DTransportEquation_UpwindExplicit_CFL"+str(cfl)+"_Smooth_PlotOfSolution.png")    
@@ -93,9 +94,9 @@ def test_validation1DTransportEquationUpwindExplicit(cfl,isSmooth):
     a=( a3*b1u-a2*b2u)/det
     b=(-a2*b1u+a1*b2u)/det
     
-    assert -a>1 and -a<1.02
-    
     print "Explicit Upwind scheme for Transport Equation on 1D regular grid : scheme order is ", -a
+    
+    assert -a>0.9 and -a<1.02
     
     # Plot of convergence curve
     plt.close()
