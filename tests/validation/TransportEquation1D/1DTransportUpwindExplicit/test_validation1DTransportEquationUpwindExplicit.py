@@ -9,7 +9,7 @@ import time, json
 def test_validation1DTransportEquationUpwindExplicit(cfl,isSmooth):
     start = time.time()
     #### 1D regular grid
-    meshList=[10,20,50,100]
+    meshList=[10,20,50,100,200, 400]
     meshType="1D regular grid"
     testColor="Green"
     nbMeshes=len(meshList)
