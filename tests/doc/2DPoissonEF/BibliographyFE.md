@@ -18,7 +18,7 @@
   where $diam(K)$ is the diameter of the cell $K$ and $\rho(K)$ is the diameter of the largest inscribed circle.  
   See definition 6.3.11 in  
   *Grégoire Allaire, Numerical analysis and optimization, Oxford University Press, 2007*  
-  *J. Brandts, S. Korotov, M. Křı́žek, On the equivalence of ball conditions for simplicial finite elements in R d , Appl. Math. Lett. 22 (2009), 1210–1212*
+  *J. Brandts, S. Korotov, M. Křı́žek, On the equivalence of ball conditions for simplicial finite elements in $\mathbb{R}^d$ , Appl. Math. Lett. 22 (2009), 1210–1212*
 
 - The maximum angle condition (1976)  
   $\gamma_K\leq\gamma_0<\pi,\,\forall K\in \mathcal{T}$ where $\gamma_K$ is the maximal angle of $K$  
