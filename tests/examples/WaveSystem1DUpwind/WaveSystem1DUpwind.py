@@ -3,9 +3,9 @@
 
 import cdmath
 
-rho0=1000#reference density
-c0=1500#reference sound speed
-p0=rho0*c0*c0#reference pressure
+p0=155e5#reference pressure in a pressurised nuclear vessel
+c0=700.#reference sound speed for water at 155 bars, 600K
+rho0=p0/c0*c0#reference density
 precision=1e-5
 
 def initial_conditions_wave_system(my_mesh):

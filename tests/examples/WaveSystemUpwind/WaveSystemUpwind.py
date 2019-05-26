@@ -7,9 +7,9 @@ import PV_routines
 import VTK_routines
 import sys
 
-rho0=1000#reference density
-c0=1500#reference sound speed
-p0=rho0*c0*c0#reference pressure
+p0=155e5#reference pressure in a pressurised nuclear vessel
+c0=700.#reference sound speed for water at 155 bars, 600K
+rho0=p0/c0*c0#reference density
 precision=1e-5
 
 def initial_conditions_disk_vortex(my_mesh):
@@ -270,7 +270,7 @@ def solve(my_mesh,filename,resolution):
     # Problem data
     tmax = 1.
     ntmax = 100
-    cfl = 0.45
+    cfl = 1./my_mesh.getSpaceDimension()
     output_freq = 100
 
     WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, filename,resolution)
@@ -286,4 +286,3 @@ if __name__ == """__main__""":
         solve(my_mesh,filename,100)
     else :
         raise ValueError("WaveSystemUpwind.py expects a mesh file name")
-
