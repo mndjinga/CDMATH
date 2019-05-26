@@ -14,14 +14,12 @@
 #================================================================================================================================
 
 
-from math import sin, cos, pi, sqrt
 import numpy as np
 from copy import deepcopy
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import matplotlib.animation as manimation
-import sys
 
 def Flux_upwind(u_l, u_r):
     if ((u_l+u_r)/2>0):

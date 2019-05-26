@@ -23,7 +23,6 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import matplotlib.animation as manimation
-import sys
 
 def Flux_Godunov(u_l, u_r):
     if (u_l==u_r):
