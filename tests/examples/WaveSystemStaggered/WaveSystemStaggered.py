@@ -182,13 +182,6 @@ def computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt,scaling):
                 implMat.addValue(  3*nbCells +   l*nx*ny        + j*nx + i,k,  c0*dt/dz)
                 implMat.addValue(  3*nbCells + ((l+1)%nz)*nx*ny + j*nx + i,k, -c0*dt/dz)
 
-    #Add the identity matrix on the diagonal
-    #divMat.diagonalShift(1)#only after  filling all coefficients
-    for j in range(nbCells*nbComp):
-        implMat.addValue(j,j,1)#/(c0*c0)
-
-    return implMat
-                
     return implMat
 
 def WaveSystemStaggered(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution):
@@ -239,9 +232,13 @@ def WaveSystemStaggered(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolu
 
     divMat=computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt,scaling)
 
-    # Add the identity matrix on the diagonal
-    for j in range(nbCells*(dim+1)):
-        divMat.addValue(j,j,1.)
+    #Add the identity matrix on the diagonal
+    if( scaling==0 ):
+        for j in range(nbCells*(dim+1)):
+            divMat.addValue(j,j,1)#/(c0*c0)
+    else:# scaling >0
+        raise ValueError("WaveSystemStaggered: add diagonal coefficient to the scaled system");
+
     LS=cdmath.LinearSolver(divMat,Un,iterGMRESMax, precision, "GMRES","LU")
 
     print("Starting computation of the linear wave system with an pseudo staggered scheme …")
