@@ -36,7 +36,7 @@ INCLUDE_DIRECTORIES(
 IF(${CMAKE_VERSION} VERSION_LESS "3.8.0") 
   SWIG_ADD_MODULE(cdmath python ${CMAKE_BINARY_DIR}/swig/cdmath.i)
 ELSE()
-  SWIG_ADD_LIBRARY(cdmath SHARED LANGUAGE python SOURCES ${CMAKE_BINARY_DIR}/swig/cdmath.i)
+  SWIG_ADD_LIBRARY(cdmath TYPE SHARED LANGUAGE python SOURCES ${CMAKE_BINARY_DIR}/swig/cdmath.i)
 ENDIF()
 SWIG_LINK_LIBRARIES(cdmath ${PYTHON_LIBS} base mesh medloader ${_extra_lib_SWIG})
 
