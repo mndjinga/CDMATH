@@ -194,11 +194,9 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,sc
             dUn-=Un
 
         else:
-            dUn=divMat*Un-S*dt
+            dUn=divMat*Un
             Un-=dUn
         
-        maxVector=dUn.maxVector(dim+1)
-
         time=time+dt;
         it=it+1;
     
@@ -207,6 +205,14 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,sc
             print"-- Iter: " + str(it) + ", Time: " + str(time) + ", dt: " + str(dt)
             if(isImplicit):
                 print "Linear system converged in ", LS.getNumberOfIter(), " GMRES iterations"
+
+            for k in range(nbCells):
+                pressure_field[k]  =Un[k*(dim+1)+0]
+                velocity_field[k,0]=Un[k*(dim+1)+1]/rho0
+                if(dim>1):
+                    velocity_field[k,1]=Un[k*(dim+1)+2]/rho0
+                    if(dim>2):
+                        velocity_field[k,2]=Un[k*(dim+1)+3]/rho0
 
             pressure_field.setTime(time,it);
             pressure_field.writeVTK("WaveSystem"+str(dim)+"DUpwind"+meshName+"_pressure",False);
