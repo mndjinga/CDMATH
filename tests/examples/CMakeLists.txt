@@ -3,7 +3,7 @@ file(GLOB NICE_EXAMPLES_TO_INSTALL
   HeatEquation1DExplicit HeatEquation1DImplicit BurgersEquation1D # 1D Heat and Burgers' equations
   TransportEquation1DUpwindExplicit TransportEquation1DUpwindImplicit TransportEquation1DCenteredImplicit TransportEquation1DCenteredExplicit # 1D Transport equation 
   Poisson2DEF Poisson2DEF_disk Poisson2DVF Poisson2DVF_disk Poisson3DEF Poisson3DEF_BALL Poisson3DVF Poisson3DVF_BALL Poisson3DSphereEF Poisson3DTorusEF  
-  WaveSystem1DUpwind WaveSystemUpwind WaveSystemCentered WaveSystemPStag WaveSystemStaggered 
+  WaveSystem1DUpwind WaveSystem1DFV_RiemannProblem WaveSystemUpwind WaveSystemCentered WaveSystemPStag WaveSystemStaggered 
 )
 
 install(DIRECTORY ${NICE_EXAMPLES_TO_INSTALL} DESTINATION share/examples)
@@ -27,6 +27,7 @@ IF (CDMATH_WITH_PYTHON AND CDMATH_WITH_PETSC AND CDMATH_WITH_POSTPRO)
     ADD_SUBDIRECTORY(Poisson3DVF)
     ADD_SUBDIRECTORY(Poisson3DVF_BALL)
     ADD_SUBDIRECTORY(WaveSystem1DUpwind)
+    ADD_SUBDIRECTORY(WaveSystem1DFV_RiemannProblem)
     ADD_SUBDIRECTORY(WaveSystemUpwind)
     ADD_SUBDIRECTORY(WaveSystemPStag)
     ADD_SUBDIRECTORY(WaveSystemStaggered)
