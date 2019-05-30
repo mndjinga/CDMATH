@@ -1,6 +1,20 @@
 #!/usr/bin/env python
 # -*-coding:utf-8 -*
 
+#===============================================================================================================================
+# Name        : Résolution VF du système des ondes 2D sans terme source
+#                \partial_t p + c^2 \div q = 0
+#                \partial_t q +    \grad p = 0
+# Author      : Michaël Ndjinga
+# Copyright   : CEA Saclay 2019
+# Description : Propagation d'une onde de choc
+#               Utilisation du schéma upwind explicite ou implicite sur un maillage général
+#               Initialisation par une surpression sphérique
+#               Conditions aux limites périodiques
+#		        Création et sauvegarde du champ résultant et des figures
+#================================================================================================================================
+
+
 from math import sin, cos, pi, sqrt
 import cdmath
 import PV_routines
