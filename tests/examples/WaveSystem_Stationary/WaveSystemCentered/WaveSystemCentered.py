@@ -36,58 +36,44 @@ def initial_conditions_disk_vortex(my_mesh):
 
     return pressure_field, velocity_field
 
-def initial_conditions_square_shock(my_mesh):
-    print "Spherical wave in a square : initial data"
+def initial_conditions_square_vortex(my_mesh):
+    print "Initial data : Square vortex (Constant pressure, divergence free velocity)"
     dim     = my_mesh.getMeshDimension()
     nbCells = my_mesh.getNumberOfCells()
 
-    rayon = 0.15
-    xcentre = 0.5
-    ycentre = 0.5
-    zcentre = 0.5
-
-    pressure_field = cdmath.Field("Pressure",            cdmath.CELLS, my_mesh, 1)
-    velocity_field = cdmath.Field("Velocity",            cdmath.CELLS, my_mesh, 3)
+    pressure_field = cdmath.Field("Pressure", cdmath.CELLS, my_mesh, 1)
+    velocity_field = cdmath.Field("Velocity", cdmath.CELLS, my_mesh, 3)
 
     for i in range(nbCells):
         x = my_mesh.getCell(i).x()
         y = my_mesh.getCell(i).y()
+        z = my_mesh.getCell(i).z()
 
-        velocity_field[i,0] = 0
-        velocity_field[i,1] = 0
-        velocity_field[i,2] = 0
-
-        valX = (x - xcentre) * (x - xcentre)
-        valY = (y - ycentre) * (y - ycentre)
-        if(dim==2):
-            val =  sqrt(valX + valY)
-        if(dim==3):
-            z = my_mesh.getCell(i).z()
-            valZ = (z - zcentre) * (z - zcentre)
-            val =  sqrt(valX + valY + valZ)
-            
-        if val < rayon:
-            pressure_field[i] = p0
-            pass
-        else:
-            pressure_field[i] = p0/2
-            pass
-        pass
+        pressure_field[i] = p0
+        if(dim==1):
+            velocity_field[i,0] = 1
+            velocity_field[i,1] = 0
+            velocity_field[i,2] = 0
+        elif(dim==2):
+            velocity_field[i,0] =  sin(pi*x)*cos(pi*y)
+            velocity_field[i,1] = -sin(pi*y)*cos(pi*x)
+            velocity_field[i,2] = 0
+        elif(dim==3):
+            velocity_field[i,0] =    sin(pi*x)*cos(pi*y)*cos(pi*z)
+            velocity_field[i,1] =    sin(pi*y)*cos(pi*x)*cos(pi*z)
+            velocity_field[i,2] = -2*sin(pi*z)*cos(pi*x)*cos(pi*y)
         
     return pressure_field, velocity_field
 
 def jacobianMatrices(normal, coeff, signun):
     dim=normal.size()
     A=cdmath.Matrix(dim+1,dim+1)
-    absA=cdmath.Matrix(dim+1,dim+1)
 
     for i in range(dim):
         A[i+1,0]=normal[i]*coeff
-        absA[i+1,0]=-signun*A[i+1,0]
         A[0,i+1]=c0*c0*normal[i]*coeff
-        absA[0,i+1]=signun*A[0,i+1]
     
-    return (A-absA)/2
+    return A/2
     
     
 def computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt):
@@ -173,7 +159,7 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, filename,resolution):
     # Initial conditions #
     print("Construction of the initial condition …")
     if(filename.find("square")>-1 or filename.find("Square")>-1 or filename.find("cube")>-1 or filename.find("Cube")>-1):
-        pressure_field, velocity_field = initial_conditions_square_shock(my_mesh)
+        pressure_field, velocity_field = initial_conditions_square_vortex(my_mesh)
     elif(filename.find("disk")>-1 or filename.find("Disk")>-1):
         pressure_field, velocity_field = initial_conditions_disk_vortex(my_mesh)
     else:
@@ -189,12 +175,12 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, filename,resolution):
             
     #sauvegarde de la donnée initiale
     pressure_field.setTime(time,it);
-    pressure_field.writeVTK("WaveSystem"+str(dim)+"DPStag"+meshName+"_pressure");
+    pressure_field.writeVTK("WaveSystem"+str(dim)+"DCentered"+meshName+"_pressure");
     velocity_field.setTime(time,it);
-    velocity_field.writeVTK("WaveSystem"+str(dim)+"DPStag"+meshName+"_velocity");
+    velocity_field.writeVTK("WaveSystem"+str(dim)+"DCentered"+meshName+"_velocity");
     #Postprocessing : save 2D picture
-    PV_routines.Save_PV_data_to_picture_file("WaveSystem"+str(dim)+"DPStag"+meshName+"_pressure"+'_0.vtu',"Pressure",'CELLS',"WaveSystem"+str(dim)+"DPStag"+meshName+"_pressure_initial")
-    PV_routines.Save_PV_data_to_picture_file("WaveSystem"+str(dim)+"DPStag"+meshName+"_velocity"+'_0.vtu',"Velocity",'CELLS',"WaveSystem"+str(dim)+"DPStag"+meshName+"_velocity_initial")
+    PV_routines.Save_PV_data_to_picture_file("WaveSystem"+str(dim)+"DCentered"+meshName+"_pressure"+'_0.vtu',"Pressure",'CELLS',"WaveSystem"+str(dim)+"DCentered"+meshName+"_pressure_initial")
+    PV_routines.Save_PV_data_to_picture_file("WaveSystem"+str(dim)+"DCentered"+meshName+"_velocity"+'_0.vtu',"Velocity",'CELLS',"WaveSystem"+str(dim)+"DCentered"+meshName+"_velocity_initial")
     
     dx_min=my_mesh.minRatioVolSurf()
 
@@ -207,7 +193,7 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, filename,resolution):
         divMat.addValue(j,j,1.)
     LS=cdmath.LinearSolver(divMat,Un,iterGMRESMax, precision, "GMRES","LU")
 
-    print("Starting computation of the linear wave system with an pseudo staggered scheme …")
+    print("Starting computation of the linear wave system with a centered scheme …")
     
     # Starting time loop
     while (it<ntmax and time <= tmax and not isStationary):
@@ -243,9 +229,9 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, filename,resolution):
                         velocity_field[k,2]=Un[k*(dim+1)+3]/rho0
                 
             pressure_field.setTime(time,it);
-            pressure_field.writeVTK("WaveSystem"+str(dim)+"DPStag"+meshName+"_pressure",False);
+            pressure_field.writeVTK("WaveSystem"+str(dim)+"DCentered"+meshName+"_pressure",False);
             velocity_field.setTime(time,it);
-            velocity_field.writeVTK("WaveSystem"+str(dim)+"DPStag"+meshName+"_velocity",False);
+            velocity_field.writeVTK("WaveSystem"+str(dim)+"DCentered"+meshName+"_velocity",False);
 
     print"-- Iter: " + str(it) + ", Time: " + str(time) + ", dt: " + str(dt)
     print "Variation temporelle relative : pressure ", maxVector[0]/p0 ,", velocity x", maxVector[1]/rho0 ,", velocity y", maxVector[2]/rho0
@@ -258,13 +244,13 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, filename,resolution):
         print "------------------------------------------------------------------------------------"
 
         pressure_field.setTime(time,0);
-        pressure_field.writeVTK("WaveSystem"+str(dim)+"DPStag"+meshName+"_pressure_Stat");
+        pressure_field.writeVTK("WaveSystem"+str(dim)+"DCentered"+meshName+"_pressure_Stat");
         velocity_field.setTime(time,0);
-        velocity_field.writeVTK("WaveSystem"+str(dim)+"DPStag"+meshName+"_velocity_Stat");
+        velocity_field.writeVTK("WaveSystem"+str(dim)+"DCentered"+meshName+"_velocity_Stat");
 
         #Postprocessing : save 2D picture
-        PV_routines.Save_PV_data_to_picture_file("WaveSystem"+str(dim)+"DPStag"+meshName+"_pressure_Stat"+'_0.vtu',"Pressure",'CELLS',"WaveSystem"+str(dim)+"DPStag"+meshName+"_pressure_Stat")
-        PV_routines.Save_PV_data_to_picture_file("WaveSystem"+str(dim)+"DPStag"+meshName+"_velocity_Stat"+'_0.vtu',"Velocity",'CELLS',"WaveSystem"+str(dim)+"DPStag"+meshName+"_velocity_Stat")
+        PV_routines.Save_PV_data_to_picture_file("WaveSystem"+str(dim)+"DCentered"+meshName+"_pressure_Stat"+'_0.vtu',"Pressure",'CELLS',"WaveSystem"+str(dim)+"DCentered"+meshName+"_pressure_Stat")
+        PV_routines.Save_PV_data_to_picture_file("WaveSystem"+str(dim)+"DCentered"+meshName+"_velocity_Stat"+'_0.vtu',"Velocity",'CELLS',"WaveSystem"+str(dim)+"DCentered"+meshName+"_velocity_Stat")
         
     else:
         print "Temps maximum Tmax= ", tmax, " atteint"
@@ -272,7 +258,7 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, filename,resolution):
 
 def solve(my_mesh,meshName,resolution):
     print "Resolution of the Wave system in dimension ", my_mesh.getSpaceDimension()
-    print "Numerical method : implicit pseudo staggered"
+    print "Numerical method : implicit centered"
     print "Initial data : constant pressure, divergence free velocity"
     print "Wall boundary conditions"
     print "Mesh name : ",meshName , my_mesh.getNumberOfCells(), " cells"

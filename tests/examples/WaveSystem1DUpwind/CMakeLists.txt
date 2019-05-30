@@ -1,11 +1,4 @@
 
-SET(MESH_MED
-  ../../ressources/meshSquare.med
-  )
-
-file(COPY ${MESH_MED} DESTINATION ${CMAKE_BINARY_DIR}/tests/examples/WaveSystem1DUpwind)
-install(FILES ${MESH_MED} DESTINATION share/examples/WaveSystem1DUpwind)
-
 if (CDMATH_WITH_PYTHON AND CDMATH_WITH_PETSC AND CDMATH_WITH_POSTPRO)
 
     ADD_TEST(ExampleWaveSystem_1DFV_Upwind ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/WaveSystem1DUpwind.py)

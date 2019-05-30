@@ -12,43 +12,32 @@ c0=700.#reference sound speed for water at 155 bars, 600K
 rho0=p0/c0*c0#reference density
 precision=1e-5
 
-def initial_conditions_wave_system(my_mesh):
-    print "Spherical wave initial data"
+def initial_conditions_square_vortex(my_mesh):
+    print "Initial data : Square vortex (Constant pressure, divergence free velocity)"
     dim     = my_mesh.getMeshDimension()
     nbCells = my_mesh.getNumberOfCells()
 
-    rayon = 0.15
-    xcentre = 0.5
-    ycentre = 0.5
-    zcentre = 0.5
-
-    pressure_field = cdmath.Field("Pressure",            cdmath.CELLS, my_mesh, 1)
-    velocity_field = cdmath.Field("Velocity",            cdmath.CELLS, my_mesh, 3)
+    pressure_field = cdmath.Field("Pressure", cdmath.CELLS, my_mesh, 1)
+    velocity_field = cdmath.Field("Velocity", cdmath.CELLS, my_mesh, 3)
 
     for i in range(nbCells):
         x = my_mesh.getCell(i).x()
         y = my_mesh.getCell(i).y()
+        z = my_mesh.getCell(i).z()
 
-        velocity_field[i,0] = 0
-        velocity_field[i,1] = 0
-        velocity_field[i,2] = 0
-
-        valX = (x - xcentre) * (x - xcentre)
-        valY = (y - ycentre) * (y - ycentre)
-        if(dim==2):
-            val =  sqrt(valX + valY)
-        if(dim==3):
-            z = my_mesh.getCell(i).z()
-            valZ = (z - zcentre) * (z - zcentre)
-            val =  sqrt(valX + valY + valZ)
-            
-        if val < rayon:
-            pressure_field[i] = p0
-            pass
-        else:
-            pressure_field[i] = p0/2
-            pass
-        pass
+        pressure_field[i] = p0
+        if(dim==1):
+            velocity_field[i,0] = 1
+            velocity_field[i,1] = 0
+            velocity_field[i,2] = 0
+        elif(dim==2):
+            velocity_field[i,0] =  sin(pi*x)*cos(pi*y)
+            velocity_field[i,1] = -sin(pi*y)*cos(pi*x)
+            velocity_field[i,2] = 0
+        elif(dim==3):
+            velocity_field[i,0] =    sin(pi*x)*cos(pi*y)*cos(pi*z)
+            velocity_field[i,1] =    sin(pi*y)*cos(pi*x)*cos(pi*z)
+            velocity_field[i,2] = -2*sin(pi*z)*cos(pi*x)*cos(pi*y)
         
     return pressure_field, velocity_field
 
@@ -204,7 +193,7 @@ def WaveSystemStaggered(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolu
     
     # Initial conditions #
     print("Construction of the initial condition …")
-    pressure_field, velocity_field = initial_conditions_wave_system(my_mesh)
+    pressure_field, velocity_field = initial_conditions_square_vortex(my_mesh)
 
     for k in range(nbCells):
         Un[k + 0*nbCells] =      pressure_field[k]
