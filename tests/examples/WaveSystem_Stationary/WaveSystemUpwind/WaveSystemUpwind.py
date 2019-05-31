@@ -78,50 +78,33 @@ def initial_conditions_square_vortex(my_mesh):
         
     return pressure_field, velocity_field
 
-def jacobianMatrices(normal):
+def jacobianMatrices(normal,coeff):
     dim=normal.size()
     A=cdmath.Matrix(dim+1,dim+1)
     absA=cdmath.Matrix(dim+1,dim+1)
 
-    absA[0,0]=c0
+    absA[0,0]=c0*coeff
     for i in range(dim):
-        A[i+1,0]=normal[i]
-        A[0,i+1]=c0*c0*normal[i]
+        A[i+1,0]=      normal[i]*coeff
+        A[0,i+1]=c0*c0*normal[i]*coeff
         for j in range(dim):
-            absA[i+1,j+1]=c0*normal[i]*normal[j]
+            absA[i+1,j+1]=c0*normal[i]*normal[j]*coeff
     
     return A, absA
     
-def Flux(U, normal):
-    dim=normal.size()
-
-    result=cdmath.Vector(dim+1)
-    for i in range(dim):
-        result[0]  +=normal[i]*U[i+1]
-        result[i+1] =normal[i]*U[0]
-        
-    result[0]=c0*c0*result[0]
-    
-    return result
-    
-def computeFluxes(U, SumFluxes):
-    my_mesh =U.getMesh();
-    nbCells = my_mesh.getNumberOfCells();
-    dim=my_mesh.getMeshDimension();
-    nbComp=U.getNumberOfComponents();
-    Fcourant=cdmath.Vector(nbComp)
-    Fautre=cdmath.Vector(nbComp)
-    Ucourant=cdmath.Vector(nbComp)
-    Uautre=cdmath.Vector(nbComp)
+def computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt):
+    nbCells = my_mesh.getNumberOfCells()
+    dim=my_mesh.getMeshDimension()
+    nbComp=dim+1
     normal=cdmath.Vector(dim)
-    sumFluxCourant=cdmath.Vector(nbComp)
 
-    for j in range(nbCells):#On parcourt les cellules         
+    implMat=cdmath.SparseMatrixPetsc(nbCells*nbComp,nbCells*nbComp,(nbVoisinsMax+1)*nbComp)
+
+    idMoinsJacCL=cdmath.Matrix(nbComp)
+    
+    for j in range(nbCells):#On parcourt les cellules
         Cj = my_mesh.getCell(j)
         nbFaces = Cj.getNumberOfFaces();
-        for i in range(nbComp) :
-            Ucourant[i]=U[j,i];
-            sumFluxCourant[i]=0;
 
         for k in range(nbFaces) :
             indexFace = Cj.getFacesId()[k];
@@ -129,7 +112,9 @@ def computeFluxes(U, SumFluxes):
             for i in range(dim) :
                 normal[i] = Cj.getNormalVector(k, i);#normale sortante
 
-            cellAutre = -1;
+            Am=jacobianMatrices( normal,dt*Fk.getMeasure()/Cj.getMeasure());
+
+            cellAutre =-1
             if ( not Fk.isBorder()) :
                 # hypothese: La cellule d'index indexC1 est la cellule courante index j */
                 if (Fk.getCellsId()[0] == j) :
@@ -139,38 +124,21 @@ def computeFluxes(U, SumFluxes):
                     # hypothese non verifiée 
                     cellAutre = Fk.getCellsId()[0];
                 else :
-                    raise ValueError("computeFluxes: problem with mesh, unknown cel number");
+                    raise ValueError("computeFluxes: problem with mesh, unknown cell number")
+                    
+                implMat.addValue(j*nbComp,cellAutre*nbComp,Am)
+                implMat.addValue(j*nbComp,        j*nbComp,Am*(-1.))
+            else  :
+                indexFP = my_mesh.getIndexFacePeriodic(indexFace, my_mesh.getName()== "squareWithBrickWall", my_mesh.getName()== "squareWithHexagons")
+                Fp = my_mesh.getFace(indexFP)
+                cellAutre = Fp.getCellsId()[0]
                 
-                for i in range(nbComp):
-                    Uautre[i]=U[cellAutre,i]
-            else :
-                if(Fk.getGroupName() != "Neumann"):#Wall boundary condition unless Wall/Neumann specified explicitly
-                    for i in range(nbComp):
-                        Uautre[i]=Ucourant[i]
-                    qn=0# normal momentum
-                    for i in range(dim):
-                        qn+=Ucourant[i+1]*normal[i]
-                    for i in range(dim):
-                        Uautre[i+1]-=2*qn*normal[i]
-                elif(Fk.getGroupName() == "Neumann"):
-                    for i in range(nbComp):
-                        Uautre[i]=Ucourant[i]
-                else:
-                    print Fk.getGroupName()
-                    raise ValueError("computeFluxes: Unknown boundary condition name");
-            
-            Fcourant=Flux(Ucourant,normal);
-            Fautre  =Flux(Uautre,  normal);
-
-            A, absA=jacobianMatrices( normal);
-            sumFluxCourant = sumFluxCourant + (Fcourant+Fautre +absA*(Ucourant-Uautre))*Fk.getMeasure()*0.5
+                implMat.addValue(j*nbComp,cellAutre*nbComp,Am)
+                implMat.addValue(j*nbComp,        j*nbComp,Am*(-1.))
                 
-        #On divise par le volume de la cellule la contribution des flux au snd membre
-        for i in range(nbComp):
-            SumFluxes[j,i]=sumFluxCourant[i]/Cj.getMeasure()
+    return implMat
 
-
-def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, filename,resolution):
+def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, filename,resolution, isImplicit):
     dim=my_mesh.getMeshDimension()
     nbCells = my_mesh.getNumberOfCells()
     meshName=my_mesh.getName()
@@ -179,8 +147,7 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, filename,resolution):
     time = 0.
     it=0;
     isStationary=False;
-    
-    SumFluxes = cdmath.Field("Fluxes", cdmath.CELLS, my_mesh, dim+1)
+    nbVoisinsMax=my_mesh.getMaxNbNeighbours(cdmath.CELLS)
 
     # Initial conditions #
     print("Construction of the initial condition …")
@@ -208,17 +175,33 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, filename,resolution):
 
     dt = cfl * dx_min / c0
     
-    print("Starting computation of the linear wave system with an explicit UPWIND scheme …")
+    divMat=computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt)
+    if( isImplicit):
+        #Adding the identity matrix on the diagonal
+        divMat.diagonalShift(1)#only after  filling all coefficients
+        
+        iterGMRESMax=50
+        LS=cdmath.LinearSolver(divMat,Un,iterGMRESMax, precision, "GMRES","ILU")
+
+        LS.setComputeConditionNumber()
+        
+    print("Starting computation of the linear wave system with an UPWIND scheme …")
     
     # Starting time loop
     while (it<ntmax and time <= tmax and not isStationary):
-        computeFluxes(U,SumFluxes);
+        if(isImplicit):
+            dUn=Un.deepCopy()
+            LS.setSndMember(Un)
+            Un=LS.solve();
+            if(not LS.getStatus()):
+                print "Linear system did not converge ", LS.getNumberOfIter(), " GMRES iterations"
+                raise ValueError("Pas de convergence du système linéaire");
+            dUn-=Un
 
-        SumFluxes*=dt;
-        maxVector=SumFluxes.normMax()
-        isStationary= maxVector[0]/p0<precision and maxVector[1]/rho0<precision and maxVector[2]/rho0<precision;
-        U-=SumFluxes;
-    
+        else:
+            dUn=divMat*Un
+            Un-=dUn
+        
         time=time+dt;
         it=it+1;
  
@@ -265,7 +248,7 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, filename,resolution):
         print "Temps maximum Tmax= ", tmax, " atteint"
 
 
-def solve(my_mesh,filename,resolution):
+def solve(my_mesh,filename,resolution, isImplicit):
     print("Resolution of the Wave system with Wall boundary conditions:")
 
     # Problem data
@@ -274,16 +257,17 @@ def solve(my_mesh,filename,resolution):
     cfl = 1./my_mesh.getSpaceDimension()
     output_freq = 100
 
-    WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, filename,resolution)
+    WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, filename,resolution, isImplicit)
 
 def solve_file( filename,resolution):
     my_mesh = cdmath.Mesh(filename+".med")
-    solve(my_mesh, filename,resolution)
+    solve(my_mesh, filename,resolution, isImplicit)
     
 if __name__ == """__main__""":
-    if len(sys.argv) >1 :
+    if len(sys.argv) >2 :
         filename=sys.argv[1]
+        isImplicit=bool(int(sys.argv[2]))
         my_mesh = cdmath.Mesh(filename)
-        solve(my_mesh,filename,100)
+        solve(my_mesh,filename,100, isImplicit)
     else :
-        raise ValueError("WaveSystemUpwind.py expects a mesh file name")
+        raise ValueError("WaveSystemUpwind.py expects a mesh file name and a boolean (isImplicit)")
