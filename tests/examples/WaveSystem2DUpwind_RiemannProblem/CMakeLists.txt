@@ -1,6 +1,6 @@
 
 SET(MESH_MED
-  ../../ressources/meshSquare.med
+  ../../ressources/squareWithTriangles.med
   ../../ressources/squareWithSquares.med
   ../../ressources/squareWithBrickWall.med
   ../../ressources/squareWithCheckerboardSquares.med
