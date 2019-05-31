@@ -10,7 +10,7 @@
 # Description : Propagation d'une onde de choc sphérique
 #               Utilisation du schéma upwind explicite ou implicite sur un maillage général
 #               Initialisation par une surpression sphérique
-#               Conditions aux limites périodiques
+#               Conditions aux limites parois
 #		        Création et sauvegarde du champ résultant et des figures
 #================================================================================================================================
 
@@ -119,12 +119,24 @@ def computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt):
                 implMat.addValue(j*nbComp,cellAutre*nbComp,Am)
                 implMat.addValue(j*nbComp,        j*nbComp,Am*(-1.))
             else  :
-                indexFP = my_mesh.getIndexFacePeriodic(indexFace, my_mesh.getName()== "squareWithBrickWall", my_mesh.getName()== "squareWithHexagons")
-                Fp = my_mesh.getFace(indexFP)
-                cellAutre = Fp.getCellsId()[0]
-                
-                implMat.addValue(j*nbComp,cellAutre*nbComp,Am)
-                implMat.addValue(j*nbComp,        j*nbComp,Am*(-1.))
+                if( Fk.getGroupName() != "Periodic" and Fk.getGroupName() != "Neumann"):#Wall boundary condition unless Periodic/Neumann specified explicitly
+                    v=cdmath.Vector(dim+1)
+                    for i in range(dim) :
+                        v[i+1]=normal[i]
+                    idMoinsJacCL=v.tensProduct(v)*2
+                    
+                    implMat.addValue(j*nbComp,j*nbComp,Am*(-1.)*idMoinsJacCL)
+                    
+                elif( Fk.getGroupName() == "Periodic"):#Periodic boundary condition
+                    indexFP=my_mesh.getIndexFacePeriodic(indexFace)
+                    Fp = my_mesh.getFace(indexFP)
+                    cellAutre = Fp.getCellsId()[0]
+                    
+                    implMat.addValue(j*nbComp,cellAutre*nbComp,Am)
+                    implMat.addValue(j*nbComp,        j*nbComp,Am*(-1.))
+                elif(Fk.getGroupName() != "Neumann"):#Nothing to do for Neumann boundary condition
+                    print Fk.getGroupName()
+                    raise ValueError("computeFluxes: Unknown boundary condition name");
                 
     return implMat
 
