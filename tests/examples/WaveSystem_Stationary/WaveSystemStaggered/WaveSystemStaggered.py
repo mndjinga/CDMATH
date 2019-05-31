@@ -311,7 +311,7 @@ def WaveSystemStaggered(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolu
 def solve(my_mesh,meshName,resolution):
     print "Resolution of the Wave system in dimension ", my_mesh.getSpaceDimension()
     print "Numerical method : staggered scheme"
-    print "Initial data : Spherical wave"
+    print "Initial data : stationary solution (constant pressure, divergence free velocity)"
     print "Periodic boundary conditions"
     print "Mesh name : ",meshName , my_mesh.getNumberOfCells(), " cells"
     

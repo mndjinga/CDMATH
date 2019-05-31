@@ -276,7 +276,7 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, filename,resolution):
 def solve(my_mesh,meshName,resolution):
     print "Resolution of the Wave system in dimension ", my_mesh.getSpaceDimension()
     print "Numerical method : implicit pseudo staggered"
-    print "Initial data : constant pressure, divergence free velocity"
+    print "Initial data : stationary solution (constant pressure, divergence free velocity)"
     print "Wall boundary conditions"
     print "Mesh name : ",meshName , my_mesh.getNumberOfCells(), " cells"
     

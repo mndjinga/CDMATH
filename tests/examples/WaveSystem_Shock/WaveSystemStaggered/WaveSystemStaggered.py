@@ -26,15 +26,20 @@ c0=700.#reference sound speed for water at 155 bars, 600K
 rho0=p0/c0*c0#reference density
 precision=1e-5
 
-def initial_conditions_shock(my_mesh):
+def initial_conditions_shock(my_mesh, isCircle):
     print "Initial data : Spherical wave"
     dim     = my_mesh.getMeshDimension()
     nbCells = my_mesh.getNumberOfCells()
 
     rayon = 0.15
-    xcentre = 0.5
-    ycentre = 0.5
-    zcentre = 0.5
+    if(not isCircle):
+        xcentre = 0.5
+        ycentre = 0.5
+        zcentre = 0.5
+    else:
+        xcentre = 0.
+        ycentre = 0.
+        zcentre = 0.
 
 
     pressure_field = cdmath.Field("Pressure",            cdmath.CELLS, my_mesh, 1)
@@ -220,7 +225,13 @@ def WaveSystemStaggered(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolu
     
     # Initial conditions #
     print("Construction of the initial condition …")
-    pressure_field, velocity_field = initial_conditions_shock(my_mesh)
+    if(filename.find("square")>-1 or filename.find("Square")>-1 or filename.find("cube")>-1 or filename.find("Cube")>-1):
+        pressure_field, velocity_field = initial_conditions_shock(my_mesh,False)
+    elif(filename.find("disk")>-1 or filename.find("Disk")>-1):
+        pressure_field, velocity_field = initial_conditions_shock(my_mesh,True)
+    else:
+        print "Mesh name : ", filename
+        raise ValueError("Mesh name should contain substring square, cube or disk")
 
     for k in range(nbCells):
         Un[k + 0*nbCells] =      pressure_field[k]
@@ -332,7 +343,7 @@ def solve(my_mesh,meshName,resolution):
     tmax = 1000.
     ntmax = 100
     cfl = 1./my_mesh.getSpaceDimension()
-    output_freq = 100
+    output_freq = 1
 
     WaveSystemStaggered(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution)
 

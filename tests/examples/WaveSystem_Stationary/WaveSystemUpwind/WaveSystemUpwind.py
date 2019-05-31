@@ -265,7 +265,11 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, filename,resolution, is
 
 
 def solve(my_mesh,filename,resolution, isImplicit):
-    print("Resolution of the Wave system")
+    print "Resolution of the Wave system in dimension ", my_mesh.getSpaceDimension()
+    print "Numerical method : upwind"
+    print "Initial data : stationary solution (constant pressure, divergence free velocity)"
+    print "Wall boundary conditions"
+    print "Mesh name : ",filename , my_mesh.getNumberOfCells(), " cells"
 
     # Problem data
     tmax = 1.
