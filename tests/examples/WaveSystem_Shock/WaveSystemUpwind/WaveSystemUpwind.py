@@ -41,25 +41,27 @@ def initial_conditions_shock(my_mesh, isCircle):
         ycentre = 0.
         zcentre = 0.
 
-
     pressure_field = cdmath.Field("Pressure",            cdmath.CELLS, my_mesh, 1)
     velocity_field = cdmath.Field("Velocity",            cdmath.CELLS, my_mesh, 3)
 
     for i in range(nbCells):
-        x = my_mesh.getCell(i).x()
-        y = my_mesh.getCell(i).y()
-
         velocity_field[i,0] = 0
         velocity_field[i,1] = 0
         velocity_field[i,2] = 0
 
+        x = my_mesh.getCell(i).x()
         valX = (x - xcentre) * (x - xcentre)
-        valY = (y - ycentre) * (y - ycentre)
 
+        if(dim==1):
+            val =  sqrt(valX)
         if(dim==2):
+            y = my_mesh.getCell(i).y()
+            valY = (y - ycentre) * (y - ycentre)
             val =  sqrt(valX + valY)
         if(dim==3):
+            y = my_mesh.getCell(i).y()
             z = my_mesh.getCell(i).z()
+            valY = (y - ycentre) * (y - ycentre)
             valZ = (z - zcentre) * (z - zcentre)
             val =  sqrt(valX + valY + valZ)
 
@@ -160,7 +162,7 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, filename,resolution, is
 
     # Initial conditions #
     print("Construction of the initial condition …")
-    if(filename.find("square")>-1 or filename.find("Square")>-1 or filename.find("cube")>-1 or filename.find("Cube")>-1):
+    if(dim==1 or filename.find("square")>-1 or filename.find("Square")>-1 or filename.find("cube")>-1 or filename.find("Cube")>-1):
         pressure_field, velocity_field = initial_conditions_shock(my_mesh,False)
     elif(filename.find("disk")>-1 or filename.find("Disk")>-1):
         pressure_field, velocity_field = initial_conditions_shock(my_mesh,True)
@@ -175,9 +177,10 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, filename,resolution, is
     for k in range(nbCells):
         Un[k*(dim+1)+0] =     pressure_field[k]
         Un[k*(dim+1)+1] =rho0*velocity_field[k,0]
-        Un[k*(dim+1)+2] =rho0*velocity_field[k,1]
-        if(dim==3):
-            Un[k*(dim+1)+3] =rho0*velocity_field[k,2]
+        if(dim>=2):
+            Un[k + 2*nbCells] = rho0*velocity_field[k,1] # value on the bottom face
+            if(dim==3):
+                Un[k + 3*nbCells] = rho0*initial_velocity[k,2]
 
     #sauvegarde de la donnée initiale
     pressure_field.setTime(time,it);
