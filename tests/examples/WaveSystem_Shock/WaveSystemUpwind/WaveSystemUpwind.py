@@ -7,7 +7,7 @@
 #                \partial_t q +    \grad p = 0
 # Author      : Michaël Ndjinga
 # Copyright   : CEA Saclay 2019
-# Description : Propagation d'une onde de choc
+# Description : Propagation d'une onde de choc sphérique
 #               Utilisation du schéma upwind explicite ou implicite sur un maillage général
 #               Initialisation par une surpression sphérique
 #               Conditions aux limites périodiques
@@ -80,7 +80,7 @@ def jacobianMatrices(normal,coeff):
         for j in range(dim):
             absA[i+1,j+1]=c0*normal[i]*normal[j]*coeff
     
-    return A, absA
+    return (A - absA)/2
     
 def computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt):
     nbCells = my_mesh.getNumberOfCells()
@@ -145,11 +145,16 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, filename,resolution, is
     print("Construction of the initial condition …")
     pressure_field, velocity_field = initial_conditions_shock(my_mesh)
 
-    U              = cdmath.Field("Conservative vector", cdmath.CELLS, my_mesh, dim+1)
-    for i in range(nbCells):
-        U[i,0] =       pressure_field[i]
-        U[i,1] =  rho0*velocity_field[i,0]
-        U[i,2] =  rho0*velocity_field[i,1]
+    #iteration vectors
+    Un =cdmath.Vector(nbCells*(dim+1))
+    dUn=cdmath.Vector(nbCells*(dim+1))
+    
+    for k in range(nbCells):
+        Un[k*(dim+1)+0] =     pressure_field[k]
+        Un[k*(dim+1)+1] =rho0*velocity_field[k,0]
+        Un[k*(dim+1)+2] =rho0*velocity_field[k,1]
+        if(dim==3):
+            Un[k*(dim+1)+3] =rho0*velocity_field[k,2]
 
     #sauvegarde de la donnée initiale
     pressure_field.setTime(time,it);
@@ -194,15 +199,14 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, filename,resolution, is
          #Sauvegardes
         if(it%output_freq==0 or it>=ntmax or isStationary or time >=tmax):
             print("-- Iter: " + str(it) + ", Time: " + str(time) + ", dt: " + str(dt))
-            print "Variation temporelle relative : pressure ", maxVector[0]/p0 ,", velocity x", maxVector[1]/rho0 ,", velocity y", maxVector[2]/rho0
 
             for k in range(nbCells):
-                pressure_field[k]=U[k,0]
-                velocity_field[k,0]=U[k,1]/rho0
+                pressure_field[k]  =Un[k*(dim+1)+0]
+                velocity_field[k,0]=Un[k*(dim+1)+1]/rho0
                 if(dim>1):
-                    velocity_field[k,1]=U[k,2]/rho0
+                    velocity_field[k,1]=Un[k*(dim+1)+2]/rho0
                     if(dim>2):
-                        velocity_field[k,2]=U[k,3]/rho0
+                        velocity_field[k,2]=Un[k*(dim+1)+3]/rho0
 
             pressure_field.setTime(time,it);
             pressure_field.writeVTK("WaveSystem"+str(dim)+"DUpwind"+meshName+"_pressure",False);
@@ -210,7 +214,6 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, filename,resolution, is
             velocity_field.writeVTK("WaveSystem"+str(dim)+"DUpwind"+meshName+"_velocity",False);
 
     print("-- Iter: " + str(it) + ", Time: " + str(time) + ", dt: " + str(dt))
-    print "Variation temporelle relative : pressure ", maxVector[0]/p0 ,", velocity x", maxVector[1]/rho0 ,", velocity y", maxVector[2]/rho0
     print
 
     if(it>=ntmax):
@@ -235,7 +238,7 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, filename,resolution, is
 
 
 def solve(my_mesh,filename,resolution, isImplicit):
-    print("Resolution of the Wave system with Wall boundary conditions:")
+    print("Resolution of the Wave system with")
 
     # Problem data
     tmax = 1.

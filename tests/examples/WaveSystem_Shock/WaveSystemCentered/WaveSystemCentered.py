@@ -7,7 +7,7 @@
 #                \partial_t q +    \grad p = 0
 # Author      : Michaël Ndjinga
 # Copyright   : CEA Saclay 2019
-# Description : Propagation d'une onde de choc
+# Description : Propagation d'une onde de choc sphérique
 #               Utilisation du schéma centré (implicite) sur un maillage général
 #               Initialisation par une surpression sphérique
 #               Conditions aux limites périodiques

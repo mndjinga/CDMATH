@@ -9,7 +9,7 @@
 # Copyright   : CEA Saclay 2019
 # Description : Test de préservation d'un état stationnaire
 #               Utilisation du schéma pseudo décalé (implicite) sur un maillage général
-#               Initialisation par une solution stationnaire
+#               Initialisation par un vortex stationnaire
 #               Conditions aux limites périodiques
 #		        Création et sauvegarde du champ résultant et des figures
 #================================================================================================================================
