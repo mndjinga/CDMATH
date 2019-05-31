@@ -10,7 +10,7 @@
 # Description : Test de préservation d'un état stationnaire
 #               Utilisation du schéma centré (implicite) sur un maillage général
 #               Initialisation par un vortex stationnaire
-#               Conditions aux limites périodiques
+#               Conditions aux limites parois
 #		        Création et sauvegarde du champ résultant et des figures
 #================================================================================================================================
 
