@@ -31,7 +31,7 @@ def initial_conditions_RiemannProblem(my_mesh):
     dim     = my_mesh.getMeshDimension()
     nbCells = my_mesh.getNumberOfCells()
 
-    xcentre = 0.5
+    xcentre = 0
 
     pressure_field = cdmath.Field("Pressure",            cdmath.CELLS, my_mesh, 1)
     velocity_field = cdmath.Field("Velocity",            cdmath.CELLS, my_mesh, 3)
@@ -136,9 +136,9 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, filename,resolution, is
 
     #sauvegarde de la donnée initiale
     pressure_field.setTime(time,it);
-    pressure_field.writeVTK("WaveSystem"+str(dim)+"DUpwind"+meshName+"_pressure");
+    pressure_field.writeVTK("WaveSystem"+str(dim)+"DUpwind"+"_isImplicit"+str(isImplicit)+meshName+"_pressure");
     velocity_field.setTime(time,it);
-    velocity_field.writeVTK("WaveSystem"+str(dim)+"DUpwind"+meshName+"_velocity");
+    velocity_field.writeVTK("WaveSystem"+str(dim)+"DUpwind"+"_isImplicit"+str(isImplicit)+meshName+"_velocity");
 
     dx_min=my_mesh.minRatioVolSurf()
 
@@ -187,9 +187,9 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, filename,resolution, is
                         velocity_field[k,2]=Un[k*(dim+1)+3]/rho0
 
             pressure_field.setTime(time,it);
-            pressure_field.writeVTK("WaveSystem"+str(dim)+"DUpwind"+meshName+"_pressure",False);
+            pressure_field.writeVTK("WaveSystem"+str(dim)+"DUpwind"+"_isImplicit"+str(isImplicit)+meshName+"_pressure",False);
             velocity_field.setTime(time,it);
-            velocity_field.writeVTK("WaveSystem"+str(dim)+"DUpwind"+meshName+"_velocity",False);
+            velocity_field.writeVTK("WaveSystem"+str(dim)+"DUpwind"+"_isImplicit"+str(isImplicit)+meshName+"_velocity",False);
 
     print("-- Iter: " + str(it) + ", Time: " + str(time) + ", dt: " + str(dt))
     print
@@ -200,29 +200,33 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, filename,resolution, is
         print "Régime stationnaire atteint au pas de temps ", it, ", t= ", time
 
         pressure_field.setTime(time,0);
-        pressure_field.writeVTK("WaveSystem"+str(dim)+"DUpwind"+meshName+"_pressure_Stat");
+        pressure_field.writeVTK("WaveSystem"+str(dim)+"DUpwind"+"_isImplicit"+str(isImplicit)+meshName+"_pressure_Stat");
         velocity_field.setTime(time,0);
-        velocity_field.writeVTK("WaveSystem"+str(dim)+"DUpwind"+meshName+"_velocity_Stat");
+        velocity_field.writeVTK("WaveSystem"+str(dim)+"DUpwind"+"_isImplicit"+str(isImplicit)+meshName+"_velocity_Stat");
 
         #Postprocessing : Extraction of the diagonal data
         diag_data_press=VTK_routines.Extract_field_data_over_line_to_numpyArray(pressure_field,[0,1,0],[1,0,0], resolution)    
         diag_data_vel  =VTK_routines.Extract_field_data_over_line_to_numpyArray(velocity_field,[0,1,0],[1,0,0], resolution)    
         #Postprocessing : save 2D picture
-        PV_routines.Save_PV_data_to_picture_file("WaveSystem"+str(dim)+"DUpwind"+meshName+"_pressure_Stat"+'_0.vtu',"Pressure",'CELLS',"WaveSystem"+str(dim)+"DUpwind"+meshName+"_pressure_Stat")
-        PV_routines.Save_PV_data_to_picture_file("WaveSystem"+str(dim)+"DUpwind"+meshName+"_velocity_Stat"+'_0.vtu',"Velocity",'CELLS',"WaveSystem"+str(dim)+"DUpwind"+meshName+"_velocity_Stat")
+        PV_routines.Save_PV_data_to_picture_file("WaveSystem"+str(dim)+"DUpwind"+"_isImplicit"+str(isImplicit)+meshName+"_pressure_Stat"+'_0.vtu',"Pressure",'CELLS',"WaveSystem"+str(dim)+"DUpwind"+meshName+"_pressure_Stat")
+        PV_routines.Save_PV_data_to_picture_file("WaveSystem"+str(dim)+"DUpwind"+"_isImplicit"+str(isImplicit)+meshName+"_velocity_Stat"+'_0.vtu',"Velocity",'CELLS',"WaveSystem"+str(dim)+"DUpwind"+meshName+"_velocity_Stat")
         
     else:
         print "Temps maximum Tmax= ", tmax, " atteint"
 
 
 def solve(my_mesh,filename,resolution, isImplicit):
-    print("Resolution of the Wave system with")
+    print "Resolution of the Wave system in dimension ", my_mesh.getSpaceDimension()
+    print "Numerical method : upwind"
+    print "Initial data : single straight discontinuity (Riemann problem)"
+    print "Neumann boundary conditions"
+    print "Mesh name : ",filename , my_mesh.getNumberOfCells(), " cells"
 
     # Problem data
     tmax = 1.
     ntmax = 50
     cfl = 1./my_mesh.getSpaceDimension()
-    output_freq = 100
+    output_freq = 1
 
     WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, filename,resolution, isImplicit)
 
