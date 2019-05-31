@@ -220,7 +220,7 @@ def solve(my_mesh,filename,resolution, isImplicit):
 
     # Problem data
     tmax = 1.
-    ntmax = 100
+    ntmax = 50
     cfl = 1./my_mesh.getSpaceDimension()
     output_freq = 100
 
