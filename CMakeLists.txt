@@ -120,7 +120,7 @@ endif( CDMATH_WITH_PETSC )
 # Paraview
 if (CDMATH_WITH_PYTHON AND CDMATH_WITH_POSTPRO)
   set (PV_LIB_DIR /usr/lib/python2.7/dist-packages/:/usr/lib64/paraview/)
-  set (PV_PYTHON_DIR /usr/lib/python2.7/dist-packages:/usr/lib64/paraview/site-packages/:/usr/lib64/paraview/site-packages/paraview/:/usr/lib64/paraview/site-packages/vtk/)
+  set (PV_PYTHON_DIR /usr/lib/python2.7/dist-packages:/usr/lib64/paraview/site-packages/:/usr/lib64/paraview/site-packages/paraview/:/usr/lib64/paraview/site-packages/vtk/:/usr/lib64/paraview/python2.7/site-packages/:/usr/lib64/paraview/python2.7/site-packages/paraview/:/usr/lib64/paraview/python2.7/site-packages/vtkmodules)
 endif ()
 
 # Swig interface
