@@ -128,7 +128,7 @@ def WaveSystemVF(ntmax, tmax, cfl, a,b,nx, output_freq, meshName,scaling):
     FFMpegWriter = manimation.writers['ffmpeg']
     metadata = dict(title="Finite volumes schemes for the 2D Wave System", artist = "CEA Saclay", comment="Shock propagation")
     writer=FFMpegWriter(fps=10, metadata=metadata, codec='h264')
-    with writer.saving(plt.figure(), "2DWaveSystem_FV"+".mp4", ntmax):
+    with writer.saving(plt.figure(), "2DWaveSystem_Upwind"+".mp4", ntmax):
         #sauvegarde de la donnée initiale
         plt.xlabel('x (m)')
         plt.ylabel('Pressure -Pa)')
