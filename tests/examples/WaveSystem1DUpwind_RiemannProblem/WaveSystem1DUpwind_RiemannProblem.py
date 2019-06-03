@@ -73,21 +73,6 @@ def computeUpwindDivergenceMatrix(a,b,nx,nbVoisinsMax,dt,scaling):
                 
     return implMat
 
-def staggeredMatrices(coeff,scaling):
-    dim=1
-    S1=cdmath.Matrix(dim+1,dim+1)
-    S2=cdmath.Matrix(dim+1,dim+1)
-
-    for i in range(dim):
-        if( scaling==0):
-            S1[0,i+1]=c0*c0*coeff
-            S2[i+1,0]=      coeff
-        else:
-            S1[0,i+1]=   c0*coeff
-            S2[i+1,0]=   c0*coeff
-       
-    return A,absA
-    
 def WaveSystemVF(ntmax, tmax, cfl, a,b,nx, output_freq, meshName,scaling):
     dim=1
     nbCells = nx
