@@ -25,27 +25,21 @@ def initial_conditions_Riemann_problem(a,b,nx):
 
     return p_initial, u_initial
 
-def jacobianMatrices(coeff,scaling):
+def staggeredMatrices(coeff,scaling):
     dim=1
-    A=cdmath.Matrix(dim+1,dim+1)
-    absA=cdmath.Matrix(dim+1,dim+1)
+    S1=cdmath.Matrix(dim+1,dim+1)
+    S2=cdmath.Matrix(dim+1,dim+1)
 
-    absA[0,0]=c0*coeff
     for i in range(dim):
-        for j in range(dim):
-            absA[i+1,j+1]=c0*coeff
         if( scaling==0):
-            A[0,i+1]=c0*c0*coeff
-            A[i+1,0]=      coeff
-        elif( scaling==1):
-            A[0,i+1]=      coeff
-            A[i+1,0]=      coeff
+            S1[0,i+1]=c0*c0*coeff
+            S2[i+1,0]=      coeff
         else:
-            A[0,i+1]=   c0*coeff
-            A[i+1,0]=   c0*coeff
+            S1[0,i+1]=   c0*coeff
+            S2[i+1,0]=   c0*coeff
        
-    return A,absA
-    
+    return S1,S2
+        
 def computeStaggeredDivergenceMatrix(a,b,nx,nbVoisinsMax,dt,scaling):
     nbCells = nx
     dx=(b-a)/nx
@@ -55,7 +49,7 @@ def computeStaggeredDivergenceMatrix(a,b,nx,nbVoisinsMax,dt,scaling):
 
     implMat=cdmath.SparseMatrixPetsc(nbCells*nbComp,nbCells*nbComp,(nbVoisinsMax+1)*nbComp)
 
-    S1,S2 = jacobianMatrices(dt/dx,scaling)
+    S1,S2 = staggeredMatrices(dt/dx,scaling)
     for k in range(nbCells):#On parcourt les cellules
         if ( k==0) :
 			implMat.addValue(k*nbComp, (k+1)*nbComp, S1)
