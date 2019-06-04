@@ -16,7 +16,7 @@ def initial_conditions_transport_equation(my_mesh):
     dim     = my_mesh.getMeshDimension()
     nbCells = my_mesh.getNumberOfCells()
 
-    initial_field = cdmath.Field("u", cdmath.CELLS, my_mesh, 1)
+    initial_field = cdmath.Field("unknown", cdmath.CELLS, my_mesh, 1)
 
     rayon = 0.15
     xcentre = 0.5
@@ -80,8 +80,8 @@ def upwinding_coeff(normal, coeff, velocity):
     test_desc["Numerical_method_name"]="Upwind"
     dim=normal.size()
     
-    if(velocity.cdot(normal)<0.):
-        return velocity.cdot(normal)
+    if(velocity*normal<0.):
+        return velocity*normal*coeff
     else:
         return 0.
     
@@ -135,7 +135,7 @@ def computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt,test_bc,velocity):
                 
     return implMat
 
-def TransportEquationVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,test_bc,velocity,with_source=False):
+def TransportEquationVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,test_bc,velocity,isImplicit,with_source=False):
     dim=my_mesh.getMeshDimension()
     nbCells = my_mesh.getNumberOfCells()
     
@@ -145,7 +145,6 @@ def TransportEquationVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolu
     isStationary=False
     
     nbVoisinsMax=my_mesh.getMaxNbNeighbours(cdmath.CELLS)
-    isImplicit=True
     
     #iteration vectors
     Un =cdmath.Vector(nbCells)
@@ -169,13 +168,13 @@ def TransportEquationVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolu
     stat_field.setTime(time,it);
     stat_field.writeVTK("TransportEquation"+str(dim)+"DUpwind"+meshName);
     #Postprocessing : save 2D picture
-    PV_routines.Save_PV_data_to_picture_file("TransportEquation"+str(dim)+"DUpwind"+meshName+'_0.vtu',"Unknown",'CELLS',"TransportEquation"+str(dim)+"DUpwind"+meshName+"_initial")
+    PV_routines.Save_PV_data_to_picture_file("TransportEquation"+str(dim)+"DUpwind"+meshName+'_0.vtu',"unknown",'CELLS',"TransportEquation"+str(dim)+"DUpwind"+meshName+"_initial")
 
     total_mass_initial=unknown_field.integral()#For conservation test later
     
     dx_min=my_mesh.minRatioVolSurf()
 
-    dt = cfl * dx_min / c0
+    dt = cfl * dx_min / velocity.norm()
 
     divMat=computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt,test_bc,velocity)
     if(isImplicit):
@@ -263,13 +262,13 @@ def TransportEquationVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolu
 
         #Postprocessing : Extraction of the diagonal data
         if(dim==2):
-            diag_data_press=VTK_routines.Extract_field_data_over_line_to_numpyArray(unknown_field,[0,1,0],[1,0,0], resolution)    
+            diag_data_u=VTK_routines.Extract_field_data_over_line_to_numpyArray(unknown_field,[0,1,0],[1,0,0], resolution)    
         elif(dim==3):
-            diag_data_press=VTK_routines.Extract_field_data_over_line_to_numpyArray(unknown_field,[0,0,0],[1,1,1], resolution)    
+            diag_data_u=VTK_routines.Extract_field_data_over_line_to_numpyArray(unknown_field,[0,0,0],[1,1,1], resolution)    
         #Postprocessing : save 2D picture
-        PV_routines.Save_PV_data_to_picture_file("TransportEquation"+str(dim)+"DUpwind"+meshName+"_Stat"+'_0.vtu',"Unknown",'CELLS',"TransportEquation"+str(dim)+"DUpwind"+meshName+"_Stat")
+        PV_routines.Save_PV_data_to_picture_file("TransportEquation"+str(dim)+"DUpwind"+meshName+"_Stat"+'_0.vtu',"unknown",'CELLS',"TransportEquation"+str(dim)+"DUpwind"+meshName+"_Stat")
         
-        return delta, nbCells, time, it, unknwon_field.getNormEuclidean().max(), diag_data_press, diag_data_vel
+        return delta, nbCells, time, it, unknown_field.getNormEuclidean().max(), diag_data_u
     else:
         print "Temps maximum Tmax= ", tmax, " atteint"
         raise ValueError("Maximum time reached : Stationary state not found !!!!!!!")
@@ -308,7 +307,7 @@ def solve(my_mesh, meshName, resolution, meshType, testColor, cfl, test_bc, with
     
     velocity=cdmath.Vector(dim,1)
 
-    error, nbCells, t_final, ndt_final, max_unknown, diag_data_press, diag_data_vel = TransportEquationVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution, test_bc,velocity,with_source)
+    error, nbCells, t_final, ndt_final, max_unknown, diag_data_u = TransportEquationVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution, test_bc,velocity,isImplicit,with_source)
     end = time.time()
 
     test_desc["Global_name"]=test_name
@@ -340,7 +339,7 @@ def solve(my_mesh, meshName, resolution, meshType, testColor, cfl, test_bc, with
     with open('test_TransportEquation'+str(my_mesh.getMeshDimension())+'DUpwind_'+meshName+ "Cells.json", 'w') as outfile:  
         json.dump(test_desc, outfile)
 
-    return error, nbCells, t_final, ndt_final, max_unknown, diag_data_press, diag_data_vel, end - start
+    return error, nbCells, t_final, ndt_final, max_unknown, diag_data_u, end - start
 
 def solve_file( filename,meshName, resolution,meshType, testColor,cfl,test_bc,with_source=False):
     my_mesh = cdmath.Mesh(filename+".med")
