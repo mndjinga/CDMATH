@@ -227,12 +227,12 @@ def WaveSystemStaggered(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolu
     
     # Initial conditions #
     print("Construction of the initial condition …")
-    if(dim==1 or filename.find("square")>-1 or filename.find("Square")>-1 or filename.find("cube")>-1 or filename.find("Cube")>-1):
+    if(dim==1 or meshName.find("square")>-1 or meshName.find("Square")>-1 or meshName.find("cube")>-1 or meshName.find("Cube")>-1):
         pressure_field, velocity_field = initial_conditions_shock(my_mesh,False)
-    elif(filename.find("disk")>-1 or filename.find("Disk")>-1):
+    elif(meshName.find("disk")>-1 or meshName.find("Disk")>-1):
         pressure_field, velocity_field = initial_conditions_shock(my_mesh,True)
     else:
-        print "Mesh name : ", filename
+        print "Mesh name : ", meshName
         raise ValueError("Mesh name should contain substring square, cube or disk")
 
     for k in range(nbCells):
@@ -364,4 +364,4 @@ if __name__ == """__main__""":
     else :
         nx=50
         my_mesh = cdmath.Mesh(0,1,nx,0,1,nx)
-        solve(my_mesh,my_mesh.getName(),100)
+        solve(my_mesh,"square",100)
