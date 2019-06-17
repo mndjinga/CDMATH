@@ -297,6 +297,14 @@ public: //----------------------------------------------------------------
     std::map<int,int> getIndexFacePeriodic( void ) const;
     bool isIndexFacePeriodicSet() const ;
     
+    /*
+     * Functions to extract boundary nodes and faces
+     */
+     /* Return list of boundary faces*/
+    std::vector< int > getBoundaryFaceIds() const;
+    /* Return list of boundary nodes*/
+    std::vector< int > getBoundaryNodeIds() const;
+ 
 	bool isBorderNode(int nodeid) const ;
 	bool isBorderFace(int faceid) const ;
 	

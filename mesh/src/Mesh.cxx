@@ -420,6 +420,17 @@ Mesh::isBorderFace(int faceid) const
 	return _faces[faceid].isBorder();
 }
 
+std::vector< int > 
+Mesh::getBoundaryFaceIds() const
+{
+    return _boundaryFaceIds;
+}
+
+std::vector< int > 
+Mesh::getBoundaryNodeIds() const
+{
+    return _boundaryNodeIds;
+}
 
 bool
 Mesh::isTriangular() const
