@@ -411,14 +411,15 @@ Mesh::getIndexFacePeriodic(int indexFace, bool check_groups, bool use_central_in
 bool
 Mesh::isBorderNode(int nodeid) const
 {
-	return getNode(nodeid).isBorder();
+	return _nodes[nodeid].isBorder();
 }
 
 bool
 Mesh::isBorderFace(int faceid) const
 {
-	return getFace(faceid).isBorder();
+	return _faces[faceid].isBorder();
 }
+
 
 bool
 Mesh::isTriangular() const
@@ -730,6 +731,8 @@ Mesh::setMesh( void )
 				vi.addNeighbourNodeId(el,workn[el]) ;
 			_nodes[id] = vi ;
 		}
+        _boundaryNodeIds.push_back(0);
+        _boundaryNodeIds.push_back(_numberOfNodes-1);
 
 		for(int id(0), k(0); id<_numberOfFaces; id++, k+=_spaceDim)
 		{
