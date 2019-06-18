@@ -73,7 +73,7 @@ print("Maximum number of neighbours per node=", maxNbNeighbours)
 Rigidite=cdmath.SparseMatrixPetsc(nbInteriorNodes,nbInteriorNodes,maxNbNeighbours) # warning : third argument is max number of non zero coefficients per line of the matrix
 RHS=cdmath.Vector(nbInteriorNodes)
 
-# Vecteurs gradient de la fonction de forme associée à chaque noeud d'un hexaèdre
+# Vecteurs gradient de la fonction de forme associée à chaque noeud d'un tétraèdre
 GradShapeFunc0=cdmath.Vector(3)
 GradShapeFunc1=cdmath.Vector(3)
 GradShapeFunc2=cdmath.Vector(3)
