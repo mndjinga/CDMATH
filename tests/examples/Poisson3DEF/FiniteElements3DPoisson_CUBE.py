@@ -79,7 +79,7 @@ GradShapeFunc1=cdmath.Vector(3)
 GradShapeFunc2=cdmath.Vector(3)
 GradShapeFunc3=cdmath.Vector(3)
 
-#On parcourt les tétrèdres du domaine
+#On parcourt les tétraèdres du domaine
 for i in range(nbCells):
 
 	Ci=my_mesh.getCell(i)
@@ -120,7 +120,7 @@ for i in range(nbCells):
 			j_int=interiorNodes.index(j)#indice du noeud j en tant que noeud intérieur
 			#Ajout de la contribution de la cellule triangulaire i au second membre du noeud j 
 			RHS[j_int]=Ci.getMeasure()/4*my_RHSfield[j]+RHS[j_int] # intégrale dans le triangle du produit f x fonction de base
-			#Contribution de la cellule triangulaire i à la ligne j_int du système linéaire
+			#Contribution de la cellule tétraédrique i à la ligne j_int du système linéaire
  			for k in [nodeId0,nodeId1,nodeId2,nodeId3] :
 				if boundaryNodes.count(k)==0 : #seuls les noeuds intérieurs contribuent à la matrice du système linéaire
 					k_int=interiorNodes.index(k)#indice du noeud k en tant que noeud intérieur
