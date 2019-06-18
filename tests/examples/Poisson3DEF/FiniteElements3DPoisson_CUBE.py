@@ -79,7 +79,7 @@ GradShapeFunc1=cdmath.Vector(3)
 GradShapeFunc2=cdmath.Vector(3)
 GradShapeFunc3=cdmath.Vector(3)
 
-#On parcourt les triangles du domaine
+#On parcourt les tétrèdres du domaine
 for i in range(nbCells):
 
 	Ci=my_mesh.getCell(i)
