@@ -84,7 +84,7 @@ for i in range(nbCells):
 
 	Ci=my_mesh.getCell(i)
 
-	#Contribution à la matrice de rigidité
+	#Extraction des noeuds de la cellule
 	nodeId0=Ci.getNodeId(0)
 	nodeId1=Ci.getNodeId(1)
 	nodeId2=Ci.getNodeId(2)
