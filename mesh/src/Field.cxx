@@ -428,7 +428,7 @@ Field::min() const
 	if( getNumberOfComponents() !=1)
 		throw CdmathException("double Field::min() : field should have a single component in order to extract minimum value");
 		
-	double result=0;
+	double result=1e100;
 	for(int i=0; i<getNumberOfElements() ; i++)
 		if( result > (*this)(i,0))
 			result = (*this)(i,0);
