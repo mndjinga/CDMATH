@@ -30,6 +30,7 @@ def gradientNodal(M, values):
 def boundaryValue(nodeId): 
 	Ni=my_mesh.getNode(nodeId)
 
+	# 4 groupes sont considérés sur le bord
 	if boundaryNodes.count(nodeId)==0:
 		return 0
 	elif Ni.getGroupName()=='Fenetre':
@@ -71,17 +72,6 @@ maxNbNeighbours=0#This is to determine the number of non zero coefficients in th
 interiorNodes=[]
 boundaryNodes=[]
 
-# 4 groupes sont considérés sur le bord
-nbFenetreNodes=0 
-nbRadiateur_sous_fenetreNodes=0 
-nbRadiateur_DevantNodes=0
-nbRadiateur_droitNodes=0
-
-FenetreNodes=[]
-Radiateur_sous_fenetreNodes=[]
-Radiateur_DevantNodes=[]
-Radiateur_droitNodes=[]
-
 #parcours des noeuds pour discrétisation du second membre et extraction 1) des noeuds intérieur 2) des noeuds frontière 3) du nb max voisins d'un noeud
 for i in range(nbNodes):
 	Ni=my_mesh.getNode(i)
@@ -94,14 +84,13 @@ for i in range(nbNodes):
 		nbInteriorNodes=nbInteriorNodes+1
 		maxNbNeighbours= max(1+Ni.getNumberOfEdges(),maxNbNeighbours) 
 
+nbInteriorNodes==len(interiorNodes)
+nbBoundaryNodes=len(boundaryNodes)
+
 
 print("nb of interior nodes=", nbInteriorNodes)
 print("nb of Boundary nodes=", nbBoundaryNodes)
 print("Max nb of neighbours=", maxNbNeighbours)
-print("nb of noeud sur la fenetre =", nbFenetreNodes)
-print("nb de noeud du Radiateur avant =", nbRadiateur_DevantNodes)
-print("nb de noeud du Radiateur sous fenetre =", nbRadiateur_sous_fenetreNodes)
-print("nb de noeud du Radiateur de deriere =", nbRadiateur_droitNodes)
 
 
 # Construction de la matrice de rigidité et du vecteur second membre du système linéaire
