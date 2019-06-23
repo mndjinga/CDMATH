@@ -78,13 +78,11 @@ for i in range(nbNodes):
     
 	if my_mesh.isBorderNode(i): # Détection des noeuds frontière getGroupName my_mesh.getNode(i)
 		boundaryNodes.append(i)
-		nbBoundaryNodes=nbBoundaryNodes+1
 	else: # Détection des noeuds intérieurs
 		interiorNodes.append(i)
-		nbInteriorNodes=nbInteriorNodes+1
 		maxNbNeighbours= max(1+Ni.getNumberOfEdges(),maxNbNeighbours) 
 
-nbInteriorNodes==len(interiorNodes)
+nbInteriorNodes=len(interiorNodes)
 nbBoundaryNodes=len(boundaryNodes)
 
 
