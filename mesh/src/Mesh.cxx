@@ -285,7 +285,7 @@ Mesh::setGroupAtPlan(double value, int direction, double eps, std::string groupN
 }
 
 void
-Mesh::setBoundaryNodes()
+Mesh::setBoundaryNodesFromFaces()
 {
     for (int iface=0;iface<_boundaryFaceIds.size();iface++)
     {

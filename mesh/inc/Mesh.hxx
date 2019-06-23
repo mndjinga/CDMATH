@@ -293,7 +293,7 @@ public: //----------------------------------------------------------------
      */
     void setPeriodicFaces(bool check_groups= false, bool use_central_inversion=false) ;
     int getIndexFacePeriodic(int indexFace, bool check_groups= false, bool use_central_inversion=false);
-    void setBoundaryNodes();
+    void setBoundaryNodesFromFaces();
     std::map<int,int> getIndexFacePeriodic( void ) const;
     bool isIndexFacePeriodicSet() const ;
     
