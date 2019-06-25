@@ -10,7 +10,6 @@
 
 import cdmath
 import numpy as np
-import time
 
 # Fonction qui remplace successivement les colonnes d'une matrices par un vecteur donné et retourne la liste des déterminants
 def gradientNodal(M, values):
@@ -67,10 +66,10 @@ Tradiateur=30
 #Détermination des noeuds intérieurs
 #======================================================================
 nbInteriorNodes = 0
-nbBoundaryNodes=0
-maxNbNeighbours=0#This is to determine the number of non zero coefficients in the sparse finite element rigidity matrix
-interiorNodes=[]
-boundaryNodes=[]
+nbBoundaryNodes = 0
+maxNbNeighbours = 0#This is to determine the number of non zero coefficients in the sparse finite element rigidity matrix
+interiorNodes = []
+boundaryNodes = []
 
 #parcours des noeuds pour discrétisation du second membre et extraction 1) des noeuds intérieur 2) des noeuds frontière 3) du nb max voisins d'un noeud
 for i in range(nbNodes):
@@ -102,7 +101,6 @@ GradShapeFunc0=cdmath.Vector(3)
 GradShapeFunc1=cdmath.Vector(3)
 GradShapeFunc2=cdmath.Vector(3)
 GradShapeFunc3=cdmath.Vector(3)
-k_int=-1
 
 #On parcourt les tétraèdres du domaine pour remplir la matrice
 for i in range(nbCells):
