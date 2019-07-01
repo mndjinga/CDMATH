@@ -86,7 +86,7 @@ def staggeredMatrices(coeff,scaling):
             S1[0,i+1]=   c0*coeff
             S2[i+1,0]=   c0*coeff
        
-    return A,absA
+    return S1,S2
     
     
 def computeStaggeredDivergenceMatrix(a,b,nx,nbVoisinsMax,dt,scaling):
@@ -98,7 +98,7 @@ def computeStaggeredDivergenceMatrix(a,b,nx,nbVoisinsMax,dt,scaling):
 
     implMat=cdmath.SparseMatrixPetsc(nbCells*nbComp,nbCells*nbComp,(nbVoisinsMax+1)*nbComp)
 
-    S1,S2 = jacobianMatrices(dt/dx,scaling)
+    S1,S2 = staggeredMatrices(dt/dx,scaling)
     for k in range(nbCells):#On parcourt les cellules
         if ( k==0) :
 			implMat.addValue(k*nbComp, (k+1)*nbComp, S1)
