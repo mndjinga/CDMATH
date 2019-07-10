@@ -457,7 +457,7 @@ LinearSolver::solve( void )
 		KSPSetType(_ksp,KSPLGMRES);
 	else if (_nameOfMethod.compare("CG")==0)
 		KSPSetType(_ksp,KSPCG);
-	else if (_nameOfMethod.compare("BCG")==0)
+	else if (_nameOfMethod.compare("BCGS")==0)
 		KSPSetType(_ksp,KSPBCGS);
 	else if (_nameOfMethod.compare("CR")==0)
 		KSPSetType(_ksp,KSPCR);
