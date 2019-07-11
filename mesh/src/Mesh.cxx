@@ -148,16 +148,15 @@ Mesh::Mesh( const Mesh& m )
 	_numberOfFaces = m.getNumberOfFaces();
 	_numberOfCells = m.getNumberOfCells();
 	_numberOfEdges = m.getNumberOfEdges();
+
 	_faceGroupNames = m.getNameOfFaceGroups() ;
 	_faceGroups = m.getFaceGroups() ;
 	_nodeGroupNames = m.getNameOfNodeGroups() ;
 	_nodeGroups = m.getNodeGroups() ;
+
 	_nodes   = new Node[_numberOfNodes] ;
 	_faces   = new Face[_numberOfFaces] ;
 	_cells   = new Cell[_numberOfCells] ;
-    _indexFacePeriodicSet= m.isIndexFacePeriodicSet();
-    if(_indexFacePeriodicSet)
-        _indexFacePeriodicMap=m.getIndexFacePeriodic();
     
 	for (int i=0;i<_numberOfNodes;i++)
 		_nodes[i]=m.getNode(i);
@@ -168,6 +167,16 @@ Mesh::Mesh( const Mesh& m )
 	for (int i=0;i<_numberOfCells;i++)
 		_cells[i]=m.getCell(i);
 
+    _indexFacePeriodicSet= m.isIndexFacePeriodicSet();
+    if(_indexFacePeriodicSet)
+        _indexFacePeriodicMap=m.getIndexFacePeriodic();
+
+    _boundaryFaceIds=m.getBoundaryFaceIds();
+    _boundaryNodeIds=m.getBoundaryNodeIds();
+
+    _eltsTypes=m.getElementTypes();
+    _eltsTypesNames=m.getElementTypesNames();
+    
 	MCAuto<MEDCouplingMesh> m1=m.getMEDCouplingMesh()->deepCopy();
 	_mesh=m1;
 }
@@ -458,32 +467,38 @@ Mesh::isStructured() const
 	return _isStructured;
 }
 
-std::string 
+std::vector< INTERP_KERNEL::NormalizedCellType > 
 Mesh::getElementTypes() const
 {
-    std::string result;    
+  return _eltsTypes;  
+}
+
+std::vector< string >
+Mesh::getElementTypesNames() const
+{
+    std::vector< string > result(0);    
     for(int i=0; i< _eltsTypes.size(); i++)
     {
         if( _eltsTypes[i]==INTERP_KERNEL::NORM_POINT1)
-            result += "Points ";
+            result.push_back("Points");
         else if( _eltsTypes[i]==INTERP_KERNEL::NORM_SEG2)
-            result += "Segments ";
+            result.push_back("Segments");
         else if( _eltsTypes[i]==INTERP_KERNEL::NORM_TRI3)
-            result += "Triangles ";
+            result.push_back("Triangles");
         else if( _eltsTypes[i]==INTERP_KERNEL::NORM_QUAD4)
-            result += "Quadrangles ";
+            result.push_back("Quadrangles");
         else if( _eltsTypes[i]==INTERP_KERNEL::NORM_POLYGON)
-            result += "Polygons ";
+            result.push_back("Polygons");
         else if( _eltsTypes[i]==INTERP_KERNEL::NORM_TETRA4)
-            result += "Tetrahedra ";
+            result.push_back("Tetrahedra");
         else if( _eltsTypes[i]==INTERP_KERNEL::NORM_PYRA5)
-            result += "Pyramids ";
+            result.push_back("Pyramids");
         else if( _eltsTypes[i]==INTERP_KERNEL::NORM_PENTA6)
-            result += "Pentahedra ";
+            result.push_back("Pentahedra");
         else if( _eltsTypes[i]==INTERP_KERNEL::NORM_HEXA8)
-            result += "Hexahedra ";
+            result.push_back("Hexahedra");
         else if( _eltsTypes[i]==INTERP_KERNEL::NORM_POLYHED)
-            result += "Polyhedrons ";
+            result.push_back("Polyhedrons");
         else
 		{
 			cout<< "Mesh " + _name + " contains an element of type " <<endl;
@@ -1752,9 +1767,6 @@ Mesh::operator= ( const Mesh& mesh )
 	_numberOfFaces = mesh.getNumberOfFaces();
 	_numberOfCells = mesh.getNumberOfCells();
 	_numberOfEdges = mesh.getNumberOfEdges();
-    _indexFacePeriodicSet= mesh.isIndexFacePeriodicSet();
-    if(_indexFacePeriodicSet)
-        _indexFacePeriodicMap=mesh.getIndexFacePeriodic();
     
     _isStructured = mesh.isStructured();
     if(_isStructured)
@@ -1772,6 +1784,7 @@ Mesh::operator= ( const Mesh& mesh )
 	_faceGroups = mesh.getFaceGroups() ;
 	_nodeGroupNames = mesh.getNameOfNodeGroups() ;
 	_nodeGroups = mesh.getNodeGroups() ;
+
 	if (_nodes)
 	{
 		delete [] _nodes ;
@@ -1800,6 +1813,16 @@ Mesh::operator= ( const Mesh& mesh )
 
 	for (int i=0;i<_numberOfCells;i++)
 		_cells[i]=mesh.getCell(i);
+
+    _indexFacePeriodicSet= mesh.isIndexFacePeriodicSet();
+    if(_indexFacePeriodicSet)
+        _indexFacePeriodicMap=mesh.getIndexFacePeriodic();
+    
+    _boundaryFaceIds=mesh.getBoundaryFaceIds();
+    _boundaryNodeIds=mesh.getBoundaryNodeIds();
+
+    _eltsTypes=mesh.getElementTypes();
+    _eltsTypesNames=mesh.getElementTypesNames();
 
 	MCAuto<MEDCouplingMesh> m1=mesh.getMEDCouplingMesh()->deepCopy();
 	_mesh=m1;

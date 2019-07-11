@@ -313,8 +313,7 @@ public: //----------------------------------------------------------------
 	bool isQuadrangular() const ;
 	bool isHexahedral() const ;
     bool isStructured() const ;
-    std::string getElementTypes() const ;
-    
+    std::vector< std::string > getElementTypesNames() const ;
 	/**
 	 * Compute the minimum value over all cells of the ratio cell perimeter/cell vaolume
 	 */
@@ -421,7 +420,10 @@ private: //----------------------------------------------------------------
 	 * The mesh MEDCoupling
 	 */
 	MEDCoupling::MCAuto<MEDCoupling::MEDCouplingMesh> _mesh;
+
 	std::vector< INTERP_KERNEL::NormalizedCellType > _eltsTypes;//List of cell types contained in the mesh
+	std::vector< std::string > _eltsTypesNames;//List of cell types contained in the mesh
+    std::vector< INTERP_KERNEL::NormalizedCellType > getElementTypes() const;    
     
     /*
      * Tools to manage periodic boundary conditions in square/cube geometries
