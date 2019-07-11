@@ -76,12 +76,12 @@ LinearSolverTests::testClassLinearSolver( void )
 	CPPUNIT_ASSERT_EQUAL(LS2.isSingular(),true);
 	CPPUNIT_ASSERT_EQUAL(LS2.getNameOfMethod(),(string)"CG");
 
-	LinearSolver LS3(A,B,500,1.E-10,"BCG");
+	LinearSolver LS3(A,B,500,1.E-10,"BCGS");
     Vector X3=LS3.solve();
 	CPPUNIT_ASSERT_DOUBLES_EQUAL(Xana(0), X3(0), 1.E-10);
 	CPPUNIT_ASSERT_DOUBLES_EQUAL(2., X3(1), 1.E-10);
 	CPPUNIT_ASSERT_EQUAL(LS3.getStatus(),true);
-	CPPUNIT_ASSERT_EQUAL(LS3.getNameOfMethod(),(string)"BCG");
+	CPPUNIT_ASSERT_EQUAL(LS3.getNameOfMethod(),(string)"BCGS");
 
 	LinearSolver LS4(A,B,500,1.E-10,"CR");
     Vector X4=LS4.solve();
@@ -97,12 +97,12 @@ LinearSolverTests::testClassLinearSolver( void )
 	CPPUNIT_ASSERT_EQUAL(LS5.getStatus(),true);
 	CPPUNIT_ASSERT_EQUAL(LS5.getNameOfMethod(),(string)"CGS");
 
-	LinearSolver LS6(A,B,500,1.E-10,"BICG","LU");
+	LinearSolver LS6(A,B,500,1.E-10,"BCGS","LU");
     Vector X6=LS6.solve();
 	CPPUNIT_ASSERT_DOUBLES_EQUAL(Xana(0), X6(0), 1.E-10);
 	CPPUNIT_ASSERT_DOUBLES_EQUAL(2., X6(1), 1.E-10);
 	CPPUNIT_ASSERT_EQUAL(LS6.getStatus(),true);
-	CPPUNIT_ASSERT_EQUAL(LS6.getNameOfMethod(),(string)"BICG");
+	CPPUNIT_ASSERT_EQUAL(LS6.getNameOfMethod(),(string)"BCGS");
 	CPPUNIT_ASSERT_EQUAL(LS6.getNameOfPc(),(string)"LU");
 
 	LinearSolver LS7(A,B,500,1.E-10,"GCR");
@@ -201,7 +201,7 @@ LinearSolverTests::testClassLinearSolver( void )
 	CPPUNIT_ASSERT_EQUAL(LS13.getTolerance(),1.E-10);
 	CPPUNIT_ASSERT_EQUAL(LS13.getNumberOfIter(),1);
 
-    LinearSolver LS14(A2,B2,500,1.E-10,"BCG","ILU");
+    LinearSolver LS14(A2,B2,500,1.E-10,"BCGS","ILU");
     Vector X14=LS14.solve();
 	CPPUNIT_ASSERT_EQUAL(LS14.getStatus(),true);
 

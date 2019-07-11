@@ -482,7 +482,7 @@ LinearSolver::solve( void )
 	else
 	{
 		string msg="Vector LinearSolver::solve( void ) : The method "+_nameOfMethod+" is not yet implemented.\n";
-		msg+="The methods implemented are : GMRES, BICG, CG, CHOLESKY, LU, BCG, LGMRES, LSQR, CR, CGS and GCR.\n";
+		msg+="The methods implemented are : GMRES, BICG, CG, CHOLESKY, LU, BCGS, LGMRES, LSQR, CR, CGS and GCR.\n";
 		throw CdmathException(msg);
 	}
 
