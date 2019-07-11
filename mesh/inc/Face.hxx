@@ -16,7 +16,6 @@
  * - barycenter of this face
  */
 
-#include "IntTab.hxx"
 #include "Point.hxx"
 
 #include <vector>
@@ -57,13 +56,13 @@ public: //----------------------------------------------------------------
      * The cells ID that this face belongs to
      * @return _cellsId
      */
-    IntTab getCellsId ( void ) const ;
+    std::vector< int > getCellsId ( void ) const ;
 
     /**
      * The nodes ID that this face belongs to
      * @return _nodesId
      */
-    IntTab getNodesId ( void ) const ;
+    std::vector< int > getNodesId ( void ) const ;
 
     /**
      * return the measure of this face (length in 2D or
@@ -171,12 +170,12 @@ private: //----------------------------------------------------------------
     /*
      * The cell id that this face belongs to.
      */
-    IntTab _cellsId ;
+    std::vector< int > _cellsId ;
 
     /*
      * The vertex id that this face belongs to.
      */
-    IntTab _nodesId ;
+    std::vector< int > _nodesId ;
 
     /*
      * The number of cells allocated for this face.

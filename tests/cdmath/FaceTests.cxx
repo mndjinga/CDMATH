@@ -40,10 +40,10 @@ FaceTests::testClassFace( void )
     CPPUNIT_ASSERT_EQUAL( 20, f2.getNodesId()[0] );
 	CPPUNIT_ASSERT_EQUAL( 21, f2.getNodesId()[1] );
 
-    CPPUNIT_ASSERT_EQUAL( 10, f2.getCellsId()(0) );
-	CPPUNIT_ASSERT_EQUAL( 11, f2.getCellsId()(1) );
-    CPPUNIT_ASSERT_EQUAL( 20, f2.getNodesId()(0) );
-	CPPUNIT_ASSERT_EQUAL( 21, f2.getNodesId()(1) );
+    CPPUNIT_ASSERT_EQUAL( 10, f2.getCellsId()[0] );
+	CPPUNIT_ASSERT_EQUAL( 11, f2.getCellsId()[1] );
+    CPPUNIT_ASSERT_EQUAL( 20, f2.getNodesId()[0] );
+	CPPUNIT_ASSERT_EQUAL( 21, f2.getNodesId()[1] );
 
 	f2=f;
 	CPPUNIT_ASSERT_EQUAL( 1.0, f2.getMeasure() );

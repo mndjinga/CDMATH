@@ -50,8 +50,8 @@ Face::Face( const int numberOfNodes, const int numberOfCells, const double measu
 	_point        = p ;
 	_numberOfNodes = numberOfNodes ;
 	_numberOfCells   = numberOfCells ;
-	_nodesId = IntTab(_numberOfNodes,0);
-	_cellsId = IntTab(_numberOfCells,0);
+	_nodesId = std::vector< int >(_numberOfNodes,0);
+	_cellsId = std::vector< int >(_numberOfCells,0);
 	_measure = measure ;
 	_region=-1;
 	_groupNames=std::vector<std::string>(0);
@@ -153,7 +153,7 @@ Face::z( void ) const
 }
 
 //----------------------------------------------------------------------
-IntTab
+std::vector< int >
 Face::getCellsId( void ) const
 //----------------------------------------------------------------------
 {
@@ -161,7 +161,7 @@ Face::getCellsId( void ) const
 }
 
 //----------------------------------------------------------------------
-IntTab
+std::vector< int >
 Face::getNodesId( void ) const
 //----------------------------------------------------------------------
 {
@@ -197,14 +197,14 @@ void
 Face::addCellId(const int numCell, const int cellId )
 //----------------------------------------------------------------------
 {
-	_cellsId(numCell) = cellId ;
+	_cellsId[numCell] = cellId ;
 }
 //----------------------------------------------------------------------
 void
 Face::addNodeId(const int numNode, const int nodeId )
 //----------------------------------------------------------------------
 {
-	_nodesId(numNode) = nodeId ;
+	_nodesId[numNode] = nodeId ;
 }
 
 //----------------------------------------------------------------------
