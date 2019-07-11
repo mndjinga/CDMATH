@@ -23,6 +23,7 @@
 #include <stdlib.h>
 #include <iterator>
 #include <algorithm> 
+#include <string.h>
 
 using namespace MEDCoupling;
 using namespace std;
@@ -127,57 +128,61 @@ Mesh::Mesh( const MEDCoupling::MEDCouplingIMesh* mesh )
 }
 
 //----------------------------------------------------------------------
-Mesh::Mesh( const Mesh& m )
+Mesh::Mesh( const Mesh& mesh )
 //----------------------------------------------------------------------
 {
-	_spaceDim = m.getSpaceDimension() ;
-	_meshDim = m.getMeshDimension() ;
-    _name=m.getName();
-    _xMax=m.getXMax();
-    _yMin=m.getYMin();
-    _yMax=m.getYMax();
-    _zMin=m.getZMin();
-    _zMax=m.getZMax();
-    _isStructured=m.isStructured();
+	_spaceDim = mesh.getSpaceDimension() ;
+	_meshDim = mesh.getMeshDimension() ;
+    _name=mesh.getName();
+    _xMax=mesh.getXMax();
+    _yMin=mesh.getYMin();
+    _yMax=mesh.getYMax();
+    _zMin=mesh.getZMin();
+    _zMax=mesh.getZMax();
+    _isStructured=mesh.isStructured();
     if(_isStructured)
     {
-        _nxyz = m.getCellGridStructure() ;
-        _dxyz=m.getDXYZ();
+        _nxyz = mesh.getCellGridStructure() ;
+        _dxyz=mesh.getDXYZ();
     }
-	_numberOfNodes = m.getNumberOfNodes();
-	_numberOfFaces = m.getNumberOfFaces();
-	_numberOfCells = m.getNumberOfCells();
-	_numberOfEdges = m.getNumberOfEdges();
+	_numberOfNodes = mesh.getNumberOfNodes();
+	_numberOfFaces = mesh.getNumberOfFaces();
+	_numberOfCells = mesh.getNumberOfCells();
+	_numberOfEdges = mesh.getNumberOfEdges();
 
-	_faceGroupNames = m.getNameOfFaceGroups() ;
-	_faceGroups = m.getFaceGroups() ;
-	_nodeGroupNames = m.getNameOfNodeGroups() ;
-	_nodeGroups = m.getNodeGroups() ;
+	_faceGroupNames = mesh.getNameOfFaceGroups() ;
+	_faceGroups = mesh.getFaceGroups() ;
+	_nodeGroupNames = mesh.getNameOfNodeGroups() ;
+	_nodeGroups = mesh.getNodeGroups() ;
 
 	_nodes   = new Node[_numberOfNodes] ;
 	_faces   = new Face[_numberOfFaces] ;
 	_cells   = new Cell[_numberOfCells] ;
     
+    //memcpy(_nodes,mesh.getNodes(),sizeof(mesh.getNodes())) ;
+    //memcpy(_cells,mesh.getCells(),sizeof(mesh.getCells())) ;
+    //memcpy(_faces,mesh.getFaces(),sizeof(mesh.getFaces())) ;
+
 	for (int i=0;i<_numberOfNodes;i++)
-		_nodes[i]=m.getNode(i);
+		_nodes[i]=mesh.getNode(i);
 
 	for (int i=0;i<_numberOfFaces;i++)
-		_faces[i]=m.getFace(i);
+		_faces[i]=mesh.getFace(i);
 
 	for (int i=0;i<_numberOfCells;i++)
-		_cells[i]=m.getCell(i);
+		_cells[i]=mesh.getCell(i);
 
-    _indexFacePeriodicSet= m.isIndexFacePeriodicSet();
+    _indexFacePeriodicSet= mesh.isIndexFacePeriodicSet();
     if(_indexFacePeriodicSet)
-        _indexFacePeriodicMap=m.getIndexFacePeriodic();
+        _indexFacePeriodicMap=mesh.getIndexFacePeriodic();
 
-    _boundaryFaceIds=m.getBoundaryFaceIds();
-    _boundaryNodeIds=m.getBoundaryNodeIds();
+    _boundaryFaceIds=mesh.getBoundaryFaceIds();
+    _boundaryNodeIds=mesh.getBoundaryNodeIds();
 
-    _eltsTypes=m.getElementTypes();
-    _eltsTypesNames=m.getElementTypesNames();
+    _eltsTypes=mesh.getElementTypes();
+    _eltsTypesNames=mesh.getElementTypesNames();
     
-	MCAuto<MEDCouplingMesh> m1=m.getMEDCouplingMesh()->deepCopy();
+	MCAuto<MEDCouplingMesh> m1=mesh.getMEDCouplingMesh()->deepCopy();
 	_mesh=m1;
 }
 
@@ -248,7 +253,7 @@ Mesh::setGroupAtFaceByCoords(double x, double y, double z, double eps, std::stri
 		if (abs(FX-x)<eps && abs(FY-y)<eps && abs(FZ-z)<eps)
 		{
 			_faces[iface].setGroupName(groupName);
-			IntTab nodesID= _faces[iface].getNodesId();
+			std::vector< int > nodesID= _faces[iface].getNodesId();
 			int nbNodes = _faces[iface].getNumberOfNodes();
 			for(int inode=0 ; inode<nbNodes ; inode++)
 				_nodes[nodesID[inode]].setGroupName(groupName);
@@ -275,7 +280,7 @@ Mesh::setGroupAtPlan(double value, int direction, double eps, std::string groupN
 		if (abs(cord-value)<eps)
 		{
 			_faces[iface].setGroupName(groupName);
-			IntTab nodesID= _faces[iface].getNodesId();
+			std::vector< int > nodesID= _faces[iface].getNodesId();
 			int nbNodes = _faces[iface].getNumberOfNodes();
 			for(int inode=0 ; inode<nbNodes ; inode++)
                 {
@@ -298,7 +303,7 @@ Mesh::setBoundaryNodesFromFaces()
 {
     for (int iface=0;iface<_boundaryFaceIds.size();iface++)
     {
-        IntTab nodesID= _faces[_boundaryFaceIds[iface]].getNodesId();
+        std::vector< int > nodesID= _faces[_boundaryFaceIds[iface]].getNodesId();
         int nbNodes = _faces[_boundaryFaceIds[iface]].getNumberOfNodes();
         for(int inode=0 ; inode<nbNodes ; inode++)
         {
@@ -1407,7 +1412,7 @@ Mesh::Mesh( double xmin, double xmax, int nx, double ymin, double ymax, int ny, 
 	_dxyz[1]=dy;
 
 	double *originPtr = new double[_spaceDim];
-	double *dxyzPtr = new double[_spaceDim];
+	double *dxyzPtr   = new double[_spaceDim];
 	int *nodeStrctPtr = new int[_spaceDim];
 
 	originPtr[0]=xmin;
