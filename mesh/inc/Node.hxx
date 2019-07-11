@@ -16,7 +16,6 @@
  */
 
 #include "Point.hxx"
-#include "IntTab.hxx"
 
 #include <vector>
 #include <string>
@@ -150,13 +149,13 @@ class Node
      * The cells ID that this Node belongs to
      * @return _cellsId
      */
-    IntTab getCellsId ( void ) const ;
+    std::vector< int > getCellsId ( void ) const ;
 
     /**
      * The faces ID that this Node belongs to
      * @return _facesId
      */
-    IntTab getFacesId ( void ) const ;
+    std::vector< int > getFacesId ( void ) const ;
 
     int getFaceId(int localId) const ;
 
@@ -164,7 +163,7 @@ class Node
      * The neighbour nodes ID : nodes connected to this node by an edge
      * @return _neighbourNodeId
      */
-    IntTab getNeighbourNodesId ( void ) const ;
+    std::vector< int > getNeighbourNodesId ( void ) const ;
 
     int getNeighbourNodeId(int localId) const ;
 
@@ -178,17 +177,17 @@ class Node
     /*
      * The cells ID that this Node belongs to.
      */
-    IntTab _cellsId ;
+    std::vector< int > _cellsId ;
 
     /*
      * The faces ID that this Node belongs to.
      */
-    IntTab _facesId ;
+    std::vector< int > _facesId ;
 
     /*
      * The neighbour nodes ID that this Node belongs to.
      */
-    IntTab _neighbourNodesId ;
+    std::vector< int > _neighbourNodesId ;
 
     /*
      * The number of cells allocated for this Node.

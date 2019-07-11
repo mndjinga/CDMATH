@@ -51,16 +51,16 @@ Node::Node( const int numberOfCells, const int numberOfFaces, const int numberOf
 	_numberOfCells = numberOfCells ;
 	_numberOfFaces = numberOfFaces ;
 	_numberOfEdges = numberOfEdges ;
-	_cellsId = IntTab(_numberOfCells,0);
-	_facesId = IntTab(_numberOfFaces,0);
-	_neighbourNodesId = IntTab(_numberOfEdges,0);
+	_cellsId = std::vector< int >(_numberOfCells,0);
+	_facesId = std::vector< int >(_numberOfFaces,0);
+	_neighbourNodesId = std::vector< int >(_numberOfEdges,0);
 	_groupNames=std::vector<std::string>(0);
 	_region=-1;
     _isBorder=false;
 }
 
 //----------------------------------------------------------------------
-IntTab
+std::vector< int >
 Node::getCellsId( void ) const 
 //----------------------------------------------------------------------
 {
@@ -68,7 +68,7 @@ Node::getCellsId( void ) const
 }
 
 //----------------------------------------------------------------------
-IntTab
+std::vector< int >
 Node::getFacesId( void ) const 
 //----------------------------------------------------------------------
 {
@@ -76,7 +76,7 @@ Node::getFacesId( void ) const
 }
 
 //----------------------------------------------------------------------
-IntTab
+std::vector< int >
 Node::getNeighbourNodesId( void ) const 
 //----------------------------------------------------------------------
 {
@@ -178,7 +178,7 @@ void
 Node::addFaceId (const int numFace, const int faceId, bool isBorder  )
 //----------------------------------------------------------------------
 {
-	_facesId(numFace) = faceId ;
+	_facesId[numFace] = faceId ;
     if(isBorder)
         _isBorder=true;
 }
@@ -188,7 +188,7 @@ void
 Node::addCellId (const int numCell, const int cellId )
 //----------------------------------------------------------------------
 {
-	_cellsId(numCell) = cellId ;
+	_cellsId[numCell] = cellId ;
 }
 
 //----------------------------------------------------------------------
@@ -196,7 +196,7 @@ void
 Node::addNeighbourNodeId (const int numNode, const int nodeId ) 
 //----------------------------------------------------------------------
 {
-	_neighbourNodesId(numNode) = nodeId ;
+	_neighbourNodesId[numNode] = nodeId ;
 }
 
 //----------------------------------------------------------------------
