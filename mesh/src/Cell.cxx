@@ -26,8 +26,8 @@ Cell::Cell( int numberOfNodes, int numberOfFaces, double measure, const Point p 
 	_point        = p ;
 	_numberOfNodes  = numberOfNodes ;
 	_numberOfFaces    = numberOfFaces ;
-	_nodesId = IntTab(_numberOfNodes,0);
-	_facesId = IntTab(_numberOfFaces,0);
+	_nodesId = std::vector< int >(_numberOfNodes,0);
+	_facesId = std::vector< int >(_numberOfFaces,0);
 	_normalVectors = Vector(3*_numberOfFaces);
 	_measure = measure ;
 }
@@ -54,7 +54,7 @@ Cell::Cell( const Cell& cell )
 //----------------------------------------------------------------------
 
 //----------------------------------------------------------------------
-IntTab
+std::vector< int >
 Cell::getNodesId ( void ) const 
 //----------------------------------------------------------------------
 {
@@ -70,7 +70,7 @@ Cell::getMeasure ( void ) const
 }
 
 //----------------------------------------------------------------------
-IntTab
+std::vector< int >
 Cell::getFacesId ( void ) const 
 //----------------------------------------------------------------------
 {
@@ -130,7 +130,7 @@ void
 Cell::addFaceId (int numFace, int faceId )
 //----------------------------------------------------------------------
 {
-	_facesId(numFace) = faceId ;
+	_facesId[numFace] = faceId ;
 }
 
 //----------------------------------------------------------------------
@@ -171,7 +171,7 @@ void
 Cell::addNodeId (int numNode, int nodeId )
 //----------------------------------------------------------------------
 {
-	_nodesId(numNode) = nodeId ;
+	_nodesId[numNode] = nodeId ;
 }
 
 //----------------------------------------------------------------------

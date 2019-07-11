@@ -16,8 +16,8 @@
  * - barycenter of this cell
  */
 
+#include <vector>
 #include "Point.hxx"
-#include "IntTab.hxx"
 #include "Vector.hxx"
 
 class Cell
@@ -64,13 +64,13 @@ class Cell
 	 * return nodes ID in this cell
 	 * @return _nodes
 	 */
-	IntTab getNodesId ( void ) const ;
+	std::vector< int > getNodesId ( void ) const ;
 
 	/**
 	 * return faces ID in this cell
 	 * @return _faces
 	 */
-	IntTab getFacesId ( void ) const ;
+	std::vector< int > getFacesId ( void ) const ;
 
 	/**
 	 * return cordinate numComposant of the normal vector in this cell
@@ -140,7 +140,7 @@ class Cell
 	/*
 	 * The nodes ID in this cell.
 	 */
-	IntTab _nodesId ;
+	std::vector< int > _nodesId ;
 
 	/*
 	 * The number of nodes in this cell.
@@ -150,7 +150,7 @@ class Cell
 	/*
 	 * The faces ID in this cell.
 	 */
-	IntTab _facesId ;
+	std::vector< int > _facesId ;
 
 	/*
 	 * The number of faces in this cell.
