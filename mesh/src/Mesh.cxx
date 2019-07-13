@@ -159,9 +159,9 @@ Mesh::Mesh( const Mesh& mesh )
 	_faces   = new Face[_numberOfFaces] ;
 	_cells   = new Cell[_numberOfCells] ;
     
-    //memcpy(_nodes,mesh.getNodes(),sizeof(mesh.getNodes())) ;
-    //memcpy(_cells,mesh.getCells(),sizeof(mesh.getCells())) ;
-    //memcpy(_faces,mesh.getFaces(),sizeof(mesh.getFaces())) ;
+    //memcpy(_nodes,mesh.getNodes(),sizeof(*mesh.getNodes())) ;
+    //memcpy(_cells,mesh.getCells(),sizeof(*mesh.getCells())) ;
+    //memcpy(_faces,mesh.getFaces(),sizeof(*mesh.getFaces())) ;
 
 	for (int i=0;i<_numberOfNodes;i++)
 		_nodes[i]=mesh.getNode(i);
