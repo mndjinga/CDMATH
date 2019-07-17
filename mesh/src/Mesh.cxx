@@ -729,7 +729,9 @@ Mesh::setMesh( void )
 				ci.addNodeId(el,nodeIdsOfCell[el]) ;
                 ci.addFaceId(el,nodeIdsOfCell[el]) ;
             }
-
+            
+            //This assumes that in a 1D mesh the cell numbers form a consecutive sequence 
+            //going either from left to right (xn=-1) or right to left (xn=1)
 			double xn = (cood[nodeIdsOfCell[nbVertices-1]] - cood[nodeIdsOfCell[0]] > 0.0) ? -1.0 : 1.0;
 
 			for( int el=0;el<nbFaces;el++ )
