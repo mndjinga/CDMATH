@@ -1513,15 +1513,20 @@ Mesh::Mesh( double xmin, double xmax, int nx, double ymin, double ymax, int ny, 
 			dxyzPtr,
 			dxyzPtr+_spaceDim);
 
-    if(split_to_tetrahedra_policy == INTERP_KERNEL::PLANAR_FACE_5  || split_to_tetrahedra_policy == INTERP_KERNEL::PLANAR_FACE_6)
+    if( split_to_tetrahedra_policy == 0 )
         {
             _mesh=_mesh->buildUnstructured();
-            _mesh->simplexize(split_to_tetrahedra_policy);
+            _mesh->simplexize(INTERP_KERNEL::PLANAR_FACE_5);
         }
-    else if (split_to_tetrahedra_policy != -1)
+    else if( split_to_tetrahedra_policy == 1 )
+        {
+            _mesh=_mesh->buildUnstructured();
+            _mesh->simplexize(INTERP_KERNEL::PLANAR_FACE_6);
+        }
+    else if ( split_to_tetrahedra_policy != -1 )
         {
             cout<< "split_to_tetrahedra_policy = "<< split_to_tetrahedra_policy << endl;
-            throw CdmathException("Mesh::Mesh( double xmin, double xmax, int nx, double ymin, double ymax, int ny, double zmin, double zmax, int nz) : Unknown splitting policy");
+            throw CdmathException("Mesh::Mesh( double xmin, double xmax, int nx, double ymin, double ymax, int ny, double zmin, double zmax, int nz) : splitting policy value should be 0 or 1");
         }
 
 	delete [] originPtr;
