@@ -102,7 +102,11 @@ Face::getGroupName(int igroup) const
     if(igroup<_groupNames.size())
         return _groupNames[igroup];
     else
-        return "";
+    {
+        std::cout<<"Error Face::getGroupName(int igroup), group number "<<igroup+1<<" requested"<<std::endl;
+        std::cout<<"Face belongs to "<< _groupNames.size() <<" groups"<<std::endl;
+        throw CdmathException("Face has no group with number igroup");
+    }
 }
 
 void

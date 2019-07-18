@@ -152,7 +152,8 @@ Node::getGroupName(int igroup) const
         return _groupNames[igroup];
     else
     {
-        std::cout<<"Error Node::getGroupName(int igroup), node belongs to "<< _groupNames.size() <<" groups"<<std::endl;
+        std::cout<<"Error Node::getGroupName(int igroup), group number "<<igroup+1<<" requested"<<std::endl;
+        std::cout<<"Node belongs to "<< _groupNames.size() <<" groups"<<std::endl;
         throw CdmathException("Node has no group with number igroup");
     }
 }
