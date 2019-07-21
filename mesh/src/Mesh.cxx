@@ -1219,6 +1219,11 @@ Mesh::Mesh( double xmin, double xmax, int nx, std::string meshName )
 			fi.addCellId(el,workc[el]) ;
 		_faces[id] = fi ;
 	}
+    _boundaryFaceIds.push_back(0);
+    _boundaryFaceIds.push_back(_numberOfFaces-1);
+    _boundaryNodeIds.push_back(0);
+    _boundaryNodeIds.push_back(_numberOfNodes-1);
+
 	fieldl->decrRef();
 	baryCell->decrRef();
 	desc->decrRef();
