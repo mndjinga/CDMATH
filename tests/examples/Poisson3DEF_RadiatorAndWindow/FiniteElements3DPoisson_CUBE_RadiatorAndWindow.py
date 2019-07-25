@@ -3,7 +3,7 @@
 # Name        : Résolution EF de l'équation de Laplace 3D -\Delta T = 0 avec conditions aux limites de Dirichlet u non nulle
 # Authors     : Michaël Ndjinga, Sédrick Kameni Ngwamou
 # Copyright   : CEA Saclay 2019
-# Description : Utilisation de la méthode des éléménts finis P1 avec champs u discrétisés aux noeuds d'un maillage triangulaire
+# Description : Utilisation de la méthode des éléménts finis P1 avec champs u discrétisés aux noeuds d'un maillage tétraédrique
 #               Condition limites correspondant au refroidissement dû à une fenêtre et au chauffage dû à un radiateur
 #				Création et sauvegarde du champ résultant ainsi que du champ second membre en utilisant la librairie CDMATH
 #================================================================================================================================
@@ -60,8 +60,8 @@ print("nb of cells=", nbCells)
 
 #Conditions limites
 Tmur=20
-Tfenetre=10
-Tradiateur=30
+Tfenetre=0
+Tradiateur=40
 
 #Détermination des noeuds intérieurs
 #======================================================================
