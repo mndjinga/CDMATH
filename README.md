@@ -1,7 +1,7 @@
 CDMATH
 ======
 
-CDMATH is a geometrical and numerical toolbox designed for numerical analysts who work on the discretisation of partial differential equations on general shapes and meshes and who would rather focus on high-level scripting. The library originates from [CDMATH](http://cdmath.jimdo.com), a collaborative workgroup with the same name. It is based on the [MEDcoupling](https://docs.salome-platform.org/latest/dev/MEDCoupling/tutorial/index.html) C++/python library of the [SALOME](http://www.salome-platform.org/) project for the handling of meshes and fields, and on the C++ library [PETSC](https://www.mcs.anl.gov/petsc/) for the handling of matrices and linear solvers. The library currently developed for linux distributions and is maintained on Ubuntu 16.04 LTS and 18.04 LTS, as well as on Fedora 24, 25 and 26.
+CDMATH is a geometrical and numerical toolbox designed for numerical analysts who work on the discretisation of partial differential equations on general shapes and meshes and who would rather focus on high-level scripting. The library originates from [CDMATH](http://cdmath.jimdo.com), a collaborative workgroup with the same name. It is based on the [MEDcoupling](https://docs.salome-platform.org/latest/dev/MEDCoupling/tutorial/index.html) C++/python library of the [SALOME](http://www.salome-platform.org/) project for the handling of meshes and fields, and on the C++ library [PETSC](https://www.mcs.anl.gov/petsc/) for the handling of matrices and linear solvers. The library currently developed for linux distributions and is maintained on Ubuntu 16.04 LTS and 18.04 LTS, as well as on Fedora 24, 26 and 29.
 
 Examples of use
 ---------------
@@ -24,11 +24,10 @@ Create your source directory. For instance:
 * `mkdir ~/workspace/cdmath`
 * `cd ~/workspace/cdmath`
 
-Download from GitHub. For instance:
-* `wget https://github.com/ndjinga/CDMATH/archive/master.zip`
-
-Then unzip the file to a directory cdmath-master
-* `unzip master.zip`
+Download from GitHub
+* click on the following link : `https://github.com/ndjinga/CDMATH/archive/master.zip` then unzip the file in a directory cdmath-master
+* or type the following in a terminal : `wget https://github.com/ndjinga/CDMATH/archive/master.zip` then unzip the file in a directory cdmath-master
+* or clone the git repository to a folder cdmath-master:  `git clone https://github.com/ndjinga/CDMATH.git cdmath-master`
 
 
 Set environment for the compilation of CDMATH
