@@ -56,12 +56,12 @@ class TestsLinearSolverSwig(unittest.TestCase):
         self.assertEqual(LS2.isSingular(), True)
         self.assertEqual(LS2.getNameOfMethod(), "CG")
 #
-        LS3 = LinearSolver(A, B, 500, 1.E-10, "BCG")
+        LS3 = LinearSolver(A, B, 500, 1.E-10, "BICG")
         X3 = LS3.solve()
         self.assertTrue(abs(X3[0] - Xana[0]) < 1.E-10)
         self.assertTrue(abs(X3[1] - Xana[1]) < 1.E-10)
         self.assertEqual(LS3.getStatus(), True)
-        self.assertEqual(LS3.getNameOfMethod(), "BCG")
+        self.assertEqual(LS3.getNameOfMethod(), "BICG")
 #
         LS3 = LinearSolver(A, B, 500, 1.E-10, "CR")
         X3 = LS3.solve()
@@ -197,7 +197,7 @@ class TestsLinearSolverSwig(unittest.TestCase):
         self.assertEqual(LS11.getTolerance(), 1.E-10)
         self.assertEqual(LS11.getNumberOfIter(), 1)
 
-        LS11 = LinearSolver(A2, B2, 500, 1.E-10, "BCG", "ILU")
+        LS11 = LinearSolver(A2, B2, 500, 1.E-10, "BICG", "ILU")
         X11 = LS11.solve()
         for i in xrange(X11.getNumberOfRows()):
             self.assertTrue(abs(X11[i] - Xana2[i]) < 1.E-10)
