@@ -62,7 +62,7 @@ if (CDMATH_WITH_PETSC)
       set(PETSC_INCLUDES  /usr/include/petsc /usr/include/petsc/petsc/mpiuni)
       set(PETSC_LIBRARIES /usr/lib64/libpetsc.so)
 
-      set(PETSC_VERSION "3.7") #value for fedora 25/26 
+      set(PETSC_VERSION "3.7") #3.7 for fedora 25/26 , 3.9 for fedora 29
       set (CPACK_RPM_PACKAGE_REQUIRES   "${CPACK_RPM_PACKAGE_REQUIRES}, petsc-devel (>= 3.4)") # This is not fully working yet. 
 
     #elseif ( IS_DIRECTORY "/usr/lib/petsc/") #Case ubuntu/debian system install
