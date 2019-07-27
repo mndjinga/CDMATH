@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head><meta charset="utf-8" />
-<title>New_Notebook1010</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<title>3DRoomCoolingEF</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 
 <style type="text/css">
@@ -11777,55 +11777,42 @@ div#notebook {
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="$P_1$--finite-element-method-for-the-Laplace-equation-with-Dirichlet-boundary-conditions-(by-S&#233;drick-Kameni-Ngwamou,-PhD-student).">$P_1$  finite element method for the Laplace equation with Dirichlet boundary conditions (by S&#233;drick Kameni Ngwamou, PhD student).<a class="anchor-link" href="#$P_1$--finite-element-method-for-the-Laplace-equation-with-Dirichlet-boundary-conditions-(by-S&#233;drick-Kameni-Ngwamou,-PhD-student).">&#194;&#182;</a></h1><p>The goal of this work is to find the optimal position where we can install a radiator in order to optimize the temperature in a room.</p>
 <h2 id="1---Variational-formulation">1 - Variational formulation<a class="anchor-link" href="#1---Variational-formulation">&#194;&#182;</a></h2><p>Let $d\in\mathbb{N}^*$ and $\Omega$ a Lipschitz open subset of $\mathbb{R}^d$.
-Let $g\in H^{\frac{1}{2}}(\partial\Omega)$ a function definedon the boundary $\partial\Omega$. We are interested in the weak solutions of the following problem:
-\begin{equation} 
-\left{\begin{array}{ccl}
--\triangle u=0 &amp;\textrm{ in }&amp; \Omega\[1.5ex]
-u=g &amp;\textrm{ on } &amp;\partial \Omega,    \;\;\;\;\;\;\;\;\;(1)<br>
-       \end{array}
-\right.
-\end{equation}
-which means we are seeking for $u\in H^1_g(\Omega)$ such that
-\begin{equation}
-\forall v\in H^1<em>{g}(\Omega),\quad \int</em>\Omega \vec\nabla u\cdot\vec\nabla v - \int_{\partial\Omega}\vec\nabla u\cdot\vec n_x v\, d s_x = 0,\;\;\;\;\;\;\;\;\;(2)
-\end{equation}
-where $H^1_g=\tilde g+H^1_0$ is the affine space
-\begin{equation}
-H^1<em>g = {u \in H^1(\Omega), u</em>{|\partial\Omega}=g}
-\end{equation}
-with $u_{|\partial\Omega}$ denoting the trace of $u$ on $\partial\Omega$, and $\tilde g\in H^1(\Omega)$ such that $g$ is the trace of $\tilde g$ on $\partial\Omega$.</p>
+Let $g\in H^{\frac{1}{2}}(\partial\Omega)$ a function definedon the boundary $\partial\Omega$. We are interested in the weak solutions of the following problem:</p>
+$$
+\left\{\begin{array}{ccl}
+-\triangle u=0 &amp;\textrm{ in }&amp; \Omega\\[1.5ex]
+u=g &amp;\textrm{ on } &amp;\partial \Omega,    \;\;\;\;\;\;\;\;\;(1)    
+       \end{array} 
+\right.$$<p>which means we are seeking for $u\in H^1_g(\Omega)$ such that</p>
+$$
+\forall v\in H^1_{g}(\Omega),\quad \int_\Omega \vec\nabla u\cdot\vec\nabla v - \int_{\partial\Omega}\vec\nabla u\cdot\vec n_x v\, d s_x = 0,\;\;\;\;\;\;\;\;\;(2)$$<p>where $H^1_g=\tilde g+H^1_0$ is the affine space</p>
+$$
+H^1_g = \{u \in H^1(\Omega), u_{|\partial\Omega}=g\}$$<p>with $u_{|\partial\Omega}$ denoting the trace of $u$ on $\partial\Omega$, and $\tilde g\in H^1(\Omega)$ such that $g$ is the trace of $\tilde g$ on $\partial\Omega$.</p>
 <h2 id="2---Existence-of-the-solution">2 - Existence of the solution<a class="anchor-link" href="#2---Existence-of-the-solution">&#194;&#182;</a></h2><p>Here we follow the method proposed by the remark 5.2.10 of [1] page 116.
 Using a change of variables, the boundary condition is set to zeros. The problem comes down to solving the Poisson problem with a source term in $H^{-1}(\Omega)$.</p>
 <h3 id="2.1---Nonhomogeneous-problem">2.1 - Nonhomogeneous problem<a class="anchor-link" href="#2.1---Nonhomogeneous-problem">&#194;&#182;</a></h3><p>Given that $\Omega$ is Lipschitz, the trace operator is surjective from $H^{1}(\Omega)$ to $H^{\frac{1}{2}}(\partial\Omega)$ (see  [1] remark 4.3.17, (or [2] remark 7-i) chapter 9 page 315 ).
 Then there exists a function $\tilde g\in H^{1}(\Omega)$ such that $\tilde g_{|\partial\Omega}=g$.</p>
-<p>We want to prove the existence of the weak solution $\tilde u=u-\tilde g\in H^1_0(\Omega)$ of the following problem :
-\begin{equation}
-\left{\begin{array}{ccc}
--\triangle \tilde u=\triangle \tilde g &amp;\textrm{ in }&amp; \Omega\[1.5ex]
-\tilde u=0 &amp;\textrm{ on } &amp;\partial \Omega<br>
+<p>We want to prove the existence of the weak solution $\tilde u=u-\tilde g\in H^1_0(\Omega)$ of the following problem :</p>
+$$
+\left\{\begin{array}{ccc}
+-\triangle \tilde u=\triangle \tilde g &amp;\textrm{ in }&amp; \Omega\\[1.5ex]
+\tilde u=0 &amp;\textrm{ on } &amp;\partial \Omega        
        \end{array}
-\right.. \;\;\;\;\;\;\;\;\;(3)
-\end{equation}</p>
-<p>Given that  $\tilde g\in H^{1}(\Omega)$, we have  $\triangle \tilde g \notin L^2(\Omega)$. 
+\right.. \;\;\;\;\;\;\;\;\;(3)$$<p>Given that  $\tilde g\in H^{1}(\Omega)$, we have  $\triangle \tilde g \notin L^2(\Omega)$. 
 In fact $\triangle \tilde g$ is not a function but a distribution: $\triangle \tilde g \in H^{-1}(\Omega)$, which does not prohibit the usage of the Lax-Milgram theorem.<br>
 As explained in the subsection 2.2 below, the Lax-Milgram theorem implies the existence and uniqueness of $\tilde u\in H^1_0(\Omega)$, solution of (3).
 We deduce that $u=\tilde u+\tilde g\in H^1_g$ is the solution of (1).</p>
 <h3 id="2.2---Homogeneous-problem-with-$f\in-H^{-1}$">2.2 - Homogeneous problem with $f\in H^{-1}$<a class="anchor-link" href="#2.2---Homogeneous-problem-with-$f\in-H^{-1}$">&#194;&#182;</a></h3><p>We consider the following Poisson problem: 
-find  $u\in H^1_0(\Omega)$ weak solution of 
-\begin{equation}
-\left{\begin{array}{ccc}
--\triangle u= f &amp;\textrm{ in }&amp; \Omega\ 
-u=0 &amp;\textrm{ on } &amp;\partial \Omega   \;\;\;\;\;\;\;\;\;(4)<br>
+find  $u\in H^1_0(\Omega)$ weak solution of</p>
+$$
+\left\{\begin{array}{ccc}
+-\triangle u= f &amp;\textrm{ in }&amp; \Omega\\ 
+u=0 &amp;\textrm{ on } &amp;\partial \Omega   \;\;\;\;\;\;\;\;\;(4)      
        \end{array}
-\right..
-\end{equation}
-with $f\in H^{-1}(\Omega)$. We recall that $H^{-1}(\Omega)$ is the set of linear continuous forms on $H^{1}(\Omega)$.
+\right.$$<p>with $f\in H^{-1}(\Omega)$. We recall that $H^{-1}(\Omega)$ is the set of linear continuous forms on $H^{1}(\Omega)$.
 Elements of $H^{-1}(\Omega)$ are not functions but distributions, which does not prohibit the use of the Lax-Milgram theorem.</p>
-<p>In fact the variationnal formulation associated to (4) is
-\begin{equation}
-\forall v\in H^1<em>0(\Omega),\quad \int</em>\Omega \vec\nabla u\cdot\vec\nabla v =\int<em>\Omega v\triangle g = - \int</em>{\Omega}\vec\nabla v\cdot\vec \nabla g.\;\;\;\;\;\;\;\;\;(5)
-\end{equation}
-The bilinear form $ a( u, v)=\int_\Omega \vec\nabla u\cdot\vec\nabla v$ is continuous and coercive. The linear form $ b( v)=\int_\Omega \vec\nabla v\cdot\vec\nabla g$ is continuous.
+<p>In fact the variationnal formulation associated to (4) is</p>
+$$\forall v\in H^1_0(\Omega),\quad \int_\Omega \vec\nabla u\cdot\vec\nabla v =\int_\Omega v\triangle g = - \int_{\Omega}\vec\nabla v\cdot\vec \nabla g.\;\;\;\;\;\;\;\;\;(5)$$<p>The bilinear form $ a( u, v)=\int_\Omega \vec\nabla u\cdot\vec\nabla v$ is continuous and coercive. The linear form $ b( v)=\int_\Omega \vec\nabla v\cdot\vec\nabla g$ is continuous.
 The Lax-Milgram theorem implies the existence of $u\in H^1_0(\Omega)$ such that $a(u,v)=b(v) \: \forall v\in H^1_0(\Omega)$.</p>
 
 </div>
@@ -11846,78 +11833,45 @@ The vertices of the mesh $\mathcal{T}_k$ which are inside $\Omega$ are denoted $
 <li>$\phi_i$ is linear on each element $\mathcal{T}_k$</li>
 <li>$\phi_i(\vec x_j)=\delta_{ij}$ for all $i=1,\dots,n$, and $j=1,\dots,n$</li>
 </ul>
-<p>We recall that, since each $\phi_i\in H^1_{0}(\Omega)$, 
-\begin{equation}
- \forall j=1,\dots,n_b,\quad  \phi<em>i(x</em>{bj})=0.
- \end{equation}
- Let us denote by $V_{h0}\subset H^1_0(\Omega)$ the sub vector space of piecewise affine functions on $\mathcal{T}_k$ and nil on the boundary.
- $V_{h0}$ is also the subspace generated by the shape functions $\phi_i, i=1,\dots,n$.
- \begin{equation}
- V_{h0}=span&lt;\phi_1,\dots,\phi_n&gt;.
- \end{equation}</p>
-<h3 id="3.3---Projection-on-$V_h$">3.3 - Projection on $V_h$<a class="anchor-link" href="#3.3---Projection-on-$V_h$">&#194;&#182;</a></h3><p>The function $g$ defined on the boundary $\partial\Omega$ is approximated on the mesh $(\partial\mathcal{T})_h$ by the piecewise affine function $g_h$ such that 
- \begin{equation}
-\forall j=1,\dots,n_b,\quad  g<em>h(x</em>{bj})=g(x_{bj}).
- \end{equation}
-We denote by $V_h=\tilde g_h+V_{h0}\subset H^1_g(\Omega)$ the subspace of piecewise affine functions that are equal to $g_h$ on the boundary $\Omega$.\</p>
-<p>We define $\tilde g_h\in V_h$ to be the discrete counterpart of the function $\tilde g$. The function $\tilde g_h$ in $V_h$ having trace $g_h$ on $\partial\Omega$ as follow :
-\begin{eqnarray}
-\forall i&amp;=&amp;1,\dots,n,  \quad \:\tilde g<em>h(x</em>{i})=0\
-\forall j&amp;=&amp;1,\dots,n_b,\quad \tilde g<em>h(x</em>{bj})=g(x_{bj}).
-\end{eqnarray}</p>
-<p>We define $u_h \in V_h$ as the projection on $V_h$ of the exact solution $u$ of the weak problem (2).
+<p>We recall that, since each $\phi_i\in H^1_{0}(\Omega)$,</p>
+$$
+ \forall j=1,\dots,n_b,\quad  \phi_i(x_{bj})=0.$$<p>Let us denote by $V_{h0}\subset H^1_0(\Omega)$ the sub vector space of piecewise affine functions on $\mathcal{T}_k$ and nil on the boundary.
+ $V_{h0}$ is also the subspace generated by the shape functions $\phi_i, i=1,\dots,n$.</p>
+<p>$$
+ V_{h0}=span&lt;\phi_1,\dots,\phi_n&gt;.$$</p>
+<h3 id="3.3---Projection-on-$V_h$">3.3 - Projection on $V_h$<a class="anchor-link" href="#3.3---Projection-on-$V_h$">&#194;&#182;</a></h3><p>The function $g$ defined on the boundary $\partial\Omega$ is approximated on the mesh $(\partial\mathcal{T})_h$ by the piecewise affine function $g_h$ such that</p>
+<p>$$
+\forall j=1,\dots,n_b,\quad  g_h(x_{bj})=g(x_{bj}).$$</p>
+<p>We denote by $V_h=\tilde g_h+V_{h0}\subset H^1_g(\Omega)$ the subspace of piecewise affine functions that are equal to $g_h$ on the boundary $\Omega$.\</p>
+<p>We define $\tilde g_h\in V_h$ to be the discrete counterpart of the function $\tilde g$. The function $\tilde g_h$ in $V_h$ having trace $g_h$ on $\partial\Omega$ as follow :</p>
+$$
+\forall i=1,\dots,n,  \quad \:\tilde g_h(x_{i})=0$$$$\forall j=1,\dots,n_b,\quad \tilde g_h(x_{bj})=g(x_{bj}).$$<p>We define $u_h \in V_h$ as the projection on $V_h$ of the exact solution $u$ of the weak problem (2).
 By definition of $u_h \in V_h$, there exist $n$ real numbers $ u_1,\dots,u_n\in\mathbb{R}$ such that</p>
-\begin{equation}
-u_h=\tilde g_h + \sum_{i=1}^n u_i \phi_i.
-\end{equation}<p>Given that the function $\phi_i$ is nil on the boundary, the variational formulation (2) implies that $u_h$ must verify the system of equations
-\begin{equation}
-\forall j\in{1,\dots,n}, \quad \int_\Omega \vec\nabla \left(\tilde g<em>h + \sum</em>{i=1}^n u_i \phi_i\right)\cdot\vec\nabla \phi<em>j = 0, \;\;\;\;\;\;\;\;\;(6)
-\end{equation}
-or
-\begin{equation}
-\forall j\in{1,\dots,n},\quad \int</em>\Omega \vec\nabla \tilde g_h\cdot\vec\nabla \phi<em>j + \sum</em>{i=1}^n u<em>i \int</em>\Omega \vec\nabla \phi_i\cdot\vec\nabla \phi_j =0.
-\end{equation}
-(6) is equivalent to the system 
-\begin{equation}
-A_hU=b_h
-\end{equation}
-where $U={}^t(u_1,\dots,u_n)$, $A_h=(a_{ij})_{i,j=1,\dots,n}$ is symmetric positive definite and $b_h={}^t(b_1,\dots,b_n)$ with 
-\begin{eqnarray}
-a<em>{ij}&amp;=&amp;\:\:\:\int</em>{\Omega}\vec\nabla \phi_i \cdot\vec\nabla\phi_j,\;\;\;\;\;\;\;\;\;(7)\
-b<em>i   &amp;=&amp;  -   \int</em>\Omega  \vec\nabla \phi_i \cdot\vec\nabla \tilde g_h.\;\;\;\;\;\;\;\;\;(8)
-\end{eqnarray}</p>
-<h5 id="Remark:-[Support-of-$\phi_i$]">Remark: [Support of $\phi_i$]<a class="anchor-link" href="#Remark:-[Support-of-$\phi_i$]">&#194;&#182;</a></h5><p>The support of $\phi_i$ is the union of cells containing the node number $i$ :
-\begin{equation}
-supp(\phi<em>i)\subset\cup</em>{\vec x_i\in\mathcal{T}_k} \mathcal{T}_k
-\end{equation}</p>
-<p>Following the remark above, two shape functions $\phi_i$ and $\phi_j$ have some common support if and only if the nodes $i$ and $j$ are connected by an edge. Therefore the matrix $A_h$ is very sparse and has the same structure as the adjacency matrix of the node graph.</p>
-<p>A more practical consequence of that remark is that the integrals in (7) and (8) reduce to integrals on the cells surrounding $i$ :
-\begin{eqnarray}
-a<em>{ij}&amp;=&amp;\:\:\:\int</em>{\mathcal{T}_k, \vec x_i\in\mathcal{T}_k}\vec\nabla \phi_i \cdot\vec\nabla\phi_j,\
-b<em>i   &amp;=&amp;  -   \int</em>{\mathcal{T}_k, \vec x_i\in\mathcal{T}_k}  \vec\nabla \phi_i \cdot\vec\nabla \tilde g_h.
-\end{eqnarray}
-Each cell $\mathcal{T}_k$ of the mesh $(\mathcal{T})_h$ gives contributions to $A_h$ and $b_h$ at the lines $i$ such that $\vec x_i\in\mathcal{T}_k$. This contribution is related to the geometry of the cell as can be seen in the following section. It therefore proves very convenient to loop on the cells $\mathcal{T}_k$ and deduce the contributions associated to the cell boundary node numbers.</p>
+$$
+u_h=\tilde g_h + \sum_{i=1}^n u_i \phi_i.$$<p>Given that the function $\phi_i$ is nil on the boundary, the variational formulation (2) implies that $u_h$ must verify the system of equations</p>
+$$
+\forall j\in\{1,\dots,n\}, \quad \int_\Omega \vec\nabla \left(\tilde g_h + \sum_{i=1}^n u_i \phi_i\right)\cdot\vec\nabla \phi_j = 0, \;\;\;\;\;\;\;\;\;(6)$$<p>or</p>
+$$
+\forall j\in\{1,\dots,n\},\quad \int_\Omega \vec\nabla \tilde g_h\cdot\vec\nabla \phi_j + \sum_{i=1}^n u_i \int_\Omega \vec\nabla \phi_i\cdot\vec\nabla \phi_j =0.$$<p>(6) is equivalent to the system</p>
+$$
+A_hU=b_h$$<p>where $U={}^t(u_1,\dots,u_n)$, $A_h=(a_{ij})_{i,j=1,\dots,n}$ is symmetric positive definite and $b_h={}^t(b_1,\dots,b_n)$ with</p>
+$$
+a_{ij}=\:\:\:\int_{\Omega}\vec\nabla \phi_i \cdot\vec\nabla\phi_j,\;\;\;\;\;\;\;\;\;(7)$$$$b_i   =  -   \int_\Omega  \vec\nabla \phi_i \cdot\vec\nabla \tilde g_h.\;\;\;\;\;\;\;\;\;(8)$$<h5 id="Remark:-[Support-of-$\phi_i$]">Remark: [Support of $\phi_i$]<a class="anchor-link" href="#Remark:-[Support-of-$\phi_i$]">&#194;&#182;</a></h5><p>The support of $\phi_i$ is the union of cells containing the node number $i$ :</p>
+$$ supp(\phi_i)\subset\cup_{\vec x_i\in\mathcal{T}_k} \mathcal{T}_k$$<p>Following the remark above, two shape functions $\phi_i$ and $\phi_j$ have some common support if and only if the nodes $i$ and $j$ are connected by an edge. Therefore the matrix $A_h$ is very sparse and has the same structure as the adjacency matrix of the node graph.</p>
+<p>A more practical consequence of that remark is that the integrals in (7) and (8) reduce to integrals on the cells surrounding $i$ :</p>
+$$
+a_{ij}=\:\:\:\int_{\mathcal{T}_k, \vec x_i\in\mathcal{T}_k}\vec\nabla \phi_i \cdot\vec\nabla\phi_j,$$$$b_i   =  -   \int_{\mathcal{T}_k, \vec x_i\in\mathcal{T}_k}  \vec\nabla \phi_i \cdot\vec\nabla \tilde g_h.$$<p>Each cell $\mathcal{T}_k$ of the mesh $(\mathcal{T})_h$ gives contributions to $A_h$ and $b_h$ at the lines $i$ such that $\vec x_i\in\mathcal{T}_k$. This contribution is related to the geometry of the cell as can be seen in the following section. It therefore proves very convenient to loop on the cells $\mathcal{T}_k$ and deduce the contributions associated to the cell boundary node numbers.</p>
 <p>Furthermore the function $\tilde g_h$ is non zero only in cells having at least one node on the boundary $\partial\Omega$. Therefore</p>
 <ul>
 <li>if all the nodes of the cell $\mathcal{T}_k$ are interior nodes then $\mathcal{T}_k$ contributes to the matrix $A_h$ at coefficients $a_{ij}$ where $i$ and $j$ are both nodes of the cell $\mathcal{T}$. There is no contribution to the right hand side $b_h$ : $\int_{\mathcal{T}_k, \vec x_i\in\mathcal{T}_k}  \vec\nabla \phi_i \cdot\vec\nabla \tilde g_h=0$.</li>
 <li>in the few cases where some of the nodes of the cell $\mathcal{T}_k$ are not interior nodes but boundary nodes on $\partial\Omega$,  $\mathcal{T}_k$ contributes to the matrix $A_h$ at coefficients $a_{ij}$ where $i$ and $j$ are both interior nodes of the cell $\mathcal{T}$. The contribution to the right hand side $b_h$ is (potentially) non zero and given by $\int_{\mathcal{T}_k, \vec x_i\in\mathcal{T}_k}  \vec\nabla \phi_i \cdot\vec\nabla \tilde g_h\neq 0$.</li>
 </ul>
-<p>We define $a_{ij}^k$ and $b_i^k$ as the contributions to $A_h$ and $b_h$ arising from the cell $\mathcal{T}_k$ :
-\begin{equation}
-a<em>{ij} =  \sum</em>{k} a<em>{ij}^{k},\
-b</em>{i} = - \sum<em>{k}b</em>{i}^{k},
-\end{equation}
-where
-\begin{equation}
-a<em>{ij}^{k} = \int</em>{\mathcal{T}<em>{k}}\vec{\nabla}\phi</em>{i}.\vec{\nabla}\phi<em>{j} ,\
-b</em>{i}^{k} = - \int<em>{\mathcal{T}</em>{k}}  \vec\nabla \phi_i \cdot\vec\nabla \tilde g_h.
-\end{equation}
-The remark  yields
-\begin{equation}
-(\vec x<em>i\notin \mathcal{T}</em>{k}) \textrm{ or } (\vec x<em>j\notin \mathcal{T}</em>{k})\Rightarrow a_{ij}^{k} = 0\
-(\vec x<em>i\notin \mathcal{T}</em>{k}) \textrm{ or } (\mathcal{T}<em>k\cap\partial\Omega=\emptyset)\Rightarrow b</em>{i}^{k} = 0.\
-\end{equation}</p>
-<p>For the final expressions of $a_{ij}$ and $b_i$, one needs the expression of the gradients $\vec\nabla\phi_i$ and $\vec\nabla \tilde g_h$ in each cell.</p>
+<p>We define $a_{ij}^k$ and $b_i^k$ as the contributions to $A_h$ and $b_h$ arising from the cell $\mathcal{T}_k$ :</p>
+$$a_{ij} =  \sum_{k} a_{ij}^{k},$$$$b_{i} = - \sum_{k}b_{i}^{k},$$<p>where</p>
+$$
+a_{ij}^{k} = \int_{\mathcal{T}_{k}}\vec{\nabla}\phi_{i}.\vec{\nabla}\phi_{j} ,$$$$b_{i}^{k} = - \int_{\mathcal{T}_{k}}  \vec\nabla \phi_i \cdot\vec\nabla \tilde g_h.$$<p>The remark  yields</p>
+$$
+(\vec x_i\notin \mathcal{T}_{k}) \textrm{ or } (\vec x_j\notin \mathcal{T}_{k})\Rightarrow a_{ij}^{k} = 0$$$$(\vec x_i\notin \mathcal{T}_{k}) \textrm{ or } (\mathcal{T}_k\cap\partial\Omega=\emptyset)\Rightarrow b_{i}^{k} = 0.$$<p>For the final expressions of $a_{ij}$ and $b_i$, one needs the expression of the gradients $\vec\nabla\phi_i$ and $\vec\nabla \tilde g_h$ in each cell.</p>
 
 </div>
 </div>
