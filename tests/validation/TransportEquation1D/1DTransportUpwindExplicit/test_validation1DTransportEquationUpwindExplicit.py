@@ -96,7 +96,7 @@ def test_validation1DTransportEquationUpwindExplicit(cfl,isSmooth):
     
     print "Explicit Upwind scheme for Transport Equation on 1D regular grid : scheme order is ", -a
     
-    assert -a>0.9 and -a<1.02
+    assert -a>0.7 and -a<1.02
     
     # Plot of convergence curve
     plt.close()
