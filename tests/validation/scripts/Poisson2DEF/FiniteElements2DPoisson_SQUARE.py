@@ -54,7 +54,7 @@ def solve(filename,resolution,meshType, testColor):
     test_desc["Space_dimension"]=my_mesh.getSpaceDimension()
     test_desc["Mesh_dimension"]=my_mesh.getMeshDimension()
     test_desc["Mesh_number_of_elements"]=my_mesh.getNumberOfNodes()
-    test_desc["Mesh_cell_type"]=my_mesh.getElementTypes()
+    test_desc["Mesh_cell_type"]=my_mesh.getElementTypesNames()
 
     print("Mesh loading done")
     print("Number of nodes=", nbNodes)

@@ -409,7 +409,7 @@ def solve(my_mesh,meshName,resolution,scaling, meshType, testColor,cfl,test_bc="
     test_desc["Space_dimension"]=my_mesh.getSpaceDimension()
     test_desc["Mesh_dimension"]=my_mesh.getMeshDimension()
     test_desc["Mesh_is_unstructured"]=True
-    test_desc["Mesh_cell_type"]=my_mesh.getElementTypes()
+    test_desc["Mesh_cell_type"]=my_mesh.getElementTypesNames()
     test_desc["Mesh_number_of_elements"]=my_mesh.getNumberOfCells()
     test_desc["Mesh_max_number_of_neighbours"]=10
     if(meshName.find("square")>-1 or meshName.find("Square")>-1):
