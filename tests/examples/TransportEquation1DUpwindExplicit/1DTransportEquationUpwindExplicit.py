@@ -21,6 +21,8 @@ import sys
 from copy import deepcopy
 
 def Transport1DUpwindExplicit(nx,cfl):
+    print "Simulation of 1D transport equation with explicit upwind scheme"
+
     ##################### Simulation parameters
     a = 0.0 # space domain :  a <= x <= b
     b = 1.0

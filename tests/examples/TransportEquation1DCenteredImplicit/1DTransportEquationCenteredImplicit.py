@@ -31,6 +31,8 @@ def centeredSchemeMatrix(nx,cfl):
     return centeredMat
     
 def Transport1DCenteredImplicit(nx,cfl):
+    print "Simulation of 1D transport equation with implicit centered scheme"
+
     ##################### Simulation parameters
     a = 0.0 # space domain :  a <= x <= b
     b = 1.0

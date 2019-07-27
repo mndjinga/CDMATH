@@ -21,6 +21,8 @@ import sys
 from copy import deepcopy
 
 def Transport1DCenteredExplicit(nx,cfl, isSmooth):
+    print "Simulation of 1D transport equation with explicit centered scheme"
+
     ##################### Simulation parameters
     a = 0.0 # space domain :  a <= x <= b
     b = 1.0
@@ -96,7 +98,7 @@ def Transport1DCenteredExplicit(nx,cfl, isSmooth):
     print "Exact solution variation : ", np.sum([abs(u_initial[i] - u_initial[(i-1)%nx]) for i in range(nx)]), "Numerical solution variation : ",  np.sum([abs(u[i] - u[(i-1)%nx]) for i in range(nx)])
     print "l1 numerical error       : ", dx*np.sum([abs(u[i] - u_initial[i]) for i in range(nx)])        
     
-    print("Simulation of transport equation with explicit centered scheme done.")
+    print "Simulation of 1D transport equation with explicit centered scheme done"
     
     #return min, max, total variation and l1 error
     return min(u), max(u), np.sum([abs(u[i] - u[(i-1)%nx]) for i in range(nx)]), dx*np.sum([abs(u[i] - u_initial[i]) for i in range(nx)])

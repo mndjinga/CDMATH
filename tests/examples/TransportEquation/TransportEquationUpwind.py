@@ -213,7 +213,7 @@ def TransportEquationVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolu
 
 
 def solve(my_mesh, meshName, resolution, meshType, cfl, test_bc):
-    print "Resolution of the Transport Equation in dimension "
+    print "Resolution of the Transport Equation in dimension ", my_mesh.getMeshDimension()
     print "Numerical method : ", "Upwind"
     print "Initial data : ", "Spherical shock"
     print "Mesh name : ",meshName , ", ", my_mesh.getNumberOfCells(), " cells"

@@ -58,6 +58,8 @@ def Du_ncsv(u_l, u_i, u_r):
     return Du
 
 def Burgers1D():
+    print "Simulation of 1D Burgers' equation with various explicit schemes"
+
     ##################### Simulation parameters
     a = 0.0 # space domain :  a <= x <= b
     b = 1.

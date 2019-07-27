@@ -21,6 +21,8 @@ import sys
 from copy import deepcopy
 
 def HeatEquation1DExplicit(nx,cfl):
+    print "Simulation of 1D heat equation with an explicit scheme"
+
     ##################### Simulation parameters
     a = 0.0 # space domain :  a <= x <= b
     b = 1.0

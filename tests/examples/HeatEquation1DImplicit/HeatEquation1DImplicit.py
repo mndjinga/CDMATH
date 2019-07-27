@@ -30,6 +30,8 @@ def implicitSchemeMatrix(nx,cfl):
     return implMat
 
 def HeatEquation1DImplicit(nx,cfl):
+    print "Simulation of 1D heat equation with an implicit scheme"
+
     ##################### Simulation parameters
     a = 0.0 # space domain :  a <= x <= b
     b = 1.0

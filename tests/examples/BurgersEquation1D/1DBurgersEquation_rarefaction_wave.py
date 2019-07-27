@@ -44,6 +44,8 @@ def Flux_Godunov(u_l, u_r):
     return flux
 
 def Burgers1D():
+    print "Simulation of 1D Burgers' equation with upwind and godunov explicit schemes"
+    
     ##################### Simulation parameters
     a = -1. # space domain :  a <= x <= b
     b = 1.
