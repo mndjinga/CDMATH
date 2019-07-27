@@ -241,7 +241,7 @@ def WaveSystemStaggered(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolu
         if(dim>=2):
             Un[k + 2*nbCells] = rho0*velocity_field[k,1] # value on the bottom face
             if(dim==3):
-                Un[k + 3*nbCells] = rho0*initial_velocity[k,2]
+                Un[k + 3*nbCells] = rho0*velocity_field[k,2]
 
     if( scaling>0):
         Vn = Un.deepCopy()
