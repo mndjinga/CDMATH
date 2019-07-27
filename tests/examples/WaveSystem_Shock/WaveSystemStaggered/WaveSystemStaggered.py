@@ -15,7 +15,7 @@
 #================================================================================================================================
 
 
-from math import sin, cos, pi, sqrt
+from math import sqrt
 import cdmath
 import PV_routines
 import VTK_routines

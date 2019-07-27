@@ -15,7 +15,7 @@
 #================================================================================================================================
 
 
-from math import sin, cos, pi, sqrt
+from math import sqrt
 from numpy import sign
 import cdmath
 import PV_routines

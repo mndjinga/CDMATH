@@ -15,7 +15,7 @@
 #================================================================================================================================
 
 
-from math import sin, cos, pi, sqrt
+from math import sqrt
 import cdmath
 import PV_routines
 import VTK_routines
@@ -158,8 +158,6 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, filename,resolution, is
     isStationary=False;
     nbVoisinsMax=my_mesh.getMaxNbNeighbours(cdmath.CELLS)
     
-    SumFluxes = cdmath.Field("Fluxes", cdmath.CELLS, my_mesh, dim+1)
-
     # Initial conditions #
     print("Construction of the initial condition …")
     if(dim==1 or filename.find("square")>-1 or filename.find("Square")>-1 or filename.find("cube")>-1 or filename.find("Cube")>-1):
