@@ -27,7 +27,6 @@ def Transport1DCenteredExplicit(nx,cfl, isSmooth):
     dx = (b - a) / nx #space step
 
     c = 0.25 # advection velocity
-    tmax = (b-a)/c # runs the simulation for 0 <= t <= tMax
     dt = cfl * dx / c
     ntmax = ceil(tmax/dt)
 
@@ -38,11 +37,11 @@ def Transport1DCenteredExplicit(nx,cfl, isSmooth):
     if(isSmooth):
         print "Smooth initial data"
         u_initial = [ sin(2*pi*xi)  for xi in x];# to be used with a=0, b=1
-        tmax = 4*(b-a)/c # runs the simulation for 0 <= t <= tMax
-        ntmax = ceil(tmax/dt)
+        tmax = 3*(b-a)/c # runs the simulation for 0 <= t <= tMax
     else:
         print "Stiff initial data"
         u_initial = [ int(1./3<xi)*int(xi<2./3)  for xi in x];# to be used with a=0, b=1
+        tmax = (b-a)/c # runs the simulation for 0 <= t <= tMax
 
     u = deepcopy(u_initial)
     
