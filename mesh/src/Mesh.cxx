@@ -233,6 +233,7 @@ Mesh::readMeshMed( const std::string filename, const int meshLevel)
     
 	MEDCouplingUMesh*  mu = setMesh();
 	setGroups(m, mu);
+
 	cout<<endl<< "Loaded file "<< filename<<endl;
     cout<<"Mesh name= "<<m->getName()<<", mesh dim="<< _meshDim<< ", space dim="<< _spaceDim<< ", nb cells= "<<getNumberOfCells()<< ", nb nodes= "<<getNumberOfNodes()<<endl;
 
@@ -263,8 +264,8 @@ Mesh::setGroupAtFaceByCoords(double x, double y, double z, double eps, std::stri
 	}
 	if (flag)
     {
-		_faceGroupNames.push_back(groupName);
-		_nodeGroupNames.push_back(groupName);
+		_faceGroupNames.insert(_faceGroupNames.begin(),groupName);
+		_nodeGroupNames.insert(_nodeGroupNames.begin(),groupName);
         //To do : update _faceGroups and _nodeGroups
     }
 }
@@ -292,8 +293,8 @@ Mesh::setGroupAtPlan(double value, int direction, double eps, std::string groupN
 	}
 	if (flag)
     {
-		_faceGroupNames.push_back(groupName);
-		_nodeGroupNames.push_back(groupName);
+		_faceGroupNames.insert(_faceGroupNames.begin(),groupName);
+		_nodeGroupNames.insert(_nodeGroupNames.begin(),groupName);
         //To do : update _faceGroups, _nodeGroups
     }
 }
@@ -531,8 +532,8 @@ Mesh::setGroups( const MEDFileUMesh* medmesh, MEDCouplingUMesh*  mu)
 		{
 			cout<<"Boundary face group named "<< groupName << " found"<<endl;
 			MEDCouplingUMesh *m=medmesh->getGroup(-1,groupName.c_str());
-			_faceGroups.push_back(m);
-			_faceGroupNames.push_back(groupName);
+			_faceGroups.insert(_faceGroups.begin(),m);
+			_faceGroupNames.insert(_faceGroupNames.begin(),groupName);
 			DataArrayDouble *baryCell = m->computeCellCenterOfMass() ;
 			const double *coorBary=baryCell->getConstPointer();
 
@@ -576,8 +577,8 @@ Mesh::setGroups( const MEDFileUMesh* medmesh, MEDCouplingUMesh*  mu)
 		{
 			cout<<"Boundary node group named "<< groupName << " found"<<endl;
 
-			_nodeGroups.push_back(nodeGroup);
-			_nodeGroupNames.push_back(groupName);
+			_nodeGroups.insert(_nodeGroups.begin(),nodeGroup);
+			_nodeGroupNames.insert(_nodeGroupNames.begin(),groupName);
 
 			int nbNodesSubMesh=nodeGroup->getNumberOfTuples();//nodeGroup->getNbOfElems();
 
