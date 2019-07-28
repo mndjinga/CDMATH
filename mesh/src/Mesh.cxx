@@ -1040,6 +1040,10 @@ Mesh::setMesh( void )
             _zMax=Box0[5];
         }
     }
+
+    //Set boundary groups
+	_faceGroupNames.push_back("Boundary");
+    _nodeGroupNames.push_back("Boundary");
     
     desc->decrRef();
 	descI->decrRef();
@@ -1219,6 +1223,10 @@ Mesh::Mesh( double xmin, double xmax, int nx, std::string meshName )
 			fi.addCellId(el,workc[el]) ;
 		_faces[id] = fi ;
 	}
+
+    //Set boundary groups
+	_faceGroupNames.push_back("Boundary");
+    _nodeGroupNames.push_back("Boundary");
     _boundaryFaceIds.push_back(0);
     _boundaryFaceIds.push_back(_numberOfFaces-1);
     _boundaryNodeIds.push_back(0);
@@ -1371,6 +1379,13 @@ Mesh::Mesh( std::vector<double> points, std::string meshName )
 			fi.addCellId(el,workc[el]) ;
 		_faces[id] = fi ;
 	}
+    //Set boundary groups
+	_faceGroupNames.push_back("Boundary");
+    _nodeGroupNames.push_back("Boundary");
+    _boundaryFaceIds.push_back(0);
+    _boundaryFaceIds.push_back(_numberOfFaces-1);
+    _boundaryNodeIds.push_back(0);
+    _boundaryNodeIds.push_back(_numberOfNodes-1);
 
 	fieldl->decrRef();
 	baryCell->decrRef();
