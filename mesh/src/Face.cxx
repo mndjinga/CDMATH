@@ -54,10 +54,19 @@ Face::Face( const int numberOfNodes, const int numberOfCells, const double measu
 	_cellsId = std::vector< int >(_numberOfCells,0);
 	_measure = measure ;
 	_region=-1;
-	_groupNames=std::vector<std::string>(0);
 	_xN=xN;
 	_yN=yN;
 	_zN=zN;
+
+    if(numberOfCells==1)
+        _groupNames=std::vector<std::string>(1,"Boundary");
+    else if(numberOfCells>=2)//On a graph geometry (spaceDim>meshDim), a face is a node and can have more than 2 cell neighbour
+        _groupNames=std::vector<std::string>(0);
+    else
+    {
+        cout<<"Error, trying to create a face with "<< numberOfCells <<" cell neighbours"<<endl;
+        throw CdmathException("A face must have at least one cell neighbour (MEDCoupling philosophy)");    
+    }
 }
 
 //----------------------------------------------------------------------
@@ -112,7 +121,7 @@ Face::getGroupName(int igroup) const
 void
 Face::setGroupName(const string groupName)
 {
-	_groupNames.push_back(groupName);
+	_groupNames.insert(_groupNames.begin(),groupName);
 	_region=0;
 }
 
