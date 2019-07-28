@@ -139,7 +139,7 @@ def computeDivergenceMatrix(my_mesh,implMat):
             for i in range(dim) :
                 normal[i] = Cj.getNormalVector(k, i);#normale sortante
 
-            Am, un=jacobianMatrices( normal,dt*Fk.getMeasure()/Cj.getMeasure());
+            Am, un=jacobianMatrices( normal,Fk.getMeasure()/Cj.getMeasure());
             maxAbsEigVa = max(maxAbsEigVa,abs(un+c),abs(un-c));
             
             cellAutre =-1
@@ -176,7 +176,7 @@ def computeDivergenceMatrix(my_mesh,implMat):
                     print Fk.getGroupName()
                     raise ValueError("computeFluxes: Unknown boundary condition name");
                 
-    return implMat, maxAbsEigVa
+    return maxAbsEigVa
 
 def EulerSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, filename,resolution, isImplicit):
     dim=my_mesh.getMeshDimension()
@@ -219,7 +219,7 @@ def EulerSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, filename,resolution, i
 
     dx_min=my_mesh.minRatioVolSurf()
 
-    divMat=cdmath.SparseMatrixPetsc(nbCells*nbComp,nbCells*nbComp,(nbVoisinsMax+1)*nbComp)
+    divMat=cdmath.SparseMatrixPetsc(nbCells*(1+dim),nbCells*(1+dim),(nbVoisinsMax+1)*(1+dim))
     if( isImplicit):
         iterGMRESMax=50
         LS=cdmath.LinearSolver(divMat,Un,iterGMRESMax, precision, "GMRES","ILU")
@@ -229,7 +229,7 @@ def EulerSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, filename,resolution, i
     # Starting time loop
     while (it<ntmax and time <= tmax and not isStationary):
         divMat.zeroEntries()#sets the matrix coefficients to zero
-        divMat,vp_max=computeDivergenceMatrix(my_mesh,implMat)#To update at each time step
+        vp_max=computeDivergenceMatrix(my_mesh,divMat)#To update at each time step
         dt = cfl * dx_min / vp_max#To update at each time step
             
         if(isImplicit):
@@ -294,7 +294,7 @@ def EulerSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, filename,resolution, i
 def solve(my_mesh,filename,resolution, isImplicit):
     print "Resolution of the Euler system in dimension ", my_mesh.getSpaceDimension()
     if( my_mesh.getSpaceDimension()!=2):
-        raise ValueError("Only dimension 2 simulations allowed"
+        raise ValueError("Only dimension 2 simulations allowed")
     print "Numerical method : upwind"
     print "Initial data : spherical wave"
     print "Wall boundary conditions"
