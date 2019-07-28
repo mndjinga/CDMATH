@@ -9,9 +9,11 @@ import time, json
 
 def test_validation3DWaveSystemUpwindTetrahedra(bctype,scaling):
     start = time.time()
-    #### 3D tetrahedral mesh by simplexization of a cartesian mesh
-    meshList=[5,11,21,26]
-    meshType="Regular tetrahedra"
+    #### 3D tetrahedral mesh of a cartesian mesh
+    #meshList=[5,11,21,26]
+    meshList=['meshCubeTetrahedra_0','meshCubeTetrahedra_1','meshCubeTetrahedra_2','meshCubeTetrahedra_3','meshCubeTetrahedra_4']
+    mesh_path='../../../ressources/3DTetrahedra/'
+    meshType="Unstructured tetrahedra"
     testColor="Green"
     nbMeshes=len(meshList)
     error_p_tab=[0]*nbMeshes
@@ -32,10 +34,12 @@ def test_validation3DWaveSystemUpwindTetrahedra(bctype,scaling):
     cfl=1./3
     
     # Storing of numerical errors, mesh sizes and diagonal values
-    for nx in meshList:
-        my_mesh=cdmath.Mesh(0.,1.,nx,0.,1.,nx,0.,1.,nx,6)
-        error_p_tab[i], error_u_tab[i], mesh_size_tab[i], t_final[i], ndt_final[i], max_vel[i], diag_data_press[i], diag_data_vel[i], time_tab[i] =WaveSystemUpwind.solve(my_mesh, mesh_name+str(my_mesh.getNumberOfCells()), resolution,scaling,meshType,testColor,cfl,bctype)
-        assert max_vel[i]>1.8 and max_vel[i]<2
+    for filename in meshList:
+    #for nx in meshList:
+        #my_mesh=cdmath.Mesh(0.,1.,nx,0.,1.,nx,0.,1.,nx,6)
+        #error_p_tab[i], error_u_tab[i], mesh_size_tab[i], t_final[i], ndt_final[i], max_vel[i], diag_data_press[i], diag_data_vel[i], time_tab[i] =WaveSystemUpwind.solve(my_mesh, mesh_name+str(my_mesh.getNumberOfCells()), resolution,scaling,meshType,testColor,cfl,bctype)
+        error_p_tab[i], error_u_tab[i], mesh_size_tab[i], t_final[i], ndt_final[i], max_vel[i], diag_data_press[i], diag_data_vel[i], time_tab[i] =WaveSystemUpwind.solve_file(mesh_path+filename, mesh_name, resolution,scaling,meshType,testColor,cfl,bctype)
+        assert max_vel[i]>1.7 and max_vel[i]<2
         error_p_tab[i]=log10(error_p_tab[i])
         error_u_tab[i]=log10(error_u_tab[i])
         i=i+1

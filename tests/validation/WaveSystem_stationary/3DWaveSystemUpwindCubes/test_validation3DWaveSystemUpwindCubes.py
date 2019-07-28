@@ -10,7 +10,9 @@ import time, json
 def test_validation3DWaveSystemUpwindCubes(bctype,scaling):
     start = time.time()
     #### 3D cubic mesh
-    meshList=[6,11,21]
+    #meshList=[6,11,21]
+    meshList=['mesh_hexa_2','mesh_hexa_3','mesh_hexa_4']#,'mesh_hexa_5'
+    mesh_path='../../../ressources/3DHexahedra/'
     meshType="Regular cubes"
     testColor="Green"
     nbMeshes=len(meshList)
@@ -32,12 +34,17 @@ def test_validation3DWaveSystemUpwindCubes(bctype,scaling):
     cfl=1./3
     
     # Storing of numerical errors, mesh sizes and diagonal values
-    for nx in meshList:
-        my_mesh=cdmath.Mesh(0,1,nx,0,1,nx,0,1,nx)
-        error_p_tab[i], error_u_tab[i], mesh_size_tab[i], t_final[i], ndt_final[i], max_vel[i], diag_data_press[i], diag_data_vel[i], time_tab[i] =WaveSystemUpwind.solve(my_mesh, mesh_name+str(my_mesh.getNumberOfCells()), resolution,scaling,meshType,testColor,cfl,bctype)
-        assert max_vel[i]>1.4 and max_vel[i]<2
-        error_p_tab[i]=log10(error_p_tab[i])
-        error_u_tab[i]=log10(error_u_tab[i])
+    for filename in meshList:
+    #for nx in meshList:
+        #my_mesh=cdmath.Mesh(0,1,nx,0,1,nx,0,1,nx)
+        #error_p_tab[i], error_u_tab[i], mesh_size_tab[i], t_final[i], ndt_final[i], max_vel[i], diag_data_press[i], diag_data_vel[i], time_tab[i] =WaveSystemUpwind.solve(my_mesh, mesh_name+str(my_mesh.getNumberOfCells()), resolution,scaling,meshType,testColor,cfl,bctype)
+        error_p_tab[i], error_u_tab[i], mesh_size_tab[i], t_final[i], ndt_final[i], max_vel[i], diag_data_press[i], diag_data_vel[i], time_tab[i] =WaveSystemUpwind.solve_file(mesh_path+filename, mesh_name, resolution,scaling,meshType,testColor,cfl,bctype)
+        print "max_vel[i]= ",max_vel[i], " error_p_tab[i]= ", error_p_tab[i]
+        assert max_vel[i]>0.8 and max_vel[i]<2
+        if error_p_tab[i]>0 :
+            error_p_tab[i]=log10(error_p_tab[i])
+        if error_u_tab[i]>0 :
+            error_u_tab[i]=log10(error_u_tab[i])
         i=i+1
     
     end = time.time()

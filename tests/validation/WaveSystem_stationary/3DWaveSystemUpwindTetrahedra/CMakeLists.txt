@@ -8,7 +8,7 @@ install(FILES ${SCRIPT} DESTINATION share/validation/test_validation3DWaveSystem
 
 if (CDMATH_WITH_PYTHON AND CDMATH_WITH_PETSC AND CDMATH_WITH_POSTPRO)
 
-    SET(BCTYPE  Periodic  )
+    SET(BCTYPE  Wall  )
 
     SET(SCALING  0  )
 
