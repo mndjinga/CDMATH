@@ -23,6 +23,10 @@ def test_validation3DVF_checkerboard():
     curv_abs=np.linspace(0,sqrt(3),resolution+1)
     plt.close('all')
     i=0
+    
+    print "!!!!!!!!!!!!!!!! Warning !!!!!!!!!!!!!!!!!!!"
+    print "Mesh was badly generated (look for instance  at boundary groups)"
+    
     # Storing of numerical errors, mesh sizes and diagonal values
     for filename in meshList:
         error_tab[i], mesh_size_tab[i], diag_data[i], min_sol_num, max_sol_num, time_tab[i] =FiniteVolumes3DPoisson_CUBE.solve_file(mesh_path+filename,resolution,meshType,testColor)
