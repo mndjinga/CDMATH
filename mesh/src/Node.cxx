@@ -7,7 +7,7 @@
 
 #include "Node.hxx"
 #include "CdmathException.hxx"
-
+#include <algorithm> 
 
 //----------------------------------------------------------------------
 Node::Node( void )
@@ -161,7 +161,7 @@ Node::getGroupName(int igroup) const
 void
 Node::setGroupName(const std::string groupName)
 {
-	_groupNames.push_back(groupName);
+	_groupNames.insert(_groupNames.begin(),groupName);
 	_region=0;
 }
 
@@ -187,7 +187,11 @@ Node::addFaceId (const int numFace, const int faceId, bool isBorder  )
 {
 	_facesId[numFace] = faceId ;
     if(isBorder)
+    {
+        if(std::find(_groupNames.begin(), _groupNames.end(), "Boundary") == _groupNames.end())//No group named Boundary
+            _groupNames.insert(_groupNames.begin(),"Boundary");
         _isBorder=true;
+    }
 }
 
 //----------------------------------------------------------------------
