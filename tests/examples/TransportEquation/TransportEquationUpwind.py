@@ -131,6 +131,9 @@ def TransportEquationVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolu
             
     total_mass_initial=unknown_field.integral()#For conservation test later
     
+    #sauvegarde de la donnée initiale
+    unknown_field.writeVTK("TransportEquation"+str(dim)+"DUpwind"+meshName);
+
     dx_min=my_mesh.minRatioVolSurf()
 
     dt = cfl * dx_min / velocity.norm()
@@ -221,7 +224,7 @@ def solve(my_mesh, meshName, resolution, meshType, cfl, test_bc):
     # Problem data
     tmax = 10000.
     ntmax = 30000
-    output_freq = 1
+    output_freq = 1000
 
     isImplicit=True
     
