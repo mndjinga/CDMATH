@@ -444,3 +444,9 @@ SparseMatrixPetsc::diagonalShift(double lambda)
 
     MatShift(_mat, lambda);
 }
+
+void 
+SparseMatrixPetsc::zeroEntries()
+{
+    MatZeroEntries(_mat);
+}

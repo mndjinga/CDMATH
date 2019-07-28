@@ -103,7 +103,8 @@ public:
 	Mat getPetscMatrix() const;
     
     void diagonalShift(double lambda);
-
+    void zeroEntries();//sets the matrix coefficients to zero
+    
 private:
 	Mat _mat;
 
