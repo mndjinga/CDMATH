@@ -76,56 +76,53 @@ def initial_conditions_shock(my_mesh, isCircle):
     return pressure_field, velocity_field
 
     
-def jacobianMatrices(Ul,Ur,c,normale,coeff):
-    RoeMat   = Matrix(3,3);
-    AbsRoeMa = Matrix(3,3);
+def jacobianMatrices(normale,coeff,rho_l,q_l,rho_r,q_r):
+    RoeMat   = cdmath.Matrix(3,3);
+    AbsRoeMa = cdmath.Matrix(3,3);
 
-    tangent=Vector(2);
+    tangent=cdmath.Vector(2);
     tangent[0]= normale[1];
     tangent[1]=-normale[0];
 
-    rho_l=Ul[0];
-    rho_r=Ur[0];
-    q_l=Vector(2);
-    q_l[0]=Ul[1];
-    q_l[1]=Ul[2];
-    q_r=Vector(2);
-    q_r[0]=Ur[1];
-    q_r[1]=Ur[2];
     u_l = q_l/rho_l;
     u_r = q_r/rho_r;
+    if rho_l<0 or rho_r<0 :
+        print "rho_l=",rho_l, " rho_r= ",rho_r
+        raise ValueError("Negative density")
     u = (u_l*sqrt(rho_l)+u_r*sqrt(rho_r))/(sqrt(rho_l)+sqrt(rho_r));   
     un=u*normale;
 
     RoeMat[0,0]   = 0
     RoeMat[0,1]   =     normale[0]
     RoeMat[0,2]   =     normale[1]
-    RoeMat[1,0]   = c*c*normale[0] - un*u[0]
-    RoeMat[2,0]   = c*c*normale[1] - un*u[1]
+    RoeMat[1,0]   = c0*c0*normale[0] - un*u[0]
+    RoeMat[2,0]   = c0*c0*normale[1] - un*u[1]
     RoeMat[1,1]   = un + normale[0]*u[0]
     RoeMat[1,2]   =      normale[1]*u[0]
     RoeMat[2,2]   = un + normale[1]*u[1]
     RoeMat[2,1]   =      normale[0]*u[1]
 
-    AbsRoeMa[0,0]=(abs(un-c)*(un+c)+abs(un+c)*(c-un))/(2*c);
-    AbsRoeMa[0,1]= (abs(un+c)-abs(un-c))/(2*c)*normale[0];
-    AbsRoeMa[0,2]= (abs(un+c)-abs(un-c))/(2*c)*normale[1];
-    AbsRoeMa[1,0]=(abs(un-c)*(un+c)*(u[0]-c*normale[0])-abs(un+c)*(un-c)*(u[0]+c*normale[0]))/(2*c)-abs(un)*(u*tangent)*tangent[0];
-    AbsRoeMa[2,0]=(abs(un-c)*(un+c)*(u[1]-c*normale[1])-abs(un+c)*(un-c)*(u[1]+c*normale[1]))/(2*c)-abs(un)*(u*tangent)*tangent[1];
-    #subMatrix=(abs(un+c)*((u-c*normale)^normale)-abs(un-c)*((u-c*normale)^normale))/(2*c)+abs(un)*(tangent^tangent);
-    AbsRoeMa[1,1]=(abs(un+c)*((u[0]-c*normale[0])*normale[0])-abs(un-c)*((u[0]-c*normale[0])*normale[0]))/(2*c)+abs(un)*(tangent[0]*tangent[0]);#subMatrix[0,0];
-    AbsRoeMa[1,2]=(abs(un+c)*((u[0]-c*normale[0])*normale[1])-abs(un-c)*((u[0]-c*normale[0])*normale[1]))/(2*c)+abs(un)*(tangent[0]*tangent[1]);#subMatrix[0,1];
-    AbsRoeMa[2,1]=(abs(un+c)*((u[1]-c*normale[1])*normale[0])-abs(un-c)*((u[1]-c*normale[1])*normale[0]))/(2*c)+abs(un)*(tangent[1]*tangent[0]);
-    AbsRoeMa[2,2]=(abs(un+c)*((u[1]-c*normale[1])*normale[1])-abs(un-c)*((u[1]-c*normale[1])*normale[1]))/(2*c)+abs(un)*(tangent[1]*tangent[1]);
+    AbsRoeMa[0,0]=(abs(un-c0)*(un+c0)+abs(un+c0)*(c0-un))/(2*c0);
+    AbsRoeMa[0,1]= (abs(un+c0)-abs(un-c0))/(2*c0)*normale[0];
+    AbsRoeMa[0,2]= (abs(un+c0)-abs(un-c0))/(2*c0)*normale[1];
+    AbsRoeMa[1,0]=(abs(un-c0)*(un+c0)*(u[0]-c0*normale[0])-abs(un+c0)*(un-c0)*(u[0]+c0*normale[0]))/(2*c0)-abs(un)*(u*tangent)*tangent[0];
+    AbsRoeMa[2,0]=(abs(un-c0)*(un+c0)*(u[1]-c0*normale[1])-abs(un+c0)*(un-c0)*(u[1]+c0*normale[1]))/(2*c0)-abs(un)*(u*tangent)*tangent[1];
+    #subMatrix=(abs(un+c0)*((u-c0*normale)^normale)-abs(un-c0)*((u-c0*normale)^normale))/(2*c0)+abs(un)*(tangent^tangent);
+    AbsRoeMa[1,1]=(abs(un+c0)*((u[0]-c0*normale[0])*normale[0])-abs(un-c0)*((u[0]-c0*normale[0])*normale[0]))/(2*c0)+abs(un)*(tangent[0]*tangent[0]);#subMatrix[0,0];
+    AbsRoeMa[1,2]=(abs(un+c0)*((u[0]-c0*normale[0])*normale[1])-abs(un-c0)*((u[0]-c0*normale[0])*normale[1]))/(2*c0)+abs(un)*(tangent[0]*tangent[1]);#subMatrix[0,1];
+    AbsRoeMa[2,1]=(abs(un+c0)*((u[1]-c0*normale[1])*normale[0])-abs(un-c0)*((u[1]-c0*normale[1])*normale[0]))/(2*c0)+abs(un)*(tangent[1]*tangent[0]);
+    AbsRoeMa[2,2]=(abs(un+c0)*((u[1]-c0*normale[1])*normale[1])-abs(un-c0)*((u[1]-c0*normale[1])*normale[1]))/(2*c0)+abs(un)*(tangent[1]*tangent[1]);
 
     return (RoeMat-AbsRoeMa)*coeff/2,un;
 
-def computeDivergenceMatrix(my_mesh,implMat):
+def computeDivergenceMatrix(my_mesh,implMat,Un):
     nbCells = my_mesh.getNumberOfCells()
     dim=my_mesh.getMeshDimension()
     nbComp=dim+1
     normal=cdmath.Vector(dim)
     maxAbsEigVa = 0
+    q_l=cdmath.Vector(2);
+    q_r=cdmath.Vector(2);
 
     idMoinsJacCL=cdmath.Matrix(nbComp)
     
@@ -139,9 +136,6 @@ def computeDivergenceMatrix(my_mesh,implMat):
             for i in range(dim) :
                 normal[i] = Cj.getNormalVector(k, i);#normale sortante
 
-            Am, un=jacobianMatrices( normal,Fk.getMeasure()/Cj.getMeasure());
-            maxAbsEigVa = max(maxAbsEigVa,abs(un+c),abs(un-c));
-            
             cellAutre =-1
             if ( not Fk.isBorder()) :
                 # hypothese: La cellule d'index indexC1 est la cellule courante index j */
@@ -154,10 +148,21 @@ def computeDivergenceMatrix(my_mesh,implMat):
                 else :
                     raise ValueError("computeFluxes: problem with mesh, unknown cell number")
                     
+                q_l[0]=Un[j*nbComp+1]
+                q_l[1]=Un[j*nbComp+2]
+                q_r[0]=Un[cellAutre*nbComp+1]
+                q_r[1]=Un[cellAutre*nbComp+2]
+                Am, un=jacobianMatrices( normal,Fk.getMeasure()/Cj.getMeasure(),Un[j*nbComp],q_l,Un[cellAutre*nbComp],q_r);
+            
                 implMat.addValue(j*nbComp,cellAutre*nbComp,Am)
                 implMat.addValue(j*nbComp,        j*nbComp,Am*(-1.))
             else  :
                 if( Fk.getGroupName() != "Periodic" and Fk.getGroupName() != "Neumann"):#Wall boundary condition unless Periodic/Neumann specified explicitly
+                    q_l[0]=Un[j*nbComp+1]
+                    q_l[1]=Un[j*nbComp+2]
+                    q_r=q_l-normal*2*(q_l*normal)
+                    Am, un=jacobianMatrices( normal,Fk.getMeasure()/Cj.getMeasure(),Un[j*nbComp],q_l,Un[j*nbComp],q_r);
+            
                     v=cdmath.Vector(dim+1)
                     for i in range(dim) :
                         v[i+1]=normal[i]
@@ -166,6 +171,12 @@ def computeDivergenceMatrix(my_mesh,implMat):
                     implMat.addValue(j*nbComp,j*nbComp,Am*(-1.)*idMoinsJacCL)
                     
                 elif( Fk.getGroupName() == "Periodic"):#Periodic boundary condition
+                    q_l[0]=Un[j*nbComp+1]
+                    q_l[1]=Un[j*nbComp+2]
+                    q_r[0]=Un[cellAutre*nbComp+1]
+                    q_r[1]=Un[cellAutre*nbComp+2]
+                    Am, un=jacobianMatrices( normal,Fk.getMeasure()/Cj.getMeasure(),Un[j*nbComp],Un[j*nbComp+1],Un[j*nbComp+2],Un[cellAutre*nbComp],Un[cellAutre*nbComp+1],Un[cellAutre*nbComp+2]);
+            
                     indexFP=my_mesh.getIndexFacePeriodic(indexFace)
                     Fp = my_mesh.getFace(indexFP)
                     cellAutre = Fp.getCellsId()[0]
@@ -175,7 +186,9 @@ def computeDivergenceMatrix(my_mesh,implMat):
                 elif(Fk.getGroupName() != "Neumann"):#Nothing to do for Neumann boundary condition
                     print Fk.getGroupName()
                     raise ValueError("computeFluxes: Unknown boundary condition name");
-                
+            
+            maxAbsEigVa = max(maxAbsEigVa,abs(un+c0),abs(un-c0));
+    
     return maxAbsEigVa
 
 def EulerSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, filename,resolution, isImplicit):
@@ -229,7 +242,7 @@ def EulerSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, filename,resolution, i
     # Starting time loop
     while (it<ntmax and time <= tmax and not isStationary):
         divMat.zeroEntries()#sets the matrix coefficients to zero
-        vp_max=computeDivergenceMatrix(my_mesh,divMat)#To update at each time step
+        vp_max=computeDivergenceMatrix(my_mesh,divMat,Un)#To update at each time step
         dt = cfl * dx_min / vp_max#To update at each time step
             
         if(isImplicit):
