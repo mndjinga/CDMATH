@@ -54,19 +54,19 @@ class Mesh
 
 public: //----------------------------------------------------------------
 	/**
-	 * default constructor
+	 * \brief default constructor
 	 */
 	Mesh ( void ) ;
 
 	/**
-	 * constructor with data to load a general unstructured mesh
+	 * \brief constructor with data to load a general unstructured mesh
 	 * @param filename name of mesh file
 	 * @param meshLevel : relative mesh dimension : 0->cells, 1->Faces etc
 	 */
 	Mesh ( const std::string filename, int meshLevel=0 ) ;
 
 	/**
-	 * constructor with data for a regular 1D grid 
+	 * \brief constructor with data for a regular 1D grid 
 	 * @param xmin : minimum x
 	 * @param xmax : maximum x
 	 * @param nx : Number of cells in x direction
@@ -74,13 +74,13 @@ public: //----------------------------------------------------------------
 	Mesh( double xmin, double xmax, int nx, std::string meshName="MESH1D_Regular_Grid" ) ;
 
 	/**
-	 * constructor with data for an unstructured 1D mesh
+	 * \brief constructor with data for an unstructured 1D mesh
 	 * @param points : abscissas of the mesh nodes
 	 */
 	Mesh( std::vector<double> points, std::string meshName="MESH1D_unstructured" ) ;
 
 	/**
-	 * constructor with data for a regular 2D grid 
+	 * \brief constructor with data for a regular 2D grid 
 	 * @param xmin : minimum x
 	 * @param xmax : maximum x
 	 * @param ymin : minimum y
@@ -92,7 +92,7 @@ public: //----------------------------------------------------------------
 	Mesh( double xmin, double xmax, int nx, double ymin, double ymax, int ny, int split_to_triangles_policy=-1, std::string meshName="MESH2D_Regular_Rectangle_Grid") ;
 
 	/**
-	 * constructor with data for a regular 3D grid 
+	 * \brief constructor with data for a regular 3D grid 
 	 * @param xmin : minimum x
 	 * @param xmax : maximum x
 	 * @param ymin : minimum y
@@ -109,85 +109,85 @@ public: //----------------------------------------------------------------
 	Mesh( const MEDCoupling::MEDCouplingIMesh* mesh ) ;
 
 	/**
-	 * constructor with data
+	 * \brief constructor with data
 	 * @param filename : file name of mesh med file
 	 * @param meshLevel : relative mesh dimension : 0->cells, 1->Faces etc
 	 */
 	void readMeshMed( const std::string filename, int meshLevel=0 ) ;
 
 	/**
-	 * constructor by copy
+	 * \brief constructor by copy
 	 * @param mesh : The Mesh object to be copied
 	 */
 	Mesh ( const Mesh & mesh ) ;
 
 	/**
-	 * destructor
+	 * \brief destructor
 	 */
 	~Mesh( void ) ;
 
 	/**
-	 * return mesh name
+	 * \brief return mesh name
 	 * @return _name
 	 */
 	std::string getName( void ) const ;
 
 	/**
-	 * return Space dimension
+	 * \brief return Space dimension
 	 * @return _spaceDim
 	 */
 	int getSpaceDimension( void ) const ;
 
 	/**
-	 * return Mesh dimension
+	 * \brief Mesh dimension
 	 * @return _meshDim
 	 */
 	int getMeshDimension( void ) const ;
 
 	/**
-	 * return The nodes in this mesh
+	 * \brief return The nodes in this mesh
 	 * @return _nodes
 	 */
 	Node* getNodes ( void ) const ;
 
 	/**
-	 * return The cells in this mesh
+	 * \brief return The cells in this mesh
 	 * @return _vertices
 	 */
 	Cell* getCells ( void ) const ;
 
 	/**
-	 * return the faces in this mesh
+	 * \brief return the faces in this mesh
 	 * @return _vertices
 	 */
 	Face* getFaces ( void ) const ;
 
 	/**
-	 * return the number of nodes in this mesh
+	 * \brief return the number of nodes in this mesh
 	 * @return _numberOfNodes
 	 */
 	int getNumberOfNodes ( void )  const ;
 
 	/**
-	 * return the number of faces in this mesh
+	 * \brief return the number of faces in this mesh
 	 * @return _numberOfFaces
 	 */
 	int getNumberOfFaces ( void )  const ;
 
 	/**
-	 * return the number of cells in this mesh
+	 * \brief return the number of cells in this mesh
 	 * @return _numberOfCells
 	 */
 	int getNumberOfCells ( void )  const ;
 
 	/**
-	 * return the number of edges in this mesh
+	 * \brief return the number of edges in this mesh
 	 * @return _numberOfEdges
 	 */
 	int getNumberOfEdges ( void )  const ;
 
 	/**
-	 * return The cell i in this mesh
+	 * \brief return the cell i in this mesh
 	 * @return _cells[i]
 	 */
 	Cell& getCell ( int i )  const ;
@@ -199,26 +199,26 @@ public: //----------------------------------------------------------------
 	Face& getFace ( int i )  const ;
 
 	/**
-	 * return The node i in this mesh
+	 * \brief return The node i in this mesh
 	 * @return _nodes[i]
 	 */
 	Node& getNode ( int i )  const ;
 
 	/**
-	 * return number of cell in x direction (structured mesh)
-	 * return _nX
+	 * \brief return number of cell in x direction (structured mesh)
+	 * @return _nX
 	 */
 	int getNx( void )  const ;
 
 	/**
-	 * return number of cell in y direction (structured mesh)
-	 * return _nY
+	 * \brief return number of cell in y direction (structured mesh)
+	 * @return _nY
 	 */
 	int getNy( void )  const ;
 
 	/**
-	 * return number of cell in z direction (structured mesh)
-	 * return _nZ
+	 * \brief return number of cell in z direction (structured mesh)
+	 * @return _nZ
 	 */
 	int getNz( void )  const ;
 
@@ -239,54 +239,83 @@ public: //----------------------------------------------------------------
 	std::vector<int> getCellGridStructure() const;// for structured meshes
 
 	/**
-	 * surcharge operator =
+	 * \brief surcharge operator =
 	 * @param mesh : The Mesh object to be copied
 	 */
 	const Mesh& operator= ( const Mesh& mesh ) ;
 
 	/**
-	 * return the mesh MEDCoupling
-	 * return _mesh
+	 * \brief return the mesh MEDCoupling
+	 * @return _mesh
 	 */
 	MEDCoupling::MCAuto<MEDCoupling::MEDCouplingMesh> getMEDCouplingMesh ( void )  const ;
 
 	/**
-	 * return the list of face group names
-	 * return _faaceGroupNames
+	 * \brief return the list of face group names
+	 * return _faceGroupNames
 	 */
 	std::vector<std::string> getNameOfFaceGroups( void )  const ;
 
 	/**
-	 * return the list of node group names
+	 * \brief return the list of node group names
 	 * return _nodeGroupNames
 	 */
 	std::vector<std::string> getNameOfNodeGroups( void )  const ;
 
 	/**
-	 * return the list of face groups
-	 * return _faceGroups
+	 * \brief return the list of face groups
+	 * @return _faceGroups
 	 */
 	std::vector<MEDCoupling::MEDCouplingUMesh *> getFaceGroups( void )  const ;
 
 	/**
-	 * return the list of node groups
-	 * return _nodeGroups
+	 * \brief return the list of node groups
+	 * @return _nodeGroups
 	 */
 	std::vector<MEDCoupling::DataArrayInt32 *> getNodeGroups( void )  const ;
 
+    /*
+     * Functions to extract boundary nodes and faces Ids
+     */
+     /**
+      *  \brief return the list of boundary faces Ids
+      *  @return _boundaryFaceIds
+      */
+    std::vector< int > getBoundaryFaceIds() const;
+    /**
+     * \brief list of boundary nodes Ids
+     * @return _boundaryNodeIds
+     */
+    std::vector< int > getBoundaryNodeIds() const;
+    /*
+     * Functions to extract group nodes and faces ids
+     */
+     /** 
+      * @return list of face group Ids
+      */
+    std::vector< int > getGroupFaceIds(std::string groupName) const;
+    /**
+     * @return list of node group Ids
+     * */
+    std::vector< int > getGroupNodeIds(std::string groupName) const;
+ 
 	/**
-	 * write mesh in the VTK format
+	 * \brief write mesh in the VTK format
 	 */
 	void writeVTK ( const std::string fileName ) const ;
 
 	/**
-	 * write mesh in the MED format
+	 * \brief write mesh in the MED format
 	 */
 	void writeMED ( const std::string fileName ) const ;
 
 	void setGroupAtPlan(double value, int direction, double eps, std::string groupName) ;
 
 	void setGroupAtFaceByCoords(double x, double y, double z, double eps, std::string groupName) ;
+
+	void setFaceGroupByIds(std::vector< int > faceIds, std::string groupName) ;
+
+	void setNodeGroupByIds(std::vector< int > nodeIds, std::string groupName) ;
 
 	/*
      * Functions to manage periodic boundary condition in square/cubic geometries 
@@ -297,14 +326,6 @@ public: //----------------------------------------------------------------
     std::map<int,int> getIndexFacePeriodic( void ) const;
     bool isIndexFacePeriodicSet() const ;
     
-    /*
-     * Functions to extract boundary nodes and faces
-     */
-     /* Return list of boundary faces*/
-    std::vector< int > getBoundaryFaceIds() const;
-    /* Return list of boundary nodes*/
-    std::vector< int > getBoundaryNodeIds() const;
- 
 	bool isBorderNode(int nodeid) const ;
 	bool isBorderFace(int faceid) const ;
 	
@@ -315,12 +336,12 @@ public: //----------------------------------------------------------------
     bool isStructured() const ;
     std::vector< std::string > getElementTypesNames() const ;
 	/**
-	 * Compute the minimum value over all cells of the ratio cell perimeter/cell vaolume
+	 * \brief Compute the minimum value over all cells of the ratio cell perimeter/cell vaolume
 	 */
     double minRatioVolSurf();
     
 	/**
-	 * Compute the maximum number of neighbours around an element (cells around a cell or nodes around a node)
+	 * \brief Compute the maximum number of neighbours around an element (cells around a cell or nodes around a node)
 	 */
     int getMaxNbNeighbours(EntityType type) const;
     
@@ -333,12 +354,12 @@ private: //----------------------------------------------------------------
     std::string _name;
     
 	/**
-	 * Space dimension
+	 * \brief Space dimension
 	 */
 	int _spaceDim ;
 
 	/**
-	 * Mesh dimension
+	 * \brief Mesh dimension
 	 */
 	int _meshDim ;
     

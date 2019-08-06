@@ -546,9 +546,18 @@ Mesh::setGroups( const MEDFileUMesh* medmesh, MEDCouplingUMesh*  mu)
 				Point p1(coorBaryXyz[0],coorBaryXyz[1],coorBaryXyz[2]) ;
 
 				int flag=0;
+                /* double min=INFINITY;
+                Point p3;
+                int closestFaceNb; */
 				for (int iface=0;iface<_numberOfFaces;iface++ )
 				{
 					Point p2=_faces[iface].getBarryCenter();
+                    /* if(groupName=="Wall" and p1.distance(p2)<min)
+                    {
+                        min=p1.distance(p2);
+                        p3=p2;
+                        closestFaceNb=iface;
+                    } */
 					if(p1.distance(p2)<1.E-10)
 					{
 						_faces[iface].setGroupName(groupName);
@@ -556,6 +565,11 @@ Mesh::setGroups( const MEDFileUMesh* medmesh, MEDCouplingUMesh*  mu)
 						break;
 					}
 				}
+                /*if(groupName=="Wall" and min>1.E-10)
+                    {
+                        cout<<"Subcell number "<< ic <<" Min distance to Wall = "<<min <<" p= "<<p1[0]<<" , "<<p1[1]<<" , "<<p1[2]<<endl;
+                        cout<<" attained at face "<< closestFaceNb << " p_min= "<<p3[0]<<" , "<<p3[1]<<" , "<<p3[2]<<endl;
+                    } */
 				if (flag==0)
 					throw CdmathException("No face belonging to group " + groupName + " found");
 			}
@@ -1943,3 +1957,60 @@ Mesh::writeMED ( const std::string fileName ) const
 
 	mu->decrRef();
 }
+
+std::vector< int > 
+Mesh::getGroupFaceIds(std::string groupName) const
+{
+    if( std::find(_faceGroupNames.begin(),_faceGroupNames.end(),groupName) == _faceGroupNames.end() )
+    {
+        cout<<"Mesh::getGroupFaceIds Error : face group " << groupName << " does not exist"<<endl;
+        throw CdmathException("Required face group does not exist");
+    }
+    else
+    {
+        std::vector< int > result(0);
+        for(int i=0; i<_boundaryFaceIds.size(); i++)
+        {
+            vector< std::string > groupNames = getFace(_boundaryFaceIds[i]).getGroupNames();
+            if( std::find(groupNames.begin(), groupNames.end(),groupName) != groupNames.end() )
+                result.push_back(_boundaryFaceIds[i]);
+        }
+        return result;
+    }
+}
+
+std::vector< int > 
+Mesh::getGroupNodeIds(std::string groupName) const
+{
+    if( std::find(_nodeGroupNames.begin(),_nodeGroupNames.end(),groupName) == _nodeGroupNames.end() )
+    {
+        cout<<"Mesh::getGroupNodeIds Error : node group " << groupName << " does not exist"<<endl;
+        throw CdmathException("Required node group does not exist");
+    }
+    else
+    {
+        std::vector< int > result(0);
+        for(int i=0; i<_boundaryFaceIds.size(); i++)
+        {
+            vector< std::string > groupNames = getNode(_boundaryFaceIds[i]).getGroupNames();
+            if( std::find(groupNames.begin(), groupNames.end(),groupName) != groupNames.end() )
+                result.push_back(_boundaryFaceIds[i]);
+        }
+        return result;
+    }
+}
+
+void 
+Mesh::setFaceGroupByIds(std::vector< int > faceIds, std::string groupName) 
+{
+    for(int i=0; i< faceIds.size(); i++)
+        getFace(faceIds[i]).setGroupName(groupName);
+}
+
+void 
+Mesh::setNodeGroupByIds(std::vector< int > nodeIds, std::string groupName) 
+{
+    for(int i=0; i< nodeIds.size(); i++)
+        getNode(nodeIds[i]).setGroupName(groupName);
+}
+
