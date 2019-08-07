@@ -532,9 +532,10 @@ Mesh::setGroups( const MEDFileUMesh* medmesh, MEDCouplingUMesh*  mu)
 		{
 			cout<<"Boundary face group named "<< groupName << " found"<<endl;
 			MEDCouplingUMesh *m=medmesh->getGroup(-1,groupName.c_str());
+            mu->unPolyze();
 			_faceGroups.insert(_faceGroups.begin(),m);
 			_faceGroupNames.insert(_faceGroupNames.begin(),groupName);
-			DataArrayDouble *baryCell = m->computeCellCenterOfMass() ;
+			DataArrayDouble *baryCell = m->computeIsoBarycenterOfNodesPerCell();//computeCellCenterOfMass() ;
 			const double *coorBary=baryCell->getConstPointer();
 
 			int nbCellsSubMesh=m->getNumberOfCells();
@@ -548,16 +549,16 @@ Mesh::setGroups( const MEDFileUMesh* medmesh, MEDCouplingUMesh*  mu)
 				int flag=0;
                 /* double min=INFINITY;
                 Point p3;
-                int closestFaceNb; */
+                int closestFaceNb;*/
 				for (int iface=0;iface<_numberOfFaces;iface++ )
 				{
 					Point p2=_faces[iface].getBarryCenter();
-                    /* if(groupName=="Wall" and p1.distance(p2)<min)
+                    /*if(groupName=="Wall" and p1.distance(p2)<min)
                     {
                         min=p1.distance(p2);
                         p3=p2;
                         closestFaceNb=iface;
-                    } */
+                    }*/
 					if(p1.distance(p2)<1.E-10)
 					{
 						_faces[iface].setGroupName(groupName);
@@ -565,11 +566,12 @@ Mesh::setGroups( const MEDFileUMesh* medmesh, MEDCouplingUMesh*  mu)
 						break;
 					}
 				}
-                /*if(groupName=="Wall" and min>1.E-10)
+                /* if(groupName=="Wall" and min>1.E-10)
                     {
+                        cout.precision(15);
                         cout<<"Subcell number "<< ic <<" Min distance to Wall = "<<min <<" p= "<<p1[0]<<" , "<<p1[1]<<" , "<<p1[2]<<endl;
                         cout<<" attained at face "<< closestFaceNb << " p_min= "<<p3[0]<<" , "<<p3[1]<<" , "<<p3[2]<<endl;
-                    } */
+                    }*/
 				if (flag==0)
 					throw CdmathException("No face belonging to group " + groupName + " found");
 			}
@@ -802,7 +804,7 @@ Mesh::setMesh( void )
 	}
 	else if(_spaceDim==2  || _spaceDim==3)
 	{
-		DataArrayDouble *barySeg = mu2->computeCellCenterOfMass() ;
+		DataArrayDouble *barySeg = mu2->computeIsoBarycenterOfNodesPerCell();//computeCellCenterOfMass() ;
 		const double *coorBarySeg=barySeg->getConstPointer();
 
 		MEDCouplingFieldDouble* fieldn;
