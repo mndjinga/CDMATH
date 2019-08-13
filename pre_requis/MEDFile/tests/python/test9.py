@@ -2,7 +2,7 @@
 # -*- coding:utf-8 -*-
 # /*  This file is part of MED.
 #  *
-#  *  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+#  *  COPYRIGHT (C) 1999 - 2019  EDF R&D, CEA/DEN
 #  *  MED is free software: you can redistribute it and/or modify
 #  *  it under the terms of the GNU Lesser General Public License as published by
 #  *  the Free Software Foundation, either version 3 of the License, or
@@ -41,22 +41,22 @@ fid = MEDfileOpen("test8.med",MED_ACC_RDONLY)
 maa, sdim, mdim, type, desc, dtunit, sort, nstep, rep, nomcoo,unicoo = MEDmeshInfo(fid, 1)
 
 #print "Maillage de nom : |%s| , de dimension : %ld , et de type %d\n"%(maa,mdim,type)
-print "Maillage de nom : |%s| , de dimension : %ld , et de type %s\n"%(maa,mdim,type)
-print "\t -Dimension de l'espace : %ld\n"%(sdim)
-print "\t -Description du maillage : %s\n"%(desc)
-print "\t -Noms des axes : |%s|\n"%(nomcoo)
-print "\t -Unités des axes : |%s|\n"%(unicoo)
+print("Maillage de nom : |%s| , de dimension : %ld , et de type %s\n"%(maa,mdim,type))
+print("\t -Dimension de l'espace : %ld\n"%(sdim))
+print("\t -Description du maillage : %s\n"%(desc))
+print("\t -Noms des axes : |%s|\n"%(nomcoo))
+print("\t -Unités des axes : |%s|\n"%(unicoo))
 #print "\t -Type de repère : %d\n"%(rep)
-print "\t -Type de repère : %s\n"%(rep)
-print "\t -Nombre d'étape de calcul : %ld\n"%(nstep)
-print "\t -Unité des dates : |%s|\n"%(dtunit)
+print("\t -Type de repère : %s\n"%(rep))
+print("\t -Nombre d'étape de calcul : %ld\n"%(nstep))
+print("\t -Unité des dates : |%s|\n"%(dtunit))
 
 # /* Lecture du nombre de familles */
 nfam = MEDnFamily(fid,maa)
-print "Nombre de familles : %d \n"%(nfam)
+print("Nombre de familles : %d \n"%(nfam))
 
 # /* Lecture de chaque famille */
-for i in xrange(0,nfam):
+for i in range(0,nfam):
 
   # /* Lecture du nombre de groupe */
   ngro = MEDnFamilyGroup(fid,maa,i+1)
@@ -65,7 +65,7 @@ for i in xrange(0,nfam):
   natt = MEDnFamily23Attribute(fid,maa,i+1) 
 
 
-  print "Famille %d a %d attributs et %d groupes \n"%(i+1,natt,ngro)
+  print("Famille %d a %d attributs et %d groupes \n"%(i+1,natt,ngro))
 
   attide = MEDINT(natt)
   attval = MEDINT(natt)
@@ -78,14 +78,14 @@ for i in xrange(0,nfam):
   nomfam,numfam,attide,attval,attdes,gro = MEDfamily23Info(fid,maa,i+1,attide,attval,attdes,gro)
 
 
-  print "Famille de nom %s et de numero %d : \n"%(nomfam,numfam)
-  print "Attributs : \n"
-  for j in xrange(0,natt):
-      print "ide = %d - val = %d - des = %s\n"%( attide[j], attval[j], attdes[j*MED_COMMENT_SIZE,j*MED_COMMENT_SIZE+MED_COMMENT_SIZE])
+  print("Famille de nom %s et de numero %d : \n"%(nomfam,numfam))
+  print("Attributs : \n")
+  for j in range(0,natt):
+      print("ide = %d - val = %d - des = %s\n"%( attide[j], attval[j], attdes[j*MED_COMMENT_SIZE,j*MED_COMMENT_SIZE+MED_COMMENT_SIZE]))
 
-  print "Groupes : \n"
-  for j in xrange(0,ngro):
-      print "gro = %s\n"%(gro[j*MED_LNAME_SIZE:j*MED_LNAME_SIZE+MED_LNAME_SIZE])
+  print("Groupes : \n")
+  for j in range(0,ngro):
+      print("gro = %s\n"%(gro[j*MED_LNAME_SIZE:j*MED_LNAME_SIZE+MED_LNAME_SIZE]))
 
 
 MEDfileClose(fid)

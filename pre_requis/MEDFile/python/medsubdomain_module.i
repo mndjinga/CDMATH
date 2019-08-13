@@ -1,5 +1,5 @@
 # -*- coding:utf-8 -*-
-%module medsubdomain
+%module (package="med") medsubdomain
 
 //A inclure avant toute déclaration à SWIG
 %include "med_881.i"

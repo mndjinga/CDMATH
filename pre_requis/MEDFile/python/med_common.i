@@ -39,7 +39,7 @@
 %include "stdint.i"
 #endif
 
-%import  "medenum_module.i"
+%import "medenum_module.i"
 
 /* Inclusion du std_vector.i pour éviter le message : */
 /* error: 'SWIGPY_SLICE_ARG' was not declared in this scope */
@@ -62,6 +62,7 @@
 // comme des MEDARRAY, chacun des modules devra définir spécifiquement ses types scalaires.
 // A définir avant les définitions d'un typemap med_float * scalaire
 %med_array_typemaps(med_float,MEDFLOAT, \  )
+// A définir avant les définitions d'un typemap med_float32 * scalaire
 %pythoncode{
 MEDFLOAT64=MEDFLOAT
 MEDDOUBLE=MEDFLOAT

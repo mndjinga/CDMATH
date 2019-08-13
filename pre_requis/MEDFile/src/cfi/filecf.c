@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2019  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -91,7 +91,7 @@ nmfifvop (const char const *name,
   _access = (med_access_mode) *access;
   
   _ret = (med_idt) MEDfileVersionOpen(_fn, _access,*major,*minor,*release); 
-  /* ISCRUTE_long(_ret); */
+ /* ISCRUTE_long(_ret); */
   _MEDcstringFree(_fn);
 
   return(_ret); 
@@ -331,30 +331,29 @@ nmfifcom(const char const *name,
 
 
 #ifdef PPRO_NT
-med_int
+med_idt
 MFIFOMN (med_idt *fid,
-		   char *fname,
-		   unsigned int bidon,
-		   med_int *len,
-		   med_int *class)
+	 char *fname,
+	 unsigned int bidon,
+	 med_int *len,
+	 med_int *class)
 #else
-med_int
+med_idt
 nmfifomn(med_idt *fid,
 	 char *fname,
 	 med_int  *len,
 	 med_int *class)
 #endif
 {
-  char *_fn;
-  med_int _ret;
+  char     *_fn;
+  med_idt   _ret;
   med_class _class = (med_class) *class;
 
   _fn = _MED2cstring((char *) fname, (int) *len);
-  if (!_fn)
-    return(-1);
+  if (!_fn) return(-1);
 
-  _ret = (med_int) MEDfileObjectsMount(*fid, _fn, _class );
-
+  _ret = MEDfileObjectsMount(*fid, _fn, _class );
+ 
   _MEDcstringFree(_fn);
 
   return(_ret); 

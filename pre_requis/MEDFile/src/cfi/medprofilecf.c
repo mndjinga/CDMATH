@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2019  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -67,10 +67,10 @@ nmpffprw(med_idt *fid, char *pname, med_int *pnamelen, med_int *psize, med_int *
 
 #ifdef PPRO_NT
 med_int 
-MPFFNPF(med_int *fid)
+MPFFNPF(med_idt *fid)
 #else
 med_int 
-nmpffnpf(med_int *fid)
+nmpffnpf(med_idt *fid)
 #endif
 {
   med_int _ret; 
@@ -84,11 +84,11 @@ nmpffnpf(med_int *fid)
 
 #ifdef PPRO_NT
 med_int 
-MPFFPFI(med_int *fid, med_int *it, char*pname, unsigned int bidon1, 
+MPFFPFI(med_idt *fid, med_int *it, char*pname, unsigned int bidon1, 
 		  med_int *psize)
 #else
 med_int 
-nmpffpfi(med_int *fid, med_int *it, char*pname, med_int *psize)
+nmpffpfi(med_idt *fid, med_int *it, char*pname, med_int *psize)
 #endif
 {
   med_int _ret;
@@ -107,11 +107,11 @@ nmpffpfi(med_int *fid, med_int *it, char*pname, med_int *psize)
 
 #ifdef PPRO_NT
 med_int 
-MPFFPSN(med_int *fid, char*pname, unsigned int bidon1, med_int *pnamelen, 
+MPFFPSN(med_idt *fid, char*pname, unsigned int bidon1, med_int *pnamelen, 
 		  med_int *psize)
 #else
 med_int 
-nmpffpsn(med_int *fid, char*pname, med_int *pnamelen, med_int *psize)
+nmpffpsn(med_idt *fid, char*pname, med_int *pnamelen, med_int *psize)
 #endif
 {
   med_int _ret=0;

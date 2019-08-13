@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2019  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -47,7 +47,7 @@ From Fortran call of following C functions :
 
 #ifdef PPRO_NT
 med_int 
-MSDFJCR(med_int *fid,
+MSDFJCR(med_idt *fid,
                    char *lmname,  unsigned int bidon1, med_int *lon1,
                    char *jname,   unsigned int bidon2, med_int *lon2, 
                    char *desc, unsigned int bidon3, med_int *lon3,
@@ -56,7 +56,7 @@ MSDFJCR(med_int *fid,
 		   )
 #else
 med_int 
-nmsdfjcr(med_int *fid, 
+nmsdfjcr(med_idt *fid, 
 	 char *lmname,  med_int *lon1,
 	 char *jname, med_int *lon2, 
 	 char *desc, med_int *lon3,
@@ -93,7 +93,7 @@ nmsdfjcr(med_int *fid,
 
 #ifdef PPRO_NT
 med_int 
-MSDFCRW(med_int *fid, 
+MSDFCRW(med_idt *fid, 
 		  char *maa_local,unsigned int bidon1, med_int *lon1,
 		  char *jn,unsigned int bidon2, med_int *lon2, 
 		  med_int *numdt, med_int *numit,
@@ -102,7 +102,7 @@ MSDFCRW(med_int *fid,
 		  med_int *n, med_int *corrtab)
 #else
 med_int 
-nmsdfcrw (med_int *fid, 
+nmsdfcrw (med_idt *fid, 
 	  char *maa_local,med_int *lon1,
 	  char *jn,med_int *lon2, 
 	  med_int *numdt, med_int *numit,
@@ -146,11 +146,11 @@ nmsdfcrw (med_int *fid,
 
 #ifdef PPRO_NT
 med_int 
-MSDFNJN(med_int *fid,
+MSDFNJN(med_idt *fid,
                   char *maa,  unsigned int bidon1, med_int *lon1)
 #else
 med_int  
-nmsdfnjn(med_int *fid, 
+nmsdfnjn(med_idt *fid, 
 	 char *maa, med_int *lon1)
 #endif
 {
@@ -177,7 +177,7 @@ nmsdfnjn(med_int *fid,
 
 #ifdef PPRO_NT
 med_int 
-MSDFJNI(med_int *fid,
+MSDFJNI(med_idt *fid,
                   char *maa, unsigned int bidon1, med_int *lon1,
 		  med_int *ind, char *jname, unsigned int bidon2,
 		  char *desc,unsigned int bidon3,
@@ -185,7 +185,7 @@ MSDFJNI(med_int *fid,
 		  med_int *nstep, med_int *ncor)
 #else
 med_int
-nmsdfjni(med_int *fid,
+nmsdfjni(med_idt *fid,
 	 char *maa, med_int *lon1,
 	 med_int *ind, char *jname,
 	 char *desc, med_int *dom,char *rname,
@@ -228,7 +228,7 @@ nmsdfjni(med_int *fid,
 
 #ifdef PPRO_NT
 med_int 
-MSDFSZI(med_int *fid,
+MSDFSZI(med_idt *fid,
 		  char *maa, unsigned int bidon1, med_int *lon1,
 		  char *jname, unsigned int bidon2, med_int *lon2,
 		  med_int *numdt, med_int *numit, med_int *it,
@@ -237,7 +237,7 @@ MSDFSZI(med_int *fid,
 		  med_int *ncor)
 #else
 med_int 
-nmsdfszi(med_int *fid,
+nmsdfszi(med_idt *fid,
 	 char *maa, med_int *lon1,
 	 char *jname, med_int *lon2,
 	 med_int *numdt, med_int *numit, med_int *it,
@@ -287,7 +287,7 @@ nmsdfszi(med_int *fid,
 
 #ifdef PPRO_NT
 med_int 
-MSDFCSZ(med_int *fid,
+MSDFCSZ(med_idt *fid,
 		  char *maa, unsigned int bidon1, med_int *lon1,
 		  char *jname, unsigned int bidon2, med_int *lon2,
 		  med_int *numdt, med_int *numit, 
@@ -296,7 +296,7 @@ MSDFCSZ(med_int *fid,
 		  med_int *ncor)
 #else
 med_int 
-nmsdfcsz(med_int *fid,
+nmsdfcsz(med_idt *fid,
 	 char *maa, med_int *lon1,
 	 char *jname, med_int *lon2,
 	 med_int *numdt, med_int *numit,
@@ -341,7 +341,7 @@ nmsdfcsz(med_int *fid,
 
 #ifdef PPRO_NT
 med_int 
-MSDFCRR(med_int *fid, 
+MSDFCRR(med_idt *fid, 
 		  char *maa_local,unsigned int bidon1, med_int *lon1,
 		  char *jn,unsigned int bidon2, med_int *lon2, 
 		  med_int *numdt, med_int *numit,
@@ -350,7 +350,7 @@ MSDFCRR(med_int *fid,
 		  med_int *corrtab)
 #else
 med_int 
-nmsdfcrr (med_int *fid, 
+nmsdfcrr (med_idt *fid, 
 	  char *maa_local,med_int *lon1,
 	  char *jn,med_int *lon2, 
 	  med_int *numdt, med_int *numit,
@@ -393,14 +393,14 @@ nmsdfcrr (med_int *fid,
 
 #ifdef PPRO_NT
 med_int 
-MSDFCSI(med_int *fid,
+MSDFCSI(med_idt *fid,
                   char *maa, unsigned int bidon1, med_int *lon1,
 		  char *jname, unsigned int bidon2, med_int *lon2,
 		  med_int *ind, med_int *numdt, med_int *numit,
 		  med_int *ncor)
 #else
 med_int 
-nmsdfcsi(med_int *fid,
+nmsdfcsi(med_idt *fid,
 	 char *maa, med_int *lon1,
 	 char *jname, med_int *lon2,
 	 med_int *ind, med_int *numdt, med_int *numit,

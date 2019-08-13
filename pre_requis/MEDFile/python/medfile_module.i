@@ -1,5 +1,5 @@
 # -*- coding:utf-8 -*-
-%module medfile
+%module (package="med") medfile
 
 //A inclure avant toute déclaration à SWIG
 %include "med_881.i"
@@ -24,13 +24,13 @@
 // SWIG SPECIFIQUE A MEDfileName : 
 // Seule fonction n'utilisant pas une chaïne fixe.
 // Réflechir à une solution plus générique sur la base du couple char * const filename, med_int filenamesize
-%typemap(in,noblock=1,numinputs=1)  (med_idt fid, char * const filename, med_int filenamesize) ( med_idt arg=0 ,int val=0, int ecode = 0 ) {
-  ecode = SWIG_AsVal_int($input, &val);
+%typemap(in,noblock=1,numinputs=1)  (med_idt fid, char * const filename, med_int filenamesize) ( med_idt arg=0 ,long val=0, int ecode = 0 ) {
+  ecode = SWIG_AsVal_long($input, &val);
   if (!SWIG_IsOK(ecode)) {
     SWIG_exception_fail(SWIG_ArgError(ecode), "in method '" "MEDfileName" "', argument " "1"" of type '" "med_idt""'");
   } 
   $1 = static_cast< med_idt >(val);
-  $3=MEDfileName($1,NULL,0);
+  $3 = MEDfileName($1,NULL,0);
   $2 = (char *) malloc(sizeof(char)*$3);
 }
 %typemap(freearg,noblock=1)  (med_idt fid, char * const filename, med_int filenamesize) {

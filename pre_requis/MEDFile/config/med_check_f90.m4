@@ -1,6 +1,6 @@
 dnl  This file is part of MED.
 dnl
-dnl  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+dnl  COPYRIGHT (C) 1999 - 2019  EDF R&D, CEA/DEN
 dnl  MED is free software: you can redistribute it and/or modify
 dnl  it under the terms of the GNU Lesser General Public License as published by
 dnl  the Free Software Foundation, either version 3 of the License, or
@@ -78,10 +78,10 @@ AS_IF([test  x"$FC" != x && test x"$med_check_f90" = xyes ],
     AC_MSG_ERROR([Can't find $f90prog command, please verify your env. var. PATH])
   fi
   
-#S'il HDF5 n'est pas parallel, la macro ax__prog__fc__mpi n'a pas tester de compilation en F90 
+#Si HDF5 n'est pas parallel, la macro ax__prog__fc__mpi n'a pas testé de compilation en F90 
 if test x"$mpi_wanted_test" = xno; then
     AC_LANG_PUSH([Fortran])
-    AC_MSG_NOTICE([testing a F90 compilation])
+    AC_MSG_CHECKING([ a F90 compilation])
     AC_COMPILE_IFELSE([AC_LANG_PROGRAM(,[[
       print *,"Testing a F90 compilation..."
 ]])],

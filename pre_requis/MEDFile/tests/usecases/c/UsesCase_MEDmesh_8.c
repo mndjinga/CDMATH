@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2019  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -16,7 +16,7 @@
  */
 
 /*
- *  Use case 8 : read a 2D unstructured mesh with coordinates nodes 
+ *  Use case 8 : read a 2D unstructured mesh with coordinates nodes
  *  modifications (generic approach)
  */
 
@@ -76,7 +76,7 @@ int main (int argc, char **argv) {
       MESSAGE("ERROR : read computation space dimension ...");
       goto ERROR;
     }
-    
+
     /* memory allocation */
     if ((axisname  = (char*) malloc(MED_SNAME_SIZE*spacedim+1)) == NULL) {
       MESSAGE("ERROR : memory allocation ...");
@@ -88,8 +88,8 @@ int main (int argc, char **argv) {
     }
 
     /* read mesh informations : meshname, mesh dimension, mesh type ... */
-    if (MEDmeshInfo(fid, i+1, meshname, &spacedim, &meshdim, &meshtype, meshdescription, 
-		    dtunit, &sortingtype, &nstep,  
+    if (MEDmeshInfo(fid, i+1, meshname, &spacedim, &meshdim, &meshtype, meshdescription,
+		    dtunit, &sortingtype, &nstep,
 		    &axistype, axisname, unitname) < 0) {
       MESSAGE("ERROR : mesh info ...")
 	free(axisname);
@@ -107,25 +107,25 @@ int main (int argc, char **argv) {
       MESSAGE("ERROR : number of nodes ...");
       goto ERROR;
     }
-  
+
     /* read mesh nodes coordinates */
     if ((coordinates = (med_float*) malloc(sizeof(med_float)*nnodes*spacedim)) == NULL) {
       MESSAGE("ERROR : memory allocation ...");
       goto ERROR;
     }
-    
+
     if (MEDmeshNodeCoordinateRd(fid, meshname, MED_NO_DT, MED_NO_IT, MED_FULL_INTERLACE,
 				coordinates) < 0) {
       MESSAGE("ERROR : nodes coordinates ...");
       free(coordinates);
       goto ERROR;
     }
-    
+
 
     /* read all MED geometry cell types */
-    for (it=1; it<=MED_N_CELL_FIXED_GEO; it++) {   
+    for (it=1; it<=MED_N_CELL_FIXED_GEO; it++) {
 
-      geotype = geotypes[it];   
+      geotype = geotypes[it];
 
       if ((ngeo = MEDmeshnEntity(fid, meshname, MED_NO_DT, MED_NO_IT, MED_CELL,geotype,
 				 MED_CONNECTIVITY, MED_NODAL, &coordinatechangement,
@@ -134,17 +134,17 @@ int main (int argc, char **argv) {
 	ISCRUTE(geotype);
 	goto ERROR;
       }
-    
+
       if (ngeo) {
 	/* read cells connectivity in the mesh */
 	if ((connectivity = (med_int *) malloc(sizeof(med_int)*ngeo*(geotype%100))) == NULL) {
 	  MESSAGE("ERROR : memory allocation ...");
 	  goto ERROR;
 	}
-	
+
 	if (MEDmeshElementConnectivityRd(fid, meshname, MED_NO_DT, MED_NO_IT, MED_CELL,
 					 geotype, MED_NODAL, MED_FULL_INTERLACE, connectivity) < 0) {
-	  MESSAGE("ERROR : cellconnectivity ...");
+	  MESSAGE("ERROR : cell connectivity ...");
 	  ISCRUTE(geotype);
 	  free(connectivity);
 	  goto ERROR;
@@ -155,32 +155,32 @@ int main (int argc, char **argv) {
 	connectivity = NULL;
       }
     }
-    
+
 
     /* read nodes coordinates changements step by step */
     for (it=1;it<nstep;it++) {
-      
-      if (MEDmeshComputationStepInfo(fid, meshname, it+1, 
+
+      if (MEDmeshComputationStepInfo(fid, meshname, it+1,
 				     &numdt, &numit, &dt) < 0) {
 	MESSAGE("ERROR : Computing step info ...");
 	SSCRUTE(meshname);
 	goto ERROR;
       }
-      
+
       /* test changement : for nodes coordinates */
-      if ((nnodes = MEDmeshnEntityWithProfile(fid, meshname, numdt, numit, 
+      if ((nnodes = MEDmeshnEntityWithProfile(fid, meshname, numdt, numit,
 					      MED_NODE, MED_NONE,
 					      MED_COORDINATE, MED_NO_CMODE,
 					      MED_GLOBAL_STMODE, profilename, &profilesize,
 					      &coordinatechangement, &geotransformation)) < 0) {
-	MESSAGE("ERROR : number of nodes ..."); 
+	MESSAGE("ERROR : number of nodes ...");
 	goto ERROR;
       }
-      
+
       /* if only coordinates have changed, then read the new coordinates */
       /* to verify if there is a matrix transformation => UsesCase_MEDmesh12. */
       if (coordinatechangement && geotransformation) {
-	if (MEDmeshNodeCoordinateWithProfileRd(fid, meshname, numdt, numit, 
+	if (MEDmeshNodeCoordinateWithProfileRd(fid, meshname, numdt, numit,
 					       MED_GLOBAL_STMODE,profilename,
 					       MED_FULL_INTERLACE,MED_ALL_CONSTITUENT,
 					       coordinates) < 0) {
@@ -189,7 +189,7 @@ int main (int argc, char **argv) {
 	  goto ERROR;
 	}
       }
-      
+
     }
   }
 
@@ -200,11 +200,11 @@ int main (int argc, char **argv) {
 
   /* close MED file */
   if (MEDfileClose(fid) < 0) {
-    MESSAGE("ERROR : close file");             
-    ret=-1; 
-  } 
+    MESSAGE("ERROR : close file");
+    ret=-1;
+  }
 
-  
+
   return ret;
 }
 

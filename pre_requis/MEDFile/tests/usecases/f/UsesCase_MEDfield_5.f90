@@ -1,6 +1,6 @@
 !*  This file is part of MED.
 !*
-!*  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+!*  COPYRIGHT (C) 1999 - 2019  EDF R&D, CEA/DEN
 !*  MED is free software: you can redistribute it and/or modify
 !*  it under the terms of the GNU Lesser General Public License as published by
 !*  the Free Software Foundation, either version 3 of the License, or
@@ -26,7 +26,8 @@ program UsesCase_MEDfield_5
   include 'med.hf90'
 
   integer cret
-  integer fid
+  integer*8 fid
+
   character(64) :: mname
   ! field name
   character(64) :: finame  = 'TEMPERATURE_FIELD'

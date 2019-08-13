@@ -1,3 +1,30 @@
+Modifications dans la version 4.0.0 :
+
+- Portage HDF5-1.10 : med-4 est capable de lire les fichier med 3.y.z mais les bibliothèques med-3.y.z ne
+  peuvent pas relire des fichiers med-4
+- Mises à jour des tests Fortran pour utiliser le type integer*8 pour tous les fid (MEDfileOpen).
+  En effet avec hdf5-1.10 les identifiants sont passés en 64 bits.
+- La bibilothèque med-4 permet de modifier des fichiers med-3 (créés en hdf5-1.8.x)
+- Vérification de la version hdf5-1.10.2 minimum (les versions précédentes ne gèrent pas corectement 
+  la selection du modèle d'écriture interne d'hdf; ce qui peut générer des fichiers 3.y.z modifiés
+  par med-4 mais plus relisibles en med-3 )
+- Interdiction de compiler Med-4 avec hdf5-1.8
+- Vérification de la compatibilité C++11 du compilateur utilisé
+- Portage Python2/3
+	- Gestion des configurations swig2.0.8--,swig...,-->swig 3.0.12 en interaction avec Python2.7 - 3 :
+	* En     swig-2.0.8 et python3 les import absolus sont mal gérés, ok à partir de swig-2.0.12
+	* Depuis swig-2.0.12 les itérateurs et nvlles méthodes des containers c++11 sont gérés
+	* Depuis swig-3.0.8 Py_int -> Py_long
+	* utilisation de swig-3.0.12 pour la générations des wrappers .py embarqués
+	* (compatibilité .py2 .py3 cf. tests/python)
+- Les wrappers python sont pré-générés pour python3
+  Si python3 n'est pas le python par défaut utiliser PYTHON_VERSION=3 au ./configure
+  Sinon, il faut swig ou desactiver l'interface python
+- Correction d'une erreur générée à l'appel de MEDmeshnEntity dans mdump pour les éléments de structures
+- Ajouts de Usecases en python
+- Ajout de la documentation du modèle 3/4 en UML
+- Réintégration des derniers developements 3.3.0
+
 Modifications dans la version 3.3.1 :
 
 - Correction d'une erreur générée à l'appel de MEDmeshnEntity dans mdump pour les éléments de structures
@@ -391,7 +418,7 @@ Le problème de la routine efmaai pour la lecture du type du maillage est corrigé
 - FT81 : Routines efgaue et efgaul
 Le problème de déclaration des paramètres des types géométriques et du mode de stockage des coordonnées est corrigé.
 
-- FT77 : Affichage des groupes dans mdump 
+- FT77 : Affichage des groupes dans mdump
 Ancien mode d'affichage de la numérotation : 0..(N-1).
 Nouveau mode d'affichage : 1..N
 

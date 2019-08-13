@@ -24,6 +24,7 @@ SET(_swig_files
   medparameter_module.i
   medprofile_module.i
   medsubdomain_module.i
+  medstructelement_module.i
 )
 
 IF(APPLE)

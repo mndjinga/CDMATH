@@ -1,6 +1,6 @@
 C*  This file is part of MED.
 C*
-C*  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+C*  COPYRIGHT (C) 1999 - 2019  EDF R&D, CEA/DEN
 C*  MED is free software: you can redistribute it and/or modify
 C*  it under the terms of the GNU Lesser General Public License as published by
 C*  the Free Software Foundation, either version 3 of the License, or
@@ -25,7 +25,8 @@ c
       save
 c     
       character *(*) maalcl, jn, des, maadst
-      integer fid, dom, cret
+      integer*8 fid
+      integer   dom, cret
       integer edfjntc
 c     
       cret = edfjntc(fid, maalcl, len(maalcl), jn, len(jn),
@@ -45,7 +46,8 @@ c
       save
 c     
       character *(*) maalcl
-      integer n, fid,  cret
+      integer*8 fid
+      integer n,  cret
       integer edfnjnt
 c     
       cret = edfnjnt(fid, maalcl, len(maalcl), n)
@@ -74,7 +76,8 @@ c
       save
 c     
       character *(*) maalcl, jn, des, maadst
-      integer fid, ind, dom, cret
+      integer*8 fid
+      integer   ind, dom, cret
       integer edfjnti
 c     
       cret = edfjnti(fid, maalcl, len(maalcl), ind,
@@ -99,7 +102,8 @@ c
       save
 c     
       character *(*) maalcl, jn
-      integer n, fid, cret, corrtab(*)
+      integer*8 fid
+      integer n, cret, corrtab(*)
       integer entlcl, entdst, geolcl, geodst
       integer edfjnte
 c     
@@ -122,7 +126,8 @@ c
       save
 c     
       character *(*) maalcl, jn
-      integer n, fid, cret, corrtab(*)
+      integer*8 fid
+      integer n, cret, corrtab(*)
       integer entlcl, entdst, geolcl, geodst
       integer edfjntl
 c     
@@ -146,7 +151,8 @@ c
       save
 c     
       character *(*) maalcl, jn
-      integer fid, entlcl, entdst, geolcl, geodst, nent, cret
+      integer*8 fid
+      integer   entlcl, entdst, geolcl, geodst, nent, cret
       integer edfjnco
 c     
       nent = edfjnco(fid,
@@ -177,7 +183,8 @@ c
       save
 c     
       character *(*) maalcl, jn 
-      integer fid, entlcl, entdst, geolcl, geodst, nent, cret, ind
+      integer*8 fid
+      integer   entlcl, entdst, geolcl, geodst, nent, cret, ind
       integer edfjtco
 c     
       nent = edfjtco(fid,
@@ -210,7 +217,8 @@ c
       save
 c     
       character *(*) maa
-      integer n, fid,  cret, numtab(*)
+      integer*8 fid
+      integer n,  cret, numtab(*)
       integer ent, geo
       integer edfgnme
 c     
@@ -232,7 +240,8 @@ c
       save
 c     
       character *(*) maa
-      integer n, fid, cret, numtab(*)
+      integer*8 fid
+      integer n, cret, numtab(*)
       integer ent, geo
       integer edfgnml
 c     

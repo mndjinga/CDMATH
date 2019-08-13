@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2019  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -53,6 +53,7 @@ int main (int argc, char **argv) {
   char *groupname=NULL;
   char familyname[MED_NAME_SIZE+1]="";
   med_int *familynumbers = NULL;
+  med_int nfamilynumber = 0;
   int ret=-1;
 
   /* open MED file with READ ONLY access mode */
@@ -62,13 +63,13 @@ int main (int argc, char **argv) {
     goto ERROR;
   }
 
-  /* 
-   * ... we know that the MED file has only one mesh, 
-   * a real code would check ... 
+  /*
+   * ... we know that the MED file has only one mesh,
+   * a real code would check ...
    */
 
   /* read mesh informations : mesh dimension, space dimension ... */
-  if (MEDmeshInfoByName(fid, meshname, &spacedim, &meshdim, &meshtype, meshdescription, 
+  if (MEDmeshInfoByName(fid, meshname, &spacedim, &meshdim, &meshtype, meshdescription,
 			dtunit, &sortingtype, &nstep, &axistype, axisname, unitname) < 0) {
     MESSAGE("ERROR : mesh info ...");
     goto ERROR;
@@ -81,10 +82,10 @@ int main (int argc, char **argv) {
     MESSAGE("ERROR : number of nodes ...");
     goto ERROR;
   }
-  
-  /* 
-   * ... we know that we only have MED_TRIA3 and MED_QUAD4 in the mesh, 
-   * a real code would check all MED geometry cell types ... 
+
+  /*
+   * ... we know that we only have MED_TRIA3 and MED_QUAD4 in the mesh,
+   * a real code would check all MED geometry cell types ...
    */
 
   /* read how many triangular cells in the mesh */
@@ -137,33 +138,33 @@ int main (int argc, char **argv) {
   }
   if (MEDmeshElementConnectivityRd(fid, meshname, MED_NO_DT, MED_NO_IT, MED_CELL,
 				   MED_QUAD4, MED_NODAL, MED_FULL_INTERLACE, quadconnectivity) < 0) {
-    MESSAGE("ERROR : MED_TRIA3 connectivity ...");
+    MESSAGE("ERROR : MED_QUAD4 connectivity ...");
     free(quadconnectivity);
     goto ERROR;
   }
   free(quadconnectivity);
 
-  /* 
+  /*
    * read families of entities...
    */
   if ((nfamily = MEDnFamily(fid,meshname)) < 0) {
     MESSAGE("ERROR : read number of family ...");
     goto ERROR;
   }
-  
+
   for (i=0; i<nfamily ; i++) {
 
     if ((ngroup = MEDnFamilyGroup(fid, meshname, i+1)) < 0) {
       MESSAGE("ERROR : read number of group in a family ...");
       goto ERROR;
     }
-    
+
     if (ngroup > 0) {
       if ((groupname = (char*) malloc(sizeof(char)*MED_LNAME_SIZE*ngroup+1)) == NULL) {
 	MESSAGE("ERROR : memory allocation ...");
 	goto ERROR;
       }
-      
+
       if (MEDfamilyInfo(fid, meshname, i+1, familyname, &familynumber, groupname) < 0) {
 	MESSAGE("ERROR : family info ...");
 	free(groupname);
@@ -171,43 +172,88 @@ int main (int argc, char **argv) {
       }
       free(groupname);
     }
-    
+
   }
 
-  /* read family numbers for nodes */
-  /* By convention, if there is no numbers in the file, it means that 0 is the family 
-     number of all nodes */
+  /* check for family numbers */
+  /* By convention, if there is no numbers in the file, it means that 0 is the family
+      number of all nodes */
+  if ((nfamilynumber = MEDmeshnEntity(fid, meshname, MED_NO_DT, MED_NO_IT,
+          MED_NODE, MED_NONE, MED_FAMILY_NUMBER, MED_NO_CMODE,
+          &coordinatechangement, &geotransformation)) < 0) {
+    MESSAGE("ERROR : check family numbers nodes ...");
+    goto ERROR;
+  }
+
   if ((familynumbers = (med_int *) malloc(sizeof(med_int)*nnodes)) == NULL) {
     MESSAGE("ERROR : memory allocation ...");
     goto ERROR;
   }
-  if (MEDmeshEntityFamilyNumberRd(fid, meshname, MED_NO_DT, MED_NO_IT,
-				  MED_NODE,MED_NONE,familynumbers ) < 0) 
+
+  if (nfamilynumber > 0) {
+    /* read family numbers for nodes */
+    if (MEDmeshEntityFamilyNumberRd(fid, meshname, MED_NO_DT, MED_NO_IT,
+  				  MED_NODE, MED_NONE, familynumbers) < 0) {
+      MESSAGE("ERROR : read family numbers nodes ...");
+      goto ERROR;
+    }
+  } else
     for (i=0; i<nnodes; i++) *(familynumbers+i) = 0;
 
-  for (i=0; i<nnodes; i++) printf("%d - ", *(familynumbers+i));
+  for (i=0; i<nnodes; i++) {
+    printf("%d", *(familynumbers+i));
+    if (i+1 != nnodes)
+      printf(" - ");
+    else
+      printf("\n");
+  }
 
   if (familynumbers)
-    free (familynumbers);
+    free(familynumbers);
 
   /* read family numbers for cells */
+
+  if ((nfamilynumber = MEDmeshnEntity(fid, meshname, MED_NO_DT, MED_NO_IT,
+          MED_CELL, MED_TRIA3, MED_FAMILY_NUMBER, MED_NODAL,
+          &coordinatechangement, &geotransformation)) < 0) {
+    MESSAGE("ERROR : check family number tria3 ...")
+    goto ERROR;
+  }
+
   if ((familynumbers = (med_int *) malloc(sizeof(med_int)*ntria3)) == NULL) {
     MESSAGE("ERROR : memory allocation ...");
     goto ERROR;
   }
-  if (MEDmeshEntityFamilyNumberRd(fid, meshname, MED_NO_DT, MED_NO_IT,
-				  MED_CELL,MED_TRIA3,familynumbers ) < 0) 
+
+  if (nfamilynumber > 0) {
+    if (MEDmeshEntityFamilyNumberRd(fid, meshname, MED_NO_DT, MED_NO_IT,
+  				  MED_CELL, MED_TRIA3, familynumbers) < 0) {
+      MESSAGE("ERROR : read family numbers tria3 ...");
+    }
+  } else
     for (i=0; i<ntria3; i++) *(familynumbers+i) = 0;
 
-    free (familynumbers);
+  free (familynumbers);
 
+  if ((nfamilynumber = MEDmeshnEntity(fid, meshname, MED_NO_DT, MED_NO_IT,
+            MED_CELL, MED_QUAD4, MED_FAMILY_NUMBER, MED_NODAL,
+            &coordinatechangement, &geotransformation)) < 0) {
+    MESSAGE("ERROR : check family number quad4 ...");
+    goto ERROR;
+  }
 
   if ((familynumbers = (med_int *) malloc(sizeof(med_int)*nquad4)) == NULL) {
     MESSAGE("ERROR : memory allocation ...");
     goto ERROR;
   }
-  if (MEDmeshEntityFamilyNumberRd(fid, meshname, MED_NO_DT, MED_NO_IT,
-				  MED_CELL,MED_QUAD4,familynumbers ) < 0) 
+
+  if (nfamilynumber > 0) {
+    if (MEDmeshEntityFamilyNumberRd(fid, meshname, MED_NO_DT, MED_NO_IT,
+  				  MED_CELL, MED_QUAD4, familynumbers) < 0) {
+      MESSAGE("ERROR : read family numbers quad4 ...");
+      goto ERROR;
+    }
+  } else
     for (i=0; i<nquad4; i++) *(familynumbers+i) = 0;
 
   free (familynumbers);
@@ -217,9 +263,9 @@ int main (int argc, char **argv) {
 
   /* close MED file */
   if (MEDfileClose(fid) < 0) {
-    MESSAGE("ERROR : close file");             
-    ret= -1; 
-  } 
+    MESSAGE("ERROR : close file");
+    ret= -1;
+  }
 
   return ret;
 }

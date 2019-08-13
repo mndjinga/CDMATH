@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2019  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -97,7 +97,7 @@ med_err _MEDattributeStringWr(med_idt pid,
 
   if (type_hdf > 0 ) if ( H5Tclose(type_hdf) < 0) {
     MED_ERR_(_ret,MED_ERR_CLOSE,MED_ERR_HDFTYPE, MED_ERR_ID_MSG );
-    ISCRUTE_int(type_hdf);
+    ISCRUTE_id(type_hdf);
   }
 
   if (aid > 0 ) if ( H5Sclose(aid) < 0) {

@@ -1,4 +1,4 @@
-%module medenumtest
+%module (package="med") medenumtest
 
 %include "typemaps.i"
 

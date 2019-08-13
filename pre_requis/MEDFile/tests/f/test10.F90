@@ -1,6 +1,6 @@
 !*  This file is part of MED.
 !*
-!*  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+!*  COPYRIGHT (C) 1999 - 2016  EDF R&D, CEA/DEN
 !*  MED is free software: you can redistribute it and/or modify
 !*  it under the terms of the GNU Lesser General Public License as published by
 !*  the Free Software Foundation, either version 3 of the License, or
@@ -77,7 +77,8 @@
 	implicit none
 	include 'med.hf'
 !
-	integer      ret,fid
+	integer*8    fid
+	integer      ret
 	real*8       a,b,p1,p2,dt
 
 	character*64 maa1,maa2,maa3

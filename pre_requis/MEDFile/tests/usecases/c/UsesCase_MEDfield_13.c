@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2019  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -15,7 +15,7 @@
  *  along with MED.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* 
+/*
  * Field use case 13 : write a field on nodes elements in a MED file
  */
 
@@ -43,7 +43,7 @@ int main (int argc, char **argv) {
 					     900., 1000., 1100., 1200.,
 					     1300., 1400., 1500., 1600. };
   int ret=-1;
-  
+
   /* file creation */
   fid = MEDfileOpen("UsesCase_MEDfield_13.med",MED_ACC_CREAT);
   if (fid < 0) {
@@ -56,29 +56,29 @@ int main (int argc, char **argv) {
     MESSAGE("ERROR : create mesh link ...");
     goto ERROR;
   }
-  
-  /* 
-   * Temperature field  creation : 
-   * - 1 component 
+
+  /*
+   * Temperature field  creation :
+   * - 1 component
    * - component unit : celsius degree
    * - mesh is the 2D unstructured mesh of UsecaseMEDmesh_1.c use case.
    * - computation step unit in 'ms'
-   */ 
-  if (MEDfieldCr(fid, fieldname, MED_FLOAT64, 
+   */
+  if (MEDfieldCr(fid, fieldname, MED_FLOAT64,
 		 ncomponent, componentname, componentunit,
 		 "ms", meshname) < 0) {
     MESSAGE("ERROR : create field");
     goto ERROR;
   }
-  
+
   /* two computation steps */
   /* write values at nodes elements : 4 MED_QUAD4 */
 
   /* STEP 1 : dt1 = 5.5, it = 1*/
-  /* MED_QUAD4  : with no profile */ 
-  if (MEDfieldValueWithProfileWr(fid, fieldname, 1, 1, 5.5, MED_NODE_ELEMENT, MED_QUAD4, 
+  /* MED_QUAD4  : with no profile */
+  if (MEDfieldValueWithProfileWr(fid, fieldname, 1, 1, 5.5, MED_NODE_ELEMENT, MED_QUAD4,
 				 MED_COMPACT_STMODE, MED_NO_PROFILE, MED_NO_LOCALIZATION,
-				 MED_FULL_INTERLACE, MED_ALL_CONSTITUENT, 
+				 MED_FULL_INTERLACE, MED_ALL_CONSTITUENT,
 				 nquad4, (unsigned char*) quad4values_step1) < 0) {
     MESSAGE("ERROR : write field values on MED_QUAD4 ");
     goto ERROR;
@@ -86,9 +86,9 @@ int main (int argc, char **argv) {
 
   /* STEP 2 : dt2 = 8.9, it = 1*/
   /* MED_QUAD4 : with no profile */
-  if (MEDfieldValueWithProfileWr(fid, fieldname, 2, 1, 8.9, MED_NODE_ELEMENT, MED_QUAD4, 
+  if (MEDfieldValueWithProfileWr(fid, fieldname, 2, 1, 8.9, MED_NODE_ELEMENT, MED_QUAD4,
 				 MED_COMPACT_STMODE, MED_NO_PROFILE, MED_NO_LOCALIZATION,
-				 MED_FULL_INTERLACE, MED_ALL_CONSTITUENT,  
+				 MED_FULL_INTERLACE, MED_ALL_CONSTITUENT,
 				 nquad4, (unsigned char*) quad4values_step2) < 0) {
     MESSAGE("ERROR : write field values on MED_QUAD4 ... ");
     goto ERROR;
@@ -96,13 +96,13 @@ int main (int argc, char **argv) {
 
   ret=0;
  ERROR:
-  
+
   /* close file */
   if (MEDfileClose(fid) < 0) {
-    MESSAGE("ERROR : close file ...");             
-    ret=-1; 
-  } 
-  
+    MESSAGE("ERROR : close file ...");
+    ret=-1;
+  }
+
   return ret;
 }
 

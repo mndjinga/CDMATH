@@ -8,21 +8,21 @@ axisname="x               "+"y               "+"z               "
 axisunit="cm              "+"cm              "+"cm              "
 
 fileexist, accessok = MEDfileExist( "test1.med", MED_ACC_RDONLY )
-if (not fileexist):  print "Le fichier test1.med n'existe pas."
-if (not accessok ):  print "Le fichier test1.med ne peut pas être ouvert selon le mode d'accès demandé ."
+if (not fileexist):  print("Le fichier test1.med n'existe pas.")
+if (not accessok ):  print("Le fichier test1.med ne peut pas être ouvert selon le mode d'accès demandé .")
 
 # Verification de la conformite du format med du fichier test1.med 
 hdfok,medok = MEDfileCompatibility("test1.med");
-print "Vérification de la compatibilité du fichier avec HDF : hdfok=",hdfok," ; avec MED : medok=",medok
+print("Vérification de la compatibilité du fichier avec HDF : hdfok=",hdfok," ; avec MED : medok=",medok)
 
 fid     = MEDfileOpen("test1.med",MED_ACC_RDONLY)
 comment = MEDfileCommentRd(fid)
-print "En-tete du fichier ",MEDfileName(fid),":",comment
+print("En-tete du fichier ",MEDfileName(fid),":",comment)
 MEDfileClose(fid)
 
 fileexist, accessok = MEDfileExist( "test2.med", MED_ACC_CREAT )
-if (not fileexist):  print "Le fichier test2.med n'existe pas."
-if (not accessok ):  print "Le fichier test2.med ne peut pas être ouvert selon le mode d'accès demandé ."
+if (not fileexist):  print("Le fichier test2.med n'existe pas.")
+if (not accessok ):  print("Le fichier test2.med ne peut pas être ouvert selon le mode d'accès demandé .")
 
 fid = MEDfileOpen("test2.med",MED_ACC_CREAT)
 
@@ -38,7 +38,7 @@ for ndtnit in [ (MED_NO_DT, MED_NO_IT, 0), (1 , 3, 1.1), (0 , 0, 1.1), (0, -1, 1
 cstp = 0
 for ndtnit in  [(MED_NO_DT,MED_NO_IT, 20,-1, 1.1), (0,0,  20,-1, 1.1), (20,-1, 20,-1, 1.1), (1,3, 20,-1, 1.1), (20,-1, 20,10, 1.1), (20,5, 20,5, 1.1), (20,-1, 20,20, 1.1) ]:
     try: cstp=cstp+1;MEDmeshComputationStepCr(fid,"maa2",*(ndtnit));
-    except  RuntimeError,ex: print "Exception attendue (cstp: "+str(cstp)+") ",ex
+    except  RuntimeError as ex: print("Exception attendue (cstp: "+str(cstp)+") ",ex)
 
 
 MEDmeshCr(fid,"maa3",3,1,MED_UNSTRUCTURED_MESH,	"un troisieme maillage","s",MED_SORT_DTIT,MED_CARTESIAN,axisname,axisunit)

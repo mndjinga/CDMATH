@@ -1,6 +1,6 @@
 C*  This file is part of MED.
 C*
-C*  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+C*  COPYRIGHT (C) 1999 - 2019  EDF R&D, CEA/DEN
 C*  MED is free software: you can redistribute it and/or modify
 C*  it under the terms of the GNU Lesser General Public License as published by
 C*  the Free Software Foundation, either version 3 of the License, or
@@ -22,10 +22,11 @@ c
       implicit none
       save
       character *(*) name
-      integer fid
-      integer access,cret
+      integer*8 fid
+      integer   cret
+      integer access
       integer major, minor, rel
-      integer mfifvop
+      integer*8 mfifvop
 c
       fid = mfifvop(name, access, major, minor, rel, len(name))
       if (fid.lt.0) then
@@ -43,9 +44,10 @@ c
       implicit none
       save
       character *(*) name
-      integer fid
-      integer access,cret
-      integer mfifope
+      integer*8 fid
+      integer   cret
+      integer access
+      integer*8 mfifope
 c
       fid = mfifope(name, access, len(name))
       if (fid.lt.0) then
@@ -65,7 +67,7 @@ c
       implicit none
       save
       character *(*) name
-      integer fid
+      integer*8 fid
       integer namesize,cret
       integer mfifnam
 c
@@ -82,7 +84,8 @@ c
       implicit none
       save
 c
-      integer fid,cret
+      integer*8 fid
+      integer cret
       integer mfifclo
 c
       cret = mfifclo(fid)
@@ -98,7 +101,8 @@ c
       implicit none
       save
 c
-      integer fid,cret
+      integer*8 fid
+      integer cret
       character*(*) cmt
       integer mfifcow
 c
@@ -114,7 +118,8 @@ c
       implicit none
       save
 c
-      integer fid,cret
+      integer*8 fid
+      integer cret
       character*(*) cmt
       integer mfifcor
 c
@@ -131,7 +136,8 @@ c
       implicit none
       save
 c
-      integer fid,major, minor,rel
+      integer*8 fid
+      integer major, minor,rel
       integer cret
       integer mfifnvr
 c
@@ -148,7 +154,8 @@ c
       save
 c
       character*(*) version
-      integer cret,fid
+      integer*8 fid
+      integer cret
       integer mfifsvr
 c
       cret =  mfifsvr(fid,version,len(version))
@@ -183,12 +190,13 @@ c
       save
 c
       character *(*) fname
-      integer class, fid, mid , cret
-      integer mfifomn
+      integer*8 fid, mid
+      integer class, cret
+      integer*8 mfifomn
 c
       mid =  mfifomn(fid, fname, len(fname), class)
-      if (mid .eq.-1) then
-         cret=-1
+      if (mid.lt.0) then
+         cret=mid
       else
          cret=0
       endif
@@ -205,7 +213,8 @@ c
       implicit none
       save
 c
-      integer mid, fid, class, cret
+      integer*8 mid, fid
+      integer class, cret
       integer mfifoun
 c
       cret = mfifoun(fid, mid, class)
@@ -221,7 +230,8 @@ c
       save
 c
       character *(*) oname
-      integer fid, class, oexist, cret
+      integer*8 fid
+      integer  class, oexist, cret
       integer mfifoex
 c
       cret = mfifoex(fid, class, oname, len(oname), oexist)

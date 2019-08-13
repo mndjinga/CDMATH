@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2019  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -46,7 +46,7 @@ _MEDcheckVersion30(med_idt fid)
 /*   ISCRUTE(libversionMM  ); */
 /*   ISCRUTE(libversionMMR ); */
 
-  if (  (fileversionM != libversionM) || (fileversionMMR > libversionMM+9 ) ) {
+  if (  (fileversionM > libversionM) || (fileversionMMR > libversionMM+9 ) ) {
     fprintf(stderr,"MED%d library is only able to use MED file which version is such that :\n"
 	    "\t %d < version <= %d\n",(int) libversionMMR,(int)libversionM,(int)libversionMM+9);
     goto ERROR;

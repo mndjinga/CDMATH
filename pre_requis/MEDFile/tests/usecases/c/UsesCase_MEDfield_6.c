@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2019  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -15,7 +15,7 @@
  *  along with MED.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* 
+/*
  * Field use case 6 : read a field (generic approach) with computing steps
  */
 
@@ -67,7 +67,7 @@ int main (int argc, char **argv) {
     goto ERROR;
   }
 
-  /* 
+  /*
    * read values for each field
    */
   for (i=0; i<nfield; i++) {
@@ -85,7 +85,7 @@ int main (int argc, char **argv) {
     if ((componentunit = (char *) malloc(ncomponent*MED_SNAME_SIZE+1)) == NULL) {
       MESSAGE("ERROR : memory allocation ...");
       goto ERROR;
-    }    
+    }
 
     if (MEDfieldInfo(fid, i+1, fieldname, meshname, &localmesh, &fieldtype,
 		     componentname, componentunit, dtunit, &nstep) < 0) {
@@ -98,18 +98,18 @@ int main (int argc, char **argv) {
     free(componentunit);
 
     /*
-     * Read field values for each computing step 
-     */ 
+     * Read field values for each computing step
+     */
     for (csit=0; csit<nstep; csit++) {
 
-      if (MEDfieldComputingStepMeshInfo(fid, fieldname, csit+1, &numdt, &numit, &dt, 
+      if (MEDfieldComputingStepMeshInfo(fid, fieldname, csit+1, &numdt, &numit, &dt,
 					&meshnumdt, &meshnumit) < 0) {
 	MESSAGE("ERROR : Computing step info ...");
 	goto ERROR;
       }
 
-      /* 
-       * ... In our case, we suppose that the field values are only defined on cells ... 
+      /*
+       * ... In our case, we suppose that the field values are only defined on cells ...
        */
       for (it=1; it<=MED_N_CELL_FIXED_GEO; it++) {
 
@@ -117,7 +117,7 @@ int main (int argc, char **argv) {
 	if ((nvalues = MEDfieldnValue(fid, fieldname, numdt, numit, MED_CELL, geotype)) < 0) {
 	  MESSAGE("ERROR : read number of values ...");
 	  goto ERROR;
-	} 
+	}
 	if (nvalues) {
 	  if ((values = (med_float *) malloc(sizeof(med_float)*nvalues*ncomponent)) == NULL) {
 	    MESSAGE("ERROR : memory allocation ...");
@@ -125,10 +125,10 @@ int main (int argc, char **argv) {
 	  }
 	  if (MEDfieldValueRd(fid, fieldname, numdt, numit, MED_CELL, geotype,
 			      MED_FULL_INTERLACE, MED_ALL_CONSTITUENT, (unsigned char*) values) < 0) {
-	    MESSAGE("ERROR : read fields values for cells ..."); 
+	    MESSAGE("ERROR : read fields values for cells ...");
 	    free(values);
-	    goto ERROR; 
-	  } 
+	    goto ERROR;
+	  }
 	  free(values);
 	}
 
@@ -138,12 +138,12 @@ int main (int argc, char **argv) {
 
   ret=0;
  ERROR:
-  
+
   /* close file */
   if (MEDfileClose(fid) < 0) {
-    MESSAGE("ERROR : close file ...");             
-    ret=-1; 
-  } 
-  
+    MESSAGE("ERROR : close file ...");
+    ret=-1;
+  }
+
   return ret;
 }

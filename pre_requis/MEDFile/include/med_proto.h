@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2019  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -116,6 +116,13 @@ _MEDmeshnEntity(const med_idt fid,
 		med_bool * const changement,
 		med_bool * const transformation );
 
+ MEDC_EXPORT med_idt
+_MEDmeshDatagroupOpen(const med_idt               fid,
+		      const char*  const          meshname,
+		      char *       const          usedpath,
+		      med_bool *   const          isasupportmesh
+		     );
+
 /*fin routines  internes */
 
 /*FIELD*/
@@ -170,211 +177,7 @@ _MEDfield23nValue(const med_idt fid, const char * const fieldname,const med_int 
 #include "medlink.h"
 
 /* Struct Elements */
-
-MEDC_EXPORT med_geometry_type
-MEDstructElementCr(const med_idt                 fid,
-		   const char*             const modelname,
-		   const med_int                 modeldim,
-		   const char*             const supportmeshname,
-		   const med_entity_type         sentitytype,
-		   const med_geometry_type       sgeotype
-		   );
-
-MEDC_EXPORT med_int
-MEDnStructElement(const med_idt      fid);
-
-MEDC_EXPORT med_err
-MEDstructElementConstAttWithProfileWr(const med_idt                  fid,
-				      const char*              const modelname,
-				      const char*              const constattname,
-				      const med_attribute_type       constatttype,
-				      const med_int                  ncomponent,
-				      const med_entity_type          sentitytype,
-				      const char*              const profilename,
-				      const void*              const value
-				      );
-
-MEDC_EXPORT med_err
-MEDstructElementConstAttWr(const med_idt                  fid,
-			   const char*              const modelname,
-			   const char*              const constattname,
-			   const med_attribute_type       constatttype,
-			   const med_int                  ncomponent,
-			   const med_entity_type          sentitytype,
-			   const void*              const value
-			   );
-
-MEDC_EXPORT med_err
-MEDstructElementInfoByName(const med_idt             fid,
-			   const char *        const modelname,
-			   med_geometry_type * const mgeotype,
-			   med_int*            const modeldim,
-			   char*               const supportmeshname,
-			   med_entity_type*    const sentitytype,
-			   med_int*            const snnode,
-			   med_int*            const sncell,
-			   med_geometry_type*  const sgeotype,
-			   med_int*            const nconstantatribute,
-			   med_bool*           const anyprofile,
-			   med_int*            const nvariableattribute
-			   );
-
-MEDC_EXPORT med_err
-MEDstructElementInfo(const med_idt             fid,
-		     const int                 mit,
-		     char *              const modelname,
-		     med_geometry_type * const mgeotype,
-		     med_int*            const modeldim,
-		     char*               const supportmeshname,
-		     med_entity_type*    const sentitytype,
-		     med_int*            const snnode,
-		     med_int*            const sncell,
-		     med_geometry_type*  const sgeotype,
-		     med_int*            const nconstantattribute,
-		     med_bool*           const anyprofile,
-		     med_int*            const nvariableattribute
-		     );
-
-MEDC_EXPORT med_err
-MEDstructElementConstAttInfoByName(const med_idt             fid,
-				   const char*         const modelname,
-				   const char*         const constattname,
-				   med_attribute_type* const constatttype,
-				   med_int*            const ncomponent,
-				   med_entity_type*    const sentitytype,
-				   char*               const profilename,
-				   med_int*            const profilesize
-				   );
-MEDC_EXPORT med_err
-MEDstructElementConstAttInfo(const med_idt             fid,
-			     const char*         const modelname,
-			     const int                 attit,
-			     char*               const constattname,
-			     med_attribute_type* const constatttype,
-			     med_int*            const ncomponent,
-			     med_entity_type*    const sentitytype,
-			     char*               const profilename,
-			     med_int*            const profilesize
-			     );
-
-MEDC_EXPORT med_err
-MEDstructElementConstAttRd(const med_idt                  fid,
-			   const char*              const modelname,
-			   const char*              const constattname,
-			   void*                    const value
-			   );
-
-MEDC_EXPORT int
-MEDstructElementAttSizeof( med_attribute_type atttype );
-
-MEDC_EXPORT med_err
-MEDstructElementVarAttCr(const med_idt                  fid,
-			 const char*              const modelname,
-			 const char*              const varattname,
-			 const med_attribute_type       varatttype,
-			 const med_int                  ncomponent
-			 );
-
-MEDC_EXPORT med_err
-MEDstructElementVarAttInfoByName(const med_idt                   fid,
-				 const char*               const modelname,
-				 const char*               const varattname,
-				       med_attribute_type* const varatttype,
-				       med_int*            const ncomponent
-				 );
-
-MEDC_EXPORT med_err
-MEDstructElementVarAttInfo(const med_idt                   fid,
-			   const char*               const modelname,
-			   const int                       attit,
-			         char*               const varattname,
-			         med_attribute_type* const varatttype,
-			         med_int*            const ncomponent
-			   );
-
-MEDC_EXPORT med_err
-MEDmeshStructElementVarAttWr(const med_idt                  fid,
-			     const char*              const meshname,
-			     const med_int                  numdt,
-			     const med_int                  numit,
-			     const med_geometry_type        mgeotype,
-			     const char*              const varattname,
-			     const med_int                  nentity,
-			     const void*              const value
-			     );
-MEDC_EXPORT med_err
-MEDmeshStructElementVarAttRd(const med_idt                  fid,
-			     const char*              const meshname,
-			     const med_int                  numdt,
-			     const med_int                  numit,
-			     const med_geometry_type        mgeotype,
-			     const char*              const varattname,
-			     void*                    const value
-			     );
-
-MEDC_EXPORT med_err
-MEDstructElementName(const med_idt                 fid,
-		     const med_geometry_type       mgeotype,
-		     char *                  const modelname);
-
-
-MEDC_EXPORT med_geometry_type
-MEDstructElementGeotype(const med_idt                 fid,
-			const char *            const modelname);
-
-/* Maillages support aux modèles d'éléments de structure */
-
-MEDC_EXPORT med_err
-MEDsupportMeshCr(const med_idt       fid,
-		 const char* const   supportmeshname,
-		 const med_int       spacedim,
-		 const med_int       meshdim,
-		 const char* const   description,
-		 const med_axis_type axistype,
-		 const char* const   axisname,
-		 const char* const   axisunit
-		 );
-
-
-
-MEDC_EXPORT med_err
-MEDsupportMeshInfoByName(const med_idt         fid,
-			 const char *    const supportmeshname,
-			 med_int *       const spacedim,
-			 med_int *       const meshdim,
-			 char *          const description,
-			 med_axis_type * const axistype,
-			 char *          const axisname,
-			 char *          const axisunit);
-
-MEDC_EXPORT med_err
-MEDsupportMeshInfo(const med_idt            fid,
-		   const int                meshit,
-		   char   *           const supportmeshname,
-		   med_int *          const spacedim,
-		   med_int *          const meshdim,
-		   char *             const description,
-		   med_axis_type *    const axistype,
-		   char *             const axisname,
-		   char *             const axisunit);
-
-MEDC_EXPORT med_int
-MEDnSupportMesh(const med_idt fid);
-
-MEDC_EXPORT med_int
-MEDsupportMeshnAxis(const med_idt fid, const int meshit);
-
-MEDC_EXPORT med_int
-MEDsupportMeshnAxisByName(const med_idt fid, const char * const meshname);
-
-
-MEDC_EXPORT med_idt
-_MEDmeshDatagroupOpen(const med_idt               fid,
-		      const char*  const          meshname,
-		      char *       const          usedpath,
-		      med_bool *   const          isasupportmesh
-		     );
-
+#include "medstructelement.h"
 
 /* Variables scalaires */
 
@@ -383,6 +186,7 @@ _MEDmeshDatagroupOpen(const med_idt               fid,
 /* Fonctions d'interpolation */
 
 #include "medinterp.h"
+
 
 
 #ifdef __cplusplus

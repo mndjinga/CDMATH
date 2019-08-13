@@ -9,6 +9,7 @@ endif
 
 #SWIG_PYTHON_OPT += -keyword
 SWIG_PYTHON_OPT += -c++ 
+#-relativeimport -py3
 #-debug-module 4 -debug-tmsearch -debug-tmused
 
 swigdir    = $(includedir)/swig
@@ -18,7 +19,7 @@ pkgpyexec_PYTHON        =
 nodist_pkgpyexec_PYTHON =
 pyexec_LTLIBRARIES      =
 pkgpyexec_LTLIBRARIES   =
-CLEANFILES              = medenum.py medenumtest.py medequivalence.py medfamily.py medfield.py medfile.py medfilter.py medinterp.py medlibrary.py medlink.py medlocalization.py medmesh.py medparameter.py medprofile.py medsubdomain.py 
+CLEANFILES              = medenum.py medenumtest.py medequivalence.py medfamily.py medfield.py medfile.py medfilter.py medinterp.py medlibrary.py medlink.py medlocalization.py medmesh.py medparameter.py medprofile.py medsubdomain.py medstructelement.py 
 DISTCLEANFILES          =
 #DISTCLEANFILES          = $(BUILT_SOURCES) $(pkgpyexec_PYTHON)
 EXTRA_DIST              = pyiterators_881.i med_881.i med_common.i med_array_typemap.i med_bool_typemap.i med_char_typemap.i med_enumtest_typemap.i med_enum_typemap.i
@@ -36,18 +37,18 @@ SUFFIXES = _int_wrap.cc _long_wrap.cc _module.i .py _int.py _long.py
 EXTRA_DIST += \
 medenum_int_wrap.cc         medfamily_int_wrap.cc  medfilter_int_wrap.cc   medlink_int_wrap.cc          medparameter_int_wrap.cc \
 medenumtest_int_wrap.cc     medfield_int_wrap.cc   medinterp_int_wrap.cc   medlocalization_int_wrap.cc  medprofile_int_wrap.cc   \
-medequivalence_int_wrap.cc  medfile_int_wrap.cc    medlibrary_int_wrap.cc  medmesh_int_wrap.cc          medsubdomain_int_wrap.cc \
+medequivalence_int_wrap.cc  medfile_int_wrap.cc    medlibrary_int_wrap.cc  medmesh_int_wrap.cc          medsubdomain_int_wrap.cc   medstructelement_int_wrap.cc \
 medenum_long_wrap.cc         medfamily_long_wrap.cc  medfilter_long_wrap.cc   medlink_long_wrap.cc          medparameter_long_wrap.cc \
 medenumtest_long_wrap.cc     medfield_long_wrap.cc   medinterp_long_wrap.cc   medlocalization_long_wrap.cc  medprofile_long_wrap.cc   \
-medequivalence_long_wrap.cc  medfile_long_wrap.cc    medlibrary_long_wrap.cc  medmesh_long_wrap.cc          medsubdomain_long_wrap.cc
+medequivalence_long_wrap.cc  medfile_long_wrap.cc    medlibrary_long_wrap.cc  medmesh_long_wrap.cc          medsubdomain_long_wrap.cc medstructelement_long_wrap.cc
 
 EXTRA_DIST += \
 medenum_int.py         medfamily_int.py  medfilter_int.py   medlink_int.py          medparameter_int.py \
 medenumtest_int.py     medfield_int.py   medinterp_int.py   medlocalization_int.py  medprofile_int.py   \
-medequivalence_int.py  medfile_int.py    medlibrary_int.py  medmesh_int.py          medsubdomain_int.py \
+medequivalence_int.py  medfile_int.py    medlibrary_int.py  medmesh_int.py          medsubdomain_int.py        medstructelement_int.py \
 medenum_long.py         medfamily_long.py  medfilter_long.py   medlink_long.py          medparameter_long.py \
 medenumtest_long.py     medfield_long.py   medinterp_long.py   medlocalization_long.py  medprofile_long.py   \
-medequivalence_long.py  medfile_long.py    medlibrary_long.py  medmesh_long.py          medsubdomain_long.py
+medequivalence_long.py  medfile_long.py    medlibrary_long.py  medmesh_long.py          medsubdomain_long.py   medstructelement_long.py
 
 if WITH_SWIG
 # Crée une dépendance de reconstruction des wrappers si SWIG est activé
@@ -425,7 +426,90 @@ medinterp_@LONG_OR_INT@_wrap.cc : $(MED_SWIG_SRC)
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/medinterp_module.i.dep@am__quote@
 
+## Python module : medstructelement
+
+nodist_pkgpyexec_PYTHON   +=  medstructelement.py
+pkgpyexec_LTLIBRARIES     += _medstructelement.la
+
+_medstructelement_la_LDFLAGS         = -module -no-undefined
+
+_medstructelement_la_LIBADD          = $(top_builddir)/src/libmed.la
+_medstructelement_la_CPPFLAGS        = $(SWIG_PYTHON_CPPFLAGS)
+_medstructelement_la_CPPFLAGS       += $(PYTHON_CPPFLAGS)
+_medstructelement_la_CPPFLAGS       += $(AM_CPPFLAGS)
+_medstructelement_la_CXXFLAGS        = $(AM_CFLAGS)
+_medstructelement_la_SOURCES  = medstructelement_@LONG_OR_INT@_wrap.cc swig_runtime.h
+_medstructelement_la_SOURCES         += medstructelement_module.i
+
+swig_DATA               += medstructelement_module.i
+
+MAINTAINERCLEANFILES += medstructelement.py medstructelement_@LONG_OR_INT@.py medstructelement_@LONG_OR_INT@_wrap.cc
+medstructelement_@LONG_OR_INT@_wrap.cc : $(MED_SWIG_SRC)
+
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/medstructelement_module.i.dep@am__quote@
+
 endif
 
 EXTRA_DIST += CMakeLists.txt
 
+DISTCLEANFILES+=\
+./medlink_int.py               \
+./medenumtest_int.py           \
+./medsubdomain_int_wrap.cc     \
+./medmesh_int.py               \
+./medfile_int_wrap.cc          \
+./medfamily_int.py             \
+./medparameter_int_wrap.cc     \
+./medlibrary_int.py            \
+./medfilter_int_wrap.cc        \
+./medequivalence_int.py        \
+./medfield_int.py              \
+./medprofile_int.py            \
+./medlocalization_int.py       \
+./medlibrary_int_wrap.cc       \
+./medinterp_int.py             \
+./medlocalization_int_wrap.cc  \
+./medequivalence_int_wrap.cc   \
+./medlink_int_wrap.cc          \
+./medenumtest_int_wrap.cc      \
+./medfamily_int_wrap.cc        \
+./medsubdomain_int.py          \
+./medmesh_int_wrap.cc          \
+./medinterp_int_wrap.cc        \
+./medfield_int_wrap.cc         \
+./medparameter_int.py          \
+./medfile_int.py               \
+./medenum_int.py               \
+./medenum_int_wrap.cc          \
+./medprofile_int_wrap.cc       \
+./medfilter_int.py             \
+./medlink_long.py               \
+./medenumtest_long.py           \
+./medsubdomain_long_wrap.cc     \
+./medmesh_long.py               \
+./medfile_long_wrap.cc          \
+./medfamily_long.py             \
+./medparameter_long_wrap.cc     \
+./medlibrary_long.py            \
+./medfilter_long_wrap.cc        \
+./medequivalence_long.py        \
+./medfield_long.py              \
+./medprofile_long.py            \
+./medlocalization_long.py       \
+./medlibrary_long_wrap.cc       \
+./medlongerp_long.py            \
+./medlocalization_long_wrap.cc  \
+./medequivalence_long_wrap.cc   \
+./medlink_long_wrap.cc          \
+./medenumtest_long_wrap.cc      \
+./medfamily_long_wrap.cc        \
+./medsubdomain_long.py          \
+./medmesh_long_wrap.cc          \
+./medlongerp_long_wrap.cc       \
+./medfield_long_wrap.cc         \
+./medparameter_long.py          \
+./medfile_long.py               \
+./medenum_long.py               \
+./medenum_long_wrap.cc          \
+./medprofile_long_wrap.cc       \
+./medfilter_long.py

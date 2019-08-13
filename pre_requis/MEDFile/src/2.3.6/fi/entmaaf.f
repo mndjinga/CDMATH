@@ -1,6 +1,6 @@
 C*  This file is part of MED.
 C*
-C*  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+C*  COPYRIGHT (C) 1999 - 2019  EDF R&D, CEA/DEN
 C*  MED is free software: you can redistribute it and/or modify
 C*  it under the terms of the GNU Lesser General Public License as published by
 C*  the Free Software Foundation, either version 3 of the License, or
@@ -23,7 +23,8 @@ c
       save
 c
       character *(*) maa
-      integer fid, conn(*),typent,typgeo,typcon,cret
+      integer*8 fid
+      integer   conn(*),typent,typgeo,typcon,cret
       integer edfcone,n,mdim, switch
 c
       cret = edfcone (fid, maa ,len(maa),mdim,conn,switch,n, 
@@ -43,7 +44,8 @@ c
 c
       character *(*) maa
       integer mdim
-      integer fid, conn(*),typent,typgeo,typcon,cret
+      integer*8 fid
+      integer   conn(*),typent,typgeo,typcon,cret
       integer pfltab(*), psize
       integer edfconl,switch
 c
@@ -64,7 +66,8 @@ c
 c
       character *(*) maa
       real*8 coo(*)
-      integer fid,typrep,mdim
+      integer*8 fid
+      integer  typrep,mdim
       integer edfcooe,n,cret,modcoo
       character *(*) nom, unit
 c
@@ -86,7 +89,8 @@ c
       character *(*) maa
       real*8 coo(*)
       integer mdim
-      integer fid,typrep,cret,modcoo
+      integer*8 fid
+      integer  typrep,cret,modcoo
       integer pfltab(*),psize, numco
       integer edfcool
       character *(*) nom, unit
@@ -107,7 +111,8 @@ c
 c
       character *(*) maa
       character*(*) nom
-      integer fid,typent, typgeo,cret
+      integer*8 fid
+      integer  typent, typgeo,cret
       integer edfnome,n
 c
       cret = edfnome (fid, maa ,len(maa),nom, 16*n, n,
@@ -125,7 +130,8 @@ c
 c
       character *(*) maa
       character*(*) nom
-      integer fid,typent, typgeo,cret
+      integer*8 fid
+      integer  typent, typgeo,cret
       integer edfnoml,n
 c
       cret = edfnoml (fid, maa ,len(maa),nom,n,
@@ -143,7 +149,8 @@ c
 c
       character *(*) maa
       integer num(*)
-      integer fid,typent, typgeo,cret
+      integer*8 fid
+      integer  typent, typgeo,cret
       integer edfnume, n
 c
       cret = edfnume (fid, maa ,len(maa),num, n,
@@ -162,7 +169,8 @@ c
 c
       character *(*) maa
       integer num(*)
-      integer fid,typent, typgeo,cret
+      integer*8 fid
+      integer  typent, typgeo,cret
       integer edfnuml,n
 c
       cret = edfnuml (fid, maa ,len(maa),num, n,
@@ -179,7 +187,8 @@ c
       save
 c
       character *(*) maa
-      integer fid,typent, typgeo,cret,typcon,n,quoi
+      integer*8 fid
+      integer  typent, typgeo,cret,typcon,n,quoi
       integer edfnema
 c
       n = edfnema(fid, maa ,len(maa),quoi, 
@@ -203,7 +212,8 @@ c
       save
 c
       character *32 maa
-      integer fid, conn(*),typent,typcon,cret,index(*)
+      integer*8 fid
+      integer   conn(*),typent,typcon,cret,index(*)
       integer edfpgce,ni
 c
       cret = edfpgce(fid,maa,len(maa),index,ni,conn,typent,typcon)
@@ -220,7 +230,8 @@ c
       save
 c
       character*32 maa
-      integer fid, conn(*),typent,typcon,cret,index(*)
+      integer*8 fid
+      integer   conn(*),typent,typcon,cret,index(*)
       integer edfpgcl,ni
 c
       cret = edfpgcl(fid,maa,len(maa),index,ni,conn,typent,typcon)
@@ -235,7 +246,8 @@ c
       save
 c
       character*32  maa
-      integer fid,typent,typcon,cret
+      integer*8 fid
+      integer  typent,typcon,cret
       integer edfpygi,consiz
 c
       cret = edfpygi(fid,maa,len(maa),typent,typcon,consiz)
@@ -252,7 +264,8 @@ c
       save
 c
       character *32 maa
-      integer fid, conn(*),typcon,cret,indexp(*),indexf(*)
+      integer*8 fid
+      integer   conn(*),typcon,cret,indexp(*),indexf(*)
       integer edfpece,np,nf
 c
       cret = edfpece(fid,maa,len(maa),indexp,np,indexf,nf,conn,typcon)
@@ -269,7 +282,8 @@ c
       save
 c
       character*32 maa
-      integer fid, conn(*),typcon,cret,indexp(*),indexf(*)
+      integer*8 fid
+      integer   conn(*),typcon,cret,indexp(*),indexf(*)
       integer edfpecl,np,nf
 c
       cret = edfpecl(fid,maa,len(maa),indexp,np,indexf,nf,conn,typcon)
@@ -284,7 +298,8 @@ c
       save
 c
       character*32 maa
-      integer fid,typcon,cret
+      integer*8 fid
+      integer  typcon,cret
       integer edfpyei,consiz,nf
 c
       cret = edfpyei(fid,maa,len(maa),typcon,nf,consiz)
@@ -303,7 +318,8 @@ c
 c
       character*32 maa
       real*8 indices(*)
-      integer fid,mdim,axe
+      integer*8 fid
+      integer  mdim,axe
       integer edficoe,n,cret
       character*(*) comp, unit
 c
@@ -324,7 +340,8 @@ c
 c
       character*32 maa
       real*8 indices(*)
-      integer fid,mdim,axe
+      integer*8 fid
+      integer  mdim,axe
       integer edficol,n,cret
       character*16 comp, unit
 c
@@ -344,7 +361,8 @@ c
 c
       character*32  maa
       integer struct(*)
-      integer fid,cret,mdim
+      integer*8 fid
+      integer  cret,mdim
       integer edfscoe
 c
       cret = edfscoe (fid, maa ,len(maa),mdim,struct)
@@ -361,7 +379,8 @@ c
 c
       character*32  maa
       integer struct(*)
-      integer fid,cret,mdim
+      integer*8 fid
+      integer  cret,mdim
       integer edfscol
 c
       cret = edfscol (fid, maa ,len(maa),mdim,struct)

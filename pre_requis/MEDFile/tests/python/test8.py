@@ -2,7 +2,7 @@
 # -*- coding:utf-8 -*-
 # /*  This file is part of MED.
 #  *
-#  *  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+#  *  COPYRIGHT (C) 1999 - 2019  EDF R&D, CEA/DEN
 #  *  MED is free software: you can redistribute it and/or modify
 #  *  it under the terms of the GNU Lesser General Public License as published by
 #  *  the Free Software Foundation, either version 3 of the License, or
@@ -38,8 +38,8 @@ unicoo="cm              cm              "
 
 try:
   MEDmeshCr(fid, maa, mdim, mdim, MED_UNSTRUCTURED_MESH,"un maillage pour test8","s", MED_SORT_DTIT, MED_CARTESIAN, nomcoo, unicoo)
-except RuntimeError,ex:
-    print "Erreur a la creation du maillage : ",maa,ex
+except RuntimeError as ex:
+    print("Erreur a la creation du maillage : ",maa,ex)
 
 # /* Ecriture des familles                                                */
 # /* Conventions appliquees dans MED :
@@ -58,8 +58,8 @@ gro=MEDCHAR(0)
 
 try:
     MEDfamilyCr(fid,maa,nomfam,numfam,0,gro)
-except RuntimeError,ex:
-    print "Erreur a la creation  de la famille 0 : ",maa,ex
+except RuntimeError as ex:
+    print("Erreur a la creation  de la famille 0 : ",maa,ex)
 
   # /* Creation pour correspondre aux cas test precedent de :
   #    - 3 familles d'elements (-1,-2,-3)
@@ -72,11 +72,11 @@ ngro = 1
 for i in range(0,nfame):
     numfam = -(i+1)
     nomfam="FAMILLE_ELEMENT_"+str(-numfam)
-    print "%s - %d - %d \n"%(nomfam,numfam, ngro)
+    print("%s - %d - %d \n"%(nomfam,numfam, ngro))
     try:
         MEDfamilyCr(fid,maa,nomfam,numfam,ngro,gro)
-    except RuntimeError,ex:
-      print "Erreur a la creation de la famille :",nomfam,"(",numfam,"("
+    except RuntimeError as ex:
+      print("Erreur a la creation de la famille :",nomfam,"(",numfam,"(")
 
 nfamn = 2
 for i in range(0,nfamn):
@@ -84,8 +84,8 @@ for i in range(0,nfamn):
     nomfam="FAMILLE_NOEUD_"+str(numfam)
     try:
         MEDfamilyCr(fid,maa,nomfam,numfam,ngro,gro)
-    except RuntimeError,ex:
-      print "Erreur a la creation de la famille :",nomfam,"(",numfam,"("
+    except RuntimeError as ex:
+      print("Erreur a la creation de la famille :",nomfam,"(",numfam,"(")
 
 
 err = MEDfileClose(fid)

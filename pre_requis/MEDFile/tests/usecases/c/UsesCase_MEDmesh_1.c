@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2019  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -16,7 +16,7 @@
  */
 
 /*
- *  How to create an unstructured mesh 
+ *  How to create an unstructured mesh
  *
  *  Use case 1 : a 2D unstructured mesh with 15 nodes, 8 triangular cells, 4 triangular cells
  */
@@ -39,14 +39,14 @@ int main (int argc, char **argv) {
 				      2.,6.,  7.,6.,  12.,6.,  17.,6.,  22.,6.,
 				      2.,11., 7.,11., 12.,11., 17.,11., 22.,11.};
   const med_int nnodes = 15;
-  const med_int triaconnectivity[24] = { 1,7,6,   2,7,1,  3,7,2,   8,7,3,   
+  const med_int triaconnectivity[24] = { 1,7,6,   2,7,1,  3,7,2,   8,7,3,
 					 13,7,8, 12,7,13, 11,7,12, 6,7,11 };
   const med_int ntria3 = 8;
-  const med_int quadconnectivity[16] = {3,4,9,8,    4,5,10,9, 
+  const med_int quadconnectivity[16] = {3,4,9,8,    4,5,10,9,
 					15,14,9,10, 13,8,9,14};
   const med_int nquad4 = 4;
   med_err ret=-1;
-  
+
   /* open MED file */
   fid = MEDfileOpen("UsesCase_MEDmesh_1.med",MED_ACC_CREAT);
   if (fid < 0) {
@@ -59,16 +59,16 @@ int main (int argc, char **argv) {
     MESSAGE("ERROR : write file description ...");
     goto ERROR;
   }
-  
+
   /* mesh creation : a 2D unstructured mesh */
-  if (MEDmeshCr(fid, meshname, spacedim, meshdim, MED_UNSTRUCTURED_MESH, 
+  if (MEDmeshCr(fid, meshname, spacedim, meshdim, MED_UNSTRUCTURED_MESH,
 		"A 2D unstructured mesh","",MED_SORT_DTIT,MED_CARTESIAN, axisname, unitname) < 0) {
     MESSAGE("ERROR : mesh creation ...");
     goto ERROR;
   }
 
-  /* nodes coordinates in a cartesian axis in full interlace mode 
-     (X1,Y1, X2,Y2, X3,Y3, ...) with no iteration and computation step 
+  /* nodes coordinates in a cartesian axis in full interlace mode
+     (X1,Y1, X2,Y2, X3,Y3, ...) with no iteration and computation step
   */
   if (MEDmeshNodeCoordinateWr(fid, meshname, MED_NO_DT, MED_NO_IT, 0.0,
 			      MED_FULL_INTERLACE, nnodes, coordinates) < 0) {
@@ -96,7 +96,7 @@ int main (int argc, char **argv) {
 
   ret = 0;
  ERROR :
-  
+
   /* close MED file */
   if (MEDfileClose(fid)  < 0) {
     MESSAGE("ERROR : close file ...");

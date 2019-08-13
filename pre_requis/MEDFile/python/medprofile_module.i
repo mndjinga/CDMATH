@@ -1,5 +1,5 @@
 # -*- coding:utf-8 -*-
-%module medprofile
+%module (package="med") medprofile
 
 //A inclure avant toute déclaration à SWIG
 %include "med_881.i"

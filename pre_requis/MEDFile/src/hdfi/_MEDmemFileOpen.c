@@ -434,7 +434,7 @@ med_idt _MEDmemFileOpen(const char * const filename, med_memfile * const memfile
     goto ERROR;
   }
 
-#if H5_VERS_MINOR > 8
+#if H5_VERS_MINOR > 10
 #error "Don't forget to change the compatibility version of the library !"
 #endif
   if ( H5Pset_libver_bounds( _fapl, H5F_LIBVER_18, H5F_LIBVER_18) ) {

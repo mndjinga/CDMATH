@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2019  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -72,10 +72,10 @@ nmlnfliw(med_idt *fid, char *mname, med_int *mnamelen,
 
 #ifdef PPRO_NT
 med_int 
-MLNFNLN(med_int *fid)
+MLNFNLN(med_idt *fid)
 #else
 med_int 
-nmlnfnln(med_int *fid)
+nmlnfnln(med_idt *fid)
 #endif
 {
   med_int _ret; 
@@ -89,11 +89,11 @@ nmlnfnln(med_int *fid)
 
 #ifdef PPRO_NT
 med_int 
-MLNFLNI(med_int *fid, med_int *it, char*mname, unsigned int bidon1, 
+MLNFLNI(med_idt *fid, med_int *it, char*mname, unsigned int bidon1, 
 		  med_int *lsize)
 #else
 med_int
-nmlnflni(med_int *fid, med_int *it, char*mname, med_int *lsize)
+nmlnflni(med_idt *fid, med_int *it, char*mname, med_int *lsize)
 #endif
 {
   med_int _ret;
@@ -111,10 +111,10 @@ nmlnflni(med_int *fid, med_int *it, char*mname, med_int *lsize)
 
 #ifdef PPRO_NT
 med_int 
-MLNFLAI(med_int *fid, char*mname, unsigned int bidon1, med_int *mnamelen, med_int *lsize)
+MLNFLAI(med_idt *fid, char*mname, unsigned int bidon1, med_int *mnamelen, med_int *lsize)
 #else
 med_int
-nmlnflai(med_int *fid, char*mname, med_int *mnamelen, med_int *lsize)
+nmlnflai(med_idt *fid, char*mname, med_int *mnamelen, med_int *lsize)
 #endif
 {
   med_int _ret;

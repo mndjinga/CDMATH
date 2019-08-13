@@ -35,6 +35,8 @@ Compiling Options:
                   hdf5 LDFLAGS : @HDF5_LDFLAGS@
                         h5dump : @H5DUMP@
                     hdf5 is // : @BUILD_WITH_PMED@
+                        Python : @PYTHON@
+			  Swig : @SWIG@
 
 Features:
 ---------

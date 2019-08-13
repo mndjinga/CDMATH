@@ -1,6 +1,6 @@
 !*  This file is part of MED.
 !*
-!*  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+!*  COPYRIGHT (C) 1999 - 2019  EDF R&D, CEA/DEN
 !*  MED is free software: you can redistribute it and/or modify
 !*  it under the terms of the GNU Lesser General Public License as published by
 !*  the Free Software Foundation, either version 3 of the License, or
@@ -28,7 +28,8 @@ program test30
   include 'med.hf'
 !
 !
-  integer      ret,cret,fid
+  integer*8    fid
+  integer      ret,cret
   character*32 maa,maadst,corr, jnt
   integer      mdim,njnt,ncor,domdst,nc,nent
   character*32  equ,ent, nodenn, nodent
@@ -123,7 +124,8 @@ program test30
 
    character*(*) maa,jnt
    character*200 des;
-   integer ret,cret,ncor,ntypnent,i,j,fid,nent,ntypent
+   integer*8 fid
+   integer ret,cret,ncor,ntypnent,i,j,nent,ntypent
    integer entlcl,geolcl, entdst, geodst
    integer, allocatable, dimension(:) :: cortab
 

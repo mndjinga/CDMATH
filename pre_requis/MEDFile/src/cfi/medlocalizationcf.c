@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2019  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -88,10 +88,10 @@ nmlcflow(med_idt *fid, char *lname,med_int *lnamelen,
 
 #ifdef PPRO_NT
 med_int 
-MLCFNLC(med_int *fid)
+MLCFNLC(med_idt *fid)
 #else
 med_int 
-nmlcfnlc(med_int *fid)
+nmlcfnlc(med_idt *fid)
 #endif
 {
   med_int _ret; 
@@ -105,14 +105,14 @@ nmlcfnlc(med_int *fid)
 
 #ifdef PPRO_NT
 med_int 
-MLCFLCI(med_int *fid, med_int *it, char*lname, unsigned int bidon1, 
+MLCFLCI(med_idt *fid, med_int *it, char*lname, unsigned int bidon1, 
 		  med_int *gtype, med_int *sdim, med_int nip, 
 		  char * giname, unsigned int bidon2,
 		  char * isname, unsigned int bidon3,
 		  med_int *nsmc, med_int *sgtype)
 #else
 med_int
-nmlcflci(med_int *fid, med_int *it, char *lname, med_int *gtype, med_int *sdim, 
+nmlcflci(med_idt *fid, med_int *it, char *lname, med_int *gtype, med_int *sdim, 
 	 med_int *nip,char * giname, char * isname,
 	 med_int *nsmc, med_int *sgtype)
 
@@ -147,14 +147,14 @@ nmlcflci(med_int *fid, med_int *it, char *lname, med_int *gtype, med_int *sdim,
 
 #ifdef PPRO_NT
 med_int
-MLCFLNI(med_int *fid, char*lname, unsigned int bidon1, med_int *lnamelen,
+MLCFLNI(med_idt *fid, char*lname, unsigned int bidon1, med_int *lnamelen,
 		  med_int *gtype, med_int *sdim, med_int nip,
 		  char * giname, unsigned int bidon2,
 		  char * isname, unsigned int bidon3,
 		  med_int *nsmc, med_int *sgtype)
 #else
 med_int
-nmlcflni(med_int *fid, char *lname,  med_int *lnamelen, med_int *gtype, med_int *sdim,
+nmlcflni(med_idt *fid, char *lname,  med_int *lnamelen, med_int *gtype, med_int *sdim,
 	 med_int *nip,char * giname, char * isname,
 	 med_int *nsmc, med_int *sgtype)
 #endif

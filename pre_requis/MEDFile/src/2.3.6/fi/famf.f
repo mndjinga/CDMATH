@@ -1,6 +1,6 @@
 C*  This file is part of MED.
 C*
-C*  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+C*  COPYRIGHT (C) 1999 - 2019  EDF R&D, CEA/DEN
 C*  MED is free software: you can redistribute it and/or modify
 C*  it under the terms of the GNU Lesser General Public License as published by
 C*  the Free Software Foundation, either version 3 of the License, or
@@ -22,7 +22,8 @@ c
       implicit none
       save
 c 
-      integer fid,num,attid(*),attval(*),natt,ngro,cret
+      integer*8 fid
+      integer  num,attid(*),attval(*),natt,ngro,cret
       character *(*) maa,fam,attdes
       character *80 gro(*)
       integer edffamc
@@ -40,7 +41,8 @@ c
       implicit none
       save
 c
-      integer fid,fam(*),n,typent,typgeo,cret
+      integer*8 fid
+      integer  fam(*),n,typent,typgeo,cret
       character *(*) maa
       integer edffame
 c      
@@ -55,7 +57,8 @@ c
       implicit none
       save
 c
-      integer fid,fam(*),n,typent,typgeo,cret
+      integer*8 fid
+      integer  fam(*),n,typent,typgeo,cret
       character *(*) maa
       integer edffaml
 c      
@@ -71,7 +74,8 @@ c
       implicit none
       save
 c 
-      integer fid,num,attid(*),attval(*),natt,ngro,cret,ind
+      integer*8 fid
+      integer  num,attid(*),attval(*),natt,ngro,cret,ind
       character *(*) maa,fam,attdes,gro
       integer edffami
 c
@@ -88,7 +92,8 @@ c
       implicit none
       save
 c
-      integer fid,n,cret
+      integer*8 fid
+      integer  n,cret
       character *(*) maa
       integer edfnfam
 c
@@ -109,7 +114,8 @@ c
       implicit none
       save
 c
-      integer fid,ind,n,cret
+      integer*8 fid
+      integer  ind,n,cret
       character *(*) maa
       integer edfngro
 c
@@ -130,7 +136,8 @@ c
       implicit none
       save
 c
-      integer fid,ind,n,cret
+      integer*8 fid
+      integer  ind,n,cret
       character *(*) maa
       integer edfnatt
 c

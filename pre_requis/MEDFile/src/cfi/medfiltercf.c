@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2019  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -87,12 +87,12 @@ nmfrfdea(med_int* nflt,unsigned char** flt)
 
 #ifdef PPRO_NT
 med_int
-MFRFCRE(med_int *fid, med_int* nent, med_int *nvent, med_int *ncent,
+MFRFCRE(med_idt *fid, med_int* nent, med_int *nvent, med_int *ncent,
 		  med_int *cs, med_int *swm, med_int *stm, char *pname, unsigned int bidon, med_int *pnamelen, 
 		  med_int *fltas, med_int *flta, unsigned char **flt)
 #else
 med_int
-nmfrfcre(med_int *fid, med_int* nent, med_int *nvent, med_int *ncent,
+nmfrfcre(med_idt *fid, med_int* nent, med_int *nvent, med_int *ncent,
 	 med_int *cs, med_int *swm,med_int *stm,char *pname, med_int *pnamelen, 
 	 med_int *fltas,med_int *flta, unsigned char **flt)
 #endif
@@ -135,13 +135,13 @@ nmfrfcre(med_int *fid, med_int* nent, med_int *nvent, med_int *ncent,
 
 #ifdef PPRO_NT
 med_int
-MFRFBLC(med_int *fid, med_int* nent, med_int *nvent, med_int *ncent,
+MFRFBLC(med_idt *fid, med_int* nent, med_int *nvent, med_int *ncent,
 		  med_int *cs, med_int *swm, med_int *stm, char *pname, unsigned int bidon, med_int *pnamelen,  
 		  med_int *start, med_int *stride, med_int *count, med_int *bsize, med_int *lbsize,
 		  unsigned char **flt)
 #else
 med_int
-nmfrfblc(med_int *fid, med_int* nent, med_int *nvent, med_int *ncent,
+nmfrfblc(med_idt *fid, med_int* nent, med_int *nvent, med_int *ncent,
 	 med_int *cs, med_int *swm,med_int *stm,char *pname, med_int *pnamelen, 
 	 med_int *start, med_int *stride, med_int *count, med_int *bsize, med_int *lbsize,
 	 unsigned char **flt)

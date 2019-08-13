@@ -92,6 +92,7 @@ subdir = tools/medimport/include
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/config/ac_check_sizeof_fortran.m4 \
 	$(top_srcdir)/config/ax_absolute_header.m4 \
+	$(top_srcdir)/config/ax_compare_version.m4 \
 	$(top_srcdir)/config/ax_pkg_swig.m4 \
 	$(top_srcdir)/config/ax_prog_cc_mpi.m4 \
 	$(top_srcdir)/config/ax_prog_cxx_mpi.m4 \
@@ -109,6 +110,7 @@ am__aclocal_m4_deps = $(top_srcdir)/config/ac_check_sizeof_fortran.m4 \
 	$(top_srcdir)/config/med_check_hdf5.m4 \
 	$(top_srcdir)/config/med_check_mesgerr.m4 \
 	$(top_srcdir)/config/med_check_python.m4 \
+	$(top_srcdir)/config/med_check_python_devel.m4 \
 	$(top_srcdir)/config/med_check_swig.m4 \
 	$(top_srcdir)/config/med_check_typeof_hidt.m4 \
 	$(top_srcdir)/config/med_check_typeof_int64.m4 \
@@ -280,14 +282,34 @@ LTLIBOBJS = @LTLIBOBJS@
 LT_SYS_LIBRARY_PATH = @LT_SYS_LIBRARY_PATH@
 MAKEINFO = @MAKEINFO@
 MANIFEST_TOOL = @MANIFEST_TOOL@
+MEDIMPORT_CMAKE_SO_MAJ = @MEDIMPORT_CMAKE_SO_MAJ@
+MEDIMPORT_CMAKE_SO_MIN = @MEDIMPORT_CMAKE_SO_MIN@
+MEDIMPORT_CMAKE_SO_REL = @MEDIMPORT_CMAKE_SO_REL@
+MEDIMPORT_CMAKE_SO_VERSION = @MEDIMPORT_CMAKE_SO_VERSION@
+MEDIMPORT_LIBTOOL_MAJ = @MEDIMPORT_LIBTOOL_MAJ@
+MEDIMPORT_LIBTOOL_MIN = @MEDIMPORT_LIBTOOL_MIN@
+MEDIMPORT_LIBTOOL_REL = @MEDIMPORT_LIBTOOL_REL@
+MED_3_LATEST_MINOR = @MED_3_LATEST_MINOR@
 MED_API_23 = @MED_API_23@
 MED_CHECK_23FORMAT = @MED_CHECK_23FORMAT@
+MED_CMAKE_SO_MAJ = @MED_CMAKE_SO_MAJ@
+MED_CMAKE_SO_MIN = @MED_CMAKE_SO_MIN@
+MED_CMAKE_SO_REL = @MED_CMAKE_SO_REL@
+MED_CMAKE_SO_VERSION = @MED_CMAKE_SO_VERSION@
 MED_DEFINE_MED_HAVE_MPI = @MED_DEFINE_MED_HAVE_MPI@
 MED_INT32 = @MED_INT32@
 MED_INT64 = @MED_INT64@
+MED_LIBTOOL_MAJ = @MED_LIBTOOL_MAJ@
+MED_LIBTOOL_MIN = @MED_LIBTOOL_MIN@
+MED_LIBTOOL_REL = @MED_LIBTOOL_REL@
 MED_NUM_MAJEUR = @MED_NUM_MAJEUR@
 MED_NUM_MINEUR = @MED_NUM_MINEUR@
 MED_NUM_RELEASE = @MED_NUM_RELEASE@
+MED_PYTHON2_VERSION_REF = @MED_PYTHON2_VERSION_REF@
+MED_PYTHON3_VERSION_REF = @MED_PYTHON3_VERSION_REF@
+MED_PYTHON_VERSION_REF = @MED_PYTHON_VERSION_REF@
+MED_SWIG_MIN_VERSION_REF = @MED_SWIG_MIN_VERSION_REF@
+MED_SWIG_VERSION_REF = @MED_SWIG_VERSION_REF@
 MESGERR = @MESGERR@
 MKDIR_P = @MKDIR_P@
 MPICC = @MPICC@
@@ -385,10 +407,6 @@ prefix = @prefix@
 program_transform_name = @program_transform_name@
 psdir = @psdir@
 pyexecdir = @pyexecdir@
-python_bin = @python_bin@
-python_includedir = @python_includedir@
-python_libdir = @python_libdir@
-python_version = @python_version@
 pythondir = @pythondir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@

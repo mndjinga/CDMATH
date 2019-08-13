@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2019  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -27,7 +27,7 @@
 
 #include <string.h>
 
-/* 
+/*
  * Field use case 3 : read a field (generic approach)
  */
 
@@ -67,9 +67,9 @@ int main (int argc, char **argv) {
 
   for (i=0; i<nfield; i++) {
 
-    /* field information 
-     * ... we know that the field has no computation step 
-     * and that the field values type is MED_FLOAT64, a real code would check ... 
+    /* field information
+     * ... we know that the field has no computation step
+     * and that the field values type is MED_FLOAT64, a real code would check ...
      */
     if ((ncomponent = MEDfieldnComponent(fid,i+1)) < 0) {
       MESSAGE("ERROR : number of field component ...");
@@ -84,7 +84,7 @@ int main (int argc, char **argv) {
     if ((componentunit = (char *) malloc(ncomponent*MED_SNAME_SIZE+1)) == NULL) {
       MESSAGE("ERROR : memory allocation ...");
       goto ERROR;
-    }    
+    }
 
     if (MEDfieldInfo(fid, i+1, fieldname, meshname, &localmesh, &fieldtype,
 		     componentname, componentunit, dtunit, &nstep) < 0) {
@@ -95,7 +95,7 @@ int main (int argc, char **argv) {
     free(componentname); free(componentunit);
 
     /* read field values for nodes and cells */
-    
+
     /* MED_NODE */
     if ((nvalues = MEDfieldnValue(fid, fieldname, MED_NO_DT, MED_NO_IT, MED_NODE, MED_NONE)) < 0) {
       MESSAGE("ERROR : read number of values ...");
@@ -119,8 +119,8 @@ int main (int argc, char **argv) {
     /* MED_CELL */
     for (j=1; j<=MED_N_CELL_FIXED_GEO; j++) {
       geotype = geotypes[j];
-  
-      if ((nvalues = MEDfieldnValue(fid, fieldname, MED_NO_DT, MED_NO_IT, MED_CELL, 
+
+      if ((nvalues = MEDfieldnValue(fid, fieldname, MED_NO_DT, MED_NO_IT, MED_CELL,
 				    geotype)) < 0) {
 	MESSAGE("ERROR : read number of values ...");
 	goto ERROR;
@@ -136,20 +136,20 @@ int main (int argc, char **argv) {
 	  MESSAGE("ERROR : read fields values for cells ...");
 	  free(values);
 	  goto ERROR;
-	}  
+	}
 	free(values);
       }
     }
   }
-  
+
   ret=0;
  ERROR:
 
   /* close file */
   if (MEDfileClose(fid) < 0) {
-    MESSAGE("ERROR : close file ...");             
-    ret=-1; 
-  } 
-  
+    MESSAGE("ERROR : close file ...");
+    ret=-1;
+  }
+
   return ret;
 }

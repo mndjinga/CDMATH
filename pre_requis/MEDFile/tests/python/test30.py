@@ -2,7 +2,7 @@
 # -*- coding:utf-8 -*-
 # /*  This file is part of MED.
 #  *
-#  *  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+#  *  COPYRIGHT (C) 1999 - 2019  EDF R&D, CEA/DEN
 #  *  MED is free software: you can redistribute it and/or modify
 #  *  it under the terms of the GNU Lesser General Public License as published by
 #  *  the Free Software Foundation, either version 3 of the License, or
@@ -43,47 +43,47 @@ fid = MEDfileOpen(file,MED_ACC_RDONLY)
 def afficheCorres(fid, maa, jnt, typ_ent_local, typ_geo_local, typ_ent_distant, typ_geo_distant, type):
 
   nc = MEDsubdomainCorrespondenceSize(fid,maa,jnt,MED_NO_DT,MED_NO_IT,
-				      typ_ent_local,typ_geo_local,typ_ent_distant,typ_geo_distant) 
-  print "nb de couples d'entites en regard |%s|: %d"%(type,nc)
+                                      typ_ent_local,typ_geo_local,typ_ent_distant,typ_geo_distant) 
+  print("nb de couples d'entites en regard |%s|: %d"%(type,nc))
 
   if nc > 0:
     cortab = MEDINT(nc*2)
     MEDsubdomainCorrespondenceRd(fid,maa,jnt,MED_NO_DT,MED_NO_IT,
                                  typ_ent_local,typ_geo_local,typ_ent_distant,typ_geo_distant,
                                  cortab)
-    for k in xrange(nc):
-	print "Correspondance %d : %d et %d"%(k+1,cortab[2*k],cortab[2*k+1])
+    for k in range(nc):
+        print("Correspondance %d : %d et %d"%(k+1,cortab[2*k],cortab[2*k+1]))
 
 
 
 maa, sdim, mdim, meshtype, desc, dtunit, sort, nstep,  repere, axisname, axisunit = MEDmeshInfo(fid, 1)
 
-print "\nMaillage de nom : |%s| , de dimension : %d , et de type %s\n"%(maa,mdim,meshtype)
-print "\t -Dimension de l'espace : %d\n"%(sdim)
-print "\t -Description du maillage : |%s|\n"%(desc)
-print "\t -Noms des axes : |%s|\n"%(axisname)
-print "\t -Unités des axes : |%s|\n"%(axisunit)
-print "\t -Type de repère : %s\n"%(repere)
-print "\t -Nombre d'étapes de calcul : %d\n"%(nstep)
-print "\t -Unité des dates : |%s|\n"%(dtunit)
+print("\nMaillage de nom : |%s| , de dimension : %d , et de type %s\n"%(maa,mdim,meshtype))
+print("\t -Dimension de l'espace : %d\n"%(sdim))
+print("\t -Description du maillage : |%s|\n"%(desc))
+print("\t -Noms des axes : |%s|\n"%(axisname))
+print("\t -Unités des axes : |%s|\n"%(axisunit))
+print("\t -Type de repère : %s\n"%(repere))
+print("\t -Nombre d'étapes de calcul : %d\n"%(nstep))
+print("\t -Unité des dates : |%s|\n"%(dtunit))
 
 
 #/* Lecture du nombre de joints */
 njnt = MEDnSubdomainJoint(fid,maa)
-print "Nombre de joints : %d"%(njnt)
+print("Nombre de joints : %d"%(njnt))
 
 #/* Lecture de tous les joints du maillage */
-for i in xrange(njnt):
-    print "Joint numero : %d "%(i+1)
+for i in range(njnt):
+    print("Joint numero : %d "%(i+1))
 
     #/* Lecture des infos sur le joints */
     jnt,des,ndom,maa_dist,njstep,nodtitncor = MEDsubdomainJointInfo(fid,maa,i+1)
-    print "Nom du joint: |%s| \n"%(jnt)
-    print "Description du joint      : |%s|"%(des)
-    print "Domaine en regard         : %d"%(ndom)
-    print "Maillage distant          : |%s|"%(maa_dist)
-    print "Nombre d'étapes de calcul : %d"%(njstep)
-    print "Nombre de correspondance pour (NO_DT,NO_IT) : %d"%(nodtitncor)
+    print("Nom du joint: |%s| \n"%(jnt))
+    print("Description du joint      : |%s|"%(des))
+    print("Domaine en regard         : %d"%(ndom))
+    print("Maillage distant          : |%s|"%(maa_dist))
+    print("Nombre d'étapes de calcul : %d"%(njstep))
+    print("Nombre de correspondance pour (NO_DT,NO_IT) : %d"%(nodtitncor))
 
     # /* lecture des correspondances une par une
     #    en connaissant leur type a priori */
@@ -100,7 +100,7 @@ for i in xrange(njnt):
     #   -> utilisation de la fonction MEDjointTypeCorres */
 
   
-    for ncor in xrange(1,nodtitncor+1):
+    for ncor in range(1,nodtitncor+1):
         typ_ent_local,typ_geo_local,typ_ent_distant,typ_geo_distant, nentity = MEDsubdomainCorrespondenceSizeInfo(fid,maa,jnt,MED_NO_DT,MED_NO_IT,ncor)
 
         # /* Lecture de la correspondance Noeud Noeud */

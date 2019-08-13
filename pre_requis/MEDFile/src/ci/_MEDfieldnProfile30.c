@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2019  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -106,7 +106,7 @@ _MEDfieldnProfile30(int dummy, ...) {
   /*
    * Si le Data Group  de niveau <type_ent>[.<type_geo>] n'existe pas retroune 0
    */
-
+  /*TODO: Appeler _MEDgetFieldEntityGeoTypeName*/
   if (_MEDgetEntityTypeName(_datagroupname1,entitype) < 0) {
     MED_ERR_(_ret,MED_ERR_READ,MED_ERR_ENTITY,_datagroupname1);
     goto ERROR;
@@ -121,6 +121,8 @@ _MEDfieldnProfile30(int dummy, ...) {
     } else {
       if (_MEDgetInternalGeometryTypeName(0,_geotypename,geotype) < 0) {
 	MED_ERR_(_ret,MED_ERR_READ,MED_ERR_GEOMETRIC,_geotypename);
+	ISCRUTE(entitype);
+	ISCRUTE_int(geotype)
 	goto ERROR;
       }
     }

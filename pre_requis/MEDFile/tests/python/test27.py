@@ -2,7 +2,7 @@
 # -*- coding:utf-8 -*-
 # /*  This file is part of MED.
 #  *
-#  *  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+#  *  COPYRIGHT (C) 1999 - 2019  EDF R&D, CEA/DEN
 #  *  MED is free software: you can redistribute it and/or modify
 #  *  it under the terms of the GNU Lesser General Public License as published by
 #  *  the Free Software Foundation, either version 3 of the License, or
@@ -50,7 +50,7 @@ fid = MEDfileOpen("test27.med",MED_ACC_CREAT)
 MEDmeshCr( fid, "maillage vide",mdim, mdim, MED_UNSTRUCTURED_MESH,
            "un maillage vide","s", MED_SORT_DTIT,
            MED_CARTESIAN, comp, unit)
-print "Creation d'un maillage structure MED_STRUCTURED_MESH \n"
+print("Creation d'un maillage structure MED_STRUCTURED_MESH \n")
 
 # /* creation d'une grille cartesienne de dimension 2 */
 # /* on commence par definir un maillage MED_STRUCTURED_MESH
@@ -58,10 +58,10 @@ print "Creation d'un maillage structure MED_STRUCTURED_MESH \n"
 MEDmeshCr( fid, maa, mdim, mdim, MED_STRUCTURED_MESH,
       	 "un exemple de grille cartesienne","s", MED_SORT_DTIT,
       	 MED_CARTESIAN, comp, unit)
-print "Creation d'un maillage structure MED_STRUCTURED_MESH \n"
+print("Creation d'un maillage structure MED_STRUCTURED_MESH \n")
 
 MEDmeshGridTypeWr(fid,maa, MED_CARTESIAN_GRID)
-print "On definit la nature du maillage structure : MED_GRILLE_CARTESIENNE \n"
+print("On definit la nature du maillage structure : MED_GRILLE_CARTESIENNE \n")
 
 # /* on definit les indices des coordonnees de la grille selon chaque dimension  */
 # /* axe des "X" */
@@ -70,7 +70,7 @@ axe  = 1
 
 MEDmeshGridIndexCoordinateWr(fid,maa,MED_NO_DT,MED_NO_IT,MED_UNDEF_DT,
                              axe,nind,indiceX)
-print "Ecriture des indices des coordonnees selon l'axe des X \n"
+print("Ecriture des indices des coordonnees selon l'axe des X \n")
 
 
 # /* axe des "Y" */
@@ -79,7 +79,7 @@ axe  = 2
 
 MEDmeshGridIndexCoordinateWr(fid,maa,MED_NO_DT,MED_NO_IT,MED_UNDEF_DT,
                              axe,nind,indiceY)
-print "Ecriture des indices des coordonnees selon l'axe des Y \n"
+print("Ecriture des indices des coordonnees selon l'axe des Y \n")
 
 # /* Creation d'une grille MED_CURVILINEAR_GRID de dimension 2 */
 # /* on commence par definir un maillage MED_STRUCTURED_MESH
@@ -88,18 +88,18 @@ print "Ecriture des indices des coordonnees selon l'axe des Y \n"
 MEDmeshCr(fid, maa2, mdim, mdim, MED_STRUCTURED_MESH,
           "un exemple de grille standard","s", MED_SORT_DTIT,
           MED_CARTESIAN, comp, unit)
-print "Creation d'un maillage structure MED_STRUCTURED_MESH \n"
+print("Creation d'un maillage structure MED_STRUCTURED_MESH \n")
 
 # /* On specifie la nature du maillage structure : MED_CURVILINEAR_GRID */
 MEDmeshGridTypeWr(fid,maa2, MED_CURVILINEAR_GRID)
-print "On definit la nature du maillage structure : MED_CURVILINEAR_GRID \n"
+print("On definit la nature du maillage structure : MED_CURVILINEAR_GRID \n")
 
 MEDmeshNodeCoordinateWr(fid,maa2,MED_NO_DT,MED_NO_IT,MED_UNDEF_DT,
                         MED_FULL_INTERLACE,nnoeuds,coo)
-print "Ecriture des coordonnees des noeuds \n"
+print("Ecriture des coordonnees des noeuds \n")
 
 # /* On definit la structure de la grille */
 MEDmeshGridStructWr(fid,maa2,MED_NO_DT,MED_NO_IT, MED_UNDEF_DT, structure_grille )
-print "Ecriture de la structure de la grille : / 2,2 / \n"
+print("Ecriture de la structure de la grille : / 2,2 / \n")
 
 MEDfileClose(fid)

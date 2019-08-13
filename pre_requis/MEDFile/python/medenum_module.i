@@ -1,5 +1,5 @@
 # -*- coding:utf-8 -*-
-%module medenum
+%module (package="med") medenum
 
 
 %include "typemaps.i"

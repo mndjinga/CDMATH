@@ -1,6 +1,8 @@
 SET(_tst_scripts
-  test10.py
-  test11.py
+  # Il faudrait gérer les différents test10_ avec
+  # les fichiers paramètres.
+  # test10.py
+  # test11.py
   test12.py
   test13.py
   test1.py

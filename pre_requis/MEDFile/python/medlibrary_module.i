@@ -1,5 +1,5 @@
 # -*- coding:utf-8 -*-
-%module medlibrary
+%module (package="med") medlibrary
 
 %include "med_881.i"
 %SwigPyIteratorDef(medlibrary_module)

@@ -1,6 +1,6 @@
 !*  This file is part of MED.
 !*
-!*  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+!*  COPYRIGHT (C) 1999 - 2019  EDF R&D, CEA/DEN
 !*  MED is free software: you can redistribute it and/or modify
 !*  it under the terms of the GNU Lesser General Public License as published by
 !*  the Free Software Foundation, either version 3 of the License, or
@@ -30,7 +30,8 @@ program test15
   include 'med.hf'
 !  
 !
-  integer  ret,cret, fid;
+  integer*8  fid
+  integer  ret,cret
   !  ** la dimension du maillage                        **
   integer mdim
   !  ** nom du maillage de longueur maxi MED_TAILLE_NOM **

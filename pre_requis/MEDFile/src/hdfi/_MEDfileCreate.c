@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2019  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -46,6 +46,9 @@ med_idt _MEDfileCreate(const char * const filename, const med_access_mode access
    */
   _MEDmodeErreurVerrouiller();
 
+  /*
+   * On interdit la création d'un nouveau fichier de Majeur différent.
+   */
   if ( major != MED_NUM_MAJEUR ) {
     MED_ERR_(_fid,MED_ERR_RANGE,MED_ERR_PROPERTY,MED_ERR_FILEVERSION_MSG);
     ISCRUTE(major);ISCRUTE(minor);ISCRUTE(release);
@@ -55,13 +58,13 @@ med_idt _MEDfileCreate(const char * const filename, const med_access_mode access
   _minor = minor;
   switch(minor)
     {
-    case 0: _release = 8; break;
-    case 1: _release = 0; break;
-    case 2: _release = 1; break;
-#if MED_NUM_MINEUR-1 > 2
+    /* case 0: _release = 8; break; */
+    /* case 1: _release = 0; break; */
+    /* case 2: _release = 1; break; */
+#if MED_NUM_MINEUR > 0
 #error "Don't forget to add a case line version here when you change the minor version of the library !"
 #endif
-#if MED_NUM_MAJEUR != 3
+#if MED_NUM_MAJEUR != 4
 #error "Don't forget to add a case line version here when you change the major version of the library !"
 #endif
     case MED_NUM_MINEUR: _release = MED_NUM_RELEASE; break;
@@ -81,7 +84,10 @@ med_idt _MEDfileCreate(const char * const filename, const med_access_mode access
    * En HDF5-1.10.0p1 cela n'a aucun effet ! 
    * Un test autoconf permet de fixer un intervalle de version HDF à MED.
    */
-    
+#if H5_VERS_MINOR > 10
+#error "Don't forget to change the compatibility version of the library !"
+#endif
+   
   if ( H5Pset_libver_bounds( _fapl, H5F_LIBVER_18, H5F_LIBVER_18 ) ) {
     MED_ERR_(_fid,MED_ERR_INIT,MED_ERR_PROPERTY,MED_ERR_FILEVERSION_MSG);
     goto ERROR;
@@ -144,6 +150,7 @@ med_idt _MEDfileCreate(const char * const filename, const med_access_mode access
   _MEDsetModeAcces(_fid,accessmode);
   
   _MEDfileVersion(_fid);
+
 
  ERROR:
   return _fid;

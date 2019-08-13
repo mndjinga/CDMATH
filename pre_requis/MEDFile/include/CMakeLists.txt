@@ -21,6 +21,7 @@ SET(medC_HEADERS_H
   medinterp.h
   medfilter.h
   medsubdomain.h
+  medstructelement.h
   medlink.h
   med_err.h
   med_exit_if.h

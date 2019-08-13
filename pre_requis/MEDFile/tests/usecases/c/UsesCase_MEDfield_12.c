@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2019  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -27,9 +27,9 @@
 
 #include <string.h>
 
-/* 
+/*
  * Field use case 12 : read a field (generic approach) in a MED file with computing steps,
- *                     profiles, integration points and interpolation families   
+ *                     profiles, integration points and interpolation families
  */
 
 
@@ -76,7 +76,7 @@ int main (int argc, char **argv) {
     return -1;
   }
 
-  /* 
+  /*
    * read values for each field
    */
   for (i=0; i<nfield; i++) {
@@ -85,7 +85,7 @@ int main (int argc, char **argv) {
       MESSAGE("ERROR : number of field component ...");
       return -1;
     }
-    
+
     if ((componentname = (char *) malloc(ncomponent*MED_SNAME_SIZE+1)) == NULL) {
       MESSAGE("ERROR : memory allocation ...");
       return -1;
@@ -94,7 +94,7 @@ int main (int argc, char **argv) {
     if ((componentunit = (char *) malloc(ncomponent*MED_SNAME_SIZE+1)) == NULL) {
       MESSAGE("ERROR : memory allocation ...");
       return -1;
-    }    
+    }
 
     if (MEDfieldInfo(fid, i+1, fieldname, meshname, &localmesh, &fieldtype,
 		     componentname, componentunit, dtunit, &nstep) < 0) {
@@ -107,15 +107,15 @@ int main (int argc, char **argv) {
     free(componentname);
     free(componentunit);
 
-    /* 
-     * Read how many interpolation family name in the field ?  
+    /*
+     * Read how many interpolation family name in the field ?
      */
     if ((ninterp = MEDfieldnInterp(fid, fieldname)) < 0) {
       MESSAGE("ERROR : Read how many interpolation functions for the field ...");
       return -1;
     }
-    /* - Read each interlolation family name 
-     * - The way to read an interploation family and it's basis functions 
+    /* - Read each interlolation family name
+     * - The way to read an interploation family and it's basis functions
      *  is described in UsesCase_MEDinterp_2 and UsesCase_MEDinterp_3 uses case
      */
     for (it=0; it<ninterp; it++) {
@@ -126,8 +126,8 @@ int main (int argc, char **argv) {
     }
 
     /*
-     * Read field values for each computing step 
-     */ 
+     * Read field values for each computing step
+     */
     for (csit=0; csit<nstep; csit++) {
 
       if (MEDfieldComputingStepInfo(fid, fieldname, csit+1, &numdt, &numit, &dt) < 0) {
@@ -135,15 +135,15 @@ int main (int argc, char **argv) {
 	return -1;
       }
 
-      /* 
-       * ... In our case, we suppose that the field values are only defined on cells ... 
+      /*
+       * ... In our case, we suppose that the field values are only defined on cells ...
        */
       for (it=1; it<=MED_N_CELL_FIXED_GEO; it++) {
 
 	geotype = geotypes[it];
 
 	/*
-	 * How many profile for each geometry type ? 
+	 * How many profile for each geometry type ?
 	 */
 	if ((nprofile = MEDfieldnProfile(fid, fieldname, numdt, numit, MED_CELL, geotype,
 					 profilename, localizationname)) < 0) {
@@ -151,18 +151,18 @@ int main (int argc, char **argv) {
 	  return -1;
 	}
 
-	/* 
+	/*
 	 * Read values for each profile
 	 */
 	for (pit=0; pit<nprofile; pit++) {
-	  
+
 	  if ((nvalues = MEDfieldnValueWithProfile(fid, fieldname, numdt, numit, MED_CELL, geotype,
 						   pit+1, MED_COMPACT_STMODE, profilename, &profilesize,
 						   localizationname, &nintegrationpoint)) < 0) {
 	    MESSAGE("ERROR : read number of values with a profile ...");
 	    return -1;
-	  } 
-	  
+	  }
+
 	  if (nvalues) {
 	    if ((values = (med_float *) malloc(sizeof(med_float)*nvalues*ncomponent*nintegrationpoint)) == NULL) {
 	      MESSAGE("ERROR : memory allocation ...");
@@ -170,27 +170,27 @@ int main (int argc, char **argv) {
 	    }
 	    if (MEDfieldValueWithProfileRd(fid, fieldname, numdt, numit, MED_CELL, geotype,
 					   MED_COMPACT_STMODE, profilename,
-					   MED_FULL_INTERLACE, MED_ALL_CONSTITUENT, 
+					   MED_FULL_INTERLACE, MED_ALL_CONSTITUENT,
 					   (unsigned char*) values) < 0) {
-	      MESSAGE("ERROR : read fields values for cells ..."); 
+	      MESSAGE("ERROR : read fields values for cells ...");
 	      free(values);
-	      return -1; 
-	    }  
+	      return -1;
+	    }
 	    free(values);
 	  }
 	}
       }
     }
   }
-  
+
   ret=0;
  ERROR:
 
   /* close file */
   if (MEDfileClose(fid) < 0) {
-    MESSAGE("ERROR : close file ...");             
-    ret=-1; 
-  } 
-  
+    MESSAGE("ERROR : close file ...");
+    ret=-1;
+  }
+
   return ret;
 }

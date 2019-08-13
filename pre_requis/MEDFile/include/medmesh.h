@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2019  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -571,6 +571,52 @@ med_err MEDmeshElementRd(const med_idt                  fid,
 			 med_int               * const  elementnumber,
 			 med_bool              * const  withfamnumber,
 			 med_int               * const  famnumber);
+
+/* Maillages support aux modèles d'éléments de structure */
+
+MEDC_EXPORT med_err
+MEDsupportMeshCr(const med_idt       fid,
+		 const char* const   supportmeshname,
+		 const med_int       spacedim,
+		 const med_int       meshdim,
+		 const char* const   description,
+		 const med_axis_type axistype,
+		 const char* const   axisname,
+		 const char* const   axisunit
+		 );
+
+
+
+MEDC_EXPORT med_err
+MEDsupportMeshInfoByName(const med_idt         fid,
+			 const char *    const supportmeshname,
+			 med_int *       const spacedim,
+			 med_int *       const meshdim,
+			 char *          const description,
+			 med_axis_type * const axistype,
+			 char *          const axisname,
+			 char *          const axisunit);
+
+MEDC_EXPORT med_err
+MEDsupportMeshInfo(const med_idt            fid,
+		   const int                meshit,
+		   char   *           const supportmeshname,
+		   med_int *          const spacedim,
+		   med_int *          const meshdim,
+		   char *             const description,
+		   med_axis_type *    const axistype,
+		   char *             const axisname,
+		   char *             const axisunit);
+
+MEDC_EXPORT med_int
+MEDnSupportMesh(const med_idt fid);
+
+MEDC_EXPORT med_int
+MEDsupportMeshnAxis(const med_idt fid, const int meshit);
+
+MEDC_EXPORT med_int
+MEDsupportMeshnAxisByName(const med_idt fid, const char * const meshname);
+
 
 #ifdef __cplusplus
 }

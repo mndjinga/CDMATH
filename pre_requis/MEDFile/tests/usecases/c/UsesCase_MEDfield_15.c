@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2019  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -16,7 +16,7 @@
  */
 
 /*
- * Field use case 15 : write a field in a MED file with 
+ * Field use case 15 : write a field in a MED file with
  * values defined on struct elements
  */
 
@@ -32,7 +32,7 @@ int main (int argc, char **argv) {
   const char meshname[MED_NAME_SIZE+1] = "COMPUT_MESH";
   const char fieldname[MED_NAME_SIZE+1] = "SPEED";
   const med_int ncomponent = 3;
-  /*                                              123456789012345612345678901234561234567890123456 */   
+  /*                                              123456789012345612345678901234561234567890123456 */
   const char componentname[3*MED_SNAME_SIZE+1] = "Vx              Vy              Vz";
   const char componentunit[3*MED_SNAME_SIZE+1] = "m/s             m/s             m/s";
   med_geometry_type geotype=MED_NONE;
@@ -83,7 +83,7 @@ int main (int argc, char **argv) {
     goto ERROR;
   }
 
-  if (MEDfieldValueWithProfileWr(fid, fieldname, MED_NO_DT, MED_NO_IT, MED_UNDEF_DT, MED_STRUCT_ELEMENT, geotype, 
+  if (MEDfieldValueWithProfileWr(fid, fieldname, MED_NO_DT, MED_NO_IT, MED_UNDEF_DT, MED_STRUCT_ELEMENT, geotype,
 				 MED_COMPACT_STMODE, MED_NO_PROFILE, MED_NO_LOCALIZATION,
 				 MED_FULL_INTERLACE, MED_ALL_CONSTITUENT,
 				 npart, (unsigned char*) part_speed1) < 0) {
@@ -104,7 +104,7 @@ int main (int argc, char **argv) {
     MESSAGE("ERROR : close file ...");
     ret=-1;
   }
-  
+
   return ret;
 }
 

@@ -1,7 +1,7 @@
 #### Makefile hooks for post-installation tests
 
 SUFFIXES		      = .at
-AUTOTEST		      = autom4te --language=autotest
+AUTOTEST		      = autom4te --language=autotest 
 CHECK_TESTS		      =
 INSTALLCHECK_TESTS	      =
 PYTHONINSTALLCHECK_TESTS      =

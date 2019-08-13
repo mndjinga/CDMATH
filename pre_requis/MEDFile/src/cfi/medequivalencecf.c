@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2019  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -48,12 +48,12 @@ From Fortran call of following C functions :
 
 #ifdef PPRO_NT
 med_int 
-MEQFCRE(med_int *fid, char *maa, unsigned int bidon1, med_int *lon1,
+MEQFCRE(med_idt *fid, char *maa, unsigned int bidon1, med_int *lon1,
                   char *eq, unsigned int bidon2, med_int *lon2, char *desc,                        
 		  unsigned int bidon3, med_int *lon3)
 #else
 med_int 
- nmeqfcre(med_int *fid, char *maa, med_int *lon1, char *eq, med_int *lon2, 
+ nmeqfcre(med_idt *fid, char *maa, med_int *lon1, char *eq, med_int *lon2, 
 	  char *desc, med_int *lon3)
 #endif
 {
@@ -81,13 +81,13 @@ med_int
 
 #ifdef PPRO_NT
 med_int
-MEQFCOW(med_int *fid, char *maa, unsigned int bidon1, med_int *lon1,
+MEQFCOW(med_idt *fid, char *maa, unsigned int bidon1, med_int *lon1,
 		  char *eq, unsigned int bidon2, med_int *lon2, 
 		  med_int *numdt, med_int *numit,med_int *typ_ent,med_int *typ_geo,
 		  med_int *n, med_int *corr)
 #else
 med_int 
-nmeqfcow(med_int *fid, char *maa, med_int *lon1,
+nmeqfcow(med_idt *fid, char *maa, med_int *lon1,
 	 char *eq, med_int *lon2, 
 	 med_int *numdt, med_int *numit,
 	 med_int *typ_ent,med_int *typ_geo,
@@ -125,10 +125,10 @@ nmeqfcow(med_int *fid, char *maa, med_int *lon1,
 
 #ifdef PPRO_NT
 med_int
-MEQFNEQ(med_int *fid, char *maa, unsigned int bidon, med_int *lon1)
+MEQFNEQ(med_idt *fid, char *maa, unsigned int bidon, med_int *lon1)
 #else
 med_int
-nmeqfneq(med_int *fid, char *maa,med_int *lon1)
+nmeqfneq(med_idt *fid, char *maa,med_int *lon1)
 #endif
 {
   med_int _ret;
@@ -152,12 +152,12 @@ nmeqfneq(med_int *fid, char *maa,med_int *lon1)
 
 #ifdef PPRO_NT
 med_int 
-MEQFEQI(med_int *fid, char *maa, unsigned int bidon1, med_int *lon1,
+MEQFEQI(med_idt *fid, char *maa, unsigned int bidon1, med_int *lon1,
                   med_int *ind, char *eq, unsigned int bidon2, 
 		  char *des,unsigned int bidon3, med_int *nstep, med_int *ncstcor)
 #else
 med_int 
-nmeqfeqi(med_int *fid, char *maa,med_int *lon1,med_int *ind, char *eq,
+nmeqfeqi(med_idt *fid, char *maa,med_int *lon1,med_int *ind, char *eq,
 	 char *des, med_int *nstep, med_int *ncstcor)
 #endif
 {
@@ -190,13 +190,13 @@ nmeqfeqi(med_int *fid, char *maa,med_int *lon1,med_int *ind, char *eq,
 
 #ifdef PPRO_NT
 med_int
-MEQFCSZ(med_int *fid, char *maa, unsigned int bidon1, med_int *lon1,
+MEQFCSZ(med_idt *fid, char *maa, unsigned int bidon1, med_int *lon1,
                   char *eq, unsigned int bidon2, med_int *lon2, 
 		  med_int *numdt, med_int *numit,
 	          med_int *typ_ent, med_int *typ_geo)
 #else
 med_int
-nmeqfcsz(med_int *fid, char *maa, med_int *lon1,
+nmeqfcsz(med_idt *fid, char *maa, med_int *lon1,
 	 char *eq, med_int *lon2, 
 	 med_int *numdt, med_int *numit,
 	 med_int *typ_ent, med_int *typ_geo)
@@ -237,13 +237,13 @@ nmeqfcsz(med_int *fid, char *maa, med_int *lon1,
 
 #ifdef PPRO_NT
 med_int
-MEQFSZI(med_int *fid, char *maa, unsigned int bidon1, med_int *lon1,
+MEQFSZI(med_idt *fid, char *maa, unsigned int bidon1, med_int *lon1,
                   char *eq, unsigned int bidon2, med_int *lon2, 
 		  med_int *numdt, med_int *numit, med_int *it,
 	          med_int *typ_ent, med_int *typ_geo, med_int *n)
 #else
 med_int
-nmeqfszi(med_int *fid, char *maa, med_int *lon1,
+nmeqfszi(med_idt *fid, char *maa, med_int *lon1,
 	 char *eq, med_int *lon2, 
 	 med_int *numdt, med_int *numit,med_int *it,
 	 med_int *typ_ent, med_int *typ_geo, med_int *n)
@@ -283,13 +283,13 @@ nmeqfszi(med_int *fid, char *maa, med_int *lon1,
 
 #ifdef PPRO_NT
 med_int
-MEQFCOR(med_int *fid, char *maa, unsigned int bidon1, med_int *lon1,
+MEQFCOR(med_idt *fid, char *maa, unsigned int bidon1, med_int *lon1,
 		  char *eq, unsigned int bidon2, med_int *lon2, 
 		  med_int *numdt, med_int *numit,med_int *typ_ent,med_int *typ_geo,
 		  med_int *corr)
 #else
 med_int 
-nmeqfcor(med_int *fid, char *maa, med_int *lon1,
+nmeqfcor(med_idt *fid, char *maa, med_int *lon1,
 	 char *eq, med_int *lon2, 
 	 med_int *numdt, med_int *numit,
 	 med_int *typ_ent,med_int *typ_geo,
@@ -325,12 +325,12 @@ nmeqfcor(med_int *fid, char *maa, med_int *lon1,
 
 #ifdef PPRO_NT
 med_int 
-MEQFCSI(med_int *fid, char *maa, unsigned int bidon1, med_int *lon1,
+MEQFCSI(med_idt *fid, char *maa, unsigned int bidon1, med_int *lon1,
         med_int *ind, char *eq, unsigned int bidon2, med_int *lon2,
 		med_int *csit, med_int *numdt, med_int *numit, med_int *ncor)
 #else
 med_int 
-nmeqfcsi(med_int *fid, char *maa, med_int *lon1,
+nmeqfcsi(med_idt *fid, char *maa, med_int *lon1,
 	 med_int *ind, char *eq, med_int *lon2,
 	 med_int *csit, med_int *numdt, med_int *numit, 
 	 med_int *ncor)

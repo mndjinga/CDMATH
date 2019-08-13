@@ -2,7 +2,7 @@
 # -*- coding:utf-8 -*-
 # /*  This file is part of MED.
 #  *
-#  *  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+#  *  COPYRIGHT (C) 1999 - 2019  EDF R&D, CEA/DEN
 #  *  MED is free software: you can redistribute it and/or modify
 #  *  it under the terms of the GNU Lesser General Public License as published by
 #  *  the Free Software Foundation, either version 3 of the License, or
@@ -39,20 +39,20 @@ fid = MEDfileOpen("test4.med",MED_ACC_RDONLY)
 
 maa, sdim, mdim, meshtype, desc, dtunit, sort, nstep,  repere, axisname, axisunit = MEDmeshInfo(fid, 1)
 
-print "\nMaillage de nom : |%s| , de dimension : %d , et de type %s\n"%(maa,mdim,meshtype)
-print "\t -Dimension de l'espace : %d\n"%(sdim)
-print "\t -Description du maillage : |%s|\n"%(desc)
-print "\t -Noms des axes : |%s|\n"%(axisname)
-print "\t -Unités des axes : |%s|\n"%(axisunit)
-print "\t -Type de repère : %s\n"%(repere)
-print "\t -Nombre d'étapes de calcul : %d\n"%(nstep)
-print "\t -Unité des dates : |%s|\n"%(dtunit)
+print("\nMaillage de nom : |%s| , de dimension : %d , et de type %s\n"%(maa,mdim,meshtype))
+print("\t -Dimension de l'espace : %d\n"%(sdim))
+print("\t -Description du maillage : |%s|\n"%(desc))
+print("\t -Noms des axes : |%s|\n"%(axisname))
+print("\t -Unités des axes : |%s|\n"%(axisunit))
+print("\t -Type de repère : %s\n"%(repere))
+print("\t -Nombre d'étapes de calcul : %d\n"%(nstep))
+print("\t -Unité des dates : |%s|\n"%(dtunit))
 
 # /* Lecture des attributs des noeuds du maillage  */
 isolatednodes, verticesnodes, cellmaxnodes = MEDmeshAttributeRd( fid, maa)
-print "\t -Nombre de noeuds isolés             : %d\n"%(isolatednodes)
-print "\t -Nombre de noeuds sommets            : %d\n"%(verticesnodes)
-print "\t -Nombre maximum de noeuds par maille : %d\n"%(cellmaxnodes)
+print("\t -Nombre de noeuds isolés             : %d\n"%(isolatednodes))
+print("\t -Nombre de noeuds sommets            : %d\n"%(verticesnodes))
+print("\t -Nombre maximum de noeuds par maille : %d\n"%(cellmaxnodes))
 
 # /* Combien de noeuds a lire ? */
 nnoe, chgt, trsf = MEDmeshnEntity(fid,maa,MED_NO_DT,MED_NO_IT,
@@ -84,7 +84,7 @@ if nnoe > 0:
     # /* Lecture des composantes n°2 des coordonnees des noeuds */
     if (nnoe > 0):
         MEDmeshNodeCoordinateAdvancedRd(fid, maa, MED_NO_DT, MED_NO_IT, filter, coo1)
-        print "Valeur de coo1 : ",coo1
+        print("Valeur de coo1 : ",coo1)
         
     MEDfilterClose(filter)
 
@@ -94,7 +94,7 @@ if nnoe > 0:
     
     # /* Lecture des composantes n°1 des coordonnees des noeuds */ 
     MEDmeshNodeCoordinateAdvancedRd(fid, maa, MED_NO_DT, MED_NO_IT, filter, coo1)
-    print "Valeur de coo1 : ",coo1
+    print("Valeur de coo1 : ",coo1)
     MEDfilterClose(filter)
 
     MEDfilterEntityCr( fid, nnoe, 1, sdim, 1,
@@ -103,7 +103,7 @@ if nnoe > 0:
     # /* Lecture des composantes n°1 des coordonnees des noeuds du filtre */
     if (nnoe > 0):
         MEDmeshNodeCoordinateAdvancedRd(fid, maa, MED_NO_DT, MED_NO_IT, filter, coo2)
-        print "Valeur de coo2 : ",coo2
+        print("Valeur de coo2 : ",coo2)
     MEDfilterClose(filter)
 
     MEDfilterEntityCr( fid, nnoe, 1, sdim, 2,
@@ -112,7 +112,7 @@ if nnoe > 0:
     # /* Lecture des composantes n°2 des coordonnees des noeuds du filtre */
     if (nnoe > 0):
         MEDmeshNodeCoordinateAdvancedRd(fid, maa, MED_NO_DT, MED_NO_IT, filter, coo2)
-        print "Valeur de coo2 : ",coo2
+        print("Valeur de coo2 : ",coo2)
     MEDfilterClose(filter)
 
     MEDfilterEntityCr( fid, nnoe, 1, sdim, MED_ALL_CONSTITUENT,
@@ -121,13 +121,13 @@ if nnoe > 0:
     # /* Lecture de toutes les composantes des coordonnees des noeuds du filtre */
     if (nnoe > 0):
         MEDmeshNodeCoordinateAdvancedRd(fid, maa, MED_NO_DT, MED_NO_IT, filter, coo2)
-        print "Valeur de coo2 : ",coo2
+        print("Valeur de coo2 : ",coo2)
     MEDfilterClose(filter)
 
     # /* Lecture des composantes des coordonnees des noeuds */
     if (nnoe > 0):
         MEDmeshNodeCoordinateRd(fid, maa, MED_NO_DT, MED_NO_IT, MED_FULL_INTERLACE, coo2)
-        print "Valeur de coo2 : ",coo2
+        print("Valeur de coo2 : ",coo2)
 
         #/* Lecture des noms des noeuds (optionnel dans un maillage MED) */
         try: MEDmeshEntityNameRd(fid,maa, MED_NO_DT, MED_NO_IT, MED_NODE,MED_NONE,nomnoe)
@@ -141,16 +141,16 @@ if nnoe > 0:
 
         #/* Lecture des numeros de familles des noeuds */
         MEDmeshEntityFamilyNumberRd(fid,maa, MED_NO_DT, MED_NO_IT, MED_NODE,MED_NONE,nufano)
-        print "Type de repere : %s "%(repere)
-        print "Nom des coordonnees : "
+        print("Type de repere : %s "%(repere))
+        print("Nom des coordonnees : ")
         # for i in xrange(sdim): print "|%s| "%(axisname[i*MED_SNAME_SIZE:i*MED_SNAME_SIZE+MED_SNAME_SIZE])
-        print [axisname[i*MED_SNAME_SIZE:i*MED_SNAME_SIZE+MED_SNAME_SIZE] for i in xrange(sdim)]
-        print "\nUnites des coordonnees :"
-        print [axisunit[i*MED_SNAME_SIZE:i*MED_SNAME_SIZE+MED_SNAME_SIZE] for i in xrange(sdim)]
-        print "\nCoordonnees des noeuds : ",coo2
-        print "\nNoms des noeuds : ",["".join(nomnoe[i*MED_SNAME_SIZE:i*MED_SNAME_SIZE+MED_SNAME_SIZE]) for i in xrange(nnoe)]
-        print "\nNumeros des noeuds : ",numnoe
-        print "\nNumeros des familles des noeuds : ",nufano
+        print([axisname[i*MED_SNAME_SIZE:i*MED_SNAME_SIZE+MED_SNAME_SIZE] for i in range(sdim)])
+        print("\nUnites des coordonnees :")
+        print([axisunit[i*MED_SNAME_SIZE:i*MED_SNAME_SIZE+MED_SNAME_SIZE] for i in range(sdim)])
+        print("\nCoordonnees des noeuds : ",coo2)
+        print("\nNoms des noeuds : ",["".join(nomnoe[i*MED_SNAME_SIZE:i*MED_SNAME_SIZE+MED_SNAME_SIZE]) for i in range(nnoe)])
+        print("\nNumeros des noeuds : ",numnoe)
+        print("\nNumeros des familles des noeuds : ",nufano)
 
 # /* Fermeture du fichier */
 MEDfileClose(fid)

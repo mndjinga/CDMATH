@@ -7,7 +7,7 @@ AT_KEYWORDS([python test6])
 
 # AT_CHECK([cp $abs_srcdir/test6.expout expout],[0],[ignore],[ignore])
 
-AT_CHECK([python $testpydir/test6.py],
+AT_CHECK([LC_ALL=C.UTF-8 $PYTHON  $testpydir/test6.py],
          [0],
          [ignore],
          [ignore],

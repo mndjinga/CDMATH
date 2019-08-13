@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2019  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -44,6 +44,10 @@ med_idt _MEDparFileCreate(const char * const filename, const med_access_mode acc
    */
   _MEDmodeErreurVerrouiller();
 
+  /*
+    TODO : Créer une version de parFileOpen avec gestion des versions de fichier créer
+  */
+
   if ( (_fapl = H5Pcreate (H5P_FILE_ACCESS)) < 0 ) {
     MED_ERR_(_fid,MED_ERR_CREATE,MED_ERR_PROPERTY,MED_ERR_PARALLEL_MSG);
     goto ERROR;
@@ -52,6 +56,20 @@ med_idt _MEDparFileCreate(const char * const filename, const med_access_mode acc
   if ( H5Pset_fapl_mpio(_fapl, comm, info) < 0 ) {
     MED_ERR_(_fid,MED_ERR_INIT,MED_ERR_PROPERTY,MED_ERR_PARALLEL_MSG);
 /*     ISCRUTE_int(comm); */
+    goto ERROR;
+  }
+
+  /*
+   * Cette ligne est censée obliger HDF à ne pas utiliser un modèle interne supérieur à 1.8.z
+   * En HDF5-1.10.0p1 cela n'a aucun effet ! 
+   * Un test autoconf permet de fixer un intervalle de version HDF à MED.
+   */
+#if H5_VERS_MINOR > 10
+#error "Don't forget to change the compatibility version of the library !"
+#endif
+   
+  if ( H5Pset_libver_bounds( _fapl, H5F_LIBVER_18, H5F_LIBVER_18 ) ) {
+    MED_ERR_(_fid,MED_ERR_INIT,MED_ERR_PROPERTY,MED_ERR_FILEVERSION_MSG);
     goto ERROR;
   }
 

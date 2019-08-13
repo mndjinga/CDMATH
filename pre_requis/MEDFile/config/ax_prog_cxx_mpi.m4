@@ -183,5 +183,7 @@ AC_DEFUN([_AX_PROG_CXX_MPI], [
   AC_REQUIRE([__AX_PROG_CXX_MPI],[__AX_PROG_CXX_MPI([$1])])
 dnl   echo "---------CXX 3-----------------------"
   AC_PROG_CXX
+
+
 dnl   echo "---------CXX 4-----------------------"
 ])

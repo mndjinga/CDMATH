@@ -1,6 +1,6 @@
 C*  This file is part of MED.
 C*
-C*  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+C*  COPYRIGHT (C) 1999 - 2019  EDF R&D, CEA/DEN
 C*  MED is free software: you can redistribute it and/or modify
 C*  it under the terms of the GNU Lesser General Public License as published by
 C*  the Free Software Foundation, either version 3 of the License, or
@@ -23,7 +23,8 @@ c
 c
       character *(*) nom
       character *(*) desc
-      integer fid, dim, type, cret
+      integer*8 fid
+      integer   dim, type, cret
       integer edfmaac
 c
       cret = edfmaac (fid, nom , len(nom), dim, type, desc, len(desc))
@@ -38,7 +39,8 @@ c
       implicit none
       save
 c
-      integer fid, n, cret
+      integer*8 fid
+      integer   n, cret
       integer edfnmaa
 c
       n = edfnmaa(fid)
@@ -60,7 +62,8 @@ c
       implicit none
       save
 c
-      integer fid,dim,cret,indice,type
+      integer*8 fid
+      integer  dim,cret,indice,type
       character *(*) maa
       character *(*) desc
       integer edfmaai
@@ -78,7 +81,8 @@ c
       implicit none
       save
 c
-      integer fid,dim,cret
+      integer*8 fid
+      integer  dim,cret
       character *(*) maa
       integer edfdiml
 c
@@ -99,7 +103,8 @@ c
       implicit none
       save
 c
-      integer fid,n,cret
+      integer*8 fid
+      integer  n,cret
       character*(*) maa
       integer edfnnsl
 c
@@ -120,7 +125,8 @@ c
       implicit none
       save
 c
-      integer fid,n,cret
+      integer*8 fid
+      integer  n,cret
       character*(*) maa
       integer edfnnse
 c
@@ -135,7 +141,8 @@ c
       implicit none
       save
 c
-      integer fid,n,cret
+      integer*8 fid
+      integer  n,cret
       character*(*) maa
       integer edfnnil
 c
@@ -156,7 +163,8 @@ c
       implicit none
       save
 c
-      integer fid,n,cret
+      integer*8 fid
+      integer  n,cret
       character*(*) maa
       integer edfnnie
 c
@@ -171,7 +179,8 @@ c
       implicit none
       save
 c
-      integer fid,n,cret
+      integer*8 fid
+      integer  n,cret
       character*(*) maa
       integer edfnnml
 c
@@ -192,7 +201,8 @@ c
       implicit none
       save
 c
-      integer fid,n,cret
+      integer*8 fid
+      integer  n,cret
       character*(*) maa
       integer edfnnme
 c
@@ -208,7 +218,8 @@ c
       save
 c
       character *(*) nom
-      integer fid, cret
+      integer*8 fid
+      integer   cret
       integer edfunvc
 c
       cret = edfunvc (fid, nom , len(nom))
@@ -222,7 +233,8 @@ c
       implicit none
       save
 c
-      integer fid,cret
+      integer*8 fid
+      integer  cret
       character *(*) nom,nomu
       integer edfunvl
 c  
@@ -239,7 +251,8 @@ c
       save
 c
       character *(*) nom
-      integer fid, dim, cret
+      integer*8 fid
+      integer   dim, cret
       integer edfespc
 c
       cret = edfespc (fid, nom , len(nom), dim)
@@ -254,7 +267,8 @@ c
       implicit none
       save
 c
-      integer fid,dim,cret
+      integer*8 fid
+      integer  dim,cret
       character *(*) maa
       integer edfespl
 c
@@ -276,7 +290,8 @@ c
       implicit none
       save
 c
-      integer fid,typ,cret
+      integer*8 fid
+      integer  typ,cret
       character*(*) maa
       integer edfnage
 c
@@ -292,7 +307,8 @@ c
       implicit none
       save
 c
-      integer fid,typ,cret
+      integer*8 fid
+      integer  typ,cret
       character*(*) maa
       integer edfnagl
 c

@@ -1,6 +1,6 @@
 C*  This file is part of MED.
 C*
-C*  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+C*  COPYRIGHT (C) 1999 - 2019  EDF R&D, CEA/DEN
 C*  MED is free software: you can redistribute it and/or modify
 C*  it under the terms of the GNU Lesser General Public License as published by
 C*  the Free Software Foundation, either version 3 of the License, or
@@ -22,7 +22,8 @@ c
       save
 c      
       character *(*) sca,desc
-      integer fid, cret, type
+      integer*8 fid
+      integer   cret, type
       integer edfscac
 c
       cret = edfscac (fid,sca,len(sca),type,desc,len(desc))
@@ -40,7 +41,8 @@ c
 c      
       character *32 sca
       character*(*) dtunit
-      integer fid,val,cret
+      integer*8 fid
+      integer  val,cret
       integer numdt,numo
       real*8 dt
       integer edfscee
@@ -62,7 +64,8 @@ c
 c      
       character *(*) sca
       character*(*) dtunit
-      integer fid,cret
+      integer*8 fid
+      integer  cret
       integer numdt,numo
       real*8 dt
       real*8 val
@@ -85,7 +88,8 @@ c
       save
 c      
       character *(*) sca
-      integer fid,val,cret
+      integer*8 fid
+      integer  val,cret
       integer numdt,numo
       integer edfscel
 c
@@ -103,7 +107,8 @@ c     DEC$ ATTRIBUTES DLLEXPORT :: efscfl
       save
 c      
       character *(*) sca
-      integer fid,cret
+      integer*8 fid
+      integer  cret
       integer numdt,numo
       integer edfscfl
       real*8 val(*)
@@ -122,7 +127,8 @@ c
       save
 c      
       character *(*) sca,desc
-      integer fid,ind,type,cret
+      integer*8 fid
+      integer  ind,type,cret
       integer edfscai
 c
       cret = edfscai(fid,ind,sca,type,desc)
@@ -136,7 +142,8 @@ c
       implicit none
       save
 c      
-      integer fid,cret,n
+      integer*8 fid
+      integer  cret,n
       integer edfnsca
 c
       n = edfnsca(fid)
@@ -155,7 +162,8 @@ c
       implicit none
       save
 c      
-      integer fid,n,cret
+      integer*8 fid
+      integer  n,cret
       character*32 sca
       integer edfnspd
 c
@@ -178,7 +186,8 @@ c
       implicit none
       save
 c      
-      integer fid,indice,numdt,numo,cret
+      integer*8 fid
+      integer  indice,numdt,numo,cret
       character*32 sca
       character*16 dtunit
       real*8 dt

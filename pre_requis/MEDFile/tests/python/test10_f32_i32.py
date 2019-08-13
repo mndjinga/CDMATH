@@ -2,7 +2,7 @@
 # -*- coding:utf-8 -*-
 # /*  This file is part of MED.
 #  *
-#  *  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+#  *  COPYRIGHT (C) 1999 - 2019  EDF R&D, CEA/DEN
 #  *  MED is free software: you can redistribute it and/or modify
 #  *  it under the terms of the GNU Lesser General Public License as published by
 #  *  the Free Software Foundation, either version 3 of the License, or
@@ -16,7 +16,7 @@
 #  *  You should have received a copy of the GNU Lesser General Public License
 #  *  along with MED.  If not, see <http://www.gnu.org/licenses/>.
 #  */
-
+#from __future__ import division 
 
 _a=0.446948490915965
 _b=0.091576213509771
@@ -39,7 +39,7 @@ from med.medprofile import *
 from med.medlocalization import *
 from med.medlink import *
 
-execfile(os.path.join(os.path.dirname(__file__),'test10_params_f32_i32.py'),locals(),globals())
+exec(compile(open(os.path.join(os.path.dirname(__file__),'test10_params_f32_i32.py')).read(), os.path.join(os.path.dirname(__file__),'test10_params_f32_i32.py'), 'exec'),locals(),globals())
 #cf test10.atpy qui lance les différents test10_TEST_PARAMS_PY.py et sauvegarde le fichier généré
 filename='test10'+PARAM_ID+'.med'
 
@@ -156,12 +156,12 @@ MEDlinkWr(fid,maa2,lien_maa2)
 
 
 # /* creation de la localisation des points de Gauss modèle n°1 */
-MEDlocalizationWr(fid, gauss1_1, MED_TRIA6, MED_TRIA6/100, refcoo1,
+MEDlocalizationWr(fid, gauss1_1, MED_TRIA6, MED_TRIA6//100, refcoo1,
                   USER_INTERLACE, ngauss1_1, gscoo1_1, wg1_1,
                   MED_NO_INTERPOLATION, MED_NO_MESH_SUPPORT )
       
 # /* creation de la localisation des points de Gauss modèle n°2 */
-MEDlocalizationWr(fid, gauss1_2, MED_TRIA6, MED_TRIA6/100, refcoo1,
+MEDlocalizationWr(fid, gauss1_2, MED_TRIA6, MED_TRIA6//100, refcoo1,
                   USER_INTERLACE,ngauss1_2, gscoo1_2, wg1_2,
                   MED_NO_INTERPOLATION, MED_NO_MESH_SUPPORT)
 

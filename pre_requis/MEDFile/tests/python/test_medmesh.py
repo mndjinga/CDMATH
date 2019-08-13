@@ -47,26 +47,26 @@ for it in range(1,MEDnMesh(fid)+1):
     meshinfo1=MEDmeshInfo(fid,it)
     meshname,spacedim1,meshdim1,meshtype1,description1,dtunit1,sortingtype1,nstep1,axistype1,axisname1,axisunit1=meshinfo1
     # print meshinfo1
-    del(meshinfo1[0]);aff1=map(str,meshinfo1); print aff1
+    del(meshinfo1[0]);aff1=list(map(str,meshinfo1)); print(aff1)
     naxis2   =MEDmeshnAxisByName(fid,meshname)
-    if naxis1 != naxis2 : print "Erreur: les informations lues par MEDmeshnAxis (%s) et MEDmeshnAxisByname (%s) differes sur le maillage n%d" % (naxis1,naxis2,it);break
+    if naxis1 != naxis2 : print("Erreur: les informations lues par MEDmeshnAxis (%s) et MEDmeshnAxisByname (%s) differes sur le maillage n%d" % (naxis1,naxis2,it));break
     meshinfo2=MEDmeshInfoByName (fid,meshname)
     spacedim2,meshdim2,meshtype2,description2,dtunit2,sortingtype2,nstep2,axistype2,axisname2,axisunit2=meshinfo2
-    aff2=map(str,meshinfo2);#print aff2
-    if aff1 != aff2 : print "Erreur: les informations lues par MEDmeshInfo et MEDmeshInfoByname different sur le maillage n",it;break
-    print "\nMaillage n :",it," de nom ",meshname
-    print "\tspacedim:%d \n\tmeshdim:%d \n\tmeshtype:%s \n\tdescription:%s \n\tdtunit:%s \n\tsortingtype:%s \n\tnstep:%d \n\taxistype:%s \n\taxisname:%s \n\taxisunit:%s " % (spacedim2,meshdim2,meshtype2,description2,dtunit2,sortingtype2,nstep2,axistype2,axisname2,axisunit2)
+    aff2=list(map(str,meshinfo2));#print aff2
+    if aff1 != aff2 : print("Erreur: les informations lues par MEDmeshInfo et MEDmeshInfoByname different sur le maillage n",it);break
+    print("\nMaillage n :",it," de nom ",meshname)
+    print("\tspacedim:%d \n\tmeshdim:%d \n\tmeshtype:%s \n\tdescription:%s \n\tdtunit:%s \n\tsortingtype:%s \n\tnstep:%d \n\taxistype:%s \n\taxisname:%s \n\taxisunit:%s " % (spacedim2,meshdim2,meshtype2,description2,dtunit2,sortingtype2,nstep2,axistype2,axisname2,axisunit2))
 
-    print MEDmeshSortingTypeRd(fid,meshname)
-    print "\n\tNom universel du maillage : ",MEDmeshUniversalNameRd(fid,meshname)
+    print(MEDmeshSortingTypeRd(fid,meshname))
+    print("\n\tNom universel du maillage : ",MEDmeshUniversalNameRd(fid,meshname))
     attmesh=MEDmeshAttributeRd( fid, meshname );
     isolatednodes, verticesnodes, cellmaxnodes = attmesh
-    print "\tisolatednodes: ",isolatednodes," verticesnodes: ",verticesnodes,", cellmaxnodes: ",cellmaxnodes
+    print("\tisolatednodes: ",isolatednodes," verticesnodes: ",verticesnodes,", cellmaxnodes: ",cellmaxnodes)
     for csit in range(1,nstep1+1):
         numdt,numit,dt1 = MEDmeshComputationStepInfo(fid,meshname,csit)
         dt2 = MEDmeshComputationStepDtRd( fid, meshname,  numdt, numit )
-        if dt1 != dt2:print "Erreur: la date est différente entre MEDmeshComputationStepInfo et MEDmeshComputationStepDtRd",dt1,dt2
-        print "\tEtape d'évolution n :",csit," : (numdt=",numdt,",numit=",numit,",dt=",dt1,")"
+        if dt1 != dt2:print("Erreur: la date est différente entre MEDmeshComputationStepInfo et MEDmeshComputationStepDtRd",dt1,dt2)
+        print("\tEtape d'évolution n :",csit," : (numdt=",numdt,",numit=",numit,",dt=",dt1,")")
 
 # coo=doubleArray(6)
 # initcoo=[ 0.0, 0.0, 0.0, 1.1, 1.1, 1.1 ]
@@ -88,23 +88,23 @@ coo2=MEDFLOAT([ 10.0, 10.1, 10.2, 11.0, 11.1, 11.2, 12.0, 12.1, 12.2 ])
 try:
     MEDmeshNodeCoordinateWr(fid,'maa1',0,MED_NO_IT,0.1,
                             MED_FULL_INTERLACE,ncoo2, coo2 )
-except RuntimeError,ex:
-    print "Une RuntimeError exception a été attrapée : ",ex
+except RuntimeError as ex:
+    print("Une RuntimeError exception a été attrapée : ",ex)
     
 coo1_rd=MEDFLOAT(ncoo1*spacedim)
 MEDmeshNodeCoordinateRd(fid,'maa1',MED_NO_DT,MED_NO_IT,MED_FULL_INTERLACE,coo1_rd)
-print coo1_rd
+print(coo1_rd)
 
 coo2_rd=MEDFLOAT(ncoo2*spacedim)
 MEDmeshNodeCoordinateRd(fid,'maa1',0,MED_NO_IT,MED_FULL_INTERLACE,coo2_rd)
-print coo2_rd
+print(coo2_rd)
 
 nconn1=2
 conn1=MEDINT([1,2,1,2])
 MEDmeshElementConnectivityWr(fid,'maa1',MED_NO_DT,MED_NO_IT,0.0,MED_CELL,MED_SEG2,MED_NODAL,MED_FULL_INTERLACE,nconn1,conn1)
 conn1_rd=MEDINT(nconn1*(MED_SEG2%100))
 MEDmeshElementConnectivityRd(fid,'maa1',MED_NO_DT,MED_NO_IT,MED_CELL,MED_SEG2,MED_NODAL,MED_FULL_INTERLACE,conn1_rd)
-if conn1 != conn1_rd : print "Erreur: les informations lues par MEDmeshElementConnectivityRd sur le maillage <%s>(%d,%d) sont inexactes."%('maa1',MED_NO_DT,MED_NO_IT)
+if conn1 != conn1_rd : print("Erreur: les informations lues par MEDmeshElementConnectivityRd sur le maillage <%s>(%d,%d) sont inexactes."%('maa1',MED_NO_DT,MED_NO_IT))
 
 
 nconn2=10000
@@ -115,18 +115,18 @@ param2=(fid,'maa1',0,MED_NO_IT,0.0,MED_CELL,MED_SEG2,MED_NODAL,MED_FULL_INTERLAC
 MEDmeshElementConnectivityWr( *(param2 + (nconn2, conn2)) )
 conn2_rd=MEDINT(nconn2*(MED_SEG2%100))
 MEDmeshElementConnectivityRd( fid,'maa1',0,MED_NO_IT,MED_CELL,MED_SEG2,MED_NODAL,MED_FULL_INTERLACE, conn2_rd )
-if conn2 != conn2_rd : print "Erreur: les informations lues par MEDmeshElementConnectivityRd sur le maillage <%s>(%d,%d) sont inexactes."%('maa1',0,MED_NO_IT)
+if conn2 != conn2_rd : print("Erreur: les informations lues par MEDmeshElementConnectivityRd sur le maillage <%s>(%d,%d) sont inexactes."%('maa1',0,MED_NO_IT))
 
 nnam1=2
  # "".join( [str(i).zfill(MED_SNAME_SIZE) for i in range(nnam1)] )
 nam1=MEDCHAR(  "".join( [str(i).zfill(MED_SNAME_SIZE) for i in range(nnam1)] )+'\0' )
 MEDmeshEntityNameWr(fid,'maa1',MED_NO_DT,MED_NO_IT,MED_CELL,MED_SEG2,nnam1,nam1)
 nam1_rd=MEDCHAR(nnam1*MED_SNAME_SIZE+1)
-print "----------- 1a ---------------"
-print MEDmeshEntityNameRd(fid,'maa1',MED_NO_DT,MED_NO_IT,MED_CELL,MED_SEG2,nam1_rd)
-print "----------- 2a ---------------"
+print("----------- 1a ---------------")
+print(MEDmeshEntityNameRd(fid,'maa1',MED_NO_DT,MED_NO_IT,MED_CELL,MED_SEG2,nam1_rd))
+print("----------- 2a ---------------")
 #print [x for x in nam1_rd]
-if nam1 != nam1_rd : print "Erreur: les informations lues par MEDmeshEntityNameRd sur le maillage < %s >( %d , %d ) sont inexactes."%('maa1',MED_NO_DT,MED_NO_IT)
+if nam1 != nam1_rd : print("Erreur: les informations lues par MEDmeshEntityNameRd sur le maillage < %s >( %d , %d ) sont inexactes."%('maa1',MED_NO_DT,MED_NO_IT))
 
 nnam2=10
 # "".join( [str(i).zfill(MED_SNAME_SIZE) for i in range(nnam2)] )
@@ -134,7 +134,7 @@ nam2=MEDCHAR(  "".join( [str(i).zfill(MED_SNAME_SIZE) for i in range(nnam2)] )+'
 MEDmeshEntityNameWr(fid,'maa1',0,MED_NO_IT,MED_CELL,MED_SEG2,nnam2,nam2)
 nam2_rd=MEDCHAR(nnam2*MED_SNAME_SIZE+1)
 MEDmeshEntityNameRd(fid,'maa1',0,MED_NO_IT,MED_CELL,MED_SEG2,nam2_rd)
-if nam2 != nam2_rd : print "Erreur: les informations lues par MEDmeshEntityNameRd sur le maillage <%s>(%d,%d) sont inexactes."%('maa1',0,MED_NO_IT)
+if nam2 != nam2_rd : print("Erreur: les informations lues par MEDmeshEntityNameRd sur le maillage <%s>(%d,%d) sont inexactes."%('maa1',0,MED_NO_IT))
 
 #TODO : Tester les attributes MESH
 
@@ -200,7 +200,7 @@ MEDfieldCr(fid,**field1)
 field1_info=MEDfieldInfoByName(fid,field1['fieldname'])
 #Les fonctions MED ne renvoient pas de dictionnaire (ou d'objets)
 #On crée un dictionnaire à partir d'une liste de clés ordonnées.
-field1_info2=dict(zip(fieldinfo_keys,field1_info))
+field1_info2=dict(list(zip(fieldinfo_keys,field1_info)))
 #On supprime les clés qui ne sont pas a comparer (on pourrait écire une fonction qui compare que les élements communs)
 del field1_info2['ncstp']
 del field1_info2['localmesh']
@@ -210,13 +210,13 @@ field1_info2['ncomponent']=field1['ncomponent']
 field1_info2['meshname']=field1['meshname']
 
 #En python 2.7 il existe des dict compréhension
-field1_info3=dict([ (x,field1_info2[x]) for x in fieldinfo_keys if x in field1.keys()] )
+field1_info3=dict([ (x,field1_info2[x]) for x in fieldinfo_keys if x in list(field1.keys())] )
  
   
-if field1 != field1_info2 : print "Erreur: les informations lues par MEDfieldInfoByName sur le champ <%s> sont inexactes."% field1['fieldname']
+if field1 != field1_info2 : print("Erreur: les informations lues par MEDfieldInfoByName sur le champ <%s> sont inexactes."% field1['fieldname'])
 
 nentity_field1=10
-value_field1=MEDFLOAT(range(nentity_field1))
+value_field1=MEDFLOAT(list(range(nentity_field1)))
 # value_field1=MEDFLOAT(range(nentity_field1))
 
 MEDfieldValueWr(fid,
@@ -228,7 +228,7 @@ MEDfieldValueWr(fid,
 
 it=value_field1.begin()
 while it!=value_field1.end():
-    print it.value();it+=1
+    print(it.value());it+=1
 
 value_field1_rd=MEDFLOAT(nentity_field1*field1['ncomponent'])
 MEDfieldValueRd(fid,
@@ -238,7 +238,7 @@ MEDfieldValueRd(fid,
                 MED_FULL_INTERLACE,MED_ALL_CONSTITUENT,
                 value_field1_rd);
 
-if value_field1 != value_field1_rd : print "Erreur: les informations lues par MEDfieldValueRd sur le champ <%s>(%d,%d) sont inexactes."%('fieldname1',MED_NO_DT,MED_NO_IT)
+if value_field1 != value_field1_rd : print("Erreur: les informations lues par MEDfieldValueRd sur le champ <%s>(%d,%d) sont inexactes."%('fieldname1',MED_NO_DT,MED_NO_IT))
 
 
 #Opérations algébrique sur les tableaux stl (cf algo.) vs numpy
@@ -267,7 +267,7 @@ MEDfieldCr(fid,
 meshname_field2_rd,lmesh_field2_rd,type_field2_rd,comp_field2_rd,unit_field2_rd,dtunit_field2_rd,ncstp_field2_rd=MEDfieldInfoByName(fid,fieldname2)
 
 nentity_field2=10
-value_field2=MEDINT(range(nentity_field2))
+value_field2=MEDINT(list(range(nentity_field2)))
 # value_field2=MEDFLOAT(range(nentity_field2))
 
 MEDfieldValueWr(fid,
@@ -285,6 +285,6 @@ MEDfieldValueRd(fid,
                 MED_FULL_INTERLACE,MED_ALL_CONSTITUENT,
                 value_field2_rd);
 
-if value_field2 != value_field2_rd : print "Erreur: les informations lues par MEDfieldValueRd sur le champ <%s>(%d,%d) sont inexactes."%('fieldname2',MED_NO_DT,MED_NO_IT)
+if value_field2 != value_field2_rd : print("Erreur: les informations lues par MEDfieldValueRd sur le champ <%s>(%d,%d) sont inexactes."%('fieldname2',MED_NO_DT,MED_NO_IT))
 
 MEDfileClose(fid)

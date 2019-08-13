@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2019  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -29,7 +29,7 @@ med_idt _MEDfileOpen(const char * const filename,const med_access_mode accessmod
   int     _hdf_mode=-1;
   hid_t   _fapl    = H5P_DEFAULT;
 
-H5AC_cache_config_t config;
+  /* H5AC_cache_config_t config; */
 
   switch(accessmode)
     {
@@ -55,7 +55,7 @@ H5AC_cache_config_t config;
 
   /* Cette ligne, présente depuis la 3.0, impose l'utilisation du modèle de données HDF 1.8 pour :
      - Utiliser les nouvelles représentations HDF plus efficaces que dans les versions précédentes
-     - Empêcher l'utilisation de nvlles représentations d'une future bibliothèque HDF 1.9 
+     - Empêcher l'utilisation de nvlles représentations d'une future bibliothèque HDF 1.10
        qui poseait d'eventuels problèmes de relecture aux bibliothèques med
        utilisant encore la 1.8 (ce choix doit être manuel) :
     Les fichier HDF 1.8 utilisent la nouvelle représentation des liens au sein des groupes :
@@ -70,8 +70,15 @@ H5AC_cache_config_t config;
         When this property is set for an HDF5 file, all objects in the file will be created using the latest
         available format; no effort will be made to create a file that can be read by older libraries.
 
-   •   The creation order tracking property, H5P_CRT_ORDER_TRACKED, has been set in the group creation property list (see H5Pset_link_creation_order).
+   •   The creation order tracking property, H5P_CRT_ORDER_TRACKED, has been set in the group creation property list (see H5Pset_link_creation_order). 
   */
+#if H5_VERS_MINOR > 10
+#error "Don't forget to change the compatibility version of the library !"
+#endif
+/* L'avantage de bloquer le modèle interne HDF5 
+   est que l'on peut modifier des fichiers med de différentes versions majeures de fichiers.
+   L'inconvénient est que l'on ne profite pas des évolutions de performances d'HDF.
+*/
   if ( H5Pset_libver_bounds( _fapl, H5F_LIBVER_18, H5F_LIBVER_18 ) ) {
     MED_ERR_(_fid,MED_ERR_INIT,MED_ERR_PROPERTY,MED_ERR_FILEVERSION_MSG);
     goto ERROR;

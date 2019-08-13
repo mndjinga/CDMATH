@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2019  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -44,13 +44,13 @@ From Fortran call of following C functions :
 
 #ifdef PPRO_NT
 med_int
-MFAFCRE(med_int *fid, char *mname, unsigned int bidon1, med_int *mnamelen,
+MFAFCRE(med_idt *fid, char *mname, unsigned int bidon1, med_int *mnamelen,
 		  char *fname, unsigned int bidon2, med_int *fnamelen,
 		  med_int *fnum, med_int *ng, char* gname, unsigned int bidon3,
 		  med_int *gnamelen)
 #else
 med_int
-nmfafcre(med_int *fid, char *mname, med_int *mnamelen,
+nmfafcre(med_idt *fid, char *mname, med_int *mnamelen,
 	 char *fname, med_int *fnamelen,
 	 med_int *fnum, med_int *ng, char* gname,
 	 med_int *gnamelen)
@@ -88,10 +88,10 @@ nmfafcre(med_int *fid, char *mname, med_int *mnamelen,
 
 #ifdef PPRO_NT
 int
-MFAFNFA(med_int *fid, char *mname, unsigned int bidon, med_int *mnamelen)
+MFAFNFA(med_idt *fid, char *mname, unsigned int bidon, med_int *mnamelen)
 #else
 med_int
-nmfafnfa(med_int *fid, char *mname, med_int *mnamelen)
+nmfafnfa(med_idt *fid, char *mname, med_int *mnamelen)
 #endif
 {
   med_int _ret;
@@ -114,10 +114,10 @@ nmfafnfa(med_int *fid, char *mname, med_int *mnamelen)
 
 #ifdef PPRO_NT
 int
-MFAFNFG(med_int *fid, char *mname, unsigned int bidon, med_int *mnamelen, med_int *it)
+MFAFNFG(med_idt *fid, char *mname, unsigned int bidon, med_int *mnamelen, med_int *it)
 #else
 med_int
-nmfafnfg(med_int *fid, char *mname, med_int *mnamelen, med_int *it)
+nmfafnfg(med_idt *fid, char *mname, med_int *mnamelen, med_int *it)
 #endif
 {
   med_int _ret;
@@ -140,12 +140,12 @@ nmfafnfg(med_int *fid, char *mname, med_int *mnamelen, med_int *it)
 
 #ifdef  PPRO_NT
 int
-MFAFFAI(med_int *fid, char *mname, unsigned int bidon1, med_int *mnamelen,
+MFAFFAI(med_idt *fid, char *mname, unsigned int bidon1, med_int *mnamelen,
                   med_int *it, char *fname, unsigned int bidon2,
 	          med_int *fnum, char *gname , int unsigned bidon4)
 #else
 med_int
-nmfaffai(med_int *fid, char *mname,med_int *mnamelen,
+nmfaffai(med_idt *fid, char *mname,med_int *mnamelen,
 	 med_int *it, char *fname,
 	 med_int *fnum, char *gname)
 #endif
@@ -191,10 +191,10 @@ nmfaffai(med_int *fid, char *mname,med_int *mnamelen,
 
 #ifdef PPRO_NT
 int
-MFAFONA(med_int *fid, char *mname, unsigned int bidon, med_int *mnamelen, med_int *it)
+MFAFONA(med_idt *fid, char *mname, unsigned int bidon, med_int *mnamelen, med_int *it)
 #else
 med_int
-nmfafona(med_int *fid, char *mname, med_int *mnamelen, med_int *it)
+nmfafona(med_idt *fid, char *mname, med_int *mnamelen, med_int *it)
 #endif
 {
   med_int _ret;
@@ -217,14 +217,14 @@ nmfafona(med_int *fid, char *mname, med_int *mnamelen, med_int *it)
 
 #ifdef  PPRO_NT
 int
-MFAFOFI(med_int *fid, char *mname, unsigned int bidon1, med_int *mnamelen,
+MFAFOFI(med_idt *fid, char *mname, unsigned int bidon1, med_int *mnamelen,
                   med_int *it, char *fname, unsigned int bidon2,
 		  med_int *attr_ident, med_int *attr_val,
 	          char *attr_desc, unsigned int bidon3,
 	          med_int *fnum, char *gname , int unsigned bidon4)
 #else
 med_int
-nmfafofi(med_int *fid, char *mname,med_int *mnamelen,
+nmfafofi(med_idt *fid, char *mname,med_int *mnamelen,
 	 med_int *it, char *fname,
 	 med_int *attr_ident, med_int *attr_val,
 	 char *attr_desc,

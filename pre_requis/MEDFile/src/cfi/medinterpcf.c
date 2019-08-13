@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2019  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -44,13 +44,13 @@ From Fortran call of following C functions :
 
 #ifdef PPRO_NT
 med_int 
-MIPFCRE(med_int *fid,
+MIPFCRE(med_idt *fid,
                   char *name,  unsigned int bidon1, med_int *lon1,
 		  med_int *gtype, med_int *cnode, med_int *nvar,
 		  med_int *mdeg, med_int *nmaxc)
 #else
 med_int 
-nmipfcre(med_int *fid,
+nmipfcre(med_idt *fid,
 	 char *name, med_int *lon1,
 	 med_int *gtype, med_int *cnode, med_int *nvar,
 	 med_int *mdeg, med_int *nmaxc)
@@ -82,12 +82,12 @@ nmipfcre(med_int *fid,
 
 #ifdef PPRO_NT
 med_int 
-MIPFBFW(med_int *fid,
+MIPFBFW(med_idt *fid,
                   char *name,  unsigned int bidon1, med_int *lon1,
 		  med_int *it, med_int *nc, med_int *pw, med_float *co)
 #else
 med_int 
-nmipfbfw(med_int *fid,
+nmipfbfw(med_idt *fid,
 	 char *name, med_int *lon1,
 	 med_int *it, med_int *nc, med_int *pw, med_float *co)
 #endif
@@ -115,12 +115,12 @@ nmipfbfw(med_int *fid,
 
 #ifdef PPRO_NT
 med_int 
-MIPFBFR(med_int *fid,
+MIPFBFR(med_idt *fid,
                   char *name,  unsigned int bidon1, med_int *lon1,
 		  med_int *it, med_int *nc, med_int *pw, med_float *co)
 #else
 med_int 
-nmipfbfr(med_int *fid,
+nmipfbfr(med_idt *fid,
 	 char *name, med_int *lon1,
 	 med_int *it, med_int *nc, med_int *pw, med_float *co)
 #endif
@@ -149,10 +149,10 @@ nmipfbfr(med_int *fid,
 
 #ifdef PPRO_NT
 med_int 
-MIPFNIP(med_int *fid)
+MIPFNIP(med_idt *fid)
 #else
 med_int 
-nmipfnip(med_int *fid)
+nmipfnip(med_idt *fid)
 #endif
 {
   med_int _ret; 
@@ -166,13 +166,13 @@ nmipfnip(med_int *fid)
 
 #ifdef PPRO_NT
 med_int 
-MIPFIIN(med_int *fid,
+MIPFIIN(med_idt *fid,
                   char *name,  unsigned int bidon1, med_int *lon1,
 		  med_int *gtype, med_int *cnode, med_int *nbf, med_int *nvar,
 		  med_int *mdeg, med_int *nmaxc)
 #else
 med_int 
-nmipfiin(med_int *fid,
+nmipfiin(med_idt *fid,
 	 char *name, med_int *lon1,
 	 med_int *gtype, med_int *cnode,  med_int *nbf, med_int *nvar,
 	 med_int *mdeg, med_int *nmaxc)
@@ -209,13 +209,13 @@ nmipfiin(med_int *fid,
 
 #ifdef PPRO_NT
 med_int 
-MIPFIPI(med_int *fid, med_int *it,
+MIPFIPI(med_idt *fid, med_int *it,
                   char *name,  unsigned int bidon1,
 		  med_int *gtype, med_int *cnode, med_int *nbf, med_int *nvar,
 		  med_int *mdeg, med_int *nmaxc)
 #else
 med_int 
-nmipfipi(med_int *fid, med_int *it, char *name,
+nmipfipi(med_idt *fid, med_int *it, char *name,
 	 med_int *gtype, med_int *cnode,  med_int *nbf, med_int *nvar,
 	 med_int *mdeg, med_int *nmaxc)
 #endif
@@ -246,12 +246,12 @@ nmipfipi(med_int *fid, med_int *it, char *name,
 
 #ifdef PPRO_NT
 med_int 
-MIPFCSZ(med_int *fid, 
+MIPFCSZ(med_idt *fid, 
                   char *name,  unsigned int bidon1, med_int *lon1,
 		  med_int *it)
 #else
 med_int 
-nmipfcsz(med_int *fid, 
+nmipfcsz(med_idt *fid, 
 	 char *name, med_int *lon1,
 	 med_int *it)
 #endif

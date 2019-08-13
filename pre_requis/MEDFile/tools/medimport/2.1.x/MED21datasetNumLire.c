@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2019  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -27,16 +27,16 @@ med_err _MED21datasetNumLire(med_idt pere,char *nom,med_type_champ type,
 			   med_size psize, med_ssize * pfltab, med_int ngauss,
 			   unsigned char *val,hid_t hdf_file)
 {
-  med_idt    dataset, dataspace = 0, memspace = 0;
+  med_idt    dataset, dataspace = 0, memspace = 0, type_hdf = 0;
   med_size  start_mem[1],start_data[1],*pflmem=0,*pfldsk=0;
   med_size   stride[1],count[1],pcount[1],size[1],pflsize[1];
   med_err    ret;
-  int        i,j,index,type_hdf;
+  int        i,j,index;
   hid_t      datatype;
   size_t     typesize;
   int        dim, firstdim, dimutil, lastdim;
   med_mode_profil pflmod;
-
+  
   /* Verify fixdim is between [0, nbdim] ( 0 is MED_ALL ) */
   if (  fixdim > nbdim ) 
     return -1;
