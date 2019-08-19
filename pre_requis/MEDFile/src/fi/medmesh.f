@@ -1,6 +1,6 @@
 C*  This file is part of MED.
 C*
-C*  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+C*  COPYRIGHT (C) 1999 - 2019  EDF R&D, CEA/DEN
 C*  MED is free software: you can redistribute it and/or modify
 C*  it under the terms of the GNU Lesser General Public License as published by
 C*  the Free Software Foundation, either version 3 of the License, or
@@ -23,7 +23,8 @@ c
       save
 c
       character *(*) name, desc, dtunit, aname, aunit
-      integer fid, sdim, mdim, mtype, stype, atype, cret
+      integer*8 fid
+      integer   sdim, mdim, mtype, stype, atype, cret
       integer mmhfcre
 c
       cret = mmhfcre(fid, name, len(name), sdim, mdim, mtype, 
@@ -42,7 +43,8 @@ c
       implicit none
       save
 c
-      integer fid, n, cret
+      integer*8 fid
+      integer   n, cret
       integer mmhfnmh 
 c
       n = mmhfnmh(fid)
@@ -64,7 +66,8 @@ c
       implicit none
       save
 c
-      integer fid,it,naxis,cret
+      integer*8 fid
+      integer  it,naxis,cret
       integer mmhfnax
 c
       naxis =  mmhfnax(fid,it)
@@ -85,7 +88,8 @@ c
       implicit none
       save
 c
-      integer fid,naxis,cret
+      integer*8 fid
+      integer  naxis,cret
       character *(*) name
       integer mmhfnan
 c
@@ -109,7 +113,8 @@ c
       save
 c
       character *(*) name, desc, dtunit, aname, aunit
-      integer fid, sdim, mdim, mtype, stype, atype, cret, nstep, it
+      integer*8 fid
+      integer   sdim, mdim, mtype, stype, atype, cret, nstep, it
       integer mmhfmhi 
 c
       cret = mmhfmhi(fid, it, name, sdim, mdim, mtype, desc, dtunit,
@@ -128,7 +133,8 @@ c
       save
 c
       character *(*) name, desc, dtunit, aname, aunit
-      integer fid, sdim, mdim, mtype, stype, atype, cret, nstep
+      integer*8 fid
+      integer   sdim, mdim, mtype, stype, atype, cret, nstep
       integer mmhfmin 
 c
       cret = mmhfmin(fid, name, len(name), sdim, mdim, mtype, desc,
@@ -146,7 +152,8 @@ c
       implicit none
       save
 c
-      integer fid,cret
+      integer*8 fid
+      integer  cret
       character *(*) name
       integer mmhfunw
 c
@@ -163,7 +170,8 @@ c
       implicit none
       save
 c
-      integer fid,cret
+      integer*8 fid
+      integer  cret
       character *(*) uname
       character *(*) mname
       integer mmhfunr
@@ -181,7 +189,8 @@ c
       implicit none
       save
 c
-      integer fid,cret,nin,nvn,nnc
+      integer*8 fid
+      integer  cret,nin,nvn,nnc
       character *(*) name
       integer mmhfatw
 c
@@ -198,7 +207,8 @@ c
       implicit none
       save
 c
-      integer fid,cret,nin,nvn,nnc
+      integer*8 fid
+      integer  cret,nin,nvn,nnc
       character *(*) name
       integer mmhfatr
 c
@@ -215,7 +225,8 @@ c
       implicit none
       save
 c
-      integer fid,cret,gtype
+      integer*8 fid
+      integer  cret,gtype
       character *(*) name
       integer mmhfgtw
 c
@@ -232,7 +243,8 @@ c
       implicit none
       save
 c
-      integer fid,cret,gtype
+      integer*8 fid
+      integer  cret,gtype
       character *(*) name
       integer mmhfgtr
 c
@@ -249,7 +261,8 @@ c
       implicit none
       save
 c
-      integer fid,cret,numdt, numit
+      integer*8 fid
+      integer  cret,numdt, numit
       character *(*) name
       real*8 dt
       integer st( * )
@@ -268,7 +281,8 @@ c
       implicit none
       save
 c
-      integer fid,cret,numdt, numit
+      integer*8 fid
+      integer  cret,numdt, numit
       character *(*) name
       integer st(*)
       integer mmhfgsr
@@ -287,7 +301,8 @@ c
       implicit none
       save
 c
-      integer fid,cret,numdt,numit,n,swm
+      integer*8 fid
+      integer  cret,numdt,numit,n,swm
       real*8 dt
       character *(*) name
       real*8 coo(*)
@@ -307,7 +322,8 @@ c
       implicit none
       save
 c
-      integer fid,cret,numdt,numit,swm
+      integer*8 fid
+      integer  cret,numdt,numit,swm
       character *(*) name
       real*8 coo(*)
       integer mmhfcor
@@ -326,7 +342,8 @@ c
       implicit none
       save
 c
-      integer fid,cret,numdt,numit,n,swm,stm,dim
+      integer*8 fid
+      integer  cret,numdt,numit,n,swm,stm,dim
       real*8 dt
       character *(*) name, pname
       real*8 coo(*)
@@ -347,7 +364,8 @@ c
       implicit none
       save
 c
-      integer fid,cret,numdt,numit,swm,stm,dim
+      integer*8 fid
+      integer  cret,numdt,numit,swm,stm,dim
       character *(*) name, pname
       real*8 coo(*)
       integer mmhfcpr
@@ -367,7 +385,8 @@ c
       implicit none
       save
 c
-      integer fid,cret,numdt,numit,axis,size
+      integer*8 fid
+      integer  cret,numdt,numit,axis,size
       real*8 dt
       character *(*) name
       real*8 index(*)
@@ -387,7 +406,8 @@ c
       implicit none
       save
 c
-      integer fid,cret,numdt,numit,axis
+      integer*8 fid
+      integer  cret,numdt,numit,axis
       character *(*) name
       real*8 index(*)
       integer mmhfgcr
@@ -406,7 +426,8 @@ c
       implicit none
       save
 c
-      integer fid,cret,numdt, numit,n,entype,geotype
+      integer*8 fid
+      integer  cret,numdt, numit,n,entype,geotype
       character *(*) name
       integer num(*)
       integer mmhfenw
@@ -426,7 +447,8 @@ c
       implicit none
       save
 c
-      integer fid,cret,numdt, numit,entype,geotype
+      integer*8 fid
+      integer  cret,numdt, numit,entype,geotype
       character *(*) name
       integer num(*)
       integer mmhfenr
@@ -446,7 +468,8 @@ c
       implicit none
       save
 c
-      integer fid,cret,numdt, numit,n,entype,geotype
+      integer*8 fid
+      integer  cret,numdt, numit,n,entype,geotype
       character *(*) name
       integer num(*)
       integer mmhffnw
@@ -466,7 +489,8 @@ c
       implicit none
       save
 c
-      integer fid,cret,numdt, numit,entype,geotype
+      integer*8 fid
+      integer  cret,numdt, numit,entype,geotype
       character *(*) name
       integer num(*)
       integer mmhffnr
@@ -488,7 +512,8 @@ c
 c
       character *(*) mname
       character*(*) ename
-      integer fid, numdt, numit, entype, geotype, n, cret
+      integer*8 fid
+      integer   numdt, numit, entype, geotype, n, cret
       integer mmhfeaw
 c
       cret = mmhfeaw(fid,mname,len(mname),numdt,numit,entype,
@@ -508,7 +533,8 @@ c
 c
       character *(*) mname
       character*(*) ename
-      integer fid, numdt, numit, entype, geotype, cret
+      integer*8 fid
+      integer   numdt, numit, entype, geotype, cret
       integer mmhfear
 
       cret = mmhfear(fid,mname,len(mname),numdt,numit,entype,
@@ -528,7 +554,8 @@ c
       save
 c
       character *(*) name
-      integer fid,numdt,numit,entype,geotype,datype,cret
+      integer*8 fid
+      integer  numdt,numit,entype,geotype,datype,cret
       integer cmode,chgt,tsf,n
       integer mmhfnme
 c
@@ -553,7 +580,8 @@ c
       implicit none
       save
 c
-      integer fid,cret,numdt,numit,n,entype,geotype,swm,cmode
+      integer*8 fid
+      integer  cret,numdt,numit,n,entype,geotype,swm,cmode
       character *(*) name
       integer con(*)
       real*8 dt
@@ -574,7 +602,8 @@ c
       implicit none
       save
 c
-      integer fid,cret,numdt,numit,entype,geotype,swm,cmode
+      integer*8 fid
+      integer  cret,numdt,numit,entype,geotype,swm,cmode
       character *(*) name
       integer con(*)
       integer mmhfcyr
@@ -594,7 +623,8 @@ c
       implicit none
       save
 c
-      integer fid,cret,numdt,numit,n,entype,geotype,swm
+      integer*8 fid
+      integer  cret,numdt,numit,n,entype,geotype,swm
       integer cmode,stmode,dim
       character *(*) name
       character *(*) pname
@@ -617,7 +647,8 @@ c
       implicit none
       save
 c
-      integer fid,cret,numdt,numit,entype,geotype,swm
+      integer*8 fid
+      integer  cret,numdt,numit,entype,geotype,swm
       integer cmode,n,stmode,dim
       character *(*) name
       character *(*) pname
@@ -643,7 +674,8 @@ c
 c
       character *(*) name
       character *(*) pname
-      integer fid,numdt,numit,entype,geotype,datype,cret
+      integer*8 fid
+      integer  numdt,numit,entype,geotype,datype,cret
       integer cmode,chgt,tsf,n,stmode,psize
       integer mmhfnep
 c
@@ -670,7 +702,8 @@ c     DEC$ ATTRIBUTES DLLEXPORT :: mmhnor
       implicit none
       save
 c
-      integer fid,cret,numdt,numit,swm
+      integer*8 fid
+      integer  cret,numdt,numit,swm
       character *(*) name
       character *(*) nname
       real*8 coo(*)
@@ -695,7 +728,8 @@ c
       implicit none
       save
 c
-      integer fid,cret,numdt,numit,swm,n
+      integer*8 fid
+      integer  cret,numdt,numit,swm,n
       character *(*) name
       character *(*) nname
       real*8 coo(*), dt
@@ -719,7 +753,8 @@ c
       implicit none
       save
 c
-      integer fid,cret,numdt,numit,n,entype,geotype,swm,cmode
+      integer*8 fid
+      integer  cret,numdt,numit,n,entype,geotype,swm,cmode
       character *(*) name
       character *(*) nname
       integer con(*)
@@ -745,7 +780,8 @@ c
       implicit none
       save
 c
-      integer fid,cret,numdt,numit,entype,geotype,swm,cmode
+      integer*8 fid
+      integer  cret,numdt,numit,entype,geotype,swm,cmode
       character *(*) name
       character *(*) nname
       integer con(*)
@@ -768,7 +804,8 @@ c
       implicit none
       save
 c
-      integer fid,cret,numdt,numit
+      integer*8 fid
+      integer  cret,numdt,numit
       real*8 dt
       character *(*) name
       real*8 coo(*)
@@ -789,7 +826,8 @@ c
       implicit none
       save
 c
-      integer fid,cret,numdt,numit
+      integer*8 fid
+      integer  cret,numdt,numit
       character *(*) name
       real*8 coo(*)
       integer*8 flt(*)
@@ -809,7 +847,8 @@ c
       implicit none
       save
 c
-      integer fid,cret,numdt,numit,entype,geotype,cmode
+      integer*8 fid
+      integer  cret,numdt,numit,entype,geotype,cmode
       character *(*) name
       integer con(*)
       integer*8 flt(*)
@@ -831,7 +870,8 @@ c
       implicit none
       save
 c
-      integer fid,cret,numdt,numit,entype,geotype,cmode
+      integer*8 fid
+      integer  cret,numdt,numit,entype,geotype,cmode
       character *(*) name
       integer con(*)
       integer*8 flt(*)
@@ -852,7 +892,8 @@ c
       implicit none
       save
 c
-      integer fid,cret,numdt,numit,isize,entype,cmode
+      integer*8 fid
+      integer  cret,numdt,numit,isize,entype,cmode
       character *(*) name
       integer con(*), index(*)
       real*8 dt
@@ -873,7 +914,8 @@ c
       implicit none
       save
 c
-      integer fid,cret,numdt,numit,entype,cmode
+      integer*8 fid
+      integer  cret,numdt,numit,entype,cmode
       character *(*) name
       integer con(*), index(*)
       integer mmhfpgr
@@ -893,7 +935,8 @@ c
       implicit none
       save
 c
-      integer fid,cret,numdt,numit,fisize,nisize,entype,cmode
+      integer*8 fid
+      integer   cret,numdt,numit,fisize,nisize,entype,cmode
       character *(*) name
       integer con(*), findex(*), nindex(*) 
       real*8 dt
@@ -914,7 +957,8 @@ c
       implicit none
       save
 c
-      integer fid,cret,numdt,numit,entype,cmode
+      integer*8 fid
+      integer   cret,numdt,numit,entype,cmode
       character *(*) name
       integer con(*), findex(*), nindex(*) 
       integer mmhfphr
@@ -934,7 +978,8 @@ c
       implicit none
       save
 c
-      integer fid,cret,numdt, numit,n,entype,geotype
+      integer*8 fid
+      integer   cret,numdt, numit,n,entype,geotype
       character *(*) name
       integer num(*)
       integer mmhfgnw
@@ -954,7 +999,8 @@ c
       implicit none
       save
 c
-      integer fid,cret,numdt, numit,entype,geotype
+      integer*8 fid
+      integer   cret,numdt, numit,entype,geotype
       character *(*) name
       integer num(*)
       integer mmhfgnr
@@ -974,7 +1020,8 @@ c
       implicit none
       save
 c
-      integer fid,cret,numdt1,numit1,numdt2,numit2
+      integer*8 fid
+      integer   cret,numdt1,numit1,numdt2,numit2
       character *(*) name
       real*8 dt2
       integer mmhfcsc
@@ -993,7 +1040,8 @@ c
       implicit none
       save
 c
-      integer fid,cret,numdt,numit,csit
+      integer*8 fid
+      integer   cret,numdt,numit,csit
       character *(*) name
       real*8 dt
       integer mmhfcsi
@@ -1011,7 +1059,8 @@ c
       implicit none
       save
 c
-      integer fid,cret,numdt,numit
+      integer*8 fid
+      integer   cret,numdt,numit
       character *(*) name
       real*8 dt
       integer mmhfcsr
@@ -1029,7 +1078,8 @@ c
       implicit none
       save
 c
-      integer fid,cret,stype
+      integer*8 fid
+      integer   cret,stype
       character *(*) name
       integer mmhfstr
 c
@@ -1049,8 +1099,9 @@ c
       save
 c
       character *(*) name,aname
-      integer fid,numdt,numit,geotype,cret
-      integer n
+      integer*8 fid
+      integer   numdt,numit,geotype,cret
+      integer   n
       real*8 val(*)
       integer mmhfraw
 c
@@ -1071,9 +1122,10 @@ c
       save
 c
       character *(*) name,aname
-      integer fid,numdt,numit,geotype,cret
-      integer n
-      integer val(*)
+      integer*8 fid
+      integer   numdt,numit,geotype,cret
+      integer   n
+      integer   val(*)
       integer mmhfiaw
 c
       cret =  mmhfiaw(fid,name,len(name),numdt,numit,geotype,
@@ -1093,8 +1145,9 @@ c
       save
 c
       character *(*) name,aname
-      integer fid,numdt,numit,geotype,cret
-      integer n
+      integer*8 fid
+      integer   numdt,numit,geotype,cret
+      integer   n
       character *(*) val
       integer mmhfsaw
 c
@@ -1115,9 +1168,10 @@ c
       save
 c
       character *(*) name,aname
-      integer fid,numdt,numit,geotype,cret
-      real*8 val(*)
-      integer mmhfrar
+      integer*8 fid
+      integer   numdt,numit,geotype,cret
+      real*8    val(*)
+      integer   mmhfrar
 c
       cret =  mmhfrar(fid,name,len(name),numdt,numit,geotype,
      &                aname,len(aname),val)
@@ -1135,9 +1189,10 @@ c
       save
 c
       character *(*) name,aname
-      integer fid,numdt,numit,geotype,cret
-      integer val(*)
-      integer mmhfiar
+      integer*8 fid
+      integer   numdt,numit,geotype,cret
+      integer   val(*)
+      integer   mmhfiar
 c
       cret =  mmhfiar(fid,name,len(name),numdt,numit,geotype,
      &                aname,len(aname),val)
@@ -1155,7 +1210,8 @@ c
       save
 c
       character *(*) name,aname
-      integer fid,numdt,numit,geotype,cret
+      integer*8 fid
+      integer   numdt,numit,geotype,cret
       integer n
       character *(*) val
       integer mmhfsar
@@ -1175,7 +1231,8 @@ c
       implicit none
       save
 c
-      integer fid,cret,numdt,numit,entype,geotype,it
+      integer*8 fid
+      integer   cret,numdt,numit,entype,geotype,it
       character *(*) name, geoname
       integer mmhfeni
 c
@@ -1194,10 +1251,11 @@ c
       implicit none
       save
 c
-      integer fid,cret,numdt,numit
-      real*8 dt
+      integer*8 fid
+      integer   cret,numdt,numit
+      real*8    dt
       character *(*) name
-      real*8 tsf(*)
+      real*8    tsf(*)
       integer mmhftfw
 c
       cret = mmhftfw(fid,name,len(name),numdt,numit,dt,tsf)
@@ -1214,7 +1272,8 @@ c
       implicit none
       save
 c
-      integer fid,cret,numdt,numit
+      integer*8 fid
+      integer   cret,numdt,numit
       character *(*) name
       real*8 tsf(*)
       integer mmhftfr
@@ -1234,10 +1293,11 @@ c
       save
 c
       character *(*) mname
-      integer  val(*)
-      integer fid,numdt,numit,entype,geotype
-      integer dtype,n,cret
-      integer mmhfaaw
+      integer   val(*)
+      integer*8 fid
+      integer   numdt,numit,entype,geotype
+      integer   dtype,cret
+      integer   mmhfaaw
       integer*8 flt(*)
 c
       cret = mmhfaaw(fid,mname,len(mname),dtype,numdt,numit,entype,
@@ -1257,9 +1317,10 @@ c
 c
       character *(*) mname
       integer  val(*)
-      integer fid,numdt,numit,entype,geotype
-      integer dtype,n,cret
-      integer mmhfaar
+      integer*8 fid
+      integer   numdt,numit,entype,geotype
+      integer   dtype,cret
+      integer   mmhfaar
       integer*8 flt(*)
 c
       cret = mmhfaar(fid,mname,len(mname),dtype,numdt,numit,entype,
@@ -1279,9 +1340,10 @@ c
 c
       character *(*) mname
       character *(*) val
-      integer fid,numdt,numit,entype,geotype
-      integer dtype,n,cret
-      integer mmhfasw
+      integer*8 fid
+      integer   numdt,numit,entype,geotype
+      integer   dtype,cret
+      integer   mmhfasw
       integer*8 flt(*)
 c
       cret = mmhfasw(fid,mname,len(mname),dtype,numdt,numit,entype,
@@ -1301,9 +1363,10 @@ c
 c
       character *(*) mname
       character *(*) val
-      integer fid,numdt,numit,entype,geotype
-      integer dtype,n,cret
-      integer mmhfasr
+      integer*8 fid
+      integer   numdt,numit,entype,geotype
+      integer   dtype,cret
+      integer   mmhfasr
       integer*8 flt(*)
 c
       cret = mmhfasr(fid,mname,len(mname),dtype,numdt,numit,entype,

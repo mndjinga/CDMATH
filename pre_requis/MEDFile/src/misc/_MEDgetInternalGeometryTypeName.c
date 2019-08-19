@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2019  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -34,6 +34,8 @@ med_err _MEDgetInternalGeometryTypeName(med_idt fid, char * const geotypename,me
   med_int majeur=MED_MAJOR_NUM, mineur=MED_MINOR_NUM, release=MED_RELEASE_NUM;
   MedFuncType func;
 
+  /* Si fid == 0, on cherche l'API :
+     MED_MAJOR_NUM.MED_MINOR_NUM, release.MED_RELEASE_NUM */
   if (fid != 0)
     MEDfileNumVersionRd(fid, &majeur, &mineur, &release);
 

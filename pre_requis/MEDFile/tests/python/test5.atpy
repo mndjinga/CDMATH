@@ -7,7 +7,7 @@ AT_KEYWORDS([python test5])
 
 AT_CHECK([ln -s $builddir/test4.med test4.med],[0],[ignore],[ignore])
 
-AT_CHECK([python $testpydir/test5.py],
+AT_CHECK([LC_ALL=C.UTF-8 $PYTHON  $testpydir/test5.py],
          [0],
          [ignore],
          [ignore],

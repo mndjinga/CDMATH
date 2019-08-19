@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2019  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -15,7 +15,7 @@
  *  along with MED.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* 
+/*
  * Field use case 11 : read a field in a MED file with computing steps,
  *                     profiles, integration points, interpolation families
  */
@@ -57,9 +57,9 @@ int main (int argc, char **argv) {
     goto ERROR;
   }
 
-  /* 
-   * ... we know that the MED file has only one field with one component , 
-   * a real code would check ... 
+  /*
+   * ... we know that the MED file has only one field with one component ,
+   * a real code would check ...
    */
 
   /*
@@ -70,16 +70,16 @@ int main (int argc, char **argv) {
     MESSAGE("ERROR : Field info by name ...");
     goto ERROR;
   }
-  
-  /* 
-   * Read how many interpolation family name for the field ?  
+
+  /*
+   * Read how many interpolation family name for the field ?
    */
   if ((ninterp = MEDfieldnInterp(fid, fieldname)) < 0) {
     MESSAGE("ERROR : Read how many interpolation functions for the field ...");
     goto ERROR;
   }
-  /* - Read each interlolation family name 
-   * - The way to read an interploation family and it's basis functions 
+  /* - Read each interpolation family name
+   * - The way to read an interpolation family and it's basis functions
    *  is described in UsesCase_MEDinterp_2 and UsesCase_MEDinterp_3 uses case
    */
   for (it=0; it<ninterp; it++) {
@@ -91,7 +91,7 @@ int main (int argc, char **argv) {
 
   /*
    * Read field values for each computing step
-   */ 
+   */
   for (csit=0; csit<nstep; csit++) {
 
     if (MEDfieldComputingStepInfo(fid, fieldname, csit+1, &numdt, &numit, &dt) < 0) {
@@ -99,22 +99,22 @@ int main (int argc, char **argv) {
       goto ERROR;
     }
 
-  /* 
-   * ... In our case, we suppose that the field values are only defined on cells ... 
+  /*
+   * ... In our case, we suppose that the field values are only defined on cells ...
    */
     for (it=1; it<=MED_N_CELL_FIXED_GEO; it++) {
 
       geotype = geotypes[it];
       /*
-       * How many profile for each geometry type ? 
+       * How many profile for each geometry type ?
        */
       if ((nprofile = MEDfieldnProfile(fid, fieldname, numdt, numit, MED_CELL, geotype,
 				       profilename, localizationname)) < 0) {
 	MESSAGE("ERROR : read number of profile ");
 	goto ERROR;
-      }     
-      
-      /* 
+      }
+
+      /*
        * Read values for each profile
        */
       for (pit=0; pit<nprofile; pit++) {
@@ -124,35 +124,35 @@ int main (int argc, char **argv) {
 						 localizationname, &nintegrationpoint)) < 0) {
 	  MESSAGE("ERROR : read number of values with a profile ...");
 	  goto ERROR;
-	} 
+	}
 
 	if (nvalues) {
 	  if ((values = (med_float *) malloc(sizeof(med_float)*nvalues*ncomponent*nintegrationpoint)) == NULL) {
-	    MESSAGE("ERROR : memory allocation ..."); 
-	    goto ERROR; 
-	  } 
-	  if (MEDfieldValueWithProfileRd(fid, fieldname, numdt, numit, MED_CELL, geotype, 
-					 MED_COMPACT_STMODE, profilename,   
+	    MESSAGE("ERROR : memory allocation ...");
+	    goto ERROR;
+	  }
+	  if (MEDfieldValueWithProfileRd(fid, fieldname, numdt, numit, MED_CELL, geotype,
+					 MED_COMPACT_STMODE, profilename,
 					 MED_FULL_INTERLACE, MED_ALL_CONSTITUENT,
-					 (unsigned char*) values) < 0) { 
-	    MESSAGE("ERROR : read fields values for cells ...");  
+					 (unsigned char*) values) < 0) {
+	    MESSAGE("ERROR : read fields values for cells ...");
 	    free(values);
-	    goto ERROR;  
-	  }   
+	    goto ERROR;
+	  }
 	  free(values);
 	}
       }
     }
   }
-  
+
   ret=0;
  ERROR:
-   
+
   /* close file */
   if (MEDfileClose(fid) < 0) {
-    MESSAGE("ERROR : close file ...");             
-    ret=-1; 
-  } 
+    MESSAGE("ERROR : close file ...");
+    ret=-1;
+  }
 
   return ret;
 }

@@ -77,7 +77,10 @@ SET(_export_group "medfileTargets")
 ######### Shared Libraries ##########
 IF(MEDFILE_BUILD_SHARED_LIBS)
   ADD_LIBRARY(medC SHARED ${medC_SOURCES})
-  TARGET_LINK_LIBRARIES(medC ${HDF5_LIBRARIES} ${MPI_LIBS})
+  SET_TARGET_PROPERTIES(medC PROPERTIES
+    VERSION   11.0.0
+    SOVERSION 11.0.0)
+  TARGET_LINK_LIBRARIES(medC ${HDF5_LIBS} ${MPI_LIBS})
   MED_SET_DEFINITIONS(medC NOGDI)
   
   INSTALL(TARGETS medC EXPORT ${_export_group} DESTINATION lib)  
@@ -91,7 +94,7 @@ ENDIF()
 IF(MEDFILE_BUILD_STATIC_LIBS)
   ADD_LIBRARY(medC_static STATIC ${medC_SOURCES})
   SET_TARGET_PROPERTIES(medC_static PROPERTIES OUTPUT_NAME medC)
-  TARGET_LINK_LIBRARIES(medC_static ${HDF5_LIBRARIES} ${MPI_LIBS})
+  TARGET_LINK_LIBRARIES(medC_static ${HDF5_LIBS} ${MPI_LIBS})
   MED_SET_DEFINITIONS(medC_static NOGDI)
   
   INSTALL(TARGETS medC_static EXPORT ${_export_group} DESTINATION lib)
@@ -105,12 +108,19 @@ IF(CMAKE_Fortran_COMPILER_WORKS)
   IF(MEDFILE_BUILD_SHARED_LIBS)
     ## Intermediate library - this is unavoidable 
     ## if we want the Fortran wrapper to build correctly under win.
-    ADD_LIBRARY(medfwrap STATIC ${medfort_wrap_SOURCES})
+    ADD_LIBRARY(medfwrap SHARED ${medfort_wrap_SOURCES})
+    SET_TARGET_PROPERTIES(medfwrap PROPERTIES
+      VERSION   11.0.0
+      SOVERSION 11.0.0)
     TARGET_LINK_LIBRARIES(medfwrap medC)
     INSTALL(TARGETS medfwrap EXPORT medfileTargetsF DESTINATION lib)
 
     # Add Shared MED library
     ADD_LIBRARY(med SHARED MEDiterators.c)
+    SET_TARGET_PROPERTIES(med PROPERTIES
+      VERSION   11.0.0
+      SOVERSION 11.0.0)
+    TARGET_LINK_LIBRARIES(medfwrap medC)
     TARGET_LINK_LIBRARIES(med medfwrap)    
    
     # Install only the resulting library:

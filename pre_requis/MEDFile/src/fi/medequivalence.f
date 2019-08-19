@@ -1,6 +1,6 @@
 C*  This file is part of MED.
 C*
-C*  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+C*  COPYRIGHT (C) 1999 - 2019  EDF R&D, CEA/DEN
 C*  MED is free software: you can redistribute it and/or modify
 C*  it under the terms of the GNU Lesser General Public License as published by
 C*  the Free Software Foundation, either version 3 of the License, or
@@ -22,7 +22,8 @@ c
       save
 c     
       character *(*) maa, des, eq
-      integer fid, cret
+      integer*8 fid
+      integer  cret
       integer meqfcre
 c
       cret = meqfcre(fid, maa, len(maa), eq, len(eq), des, len(des))
@@ -41,7 +42,8 @@ c
 c
       character *(*) maa, eq
       integer numit, numdt
-      integer fid, cret, n, typent, typgeo
+      integer*8 fid
+      integer  cret, n, typent, typgeo
       integer corr(*)
       integer meqfcow
 c
@@ -61,7 +63,8 @@ c
       save
 c
       character *(*) maa
-      integer fid, cret, n
+      integer*8 fid
+      integer  cret, n
       integer meqfneq
 c
       n = meqfneq(fid, maa, len(maa))
@@ -83,7 +86,8 @@ c
       save
 c
       character *(*) maa,eq,des
-      integer fid, cret,ind,nstep,nctcor
+      integer*8 fid
+      integer  cret,ind,nstep,nctcor
       integer meqfeqi
 c
       cret = meqfeqi(fid,maa,len(maa),ind,eq,des,
@@ -102,7 +106,8 @@ c
       save
 c
       character *(*) maa, eq
-      integer fid,cret,n,typent,typgeo,numit,numdt
+      integer*8 fid
+      integer cret,n,typent,typgeo,numit,numdt
       integer meqfcsz
 c
       n = meqfcsz(fid,maa,len(maa),eq,len(eq),
@@ -127,7 +132,8 @@ c
       save
 c
       character *(*) maa, eq
-      integer fid,cret,n,typent,typgeo,numit,numdt
+      integer*8 fid
+      integer cret,n,typent,typgeo,numit,numdt
       integer corit
       integer meqfszi
 c
@@ -147,7 +153,8 @@ c
       save
 c
       character *(*) maa, eq
-      integer fid, cret, corr(*), typent, typgeo,numdt,mumit
+      integer*8 fid
+      integer  cret, corr(*), typent, typgeo,numdt,mumit
       integer meqfcor
 c
       cret = meqfcor(fid, maa, len(maa), eq, len(eq), 
@@ -165,7 +172,8 @@ c
       save
 c
       character *(*) maa,eq
-      integer fid,cret,ind,numdt,numit,ncor
+      integer*8 fid
+      integer cret,ind,numdt,numit,ncor
       integer meqfcsi
 c
       cret = meqfcsi(fid,maa,len(maa),eq,len(eq),

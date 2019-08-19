@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2019  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -58,13 +58,13 @@ int main (int argc, char **argv) {
     goto ERROR;
   }
 
-  /* 
-   * ... we know that the MED file has only one mesh, 
-   * a real code would check ... 
+  /*
+   * ... we know that the MED file has only one mesh,
+   * a real code would check ...
    */
 
   /* read mesh informations : mesh dimension, space dimension ... */
-  if (MEDmeshInfoByName(fid, meshname, &spacedim, &meshdim, &meshtype, meshdescription, 
+  if (MEDmeshInfoByName(fid, meshname, &spacedim, &meshdim, &meshtype, meshdescription,
 			dtunit, &sortingtype, &nstep, &axistype, axisname, unitname) < 0) {
     MESSAGE("ERROR : mesh info ...");
     goto ERROR;
@@ -76,10 +76,10 @@ int main (int argc, char **argv) {
     { MESSAGE("ERROR : number of nodes ...");
       goto ERROR;
     }
-  
-  /* 
-   * ... we know that we only have MED_POLYGON celles in the mesh, 
-   * a real code would check all MED geometry cell types ... 
+
+  /*
+   * ... we know that we only have MED_POLYGON cells in the mesh,
+   * a real code would check all MED geometry cell types ...
    */
 
   /* How many polygon in the mesh in nodal connectivity mode */
@@ -96,7 +96,7 @@ int main (int argc, char **argv) {
   if ((connectivitysize = MEDmeshnEntity(fid,meshname,MED_NO_DT,MED_NO_IT,
 					 MED_CELL,MED_POLYGON,MED_CONNECTIVITY,MED_NODAL,
 					 &coordinatechangement, &geotransformation)) < 0)
-    { MESSAGE("ERROR : read connevity size ...");
+    { MESSAGE("ERROR : read connectivity size ...");
       goto ERROR;
     }
 
@@ -125,8 +125,8 @@ int main (int argc, char **argv) {
     }
   free(index);
   free(connectivity);
-  
-  /* 
+
+  /*
    * ... we know that the family number of nodes and elements is 0, a real code would check ...
    */
 
@@ -135,9 +135,9 @@ int main (int argc, char **argv) {
 
   /* close MED file */
   if (MEDfileClose(fid) < 0) {
-    MESSAGE("ERROR : close file");             
-    ret=-1; 
-  } 
+    MESSAGE("ERROR : close file");
+    ret=-1;
+  }
 
   return ret;
 }

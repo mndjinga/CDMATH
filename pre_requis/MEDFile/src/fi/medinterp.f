@@ -1,6 +1,6 @@
 C*  This file is part of MED.
 C*
-C*  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+C*  COPYRIGHT (C) 1999 - 2019  EDF R&D, CEA/DEN
 C*  MED is free software: you can redistribute it and/or modify
 C*  it under the terms of the GNU Lesser General Public License as published by
 C*  the Free Software Foundation, either version 3 of the License, or
@@ -22,7 +22,8 @@ c
       save
 c     
       character*(*) name
-      integer fid, gtype,cnode,nvar,maxd,nmaxc,cret
+      integer*8 fid
+      integer  gtype,cnode,nvar,maxd,nmaxc,cret
       integer mipfcre
 c     
       cret = mipfcre(fid,name,len(name),gtype,cnode,
@@ -40,7 +41,8 @@ c
       save
 c     
       character*(*) name
-      integer fid,it,nc,cret
+      integer*8 fid
+      integer it,nc,cret
       integer pw(*)
       real*8 co(*)
       integer mipfbfw
@@ -59,7 +61,8 @@ c
       save
 c     
       character*(*) name
-      integer fid,it,nc,cret
+      integer*8 fid
+      integer it,nc,cret
       integer pw(*)
       real*8 co(*)
       integer mipfbfr
@@ -102,7 +105,8 @@ c
       save
 c     
       character*(*) name
-      integer fid, gtype,cnode,nvar,maxd,nmaxc,cret,nbf
+      integer*8 fid
+      integer  gtype,cnode,nvar,maxd,nmaxc,cret,nbf
       integer mipfiin
 c     
       cret = mipfiin(fid,name,len(name),gtype,cnode,nbf,
@@ -121,7 +125,8 @@ c
       save
 c     
       character*(*) name
-      integer fid, gtype,cnode,nvar,maxd,nmaxc,cret,nbf
+      integer*8 fid
+      integer  gtype,cnode,nvar,maxd,nmaxc,cret,nbf
       integer it
       integer mipfipi
 c     
@@ -140,7 +145,8 @@ c
       save
 c     
       character*(*) name
-      integer n, fid, it, cret
+      integer*8 fid
+      integer n, it, cret
       integer mipfcsz
 c     
       n = mipfcsz(fid,name,len(name),it)

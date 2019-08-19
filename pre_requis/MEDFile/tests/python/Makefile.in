@@ -107,11 +107,14 @@ host_triplet = @host@
 @WITH_PYTHON_TRUE@	test11_f32_i32_long.expout \
 @WITH_PYTHON_TRUE@	test11_f32_i64_long.expout \
 @WITH_PYTHON_TRUE@	test11_f64_i32_long.expout \
-@WITH_PYTHON_TRUE@	test11_f64_i64_long.expout
+@WITH_PYTHON_TRUE@	test11_f64_i64_long.expout \
+@WITH_PYTHON_TRUE@	test11_f64_i64_int_py3.expout \
+@WITH_PYTHON_TRUE@	test11_f32_i64_int_py3.expout
 @WITH_PYTHON_TRUE@am__append_3 = $(CHECK_TESTS_LEC) $(CHECK_TESTS_ECR) 
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/config/ac_check_sizeof_fortran.m4 \
 	$(top_srcdir)/config/ax_absolute_header.m4 \
+	$(top_srcdir)/config/ax_compare_version.m4 \
 	$(top_srcdir)/config/ax_pkg_swig.m4 \
 	$(top_srcdir)/config/ax_prog_cc_mpi.m4 \
 	$(top_srcdir)/config/ax_prog_cxx_mpi.m4 \
@@ -129,6 +132,7 @@ am__aclocal_m4_deps = $(top_srcdir)/config/ac_check_sizeof_fortran.m4 \
 	$(top_srcdir)/config/med_check_hdf5.m4 \
 	$(top_srcdir)/config/med_check_mesgerr.m4 \
 	$(top_srcdir)/config/med_check_python.m4 \
+	$(top_srcdir)/config/med_check_python_devel.m4 \
 	$(top_srcdir)/config/med_check_swig.m4 \
 	$(top_srcdir)/config/med_check_typeof_hidt.m4 \
 	$(top_srcdir)/config/med_check_typeof_int64.m4 \
@@ -358,14 +362,34 @@ LTLIBOBJS = @LTLIBOBJS@
 LT_SYS_LIBRARY_PATH = @LT_SYS_LIBRARY_PATH@
 MAKEINFO = @MAKEINFO@
 MANIFEST_TOOL = @MANIFEST_TOOL@
+MEDIMPORT_CMAKE_SO_MAJ = @MEDIMPORT_CMAKE_SO_MAJ@
+MEDIMPORT_CMAKE_SO_MIN = @MEDIMPORT_CMAKE_SO_MIN@
+MEDIMPORT_CMAKE_SO_REL = @MEDIMPORT_CMAKE_SO_REL@
+MEDIMPORT_CMAKE_SO_VERSION = @MEDIMPORT_CMAKE_SO_VERSION@
+MEDIMPORT_LIBTOOL_MAJ = @MEDIMPORT_LIBTOOL_MAJ@
+MEDIMPORT_LIBTOOL_MIN = @MEDIMPORT_LIBTOOL_MIN@
+MEDIMPORT_LIBTOOL_REL = @MEDIMPORT_LIBTOOL_REL@
+MED_3_LATEST_MINOR = @MED_3_LATEST_MINOR@
 MED_API_23 = @MED_API_23@
 MED_CHECK_23FORMAT = @MED_CHECK_23FORMAT@
+MED_CMAKE_SO_MAJ = @MED_CMAKE_SO_MAJ@
+MED_CMAKE_SO_MIN = @MED_CMAKE_SO_MIN@
+MED_CMAKE_SO_REL = @MED_CMAKE_SO_REL@
+MED_CMAKE_SO_VERSION = @MED_CMAKE_SO_VERSION@
 MED_DEFINE_MED_HAVE_MPI = @MED_DEFINE_MED_HAVE_MPI@
 MED_INT32 = @MED_INT32@
 MED_INT64 = @MED_INT64@
+MED_LIBTOOL_MAJ = @MED_LIBTOOL_MAJ@
+MED_LIBTOOL_MIN = @MED_LIBTOOL_MIN@
+MED_LIBTOOL_REL = @MED_LIBTOOL_REL@
 MED_NUM_MAJEUR = @MED_NUM_MAJEUR@
 MED_NUM_MINEUR = @MED_NUM_MINEUR@
 MED_NUM_RELEASE = @MED_NUM_RELEASE@
+MED_PYTHON2_VERSION_REF = @MED_PYTHON2_VERSION_REF@
+MED_PYTHON3_VERSION_REF = @MED_PYTHON3_VERSION_REF@
+MED_PYTHON_VERSION_REF = @MED_PYTHON_VERSION_REF@
+MED_SWIG_MIN_VERSION_REF = @MED_SWIG_MIN_VERSION_REF@
+MED_SWIG_VERSION_REF = @MED_SWIG_VERSION_REF@
 MESGERR = @MESGERR@
 MKDIR_P = @MKDIR_P@
 MPICC = @MPICC@
@@ -463,10 +487,6 @@ prefix = @prefix@
 program_transform_name = @program_transform_name@
 psdir = @psdir@
 pyexecdir = @pyexecdir@
-python_bin = @python_bin@
-python_includedir = @python_includedir@
-python_libdir = @python_libdir@
-python_version = @python_version@
 pythondir = @pythondir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
@@ -483,7 +503,7 @@ AM_FFLAGS = -I$(top_srcdir)/include  -I$(top_builddir)/include
 AM_FCFLAGS = -I$(top_srcdir)/include  -I$(top_builddir)/include
 AM_LDFLAGS = @HDF5_LDFLAGS@
 SUFFIXES = .at $(am__append_1)
-AUTOTEST = autom4te --language=autotest
+AUTOTEST = autom4te --language=autotest 
 CHECK_TESTS = 
 INSTALLCHECK_TESTS = 
 PYTHONINSTALLCHECK_TESTS = $(am__append_3)
@@ -509,9 +529,37 @@ CLEANFILES = *.log $(PYTHONINSTALLCHECKTESTSUITE) expout \
 	./test18.dump ./test19.dump ./test1.dump ./test20.dump \
 	./test2.dump ./test4.dump ./test6.dump ./test8.dump \
 	./test21.dump ./test23.dump ./test25.dump ./test27.dump \
-	./test28.dump ./test29.dump ./test31.dump ${BUILT_SOURCES} \
-	tests_params*.py.tmp
-DISTCLEANFILES = atconfig
+	./test28.dump ./test29.dump ./test31.dump ./test10_f32_i32.med \
+	./test10_f32_i32.py ./test10_f32_i64.med ./test10_f64_i32.med \
+	./test10_f64_i64.med ${BUILT_SOURCES} tests_params*.py.tmp
+DISTCLEANFILES = atconfig ./atconfig ./medlink_int.py \
+	./medenumtest_int.py ./medsubdomain_int_wrap.cc \
+	./medmesh_int.py ./medfile_int_wrap.cc ./medfamily_int.py \
+	./medparameter_int_wrap.cc ./medlibrary_int.py \
+	./medfilter_int_wrap.cc ./medequivalence_int.py \
+	./medfield_int.py ./medprofile_int.py ./medlocalization_int.py \
+	./medlibrary_int_wrap.cc ./medinterp_int.py \
+	./medlocalization_int_wrap.cc ./medequivalence_int_wrap.cc \
+	./medlink_int_wrap.cc ./medenumtest_int_wrap.cc \
+	./medfamily_int_wrap.cc ./medsubdomain_int.py \
+	./medmesh_int_wrap.cc ./medinterp_int_wrap.cc \
+	./medfield_int_wrap.cc ./medparameter_int.py ./medfile_int.py \
+	./medenum_int.py ./medenum_int_wrap.cc \
+	./medprofile_int_wrap.cc ./medfilter_int.py ./medlink_long.py \
+	./medenumtest_long.py ./medsubdomain_long_wrap.cc \
+	./medmesh_long.py ./medfile_long_wrap.cc ./medfamily_long.py \
+	./medparameter_long_wrap.cc ./medlibrary_long.py \
+	./medfilter_long_wrap.cc ./medequivalence_long.py \
+	./medfield_long.py ./medprofile_long.py \
+	./medlocalization_long.py ./medlibrary_long_wrap.cc \
+	./medlongerp_long.py ./medlocalization_long_wrap.cc \
+	./medequivalence_long_wrap.cc ./medlink_long_wrap.cc \
+	./medenumtest_long_wrap.cc ./medfamily_long_wrap.cc \
+	./medsubdomain_long.py ./medmesh_long_wrap.cc \
+	./medlongerp_long_wrap.cc ./medfield_long_wrap.cc \
+	./medparameter_long.py ./medfile_long.py ./medenum_long.py \
+	./medenum_long_wrap.cc ./medprofile_long_wrap.cc \
+	./medfilter_long.py
 subdir = tests/python
 @WITH_PYTHON_TRUE@TESTS_PARAMS = tests_params.py \
 @WITH_PYTHON_TRUE@tests_params_f64_i32.py tests_params_f32_i32.py \
@@ -528,7 +576,25 @@ subdir = tests/python
 
 # check-local: 
 @WITH_PYTHON_TRUE@testpydir = $(bindir)/testpy
-@WITH_PYTHON_TRUE@INSTALLCHECK_TESTS_ENVIRONMENT = AUTOTEST_PATH=$(testpydir) PYTHONPATH=$(pyexecdir) H5DUMP=@H5DUMP@ SRCDIR=$(srcdir) ABSSRCDIR="$(abs_srcdir)" BUILDDIR=$(abs_builddir) EXECDIR="$(abs_builddir)" CP=${CP} CPYMED="no" MEDINT="_@LONG_OR_INT@"
+@MED_HAVE_PYTHON3_FALSE@@MED_SWIG_GT_30008_FALSE@@WITH_PYTHON_TRUE@MEDINT = "_@LONG_OR_INT@"
+@MED_HAVE_PYTHON3_TRUE@@MED_SWIG_GT_30008_FALSE@@WITH_PYTHON_TRUE@MEDINT = "_int"
+
+# Depuis swig 3.0.9 les long C sont convertis en PyInt 
+# En swig 3.0.9 __define SWIG_From_long   PyInt_FromLong 
+# En swig 3.0.8 __define SWIG_From_long   PyLong_FromLong
+@MED_SWIG_GT_30008_TRUE@@WITH_PYTHON_TRUE@MEDINT = "_int"
+@MED_HAVE_PYTHON3_FALSE@@MED_SWIG_GT_30008_FALSE@@WITH_PYTHON_TRUE@MED_PY3_SUFFIX = ""
+@MED_HAVE_PYTHON3_TRUE@@MED_SWIG_GT_30008_FALSE@@WITH_PYTHON_TRUE@MED_PY3_SUFFIX = "_py3"
+@MED_SWIG_GT_30008_TRUE@@WITH_PYTHON_TRUE@MED_PY3_SUFFIX = "_py3"
+
+#MED_PY3_SUFFIX est utile pour choisir le fichier de sortie de référence car les int d'affichent différemment selon la version de python et swig
+@WITH_PYTHON_TRUE@INSTALLCHECK_TESTS_ENVIRONMENT = AUTOTEST_PATH=$(testpydir) PYTHON=$(PYTHON) PYTHONPATH=$(pyexecdir) H5DUMP=@H5DUMP@ SRCDIR=$(srcdir) ABSSRCDIR="$(abs_srcdir)" BUILDDIR=$(abs_builddir) EXECDIR="$(abs_builddir)" CP=${CP} CPYMED="no" MEDINT=$(MEDINT) MED_PY3_SUFFIX=$(MED_PY3_SUFFIX)
+
+# if MED_HAVE_PYTHON3
+# INSTALLCHECK_TESTS_ENVIRONMENT = AUTOTEST_PATH=$(testpydir) PYTHON=$(PYTHON) PYTHONPATH=$(pyexecdir) H5DUMP=@H5DUMP@ SRCDIR=$(srcdir) ABSSRCDIR="$(abs_srcdir)" BUILDDIR=$(abs_builddir) EXECDIR="$(abs_builddir)" CP=${CP} CPYMED="no" MEDINT="_int" MED_PY3_SUFFIX="_py3"
+# else
+# INSTALLCHECK_TESTS_ENVIRONMENT = AUTOTEST_PATH=$(testpydir) PYTHON=$(PYTHON) PYTHONPATH=$(pyexecdir) H5DUMP=@H5DUMP@ SRCDIR=$(srcdir) ABSSRCDIR="$(abs_srcdir)" BUILDDIR=$(abs_builddir) EXECDIR="$(abs_builddir)" CP=${CP} CPYMED="no" MEDINT="_@LONG_OR_INT@" MED_PY3_SUFFIX=""
+# endif
 
 # TESTS = test1.sh $(TESTS_ECR) $(TESTS_LEC)
 @WITH_PYTHON_TRUE@TESTS_LEC = test3.py test5.py test7.py test9.py \

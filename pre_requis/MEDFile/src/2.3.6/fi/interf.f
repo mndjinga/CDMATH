@@ -1,6 +1,6 @@
 C*  This file is part of MED.
 C*
-C*  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+C*  COPYRIGHT (C) 1999 - 2019  EDF R&D, CEA/DEN
 C*  MED is free software: you can redistribute it and/or modify
 C*  it under the terms of the GNU Lesser General Public License as published by
 C*  the Free Software Foundation, either version 3 of the License, or
@@ -21,7 +21,8 @@ c
         implicit none
         save
 c
-        integer fid, typent, typcon, cret
+        integer*8 fid
+        integer   typent, typcon, cret
         character*(*) maa
         integer edfnent
 c
@@ -38,7 +39,8 @@ c
 	implicit none
 	save
 c
-	integer fid,mdim,rep,nnoe,cret,modcoo
+	integer*8 fid
+	integer  mdim,rep,nnoe,cret,modcoo
         integer num(*),fam(*)
  	integer edfnoel
 	logical inom,inum
@@ -72,7 +74,8 @@ c
 	implicit none
 	save
 c
-	integer fid,mdim,rep,nnoe,cret,modcoo
+	integer*8 fid
+	integer  mdim,rep,nnoe,cret,modcoo
         integer num(*),fam(*)
  	integer edfnoee
 	logical inom,inum
@@ -107,7 +110,8 @@ c     DEC$ ATTRIBUTES DLLEXPORT :: efelee
 	implicit none
 	save
 c
-	integer fid,mdim,nele,cret
+	integer*8 fid
+	integer  mdim,nele,cret
 	integer conn(*)
         integer fam(*)
         integer num(*)
@@ -144,7 +148,8 @@ c     DEC$ ATTRIBUTES DLLEXPORT :: efelel
 	implicit none
 	save
 c
-	integer fid,mdim,pnum,pnom,nele,cret,switch
+	integer*8 fid
+	integer  mdim,pnum,pnom,nele,cret,switch
   	integer typgeo,typent,typcon,edfelel
 	integer conn(*),fam(*),num(*)
         character*(*) nom,maa
@@ -177,7 +182,8 @@ c     DEC$ ATTRIBUTES DLLEXPORT :: efg2fc
 	implicit none
 	save
 c     
-        integer          fid,cret,ngro,nent,typent,ngeo
+        integer*8        fid
+        integer  cret,ngro,nent,typent,ngeo
         character*32     maa
         character *80    nomgro(*)
         integer          ind(*),indgeo(*),ent(*),typgeo(*)

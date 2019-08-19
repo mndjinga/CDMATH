@@ -113,7 +113,32 @@ test10_f64_i32.py test10_f32_i64.py test10_f64_i64.py test10_f32_i64.py
 
 testpydir = $(bindir)/testpy
 
-INSTALLCHECK_TESTS_ENVIRONMENT = AUTOTEST_PATH=$(testpydir) PYTHONPATH=$(pyexecdir) H5DUMP=@H5DUMP@ SRCDIR=$(srcdir) ABSSRCDIR="$(abs_srcdir)" BUILDDIR=$(abs_builddir) EXECDIR="$(abs_builddir)" CP=${CP} CPYMED="no" MEDINT="_@LONG_OR_INT@"
+# Depuis swig 3.0.9 les long C sont convertis en PyInt 
+# En swig 3.0.9 __define SWIG_From_long   PyInt_FromLong 
+# En swig 3.0.8 __define SWIG_From_long   PyLong_FromLong
+if MED_SWIG_GT_30008
+ MEDINT="_int"
+ MED_PY3_SUFFIX="_py3"
+else
+
+if MED_HAVE_PYTHON3
+ MEDINT="_int"
+ MED_PY3_SUFFIX="_py3"
+else
+ MEDINT="_@LONG_OR_INT@"
+ MED_PY3_SUFFIX=""
+endif
+
+endif
+#MED_PY3_SUFFIX est utile pour choisir le fichier de sortie de référence car les int d'affichent différemment selon la version de python et swig
+
+INSTALLCHECK_TESTS_ENVIRONMENT = AUTOTEST_PATH=$(testpydir) PYTHON=$(PYTHON) PYTHONPATH=$(pyexecdir) H5DUMP=@H5DUMP@ SRCDIR=$(srcdir) ABSSRCDIR="$(abs_srcdir)" BUILDDIR=$(abs_builddir) EXECDIR="$(abs_builddir)" CP=${CP} CPYMED="no" MEDINT=$(MEDINT) MED_PY3_SUFFIX=$(MED_PY3_SUFFIX)
+
+# if MED_HAVE_PYTHON3
+# INSTALLCHECK_TESTS_ENVIRONMENT = AUTOTEST_PATH=$(testpydir) PYTHON=$(PYTHON) PYTHONPATH=$(pyexecdir) H5DUMP=@H5DUMP@ SRCDIR=$(srcdir) ABSSRCDIR="$(abs_srcdir)" BUILDDIR=$(abs_builddir) EXECDIR="$(abs_builddir)" CP=${CP} CPYMED="no" MEDINT="_int" MED_PY3_SUFFIX="_py3"
+# else
+# INSTALLCHECK_TESTS_ENVIRONMENT = AUTOTEST_PATH=$(testpydir) PYTHON=$(PYTHON) PYTHONPATH=$(pyexecdir) H5DUMP=@H5DUMP@ SRCDIR=$(srcdir) ABSSRCDIR="$(abs_srcdir)" BUILDDIR=$(abs_builddir) EXECDIR="$(abs_builddir)" CP=${CP} CPYMED="no" MEDINT="_@LONG_OR_INT@" MED_PY3_SUFFIX=""
+# endif
 
 # TESTS = test1.sh $(TESTS_ECR) $(TESTS_LEC)
 
@@ -141,7 +166,9 @@ test11_f64_i64_int.expout\
 test11_f32_i32_long.expout\
 test11_f32_i64_long.expout\
 test11_f64_i32_long.expout\
-test11_f64_i64_long.expout
+test11_f64_i64_long.expout\
+test11_f64_i64_int_py3.expout\
+test11_f32_i64_int_py3.expout
 
 
 CHECK_TESTS_LEC = $(srcdir)/test3.atpy $(srcdir)/test5.atpy $(srcdir)/test7.atpy $(srcdir)/test9.atpy \
@@ -207,7 +234,13 @@ CLEANFILES+= UsesCase_MEDinterp_1.med \
 ./test27.dump\
 ./test28.dump\
 ./test29.dump\
-./test31.dump
+./test31.dump\
+./test10_f32_i32.med \
+./test10_f32_i32.py \
+./test10_f32_i64.med \
+./test10_f64_i32.med \
+./test10_f64_i64.med
+
 
 CLEANFILES+=  ${BUILT_SOURCES} tests_params*.py.tmp
 
@@ -216,3 +249,65 @@ SUBDIRS =  .
 
 EXTRA_DIST += CMakeLists.txt
 
+DISTCLEANFILES+=\
+./atconfig                     \
+./medlink_int.py               \
+./medenumtest_int.py           \
+./medsubdomain_int_wrap.cc     \
+./medmesh_int.py               \
+./medfile_int_wrap.cc          \
+./medfamily_int.py             \
+./medparameter_int_wrap.cc     \
+./medlibrary_int.py            \
+./medfilter_int_wrap.cc        \
+./medequivalence_int.py        \
+./medfield_int.py              \
+./medprofile_int.py            \
+./medlocalization_int.py       \
+./medlibrary_int_wrap.cc       \
+./medinterp_int.py             \
+./medlocalization_int_wrap.cc  \
+./medequivalence_int_wrap.cc   \
+./medlink_int_wrap.cc          \
+./medenumtest_int_wrap.cc      \
+./medfamily_int_wrap.cc        \
+./medsubdomain_int.py          \
+./medmesh_int_wrap.cc          \
+./medinterp_int_wrap.cc        \
+./medfield_int_wrap.cc         \
+./medparameter_int.py          \
+./medfile_int.py               \
+./medenum_int.py               \
+./medenum_int_wrap.cc          \
+./medprofile_int_wrap.cc       \
+./medfilter_int.py             \
+./medlink_long.py               \
+./medenumtest_long.py           \
+./medsubdomain_long_wrap.cc     \
+./medmesh_long.py               \
+./medfile_long_wrap.cc          \
+./medfamily_long.py             \
+./medparameter_long_wrap.cc     \
+./medlibrary_long.py            \
+./medfilter_long_wrap.cc        \
+./medequivalence_long.py        \
+./medfield_long.py              \
+./medprofile_long.py            \
+./medlocalization_long.py       \
+./medlibrary_long_wrap.cc       \
+./medlongerp_long.py            \
+./medlocalization_long_wrap.cc  \
+./medequivalence_long_wrap.cc   \
+./medlink_long_wrap.cc          \
+./medenumtest_long_wrap.cc      \
+./medfamily_long_wrap.cc        \
+./medsubdomain_long.py          \
+./medmesh_long_wrap.cc          \
+./medlongerp_long_wrap.cc       \
+./medfield_long_wrap.cc         \
+./medparameter_long.py          \
+./medfile_long.py               \
+./medenum_long.py               \
+./medenum_long_wrap.cc          \
+./medprofile_long_wrap.cc       \
+./medfilter_long.py

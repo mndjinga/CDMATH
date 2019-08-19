@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2019  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -35,16 +35,16 @@ int main (int argc, char **argv) {
   /*                                         12345678901234561234567890123456 */
   const char axisname[3*MED_SNAME_SIZE+1] = "x               y               z               ";
   const char unitname[3*MED_SNAME_SIZE+1] = "cm              cm              cm              ";
- 
+
   const med_int nnodes = 16;
   const med_float coordinates[3 * 16] = {
 /* [     1 ] */  -10.0,  -10.0,  +0.0,
-/* [     2 ] */  -10.0,  -10.0,  +10., 
-/* [     3 ] */  -10.0,  +10.0,  +10., 
+/* [     2 ] */  -10.0,  -10.0,  +10.,
+/* [     3 ] */  -10.0,  +10.0,  +10.,
 /* [     4 ] */  -10.0,  +10.0,  +0.0,
 /* [     5 ] */  +10.0,  -10.0,  +0.0,
-/* [     6 ] */  +10.0,  -10.0,  +10., 
-/* [     7 ] */  +10.0,  +10.0,  +10., 
+/* [     6 ] */  +10.0,  -10.0,  +10.,
+/* [     7 ] */  +10.0,  +10.0,  +10.,
 /* [     8 ] */  +10.0,  +10.0,  +0.0,
 /* [     9 ] */  -10.0,  +0.0 , +10.0,
 /* [    10 ] */  -10.0,  +0.0 , +0.0 ,
@@ -58,20 +58,20 @@ int main (int argc, char **argv) {
 
   /*Il y a 58 numéros de noeuds dans le tableau de connextivité*/
   const med_int connectivity[26+32] = {
-/*  - Poly 1 : */  
-/*  - Face 1 : */  1,  2  ,  9 , 3  , 10, 
-/*  - Face 2 : */  1,  12 ,  5 , 6  , 11,  2, 
+/*  - Poly 1 : */
+/*  - Face 1 : */  1,  2  ,  9 , 3  , 10,
+/*  - Face 2 : */  1,  12 ,  5 , 6  , 11,  2,
 /*  - Face 3 : */  2,  11 ,  6 , 3  , 9 ,
-/*  - Face 4 : */  3,  6  ,  5 ,      
-/*  - Face 5 : */  3,  5  , 10 ,      
-/*  - Face 6 : */  1,  10 ,  5 , 12,  
-/*  - Poly 2 : */	    	      
-/*  - Face 1 : */  3,  13 ,  7 , 8  , 15,  4, 
-/*  - Face 2 : */  3,  4  , 10 ,      
-/*  - Face 3 : */  4,  15 ,  8 , 16 ,  5,  10, 
-/*  - Face 4 : */  3,  6  , 14 , 7  , 13, 
-/*  - Face 5 : */  5,  16 ,  8 , 7  , 14,  6, 
-/*  - Face 6 : */  3,  10 ,  5 , 
+/*  - Face 4 : */  3,  6  ,  5 ,
+/*  - Face 5 : */  3,  5  , 10 ,
+/*  - Face 6 : */  1,  10 ,  5 , 12,
+/*  - Poly 2 : */
+/*  - Face 1 : */  3,  13 ,  7 , 8  , 15,  4,
+/*  - Face 2 : */  3,  4  , 10 ,
+/*  - Face 3 : */  4,  15 ,  8 , 16 ,  5,  10,
+/*  - Face 4 : */  3,  6  , 14 , 7  , 13,
+/*  - Face 5 : */  5,  16 ,  8 , 7  , 14,  6,
+/*  - Face 6 : */  3,  10 ,  5 ,
 /*  - Face 7 : */  3,  5  ,  6
   };
 
@@ -136,7 +136,7 @@ int main (int argc, char **argv) {
 
   /* create family 0 : by default, all mesh entities family number is 0 */
   if (MEDfamilyCr(fid, meshname, "", 0, 0, "") < 0) {
-    MESSAGE("ERROR : quadrangular cells connectivity ...");
+    MESSAGE("ERROR : family 0 creation ...");
     return -1;
   }
 

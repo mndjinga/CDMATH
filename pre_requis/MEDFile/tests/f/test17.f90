@@ -1,6 +1,6 @@
 !*  This file is part of MED.
 !*
-!*  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+!*  COPYRIGHT (C) 1999 - 2019  EDF R&D, CEA/DEN
 !*  MED is free software: you can redistribute it and/or modify
 !*  it under the terms of the GNU Lesser General Public License as published by
 !*  the Free Software Foundation, either version 3 of the License, or
@@ -29,15 +29,16 @@ program test17
   implicit none
   include 'med.hf90'
 
-  integer      :: cret,ret, fid, nse2, mdim, sdim 
-  integer,     allocatable, dimension(:) ::se2
+  integer*8    fid
+  integer      :: cret, ret, nse2, mdim, sdim 
+  integer,     allocatable,  dimension(:) ::se2
   character*16, allocatable, dimension(:) ::nomse2
-  integer,     allocatable, dimension(:) ::numse2,nufase2 
+  integer,     allocatable,  dimension(:) ::numse2,nufase2 
   integer      ntr3
-  integer,     allocatable, dimension(:) ::tr3
+  integer,     allocatable,  dimension(:) ::tr3
   character*16, allocatable, dimension(:) ::nomtr3
-  integer,     allocatable, dimension(:) ::numtr3
-  integer,     allocatable, dimension(:) ::nufatr3
+  integer,     allocatable,  dimension(:) ::numtr3
+  integer,     allocatable,  dimension(:) ::nufatr3
   character*64  :: maa
   character*200 :: desc
   integer      :: inoele1,inuele1,inoele2,inuele2,ifaele1,ifaele2

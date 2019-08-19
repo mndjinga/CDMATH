@@ -1,6 +1,6 @@
 C*  This file is part of MED.
 C*
-C*  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+C*  COPYRIGHT (C) 1999 - 2019  EDF R&D, CEA/DEN
 C*  MED is free software: you can redistribute it and/or modify
 C*  it under the terms of the GNU Lesser General Public License as published by
 C*  the Free Software Foundation, either version 3 of the License, or
@@ -21,7 +21,8 @@ c
       implicit none
       save
 c
-      integer fid, n, cret
+      integer*8 fid
+      integer   n, cret
       integer edfngau
 c
       n = edfngau(fid)
@@ -43,7 +44,8 @@ c
       implicit none
       save
 c
-      integer fid,indice,typgeo,ngauss,cret
+      integer*8 fid
+      integer  indice,typgeo,ngauss,cret
       character *(*) locname
       integer edfgaui
 c
@@ -63,7 +65,8 @@ c
       implicit none
       save
 c      
-      integer fid,typgeo,mode_coo,ngauss,cret
+      integer*8 fid
+      integer  typgeo,mode_coo,ngauss,cret
       real*8 refcoo(*),gscoo(*),wg(*)
       character *(*) locname
       integer edfgaue
@@ -83,7 +86,8 @@ c
       implicit none
       save
 c      
-      integer fid,mode_coo,cret
+      integer*8 fid
+      integer  mode_coo,cret
       real*8 refcoo(*),gscoo(*),wg(*)
       character *(*) locname
       integer edfgaul 

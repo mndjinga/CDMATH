@@ -396,20 +396,21 @@ MACRO(MED_FIND_HDF5)
     FIND_PACKAGE(MedfileHDF5 REQUIRED)
 
     ##
-    ## Requires 1.8.x version
+    ## Requires 1.10.x version
     ##
-    IF (NOT HDF_VERSION_MAJOR_REF EQUAL 1 OR NOT HDF_VERSION_MINOR_REF EQUAL 8)
-        MESSAGE(FATAL_ERROR "HDF5 version is ${HDF_VERSION_REF}. Only 1.8.x versions are supported.")
+    IF (NOT HDF_VERSION_MAJOR_REF EQUAL 1 OR HDF_VERSION_MINOR_REF LESS 8 HDF_VERSION_MINOR_REF GREATER 10 )
+        MESSAGE(FATAL_ERROR "HDF5 version is ${HDF_VERSION_REF}. Only versions >= 1.10.0 are supported.")
     ENDIF()
     ##
     ##
 
     ADD_DEFINITIONS(-DH5_USE_16_API)  
     IF(WIN32 AND MEDFILE_BUILD_SHARED_LIBS)
-      ADD_DEFINITIONS(-D_HDF5USEDLL_)  
+      ADD_DEFINITIONS(-D_HDF5USEDLL_ -DH5_BUILT_AS_DYNAMIC_LIB=1)   
     ENDIF()
     
     # Take what is exposed by the standard FIND_PACKAGE()
+    
     SET(HDF5_LIBS ${HDF5_LIBRARIES})
 
     IF(HDF5_IS_PARALLEL OR HDF5_ENABLE_PARALLEL)

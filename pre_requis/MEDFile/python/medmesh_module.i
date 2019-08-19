@@ -1,6 +1,6 @@
 # -*- coding:utf-8 -*-
 
-%module medmesh
+%module (package="med") medmesh
 
 //A inclure avant toute déclaration à SWIG
 %include "med_881.i"
@@ -31,7 +31,8 @@ med_int * const numdt,
 med_int * const numit,
 med_int * const cellmaxnodes,
 med_int * const isolatednodes,
-med_int * const verticesnodes
+med_int * const verticesnodes,
+med_geometry_type * const geotype
 %enddef
 
 %apply int *OUTPUT { med_int * const meshdim };

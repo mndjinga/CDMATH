@@ -1,6 +1,6 @@
 !*  This file is part of MED.
 !*
-!*  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+!*  COPYRIGHT (C) 1999 - 2019  EDF R&D, CEA/DEN
 !*  MED is free software: you can redistribute it and/or modify
 !*  it under the terms of the GNU Lesser General Public License as published by
 !*  the Free Software Foundation, either version 3 of the License, or
@@ -26,8 +26,9 @@ program UsesCase_MEDmesh_11
   include 'med.hf90'
 
   integer cret
-  integer fid
-  ! space dim, mesh dim      
+  integer*8 fid
+
+  ! space dim, mesh dim
   integer sdim, mdim
   ! axis name, unit name
   character*16 axname(2), unname(2)
@@ -43,6 +44,8 @@ program UsesCase_MEDmesh_11
   integer nstep
   ! coordinate changement, geotransformation
   integer coocha, geotra
+  ! number of family numbers
+  integer nfanbrs
   ! coordinates
   real*8, dimension(:), allocatable :: coords
   integer nnodes, ntria3, nquad4
@@ -56,7 +59,7 @@ program UsesCase_MEDmesh_11
   ! comment 1, mesh description
   character*200 cmt1, mdesc
   ! group name
-  character*80, dimension (:), allocatable ::  gname  
+  character*80, dimension (:), allocatable ::  gname
 
   parameter (mname = "2D unstructured mesh")
   parameter (finame = "UsesCase_MEDmesh_10.med")
@@ -68,8 +71,8 @@ program UsesCase_MEDmesh_11
      call efexit(-1)
   endif
 
-  ! ... we know that the MED file has only one mesh, 
-  ! a real code working would check ... 
+  ! ... we know that the MED file has only one mesh,
+  ! a real code working would check ...
 
   ! read mesh informations : mesh dimension, space dimension ...
   call  mmhmin(fid, mname, sdim, mdim, mtype, mdesc, dtunit, stype, nstep, atype, axname, unname, cret)
@@ -97,7 +100,7 @@ program UsesCase_MEDmesh_11
   endif
   print *,"Number of nodes  =", nnodes
 
-  ! ... we know that we only have MED_TRIA3 and MED_QUAD4 in the mesh, 
+  ! ... we know that we only have MED_TRIA3 and MED_QUAD4 in the mesh,
   ! a real code working would check all MED geometry cell types ...
 
   ! read how many triangular cells in the mesh
@@ -193,19 +196,29 @@ program UsesCase_MEDmesh_11
         print *,"Group name =", gname
         deallocate(gname)
      endif
-  
+
   enddo
 
   ! read family numbers for nodes
-  ! By convention, if there is no numbers in the file, it means that 0 is the family 
+  ! By convention, if there is no numbers in the file, it means that 0 is the family
   ! number of all nodes
+  call mmhnme(fid,mname,MED_NO_DT,MED_NO_IT,MED_NODE,MED_NONE,MED_FAMILY_NUMBER,MED_NO_CMODE,coocha,geotra,nfanbrs,cret)
+  if (cret .ne. 0) then
+     print *,'Check family numbers nodes'
+     call efexit(-1)
+  endif
   allocate ( fanbrs(nnodes),STAT=cret )
   if (cret .ne. 0) then
      print *,'Memory allocation'
      call efexit(-1)
   endif
-  call mmhfnr(fid,mname,MED_NO_DT,MED_NO_IT,MED_NODE, MED_NONE,fanbrs,cret)
-  if (cret .ne. 0) then
+  if (nfanbrs .ne. 0) then
+     call mmhfnr(fid,mname,MED_NO_DT,MED_NO_IT,MED_NODE, MED_NONE,fanbrs,cret)
+     if (cret .ne. 0) then
+        print *,'Read family numbers nodes'
+        call efexit(-1)
+     endif
+  else
      do n=1,nnodes
         fanbrs(n) = 0
      enddo
@@ -214,17 +227,24 @@ program UsesCase_MEDmesh_11
   deallocate(fanbrs)
 
   ! read family numbers for cells
+  call mmhnme(fid,mname,MED_NO_DT,MED_NO_IT,MED_CELL,MED_TRIA3,MED_FAMILY_NUMBER,MED_NODAL,coocha,geotra,nfanbrs,cret)
+  if (cret .ne. 0) then
+     print *,'Check family numbers tria3'
+     call efexit(-1)
+  endif
   allocate ( fanbrs(ntria3),STAT=cret )
   if (cret .ne. 0) then
      print *,'Memory allocation'
      call efexit(-1)
   endif
- 
-  do n=1,ntria3
-     fanbrs(n) = 0
-  enddo
-  call mmhfnr(fid,mname,MED_NO_DT,MED_NO_IT,MED_CELL,MED_TRIA3,fanbrs,cret)
-  if (cret .ne. 0) then
+
+  if (nfanbrs .ne. 0) then
+     call mmhfnr(fid,mname,MED_NO_DT,MED_NO_IT,MED_CELL,MED_TRIA3,fanbrs,cret)
+     if (cret .ne. 0) then
+        print *,'Read family numbers tria3'
+        call efexit(-1)
+     endif
+  else
      do n=1,ntria3
         fanbrs(n) = 0
      enddo
@@ -232,16 +252,23 @@ program UsesCase_MEDmesh_11
   print *, 'Family numbers for tria cells :', fanbrs
   deallocate(fanbrs)
 
+  call mmhnme(fid,mname,MED_NO_DT,MED_NO_IT,MED_CELL,MED_QUAD4,MED_FAMILY_NUMBER,MED_NODAL,coocha,geotra,nfanbrs,cret)
+  if (cret .ne. 0) then
+     print *,'Check family numbers quad4'
+     call efexit(-1)
+  endif
   allocate ( fanbrs(nquad4),STAT=cret )
   if (cret .ne. 0) then
      print *,'Memory allocation'
      call efexit(-1)
   endif
-  do n=1,nquad4
-     fanbrs(n) = 0
-  enddo  
-  call mmhfnr(fid,mname,MED_NO_DT,MED_NO_IT,MED_CELL,MED_QUAD4,fanbrs,cret)
-  if (cret .ne. 0) then
+  if (nfanbrs .ne. 0) then
+     call mmhfnr(fid,mname,MED_NO_DT,MED_NO_IT,MED_CELL,MED_QUAD4,fanbrs,cret)
+     if (cret .ne. 0) then
+        print *,'Read family numbers quad4'
+        call efexit(-1)
+     endif
+  else
      do n=1,nquad4
         fanbrs(n) = 0
      enddo

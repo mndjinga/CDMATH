@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2019  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -17,7 +17,7 @@
 
 
 /*
- *  How to create a structured mesh 
+ *  How to create a structured mesh
  *
  *  Use case 4 :  write a 2D structured mesh (5x3 cartesian grid)
  */
@@ -54,30 +54,30 @@ int main (int argc, char **argv) {
   }
 
   /* create the structured mesh in the MED file */
-  if (MEDmeshCr(fid, meshname, spacedim, meshdim, MED_STRUCTURED_MESH,  
+  if (MEDmeshCr(fid, meshname, spacedim, meshdim, MED_STRUCTURED_MESH,
  		"A 2D structured mesh","",MED_SORT_DTIT,
 		MED_CARTESIAN, axisname, unitname) < 0) {
     MESSAGE("ERROR : mesh creation ...");
     goto ERROR;
   }
-  
+
   /* specify the grid type : MED_CARTESIAN_GRID */
    if (MEDmeshGridTypeWr(fid,meshname, MED_CARTESIAN_GRID) < 0) {
     MESSAGE("ERROR : write grid type ...");
     goto ERROR;
   }
-  
-   /* write axis "X" and "Y" coordinates */ 
+
+   /* write axis "X" and "Y" coordinates */
    axis = 1;
    size = 5;
-   if (MEDmeshGridIndexCoordinateWr(fid, meshname, MED_NO_DT, MED_NO_IT,0.0, 
+   if (MEDmeshGridIndexCoordinateWr(fid, meshname, MED_NO_DT, MED_NO_IT,0.0,
 				    axis, size, cooXaxis) < 0) {
      MESSAGE("ERROR : write of axis X coordinates ...");
      goto ERROR;
    }
   axis++;
   size = 3;
-  if (MEDmeshGridIndexCoordinateWr(fid, meshname, MED_NO_DT, MED_NO_IT,0.0, 
+  if (MEDmeshGridIndexCoordinateWr(fid, meshname, MED_NO_DT, MED_NO_IT,0.0,
 				   axis, size, cooYaxis) < 0) {
     MESSAGE("ERROR : write of axis Y coordinates ...");
     goto ERROR;
@@ -90,14 +90,14 @@ int main (int argc, char **argv) {
     MESSAGE("ERROR : cells names  ...");
     goto ERROR;
   }
-  
+
   /* We have to create family 0 : by default, all mesh entities family number is 0 */
   if (MEDfamilyCr(fid, meshname, MED_NO_NAME, 0, 0, MED_NO_GROUP) < 0) {
-    MESSAGE("ERROR : quadrangular cells connectivity ...");
+    MESSAGE("ERROR : family 0 creation ...");
     goto ERROR;
   }
 
-  /* We decide to create a family for boundary quad4 : 
+  /* We decide to create a family for boundary quad4 :
      by convention a nodes family number is > 0 and an element family number is < 0 */
   if (MEDfamilyCr(fid, meshname,familyname, 1, -1, groupname) < 0) {
     MESSAGE("ERROR : family creation ...");
@@ -109,16 +109,16 @@ int main (int argc, char **argv) {
 				  MED_CELL, MED_QUAD4, nquad4, familynumbers) < 0) {
     MESSAGE("ERROR : nodes family numbers ...");
     goto ERROR;
-  }    
+  }
 
   ret = 0;
  ERROR:
 
   /* close MED file  */
   if (MEDfileClose(fid) < 0) {
-    MESSAGE("ERROR : close file ...");             
-    ret = -1; 
-  } 
+    MESSAGE("ERROR : close file ...");
+    ret = -1;
+  }
 
   return ret;
 }

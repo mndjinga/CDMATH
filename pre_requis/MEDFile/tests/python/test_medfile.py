@@ -8,19 +8,19 @@ MEDfileCommentWr(fid,"Ceci est mon premier commentaire")
 MEDfileClose(fid)
 
 hdfok,medok = MEDfileCompatibility("test_medfile_1_1.med");
-print "Vérification de la compatibilité du fichier avec HDF : hdfok=",hdfok," ; avec MED : medok=",medok
+print("Vérification de la compatibilité du fichier avec HDF : hdfok=",hdfok," ; avec MED : medok=",medok)
 
 fid = MEDfileOpen("test_medfile_1_1.med",MED_ACC_RDONLY)
 
 mm,m,r =  MEDfileNumVersionRd(fid)
-print "Version Du Fichier (num) :",mm,m,r
+print("Version Du Fichier (num) :",mm,m,r)
 version = MEDfileStrVersionRd(fid);
-print "Version Du Fichier (str) :",version
+print("Version Du Fichier (str) :",version)
 
 comment = MEDfileCommentRd(fid)
-print comment
+print(comment)
 
-print MEDfileName(fid);
+print(MEDfileName(fid));
 
 MEDfileClose(fid)
 

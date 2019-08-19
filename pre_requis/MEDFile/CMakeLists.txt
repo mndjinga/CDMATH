@@ -1,5 +1,5 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8.10 FATAL_ERROR)
-PROJECT(MEDFile CXX C)
+PROJECT(MEDFile C CXX)
 
 ## The following signature is still buggy as of CMake 2.8.11 - 
 ## the OPTIONAL is not considered.
@@ -15,9 +15,12 @@ ELSE()
 ENDIF()
 
 ## Version number 
-SET(MED_NUM_MAJEUR  3)
-SET(MED_NUM_MINEUR  3)
-SET(MED_NUM_RELEASE 1)
+SET(MED_NUM_MAJEUR  4)
+SET(MED_NUM_MINEUR  0)
+SET(MED_NUM_RELEASE 0)
+
+## Previous version
+SET(MED_3_LATEST_MINOR 3)
 
 SET(MED_STR_VERSION "${MED_NUM_MAJEUR}.${MED_NUM_MINEUR}.${MED_NUM_RELEASE}")
 
@@ -33,20 +36,28 @@ OPTION (MEDFILE_BUILD_STATIC_LIBS "Build MED-file static libraries" OFF)
 OPTION (MEDFILE_INSTALL_DOC "Install pre-built documentation" OFF)
 OPTION (MEDFILE_BUILD_PYTHON "Build Python bindings (needs SWIG)" OFF)
 
+#-- Add an Option to toggle the generation of the API documentation
+#-- Embedded documentation contains patched doxygen generated fortran documention
+#-- If you rebuild it with your own doxygen Fortran documentation will differ
+option(MEDFILE_BUILD_DOC "Use Doxygen to create the HTML based API documentation" OFF)
+if(MEDFILE_BUILD_DOC)
+  FIND_PACKAGE(Doxygen)
+  if (NOT DOXYGEN_FOUND)
+    message(FATAL_ERROR
+      "Doxygen is needed to build the documentation. Please install it correctly")
+  endif()
+
+  ADD_SUBDIRECTORY(doc)
+endif()
+
 # Option checking.
-IF(WIN32 AND MEDFILE_BUILD_SHARED_LIBS AND MEDFILE_BUILD_STATIC_LIBS)
-  MESSAGE(WARNING "On Windows you can not build shared and static libraries at the same time! "
-  "Disabling STATIC build.")
+IF(MEDFILE_BUILD_SHARED_LIBS AND MEDFILE_BUILD_STATIC_LIBS)
+  MESSAGE(FATAL_ERROR "You can not build shared and static libraries at the same time! ")
   SET(MEDFILE_BUILD_STATIC_LIBS OFF)
 ENDIF()
 IF(NOT (MEDFILE_BUILD_SHARED_LIBS OR MEDFILE_BUILD_STATIC_LIBS))
-  MESSAGE(WARNING "You must select to build either STATIC or SHARED libs. Setting "
-  "MEDFILE_BUILD_SHARED_LIBS to ON.")
+  MESSAGE(FATAL_ERROR "You must select to build either STATIC or SHARED libs")
   SET(MEDFILE_BUILD_SHARED_LIBS ON)
-ENDIF()
-IF(MEDFILE_BUILD_SHARED_LIBS AND MEDFILE_BUILD_STATIC_LIBS)
-  MESSAGE(WARNING "You are building both static and shared libs. This might create conflicts when " 
-  "linking projects to med-file. You have been warned.")
 ENDIF()
 
 ## Useful macros
@@ -81,7 +92,7 @@ ENDIF(WIN32)
 IF(WIN32 AND NOT CYGWIN)
    SET(INSTALL_CMAKE_CONFIG_DIR cmake)
 ELSE()
-   SET(INSTALL_CMAKE_CONFIG_DIR share/cmake/${PROJECT_NAME})
+   SET(INSTALL_CMAKE_CONFIG_DIR share/cmake/med-fichier-${MED_STR_VERSION})
 ENDIF()
 SET(INSTALL_INCLUDE_DIR include)
 
@@ -123,8 +134,9 @@ IF(MEDFILE_BUILD_PYTHON)
 ENDIF()
 
 ## Installation of the doc
-IF(MEDFILE_INSTALL_DOC)
-  INSTALL(DIRECTORY doc DESTINATION ${CMAKE_INSTALL_PREFIX}/share)
+IF(MEDFILE_INSTALL_DOC  OR MEDFILE_BUILD_DOC)
+  INSTALL(DIRECTORY doc/html.dox/ DESTINATION ${CMAKE_INSTALL_PREFIX}/share/doc/med-fichier-${MED_STR_VERSION} REGEX "Makefile*" EXCLUDE PATTERN "*.am" EXCLUDE)
+  INSTALL(DIRECTORY doc/gif doc/jpg doc/png DESTINATION ${CMAKE_INSTALL_PREFIX}/share/doc/med-fichier-${MED_STR_VERSION} FILES_MATCHING PATTERN "*.gif" PATTERN "*.jpg" PATTERN "*.svg" PATTERN "*.png")
 ENDIF()
 
 #######################

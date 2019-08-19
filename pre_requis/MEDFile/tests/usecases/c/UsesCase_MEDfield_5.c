@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2019  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -15,7 +15,7 @@
  *  along with MED.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* 
+/*
  * Field use case 5 : read a field with following with computing steps
  */
 
@@ -94,10 +94,10 @@ int main (int argc, char **argv) {
 	}
         if (MEDfieldValueRd(fid, fieldname, numdt, numit, MED_CELL, geotype,
 			    MED_FULL_INTERLACE, MED_ALL_CONSTITUENT, (unsigned char*) values) < 0) {
-	  MESSAGE("ERROR : read fields values for cells ..."); 
+	  MESSAGE("ERROR : read fields values for cells ...");
 	  free(values);
-	  goto ERROR; 
-	}  
+	  goto ERROR;
+	}
 	free(values);
       }
     }
@@ -105,12 +105,12 @@ int main (int argc, char **argv) {
 
   ret=0;
  ERROR:
-   
+
   /* close file */
   if (MEDfileClose(fid) < 0) {
-    MESSAGE("ERROR : close file ...");             
-    ret=-1; 
-  } 
+    MESSAGE("ERROR : close file ...");
+    ret=-1;
+  }
 
   return ret;
 }

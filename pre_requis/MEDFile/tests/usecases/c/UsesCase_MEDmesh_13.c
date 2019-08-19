@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2019  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -70,24 +70,24 @@ int main (int argc, char **argv) {
   }
 
   /* write a comment in the file */
-  if (MEDfileCommentWr(fid, "A 2D unstructured mesh : 12, 12 polygons") < 0) 
+  if (MEDfileCommentWr(fid, "A 2D unstructured mesh : 12, 12 polygons") < 0)
     { MESSAGE("ERROR : write file description ...");
       goto ERROR;
     }
-  
+
   /* mesh creation : a 2D unstructured mesh */
-  if (MEDmeshCr(fid, meshname, spacedim, meshdim, 
+  if (MEDmeshCr(fid, meshname, spacedim, meshdim,
 		MED_UNSTRUCTURED_MESH, "A 2D mesh with 2 polygons",
-		"", MED_SORT_DTIT, MED_CARTESIAN, axisname, unitname) < 0) 
+		"", MED_SORT_DTIT, MED_CARTESIAN, axisname, unitname) < 0)
     { MESSAGE("ERROR : mesh creation ...");
       goto ERROR;
     }
 
-  /* nodes coordinates in a cartesian axis in full interlace mode 
-     (X1,Y1, X2,Y2, X3,Y3, ...) with no iteration and computation step 
+  /* nodes coordinates in a cartesian axis in full interlace mode
+     (X1,Y1, X2,Y2, X3,Y3, ...) with no iteration and computation step
   */
   if (MEDmeshNodeCoordinateWr(fid, meshname, MED_NO_DT, MED_NO_IT, MED_UNDEF_DT,
-			      MED_FULL_INTERLACE, nnodes, coordinates) < 0) 
+			      MED_FULL_INTERLACE, nnodes, coordinates) < 0)
     { MESSAGE("ERROR : nodes coordinates ...");
       goto ERROR;
     }
@@ -102,14 +102,14 @@ int main (int argc, char **argv) {
 
 
   /* create family 0 : by default, all mesh entities family number is 0 */
-  if (MEDfamilyCr(fid, meshname, MED_NO_NAME, 0, 0, MED_NO_GROUP) < 0) 
+  if (MEDfamilyCr(fid, meshname, MED_NO_NAME, 0, 0, MED_NO_GROUP) < 0)
     { MESSAGE("ERROR : family 0 creation ...");
       goto ERROR;
     }
 
   ret=0;
  ERROR:
-  
+
   /* close MED file */
   if (MEDfileClose(fid)  < 0) {
     MESSAGE("ERROR : close file ...");

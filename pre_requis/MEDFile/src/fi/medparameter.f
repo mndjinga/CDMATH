@@ -1,6 +1,6 @@
 C*  This file is part of MED.
 C*
-C*  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+C*  COPYRIGHT (C) 1999 - 2019  EDF R&D, CEA/DEN
 C*  MED is free software: you can redistribute it and/or modify
 C*  it under the terms of the GNU Lesser General Public License as published by
 C*  the Free Software Foundation, either version 3 of the License, or
@@ -22,7 +22,8 @@ c
       save
 c     
       character *(*) name, des, dtunit
-      integer fid, cret,  type
+      integer*8 fid
+      integer    cret,  type
       integer mprfcre
 c
       cret = mprfcre(fid,name,len(name),type,des,len(des),
@@ -39,7 +40,8 @@ c
       implicit none
       save
       character*(*) name
-      integer fid,numdt,numit,cret
+      integer*8 fid
+      integer   numdt,numit,cret
       real*8 dt,val
       integer mprfrvw
 c
@@ -56,7 +58,8 @@ c
       implicit none
       save
       character*(*) name
-      integer fid,numdt,numit,cret
+      integer*8 fid
+      integer   numdt,numit,cret
       real*8 dt
       integer val
       integer mprfivw
@@ -74,7 +77,8 @@ c
       implicit none
       save
       character*(*) name
-      integer fid,numdt,numit,cret
+      integer*8 fid
+      integer   numdt,numit,cret
       real*8 val
       integer mprfrvr
 c
@@ -91,7 +95,8 @@ c
       implicit none
       save
       character*(*) name
-      integer fid,numdt,numit,cret
+      integer*8 fid
+      integer   numdt,numit,cret
       integer val
       integer mprfivr
 c
@@ -107,7 +112,8 @@ c     DEC$ ATTRIBUTES DLLEXPORT :: mprnpr
 c
       implicit none
       save
-      integer fid,n,cret
+      integer*8 fid
+      integer   n,cret
       integer mprfnpr
 c
       n = mprfnpr(fid)
@@ -131,7 +137,8 @@ c
       save
 c
       character *(*) name, dtunit, desc
-      integer fid, it, cret,  type, nstep
+      integer*8 fid
+      integer   it, cret,  type, nstep
       integer mprfpri 
 c
       cret = mprfpri(fid, it, name, type,
@@ -150,7 +157,8 @@ c
       save
 c
       character *(*) name, dtunit, desc
-      integer fid, cret,  type, nstep
+      integer*8 fid
+      integer   cret,  type, nstep
       integer mprfpin 
 c
       cret = mprfpin(fid, name, len(name), type,
@@ -169,7 +177,8 @@ c
       save
 c
       character *(*) name
-      integer fid, it, cret, numdt, numit
+      integer*8 fid
+      integer   it, cret, numdt, numit
       real*8 dt
       integer mprfcsi 
 c

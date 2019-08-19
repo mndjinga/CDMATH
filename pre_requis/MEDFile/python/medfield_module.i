@@ -1,5 +1,5 @@
 # -*- coding:utf-8 -*-
-%module medfield
+%module (package="med") medfield
 
 %include "med_881.i"
 %SwigPyIteratorDef(medfield_module)

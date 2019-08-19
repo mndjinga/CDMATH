@@ -1,6 +1,6 @@
 C*  This file is part of MED.
 C*
-C*  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+C*  COPYRIGHT (C) 1999 - 2019  EDF R&D, CEA/DEN
 C*  MED is free software: you can redistribute it and/or modify
 C*  it under the terms of the GNU Lesser General Public License as published by
 C*  the Free Software Foundation, either version 3 of the License, or
@@ -27,7 +27,8 @@ C
       include 'med.hf'
 C
 C
-      integer cret, fid, ncha, nmaa, mid, mid2
+      integer*8 fid, mid, mid2
+      integer cret, ncha, nmaa
       integer i, ncomp, type
       character*16  comp(3), unit(3), dtunit
       character*64  nomcha,nommaa
@@ -60,18 +61,18 @@ C     ** Montage du fichier test10-0.med (acces aux champs et maillages)
       endif      
       print *,'On monte les champs du fichier test10-0.med'
 C
-C     ** Lecture du nombre de champ apres montage
+C     ** Lecture du nombre de champs apres montage
       call mfdnfd(fid,ncha,cret)
       print *,cret
       if (cret .ne. 0 ) then
-         print *,'Erreur lecture du nombre de champ'
+         print *,'Erreur lecture du nombre de champs'
          call efexit(-1)
       endif      
       print *,'Nombre de champs dans test20-0.med apres montage : ',ncha
 C
 C     ** Acces a tous les champs de test10.med a travers le point de 
 C     ** montage
-C
+C  
       do 10 i = 1,ncha
 C
 C        ** Lecture du nombre de composante dans le champ

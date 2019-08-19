@@ -1,6 +1,6 @@
 C*  This file is part of MED.
 C*
-C*  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+C*  COPYRIGHT (C) 1999 - 2019  EDF R&D, CEA/DEN
 C*  MED is free software: you can redistribute it and/or modify
 C*  it under the terms of the GNU Lesser General Public License as published by
 C*  the Free Software Foundation, either version 3 of the License, or
@@ -24,7 +24,8 @@ c
       save
       character*(*) pname
       integer profil(*)
-      integer fid,cret,psize
+      integer*8 fid
+      integer   cret,psize
       integer mpffprw
 c
       cret = mpffprw(fid,pname,len(pname),psize,profil)
@@ -39,7 +40,8 @@ c     DEC$ ATTRIBUTES DLLEXPORT :: mpfnpf
 c
       implicit none
       save
-      integer fid,n,cret
+      integer*8 fid
+      integer   n,cret
       integer mpffnpf
 c
       n = mpffnpf(fid)
@@ -62,7 +64,8 @@ c
       save
 c
       character *(*) pname
-      integer fid, psize, it, cret
+      integer*8 fid
+      integer   psize, it, cret
       integer mpffpfi
 c
       cret = mpffpfi(fid, it, pname, psize)
@@ -79,7 +82,8 @@ c
       save
 c
       character *(*) pname
-      integer fid, psize, cret
+      integer*8 fid
+      integer   psize, cret
       integer mpffpsn
 c
       cret = mpffpsn(fid, pname, len(pname), psize)
@@ -96,7 +100,8 @@ c
       save
       character*(*) pname
       integer profil(*)
-      integer fid,cret
+      integer*8 fid
+      integer   cret
       integer mpffprr
 c
       cret = mpffprr(fid,pname,len(pname),profil)

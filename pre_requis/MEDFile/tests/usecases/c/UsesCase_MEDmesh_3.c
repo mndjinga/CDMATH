@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2019  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -84,9 +84,9 @@ int main (int argc, char **argv) {
       MESSAGE("ERROR : memory allocation ...");
       goto ERROR;
     }
-   
+
     /* read mesh informations : meshname, mesh dimension, mesh type ... */
-    if (MEDmeshInfo(fid, i+1, meshname, &spacedim, &meshdim, &meshtype, meshdescription, 
+    if (MEDmeshInfo(fid, i+1, meshname, &spacedim, &meshdim, &meshtype, meshdescription,
 		    dtunit, &sortingtype, &nstep, &axistype, axisname, unitname) < 0) {
       MESSAGE("ERROR : mesh info ...");
       free(axisname); free(unitname);
@@ -95,7 +95,7 @@ int main (int argc, char **argv) {
 
     free(axisname);
     free(unitname);
-    
+
     /* read how many nodes in the mesh */
     if ((nnodes = MEDmeshnEntity(fid, meshname, MED_NO_DT, MED_NO_IT, MED_NODE, MED_NO_GEOTYPE,
 				 MED_COORDINATE, MED_NO_CMODE,&coordinatechangement,
@@ -103,13 +103,13 @@ int main (int argc, char **argv) {
       MESSAGE("ERROR : number of nodes ...");
     goto ERROR;
     }
-    
+
     /* read mesh nodes coordinates */
     if ((coordinates = (med_float*) malloc(sizeof(med_float)*nnodes*spacedim)) == NULL) {
       MESSAGE("ERROR : memory allocation ...");
       goto ERROR;
     }
-    
+
     if (MEDmeshNodeCoordinateRd(fid, meshname, MED_NO_DT, MED_NO_IT, MED_FULL_INTERLACE,
 				coordinates) < 0) {
       MESSAGE("ERROR : nodes coordinates ...");
@@ -119,12 +119,12 @@ int main (int argc, char **argv) {
 
     if (coordinates)
       free(coordinates);
-    
+
     /* read number of geometrical types for cells */
     if ((ngeo = MEDmeshnEntity(fid, meshname, MED_NO_DT, MED_NO_IT, MED_CELL,MED_GEO_ALL,
 			       MED_CONNECTIVITY, MED_NODAL,&coordinatechangement,
 			       &geotransformation)) < 0) {
-      MESSAGE("ERROR : number of cell ...");
+      MESSAGE("ERROR : number of geo type ...");
       ISCRUTE(geotype);
       goto ERROR;
     }
@@ -132,9 +132,9 @@ int main (int argc, char **argv) {
     for (it=1; it<=ngeo; it++) {
 
       /* get geometry type */
-      if ((nelt = MEDmeshEntityInfo(fid, meshname, MED_NO_DT, MED_NO_IT,MED_CELL,it,
-				   geotypename,&geotype)) < 0) {
-	MESSAGE("ERROR : number of cell ...");
+      if (MEDmeshEntityInfo(fid, meshname, MED_NO_DT, MED_NO_IT,MED_CELL,it,
+				   geotypename,&geotype) < 0) {
+	MESSAGE("ERROR : get geo type ...");
 	ISCRUTE(it);
 	goto ERROR;
       }
@@ -146,21 +146,21 @@ int main (int argc, char **argv) {
 	MESSAGE("ERROR : number of cell ...");
 	goto ERROR;
       }
-      
+
       /* read cells connectivity in the mesh */
       if ((connectivity = (med_int *) malloc(sizeof(med_int)*nelt*(geotype%100))) == NULL) {
 	MESSAGE("ERROR : memory allocation ...");
 	goto ERROR;
       }
-      
+
       if (MEDmeshElementConnectivityRd(fid, meshname, MED_NO_DT, MED_NO_IT, MED_CELL,
 				       geotype, MED_NODAL, MED_FULL_INTERLACE, connectivity) < 0) {
-	MESSAGE("ERROR : cellconnectivity ...");
+	MESSAGE("ERROR : cell connectivity ...");
 	ISCRUTE(geotype);
 	free(connectivity);
 	goto ERROR;
       }
-      
+
       /* memory deallocation */
       if (connectivity) {
 	free(connectivity);
@@ -169,20 +169,20 @@ int main (int argc, char **argv) {
 
 
     }
-    
+
   }
-  
-  /* 
+
+  /*
    * ... we know that the family number of nodes and elements is 0, a real code would check ...
    */
   ret=0;
  ERROR:
-    
+
   /* close MED file */
   if (MEDfileClose(fid) < 0) {
-    MESSAGE("ERROR : close file");             
-    ret=-1; 
-  } 
+    MESSAGE("ERROR : close file");
+    ret=-1;
+  }
 
   return ret;
 }

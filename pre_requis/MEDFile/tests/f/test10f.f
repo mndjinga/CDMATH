@@ -1,6 +1,6 @@
 C*  This file is part of MED.
 C*
-C*  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+C*  COPYRIGHT (C) 1999 - 2016  EDF R&D, CEA/DEN
 C*  MED is free software: you can redistribute it and/or modify
 C*  it under the terms of the GNU Lesser General Public License as published by
 C*  the Free Software Foundation, either version 3 of the License, or
@@ -26,7 +26,8 @@ C
 	implicit none
 	include 'med.hf'
 C
-	integer      ret,fid,USER_INTERLACE,USER_MODE
+	integer*8    fid
+	integer      ret,USER_INTERLACE,USER_MODE
 	integer      FTYPECHA
 	real*8       a,b,p1,p2,dt
 

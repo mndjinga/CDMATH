@@ -1,6 +1,6 @@
 C*  This file is part of MED.
 C*
-C*  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+C*  COPYRIGHT (C) 1999 - 2019  EDF R&D, CEA/DEN
 C*  MED is free software: you can redistribute it and/or modify
 C*  it under the terms of the GNU Lesser General Public License as published by
 C*  the Free Software Foundation, either version 3 of the License, or
@@ -22,7 +22,8 @@ c
       save
 c
       character *(*) name, fname, gname
-      integer fid, fnum, ngro, cret
+      integer*8 fid
+      integer  fnum, ngro, cret
       integer mfafcre
 c
       cret = mfafcre(fid, name, len(name), fname, len(name),
@@ -39,7 +40,8 @@ c
       implicit none
       save
 c
-      integer fid,n,cret
+      integer*8 fid
+      integer n,cret
       character *(*) maa
       integer mfafnfa
 c
@@ -61,7 +63,8 @@ c
       implicit none
       save
 c
-      integer fid,n,cret,it
+      integer*8 fid
+      integer n,cret,it
       character *(*) maa
       integer mfafnfg
 c
@@ -83,7 +86,8 @@ c
       implicit none
       save
 c 
-      integer fid,num,cret,ind
+      integer*8 fid
+      integer num,cret,ind
       character *(*) maa,fam,gro
       integer mfaffai
 c
@@ -100,7 +104,8 @@ c
       implicit none
       save
 c
-      integer fid,it,n,cret
+      integer*8 fid
+      integer it,n,cret
       character *(*) maa
       integer mfafona
 c
@@ -123,7 +128,8 @@ c
       implicit none
       save
 c 
-      integer fid,num,cret,it
+      integer*8 fid
+      integer num,cret,it
       integer attnum(*),attval(*)
       character *(*) maa,fam,gro,attdes
       integer mfafofi

@@ -2,7 +2,7 @@
 # -*- coding:utf-8 -*-
 # /*  This file is part of MED.
 #  *
-#  *  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+#  *  COPYRIGHT (C) 1999 - 2019  EDF R&D, CEA/DEN
 #  *  MED is free software: you can redistribute it and/or modify
 #  *  it under the terms of the GNU Lesser General Public License as published by
 #  *  the Free Software Foundation, either version 3 of the License, or
@@ -36,11 +36,11 @@ ninterp = MEDnInterp(fid)
 
 #/* read each interpolation family */
 #/* with an access by an iterator */
-for it in xrange(1,ninterp+1):
+for it in range(1,ninterp+1):
 
     interpname, geotype, cellnodes, nbasisfunc, nvariable, maxdegree, nmaxcoefficient = MEDinterpInfo(fid,it) 
     # /* read each basis function */
-    for  basisfuncit in xrange(1,nbasisfunc+1):
+    for  basisfuncit in range(1,nbasisfunc+1):
         ncoefficient = MEDinterpBaseFunctionCoefSize(fid,interpname,basisfuncit)
 
         coefficient = MEDFLOAT(ncoefficient)

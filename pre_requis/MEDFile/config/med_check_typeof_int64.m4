@@ -1,6 +1,6 @@
 dnl  This file is part of MED.
 dnl
-dnl  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+dnl  COPYRIGHT (C) 1999 - 2019  EDF R&D, CEA/DEN
 dnl  MED is free software: you can redistribute it and/or modify
 dnl  it under the terms of the GNU Lesser General Public License as published by
 dnl  the Free Software Foundation, either version 3 of the License, or
@@ -91,7 +91,7 @@ else
   MED_INT32="int"
   #Prévoir un paramétrage
   MED_H5T_INT64="H5T_NATIVE_LONG"
-  AC_DEFINE(MED_H5T_INT64,[H5T_NATIVE_LONG],[The hdf type to user for 64bits signed integer type.])
+  AC_DEFINE(MED_H5T_INT64,[H5T_NATIVE_LONG],[The hdf type to use for 64bits signed integer type.])
 fi
 
 test "x$med_swig_int64" = "xyes" && (AC_DEFINE(MED_SWIG_INT64,[],[The size of a long imply the size of python integer via swig.]))

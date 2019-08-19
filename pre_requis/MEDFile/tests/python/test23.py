@@ -2,7 +2,7 @@
 # -*- coding:utf-8 -*-
 # /*  This file is part of MED.
 #  *
-#  *  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+#  *  COPYRIGHT (C) 1999 - 2019  EDF R&D, CEA/DEN
 #  *  MED is free software: you can redistribute it and/or modify
 #  *  it under the terms of the GNU Lesser General Public License as published by
 #  *  the Free Software Foundation, either version 3 of the License, or
@@ -56,13 +56,13 @@ unicoo = "cm              cm              cm              "
 
 # /* Creation du fichier test23.med */
 fid = MEDfileOpen("test23.med",MED_ACC_CREAT);
-print "Creation du fichier test23.med \n"
+print("Creation du fichier test23.med \n")
 
 # /* Creation du maillage */
 MEDmeshCr( fid, maa, mdim, mdim, MED_UNSTRUCTURED_MESH,
            "un maillage pour test23","s", MED_SORT_DTIT,
            MED_CARTESIAN, nomcoo, unicoo)
-print "Creation du maillage \n"
+print("Creation du maillage \n")
 
 # Ecriture des coordonnees des noeuds en mode MED_FULL_INTERLACE :
 #   (X1,Y1, X2,Y2, X3,Y3, ...) dans un repere cartesien */
@@ -73,12 +73,12 @@ MEDmeshNodeCoordinateWr(fid,maa,MED_NO_DT,MED_NO_IT,MED_UNDEF_DT, MED_FULL_INTER
 #                  ni,index,con)
 MEDmeshPolygon2Wr(fid,maa,MED_NO_DT,MED_NO_IT,MED_UNDEF_DT,MED_CELL,MED_POLYGON,MED_NODAL,
                   ni,index,con)
-print "Ecriture des connectivites de mailles de type MED_POLYGONE en mode nodal \n"
+print("Ecriture des connectivites de mailles de type MED_POLYGONE en mode nodal \n")
 
 # /* Ecriture de la connectivite des mailles polygones en mode nodal */
 MEDmeshPolygon2Wr(fid,maa,MED_NO_DT,MED_NO_IT,MED_UNDEF_DT,MED_CELL,MED_POLYGON2,MED_NODAL,
                   ni,index2,con2)
-print "Ecriture des connectivites de mailles de type MED_POLYGONE Quadratique en mode nodal \n"
+print("Ecriture des connectivites de mailles de type MED_POLYGONE Quadratique en mode nodal \n")
 
 param=(fid,maa,MED_NO_DT,MED_NO_IT,MED_CELL,MED_POLYGON,n)
 # /* Ecriture des noms des polygones */
@@ -86,15 +86,15 @@ param=(fid,maa,MED_NO_DT,MED_NO_IT,MED_CELL,MED_POLYGON,n)
 MEDmeshEntityNameWr(*param,name=nom)
 # MEDmeshEntityNameWr(fid,maa,MED_NO_DT,MED_NO_IT,
 #                     MED_CELL,MED_POLYGON,n,nom)
-print "Ecriture des noms des polygones \n"
+print("Ecriture des noms des polygones \n")
 
 # /* ecriture (optionnelle) des numeros des polygones */
 MEDmeshEntityNumberWr(*param,number=num)
-print "Ecriture des numeros des polygones \n"
+print("Ecriture des numeros des polygones \n")
 
 # /* ecriture des numeros des familles des polygones */
 MEDmeshEntityFamilyNumberWr(*param,number=fam)
-print "Ecriture des numeros des familles des polygones \n"
+print("Ecriture des numeros des familles des polygones \n")
 
 # /* Fermeture du fichier */
 MEDfileClose(fid)

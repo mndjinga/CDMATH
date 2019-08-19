@@ -1,5 +1,5 @@
 # -*- coding:utf-8 -*-
-%module medfamily
+%module (package="med") medfamily
 
 //A inclure avant toute déclaration à SWIG
 %include "med_881.i"

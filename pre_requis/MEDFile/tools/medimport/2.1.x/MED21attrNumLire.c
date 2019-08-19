@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2019  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -24,9 +24,8 @@
 med_err _MED21attrNumLire(med_idt pere,med_type_champ type,char *nom,
 			  unsigned char *val,hid_t hdf_file)
 {
-  med_idt attid;
+  med_idt attid,type_hdf;
   med_err ret;
-  int type_hdf;
 
   if ((attid = H5Aopen_name(pere,nom)) < 0)
     return -1;

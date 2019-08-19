@@ -1,6 +1,6 @@
 C*  This file is part of MED.
 C*
-C*  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+C*  COPYRIGHT (C) 1999 - 2019  EDF R&D, CEA/DEN
 C*  MED is free software: you can redistribute it and/or modify
 C*  it under the terms of the GNU Lesser General Public License as published by
 C*  the Free Software Foundation, either version 3 of the License, or
@@ -22,7 +22,8 @@ c
       implicit none
       save
       character*(*) mname,smname
-      integer fid,cret,mdim,setype,sgtype,etype
+      integer*8 fid
+      integer   cret,mdim,setype,sgtype,etype
       integer msefcre
 c
       etype = msefcre(fid,mname,len(mname),mdim,
@@ -44,7 +45,8 @@ c     DEC$ ATTRIBUTES DLLEXPORT :: msense
 c
       implicit none
       save
-      integer fid,n,cret
+      integer*8 fid
+      integer   n,cret
       integer msefnse
 c
       n = msefnse(fid)
@@ -68,7 +70,8 @@ c
       implicit none
       save
       character*(*) mname,smname
-      integer fid,cret,mdim,setype,sgtype,it
+      integer*8 fid
+      integer   cret,mdim,setype,sgtype,it
       integer snnode,sncell,ncatt,ap,nvatt,mgtype
       integer msefsei
 c
@@ -89,7 +92,8 @@ c
       implicit none
       save
       character*(*) mname,smname
-      integer fid,cret,mdim,setype,sgtype
+      integer*8 fid
+      integer   cret,mdim,setype,sgtype
       integer snnode,sncell,ncatt,ap,nvatt,mgtype
       integer msefsin
 c
@@ -108,7 +112,8 @@ c
       implicit none
       save
       character*(*) mname
-      integer fid,cret,mgtype
+      integer*8 fid
+      integer   cret,mgtype
       integer msefsen
 c
       cret = msefsen(fid,mgtype,mname)
@@ -124,7 +129,8 @@ c
       implicit none
       save
       character*(*) mname
-      integer fid,gtype,cret
+      integer*8 fid
+      integer   gtype,cret
       integer msefsgt
 c
       gtype = msefsgt(fid,mname,len(mname))
@@ -146,7 +152,8 @@ c
       implicit none
       save
       character*(*) mname,aname
-      integer fid,cret,atype,anc
+      integer*8 fid
+      integer   cret,atype,anc
       integer msefvac
 c
       cret = msefvac(fid,mname,len(mname),
@@ -164,7 +171,8 @@ c
       implicit none
       save
       character*(*) mname,aname
-      integer fid,cret,atype,anc
+      integer*8 fid
+      integer   cret,atype,anc
       integer msefvni
 c
       cret = msefvni(fid,mname,len(mname),
@@ -182,7 +190,8 @@ c
       implicit none
       save
       character*(*) mname,aname
-      integer fid,cret,atype,anc,it
+      integer*8 fid
+      integer   cret,atype,anc,it
       integer msefvai
 c
       cret = msefvai(fid,mname,len(mname),it,
@@ -221,7 +230,8 @@ c
       implicit none
       save
       character*(*) mname,aname
-      integer fid,cret,atype,anc,setype
+      integer*8 fid
+      integer   cret,atype,anc,setype
       real*8 val(*)
       integer msefraw
 c
@@ -241,7 +251,8 @@ c
       implicit none
       save
       character*(*) mname,aname
-      integer fid,cret,atype,anc,setype
+      integer*8 fid
+      integer   cret,atype,anc,setype
       integer val(*)
       integer msefiaw
 c
@@ -261,7 +272,8 @@ c
       implicit none
       save
       character*(*) mname,aname
-      integer fid,cret,atype,anc,setype
+      integer*8 fid
+      integer   cret,atype,anc,setype
       character *(*) val
       integer msefsaw
 c
@@ -281,7 +293,8 @@ c
       implicit none
       save
       character*(*) mname,aname,pname
-      integer fid,cret,atype,anc,setype
+      integer*8 fid
+      integer   cret,atype,anc,setype
       real*8 val(*)
       integer msefrpw
 c
@@ -302,7 +315,8 @@ c
       implicit none
       save
       character*(*) mname,aname,pname
-      integer fid,cret,atype,anc,setype
+      integer*8 fid
+      integer   cret,atype,anc,setype
       integer val(*)
       integer msefipw
 c
@@ -323,7 +337,8 @@ c
       implicit none
       save
       character*(*) mname,aname,pname
-      integer fid,cret,atype,anc,setype
+      integer*8 fid
+      integer   cret,atype,anc,setype
       character *(*) val
       integer msefspw
 c
@@ -344,7 +359,8 @@ c
       implicit none
       save
       character*(*) mname,aname,pname
-      integer fid,cret,atype,anc,setype,psize
+      integer*8 fid
+      integer   cret,atype,anc,setype,psize
       integer msefcni
 c
       cret = msefcni(fid,mname,len(mname),
@@ -363,7 +379,8 @@ c
       implicit none
       save
       character*(*) mname,aname,pname
-      integer fid,cret,atype,anc,setype,psize,it
+      integer*8 fid
+      integer   cret,atype,anc,setype,psize,it
       integer msefcai
 c
       cret = msefcai(fid,mname,len(mname),it,
@@ -381,7 +398,8 @@ c
       implicit none
       save
       character*(*) mname,aname
-      integer fid,cret
+      integer*8 fid
+      integer   cret
       real*8 val(*)
       integer msefrar
 c
@@ -399,7 +417,8 @@ c
       implicit none
       save
       character*(*) mname,aname
-      integer fid,cret
+      integer*8 fid
+      integer   cret
       integer val(*)
       integer msefiar
 c
@@ -417,7 +436,8 @@ c
       implicit none
       save
       character*(*) mname,aname
-      integer fid,cret
+      integer*8 fid
+      integer   cret
       character *(*) val
       integer msefsar
 c

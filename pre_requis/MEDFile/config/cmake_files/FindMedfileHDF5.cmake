@@ -47,7 +47,12 @@ IF(EXISTS "${HDF5_ROOT_DIR}")
   ENDIF()
   # Try find_package in config mode with a hard-coded guess. This
   # has the priority.
-  FIND_PACKAGE(HDF5 CONFIG COMPONENTS C QUIET PATHS "${_CONF_DIR}"
+  SET(_OPT static)
+  IF (MEDFILE_BUILD_SHARED_LIBS)
+      SET(_OPT shared)
+  ENDIF()
+  # [ABN] from HDF5 1.10.1, CMake procedure has become ... complicated:
+  FIND_PACKAGE(HDF5 CONFIG COMPONENTS C ${_opt} QUIET PATHS "${_CONF_DIR}"
       NO_CMAKE_BUILDS_PATH NO_CMAKE_PACKAGE_REGISTRY NO_CMAKE_SYSTEM_PACKAGE_REGISTRY)
     
   IF (NOT (HDF5_FOUND OR hdf5_FOUND))  
@@ -127,17 +132,54 @@ IF (HDF5_FOUND)
   # As of HDF5-1.8.11 the following is still not set in the exported CONFIG
   # of the official hdf5-config.cmake. We add it ourselves:
   IF(NOT DEFINED HDF5_LIBRARIES)
-    SET(HDF5_LIBRARIES "hdf5")
+    IF(NOT TARGET hdf5 AND NOT TARGET hdf5-static AND NOT TARGET hdf5-shared)
+      # Some HDF5 versions (e.g. 1.8.18) used hdf5::hdf5 etc
+      SET(_target_prefix "hdf5::")
+    ENDIF()
+    IF(MEDFILE_BUILD_SHARED_LIBS)
+      SET(_suffix "-shared")
+    ELSE()
+      SET(_suffix "-static")
+    ENDIF()
+    SET(HDF5_LIBRARIES "${_target_prefix}hdf5${_suffix}")
   ENDIF()
   
   SET(HDF5_ROOT_DIR ${_tmp_ROOT_DIR})
   
   # Parse HDF5_VERSION to extract major, minor and release number
+  if(NOT HDF5_VERSION)
+    MESSAGE(STATUS "Cannot find HDF5_VERSION - maybe cmake is too old")
+    set( HDF5_VERSION "" )
+    foreach( _dir IN LISTS HDF5_INCLUDE_DIRS )
+      foreach(_hdr "${_dir}/H5pubconf.h" "${_dir}/H5pubconf-64.h" "${_dir}/H5pubconf-32.h")
+        if( EXISTS "${_hdr}" )
+    	    #MESSAGE(STATUS "_hdr=${_hdr}")
+            file( STRINGS "${_hdr}"
+                HDF5_VERSION_DEFINE
+                REGEX "^[ \t]*#[ \t]*define[ \t]+H5_VERSION[ \t]+" )
+	    #MESSAGE(STATUS "HDF5_VERSION_DEFINE=${HDF5_VERSION_DEFINE}")
+            if( "${HDF5_VERSION_DEFINE}" MATCHES
+                "H5_VERSION[ \t]+\"([0-9]+\\.[0-9]+\\.[0-9]+)(-patch([0-9]+))?\"" )
+	        set( HDF5_VERSION "${CMAKE_MATCH_1}" )
+                if( CMAKE_MATCH_3 )
+                  set( HDF5_VERSION ${HDF5_VERSION}.${CMAKE_MATCH_3})
+                endif()
+            endif()
+	    #MESSAGE(STATUS "HDF5_VERSION=${HDF5_VERSION}")
+            unset(HDF5_VERSION_DEFINE)
+        endif()
+      endforeach()
+    endforeach()
+  endif(NOT HDF5_VERSION)
+
   STRING (REGEX MATCHALL "[0-9]+" _versionComponents "${HDF5_VERSION}")
+  MESSAGE(STATUS "_versionComponents=${_versionComponents}")
+  MESSAGE(STATUS "HDF5_VERSION=${HDF5_VERSION}")
   LIST(GET _versionComponents 0 HDF_VERSION_MAJOR_REF)
   LIST(GET _versionComponents 1 HDF_VERSION_MINOR_REF)
   LIST(GET _versionComponents 2 HDF_VERSION_RELEASE_REF)
-  SET(HDF_VERSION_REF "${HDF5_VERSION}")  
+  SET(HDF_VERSION_REF "${HDF5_VERSION}")
+
 ELSE(HDF5_FOUND)
   MESSAGE(STATUS "HDF5 was not found.")  
 ENDIF(HDF5_FOUND)

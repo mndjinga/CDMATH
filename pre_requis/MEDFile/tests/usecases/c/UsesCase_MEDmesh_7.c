@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2019  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -60,13 +60,13 @@ int main (int argc, char **argv) {
     goto ERROR;
   }
 
-  /* 
-   * ... we know that the MED file has only one mesh, 
-   * a real code would check ... 
+  /*
+   * ... we know that the MED file has only one mesh,
+   * a real code would check ...
    */
 
   /* read mesh informations : mesh dimension, space dimension ... */
-  if (MEDmeshInfoByName(fid, meshname, &spacedim, &meshdim, &meshtype, meshdescription, 
+  if (MEDmeshInfoByName(fid, meshname, &spacedim, &meshdim, &meshtype, meshdescription,
 			dtunit, &sortingtype, &nstep, &axistype, axisname, unitname) < 0) {
     MESSAGE("ERROR : mesh info ...");
     goto ERROR;
@@ -79,10 +79,10 @@ int main (int argc, char **argv) {
     MESSAGE("ERROR : number of nodes ...");
     goto ERROR;
   }
-  
-  /* 
-   * ... we know that we only have MED_TRIA3 and MED_QUAD4 in the mesh, 
-   * a real code would check all MED geometry cell types ... 
+
+  /*
+   * ... we know that we only have MED_TRIA3 and MED_QUAD4 in the mesh,
+   * a real code would check all MED geometry cell types ...
    */
 
   /* read how many triangular cells in the mesh */
@@ -139,22 +139,22 @@ int main (int argc, char **argv) {
   }
   free(quadconnectivity);
 
-  /* 
+  /*
    * ... we know that the family number of nodes and elements is 0, a real code would check ...
    */
 
   /* read nodes coordinates changements step by step */
   for (it=1;it<nstep;it++) {
 
-    if (MEDmeshComputationStepInfo(fid, meshname, it+1, 
+    if (MEDmeshComputationStepInfo(fid, meshname, it+1,
 				   &numdt, &numit, &dt) < 0) {
       MESSAGE("ERROR : Computing step info ...");
       SSCRUTE(meshname);
       goto ERROR;
     }
-  
+
     /* test changement : for nodes coordinates */
-    if ((nnodes = MEDmeshnEntityWithProfile(fid, meshname, numdt, numit, 
+    if ((nnodes = MEDmeshnEntityWithProfile(fid, meshname, numdt, numit,
 					    MED_NODE,  MED_NO_GEOTYPE,
 					    MED_COORDINATE, MED_NO_CMODE,
 					    MED_GLOBAL_STMODE, profilename, &profilesize,
@@ -165,7 +165,7 @@ int main (int argc, char **argv) {
 
     /* if coordinates have changed, then read the new coordinates */
     if (coordinatechangement) {
-      if (MEDmeshNodeCoordinateWithProfileRd(fid, meshname, numdt, numit, 
+      if (MEDmeshNodeCoordinateWithProfileRd(fid, meshname, numdt, numit,
 					     MED_GLOBAL_STMODE,profilename,
 					     MED_FULL_INTERLACE,MED_ALL_CONSTITUENT,
 					     coordinates) < 0) {
@@ -174,19 +174,19 @@ int main (int argc, char **argv) {
 	goto ERROR;
       }
     }
-      
+
   }
 
   free(coordinates);
-  
+
   ret=0;
  ERROR:
 
   /* close MED file */
   if (MEDfileClose(fid) < 0) {
-    MESSAGE("ERROR : close file");             
-    ret=-1; 
-  } 
+    MESSAGE("ERROR : close file");
+    ret=-1;
+  }
 
 
   return ret;

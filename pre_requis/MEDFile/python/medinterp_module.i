@@ -1,5 +1,5 @@
 # -*- coding:utf-8 -*-
-%module medinterp
+%module (package="med") medinterp
 
 //A inclure avant toute déclaration à SWIG
 %include "med_881.i"

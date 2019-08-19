@@ -1,6 +1,6 @@
 C*  This file is part of MED.
 C*
-C*  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+C*  COPYRIGHT (C) 1999 - 2019  EDF R&D, CEA/DEN
 C*  MED is free software: you can redistribute it and/or modify
 C*  it under the terms of the GNU Lesser General Public License as published by
 C*  the Free Software Foundation, either version 3 of the License, or
@@ -23,7 +23,8 @@ c
       save
 c     
       character *(*) maa, des, aname, aunit
-      integer fid, cret, atype, sdim, mdim
+      integer*8 fid
+      integer   cret, atype, sdim, mdim
       integer msmfcre
 c
       cret = msmfcre(fid, maa, len(maa), sdim, mdim,
@@ -41,7 +42,8 @@ c
       implicit none
       save
 c
-      integer fid, n, cret
+      integer*8 fid
+      integer    n, cret
       integer msmfnsm 
 c
       n = msmfnsm(fid)
@@ -65,7 +67,8 @@ c
       save
 c
       character *(*) name, desc, aname, aunit
-      integer fid, sdim, mdim, atype, cret
+      integer*8 fid
+      integer   sdim, mdim, atype, cret
       integer msmfsni 
 c
       cret = msmfsni(fid, name, len(name), sdim, mdim, desc,
@@ -84,7 +87,8 @@ c
       save
 c
       character *(*) name, desc, aname, aunit
-      integer fid, sdim, mdim, atype, it, cret
+      integer*8 fid
+      integer   sdim, mdim, atype, it, cret
       integer msmfsmi 
 c
       cret = msmfsmi(fid, it, name, sdim, mdim, desc,
@@ -101,7 +105,8 @@ c
       implicit none
       save
 c
-      integer fid,it,naxis,cret
+      integer*8 fid
+      integer   it,naxis,cret
       integer msmfnax
 c
       naxis =  msmfnax(fid,it)
@@ -122,7 +127,8 @@ c
       implicit none
       save
 c
-      integer fid,naxis,cret
+      integer*8 fid
+      integer   naxis,cret
       character *(*) name
       integer msmfnan
 c

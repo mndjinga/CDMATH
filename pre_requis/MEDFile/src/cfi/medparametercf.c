@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2019  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -45,12 +45,12 @@ From Fortran call of following C functions :
 
 #ifdef PPRO_NT
 med_int 
-MPRFCRE(med_int *fid, char *pname, unsigned int bidon1, med_int *lon1,
+MPRFCRE(med_idt *fid, char *pname, unsigned int bidon1, med_int *lon1,
                   med_int *type, char *desc, unsigned int bidon2, med_int *lon2,
 		  char *dtunit, unsigned int bidon3, med_int *lon3)
 #else
 med_int 
-nmprfcre(med_int *fid, char *pname, med_int *lon1,
+nmprfcre(med_idt *fid, char *pname, med_int *lon1,
 	 med_int *type, char *desc, med_int *lon2,
 	 char *dtunit, med_int *lon3)
 #endif
@@ -209,10 +209,10 @@ nmprfivr(med_idt *fid, char *name, med_int *namelen,
 
 #ifdef PPRO_NT
 med_int 
-MPRFNPR(med_int *fid)
+MPRFNPR(med_idt *fid)
 #else
 med_int 
-nmprfnpr(med_int *fid)
+nmprfnpr(med_idt *fid)
 #endif
 {
   med_int _ret; 
@@ -226,12 +226,12 @@ nmprfnpr(med_int *fid)
 
 #ifdef PPRO_NT
 med_int 
-MPRFPRI(med_int *fid, med_int *it, char *name, unsigned int bidon1, 
+MPRFPRI(med_idt *fid, med_int *it, char *name, unsigned int bidon1, 
 		  med_int *type, char *desc, unsigned int bidon2,
 		  char *dtunit, unsigned int bidon3, med_int *nstep) 
 #else
 med_int 
-nmprfpri(med_int *fid, med_int *it, char *name,  
+nmprfpri(med_idt *fid, med_int *it, char *name,  
 	 med_int *type, char *desc,
 	 char *dtunit, med_int *nstep)
 #endif
@@ -263,13 +263,13 @@ nmprfpri(med_int *fid, med_int *it, char *name,
 
 #ifdef PPRO_NT
 med_int 
-MPRFPIN(med_int *fid, char *name, unsigned int bidon1, med_int *namelen,
+MPRFPIN(med_idt *fid, char *name, unsigned int bidon1, med_int *namelen,
 		  med_int *type, char *desc, unsigned int bidon2,
 		  char *dtunit, unsigned int bidon3, 
 		  med_int *nstep) 
 #else
 med_int 
-nmprfpin(med_int *fid, char *name, med_int *namelen,
+nmprfpin(med_idt *fid, char *name, med_int *namelen,
 	 med_int *type, char *desc,
 	 char *dtunit, med_int *nstep)
 #endif
@@ -306,11 +306,11 @@ nmprfpin(med_int *fid, char *name, med_int *namelen,
 
 #ifdef PPRO_NT
 med_int
-MPRFCSI(med_int *fid, char* name, unsigned int bidon1, med_int *namelen,
+MPRFCSI(med_idt *fid, char* name, unsigned int bidon1, med_int *namelen,
 		  med_int *it, med_int *numdt, med_int *numit, med_float *dt)
 #else
 med_int
-nmprfcsi(med_int *fid, char *name, med_int *namelen,
+nmprfcsi(med_idt *fid, char *name, med_int *namelen,
 	 med_int *it, med_int *numdt, med_int *numit, med_float *dt)
 #endif
 {

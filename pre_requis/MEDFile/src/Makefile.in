@@ -94,6 +94,7 @@ subdir = src
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/config/ac_check_sizeof_fortran.m4 \
 	$(top_srcdir)/config/ax_absolute_header.m4 \
+	$(top_srcdir)/config/ax_compare_version.m4 \
 	$(top_srcdir)/config/ax_pkg_swig.m4 \
 	$(top_srcdir)/config/ax_prog_cc_mpi.m4 \
 	$(top_srcdir)/config/ax_prog_cxx_mpi.m4 \
@@ -111,6 +112,7 @@ am__aclocal_m4_deps = $(top_srcdir)/config/ac_check_sizeof_fortran.m4 \
 	$(top_srcdir)/config/med_check_hdf5.m4 \
 	$(top_srcdir)/config/med_check_mesgerr.m4 \
 	$(top_srcdir)/config/med_check_python.m4 \
+	$(top_srcdir)/config/med_check_python_devel.m4 \
 	$(top_srcdir)/config/med_check_swig.m4 \
 	$(top_srcdir)/config/med_check_typeof_hidt.m4 \
 	$(top_srcdir)/config/med_check_typeof_int64.m4 \
@@ -125,7 +127,7 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 DIST_COMMON = $(srcdir)/Makefile.am $(am__DIST_COMMON)
 mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/include/med_config.h
-CONFIG_CLEAN_FILES = libmed3.settings
+CONFIG_CLEAN_FILES = libmed3.settings CMakeLists.txt
 CONFIG_CLEAN_VPATH_FILES =
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
@@ -293,7 +295,8 @@ am__define_uniq_tagged_files = \
 ETAGS = etags
 CTAGS = ctags
 DIST_SUBDIRS = 2.3.6 ci misc hdfi . fi cfi
-am__DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/libmed3.settings.in \
+am__DIST_COMMON = $(srcdir)/CMakeLists.txt.in $(srcdir)/Makefile.in \
+	$(srcdir)/libmed3.settings.in \
 	$(top_srcdir)/config/automake.common \
 	$(top_srcdir)/config/depcomp
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -407,14 +410,34 @@ LTLIBOBJS = @LTLIBOBJS@
 LT_SYS_LIBRARY_PATH = @LT_SYS_LIBRARY_PATH@
 MAKEINFO = @MAKEINFO@
 MANIFEST_TOOL = @MANIFEST_TOOL@
+MEDIMPORT_CMAKE_SO_MAJ = @MEDIMPORT_CMAKE_SO_MAJ@
+MEDIMPORT_CMAKE_SO_MIN = @MEDIMPORT_CMAKE_SO_MIN@
+MEDIMPORT_CMAKE_SO_REL = @MEDIMPORT_CMAKE_SO_REL@
+MEDIMPORT_CMAKE_SO_VERSION = @MEDIMPORT_CMAKE_SO_VERSION@
+MEDIMPORT_LIBTOOL_MAJ = @MEDIMPORT_LIBTOOL_MAJ@
+MEDIMPORT_LIBTOOL_MIN = @MEDIMPORT_LIBTOOL_MIN@
+MEDIMPORT_LIBTOOL_REL = @MEDIMPORT_LIBTOOL_REL@
+MED_3_LATEST_MINOR = @MED_3_LATEST_MINOR@
 MED_API_23 = @MED_API_23@
 MED_CHECK_23FORMAT = @MED_CHECK_23FORMAT@
+MED_CMAKE_SO_MAJ = @MED_CMAKE_SO_MAJ@
+MED_CMAKE_SO_MIN = @MED_CMAKE_SO_MIN@
+MED_CMAKE_SO_REL = @MED_CMAKE_SO_REL@
+MED_CMAKE_SO_VERSION = @MED_CMAKE_SO_VERSION@
 MED_DEFINE_MED_HAVE_MPI = @MED_DEFINE_MED_HAVE_MPI@
 MED_INT32 = @MED_INT32@
 MED_INT64 = @MED_INT64@
+MED_LIBTOOL_MAJ = @MED_LIBTOOL_MAJ@
+MED_LIBTOOL_MIN = @MED_LIBTOOL_MIN@
+MED_LIBTOOL_REL = @MED_LIBTOOL_REL@
 MED_NUM_MAJEUR = @MED_NUM_MAJEUR@
 MED_NUM_MINEUR = @MED_NUM_MINEUR@
 MED_NUM_RELEASE = @MED_NUM_RELEASE@
+MED_PYTHON2_VERSION_REF = @MED_PYTHON2_VERSION_REF@
+MED_PYTHON3_VERSION_REF = @MED_PYTHON3_VERSION_REF@
+MED_PYTHON_VERSION_REF = @MED_PYTHON_VERSION_REF@
+MED_SWIG_MIN_VERSION_REF = @MED_SWIG_MIN_VERSION_REF@
+MED_SWIG_VERSION_REF = @MED_SWIG_VERSION_REF@
 MESGERR = @MESGERR@
 MKDIR_P = @MKDIR_P@
 MPICC = @MPICC@
@@ -512,10 +535,6 @@ prefix = @prefix@
 program_transform_name = @program_transform_name@
 psdir = @psdir@
 pyexecdir = @pyexecdir@
-python_bin = @python_bin@
-python_includedir = @python_includedir@
-python_libdir = @python_libdir@
-python_version = @python_version@
 pythondir = @pythondir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
@@ -542,36 +561,17 @@ libmed_la_SOURCES = MEDiterators.c $(am__append_1)
 nodist_EXTRA_libmed_la_SOURCES = dummy.cxx
 
 #TODO : Créer une release pour une nvlle bilbiothèque de l'ancienne API libmed23 compilée conditionellement
-
-# info libtool/versioning:
-# 3. If the library source code has changed at all since the last
-#    update, then increment REVISION (`C:R:A' becomes `C:r+1:A').
-# 4. If any interfaces have been added, removed, or changed since the
-#    last update, increment CURRENT, and set REVISION to 0.
-# 5. If any interfaces have been added since the last public release,
-#    then increment AGE.
-# 6. If any interfaces have been removed or changed since the last
-#    public release, then set AGE to 0.
-#
-# A la mise à jour du mineur de la bibliothèque med, on a x+1:0:z+1 pour la version libtool 
-# ce qui permet aux programmes liés à l'ancienne bibliothèque de mineur-1
-# d'utiliser la nouvelle bibliothèque pour lire/modifier les anciens fichiers
-# et en créer de nouveaux en version mineur courante.
-# Les anciennes bibliothèques refuseront de lire un fichier dont le mineur est supérieur à celui 
-# de la bibliothèque 
-#
-#TODO : Changer le versionement libtool
-libmed_la_LDFLAGS = -no-undefined -version-info 10:1:9 @HDF5_LDFLAGS@ @HDF5_LIBS@
+libmed_la_LDFLAGS = -no-undefined -version-info @MED_LIBTOOL_MAJ@:@MED_LIBTOOL_MIN@:@MED_LIBTOOL_REL@ @HDF5_LDFLAGS@ @HDF5_LIBS@
 @ENABLE_FORTRAN_FALSE@libmed_la_LIBADD = 2.3.6/libmed23.la 2.3.6/libmedVV.la ci/libci.la misc/libmisc.la hdfi/libhdfi.la
 @ENABLE_FORTRAN_TRUE@libmed_la_LIBADD = 2.3.6/libmed23.la 2.3.6/libmedVV.la ci/libci.la fi/libfi.la cfi/libcfi.la misc/libmisc.la hdfi/libhdfi.la $(FLIBS)
 libmedC_la_SOURCES = MEDiterators.c
 nodist_EXTRA_libmedC_la_SOURCES = dummy.cxx
 #TODO : Changer le versionement libtool
-libmedC_la_LDFLAGS = -no-undefined -version-info 10:1:9 @HDF5_LDFLAGS@ @HDF5_LIBS@
+libmedC_la_LDFLAGS = -no-undefined -version-info @MED_LIBTOOL_MAJ@:@MED_LIBTOOL_MIN@:@MED_LIBTOOL_REL@ @HDF5_LDFLAGS@ @HDF5_LIBS@
 libmedC_la_LIBADD = 2.3.6/libmedC23.la 2.3.6/libmedVV.la ci/libci.la misc/libmisc.la hdfi/libhdfi.la
 settingsdir = $(libdir)
 nodist_settings_DATA = libmed3.settings
-EXTRA_DIST = CMakeLists.txt  libmed3.settings.in
+EXTRA_DIST = CMakeLists.txt CMakeLists.txt.in libmed3.settings.in
 CLEANFILES = libmed3.settings
 all: all-recursive
 
@@ -608,6 +608,8 @@ $(ACLOCAL_M4):  $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 $(am__aclocal_m4_deps):
 libmed3.settings: $(top_builddir)/config.status $(srcdir)/libmed3.settings.in
+	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
+CMakeLists.txt: $(top_builddir)/config.status $(srcdir)/CMakeLists.txt.in
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
 
 install-libLTLIBRARIES: $(lib_LTLIBRARIES)

@@ -416,6 +416,8 @@ void MAJ_320_330_champs(med_idt fid)
     /* EXIT_IF( (H5Gmove(fid, _pathf, _pathi  ) < 0) ,"Switch to ",_pathf); */
     EXIT_IF( (H5Ldelete(fid,_pathf, H5P_DEFAULT) < 0) ,"Delete ",_pathf);
   }
+  free(geotype_elst);
+  free(geotypename_elst);
 
   /* _MEDobjetsOuverts(fid);  */
 

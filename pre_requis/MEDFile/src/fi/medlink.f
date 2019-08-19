@@ -1,6 +1,6 @@
 C*  This file is part of MED.
 C*
-C*  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+C*  COPYRIGHT (C) 1999 - 2019  EDF R&D, CEA/DEN
 C*  MED is free software: you can redistribute it and/or modify
 C*  it under the terms of the GNU Lesser General Public License as published by
 C*  the Free Software Foundation, either version 3 of the License, or
@@ -23,8 +23,9 @@ c
       implicit none
       save
       character*(*) mname,lname
-      integer fid,cret
-      integer mlnfliw
+      integer*8 fid
+      integer   cret
+      integer   mlnfliw
 c
       cret = mlnfliw(fid,mname,len(mname),lname,len(lname))
 c      
@@ -38,8 +39,9 @@ c     DEC$ ATTRIBUTES DLLEXPORT :: mlnnln
 c
       implicit none
       save
-      integer fid,n,cret
-      integer mlnfnln
+      integer*8 fid
+      integer   n,cret
+      integer   mlnfnln
 c
       n = mlnfnln(fid)
 c
@@ -61,8 +63,9 @@ c
       save
 c
       character *(*) mname
-      integer fid, lsize, it, cret
-      integer mlnflni
+      integer*8 fid
+      integer   lsize, it, cret
+      integer   mlnflni
 c
       cret = mlnflni(fid, it, mname, lsize)
 c     
@@ -78,8 +81,9 @@ c
       save
 c
       character *(*) mname
-      integer fid, lsize, cret,n
-      integer mlnflai
+      integer*8 fid
+      integer   lsize, cret,n
+      integer   mlnflai
 c
       n = mlnflai(fid, mname, len(mname), lsize)
 c
@@ -100,8 +104,9 @@ c
       implicit none
       save
       character*(*) mname,lname
-      integer fid,cret
-      integer mlnflir
+      integer*8 fid
+      integer   cret
+      integer   mlnflir
 c
       cret = mlnflir(fid,mname,len(mname),lname,len(lname))
 c      

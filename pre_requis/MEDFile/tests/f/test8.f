@@ -1,6 +1,6 @@
 C*  This file is part of MED.
 C*
-C*  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+C*  COPYRIGHT (C) 1999 - 2019  EDF R&D, CEA/DEN
 C*  MED is free software: you can redistribute it and/or modify
 C*  it under the terms of the GNU Lesser General Public License as published by
 C*  the Free Software Foundation, either version 3 of the License, or
@@ -26,7 +26,8 @@ C
 	implicit none
 	include 'med.hf'
 C
-        integer cret, fid
+        integer*8 fid
+        integer cret
         
         character*64  maa 
         integer       mdim, sdim
@@ -50,7 +51,7 @@ C     ** Creation du fichier test8.med                       **
 	   print *,'Erreur creation du fichier'
 	   call efexit(-1)
 	endif      
-        
+
 C     ** Creation du maillage maa de dimension 2         **
 	call mmhcre(fid,maa,mdim,sdim,MED_UNSTRUCTURED_MESH,
      &              'un maillage pour test8',"",MED_SORT_DTIT,
@@ -60,7 +61,7 @@ C     ** Creation du maillage maa de dimension 2         **
 	   print *,'Erreur creation du maillage'
 	   call efexit(-1)
 	endif      
-        
+      
 C     ** Ecriture des familles                           **
 C     * Conventions :
 C       - Toujours creer une famille de numero 0 ne comportant aucun attribut

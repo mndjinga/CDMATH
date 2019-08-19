@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2019  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -56,13 +56,13 @@ int main (int argc, char **argv) {
     goto ERROR;
   }
 
-  /* 
-   * ... we know that the MED file has only one mesh, 
-   * a real code would check ... 
+  /*
+   * ... we know that the MED file has only one mesh,
+   * a real code would check ...
    */
 
   /* read mesh informations : mesh dimension, space dimension ... */
-  if (MEDmeshInfoByName(fid, meshname, &spacedim, &meshdim, &meshtype, meshdescription, 
+  if (MEDmeshInfoByName(fid, meshname, &spacedim, &meshdim, &meshtype, meshdescription,
 			dtunit, &sortingtype, &nstep, &axistype, axisname, unitname) < 0) {
     MESSAGE("ERROR : mesh info ...");
     goto ERROR;
@@ -75,10 +75,10 @@ int main (int argc, char **argv) {
     MESSAGE("ERROR : number of nodes ...");
     goto ERROR;
   }
-  
-  /* 
-   * ... we know that we only have MED_TRIA3 and MED_QUAD4 in the mesh, 
-   * a real code would check all MED geometry cell types ... 
+
+  /*
+   * ... we know that we only have MED_TRIA3 and MED_QUAD4 in the mesh,
+   * a real code would check all MED geometry cell types ...
    */
 
   /* read how many triangular cells in the mesh */
@@ -127,11 +127,11 @@ int main (int argc, char **argv) {
   }
   if (MEDmeshElementConnectivityRd(fid, meshname, MED_NO_DT, MED_NO_IT, MED_CELL,
 				   MED_QUAD4, MED_NODAL, MED_FULL_INTERLACE, quadconnectivity) < 0) {
-    MESSAGE("ERROR : MED_TRIA3 connectivity ...");
+    MESSAGE("ERROR : MED_QUAD4 connectivity ...");
     goto ERROR;
   }
 
-  /* 
+  /*
    * ... we know that the family number of nodes and elements is 0, a real code would check ...
    */
   ret = 0;
@@ -149,9 +149,9 @@ int main (int argc, char **argv) {
 
   /* close MED file */
   if (MEDfileClose(fid) < 0) {
-    MESSAGE("ERROR : close file");             
-    ret = -1; 
-  } 
+    MESSAGE("ERROR : close file");
+    ret = -1;
+  }
 
   return ret;
 }

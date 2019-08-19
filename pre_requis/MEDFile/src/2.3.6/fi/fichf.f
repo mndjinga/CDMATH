@@ -1,6 +1,6 @@
 C*  This file is part of MED.
 C*
-C*  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+C*  COPYRIGHT (C) 1999 - 2019  EDF R&D, CEA/DEN
 C*  MED is free software: you can redistribute it and/or modify
 C*  it under the terms of the GNU Lesser General Public License as published by
 C*  the Free Software Foundation, either version 3 of the License, or
@@ -31,8 +31,9 @@ c
       save
 c
       character *(*) nom
-      integer acces, fid, cret
-      integer edfouvr
+      integer*8 fid
+      integer acces, cret
+      integer*8 edfouvr
 c
       fid = edfouvr(nom, acces, len(nom))
       if (fid.eq.-1) then
@@ -50,7 +51,8 @@ c
       implicit none
       save
 c
-      integer fid,cret
+      integer*8 fid
+      integer  cret
       integer edfferm
 c
       cret = edfferm(fid)
@@ -65,7 +67,8 @@ c
       implicit none
       save
 c
-      integer fid,cret,lon
+      integer*8 fid
+      integer  cret,lon
       integer edflfde
 c
       lon = edflfde(fid)
@@ -85,7 +88,8 @@ c
       implicit none
       save
 c
-      integer fid,quoi,cret
+      integer*8 fid
+      integer  quoi,cret
       integer edffien
       character*(*) str
 c
@@ -100,7 +104,8 @@ c     DEC$ ATTRIBUTES DLLEXPORT :: effide
 c
       implicit none
       save
-      integer fid,cret
+      integer*8 fid
+      integer  cret
       character*(*) des
       integer edffide
 c
@@ -147,7 +152,8 @@ c
       implicit none
       save
 C
-      integer fid, maj, min, rel
+      integer*8 fid
+      integer   maj, min, rel
       integer cret
       integer edfveli
 c
@@ -182,8 +188,9 @@ c
       save
 c
       character *(*) acces
-      integer mid, fid, type, cret
-      integer edfmont
+      integer*8 fid, mid
+      integer   type, cret
+      integer*8 edfmont
 c
       mid = edfmont(fid, acces, len(acces), type)
       if (mid .eq.-1) then
@@ -203,7 +210,8 @@ c
       implicit none
       save
 c
-      integer mid, fid, type, cret
+      integer*8 fid, mid
+      integer type, cret
       integer edfdemo
 c
       cret = edfdemo(fid, mid, type)

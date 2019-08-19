@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2019  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -15,7 +15,7 @@
  *  along with MED.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* 
+/*
  * Field use case 2 : read the field of use case 1
  */
 
@@ -42,16 +42,16 @@ int main (int argc, char **argv) {
   const med_int ncomponent = 1;
   int ret=-1;
 
-  /* file creation */
+  /* open MED file with READ ONLY access mode */
   fid = MEDfileOpen("UsesCase_MEDfield_1.med",MED_ACC_RDONLY);
   if (fid < 0) {
     MESSAGE("ERROR : open file ...");
     goto ERROR;
   }
 
-  /* 
-   * ... we know that the MED file has only one field with one component , 
-   * a real code would check ... 
+  /*
+   * ... we know that the MED file has only one field with one component ,
+   * a real code would check ...
    */
 
   /*
@@ -61,11 +61,11 @@ int main (int argc, char **argv) {
 			 componentname, componentunit, dtunit, &nstep) < 0) {
     MESSAGE("ERROR : Field info by name ...");
     goto ERROR;
-  } 
-  
-  /* 
-   * ... we know that the field values are defined on vertices and MED_TRIA3 
-   * and MED_QUAD4 cells, a real code would check ... 
+  }
+
+  /*
+   * ... we know that the field values are defined on vertices and MED_TRIA3
+   * and MED_QUAD4 cells, a real code would check ...
    */
 
   /* MED_NODE */
@@ -85,9 +85,9 @@ int main (int argc, char **argv) {
     goto ERROR;
   }
   free(verticesvalues);
-  
+
   /* MED_TRIA3 */
-  if ((nvalues = MEDfieldnValue(fid, fieldname, MED_NO_DT, MED_NO_IT, MED_CELL, 
+  if ((nvalues = MEDfieldnValue(fid, fieldname, MED_NO_DT, MED_NO_IT, MED_CELL,
 				MED_TRIA3)) < 0) {
     MESSAGE("ERROR : read number of values ...");
     goto ERROR;
@@ -105,7 +105,7 @@ int main (int argc, char **argv) {
   free(tria3values);
 
   /* MED_QUAD4 */
-  if ((nvalues = MEDfieldnValue(fid, fieldname, MED_NO_DT, MED_NO_IT, MED_CELL, 
+  if ((nvalues = MEDfieldnValue(fid, fieldname, MED_NO_DT, MED_NO_IT, MED_CELL,
 				MED_QUAD4)) < 0) {
     MESSAGE("ERROR : read number of values ...");
     goto ERROR;
@@ -119,7 +119,7 @@ int main (int argc, char **argv) {
     MESSAGE("ERROR : read fields values for MED_QUAD4 cells ...");
     free(quad4values);
     goto ERROR;
-  }  
+  }
   free(quad4values);
 
   ret=0;
@@ -129,7 +129,7 @@ int main (int argc, char **argv) {
   if (MEDfileClose(fid) < 0) {
     MESSAGE("ERROR : close file ...");
     ret=-1;
-  } 
+  }
 
   return ret;
 }

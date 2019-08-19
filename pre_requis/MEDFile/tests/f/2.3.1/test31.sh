@@ -8,13 +8,13 @@ ${H5DUMP} -d /ENS_MAA/maa1/NOE/GLB ${BUILDDIR}/${file}.med  | ${AWK} 'BEGIN {i=0
 sed -e 's/H5T_STD_I32BE//g' -e 's/H5T_STD_I32LE//g'	 \
     -e 's/H5T_STD_I64BE//g' -e 's/H5T_STD_I64LE//g'  \
     -e 's/H5T_IEEE_F64BE//g' -e 's/H5T_IEEE_F64LE//g'  \
-    -e 's/H5T_STD_[IU]I8[LB]E//g'  \
+    -e 's/H5T_STD_[IU]8[LB]E//g'  \
     -e 's/HDF5.*{//g' \
 	${BUILDDIR}/${file}.dump > ${BUILDDIR}/${file}.dump.tmp && \
 sed -e 's/H5T_STD_I32BE//g' -e 's/H5T_STD_I32LE//g'	 \
     -e 's/H5T_STD_I64BE//g' -e 's/H5T_STD_I64LE//g'  \
     -e 's/H5T_IEEE_F64BE//g' -e 's/H5T_IEEE_F64LE//g'  \
-    -e 's/H5T_STD_[IU]I8[LB]E//g'  \
+    -e 's/H5T_STD_[IU]8[LB]E//g'  \
     -e 's/HDF5.*{//g' \
 	 ${BUILDDIR}/dumps.ref/${file}.dump > ${BUILDDIR}/${file}.dump.ref && \
 diff ${BUILDDIR}/${file}.dump.ref ${BUILDDIR}/${file}.dump.tmp && \

@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2019  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -139,7 +139,7 @@ int MEDimport(char * filein, char *  fileout) {
   if (ret < 0 ) {
     fprintf(stdout,">>> Attention le fichier %s ne contient pas de numéro de version. \n",filein);
     fprintf(stdout,">>> Le fichier  %s est supposé être en version 2.1.1. \n",filein);
-    /* PAs d'interactif dans une bibliothèque !*/
+    /* Pas d'interactif dans une bibliothèque !*/
 /*     fprintf(stdout,">>> Voulez-vous essayer une conversion d'un fichier  < 2.2 (o/n) ? "); */
 /*     scanf("%c",&reponse); */
     if ( (reponse != 'o') && (reponse != 'O') && (reponse != 'y') && (reponse != 'Y') ) {

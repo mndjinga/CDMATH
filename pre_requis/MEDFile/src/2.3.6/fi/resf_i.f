@@ -1,6 +1,6 @@
 C*  This file is part of MED.
 C*
-C*  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+C*  COPYRIGHT (C) 1999 - 2019  EDF R&D, CEA/DEN
 C*  MED is free software: you can redistribute it and/or modify
 C*  it under the terms of the GNU Lesser General Public License as published by
 C*  the Free Software Foundation, either version 3 of the License, or
@@ -22,7 +22,8 @@ c
       save
 c      
       character *(*) cha,comp,unit
-      integer fid, ncomp, cret, type
+      integer*8 fid
+      integer   ncomp, cret, type
       integer edfchac
 c
       cret = edfchac (fid, cha,len(cha),type, comp,16*ncomp,
@@ -42,7 +43,8 @@ c
 c      
       character *(*) cha,maa,profil,locname
       character*(*) dtunit
-      integer fid,val(*)
+      integer*8 fid
+      integer  val(*)
       integer n,pflmod,typent,typgeo,cret
       integer interlace,numco,numdt,numo
       real*8 dt
@@ -69,7 +71,8 @@ c
 c      
       character *(*) cha,maa,profil,locname
       character*(*) dtunit
-      integer fid,val(*),n,pflmod,typent,typgeo,cret
+      integer*8 fid
+      integer  val(*),n,pflmod,typent,typgeo,cret
       integer interlace,numco,numdt,numo
       real*8 dt
       integer edfchae
@@ -97,7 +100,8 @@ c
       save
 c      
       character *(*) cha,maa,locname,profil
-      integer fid,val(*),pflmod,typent,typgeo,cret
+      integer*8 fid
+      integer  val(*),pflmod,typent,typgeo,cret
       integer interlace,numco,numdt,numo
       integer edfchal
 c
@@ -122,7 +126,8 @@ c
       save
 c      
       character *(*) cha,maa,locname,profil
-      integer fid,val(*),typent,typgeo,cret,pflmod
+      integer*8 fid
+      integer  val(*),typent,typgeo,cret,pflmod
       integer interlace,numco,numdt,numo
       integer edfchal
 c
@@ -142,7 +147,8 @@ c
       save
 c      
       character *(*) cha,comp,unit
-      integer fid,ind,type,ncomp,cret
+      integer*8 fid
+      integer  ind,type,ncomp,cret
       integer edfchai
 c
       cret = edfchai(fid,ind,cha,type,
@@ -157,7 +163,8 @@ c
       implicit none
       save
 c      
-      integer fid,ind,cret,n
+      integer*8 fid
+      integer  ind,cret,n
       integer edfncha
 c
       n = edfncha(fid,ind)
@@ -178,7 +185,8 @@ c
       implicit none
       save
 c      
-      integer fid,typent,typgeo,n,cret
+      integer*8 fid
+      integer  typent,typgeo,n,cret
       integer numdt, numo, pflmod
       character *(*) cha, maa
       integer edfnval
@@ -204,7 +212,8 @@ c
       implicit none
       save
 c      
-      integer fid,type,geo,n,cret
+      integer*8 fid
+      integer  type,geo,n,cret
       character*32 cha
       integer edfnpdt
 c
@@ -227,7 +236,8 @@ c
       implicit none
       save
 c      
-      integer fid,typent,typgeo,ind,ngauss,numdt,numo,nmaa,cret
+      integer*8 fid
+      integer  typent,typgeo,ind,ngauss,numdt,numo,nmaa,cret
       character*32 cha,maa
       character*16 dtunit
       real*8 dt
@@ -248,7 +258,8 @@ c
       implicit none
       save
 c
-      integer fid,typent,typgeo,n,cret
+      integer*8 fid
+      integer  typent,typgeo,n,cret
       integer numdt, numo
       character *(*) cha
       integer edfnref
@@ -273,7 +284,8 @@ c
       implicit none
       save
 c
-      integer fid,typent,typgeo,indice,n,cret
+      integer*8 fid
+      integer  typent,typgeo,indice,n,cret
       integer numdt, numo, ngauss
       character *(*) cha, maa
       logical local
@@ -294,7 +306,8 @@ c
 
       subroutine efliee(fid,lienval,maa,cret)
 c     DEC$ ATTRIBUTES DLLEXPORT :: efliee
-      integer fid,cret
+      integer*8 fid
+      integer  cret
       character *(*) lienval, maa
       integer   edfliee
 
@@ -312,7 +325,8 @@ c
       implicit none
       save
 c      
-      integer fid,cret,n
+      integer*8 fid
+      integer  cret,n
       integer edfnlie
 c
       n = edfnlie(fid)
@@ -332,7 +346,8 @@ c
       implicit none
       save
 c
-      integer fid,n,cret,indice
+      integer*8 fid
+      integer  n,cret,indice
       character *(*) maa
       integer edfliei
 c
@@ -349,7 +364,8 @@ c
       implicit none
       save
 c      
-      integer fid,cret,n
+      integer*8 fid
+      integer  cret,n
       character *(*) maa
       integer edfnvli
 c
@@ -371,7 +387,8 @@ c
       implicit none
       save
 c      
-      integer fid,n,cret
+      integer*8 fid
+      integer  n,cret
       character *(*) maa,lienval
       integer edfliel
 c

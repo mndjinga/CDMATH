@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2019  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -87,14 +87,14 @@ From Fortran call of following C functions :
 
 #ifdef PPRO_NT
 med_int
-MFDFCRE(med_int *fid, char *fname, unsigned int bidon1, med_int *fnamelen,
+MFDFCRE(med_idt *fid, char *fname, unsigned int bidon1, med_int *fnamelen,
 		  med_int *ftype, med_int *ncomp, char *cname, unsigned int bidon2, med_int *cnamelen,
 		  char *cuname, unsigned int bidon3, med_int *cunamelen,
 		  char *dtunit, unsigned int bidon4, med_int *dtunitlen,
 		  char* mname, unsigned int bidon5, med_int *mnamelen)
 #else
 med_int
-nmfdfcre(med_int *fid, char *fname, med_int *fnamelen,
+nmfdfcre(med_idt *fid, char *fname, med_int *fnamelen,
 	 med_int *ftype, med_int *ncomp, char *cname, med_int *cnamelen,
 	 char *cuname, med_int *cunamelen, char *dtunit, med_int *dtunitlen,
 	 char* mname, med_int *mnamelen)
@@ -143,13 +143,13 @@ nmfdfcre(med_int *fid, char *fname, med_int *fnamelen,
 
 #ifdef PPRO_NT
 med_int
-MFDFRVW(med_int *fid, char *fname, unsigned int bidon1, med_int *fnamelen,
+MFDFRVW(med_idt *fid, char *fname, unsigned int bidon1, med_int *fnamelen,
 		  med_int *numdt, med_int *numit, med_float *dt,
 		  med_int *etype, med_int *gtype, med_int *swm,
 		  med_int *cs, med_int *n, med_float *val)
 #else
 med_int
-nmfdfrvw(med_int *fid, char *fname, med_int *fnamelen,
+nmfdfrvw(med_idt *fid, char *fname, med_int *fnamelen,
 	 med_int *numdt, med_int *numit, med_float *dt,
 	 med_int *etype, med_int *gtype, med_int *swm,
 	 med_int *cs, med_int *n, med_float *val)
@@ -188,13 +188,13 @@ nmfdfrvw(med_int *fid, char *fname, med_int *fnamelen,
 
 #ifdef PPRO_NT
 med_int
-MFDFIVW(med_int *fid, char *fname, unsigned int bidon1, med_int *fnamelen,
+MFDFIVW(med_idt *fid, char *fname, unsigned int bidon1, med_int *fnamelen,
 		  med_int *numdt, med_int *numit, med_float *dt,
 		  med_int *etype, med_int *gtype, med_int *swm,
 		  med_int *cs, med_int *n, med_int *val)
 #else
 med_int
-nmfdfivw(med_int *fid, char *fname, med_int *fnamelen,
+nmfdfivw(med_idt *fid, char *fname, med_int *fnamelen,
 	 med_int *numdt, med_int *numit, med_float *dt,
 	 med_int *etype, med_int *gtype, med_int *swm,
 	 med_int *cs, med_int *n, med_int *val)
@@ -232,7 +232,7 @@ nmfdfivw(med_int *fid, char *fname, med_int *fnamelen,
 
 #ifdef PPRO_NT
 med_int
-MFDFRPW(med_int *fid, char *fname, unsigned int bidon1, med_int *fnamelen,
+MFDFRPW(med_idt *fid, char *fname, unsigned int bidon1, med_int *fnamelen,
 		  med_int *numdt, med_int *numit, med_float *dt,
 		  med_int *etype, med_int *gtype, 
 		  med_int *stm, char *pname, unsigned int bidon2, med_int *pnamelen,  
@@ -240,7 +240,7 @@ MFDFRPW(med_int *fid, char *fname, unsigned int bidon1, med_int *fnamelen,
 		  med_int *swm,med_int *cs, med_int *n, med_float *val)
 #else
 med_int
-nmfdfrpw(med_int *fid, char *fname, med_int *fnamelen,
+nmfdfrpw(med_idt *fid, char *fname, med_int *fnamelen,
 	 med_int *numdt, med_int *numit, med_float *dt,
 	 med_int *etype, med_int *gtype,
 	 med_int *stm, char *pname, med_int *pnamelen,
@@ -293,7 +293,7 @@ nmfdfrpw(med_int *fid, char *fname, med_int *fnamelen,
 
 #ifdef PPRO_NT
 med_int
-MFDFIPW(med_int *fid, char *fname, unsigned int bidon1, med_int *fnamelen,
+MFDFIPW(med_idt *fid, char *fname, unsigned int bidon1, med_int *fnamelen,
 		  med_int *numdt, med_int *numit, med_float *dt,
 		  med_int *etype, med_int *gtype, 
 		  med_int *stm, char *pname, unsigned int bidon2, med_int *pnamelen,  
@@ -301,7 +301,7 @@ MFDFIPW(med_int *fid, char *fname, unsigned int bidon1, med_int *fnamelen,
 		  med_int *swm,med_int *cs, med_int *n, med_int *val)
 #else
 med_int
-nmfdfipw(med_int *fid, char *fname, med_int *fnamelen,
+nmfdfipw(med_idt *fid, char *fname, med_int *fnamelen,
 	 med_int *numdt, med_int *numit, med_float *dt,
 	 med_int *etype, med_int *gtype, 
 	 med_int *stm, char *pname, med_int *pnamelen,  
@@ -354,14 +354,14 @@ nmfdfipw(med_int *fid, char *fname, med_int *fnamelen,
 
 #ifdef PPRO_NT
 med_int
-MFDFRAW(med_int *fid, char *fname, unsigned int bidon1, med_int *fnamelen,
+MFDFRAW(med_idt *fid, char *fname, unsigned int bidon1, med_int *fnamelen,
 		  med_int *numdt, med_int *numit, med_float *dt,
 		  med_int *etype, med_int *gtype,
 		  char *lname, unsigned int bidon2, med_int *lnamelen, 
 		  unsigned char **flt, med_float *val)
 #else
 med_int
-nmfdfraw(med_int *fid, char *fname, med_int *fnamelen,
+nmfdfraw(med_idt *fid, char *fname, med_int *fnamelen,
 	 med_int *numdt, med_int *numit, med_float *dt,
 	 med_int *etype, med_int *gtype,
 	 char *lname, med_int *lnamelen, 
@@ -405,14 +405,14 @@ nmfdfraw(med_int *fid, char *fname, med_int *fnamelen,
 
 #ifdef PPRO_NT
 med_int
-MFDFIAW(med_int *fid, char *fname, unsigned int bidon1, med_int *fnamelen,
+MFDFIAW(med_idt *fid, char *fname, unsigned int bidon1, med_int *fnamelen,
 		  med_int *numdt, med_int *numit, med_float *dt,
 		  med_int *etype, med_int *gtype,
 		  char *lname, unsigned int bidon2, med_int *lnamelen, 
 		  unsigned char **flt, med_int *val)
 #else
 med_int
-nmfdfiaw(med_int *fid, char *fname, med_int *fnamelen,
+nmfdfiaw(med_idt *fid, char *fname, med_int *fnamelen,
 	 med_int *numdt, med_int *numit, med_float *dt,
 	 med_int *etype, med_int *gtype,
 	 char *lname, med_int *lnamelen, 
@@ -456,10 +456,10 @@ nmfdfiaw(med_int *fid, char *fname, med_int *fnamelen,
 
 #ifdef PPRO_NT
 med_int 
-MFDFNFD(med_int *fid)
+MFDFNFD(med_idt *fid)
 #else
 med_int 
-nmfdfnfd(med_int *fid)
+nmfdfnfd(med_idt *fid)
 #endif
 {
   med_int _ret; 
@@ -472,10 +472,10 @@ nmfdfnfd(med_int *fid)
 
 #ifdef PPRO_NT
 med_int 
-MFDFNFC(med_int *fid, med_int *ind)
+MFDFNFC(med_idt *fid, med_int *ind)
 #else
 med_int 
-nmfdfnfc(med_int *fid, med_int *ind)
+nmfdfnfc(med_idt *fid, med_int *ind)
 #endif
 {
   med_int _ret; 
@@ -489,11 +489,11 @@ nmfdfnfc(med_int *fid, med_int *ind)
 
 #ifdef PPRO_NT
 med_int 
-MFDFNCN(med_int *fid,  
+MFDFNCN(med_idt *fid,  
 		  char* fname, unsigned int bidon1, med_int *fnamelen)
 #else
 med_int 
-nmfdfncn(med_int *fid, 
+nmfdfncn(med_idt *fid, 
 	 char* fname, med_int *fnamelen)
 #endif
 {
@@ -516,7 +516,7 @@ nmfdfncn(med_int *fid,
 
 #ifdef PPRO_NT
 med_int 
-MFDFFDI(med_int *fid, med_int *it, char *fname, unsigned int bidon1, 
+MFDFFDI(med_idt *fid, med_int *it, char *fname, unsigned int bidon1, 
 		  char*mname, unsigned int bidon2,
 		  med_int *localmesh, med_int *type,
 		  char *cname, unsigned int bidon3, 
@@ -525,7 +525,7 @@ MFDFFDI(med_int *fid, med_int *it, char *fname, unsigned int bidon1,
 		  med_int *nc)
 #else
 med_int 
-nmfdffdi(med_int *fid, med_int *it, char *fname,char *mname,
+nmfdffdi(med_idt *fid, med_int *it, char *fname,char *mname,
 	 med_int *localmesh, med_int *type,
 	 char *cname,char *cunit, char *dtunit, med_int *nc)
 #endif
@@ -579,7 +579,7 @@ nmfdffdi(med_int *fid, med_int *it, char *fname,char *mname,
 
 #ifdef PPRO_NT
 med_int 
-MFDFFIN(med_int *fid, char *fname, unsigned int bidon1,med_int *fnamelen,
+MFDFFIN(med_idt *fid, char *fname, unsigned int bidon1,med_int *fnamelen,
 		  char*mname, unsigned int bidon2,
 		  med_int *localmesh, med_int *type,
 		  char *cname, unsigned int bidon3, 
@@ -588,7 +588,7 @@ MFDFFIN(med_int *fid, char *fname, unsigned int bidon1,med_int *fnamelen,
 		  med_int *nc)
 #else
 med_int 
-nmfdffin(med_int *fid, char *fname, med_int *fnamelen,
+nmfdffin(med_idt *fid, char *fname, med_int *fnamelen,
 	 char*mname, med_int *localmesh, med_int *type,
 	 char *cname, char *cunit, char *dtunit, 
 	 med_int *nc)
@@ -648,11 +648,11 @@ nmfdffin(med_int *fid, char *fname, med_int *fnamelen,
 
 #ifdef PPRO_NT
 med_int
-MFDFCSI(med_int *fid, char* fname, unsigned int bidon1, med_int *fnamelen,
+MFDFCSI(med_idt *fid, char* fname, unsigned int bidon1, med_int *fnamelen,
 		  med_int *it, med_int *numdt, med_int *numit, med_float *dt)
 #else
 med_int
-nmfdfcsi(med_int *fid, char* fname, med_int *fnamelen,
+nmfdfcsi(med_idt *fid, char* fname, med_int *fnamelen,
 	 med_int *it, med_int *numdt, med_int *numit, med_float *dt)
 #endif
 {
@@ -678,11 +678,11 @@ nmfdfcsi(med_int *fid, char* fname, med_int *fnamelen,
 
 #ifdef PPRO_NT
 med_int
-MFDFCMI(med_int *fid, char* fname, unsigned int bidon1, med_int *fnamelen,
+MFDFCMI(med_idt *fid, char* fname, unsigned int bidon1, med_int *fnamelen,
 		  med_int *it, med_int *numdt, med_int *numit, med_float *dt, med_int *meshnumdt, med_int *meshnumit)
 #else
 med_int
-nmfdfcmi(med_int *fid, char* fname, med_int *fnamelen,
+nmfdfcmi(med_idt *fid, char* fname, med_int *fnamelen,
 	 med_int *it, med_int *numdt, med_int *numit, med_float *dt,
 	 med_int *meshnumdt, med_int *meshnumit)
 #endif
@@ -710,11 +710,11 @@ nmfdfcmi(med_int *fid, char* fname, med_int *fnamelen,
 
 #ifdef PPRO_NT
 med_int
-MFDFCMW(med_int *fid, char* fname, unsigned int bidon1, med_int *fnamelen,
+MFDFCMW(med_idt *fid, char* fname, unsigned int bidon1, med_int *fnamelen,
 		  med_int *numdt, med_int *numit, med_int *meshnumdt, med_int *meshnumit)
 #else
 med_int
-nmfdfcmw(med_int *fid, char* fname, med_int *fnamelen,
+nmfdfcmw(med_idt *fid, char* fname, med_int *fnamelen,
 	 med_int *numdt, med_int *numit,
 	 med_int *meshnumdt, med_int *meshnumit)
 #endif
@@ -742,12 +742,12 @@ nmfdfcmw(med_int *fid, char* fname, med_int *fnamelen,
 
 #ifdef PPRO_NT
 med_int 
-MFDFNPF(med_int *fid, char*fname, unsigned int bidon1, med_int *fnamelen,
+MFDFNPF(med_idt *fid, char*fname, unsigned int bidon1, med_int *fnamelen,
 		  med_int *numdt, med_int *numit, med_int *etype, med_int *gtype,
 		  char *dpname, unsigned int bidon2, char *dlname, unsigned int bidon3)
 #else
 med_int 
-nmfdfnpf(med_int *fid, char*fname, med_int *fnamelen,
+nmfdfnpf(med_idt *fid, char*fname, med_int *fnamelen,
 	 med_int *numdt, med_int *numit, med_int *etype, med_int *gtype,
 	 char *dpname, char *dlname)
 #endif
@@ -783,11 +783,11 @@ nmfdfnpf(med_int *fid, char*fname, med_int *fnamelen,
 
 #ifdef PPRO_NT
 med_int
-MFDFNVA(med_int *fid, char *fname, unsigned int bidon1, med_int *fnamelen,
+MFDFNVA(med_idt *fid, char *fname, unsigned int bidon1, med_int *fnamelen,
 		  med_int *numdt, med_int *numit, med_int *etype, med_int *gtype)
 #else
 med_int 
-nmfdfnva(med_int *fid, char *fname, med_int *fnamelen,
+nmfdfnva(med_idt *fid, char *fname, med_int *fnamelen,
 	 med_int *numdt, med_int *numit, med_int *etype, med_int *gtype)
 #endif
 {
@@ -815,13 +815,13 @@ nmfdfnva(med_int *fid, char *fname, med_int *fnamelen,
 
 #ifdef PPRO_NT
 med_int 
-MFDFNVP(med_int *fid, char*fname, unsigned int bidon1, med_int *fnamelen,
+MFDFNVP(med_idt *fid, char*fname, unsigned int bidon1, med_int *fnamelen,
 		  med_int *numdt, med_int *numit, med_int *etype, med_int *gtype,
 		  med_int *pit, med_int *stm, char *pname, unsigned int bidon2, 
 		  med_int *psize, char *lname, unsigned int bidon3, med_int *nip)
 #else
 med_int 
-nmfdfnvp(med_int *fid, char*fname, med_int *fnamelen,
+nmfdfnvp(med_idt *fid, char*fname, med_int *fnamelen,
 	 med_int *numdt, med_int *numit, med_int *etype, med_int *gtype,
 	 med_int *pit, med_int *stm, char *pname, 
 	 med_int *psize, char *lname, med_int *nip)
@@ -863,13 +863,13 @@ nmfdfnvp(med_int *fid, char*fname, med_int *fnamelen,
 
 #ifdef PPRO_NT
 med_int 
-MFDFNPN(med_int *fid, char* fname, unsigned int bidon1, med_int *fnamelen,
+MFDFNPN(med_idt *fid, char* fname, unsigned int bidon1, med_int *fnamelen,
 		  med_int *numdt, med_int *numit, med_int *etype, med_int *gtype,
 		  char *pname, unsigned int bidon2, med_int *pnamelen, med_int *stm, 
 		  med_int *psize, char *lname, unsigned int bidon3, med_int *nip)
 #else
 med_int 
-nmfdfnpn(med_int *fid, char* fname, med_int *fnamelen,
+nmfdfnpn(med_idt *fid, char* fname, med_int *fnamelen,
 	 med_int *numdt, med_int *numit, med_int *etype, med_int *gtype,
 	 char *pname, med_int *pnamelen, med_int *stm, 
 	 med_int *psize, char *lname, med_int *nip)
@@ -914,13 +914,13 @@ nmfdfnpn(med_int *fid, char* fname, med_int *fnamelen,
 
 #ifdef PPRO_NT
 med_int
-MFDFRVR(med_int *fid, char *fname, unsigned int bidon1, med_int *fnamelen,
+MFDFRVR(med_idt *fid, char *fname, unsigned int bidon1, med_int *fnamelen,
 		  med_int *numdt, med_int *numit, 
 		  med_int *etype, med_int *gtype, med_int *swm,
 		  med_int *cs, med_float *val)
 #else
 med_int
-nmfdfrvr(med_int *fid, char *fname, med_int *fnamelen,
+nmfdfrvr(med_idt *fid, char *fname, med_int *fnamelen,
 	 med_int *numdt, med_int *numit, 
 	 med_int *etype, med_int *gtype, med_int *swm,
 	 med_int *cs, med_float *val)
@@ -957,13 +957,13 @@ nmfdfrvr(med_int *fid, char *fname, med_int *fnamelen,
 
 #ifdef PPRO_NT
 med_int
-MFDFIVR(med_int *fid, char *fname, unsigned int bidon1, med_int *fnamelen,
+MFDFIVR(med_idt *fid, char *fname, unsigned int bidon1, med_int *fnamelen,
 		  med_int *numdt, med_int *numit,
 		  med_int *etype, med_int *gtype, med_int *swm,
 		  med_int *cs, med_int *val)
 #else
 med_int
-nmfdfivr(med_int *fid, char *fname, unsigned int bidon1, med_int *fnamelen,
+nmfdfivr(med_idt *fid, char *fname, unsigned int bidon1, med_int *fnamelen,
 	 med_int *numdt, med_int *numit,
 	 med_int *etype, med_int *gtype, med_int *swm,
 	 med_int *cs, med_int *val)
@@ -999,14 +999,14 @@ nmfdfivr(med_int *fid, char *fname, unsigned int bidon1, med_int *fnamelen,
 
 #ifdef PPRO_NT
 med_int
-MFDFRPR(med_int *fid, char *fname, unsigned int bidon1, med_int *fnamelen,
+MFDFRPR(med_idt *fid, char *fname, unsigned int bidon1, med_int *fnamelen,
 		  med_int *numdt, med_int *numit,
 		  med_int *etype, med_int *gtype, 
 		  med_int *stm, char *pname, unsigned int bidon2, med_int *pnamelen,  
 		  med_int *swm,med_int *cs, med_float *val)
 #else
 med_int
-nmfdfrpr(med_int *fid, char *fname, med_int *fnamelen,
+nmfdfrpr(med_idt *fid, char *fname, med_int *fnamelen,
 	 med_int *numdt, med_int *numit,
 	 med_int *etype, med_int *gtype, 
 	 med_int *stm, char *pname, med_int *pnamelen,   
@@ -1050,14 +1050,14 @@ nmfdfrpr(med_int *fid, char *fname, med_int *fnamelen,
 
 #ifdef PPRO_NT
 med_int
-MFDFIPR(med_int *fid, char *fname, unsigned int bidon1, med_int *fnamelen,
+MFDFIPR(med_idt *fid, char *fname, unsigned int bidon1, med_int *fnamelen,
 		  med_int *numdt, med_int *numit,
 		  med_int *etype, med_int *gtype, 
 		  med_int *stm, char *pname, unsigned int bidon2, med_int *pnamelen,  
 		  med_int *swm, med_int *cs, med_int *val)
 #else
 med_int
-nmfdfipr(med_int *fid, char *fname, med_int *fnamelen,
+nmfdfipr(med_idt *fid, char *fname, med_int *fnamelen,
 	 med_int *numdt, med_int *numit, 
 	 med_int *etype, med_int *gtype, 
 	 med_int *stm, char *pname, med_int *pnamelen,  
@@ -1101,13 +1101,13 @@ nmfdfipr(med_int *fid, char *fname, med_int *fnamelen,
 
 #ifdef PPRO_NT
 med_int
-MFDFRAR(med_int *fid, char *fname, unsigned int bidon1, med_int *fnamelen,
+MFDFRAR(med_idt *fid, char *fname, unsigned int bidon1, med_int *fnamelen,
 		  med_int *numdt, med_int *numit,
 		  med_int *etype, med_int *gtype,
 		  unsigned char **flt, med_float *val)
 #else
 med_int
-nmfdfrar(med_int *fid, char *fname, med_int *fnamelen,
+nmfdfrar(med_idt *fid, char *fname, med_int *fnamelen,
 	 med_int *numdt, med_int *numit,
 	 med_int *etype, med_int *gtype,
 	 unsigned char **flt, med_float *val)
@@ -1141,13 +1141,13 @@ nmfdfrar(med_int *fid, char *fname, med_int *fnamelen,
 
 #ifdef PPRO_NT
 med_int
-MFDFIAR(med_int *fid, char *fname, unsigned int bidon1, med_int *fnamelen,
+MFDFIAR(med_idt *fid, char *fname, unsigned int bidon1, med_int *fnamelen,
 		  med_int *numdt, med_int *numit,
 		  med_int *etype, med_int *gtype,
 		  unsigned char **flt, med_int *val)
 #else
 med_int
-nmfdfiar(med_int *fid, char *fname, med_int *fnamelen,
+nmfdfiar(med_idt *fid, char *fname, med_int *fnamelen,
 	 med_int *numdt, med_int *numit,
 	 med_int *etype, med_int *gtype,
 	 unsigned char **flt, med_int *val)
@@ -1182,11 +1182,11 @@ nmfdfiar(med_int *fid, char *fname, med_int *fnamelen,
 
 #ifdef PPRO_NT
 med_int
-MFDFINW(med_int *fid, char *fname, unsigned int bidon1, med_int *fnamelen,
+MFDFINW(med_idt *fid, char *fname, unsigned int bidon1, med_int *fnamelen,
 		  char *iname, unsigned int bidon2, med_int *inamelen)
 #else
 med_int
-nmfdfinw(med_int *fid, char *fname, med_int *fnamelen,
+nmfdfinw(med_idt *fid, char *fname, med_int *fnamelen,
 	 char *iname, med_int *inamelen)
 #endif
 {
@@ -1216,11 +1216,11 @@ nmfdfinw(med_int *fid, char *fname, med_int *fnamelen,
 
 #ifdef PPRO_NT
 med_int 
-MFDFNIN(med_int *fid, 
+MFDFNIN(med_idt *fid, 
 		  char *fname, unsigned int bidon1, med_int *fnamelen)
 #else
 med_int 
-nmfdfnin(med_int *fid,char *fname, med_int *fnamelen)
+nmfdfnin(med_idt *fid,char *fname, med_int *fnamelen)
 #endif
 {
   med_int _ret; 
@@ -1241,11 +1241,11 @@ nmfdfnin(med_int *fid,char *fname, med_int *fnamelen)
 
 #ifdef PPRO_NT
 med_int
-MFDFINI(med_int *fid, char *fname, unsigned int bidon1, med_int *fnamelen,
+MFDFINI(med_idt *fid, char *fname, unsigned int bidon1, med_int *fnamelen,
 		  med_int *it, char *iname, unsigned int bidon2)
 #else
 med_int
-nmfdfini(med_int *fid, char *fname, med_int *fnamelen, med_int *it, char *iname)
+nmfdfini(med_idt *fid, char *fname, med_int *fnamelen, med_int *it, char *iname)
 #endif
 {
   med_err _ret=0;
@@ -1271,13 +1271,13 @@ nmfdfini(med_int *fid, char *fname, med_int *fnamelen, med_int *it, char *iname)
 
 #ifdef PPRO_NT
 med_int
-MFDFOCI(med_int *fid, char* fname, unsigned int bidon1, med_int *fnamelen,
+MFDFOCI(med_idt *fid, char* fname, unsigned int bidon1, med_int *fnamelen,
 		  med_int *it, med_int *numdt, med_int *numit, med_float *dt,
 		  med_int *nmesh, char *mname, unsigned int bidon2, med_int *lmesh,
 		  med_int *mnumdt, med_int *mnumit)
 #else
 med_int
-nmfdfoci(med_int *fid, char* fname,med_int *fnamelen,
+nmfdfoci(med_idt *fid, char* fname,med_int *fnamelen,
 	 med_int *it, med_int *numdt, med_int *numit, med_float *dt,
 	 med_int *nmesh, char *mname, med_int *lmesh,
 	 med_int *mnumdt, med_int *mnumit)
@@ -1315,13 +1315,13 @@ nmfdfoci(med_int *fid, char* fname,med_int *fnamelen,
 
 #ifdef PPRO_NT
 med_int 
-MFDFONP(med_int *fid, char* fname, unsigned int bidon1, med_int *fnamelen,
+MFDFONP(med_idt *fid, char* fname, unsigned int bidon1, med_int *fnamelen,
 		  med_int *numdt, med_int *numit, med_int *etype, med_int *gtype,
 		  med_int *it, char *mname, unsigned int bidon2,
 		  char *dpname, unsigned int bidon3, char *dlname, unsigned int bidon4)
 #else
 med_int 
-nmfdfonp(med_int *fid, char*fname, med_int *fnamelen,
+nmfdfonp(med_idt *fid, char*fname, med_int *fnamelen,
 	 med_int *numdt, med_int *numit, med_int *etype, med_int *gtype,
 	 med_int *it, char *mname, 
 	 char *dpname, char *dlname)
@@ -1363,14 +1363,14 @@ nmfdfonp(med_int *fid, char*fname, med_int *fnamelen,
 
 #ifdef PPRO_NT
 med_int 
-MFDFONV(med_int *fid, char*fname, unsigned int bidon1, med_int *fnamelen,
+MFDFONV(med_idt *fid, char*fname, unsigned int bidon1, med_int *fnamelen,
 		  med_int *numdt, med_int *numit, med_int *etype, med_int *gtype,
 		  char* mname,  unsigned int bidon2, med_int *mnamelen,
 		  med_int *pit, med_int *stm, char *pname, unsigned int bidon3, 
 		  med_int *psize, char *lname, unsigned int bidon4, med_int *nip)
 #else
 med_int 
-nmfdfonv(med_int *fid, char*fname, med_int *fnamelen,
+nmfdfonv(med_idt *fid, char*fname, med_int *fnamelen,
 	 med_int *numdt, med_int *numit, med_int *etype, med_int *gtype,
 	 char* mname, med_int *mnamelen,
 	 med_int *pit, med_int *stm, char *pname, 
@@ -1420,7 +1420,7 @@ nmfdfonv(med_int *fid, char*fname, med_int *fnamelen,
 
 #ifdef PPRO_NT
 med_int
-MFDFORR(med_int *fid, char *fname, unsigned int bidon1, med_int *fnamelen,
+MFDFORR(med_idt *fid, char *fname, unsigned int bidon1, med_int *fnamelen,
 		  med_int *numdt, med_int *numit,
 		  med_int *etype, med_int *gtype,
 		  char *mname, unsigned int bidon2, med_int *mnamelen,
@@ -1428,7 +1428,7 @@ MFDFORR(med_int *fid, char *fname, unsigned int bidon1, med_int *fnamelen,
 		  med_int *swm,med_int *cs, med_float *val)
 #else
 med_int
-nmfdforr(med_int *fid, char *fname, med_int *fnamelen,
+nmfdforr(med_idt *fid, char *fname, med_int *fnamelen,
 	 med_int *numdt, med_int *numit,
 	 med_int *etype, med_int *gtype, 
 	 char *mname, med_int *mnamelen,
@@ -1479,7 +1479,7 @@ nmfdforr(med_int *fid, char *fname, med_int *fnamelen,
 
 #ifdef PPRO_NT
 med_int
-MFDFOIR(med_int *fid, char *fname, unsigned int bidon1, med_int *fnamelen,
+MFDFOIR(med_idt *fid, char *fname, unsigned int bidon1, med_int *fnamelen,
 		  med_int *numdt, med_int *numit,
 		  med_int *etype, med_int *gtype, 
 		  char *mname, unsigned int bidon2, med_int *mnamelen,
@@ -1487,7 +1487,7 @@ MFDFOIR(med_int *fid, char *fname, unsigned int bidon1, med_int *fnamelen,
 		  med_int *swm, med_int *cs, med_int *val)
 #else
 med_int
-nmfdfoir(med_int *fid, char *fname, med_int *fnamelen,
+nmfdfoir(med_idt *fid, char *fname, med_int *fnamelen,
 	 med_int *numdt, med_int *numit, 
 	 med_int *etype, med_int *gtype,
 	 char *mname, med_int *mnamelen, 

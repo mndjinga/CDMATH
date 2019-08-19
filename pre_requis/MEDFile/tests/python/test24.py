@@ -2,7 +2,7 @@
 # -*- coding:utf-8 -*-
 # /*  This file is part of MED.
 #  *
-#  *  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+#  *  COPYRIGHT (C) 1999 - 2019  EDF R&D, CEA/DEN
 #  *  MED is free software: you can redistribute it and/or modify
 #  *  it under the terms of the GNU Lesser General Public License as published by
 #  *  the Free Software Foundation, either version 3 of the License, or
@@ -34,19 +34,19 @@ fid = MEDfileOpen("test23.med",MED_ACC_RDONLY)
 
 # /* Lecture du nombre de maillages */
 nmaa = MEDnMesh(fid)
-print "Nombre de maillages = \n",nmaa
+print("Nombre de maillages = \n",nmaa)
 
-for i in xrange(nmaa):
+for i in range(nmaa):
     maa, spacedim, mdim, type, desc, dtunit, sort, nstep,  rep, nomcoo, unicoo = MEDmeshInfo(fid, i+1)
 
-    print "\nMaillage de nom : |%s| , de dimension : %d , et de type %s\n"%(maa,mdim,type)
-    print "\t -Dimension de l'espace : %d\n"%(spacedim)
-    print "\t -Description du maillage : |%s|\n"%(desc)
-    print "\t -Noms des axes : |%s|\n"%(nomcoo)
-    print "\t -Unités des axes : |%s|\n"%(unicoo)
-    print "\t -Type de repère : %s\n"%(rep)
-    print "\t -Nombre d'étapes de calcul : %d\n"%(nstep)
-    print "\t -Unité des dates : |%s|\n"%(dtunit)
+    print("\nMaillage de nom : |%s| , de dimension : %d , et de type %s\n"%(maa,mdim,type))
+    print("\t -Dimension de l'espace : %d\n"%(spacedim))
+    print("\t -Description du maillage : |%s|\n"%(desc))
+    print("\t -Noms des axes : |%s|\n"%(nomcoo))
+    print("\t -Unités des axes : |%s|\n"%(unicoo))
+    print("\t -Type de repère : %s\n"%(rep))
+    print("\t -Nombre d'étapes de calcul : %d\n"%(nstep))
+    print("\t -Unité des dates : |%s|\n"%(dtunit))
 
     for (polytype,polyname) in [( MED_POLYGON, MEDmeshGeotypeName(fid,MED_POLYGON) ),
                                 ( MED_POLYGON2, MEDmeshGeotypeName(fid,MED_POLYGON2) )]:
@@ -54,7 +54,7 @@ for i in xrange(nmaa):
         nind,chgt,trsf = MEDmeshnEntity(fid,maa,MED_NO_DT,MED_NO_IT,
                                         MED_CELL,polytype,MED_INDEX_NODE,MED_NODAL)
         npoly = nind-1;
-        print "Nombre de mailles ",polyname," en mode nodal : \n",npoly
+        print("Nombre de mailles ",polyname," en mode nodal : \n",npoly)
 
         # /* Quelle taille pour le tableau des connectivites, nombre de noeuds
         #     tous polygones confondus*/
@@ -75,13 +75,13 @@ for i in xrange(nmaa):
 
         # /* Lecture de la connectivite des mailles polygones */
         MEDmeshPolygon2Rd(fid,maa,MED_NO_DT,MED_NO_IT,MED_CELL,polytype,MED_NODAL,index,con)
-        print "Lecture de la connectivite des mailles ",polyname," en mode nodal \n"
+        print("Lecture de la connectivite des mailles ",polyname," en mode nodal \n")
 
         # /* Lecture (optionnelle) des noms des polygones */
         try:
             nom=MEDmeshEntityNameRd(fid, maa, MED_NO_DT, MED_NO_IT, MED_CELL, polytype, nom)
         except RuntimeError as ex:
-            print "Une RuntimeError exception a été attrapée : ",ex
+            print("Une RuntimeError exception a été attrapée : ",ex)
             ret=ex.args[1]
             
         if (ret <0):
@@ -93,7 +93,7 @@ for i in xrange(nmaa):
         try:
             num=MEDmeshEntityNumberRd(fid, maa, MED_NO_DT, MED_NO_IT,MED_CELL, polytype,num)
         except RuntimeError as ex:
-            print "Une RuntimeError exception a été attrapée : ",ex
+            print("Une RuntimeError exception a été attrapée : ",ex)
             ret=ex.args[1]
         if (ret < 0):
             inuele = MED_FALSE;
@@ -104,20 +104,20 @@ for i in xrange(nmaa):
         try:
             fam = MEDmeshEntityFamilyNumberRd(fid,maa, MED_NO_DT, MED_NO_IT,MED_CELL, polytype,fam)
         except RuntimeError as ex:
-            print "Une RuntimeError exception a été attrapée : ",ex
+            print("Une RuntimeError exception a été attrapée : ",ex)
             
-        print "Affichage des resultats \n"
-        for j in xrange(npoly):
-            print ">> Maille %s %d : \n"%(polyname,j+1)
+        print("Affichage des resultats \n")
+        for j in range(npoly):
+            print(">> Maille %s %d : \n"%(polyname,j+1))
             ind1 = index[j]-1
             ind2 = index[j+1]-1
-            print "---- Connectivite       ----- :",con[ind1:ind2]
+            print("---- Connectivite       ----- :",con[ind1:ind2])
                                                   
             if inoele:
-                print "---- Nom                ----- : |%s| "%("".join(nom[j*MED_SNAME_SIZE:j*MED_SNAME_SIZE+MED_SNAME_SIZE]))
+                print("---- Nom                ----- : |%s| "%("".join(nom[j*MED_SNAME_SIZE:j*MED_SNAME_SIZE+MED_SNAME_SIZE])))
             if inuele:
-                print "---- Numero             ----- : %d "%(num[j])
-            print "---- Numero de famille  ----- : %d \n"%(fam[j])
+                print("---- Numero             ----- : %d "%(num[j]))
+            print("---- Numero de famille  ----- : %d \n"%(fam[j]))
 
 # /* Fermeture du fichier */
 MEDfileClose(fid)

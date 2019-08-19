@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2019  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -18,7 +18,7 @@
 /*
  * Mesh Use case 5 : read a 2D structured mesh
  *                   5x3 cartesian grid
- * 
+ *
  */
 
 #include <med.h>
@@ -59,26 +59,26 @@ int main (int argc, char **argv) {
   }
 
   /* read mesh informations : meshname, mesh dimension, space dimension ... */
-  if (MEDmeshInfoByName(fid, meshname, &spacedim, &meshdim, &meshtype, meshdescription, 
+  if (MEDmeshInfoByName(fid, meshname, &spacedim, &meshdim, &meshtype, meshdescription,
 			dtunit, &sortingtype, &nstep, &axistype, axisname, unitname) < 0) {
     MESSAGE("ERROR : mesh info ...");
     goto ERROR;
   }
-  
+
   /* read the grid type : MED_CARTESIAN_GRID or MED_CURVILINEAR_GRID */
   if (MEDmeshGridTypeRd(fid, meshname, &gridtype) < 0) {
     MESSAGE("ERROR : read grid type ...");
   }
 
-  /* 
-   * ... we know that we the mesh is a cartesian grid, 
-   * a real code would check  ... 
+  /*
+   * ... we know that the mesh is a cartesian grid,
+   * a real code would check  ...
    */
 
   /* read the axis coordinates (MED_CARTESIAN coordinates system */
   /* X */
   axis = 1;
-  if ((size = MEDmeshnEntity(fid, meshname, MED_NO_DT, MED_NO_IT, 
+  if ((size = MEDmeshnEntity(fid, meshname, MED_NO_DT, MED_NO_IT,
 			     MED_NODE, MED_NONE, MED_COORDINATE_AXIS1, MED_NO_CMODE,
 			     &coordinatechangement, &geotransformation)) < 0) {
     MESSAGE("ERROR : number of coordinates on X axis ...");
@@ -90,18 +90,18 @@ int main (int argc, char **argv) {
     MESSAGE("ERROR : memory allocation ...");
     goto ERROR;
   }
-  if (MEDmeshGridIndexCoordinateRd(fid, meshname, MED_NO_DT, MED_NO_IT, 
+  if (MEDmeshGridIndexCoordinateRd(fid, meshname, MED_NO_DT, MED_NO_IT,
 				   axis, cooXaxis) < 0) {
     MESSAGE("ERROR : read axis X coordinates ...");
     free(cooXaxis);
     goto ERROR;
-  }  
-  
+  }
+
   free(cooXaxis);
 
   /* Y */
-  axis = 2; 
-  if ((size = MEDmeshnEntity(fid, meshname, MED_NO_DT, MED_NO_IT, 
+  axis = 2;
+  if ((size = MEDmeshnEntity(fid, meshname, MED_NO_DT, MED_NO_IT,
 			     MED_NODE, MED_NONE, MED_COORDINATE_AXIS2, MED_NO_CMODE,
 			     &coordinatechangement, &geotransformation)) < 0) {
     MESSAGE("ERROR : number of coordinates on Y axis ...");
@@ -113,31 +113,33 @@ int main (int argc, char **argv) {
     MESSAGE("ERROR : memory allocation ...");
     goto ERROR;
   }
-  if (MEDmeshGridIndexCoordinateRd(fid, meshname, MED_NO_DT, MED_NO_IT, 
+  if (MEDmeshGridIndexCoordinateRd(fid, meshname, MED_NO_DT, MED_NO_IT,
 				   axis, cooYaxis) < 0) {
     MESSAGE("ERROR : read axis Y coordinates ...");
-    free(cooYaxis); 
+    free(cooYaxis);
     goto ERROR;
   }
 
-  free(cooYaxis);   
+  free(cooYaxis);
+
+  /* read cells name */
 
   cellsname = (char *) malloc((sizeof(char))*ncell*MED_SNAME_SIZE+1);
-  if (MEDmeshEntityNameRd(fid, meshname, MED_NO_DT, MED_NO_IT, 
+  if (MEDmeshEntityNameRd(fid, meshname, MED_NO_DT, MED_NO_IT,
 			  MED_CELL, MED_QUAD4, cellsname) < 0)  {
     MESSAGE("ERROR : read cells name ...");
-    free(cellsname); 
+    free(cellsname);
     goto ERROR;
-  } 
+  }
   free(cellsname);
 
   ret=0;
  ERROR:
- 
+
   /* close MED file */
   if (MEDfileClose(fid) < 0) {
-    MESSAGE("ERROR : close file ...");             
-    ret = -1; 
+    MESSAGE("ERROR : close file ...");
+    ret = -1;
   }
 
   return ret;

@@ -1,6 +1,6 @@
 !*  This file is part of MED.
 !*
-!*  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+!*  COPYRIGHT (C) 1999 - 2019  EDF R&D, CEA/DEN
 !*  MED is free software: you can redistribute it and/or modify
 !*  it under the terms of the GNU Lesser General Public License as published by
 !*  the Free Software Foundation, either version 3 of the License, or
@@ -29,7 +29,8 @@ program test11
   include 'med.hf90'
 
 
-  integer       cret,ret,lret,retmem, fid
+  integer*8     fid
+  integer       cret,ret,lret,retmem
   integer       USER_INTERLACE,USER_MODE
   character*64  :: maa,nomcha,pflname,nomlien,locname
   character*200 desc
@@ -274,7 +275,8 @@ integer function getFieldsOn(fid, nomcha, typcha, ncomp, entite, stockage, ncst)
   implicit none
   include 'med.hf90'
 
-  integer      ::fid,typcha,ncomp,entite,stockage, ncst
+  integer*8    fid
+  integer      ::typcha,ncomp,entite,stockage, ncst
   character(LEN=*)  nomcha
 
   integer      :: j,k,l,m,n,nb_geo,cret,ret,retmem,nvl,nref

@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2019  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -97,7 +97,7 @@ int main (int argc, char **argv) {
 						 7,8,5,4,
 						 8,9,6,5};
   int ret=-1;
-  
+
   /* file creation */
   fid = MEDfileOpen("UsesCase_MEDstructElement_1.med",MED_ACC_CREAT);
   if (fid < 0) {
@@ -268,7 +268,7 @@ int main (int argc, char **argv) {
   geotype = MEDstructElementGeotype(fid,elementname);
   nentity = 3;
   ISCRUTE(geotype);
-  if (MEDmeshElementConnectivityWr(fid, computmeshname, MED_NO_DT, MED_NO_IT, 0.0, 
+  if (MEDmeshElementConnectivityWr(fid, computmeshname, MED_NO_DT, MED_NO_IT, 0.0,
 				   MED_STRUCT_ELEMENT, geotype , MED_NODAL, MED_FULL_INTERLACE,
 				   nentity, 0) < 0) {
     MESSAGE("ERROR : writing particles connectivity ...");

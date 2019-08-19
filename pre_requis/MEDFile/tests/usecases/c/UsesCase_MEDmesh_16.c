@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2019  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -18,7 +18,7 @@
 /*
  *  How to create an unstructured mesh with polyhedrons
  *
- *  Use case 16 : read a 2D unstructured mesh with 1 polyhedrons
+ *  Use case 16 : read a 3D unstructured mesh with 2 polyhedrons
  */
 
 #include <med.h>
@@ -87,13 +87,13 @@ int main (int argc, char **argv) {
    */
 
   /* We read how many polyhedrons are in the mesh (using nodal connectivity mode) */
-  /* We get the size of the polyhedrons/face index array. 
-   * As an index of the face index array give the location of the first face   and so the 
-   * number of polyhedrons 
+  /* We get the size of the polyhedrons/face index array.
+   * As an index of the face index array give the location of the first face   and so the
+   * number of polyhedrons
    */
   if ((faceindexsize = MEDmeshnEntity(fid,meshname,MED_NO_DT,MED_NO_IT,
           MED_CELL,MED_POLYHEDRON,MED_INDEX_FACE,MED_NODAL,
-          &coordinatechangement, &geotransformation)) < 0) 
+          &coordinatechangement, &geotransformation)) < 0)
     { MESSAGE("ERROR : read number of polyhedrons ...");
       return -1;
     }
@@ -102,7 +102,7 @@ int main (int argc, char **argv) {
 
   if ((nodeindexsize = MEDmeshnEntity(fid,meshname,MED_NO_DT,MED_NO_IT,
           MED_CELL,MED_POLYHEDRON,MED_INDEX_NODE,MED_NODAL,
-          &coordinatechangement, &geotransformation)) < 0) 
+          &coordinatechangement, &geotransformation)) < 0)
     { MESSAGE("ERROR : read number of polyhedrons ...");
       return -1;
     }
@@ -111,8 +111,8 @@ int main (int argc, char **argv) {
   /* how many nodes for the polyhedron connectivity ? */
   if ((connectivitysize = MEDmeshnEntity(fid,meshname,MED_NO_DT,MED_NO_IT,
            MED_CELL,MED_POLYHEDRON,MED_CONNECTIVITY,MED_NODAL,
-           &coordinatechangement, &geotransformation)) < 0) 
-    { MESSAGE("ERROR : read connevity size ...");
+           &coordinatechangement, &geotransformation)) < 0)
+    { MESSAGE("ERROR : read connectivity size ...");
       return -1;
     }
   ISCRUTE(connectivitysize);
@@ -133,14 +133,14 @@ int main (int argc, char **argv) {
   printf("\n");
 
 
-  /* read polygons connectivity */
+  /* read polyhedron connectivity */
   faceindex = (med_int *) malloc(sizeof(med_int)*faceindexsize);
   nodeindex = (med_int *) malloc(sizeof(med_int)*nodeindexsize);
   connectivity = (med_int *) malloc(sizeof(med_int)*connectivitysize);
 
   if (MEDmeshPolyhedronRd(fid,meshname,MED_NO_DT,MED_NO_IT,MED_CELL,MED_NODAL,
-			  faceindex,nodeindex,connectivity) < 0) 
-    { MESSAGE("ERROR : read polygon connectivity ...");
+			  faceindex,nodeindex,connectivity) < 0)
+    { MESSAGE("ERROR : read polyhedron connectivity ...");
       return -1;
     }
 

@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2019  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -41,14 +41,14 @@ From Fortran call of following C functions :
 
 #ifdef PPRO_NT
 med_int 
-MSMFCRE(med_int *fid, char *mname, unsigned int bidon, med_int *mnamelen, 
+MSMFCRE(med_idt *fid, char *mname, unsigned int bidon, med_int *mnamelen, 
 		  med_int * sdim, med_int * mdim,
 		  char *desc, unsigned int bidon2, med_int *desclen,
 		  med_int *atype, char *aname, unsigned int bidon3, med_int *anamelen, 
 		  char *aunit, unsigned int bidon4, med_int* aunitlen)
 #else
 med_int 
-nmsmfcre(med_int *fid, char *mname, med_int *mnamelen, 
+nmsmfcre(med_idt *fid, char *mname, med_int *mnamelen, 
 	 med_int * sdim, med_int * mdim,
 	 char *desc, med_int *desclen,
 	 med_int *atype, char *aname, med_int *anamelen, 
@@ -92,10 +92,10 @@ nmsmfcre(med_int *fid, char *mname, med_int *mnamelen,
 
 #ifdef PPRO_NT
 med_int
-MSMFNSM(med_int *fid)
+MSMFNSM(med_idt *fid)
 #else
 med_int
-nmsmfnsm(med_int *fid)
+nmsmfnsm(med_idt *fid)
 #endif
 {
   med_int _ret;
@@ -109,7 +109,7 @@ nmsmfnsm(med_int *fid)
 
 #ifdef PPRO_NT
 med_int
-MSMFSNI(med_int *fid, char*mname, unsigned int bidon, med_int *mnamelen,
+MSMFSNI(med_idt *fid, char*mname, unsigned int bidon, med_int *mnamelen,
                   med_int * sdim, med_int * mdim, 
 		  char *desc, unsigned int bidon2,
 		  med_int *atype,
@@ -117,7 +117,7 @@ MSMFSNI(med_int *fid, char*mname, unsigned int bidon, med_int *mnamelen,
 		  char *aunit, unsigned int bidon5)
 #else
 med_int
-nmsmfsni(med_int *fid, char* mname, med_int *mnamelen,
+nmsmfsni(med_idt *fid, char* mname, med_int *mnamelen,
 	 med_int * sdim, med_int * mdim, 
 	 char *desc,med_int *atype, char *aname, char *aunit)
 #endif
@@ -169,7 +169,7 @@ nmsmfsni(med_int *fid, char* mname, med_int *mnamelen,
 
 #ifdef PPRO_NT
 med_int
-MSMFSMI(med_int *fid, med_int *it, char*mname, unsigned int bidon, 
+MSMFSMI(med_idt *fid, med_int *it, char*mname, unsigned int bidon, 
                   med_int * sdim, med_int * mdim, 
 		  char *desc, unsigned int bidon2,
 		  med_int *atype,
@@ -177,7 +177,7 @@ MSMFSMI(med_int *fid, med_int *it, char*mname, unsigned int bidon,
 		  char *aunit, unsigned int bidon5)
 #else
 med_int
-nmsmfsmi(med_int *fid, med_int *it, char* mname, 
+nmsmfsmi(med_idt *fid, med_int *it, char* mname, 
 	 med_int * sdim, med_int * mdim, 
 	 char *desc,med_int *atype, char *aname, char *aunit)
 #endif
@@ -227,10 +227,10 @@ nmsmfsmi(med_int *fid, med_int *it, char* mname,
 
 #ifdef PPRO_NT
 med_int
-MSMFNAN(med_int *fid, char *mname, unsigned int bidon, med_int *mnamelen)
+MSMFNAN(med_idt *fid, char *mname, unsigned int bidon, med_int *mnamelen)
 #else
 med_int
-nmsmfnan(med_int *fid, char *mname, med_int *mnamelen)
+nmsmfnan(med_idt *fid, char *mname, med_int *mnamelen)
 #endif
 {
   med_int _ret;
@@ -251,10 +251,10 @@ nmsmfnan(med_int *fid, char *mname, med_int *mnamelen)
 
 #ifdef PPRO_NT
 med_int 
-MSMFNAX(med_int *fid, med_int *it)
+MSMFNAX(med_idt *fid, med_int *it)
 #else
 med_int 
-nmsmfnax(med_int *fid, med_int *it)
+nmsmfnax(med_idt *fid, med_int *it)
 #endif
 {
   med_int _ret; 

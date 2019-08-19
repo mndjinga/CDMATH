@@ -1,6 +1,6 @@
 C*  This file is part of MED.
 C*
-C*  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+C*  COPYRIGHT (C) 1999 - 2019  EDF R&D, CEA/DEN
 C*  MED is free software: you can redistribute it and/or modify
 C*  it under the terms of the GNU Lesser General Public License as published by
 C*  the Free Software Foundation, either version 3 of the License, or
@@ -24,7 +24,8 @@ c
       implicit none
       save
       character*(*) fname,cname,cunit,dtunit,mname
-      integer fid,ncomp,cret,ftype
+      integer*8 fid
+      integer ncomp,cret,ftype
       integer mfdfcre
 c
       cret = mfdfcre(fid,fname,len(fname),ftype,
@@ -45,7 +46,8 @@ c
       character*(*) fname
       integer numdt,numit
       real*8 dt,val(*)
-      integer fid,cret,etype,gtype,swm,cs,n
+      integer*8 fid
+      integer cret,etype,gtype,swm,cs,n
       integer mfdfrvw
 c
       cret = mfdfrvw(fid,fname,len(fname),numdt,numit,dt,
@@ -66,7 +68,8 @@ c
       integer numdt,numit
       real*8 dt
       integer val(*)
-      integer fid,cret,etype,gtype,swm,cs,n
+      integer*8 fid
+      integer cret,etype,gtype,swm,cs,n
       integer mfdfivw
 c
       cret = mfdfivw(fid,fname,len(fname),numdt,numit,dt,
@@ -88,7 +91,8 @@ c
       character*(*) fname,pname,lname
       integer numdt,numit
       real*8 dt,val(*)
-      integer fid,cret,etype,gtype,swm,cs,n,stm
+      integer*8 fid
+      integer cret,etype,gtype,swm,cs,n,stm
       integer mfdfrpw
 c
       cret = mfdfrpw(fid,fname,len(fname),numdt,numit,dt,
@@ -112,7 +116,8 @@ c
       integer numdt,numit
       real*8 dt
       integer val(*)
-      integer fid,cret,etype,gtype,swm,cs,n,stm
+      integer*8 fid
+      integer cret,etype,gtype,swm,cs,n,stm
       integer mfdfipw
 c
       cret = mfdfipw(fid,fname,len(fname),numdt,numit,dt,
@@ -135,7 +140,8 @@ c
       integer numdt,numit
       real*8 dt,val(*)
       integer*8 flt(*)
-      integer fid,cret,etype,gtype
+      integer*8 fid
+      integer cret,etype,gtype
       integer mfdfraw
 c
       cret = mfdfraw(fid,fname,len(fname),numdt,numit,dt,
@@ -158,7 +164,8 @@ c
       real*8 dt
       integer val(*)
       integer*8 flt(*)
-      integer fid,cret,etype,gtype
+      integer*8 fid
+      integer cret,etype,gtype
       integer mfdfiaw
 c
       cret = mfdfiaw(fid,fname,len(fname),numdt,numit,dt,
@@ -174,7 +181,8 @@ c     DEC$ ATTRIBUTES DLLEXPORT :: mfdnfd
 c
       implicit none
       save
-      integer fid,n,cret
+      integer*8 fid
+      integer n,cret
       integer mfdfnfd
 c
       n = mfdfnfd(fid)
@@ -195,7 +203,8 @@ c     DEC$ ATTRIBUTES DLLEXPORT :: mfdnfc
 c
       implicit none
       save
-      integer fid,n,cret,ind
+      integer*8 fid
+      integer n,cret,ind
       integer mfdfnfc
 c
       n = mfdfnfc(fid,ind)
@@ -216,7 +225,8 @@ c     DEC$ ATTRIBUTES DLLEXPORT :: mfdncn
 c
       implicit none
       save
-      integer fid,n,cret
+      integer*8 fid
+      integer n,cret
       character *(*) fname
       integer mfdfncn
 c
@@ -242,7 +252,8 @@ c
 c
       character *(*) fname, mname, dtunit, cname, cunit
       integer lmesh, cret
-      integer fid, type, it, nc
+      integer*8 fid
+      integer  type, it, nc
       integer mfdffdi 
 c
       cret = mfdffdi(fid, it, fname, mname, lmesh, type,
@@ -263,7 +274,8 @@ c
 c
       character *(*) fname, mname, dtunit, cname, cunit
       integer lmesh, cret
-      integer fid, type, nc
+      integer*8 fid
+      integer  type, nc
       integer mfdffin 
 c
       cret = mfdffin(fid, fname, len(fname), mname, lmesh, type,
@@ -282,7 +294,8 @@ c
 c
       character*(*) fname
       integer cret
-      integer fid, it, numdt, numit
+      integer*8 fid
+      integer  it, numdt, numit
       real*8  dt
       integer mfdfcsi
 c
@@ -302,7 +315,8 @@ c
 c
       character*(*) fname
       integer cret
-      integer fid, it, numdt, numit, mnumdt, mnumit
+      integer*8 fid
+      integer  it, numdt, numit, mnumdt, mnumit
       real*8  dt
       integer mfdfcmi
 c
@@ -323,7 +337,8 @@ c
 c
       character*(*) fname
       integer cret
-      integer fid, numdt, numit, mnumdt, mnumit
+      integer*8 fid
+      integer  numdt, numit, mnumdt, mnumit
       integer mfdfcmw
 c
       cret = mfdfcmw(fid,fname,len(fname),numdt,numit,
@@ -340,7 +355,8 @@ c     DEC$ ATTRIBUTES DLLEXPORT :: mfdnpf
 c
       implicit none
       save
-      integer fid,n,cret
+      integer*8 fid
+      integer n,cret
       integer numdt,numit,etype,gtype
       character*(*) fname,dpname,dlname
       
@@ -366,7 +382,8 @@ c
       implicit none
       save
       character*(*) fname
-      integer fid,n,cret,numdt,numit,etype,gtype
+      integer*8 fid
+      integer n,cret,numdt,numit,etype,gtype
       integer mfdfnva
 c
       n = mfdfnva(fid,fname,len(fname),numdt,numit,
@@ -392,7 +409,8 @@ c
       save
       character*(*) fname, pname, lname
       integer pit,stm,psize
-      integer fid,n,cret,numdt,numit,etype,gtype,nip
+      integer*8 fid
+      integer n,cret,numdt,numit,etype,gtype,nip
       integer mfdfnvp
 c
       n = mfdfnvp(fid,fname,len(fname),numdt,numit,
@@ -419,7 +437,8 @@ c
       save
       character*(*) fname, pname, lname
       integer stm,psize
-      integer fid,n,cret,numdt,numit,etype,gtype,nip
+      integer*8 fid
+      integer n,cret,numdt,numit,etype,gtype,nip
       integer mfdfnpn
 c
       n = mfdfnpn(fid,fname,len(fname),numdt,numit,
@@ -446,7 +465,8 @@ c
       character*(*) fname
       integer numdt,numit
       real*8 val(*)
-      integer fid,cret,etype,gtype,swm,cs
+      integer*8 fid
+      integer cret,etype,gtype,swm,cs
       integer mfdfrvr
 c
       cret = mfdfrvr(fid,fname,len(fname),numdt,numit,
@@ -466,7 +486,8 @@ c
       character*(*) fname
       integer numdt,numit
       integer val(*)
-      integer fid,cret,etype,gtype,swm,cs
+      integer*8 fid
+      integer cret,etype,gtype,swm,cs
       integer mfdfivr
 c
       cret = mfdfivr(fid,fname,len(fname),numdt,numit,
@@ -488,7 +509,8 @@ c
       character*(*) fname,pname
       integer numdt,numit
       real*8 val(*)
-      integer fid,cret,etype,gtype,swm,cs,stm
+      integer*8 fid
+      integer cret,etype,gtype,swm,cs,stm
       integer mfdfrpr
 c
       cret = mfdfrpr(fid,fname,len(fname),numdt,numit,
@@ -510,7 +532,8 @@ c
       character*(*) fname,pname
       integer numdt,numit
       integer val(*)
-      integer fid,cret,etype,gtype,swm,cs,n,stm
+      integer*8 fid
+      integer cret,etype,gtype,swm,cs,n,stm
       integer mfdfipr
 c
       cret = mfdfipr(fid,fname,len(fname),numdt,numit,
@@ -532,7 +555,8 @@ c
       integer numdt,numit
       real*8 val(*)
       integer*8 flt(*)
-      integer fid,cret,etype,gtype
+      integer*8 fid
+      integer cret,etype,gtype
       integer mfdfrar
 c
       cret = mfdfrar(fid,fname,len(fname),numdt,numit,
@@ -554,7 +578,8 @@ c
       integer numdt,numit
       integer val(*)
       integer*8 flt(*)
-      integer fid,cret,etype,gtype
+      integer*8 fid
+      integer cret,etype,gtype
       integer mfdfiar
 c
       cret = mfdfiar(fid,fname,len(fname),numdt,numit,
@@ -571,7 +596,8 @@ c
       implicit none
       save
       character*(*) fname,iname
-      integer fid,cret
+      integer*8 fid
+      integer cret
       integer mfdfinw
 c
       cret = mfdfinw(fid,fname,len(fname),iname,len(iname),cret)
@@ -586,7 +612,8 @@ c     DEC$ ATTRIBUTES DLLEXPORT :: mfdnin
 c
       implicit none
       save
-      integer fid,n,cret
+      integer*8 fid
+      integer n,cret
       character*(*) fname
       integer mfdfnin
 c
@@ -609,7 +636,8 @@ c
       implicit none
       save
       character*(*) fname,iname
-      integer fid,cret,it
+      integer*8 fid
+      integer cret,it
       integer mfdfini
 c
       cret = mfdfini(fid,fname,len(fname),it,iname,cret)
@@ -629,7 +657,8 @@ c
 c
       character*(*) fname,mname
       integer cret
-      integer fid,it,numdt,numit,nmesh,lmesh
+      integer*8 fid
+      integer it,numdt,numit,nmesh,lmesh
       integer mnumdt,mnumit
       real*8  dt
       integer mfdfoci
@@ -650,7 +679,8 @@ c     DEC$ ATTRIBUTES DLLEXPORT :: mfdonp
 c
       implicit none
       save
-      integer fid,n,cret
+      integer*8 fid
+      integer n,cret
       integer numdt,numit,etype,gtype,it
       character*(*) fname,dpname,dlname,mname
       
@@ -679,7 +709,8 @@ c
       save
       character*(*) fname, pname, lname, mname
       integer pit,stm,psize
-      integer fid,n,cret,numdt,numit,etype,gtype,nip
+      integer*8 fid
+      integer n,cret,numdt,numit,etype,gtype,nip
       integer mfdfonv
 c
       n = mfdfonv(fid,fname,len(fname),numdt,numit,
@@ -711,7 +742,8 @@ c
       character*(*) fname,pname,mname
       integer numdt,numit
       real*8 val(*)
-      integer fid,cret,etype,gtype,swm,cs,stm
+      integer*8 fid
+      integer cret,etype,gtype,swm,cs,stm
       integer mfdforr
 c
       cret = mfdforr(fid,fname,len(fname),numdt,numit,
@@ -735,7 +767,8 @@ c
       character*(*) fname,pname,mname
       integer numdt,numit
       integer val(*)
-      integer fid,cret,etype,gtype,swm,cs,n,stm
+      integer*8 fid
+      integer cret,etype,gtype,swm,cs,n,stm
       integer mfdfoir
 c
       cret = mfdfoir(fid,fname,len(fname),numdt,numit,

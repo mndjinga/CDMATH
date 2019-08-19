@@ -1,6 +1,6 @@
 C*  This file is part of MED.
 C*
-C*  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+C*  COPYRIGHT (C) 1999 - 2019  EDF R&D, CEA/DEN
 C*  MED is free software: you can redistribute it and/or modify
 C*  it under the terms of the GNU Lesser General Public License as published by
 C*  the Free Software Foundation, either version 3 of the License, or
@@ -26,8 +26,9 @@ c
       character*(*) lmname
       character*(*) des
       character*(*) rmname
-      integer fid, dom, cret
-      integer msdfjcr
+      integer*8 fid
+      integer   dom, cret
+      integer   msdfjcr
 c     
       print *,lmname
       print *,jname
@@ -97,7 +98,8 @@ c
       save
 c     
       character *(*) lmname,jname,des,rmname
-      integer fid, ind,dom,cret,nstep,ncor
+      integer*8 fid
+      integer   ind,dom,cret,nstep,ncor
       integer msdfjni
 c     
       cret = msdfjni(fid,lmname,len(lmname),ind,
@@ -119,7 +121,8 @@ c
       save
 c     
       character*(*) mname,jname
-      integer fid,cret,numdt,numit
+      integer*8 fid
+      integer cret,numdt,numit
       integer it,letype,lgtype,retype,rgtype,ncor
       integer msdfszi
 c     
@@ -145,7 +148,8 @@ c
       save
 c     
       character*(*) mname,jname
-      integer fid,cret,numdt,numit
+      integer*8 fid
+      integer cret,numdt,numit
       integer letype,lgtype,retype,rgtype,ncor
       integer msdfcsz
 c     
@@ -170,7 +174,8 @@ c
       save
 c     
       character *(*) lmname, jname
-      integer fid, cret, corrtab(*)
+      integer*8 fid
+      integer cret, corrtab(*)
       integer entlcl, entdst, geolcl, geodst, numdt,numit
       integer msdfcrr
 c     
@@ -191,7 +196,8 @@ c
       save
 c     
       character *(*) mname,jname
-      integer fid, ind,ncor,numdt,numit,cret
+      integer*8 fid
+      integer ind,ncor,numdt,numit,cret
       integer msdfcsi
 c     
       cret = msdfcsi(fid,mname,len(mname),

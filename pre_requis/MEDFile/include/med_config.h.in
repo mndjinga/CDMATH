@@ -123,7 +123,7 @@
    data model which is not be managable by a MED3.0 function. */
 #undef MED_CHECK_23FORMAT
 
-/* The hdf type to user for 64bits signed integer type. */
+/* The hdf type to use for 64bits signed integer type. */
 #undef MED_H5T_INT64
 
 /* Define if the Fortran part of MED library must be compiled. */

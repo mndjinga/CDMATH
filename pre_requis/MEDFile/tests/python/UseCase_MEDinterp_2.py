@@ -2,7 +2,7 @@
 # -*- coding:utf-8 -*-
 # /*  This file is part of MED.
 #  *
-#  *  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+#  *  COPYRIGHT (C) 1999 - 2019  EDF R&D, CEA/DEN
 #  *  MED is free software: you can redistribute it and/or modify
 #  *  it under the terms of the GNU Lesser General Public License as published by
 #  *  the Free Software Foundation, either version 3 of the License, or
@@ -35,20 +35,20 @@ fid = MEDfileOpen("UsesCase_MEDinterp_1.med",MED_ACC_RDONLY)
 geotype, cellnodes, nbasisfunc, nvariable, maxdegree, nmaxcoefficient = MEDinterpInfoByName(fid,interpname)
 
 #/* read each basis function */
-for  basisfuncit in xrange(1,nbasisfunc+1):
+for  basisfuncit in range(1,nbasisfunc+1):
 
     ncoefficient = MEDinterpBaseFunctionCoefSize(fid,interpname,basisfuncit)
-    print "\t Nombre de coefficients :",ncoefficient
+    print("\t Nombre de coefficients :",ncoefficient)
    
     coefficient = MEDFLOAT(ncoefficient)
     power       = MEDINT(nvariable*ncoefficient)
     
     MEDinterpBaseFunctionRd(fid,interpname,basisfuncit,power,coefficient)
-    print "Function de base n°%d de l'interpolation |%s| : "%(basisfuncit,interpname)
-    print "\t Nombre de coefficients :",ncoefficient
-    print "\t Nombre de variables :",nvariable
-    print "\t coefficient :",coefficient
-    print "\t power       :",power
+    print("Function de base n°%d de l'interpolation |%s| : "%(basisfuncit,interpname))
+    print("\t Nombre de coefficients :",ncoefficient)
+    print("\t Nombre de variables :",nvariable)
+    print("\t coefficient :",coefficient)
+    print("\t power       :",power)
     
 MEDfileClose(fid)
 

@@ -1,6 +1,6 @@
 C*  This file is part of MED.
 C*
-C*  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+C*  COPYRIGHT (C) 1999 - 2019  EDF R&D, CEA/DEN
 C*  MED is free software: you can redistribute it and/or modify
 C*  it under the terms of the GNU Lesser General Public License as published by
 C*  the Free Software Foundation, either version 3 of the License, or
@@ -21,7 +21,8 @@ c
       implicit none
       save
 c
-      integer fid, n, cret
+      integer*8 fid
+      integer   n, cret
       integer edfnpro
 c
       n = edfnpro(fid)
@@ -43,7 +44,8 @@ c
       implicit none
       save
 c
-      integer fid,n,cret,indice
+      integer*8 fid
+      integer  n,cret,indice
       character *(*) pro
       integer edfproi
 c
@@ -61,7 +63,8 @@ c
       implicit none
       save
 c      
-      integer fid,n,cret
+      integer*8 fid
+      integer  n,cret
       integer pflval(*)
       character *(*) nom
       integer edfpfle
@@ -79,7 +82,8 @@ c
       implicit none
       save
 c      
-      integer fid,cret,n
+      integer*8 fid
+      integer  cret,n
       character *(*) nom
       integer edfnpfl
 c
@@ -101,7 +105,8 @@ c
       implicit none
       save
 c      
-      integer fid,cret
+      integer*8 fid
+      integer  cret
       integer pflval(*)
       character *(*) nom
       integer edfpfll

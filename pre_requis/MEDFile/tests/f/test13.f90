@@ -1,6 +1,6 @@
 !*  This file is part of MED.
 !*
-!*  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+!*  COPYRIGHT (C) 1999 - 2019  EDF R&D, CEA/DEN
 !*  MED is free software: you can redistribute it and/or modify
 !*  it under the terms of the GNU Lesser General Public License as published by
 !*  the Free Software Foundation, either version 3 of the License, or
@@ -28,7 +28,8 @@ program test13
   include 'med.hf90'
 !
 !
-  integer      ret,cret,fid
+  integer*8    fid
+  integer      ret,cret
   character*64 maa
   integer      mdim,nequ,ncor,sdim
   integer, allocatable, dimension(:) :: cor

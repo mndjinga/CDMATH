@@ -1,6 +1,6 @@
 C*  This file is part of MED.
 C*
-C*  COPYRIGHT (C) 1999 - 2017  EDF R&D, CEA/DEN
+C*  COPYRIGHT (C) 1999 - 2019  EDF R&D, CEA/DEN
 C*  MED is free software: you can redistribute it and/or modify
 C*  it under the terms of the GNU Lesser General Public License as published by
 C*  the Free Software Foundation, either version 3 of the License, or
@@ -28,7 +28,8 @@ C
 	include 'med.hf'
 C       
 C       
-	integer       cret, fid,i,j
+	integer*8     fid
+	integer       cret,i,j
 C       ** la dimension du maillage                         **
 	integer       mdim,nind,nmaa,type,quoi,rep,typmaa
         integer       edim,nstep,stype,atype, chgt, tsf
