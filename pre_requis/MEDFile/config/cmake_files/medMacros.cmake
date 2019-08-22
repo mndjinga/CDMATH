@@ -398,8 +398,8 @@ MACRO(MED_FIND_HDF5)
     ##
     ## Requires 1.10.x version
     ##
-    IF (NOT HDF_VERSION_MAJOR_REF EQUAL 1 OR HDF_VERSION_MINOR_REF LESS 8 HDF_VERSION_MINOR_REF GREATER 10 )
-        MESSAGE(FATAL_ERROR "HDF5 version is ${HDF_VERSION_REF}. Only versions >= 1.10.0 are supported.")
+    IF (NOT HDF_VERSION_MAJOR_REF EQUAL 1 OR HDF_VERSION_MINOR_REF LESS 8 OR HDF_VERSION_MINOR_REF GREATER 10 )
+        MESSAGE(FATAL_ERROR "HDF5 version is ${HDF_VERSION_REF}. Only versions >= 1.8 and <= 1.10 are supported.")
     ENDIF()
     ##
     ##
