@@ -1,7 +1,7 @@
 CDMATH
 ======
 
-CDMATH is a geometrical and numerical toolbox designed for numerical analysts who work on the discretisation of partial differential equations on general shapes and meshes and who would rather focus on high-level scripting. The library originates from [CDMATH](http://cdmath.jimdo.com), a collaborative workgroup with the same name. It is based on the [MEDcoupling](https://docs.salome-platform.org/latest/dev/MEDCoupling/tutorial/index.html) C++/python library of the [SALOME](http://www.salome-platform.org/) project for the handling of meshes and fields, and on the C++ library [PETSC](https://www.mcs.anl.gov/petsc/) for the handling of matrices and linear solvers. The library currently developed for linux distributions and is maintained on Ubuntu 16.04 LTS and 18.04 LTS, as well as on Fedora 24, 26 and 29.
+CDMATH is a geometrical and numerical toolbox designed for numerical analysts who work on the discretisation of partial differential equations on general shapes and meshes and who would rather focus on high-level scripting. The library originates from [CDMATH](http://cdmath.jimdo.com), a collaborative workgroup with the same name. It is based on the [MEDcoupling](https://docs.salome-platform.org/latest/dev/MEDCoupling/tutorial/index.html) C++/python library of the [SALOME](http://www.salome-platform.org/) project for the handling of meshes and fields, and on the C++ library [PETSC](https://www.mcs.anl.gov/petsc/) for the handling of matrices and linear solvers. The library is currently developed for linux distributions and is maintained on Ubuntu 14.04 LTS, 16.04 LTS and 18.04 LTS, as well as on Fedora 24, 26 and 29.
 
 Examples of use
 ---------------
@@ -16,6 +16,8 @@ Examples of use
 - [Influence of the mesh on the convergence and low Mach precision  for the CENTERED finite volume method applied to the 2D wave system](tests/doc/2DWaveSystemVF_stationary/Convergence_WaveSystem_Centered_SQUARE.ipynb)
 - [Influence of the mesh on the convergence and low Mach precision  for the STAGGERED finite volume method applied to the 2D wave system](tests/doc/2DWaveSystemVF_stationary/Convergence_WaveSystem_Staggered_SQUARE_squares.ipynb)
 - [Influence of the mesh on the convergence and low Mach precision  for the PSEUDO-STAGGERED (colocated) finite volume method applied to the 2D wave system](tests/doc/2DWaveSystemVF_stationary/Convergence_WaveSystem_PStag_SQUARE.ipynb)
+- [Dirichlet problem for the 3D Poisson equation on a cube (by S. Kameni Ngwamou, PhD student)](tests/doc/3DPoissonEF/FiniteElements3DPoisson_CUBE.ipynb)
+- [3D Stationary diffusion in a room with a cold window and a hot radiator. Influence of the radiator position (by S. Kameni Ngwamou, PhD student)](tests/doc/3DRoomCoolingEF/3DRoomCoolingEF.ipynb)
 
 Download CDMATH sources to compile
 ----------------------------------
