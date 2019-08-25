@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2016  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2019  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -149,7 +149,7 @@ static PyObject *convertDataForGodFather(MEDCoupling::MEDCouplingDataForGodFathe
   throw INTERP_KERNEL::Exception("convertDataForGodFather wrap : unrecognized data type for AMR !");
 }
 
-static PyObject *convertCartesianAMRPatch(MEDCoupling::MEDCouplingCartesianAMRPatchGen *patch, int owner) throw(INTERP_KERNEL::Exception)
+static PyObject *convertCartesianAMRPatch(MEDCoupling::MEDCouplingCartesianAMRPatchGen *patch, int owner)
 {
   if(!patch)
     {
@@ -167,7 +167,7 @@ static PyObject *convertCartesianAMRPatch(MEDCoupling::MEDCouplingCartesianAMRPa
   throw INTERP_KERNEL::Exception("convertCartesianAMRPatch wrap : unrecognized type of cartesian AMR patch !");
 }
 
-static MEDCoupling::MEDCouplingFieldDouble *MEDCoupling_MEDCouplingFieldDouble___add__Impl(MEDCoupling::MEDCouplingFieldDouble *self, PyObject *obj) throw(INTERP_KERNEL::Exception)
+static MEDCoupling::MEDCouplingFieldDouble *MEDCoupling_MEDCouplingFieldDouble___add__Impl(MEDCoupling::MEDCouplingFieldDouble *self, PyObject *obj)
 {
   const char msg[]="Unexpected situation in MEDCouplingFieldDouble.__add__ ! Expecting a not null MEDCouplingFieldDouble or DataArrayDouble or DataArrayDoubleTuple instance, or a list of double, or a double.";
   const char msg2[]="in MEDCouplingFieldDouble.__add__ : self field has no Array of values set !";
@@ -223,7 +223,7 @@ static MEDCoupling::MEDCouplingFieldDouble *MEDCoupling_MEDCouplingFieldDouble__
       {
         if(!self->getArray())
           throw INTERP_KERNEL::Exception(msg2);
-        MEDCoupling::MCAuto<MEDCoupling::DataArrayDouble> aaa=MEDCoupling::DataArrayDouble::New(); aaa->useArray(&bb[0],false,MEDCoupling::CPP_DEALLOC,1,(int)bb.size());
+        MEDCoupling::MCAuto<MEDCoupling::DataArrayDouble> aaa=MEDCoupling::DataArrayDouble::New(); aaa->useArray(&bb[0],false,MEDCoupling::DeallocType::CPP_DEALLOC,1,(int)bb.size());
         MEDCoupling::MCAuto<MEDCoupling::DataArrayDouble> ret=MEDCoupling::DataArrayDouble::Add(self->getArray(),aaa);
         MEDCoupling::MCAuto<MEDCoupling::MEDCouplingFieldDouble> ret2=self->clone(false);
         ret2->setArray(ret);
@@ -234,12 +234,12 @@ static MEDCoupling::MEDCouplingFieldDouble *MEDCoupling_MEDCouplingFieldDouble__
     }
 }
 
-static MEDCoupling::MEDCouplingFieldDouble *MEDCoupling_MEDCouplingFieldDouble___radd__Impl(MEDCoupling::MEDCouplingFieldDouble *self, PyObject *obj) throw(INTERP_KERNEL::Exception)
+static MEDCoupling::MEDCouplingFieldDouble *MEDCoupling_MEDCouplingFieldDouble___radd__Impl(MEDCoupling::MEDCouplingFieldDouble *self, PyObject *obj)
 {
   return MEDCoupling_MEDCouplingFieldDouble___add__Impl(self,obj);
 }
 
-static MEDCoupling::MEDCouplingFieldDouble *MEDCoupling_MEDCouplingFieldDouble___rsub__Impl(MEDCoupling::MEDCouplingFieldDouble *self, PyObject *obj) throw(INTERP_KERNEL::Exception)
+static MEDCoupling::MEDCouplingFieldDouble *MEDCoupling_MEDCouplingFieldDouble___rsub__Impl(MEDCoupling::MEDCouplingFieldDouble *self, PyObject *obj)
 {
   const char msg[]="Unexpected situation in MEDCouplingFieldDouble.__rsub__ ! Expecting a not null MEDCouplingFieldDouble or DataArrayDouble or DataArrayDoubleTuple instance, or a list of double, or a double.";
   const char msg2[]="in MEDCouplingFieldDouble.__rsub__ : self field has no Array of values set !";
@@ -295,7 +295,7 @@ static MEDCoupling::MEDCouplingFieldDouble *MEDCoupling_MEDCouplingFieldDouble__
       {
         if(!self->getArray())
           throw INTERP_KERNEL::Exception(msg2);
-        MEDCoupling::MCAuto<MEDCoupling::DataArrayDouble> aaa=MEDCoupling::DataArrayDouble::New(); aaa->useArray(&bb[0],false,MEDCoupling::CPP_DEALLOC,1,(int)bb.size());
+        MEDCoupling::MCAuto<MEDCoupling::DataArrayDouble> aaa=MEDCoupling::DataArrayDouble::New(); aaa->useArray(&bb[0],false,MEDCoupling::DeallocType::CPP_DEALLOC,1,(int)bb.size());
         MEDCoupling::MCAuto<MEDCoupling::DataArrayDouble> ret=MEDCoupling::DataArrayDouble::Substract(aaa,self->getArray());
         MEDCoupling::MCAuto<MEDCoupling::MEDCouplingFieldDouble> ret2=self->clone(false);
         ret2->setArray(ret);
@@ -306,7 +306,7 @@ static MEDCoupling::MEDCouplingFieldDouble *MEDCoupling_MEDCouplingFieldDouble__
     }
 }
 
-static MEDCoupling::MEDCouplingFieldDouble *MEDCoupling_MEDCouplingFieldDouble___mul__Impl(MEDCoupling::MEDCouplingFieldDouble *self, PyObject *obj) throw(INTERP_KERNEL::Exception)
+static MEDCoupling::MEDCouplingFieldDouble *MEDCoupling_MEDCouplingFieldDouble___mul__Impl(MEDCoupling::MEDCouplingFieldDouble *self, PyObject *obj)
 {
   const char msg[]="Unexpected situation in MEDCouplingFieldDouble.__mul__ ! Expecting a not null MEDCouplingFieldDouble or DataArrayDouble or DataArrayDoubleTuple instance, or a list of double, or a double.";
   const char msg2[]="in MEDCouplingFieldDouble.__mul__ : self field has no Array of values set !";
@@ -362,7 +362,7 @@ static MEDCoupling::MEDCouplingFieldDouble *MEDCoupling_MEDCouplingFieldDouble__
       {
         if(!self->getArray())
           throw INTERP_KERNEL::Exception(msg2);
-        MEDCoupling::MCAuto<MEDCoupling::DataArrayDouble> aaa=MEDCoupling::DataArrayDouble::New(); aaa->useArray(&bb[0],false,MEDCoupling::CPP_DEALLOC,1,(int)bb.size());
+        MEDCoupling::MCAuto<MEDCoupling::DataArrayDouble> aaa=MEDCoupling::DataArrayDouble::New(); aaa->useArray(&bb[0],false,MEDCoupling::DeallocType::CPP_DEALLOC,1,(int)bb.size());
         MEDCoupling::MCAuto<MEDCoupling::DataArrayDouble> ret=MEDCoupling::DataArrayDouble::Multiply(self->getArray(),aaa);
         MEDCoupling::MCAuto<MEDCoupling::MEDCouplingFieldDouble> ret2=self->clone(false);
         ret2->setArray(ret);
@@ -373,12 +373,12 @@ static MEDCoupling::MEDCouplingFieldDouble *MEDCoupling_MEDCouplingFieldDouble__
     }
 }
 
-MEDCoupling::MEDCouplingFieldDouble *MEDCoupling_MEDCouplingFieldDouble___rmul__Impl(MEDCoupling::MEDCouplingFieldDouble *self, PyObject *obj) throw(INTERP_KERNEL::Exception)
+MEDCoupling::MEDCouplingFieldDouble *MEDCoupling_MEDCouplingFieldDouble___rmul__Impl(MEDCoupling::MEDCouplingFieldDouble *self, PyObject *obj)
 {
   return MEDCoupling_MEDCouplingFieldDouble___mul__Impl(self,obj);
 }
 
-MEDCoupling::MEDCouplingFieldDouble *MEDCoupling_MEDCouplingFieldDouble___rdiv__Impl(MEDCoupling::MEDCouplingFieldDouble *self, PyObject *obj) throw(INTERP_KERNEL::Exception)
+MEDCoupling::MEDCouplingFieldDouble *MEDCoupling_MEDCouplingFieldDouble___rdiv__Impl(MEDCoupling::MEDCouplingFieldDouble *self, PyObject *obj)
 {
   const char msg[]="Unexpected situation in MEDCouplingFieldDouble.__rdiv__ ! Expecting a not null MEDCouplingFieldDouble or DataArrayDouble or DataArrayDoubleTuple instance, or a list of double, or a double.";
   const char msg2[]="in MEDCouplingFieldDouble.__div__ : self field has no Array of values set !";
@@ -434,7 +434,7 @@ MEDCoupling::MEDCouplingFieldDouble *MEDCoupling_MEDCouplingFieldDouble___rdiv__
       {
         if(!self->getArray())
           throw INTERP_KERNEL::Exception(msg2);
-        MEDCoupling::MCAuto<MEDCoupling::DataArrayDouble> aaa=MEDCoupling::DataArrayDouble::New(); aaa->useArray(&bb[0],false,MEDCoupling::CPP_DEALLOC,1,(int)bb.size());
+        MEDCoupling::MCAuto<MEDCoupling::DataArrayDouble> aaa=MEDCoupling::DataArrayDouble::New(); aaa->useArray(&bb[0],false,MEDCoupling::DeallocType::CPP_DEALLOC,1,(int)bb.size());
         MEDCoupling::MCAuto<MEDCoupling::DataArrayDouble> ret=MEDCoupling::DataArrayDouble::Divide(aaa,self->getArray());
         MEDCoupling::MCAuto<MEDCoupling::MEDCouplingFieldDouble> ret2=self->clone(false);
         ret2->setArray(ret);

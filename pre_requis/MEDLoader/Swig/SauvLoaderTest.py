@@ -1,5 +1,5 @@
 #  -*- coding: iso-8859-1 -*-
-# Copyright (C) 2007-2016  CEA/DEN, EDF R&D
+# Copyright (C) 2007-2019  CEA/DEN, EDF R&D
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -320,6 +320,49 @@ class SauvLoaderTest(unittest.TestCase):
         ids1.setName("")
         ids2.setName("")
         self.assertTrue(ids1.isEqual(ids2))
+        pass
+
+    @unittest.skipUnless(HasXDR(),"requires XDR")
+    def testReadSauvXDRCastem17(self):
+        """test reading Castem17 XDR sauv with 'ENREGISTREMENT DE TYPE 8'"""
+        sauvFile = os.path.join(self.__getResourcesDirectory(),"castem17_result_xdr.sauv")
+        self.assertTrue( os.access( sauvFile, os.F_OK))
+        sr=SauvReader.New(sauvFile)
+        mfd2=sr.loadInMEDFileDS()
+        mfMesh=mfd2.getMeshes()[0]
+        umesh0 = mfMesh.getMeshAtLevel(0)
+        #
+        self.assertEqual(2,umesh0.getNumberOfCellsWithType( NORM_HEXA8 ))
+        self.assertEqual(12,umesh0.getNumberOfNodes())
+        #
+        mfField=mfd2.getFields().getFieldWithName("TEMP1")
+        iterations = mfField.getIterations()
+        field0 = mfField.getFieldOnMeshAtLevel(ON_NODES, iterations[0][0],iterations[0][1],umesh0)
+        fieldArray = field0.getArray()
+        expectedValues = [238.46153846153845]*4 + [169.23076923076923]*4 + [100]*4
+        expectedArray = DataArrayDouble(expectedValues)
+        self.assertTrue( fieldArray.isEqualWithoutConsideringStr( expectedArray, 1e-12 ))
+        pass
+
+    def testReadSauvAsciiCastem17(self):
+        """test reading Castem17 ascii sauv with 'ENREGISTREMENT DE TYPE 8'"""
+        sauvFile = os.path.join(self.__getResourcesDirectory(),"castem17_result_ascii.sauv")
+        self.assertTrue( os.access( sauvFile, os.F_OK))
+        sr=SauvReader.New(sauvFile)
+        mfd2=sr.loadInMEDFileDS()
+        mfMesh=mfd2.getMeshes()[0]
+        umesh0 = mfMesh.getMeshAtLevel(0)
+        #
+        self.assertEqual(2,umesh0.getNumberOfCellsWithType( NORM_HEXA8 ))
+        self.assertEqual(12,umesh0.getNumberOfNodes())
+        #
+        mfField=mfd2.getFields().getFieldWithName("TEMP1")
+        iterations = mfField.getIterations()
+        field0 = mfField.getFieldOnMeshAtLevel(ON_NODES, iterations[0][0],iterations[0][1],umesh0)
+        fieldArray = field0.getArray()
+        expectedValues = [238.46153846153845]*4 + [169.23076923076923]*4 + [100]*4
+        expectedArray = DataArrayDouble(expectedValues)
+        self.assertTrue( fieldArray.isEqualWithoutConsideringStr( expectedArray, 1e-12 ))
         pass
 
     def testGaussPt(self):

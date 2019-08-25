@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2016  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2019  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -185,7 +185,7 @@ void DataArrayChar::meldWith(const DataArrayChar *other)
       w=std::copy(inp1,inp1+nbOfComp1,w);
       w=std::copy(inp2,inp2+nbOfComp2,w);
     }
-  useArray(newArr,true,C_DEALLOC,nbOfTuples,nbOfComp1+nbOfComp2);
+  useArray(newArr,true,DeallocType::C_DEALLOC,nbOfTuples,nbOfComp1+nbOfComp2);
   std::vector<int> compIds(nbOfComp2);
   for(int i=0;i<nbOfComp2;i++)
     compIds[i]=nbOfComp1+i;

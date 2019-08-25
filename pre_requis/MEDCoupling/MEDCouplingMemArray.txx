@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2016  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2019  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -58,7 +58,7 @@ namespace MEDCoupling
         _nb_of_elem_alloc=other._nb_of_elem;
         T *pointer=(T*)malloc(_nb_of_elem_alloc*sizeof(T));
         std::copy(other._pointer.getConstPointer(),other._pointer.getConstPointer()+other._nb_of_elem,pointer);
-        useArray(pointer,true,C_DEALLOC,other._nb_of_elem);
+        useArray(pointer,true,DeallocType::C_DEALLOC,other._nb_of_elem);
       }
   }
 
@@ -438,14 +438,24 @@ namespace MEDCoupling
   }
 
   template<class T>
+  void MemArray<T>::COffsetDeallocator(void *pt, void *param)
+  {
+    int64_t *offset(reinterpret_cast<int64_t *>(param));
+    char *ptcast(reinterpret_cast<char *>(pt));
+    free(ptcast+*offset);
+  }
+
+  template<class T>
   typename MemArray<T>::Deallocator MemArray<T>::BuildFromType(DeallocType type)
   {
     switch(type)
     {
-      case CPP_DEALLOC:
+      case DeallocType::CPP_DEALLOC:
         return CPPDeallocator;
-      case C_DEALLOC:
+      case DeallocType::C_DEALLOC:
         return CDeallocator;
+      case DeallocType::C_DEALLOC_WITH_OFFSET:
+        return COffsetDeallocator;
       default:
         throw INTERP_KERNEL::Exception("Invalid deallocation requested ! Unrecognized enum DeallocType !");
     }
@@ -1098,17 +1108,17 @@ namespace MEDCoupling
    *          is to delete using decrRef() as it is no more needed.
    */
   template<class T>
-  typename Traits<T>::ArrayType *DataArrayTemplate<T>::mySelectByTupleId(const int *new2OldBg, const int *new2OldEnd) const
+  typename Traits<T>::ArrayType *DataArrayTemplate<T>::mySelectByTupleId(const mcIdType *new2OldBg, const mcIdType *new2OldEnd) const
   {
     checkAllocated();
     MCAuto<DataArray> ret0(buildNewEmptyInstance());
     MCAuto< typename Traits<T>::ArrayType > ret(DynamicCastSafe<DataArray,typename Traits<T>::ArrayType>(ret0));
-    int nbComp(getNumberOfComponents());
-    ret->alloc((int)std::distance(new2OldBg,new2OldEnd),nbComp);
+    std::size_t nbComp(getNumberOfComponents());
+    ret->alloc(std::distance(new2OldBg,new2OldEnd),nbComp);
     ret->copyStringInfoFrom(*this);
     T *pt(ret->getPointer());
     const T *srcPt(getConstPointer());
-    int i(0);
+    std::size_t i(0);
     for(const int *w=new2OldBg;w!=new2OldEnd;w++,i++)
       std::copy(srcPt+(*w)*nbComp,srcPt+((*w)+1)*nbComp,pt+i*nbComp);
     ret->copyStringInfoFrom(*this);
@@ -1116,9 +1126,9 @@ namespace MEDCoupling
   }
 
   template<class T>
-  typename Traits<T>::ArrayType *DataArrayTemplate<T>::mySelectByTupleId(const DataArrayInt& di) const
+  typename Traits<T>::ArrayType *DataArrayTemplate<T>::mySelectByTupleId(const DataArrayIdType& di) const
   {
-    return DataArrayTemplate<T>::mySelectByTupleId(di.begin(),di.end());
+    return this->mySelectByTupleId(di.begin(),di.end());
   }
 
   template<class T>
@@ -3107,7 +3117,7 @@ struct NotInRange
       throw INTERP_KERNEL::Exception("DataArrayDouble::fromNoInterlace : Not defined array !");
     T *tab(this->_mem.fromNoInterlace(this->getNumberOfComponents()));
     MCAuto<typename Traits<T>::ArrayType> ret(Traits<T>::ArrayType::New());
-    ret->useArray(tab,true,C_DEALLOC,this->getNumberOfTuples(),this->getNumberOfComponents());
+    ret->useArray(tab,true,DeallocType::C_DEALLOC,this->getNumberOfTuples(),this->getNumberOfComponents());
     return ret.retn();
   }
 
@@ -3128,7 +3138,7 @@ struct NotInRange
       throw INTERP_KERNEL::Exception("DataArrayDouble::toNoInterlace : Not defined array !");
     T *tab(this->_mem.toNoInterlace(this->getNumberOfComponents()));
     MCAuto<typename Traits<T>::ArrayType> ret(Traits<T>::ArrayType::New());
-    ret->useArray(tab,true,C_DEALLOC,this->getNumberOfTuples(),this->getNumberOfComponents());
+    ret->useArray(tab,true,DeallocType::C_DEALLOC,this->getNumberOfTuples(),this->getNumberOfComponents());
     return ret.retn();
   }
   
@@ -3163,7 +3173,7 @@ struct NotInRange
         w=std::copy(inp1,inp1+nbOfComp1,w);
         w=std::copy(inp2,inp2+nbOfComp2,w);
       }
-    this->useArray(newArr,true,C_DEALLOC,nbOfTuples,nbOfComp1+nbOfComp2);
+    this->useArray(newArr,true,DeallocType::C_DEALLOC,nbOfTuples,nbOfComp1+nbOfComp2);
     std::vector<int> compIds(nbOfComp2);
     for(int i=0;i<nbOfComp2;i++)
       compIds[i]=nbOfComp1+i;
@@ -3375,6 +3385,29 @@ struct NotInRange
     return ret.str();
   }
   
+  /*!
+   * Returns a textual and human readable representation of \a this instance of
+   * DataArrayInt. This text is shown when a DataArrayInt is printed in Python.
+   * \return std::string - text describing \a this DataArrayInt.
+   *
+   * \sa reprNotTooLong, reprZip
+   */
+  template<class T>
+  std::string DataArrayTemplateClassic<T>::repr() const
+  {
+    std::ostringstream ret;
+    DataArrayTemplateClassic<T>::reprStream(ret);
+    return ret.str();
+  }
+  
+  template<class T>
+  std::string DataArrayTemplateClassic<T>::reprZip() const
+  {
+    std::ostringstream ret;
+    DataArrayTemplateClassic<T>::reprZipStream(ret);
+    return ret.str();
+  }
+  
   /////////////////////////////////
   
   /*!
@@ -3428,7 +3461,17 @@ struct NotInRange
     std::string tmp;
     return isEqualIfNotWhy(other,tmp);
   }
-
+  
+  /*!
+   * Returns a new instance of DataArrayInt. The caller is to delete this array
+   * using decrRef() as it is no more needed.
+   */
+  template<class T>
+  typename Traits<T>::ArrayType *DataArrayDiscrete<T>::New()
+  {
+    return new typename Traits<T>::ArrayType;
+  }
+  
   /*!
    * Checks if values of \a this and another DataArrayInt are equal. For more info see
    * \ref MEDCouplingArrayBasicsCompare.
@@ -3452,7 +3495,8 @@ struct NotInRange
   template<class T>
   bool DataArrayDiscrete<T>::isEqualWithoutConsideringStrAndOrder(const typename Traits<T>::ArrayType& other) const
   {
-    MCAuto<DataArrayInt> a(static_cast<const typename Traits<T>::ArrayType *>(this)->deepCopy()),b(other.deepCopy());
+    MCAuto<typename Traits<T>::ArrayType> a((static_cast<const typename Traits<T>::ArrayType *>(this))->deepCopy());
+    MCAuto<typename Traits<T>::ArrayType> b((static_cast<const typename Traits<T>::ArrayType *>(&other))->deepCopy());
     a->sort();
     b->sort();
     return a->isEqualWithoutConsideringStr(*b);
@@ -3576,7 +3620,7 @@ struct NotInRange
     const T *thisPt(this->begin()),*pt(partOfThis.begin());
     MCAuto<DataArrayIdType> ret(DataArrayIdType::New());
     ret->alloc(nbTuples,1);
-    T *retPt(ret->getPointer());
+    mcIdType *retPt(ret->getPointer());
     std::map<int,mcIdType> m;
     for(std::size_t i=0;i<thisNbTuples;i++,thisPt++)
       m[*thisPt]=(mcIdType)i;
@@ -3708,6 +3752,233 @@ struct NotInRange
         else
           throw INTERP_KERNEL::Exception("DataArrayInt::checkStrictlyMonotonic : 'this' is not strictly DECREASING monotonic !");
       }
+  }
+
+  /*!
+   * Returns an integer value characterizing \a this array, which is useful for a quick
+   * comparison of many instances of DataArrayInt.
+   *  \return int - the hash value.
+   *  \throw If \a this is not allocated.
+   */
+  template<class T>
+  int DataArrayDiscrete<T>::getHashCode() const
+  {
+    this->checkAllocated();
+    std::size_t nbOfElems(this->getNbOfElems());
+    int ret=nbOfElems*65536;
+    int delta=3;
+    if(nbOfElems>48)
+      delta=nbOfElems/8;
+    T ret0(0);
+    const T *pt(this->begin());
+    for(std::size_t i=0;i<nbOfElems;i+=delta)
+      ret0+=pt[i] & 0x1FFF;
+    return ret+ret0;
+  }
+
+  template<class T>
+  void DataArrayDiscrete<T>::reprCppStream(const std::string& varName, std::ostream& stream) const
+  {
+    std::size_t nbTuples(this->getNumberOfTuples()),nbComp(this->getNumberOfComponents());
+    const T *data(this->getConstPointer());
+    stream << Traits<T>::ArrayTypeName << " *" << varName << "=" << Traits<T>::ArrayTypeName << "::New();" << std::endl;
+    if(nbTuples*nbComp>=1)
+      {
+        stream << "const int " << varName << "Data[" << nbTuples*nbComp << "]={";
+        std::copy(data,data+nbTuples*nbComp-1,std::ostream_iterator<int>(stream,","));
+        stream << data[nbTuples*nbComp-1] << "};" << std::endl;
+        stream << varName << "->useArray(" << varName << "Data,false,CPP_DEALLOC," << nbTuples << "," << nbComp << ");" << std::endl;
+      }
+    else
+      stream << varName << "->alloc(" << nbTuples << "," << nbComp << ");" << std::endl;
+    stream << varName << "->setName(\"" << this->getName() << "\");" << std::endl;
+  }
+
+  /*!
+   * Method that gives a quick overvien of \a this for python.
+   */
+  template<class T>
+  void DataArrayDiscrete<T>::reprQuickOverview(std::ostream& stream) const
+  {
+    static const std::size_t MAX_NB_OF_BYTE_IN_REPR=300;
+    stream << Traits<T>::ArrayTypeName << " C++ instance at " << this << ". ";
+    if(this->isAllocated())
+      {
+        std::size_t nbOfCompo(this->getNumberOfComponents());
+        if(nbOfCompo>=1)
+          {
+            std::size_t nbOfTuples(this->getNumberOfTuples());
+            stream << "Number of tuples : " << nbOfTuples << ". Number of components : " << nbOfCompo << "." << std::endl;
+            reprQuickOverviewData(stream,MAX_NB_OF_BYTE_IN_REPR);
+          }
+        else
+          stream << "Number of components : 0.";
+      }
+    else
+      stream << "*** No data allocated ****";
+  }
+
+  template<class T>
+  void DataArrayDiscrete<T>::reprQuickOverviewData(std::ostream& stream, std::size_t maxNbOfByteInRepr) const
+  {
+    const T *data(this->begin());
+    std::size_t nbOfTuples(this->getNumberOfTuples()),nbOfCompo(this->getNumberOfComponents());
+    std::ostringstream oss2; oss2 << "[";
+    std::string oss2Str(oss2.str());
+    bool isFinished=true;
+    for(int i=0;i<nbOfTuples && isFinished;i++)
+      {
+        if(nbOfCompo>1)
+          {
+            oss2 << "(";
+            for(int j=0;j<nbOfCompo;j++,data++)
+              {
+                oss2 << *data;
+                if(j!=nbOfCompo-1) oss2 << ", ";
+              }
+            oss2 << ")";
+          }
+        else
+          oss2 << *data++;
+        if(i!=nbOfTuples-1) oss2 << ", ";
+        std::string oss3Str(oss2.str());
+        if(oss3Str.length()<maxNbOfByteInRepr)
+          oss2Str=oss3Str;
+        else
+          isFinished=false;
+      }
+    stream << oss2Str;
+    if(!isFinished)
+      stream << "... ";
+    stream << "]";
+  }
+
+  template<class T>
+  void DataArrayDiscrete<T>::writeVTK(std::ostream& ofs, int indent, const std::string& type, const std::string& nameInFile, DataArrayByte *byteArr) const
+  {
+    static const char SPACE[4]={' ',' ',' ',' '};
+    this->checkAllocated();
+    std::string idt(indent,' ');
+    ofs << idt << "<DataArray type=\"" << type << "\" Name=\"" << nameInFile << "\" NumberOfComponents=\"" << this->getNumberOfComponents() << "\"";
+    if(byteArr)
+      {
+        ofs << " format=\"appended\" offset=\"" << byteArr->getNumberOfTuples() << "\">";
+        if(std::string(type)==Traits<T>::VTKReprStr)
+          {
+            const char *data(reinterpret_cast<const char *>(this->begin()));
+            std::size_t sz(this->getNbOfElems()*sizeof(T));
+            byteArr->insertAtTheEnd(data,data+sz);
+            byteArr->insertAtTheEnd(SPACE,SPACE+4);
+          }
+        else if(std::string(type)=="Int8")
+          {
+            INTERP_KERNEL::AutoPtr<char> tmp(new char[this->getNbOfElems()]);
+            std::copy(this->begin(),this->end(),(char *)tmp);
+            byteArr->insertAtTheEnd((char *)tmp,(char *)tmp+this->getNbOfElems());
+            byteArr->insertAtTheEnd(SPACE,SPACE+4);
+          }
+        else if(std::string(type)=="UInt8")
+          {
+            INTERP_KERNEL::AutoPtr<unsigned char> tmp(new unsigned char[this->getNbOfElems()]);
+            std::copy(this->begin(),this->end(),(unsigned char *)tmp);
+            byteArr->insertAtTheEnd((unsigned char *)tmp,(unsigned char *)tmp+this->getNbOfElems());
+            byteArr->insertAtTheEnd(SPACE,SPACE+4);
+          }
+        else
+          {
+            std::ostringstream oss;
+            oss << Traits<T>::ArrayTypeName << "::writeVTK : Only " << Traits<T>::VTKReprStr << ", Int8 and UInt8 supported !";
+            throw INTERP_KERNEL::Exception(oss.str());
+          }
+      }
+    else
+      {
+        ofs << " RangeMin=\"" << this->getMinValueInArray() << "\" RangeMax=\"" << this->getMaxValueInArray() << "\" format=\"ascii\">\n" << idt;
+        std::copy(this->begin(),this->end(),std::ostream_iterator<int>(ofs," "));
+      }
+      ofs << std::endl << idt << "</DataArray>\n";
+  }
+
+  /*!
+   * Modifies in place \a this one-dimensional array so that each value \a v = \a indArrBg[ \a v ],
+   * i.e. a current value is used as in index to get a new value from \a indArrBg.
+   *  \param [in] indArrBg - pointer to the first element of array of new values to assign
+   *         to \a this array.
+   *  \param [in] indArrEnd - specifies the end of the array \a indArrBg, so that
+   *              the last value of \a indArrBg is \a indArrEnd[ -1 ].
+   *  \throw If \a this->getNumberOfComponents() != 1
+   *  \throw If any value of \a this can't be used as a valid index for
+   *         [\a indArrBg, \a indArrEnd).
+   *
+   *  \sa changeValue, findIdForEach
+   */
+  template<class T>
+  void DataArrayDiscrete<T>::transformWithIndArr(const T *indArrBg, const T *indArrEnd)
+  {
+    this->checkAllocated();
+    if(this->getNumberOfComponents()!=1)
+      throw INTERP_KERNEL::Exception("Call transformWithIndArr method on DataArrayInt with only one component, you can call 'rearrange' method before !");
+    std::size_t nbElemsIn(std::distance(indArrBg,indArrEnd)),nbOfTuples(this->getNumberOfTuples());
+    T *pt(this->getPointer());
+    for(std::size_t i=0;i<nbOfTuples;i++,pt++)
+      {
+        if(*pt>=0 && *pt<nbElemsIn)
+          *pt=indArrBg[*pt];
+        else
+          {
+            std::ostringstream oss; oss << "DataArrayInt::transformWithIndArr : error on tuple #" << i << " of this value is " << *pt << ", should be in [0," << nbElemsIn << ") !";
+            throw INTERP_KERNEL::Exception(oss.str());
+          }
+      }
+    this->declareAsNew();
+  }
+
+  template<class T>
+  void DataArrayDiscrete<T>::transformWithIndArr(const MapKeyVal<T>& m)
+  {
+    this->checkAllocated();
+    if(this->getNumberOfComponents()!=1)
+      throw INTERP_KERNEL::Exception("Call transformWithIndArr method on DataArrayInt with only one component, you can call 'rearrange' method before !");
+    const typename std::map<T,T>& dat(m.data());
+    std::size_t nbOfTuples(this->getNumberOfTuples());
+    T *pt(this->getPointer());
+    for(std::size_t i=0;i<nbOfTuples;i++,pt++)
+      {
+        typename std::map<T,T>::const_iterator it(dat.find(*pt));
+        if(it!=dat.end())
+          *pt=(*it).second;
+        else
+          {
+            std::ostringstream oss; oss << "DataArrayInt::transformWithIndArr : error on tuple #" << i << " of this value is " << *pt << " not in map !";
+            throw INTERP_KERNEL::Exception(oss.str());
+          }
+      }
+    this->declareAsNew();
+  }
+
+  /*!
+   * Creates a new DataArrayInt containing IDs (indices) of tuples holding value equal to a
+   * given one. The ids are sorted in the ascending order.
+   *  \param [in] val - the value to find within \a this.
+   *  \return DataArrayInt * - a new instance of DataArrayInt. The caller is to delete this
+   *          array using decrRef() as it is no more needed.
+   *  \throw If \a this is not allocated.
+   *  \throw If \a this->getNumberOfComponents() != 1.
+   *  \sa DataArrayInt::findIdsEqualTuple
+   */
+  template<class T>
+  DataArrayIdType *DataArrayDiscrete<T>::findIdsEqual(T val) const
+  {
+    this->checkAllocated();
+    if(this->getNumberOfComponents()!=1)
+      throw INTERP_KERNEL::Exception("DataArrayInt::findIdsEqual : the array must have only one component, you can call 'rearrange' method before !");
+    const T *cptr(this->getConstPointer());
+    MCAuto<DataArrayIdType> ret(DataArrayIdType::New()); ret->alloc(0,1);
+    std::size_t nbOfTuples(this->getNumberOfTuples());
+    for(std::size_t i=0;i<nbOfTuples;i++,cptr++)
+      if(*cptr==val)
+        ret->pushBackSilent(ToIdType(i));
+    return ret.retn();
   }
 
   ////////////////////////////////////

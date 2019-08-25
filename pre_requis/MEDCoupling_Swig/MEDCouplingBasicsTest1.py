@@ -1,5 +1,5 @@
 #  -*- coding: utf-8 -*-
-# Copyright (C) 2007-2016  CEA/DEN, EDF R&D
+# Copyright (C) 2007-2019  CEA/DEN, EDF R&D
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -22,7 +22,7 @@ import sys
 if sys.platform == "win32":
     from MEDCouplingCompat import *
 else:
-    from MEDCoupling import *
+    from medcoupling import *
 
 import unittest
 from math import pi,e,sqrt,cos,sin
@@ -1030,6 +1030,7 @@ class MEDCouplingBasicsTest1(unittest.TestCase):
         f3=MEDCouplingFieldDouble.MergeFields(f1,f2);
         f3.checkConsistencyLight();
         m4=MEDCouplingDataForTest.build2DTargetMeshMerged_1();
+        m4.setName(f1.getMesh().getName())
         self.assertTrue(f3.getMesh().isEqual(m4,1.e-12));
         name=f3.getName();
         self.assertEqual(name,"MeasureOfMesh_");
@@ -1093,9 +1094,10 @@ class MEDCouplingBasicsTest1(unittest.TestCase):
         self.assertTrue(abs(3.6-values4[0])<1.e-12);
         self.assertTrue(abs(7.2-values4[1])<1.e-12);
         values4=f1.integral(True);
+        #0.4 == 0.25/4*-0.6+(0.25/4+0.125/3)*-0.1+0.4*(0.125/3.+0.125/3)+(-0.1)*(0.25/4+0.25/4)+0.4*(0.25/4+0.125/3+0.125/3+0.25/4+0.25/4)+0.9*(0.25/4+0.125/3)+0.4*0.25/4+0.9*(0.25/4+0.25/4)+1.4*0.25/4
         self.assertEqual(2,len(values4))
-        self.assertTrue(abs(0.5-values4[0])<1.e-12);
-        self.assertTrue(abs(1.-values4[1])<1.e-12);
+        self.assertTrue(abs(0.4-values4[0])<1.e-12);
+        self.assertTrue(abs(0.8-values4[1])<1.e-12);
         #
         self.assertRaises(InterpKernelException,m.fillFromAnalytic,ON_NODES,1,"1./(x-0.2)");
         pass
@@ -1156,8 +1158,8 @@ class MEDCouplingBasicsTest1(unittest.TestCase):
         self.assertTrue(abs(3.6-values4[0])<1.e-12);
         self.assertTrue(abs(7.2-values4[1])<1.e-12);
         values4=f1.integral(True);
-        self.assertTrue(abs(0.5-values4[0])<1.e-12);
-        self.assertTrue(abs(1.-values4[1])<1.e-12);
+        self.assertTrue(abs(0.4-values4[0])<1.e-12);
+        self.assertTrue(abs(0.8-values4[1])<1.e-12);
         pass
 
     def testApplyFunc(self):
@@ -2281,6 +2283,30 @@ class MEDCouplingBasicsTest1(unittest.TestCase):
         mesh.changeSpaceDimension(2)
         cRef = [32, 9, 10, 2, 0, 4, 6, 8, 12, 11, 3, 5, 7, 1, 13]
         cIRef = [0, 15]
+        self.assertEqual(mesh.getNodalConnectivity().getValues(), cRef)
+        self.assertEqual(mesh.getNodalConnectivityIndex().getValues(), cIRef)
+        pass
+
+    def testCellOrientation5(self):
+        """ Non regression for NORM_QPOLYG  """
+        mesh = MEDCouplingUMesh('Mesh_3', 2)
+        coo = DataArrayDouble([(-34.3035,5.1),(-35.2018,4.59163),(-34.9509,6.21985),(-35.0858,5.4072),(-34.7527,4.84582),(-34.6641,5.63857)])
+        mesh.setCoords(coo)
+        c = DataArrayInt([6, 2, 1, 0, 3, 4, 5])
+        cI = DataArrayInt([0, 7])
+        mesh.setConnectivity(c, cI)
+        vec = [0., 0., -1.]
+        mesh.changeSpaceDimension(3)
+        mesh.orientCorrectly2DCells(vec, False)
+        mesh.changeSpaceDimension(2)
+        cRef = [6, 2, 0, 1, 5, 4, 3]
+        cIRef = [0, 7]
+        self.assertEqual(mesh.getNodalConnectivity().getValues(), cRef)
+        self.assertEqual(mesh.getNodalConnectivityIndex().getValues(), cIRef)
+        # Second call doest not change anything:
+        mesh.changeSpaceDimension(3)
+        mesh.orientCorrectly2DCells(vec, False)
+        mesh.changeSpaceDimension(2)
         self.assertEqual(mesh.getNodalConnectivity().getValues(), cRef)
         self.assertEqual(mesh.getNodalConnectivityIndex().getValues(), cIRef)
         pass

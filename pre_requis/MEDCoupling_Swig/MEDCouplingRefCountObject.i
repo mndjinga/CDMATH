@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2016  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2019  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -36,6 +36,21 @@ namespace INTERP_KERNEL
   };
 }
 
+/*
+ * ABN: Install default exception handler: this catches all INTERP_KERNEL::Exception (even when no
+ * except declaration was added to the function declaration) and propagates it to the Python level.
+ */
+%exception {
+  try {
+    $action
+  }
+  catch (INTERP_KERNEL::Exception& _e) {
+    // Reraise with SWIG_Python_Raise
+    SWIG_Python_Raise(SWIG_NewPointerObj((new INTERP_KERNEL::Exception(static_cast< const INTERP_KERNEL::Exception& >(_e))),SWIGTYPE_p_INTERP_KERNEL__Exception,SWIG_POINTER_OWN), "INTERP_KERNEL::Exception", SWIGTYPE_p_INTERP_KERNEL__Exception);
+    SWIG_fail;
+  }
+}
+
 namespace MEDCoupling
 {
   class TimeLabel
@@ -51,15 +66,16 @@ namespace MEDCoupling
 
 namespace MEDCoupling
 {
-  typedef enum
+  enum class DeallocType
     {
       C_DEALLOC = 2,
       CPP_DEALLOC = 3
-    } DeallocType;
+    };
 
   const char *MEDCouplingVersionStr();
   int MEDCouplingVersion();
   int MEDCouplingSizeOfVoidStar();
+  int MEDCouplingSizeOfIDs();
   bool MEDCouplingByteOrder();
   const char *MEDCouplingByteOrderStr();
   bool IsCXX11Compiled();
@@ -67,14 +83,14 @@ namespace MEDCoupling
   class BigMemoryObject
   {
   public:
-    std::size_t getHeapMemorySize() const throw(INTERP_KERNEL::Exception);
-    std::string getHeapMemorySizeStr() const throw(INTERP_KERNEL::Exception);
-    bool isObjectInTheProgeny(const BigMemoryObject *obj) const throw(INTERP_KERNEL::Exception);
-    virtual std::size_t getHeapMemorySizeWithoutChildren() const throw(INTERP_KERNEL::Exception);
+    std::size_t getHeapMemorySize() const;
+    std::string getHeapMemorySizeStr() const;
+    bool isObjectInTheProgeny(const BigMemoryObject *obj) const;
+    virtual std::size_t getHeapMemorySizeWithoutChildren() const;
     virtual ~BigMemoryObject();
     %extend
     {
-      virtual PyObject *getDirectChildren() const throw(INTERP_KERNEL::Exception)
+      virtual PyObject *getDirectChildren() const
       {
         std::vector<const BigMemoryObject *> c(self->getDirectChildren());
         PyObject *ret(PyList_New(c.size()));
@@ -83,7 +99,7 @@ namespace MEDCoupling
         return ret;
       }
 
-      PyObject *getAllTheProgeny() const throw(INTERP_KERNEL::Exception)
+      PyObject *getAllTheProgeny() const
       {
         std::vector<const BigMemoryObject *> c(self->getAllTheProgeny());
         PyObject *ret(PyList_New(c.size()));
@@ -92,7 +108,7 @@ namespace MEDCoupling
         return ret;
       }
 
-      static std::size_t GetHeapMemorySizeOfObjs(PyObject *objs) throw(INTERP_KERNEL::Exception)
+      static std::size_t GetHeapMemorySizeOfObjs(PyObject *objs)
       {
         std::vector<const BigMemoryObject *> cppObjs;
         convertFromPyObjVectorOfObj<const MEDCoupling::BigMemoryObject *>(objs,SWIGTYPE_p_MEDCoupling__BigMemoryObject,"BigMemoryObject",cppObjs);
@@ -120,14 +136,14 @@ namespace MEDCoupling
   class GlobalDict
   {
   public:
-    static GlobalDict *GetInstance() throw(INTERP_KERNEL::Exception);
-    bool hasKey(const std::string& key) const throw(INTERP_KERNEL::Exception);
-    std::string value(const std::string& key) const throw(INTERP_KERNEL::Exception);
-    std::vector<std::string> keys() const throw(INTERP_KERNEL::Exception);
-    void erase(const std::string& key) throw(INTERP_KERNEL::Exception);
-    void clear() throw(INTERP_KERNEL::Exception);
-    void setKeyValue(const std::string& key, const std::string& value) throw(INTERP_KERNEL::Exception);
-    void setKeyValueForce(const std::string& key, const std::string& value) throw(INTERP_KERNEL::Exception);
+    static GlobalDict *GetInstance();
+    bool hasKey(const std::string& key) const;
+    std::string value(const std::string& key) const;
+    std::vector<std::string> keys() const;
+    void erase(const std::string& key);
+    void clear();
+    void setKeyValue(const std::string& key, const std::string& value);
+    void setKeyValueForce(const std::string& key, const std::string& value);
   private:
     GlobalDict();
   public:
@@ -172,7 +188,7 @@ namespace MEDCoupling
 #endif
   }
 
-  std::string MEDCouplingCompletionScript() throw(INTERP_KERNEL::Exception)
+  std::string MEDCouplingCompletionScript()
   {
     static const char script[]="import rlcompleter,readline\nreadline.parse_and_bind('tab:complete')";
     std::ostringstream oss; oss << "MEDCouplingCompletionScript : error when trying to activate completion ! readline not present ?\nScript is :\n" << script;

@@ -1,5 +1,5 @@
 #  -*- coding: iso-8859-1 -*-
-# Copyright (C) 2007-2016  CEA/DEN, EDF R&D
+# Copyright (C) 2007-2019  CEA/DEN, EDF R&D
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -870,6 +870,27 @@ class MEDLoaderTest1(unittest.TestCase):
         self.assertRaises(Exception,MEDLoader.ReadField,fname,"field2",5,5) # invalid time step
         self.assertTrue(f3.isEqual(MEDLoader.ReadField(MEDLoader.ON_CELLS,fname,"mesh",0,"field2",4,5),1e-12,1e-12))
         self.assertRaises(Exception,MEDLoader.ReadField,MEDLoader.ON_CELLS,fname,"mesh",0,"field2",5,5) # invalid time step
+        pass
+
+    def testMultiWriteFieldOnMergeableNodesMeshes(self):
+        fname="Pyfile120.med"
+        arr=MEDLoader.DataArrayDouble([(0,0),(1,0),(0,1),(0,0),(1,0),(0,1)])
+        m=MEDLoader.MEDCouplingUMesh("mesh",2)
+        m.setCoords(arr)
+        m.allocateCells()
+        m.insertNextCell(MEDLoader.NORM_TRI3,[0,4,2])
+        m.insertNextCell(MEDLoader.NORM_TRI3,[3,1,5])
+        m.setName("mesh")
+        #
+        f=MEDLoader.MEDCouplingFieldDouble(MEDLoader.ON_CELLS)
+        f.setMesh(m)
+        f.setArray(MEDLoader.DataArrayDouble([5,6]))
+        f.setName("field")
+        #
+        f.setTime(0.,0,0)
+        MEDLoader.WriteField(fname,f,True)
+        f.setTime(1.,1,0)
+        MEDLoader.WriteField(fname,f,False)
         pass
 
     pass

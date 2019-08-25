@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2016  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2019  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -70,6 +70,14 @@ void ElementaryEdge::getAllNodes(std::set<Node *>& output) const
 {
   output.insert(_ptr->getStartNode());
   output.insert(_ptr->getEndNode());
+}
+
+bool ElementaryEdge::hasSameExtremities(const ElementaryEdge& other) const
+{
+  std::set<Node *> s1, s2;
+  getAllNodes(s1);
+  other.getAllNodes(s2);
+  return (s1 == s2);
 }
 
 void ElementaryEdge::getBarycenter(double *bary, double& weigh) const
@@ -183,6 +191,11 @@ void ElementaryEdge::dumpInXfigFile(std::ostream& stream, int resolution, const 
   _ptr->dumpInXfigFile(stream,_direction,resolution,box);
 }
 
+void ElementaryEdge::dumpToCout(const std::map<INTERP_KERNEL::Node *,int>& mapp, int index) const
+{
+  _ptr->dumpToCout(mapp, index);
+}
+
 bool ElementaryEdge::intresicEqual(const ElementaryEdge *other) const
 {
   return _ptr==other->_ptr;
@@ -217,9 +230,12 @@ void ElementaryEdge::fillGlobalInfoAbs(const std::map<INTERP_KERNEL::Node *,int>
  * unsorted because the "other" mesh is not subdivided yet.
  */
 void ElementaryEdge::fillGlobalInfoAbs2(const std::map<INTERP_KERNEL::Node *,int>& mapThis, const std::map<INTERP_KERNEL::Node *,int>& mapOther, int offset1, int offset2, double fact, double baryX, double baryY,
+                                        short skipStartOrEnd,
                                         std::vector<int>& edgesOther, std::vector<double>& addCoo, std::map<INTERP_KERNEL::Node *,int>& mapAddCoo) const
 {
-  _ptr->fillGlobalInfoAbs2(mapThis,mapOther,offset1,offset2,fact,baryX,baryY,edgesOther,addCoo,mapAddCoo);
+  if (!_direction)
+    skipStartOrEnd *= -1;  // invert value - see QuadraticPolygon::splitAbs()
+  _ptr->fillGlobalInfoAbs2(mapThis,mapOther,offset1,offset2,fact,baryX,baryY,skipStartOrEnd,edgesOther,addCoo,mapAddCoo);
 }
 
 /*!

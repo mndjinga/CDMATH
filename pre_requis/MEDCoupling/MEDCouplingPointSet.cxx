@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2016  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2019  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -364,7 +364,7 @@ void MEDCouplingPointSet::getNodeIdsNearPoints(const double *pos, int nbOfPoints
     throw INTERP_KERNEL::Exception("MEDCouplingPointSet::getNodeIdsNearPoint : no coordiantes set !");
   int spaceDim=getSpaceDimension();
   MCAuto<DataArrayDouble> points=DataArrayDouble::New();
-  points->useArray(pos,false,CPP_DEALLOC,nbOfPoints,spaceDim);
+  points->useArray(pos,false,DeallocType::CPP_DEALLOC,nbOfPoints,spaceDim);
   _coords->computeTupleIdsNearTuples(points,eps,c,cI);
 }
 

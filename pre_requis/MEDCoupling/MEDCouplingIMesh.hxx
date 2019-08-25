@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2016  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2019  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -118,7 +118,7 @@ namespace MEDCoupling
     int _space_dim;
     double _origin[3];
     double _dxyz[3];
-    int _structure[3];
+    mcIdType _structure[3];
     std::string _axis_unit;
   };
 }

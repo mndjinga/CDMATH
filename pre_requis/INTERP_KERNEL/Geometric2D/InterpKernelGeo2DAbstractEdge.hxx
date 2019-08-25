@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2016  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2019  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -59,6 +59,7 @@ namespace INTERP_KERNEL
     INTERPKERNEL_EXPORT ElementaryEdge *current() { return *_deep_it; }
     INTERPKERNEL_EXPORT void assignMySelfToAllElems(ComposedEdge *elems);
     INTERPKERNEL_EXPORT void insertElemEdges(ComposedEdge *elems, bool changeMySelf);
+    INTERPKERNEL_EXPORT void eraseCurrent();
   private:
     std::list<ElementaryEdge *>::iterator _deep_it;
     std::list<ElementaryEdge *>* _list_handle;

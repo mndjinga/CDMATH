@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2016  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2019  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -147,9 +147,9 @@ namespace INTERP_KERNEL
   {
   protected:
     //! All non symmetric methods are relative to 'e1'.
-    EdgeIntersector(const Edge& e1, const Edge& e2):_e1(e1),_e2(e2) { }
+    EdgeIntersector(const Edge& e1, const Edge& e2):_e1(e1),_e2(e2), _earlyInter(0) { }
   public:
-    virtual ~EdgeIntersector() { }
+    virtual ~EdgeIntersector() { if(_earlyInter) delete(_earlyInter); }
     virtual bool keepOrder() const = 0;
     virtual bool areColinears() const = 0;
     //!to call only if 'areOverlapped' have been set to true when areOverlappedOrOnlyColinears was called
@@ -157,16 +157,18 @@ namespace INTERP_KERNEL
     //!to call only if 'areOverlapped' have been set to true when areOverlappedOrOnlyColinears was called
     virtual void getPlacements(Node *start, Node *end, TypeOfLocInEdge& whereStart, TypeOfLocInEdge& whereEnd, MergePoints& commonNode) const = 0;
     //! When true is returned, newNodes should contains at least 1 element. All merging nodes betw _e1 and _e2 extremities must be done.
-    bool intersect(const Bounds *whereToFind, std::vector<Node *>& newNodes, bool& order, MergePoints& commonNode);
+    bool intersect(std::vector<Node *>& newNodes, bool& order, MergePoints& commonNode);
     //! Should be called only once per association.
-    virtual void areOverlappedOrOnlyColinears(const Bounds *whereToFind, bool& obviousNoIntersection, bool& areOverlapped) = 0;
+    virtual void areOverlappedOrOnlyColinears(bool& obviousNoIntersection, bool& areOverlapped) = 0;
     //! The size of returned vector is equal to number of potential intersections point. The values are so that their are interpretable by virtual Edge::isIn method.
     virtual std::list< IntersectElement > getIntersectionsCharacteristicVal() const = 0;
   protected:
     void obviousCaseForCurvAbscisse(Node *node, TypeOfLocInEdge& where, MergePoints& commonNode, bool& obvious) const;
+    virtual void identifyEarlyIntersection(bool& , bool&, bool&, bool&);
   protected:
     const Edge& _e1;
     const Edge& _e2;
+    IntersectElement *_earlyInter;   // Non null if the intersection can be determined early -> see areOverlappedOrOnlyColinears()
   };
 
   class INTERPKERNEL_EXPORT SameTypeEdgeIntersector : public EdgeIntersector
@@ -276,20 +278,23 @@ namespace INTERP_KERNEL
     static void Interpolate1DLin(const std::vector<double>& distrib1, const std::vector<double>& distrib2,
                                  std::map<int, std::map<int,double> >& result);
     virtual void dumpInXfigFile(std::ostream& stream, bool direction, int resolution, const Bounds& box) const = 0;
+    void dumpToCout(const std::map<INTERP_KERNEL::Node *,int>& mapp, int index) const;
     bool isEqual(const Edge& other) const;
   public:
     bool sortSubNodesAbs(const double *coo, std::vector<int>& subNodes);
     void sortIdsAbs(const std::vector<INTERP_KERNEL::Node *>& addNodes, const std::map<INTERP_KERNEL::Node *, int>& mapp1, const std::map<INTERP_KERNEL::Node *, int>& mapp2, std::vector<int>& edgesThis);
-    virtual void fillGlobalInfoAbs(bool direction, const std::map<INTERP_KERNEL::Node *,int>& mapThis, const std::map<INTERP_KERNEL::Node *,int>& mapOther, int offset1, int offset2, double fact, double baryX, double baryY,
-                                   std::vector<int>& edgesThis, std::vector<double>& addCoo, std::map<INTERP_KERNEL::Node *,int> mapAddCoo) const = 0;
-    virtual void fillGlobalInfoAbs2(const std::map<INTERP_KERNEL::Node *,int>& mapThis, const std::map<INTERP_KERNEL::Node *,int>& mapOther, int offset1, int offset2, double fact, double baryX, double baryY,
-                                    std::vector<int>& edgesOther, std::vector<double>& addCoo, std::map<INTERP_KERNEL::Node *,int>& mapAddCoo) const = 0;
     virtual Edge *buildEdgeLyingOnMe(Node *start, Node *end, bool direction=true) const = 0;
+    void fillGlobalInfoAbs(bool direction, const std::map<INTERP_KERNEL::Node *,int>& mapThis, const std::map<INTERP_KERNEL::Node *,int>& mapOther, int offset1, int offset2, double fact, double baryX, double baryY,
+                           std::vector<int>& edgesThis, std::vector<double>& addCoo, std::map<INTERP_KERNEL::Node *,int> mapAddCoo) const;
+    void fillGlobalInfoAbs2(const std::map<INTERP_KERNEL::Node *,int>& mapThis, const std::map<INTERP_KERNEL::Node *,int>& mapOther, int offset1, int offset2, double fact, double baryX, double baryY,
+                            short skipStartOrEnd,
+                            std::vector<int>& edgesOther, std::vector<double>& addCoo, std::map<INTERP_KERNEL::Node *,int>& mapAddCoo) const;
+
   protected:
     Edge():_cnt(1),_loc(FULL_UNKNOWN),_start(0),_end(0) { }
     virtual ~Edge();
     static int CombineCodes(TypeOfLocInEdge code1, TypeOfLocInEdge code2);
-    static bool Intersect(const Edge *f1, const Edge *f2, EdgeIntersector *intersector, const Bounds *whereToFind, MergePoints& commonNode,
+    static bool Intersect(const Edge *f1, const Edge *f2, EdgeIntersector *intersector, MergePoints& commonNode,
                           ComposedEdge& outValForF1, ComposedEdge& outValForF2);
     //! The code 'code' is built by method combineCodes
     static bool SplitOverlappedEdges(const Edge *e1, const Edge *e2, Node *nS, Node *nE, bool direction, int code,

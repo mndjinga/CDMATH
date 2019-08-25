@@ -1,5 +1,5 @@
 #  -*- coding: utf-8 -*-
-# Copyright (C) 2007-2016  CEA/DEN, EDF R&D
+# Copyright (C) 2007-2019  CEA/DEN, EDF R&D
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -22,7 +22,7 @@ import sys
 if sys.platform == "win32":
     from MEDCouplingCompat import *
 else:
-    from MEDCoupling import *
+    from medcoupling import *
 import unittest
 from math import pi,e,sqrt,cos,sin
 from datetime import datetime
@@ -1971,14 +1971,14 @@ class MEDCouplingBasicsTest3(unittest.TestCase):
         res = d.normMaxPerComponent()
         self.assertAlmostEqual(-1.0, res[0],14)
         self.assertAlmostEqual(-1.0, res[1],14)
-        
+
         tab=[2.3,-1.2,6.3,-7.8,2.9,7.7,2.1,0.,3.6,-7.6]
         d.setValues(tab,5,2);
-        
+
         res = d.normMaxPerComponent()
         self.assertAlmostEqual(6.3, res[0],14)
         self.assertAlmostEqual(7.8, res[1],14)
-        
+
         f.setArray(d);
         f.checkConsistencyLight();
         #
@@ -1988,7 +1988,7 @@ class MEDCouplingBasicsTest3(unittest.TestCase):
         #
         self.assertAlmostEqual(6.3,f.normMax(0),14);
         self.assertAlmostEqual(7.8,f.normMax(1),14);
-        
+
         pass
 
     def testFindAndCorrectBadOriented3DExtrudedCells1(self):

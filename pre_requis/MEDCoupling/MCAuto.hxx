@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2016  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2019  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -23,6 +23,8 @@
 
 #include "MEDCouplingRefCountObject.hxx"
 #include "InterpKernelException.hxx"
+
+#include <vector>
 
 namespace MEDCoupling
 {
@@ -80,6 +82,16 @@ namespace MEDCoupling
     return ret;
   }
 
+  template<class T>
+  typename std::vector<const T *> ToConstVect(const typename std::vector< MCAuto<T> >& vec)
+  {
+    std::size_t sz(vec.size());
+    std::vector<const T *> ret(sz);
+    for(std::size_t i=0;i<sz;i++)
+      ret[i]=(const T *)vec[i];
+    return ret;
+  }
+  
   template<class T>
   class MCConstAuto
   {

@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2016  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2019  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -99,11 +99,8 @@ namespace INTERP_KERNEL
                                                                                    intersectFaces,
                                                                                    getSplittingPolicy());
             break;
-          case PointLocator:// switch target and source
-            intersector=new PointLocator3DIntersectorP0P0<MyMeshType,MyMatrixType>(srcMesh,targetMesh,getPrecision());
-            break;
           default:
-            throw INTERP_KERNEL::Exception("Invalid 3D to 2D intersection type for P0P0 interp specified : must be Triangulation or PointLocator.");
+            throw INTERP_KERNEL::Exception("Invalid 2D to 3D intersection type for P0P0 interp specified : must be Triangulation.");
           }
       }
     else

@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2016  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2019  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -53,6 +53,8 @@ template class MEDCoupling::DataArrayIterator<double>;
 template class MEDCoupling::DataArrayIterator<int>;
 template class MEDCoupling::DataArrayDiscrete<Int32>;
 template class MEDCoupling::DataArrayDiscreteSigned<Int32>;
+template class MEDCoupling::DataArrayDiscrete<Int64>;
+template class MEDCoupling::DataArrayDiscreteSigned<Int64>;
 template class MEDCoupling::DataArrayTuple<int>;
 template class MEDCoupling::DataArrayTuple<double>;
 template class MEDCoupling::DataArrayTuple<float>;
@@ -884,27 +886,6 @@ bool DataArrayDouble::isMonotonic(bool increasing, double eps) const
     }
 }
 
-/*!
- * Returns a textual and human readable representation of \a this instance of
- * DataArrayDouble. This text is shown when a DataArrayDouble is printed in Python.
- * \return std::string - text describing \a this DataArrayDouble.
- *
- * \sa reprNotTooLong, reprZip
- */
-std::string DataArrayDouble::repr() const
-{
-  std::ostringstream ret;
-  reprStream(ret);
-  return ret.str();
-}
-
-std::string DataArrayDouble::reprZip() const
-{
-  std::ostringstream ret;
-  reprZipStream(ret);
-  return ret.str();
-}
-
 void DataArrayDouble::writeVTK(std::ostream& ofs, int indent, const std::string& nameInFile, DataArrayByte *byteArr) const
 {
   static const char SPACE[4]={' ',' ',' ',' '};
@@ -969,10 +950,10 @@ void DataArrayDouble::reprQuickOverview(std::ostream& stream) const
   stream << "DataArrayDouble C++ instance at " << this << ". ";
   if(isAllocated())
     {
-      int nbOfCompo=(int)_info_on_compo.size();
+      std::size_t nbOfCompo(_info_on_compo.size());
       if(nbOfCompo>=1)
         {
-          int nbOfTuples=getNumberOfTuples();
+          std::size_t nbOfTuples(getNumberOfTuples());
           stream << "Number of tuples : " << nbOfTuples << ". Number of components : " << nbOfCompo << "." << std::endl;
           reprQuickOverviewData(stream,MAX_NB_OF_BYTE_IN_REPR);
         }
@@ -3679,15 +3660,6 @@ DataArrayDouble *DataArrayDoubleTuple::buildDADouble(int nbOfTuples, int nbOfCom
 }
 
 /*!
- * Returns a new instance of DataArrayInt. The caller is to delete this array
- * using decrRef() as it is no more needed.
- */
-DataArrayInt *DataArrayInt::New()
-{
-  return new DataArrayInt;
-}
-
-/*!
  * Returns the only one value in \a this, if and only if number of elements
  * (nb of tuples * nb of components) is equal to 1, and that \a this is allocated.
  *  \return double - the sole value stored in \a this array.
@@ -3709,27 +3681,6 @@ int DataArrayInt::intValue() const
 }
 
 /*!
- * Returns an integer value characterizing \a this array, which is useful for a quick
- * comparison of many instances of DataArrayInt.
- *  \return int - the hash value.
- *  \throw If \a this is not allocated.
- */
-int DataArrayInt::getHashCode() const
-{
-  checkAllocated();
-  std::size_t nbOfElems=getNbOfElems();
-  int ret=nbOfElems*65536;
-  int delta=3;
-  if(nbOfElems>48)
-    delta=nbOfElems/8;
-  int ret0=0;
-  const int *pt=begin();
-  for(std::size_t i=0;i<nbOfElems;i+=delta)
-    ret0+=pt[i] & 0x1FFF;
-  return ret+ret0;
-}
-
-/*!
  * Returns a full copy of \a this. For more info on copying data arrays see
  * \ref MEDCouplingArrayBasicsCopyDeep.
  *  \return DataArrayInt * - a new instance of DataArrayInt.
@@ -3737,143 +3688,6 @@ int DataArrayInt::getHashCode() const
 DataArrayInt32 *DataArrayInt32::deepCopy() const
 {
   return new DataArrayInt32(*this);
-}
-
-/*!
- * Returns a textual and human readable representation of \a this instance of
- * DataArrayInt. This text is shown when a DataArrayInt is printed in Python.
- * \return std::string - text describing \a this DataArrayInt.
- *
- * \sa reprNotTooLong, reprZip
- */
-std::string DataArrayInt::repr() const
-{
-  std::ostringstream ret;
-  reprStream(ret);
-  return ret.str();
-}
-
-std::string DataArrayInt::reprZip() const
-{
-  std::ostringstream ret;
-  reprZipStream(ret);
-  return ret.str();
-}
-
-void DataArrayInt::writeVTK(std::ostream& ofs, int indent, const std::string& type, const std::string& nameInFile, DataArrayByte *byteArr) const
-{
-  static const char SPACE[4]={' ',' ',' ',' '};
-  checkAllocated();
-  std::string idt(indent,' ');
-  ofs << idt << "<DataArray type=\"" << type << "\" Name=\"" << nameInFile << "\" NumberOfComponents=\"" << getNumberOfComponents() << "\"";
-  if(byteArr)
-    {
-      ofs << " format=\"appended\" offset=\"" << byteArr->getNumberOfTuples() << "\">";
-      if(std::string(type)=="Int32")
-        {
-          const char *data(reinterpret_cast<const char *>(begin()));
-          std::size_t sz(getNbOfElems()*sizeof(int));
-          byteArr->insertAtTheEnd(data,data+sz);
-          byteArr->insertAtTheEnd(SPACE,SPACE+4);
-        }
-      else if(std::string(type)=="Int8")
-        {
-          INTERP_KERNEL::AutoPtr<char> tmp(new char[getNbOfElems()]);
-          std::copy(begin(),end(),(char *)tmp);
-          byteArr->insertAtTheEnd((char *)tmp,(char *)tmp+getNbOfElems());
-          byteArr->insertAtTheEnd(SPACE,SPACE+4);
-        }
-      else if(std::string(type)=="UInt8")
-        {
-          INTERP_KERNEL::AutoPtr<unsigned char> tmp(new unsigned char[getNbOfElems()]);
-          std::copy(begin(),end(),(unsigned char *)tmp);
-          byteArr->insertAtTheEnd((unsigned char *)tmp,(unsigned char *)tmp+getNbOfElems());
-          byteArr->insertAtTheEnd(SPACE,SPACE+4);
-        }
-      else
-        throw INTERP_KERNEL::Exception("DataArrayInt::writeVTK : Only Int32, Int8 and UInt8 supported !");
-    }
-  else
-    {
-      ofs << " RangeMin=\"" << getMinValueInArray() << "\" RangeMax=\"" << getMaxValueInArray() << "\" format=\"ascii\">\n" << idt;
-      std::copy(begin(),end(),std::ostream_iterator<int>(ofs," "));
-    }
-  ofs << std::endl << idt << "</DataArray>\n";
-}
-
-void DataArrayInt::reprCppStream(const std::string& varName, std::ostream& stream) const
-{
-  int nbTuples=getNumberOfTuples(),nbComp=getNumberOfComponents();
-  const int *data=getConstPointer();
-  stream << "DataArrayInt *" << varName << "=DataArrayInt::New();" << std::endl;
-  if(nbTuples*nbComp>=1)
-    {
-      stream << "const int " << varName << "Data[" << nbTuples*nbComp << "]={";
-      std::copy(data,data+nbTuples*nbComp-1,std::ostream_iterator<int>(stream,","));
-      stream << data[nbTuples*nbComp-1] << "};" << std::endl;
-      stream << varName << "->useArray(" << varName << "Data,false,CPP_DEALLOC," << nbTuples << "," << nbComp << ");" << std::endl;
-    }
-  else
-    stream << varName << "->alloc(" << nbTuples << "," << nbComp << ");" << std::endl;
-  stream << varName << "->setName(\"" << getName() << "\");" << std::endl;
-}
-
-/*!
- * Method that gives a quick overvien of \a this for python.
- */
-void DataArrayInt::reprQuickOverview(std::ostream& stream) const
-{
-  static const std::size_t MAX_NB_OF_BYTE_IN_REPR=300;
-  stream << "DataArrayInt C++ instance at " << this << ". ";
-  if(isAllocated())
-    {
-      int nbOfCompo=(int)_info_on_compo.size();
-      if(nbOfCompo>=1)
-        {
-          int nbOfTuples=getNumberOfTuples();
-          stream << "Number of tuples : " << nbOfTuples << ". Number of components : " << nbOfCompo << "." << std::endl;
-          reprQuickOverviewData(stream,MAX_NB_OF_BYTE_IN_REPR);
-        }
-      else
-        stream << "Number of components : 0.";
-    }
-  else
-    stream << "*** No data allocated ****";
-}
-
-void DataArrayInt::reprQuickOverviewData(std::ostream& stream, std::size_t maxNbOfByteInRepr) const
-{
-  const int *data=begin();
-  int nbOfTuples=getNumberOfTuples();
-  int nbOfCompo=(int)_info_on_compo.size();
-  std::ostringstream oss2; oss2 << "[";
-  std::string oss2Str(oss2.str());
-  bool isFinished=true;
-  for(int i=0;i<nbOfTuples && isFinished;i++)
-    {
-      if(nbOfCompo>1)
-        {
-          oss2 << "(";
-          for(int j=0;j<nbOfCompo;j++,data++)
-            {
-              oss2 << *data;
-              if(j!=nbOfCompo-1) oss2 << ", ";
-            }
-          oss2 << ")";
-        }
-      else
-        oss2 << *data++;
-      if(i!=nbOfTuples-1) oss2 << ", ";
-      std::string oss3Str(oss2.str());
-      if(oss3Str.length()<maxNbOfByteInRepr)
-        oss2Str=oss3Str;
-      else
-        isFinished=false;
-    }
-  stream << oss2Str;
-  if(!isFinished)
-    stream << "... ";
-  stream << "]";
 }
 
 /*!
@@ -4020,60 +3834,6 @@ bool DataArrayInt::isRange(int& strt, int& sttoopp, int& stteepp) const
           return false;
       return true;
     }
-}
-
-
-/*!
- * Modifies in place \a this one-dimensional array so that each value \a v = \a indArrBg[ \a v ],
- * i.e. a current value is used as in index to get a new value from \a indArrBg.
- *  \param [in] indArrBg - pointer to the first element of array of new values to assign
- *         to \a this array.
- *  \param [in] indArrEnd - specifies the end of the array \a indArrBg, so that
- *              the last value of \a indArrBg is \a indArrEnd[ -1 ].
- *  \throw If \a this->getNumberOfComponents() != 1
- *  \throw If any value of \a this can't be used as a valid index for
- *         [\a indArrBg, \a indArrEnd).
- *
- *  \sa changeValue, findIdForEach
- */
-void DataArrayInt::transformWithIndArr(const int *indArrBg, const int *indArrEnd)
-{
-  this->checkAllocated();
-  if(this->getNumberOfComponents()!=1)
-    throw INTERP_KERNEL::Exception("Call transformWithIndArr method on DataArrayInt with only one component, you can call 'rearrange' method before !");
-  int nbElemsIn((int)std::distance(indArrBg,indArrEnd)),nbOfTuples(getNumberOfTuples()),*pt(getPointer());
-  for(int i=0;i<nbOfTuples;i++,pt++)
-    {
-      if(*pt>=0 && *pt<nbElemsIn)
-        *pt=indArrBg[*pt];
-      else
-        {
-          std::ostringstream oss; oss << "DataArrayInt::transformWithIndArr : error on tuple #" << i << " of this value is " << *pt << ", should be in [0," << nbElemsIn << ") !";
-          throw INTERP_KERNEL::Exception(oss.str());
-        }
-    }
-  this->declareAsNew();
-}
-
-void DataArrayInt::transformWithIndArr(const MapKeyVal<int>& m)
-{
-  this->checkAllocated();
-  if(this->getNumberOfComponents()!=1)
-    throw INTERP_KERNEL::Exception("Call transformWithIndArr method on DataArrayInt with only one component, you can call 'rearrange' method before !");
-  const std::map<int,int>& dat(m.data());
-  int nbOfTuples(getNumberOfTuples()),*pt(getPointer());
-  for(int i=0;i<nbOfTuples;i++,pt++)
-    {
-      std::map<int,int>::const_iterator it(dat.find(*pt));
-      if(it!=dat.end())
-        *pt=(*it).second;
-      else
-        {
-          std::ostringstream oss; oss << "DataArrayInt::transformWithIndArr : error on tuple #" << i << " of this value is " << *pt << " not in map !";
-          throw INTERP_KERNEL::Exception(oss.str());
-        }
-    }
-  this->declareAsNew();
 }
 
 /*!
@@ -4312,7 +4072,7 @@ DataArrayInt *DataArrayInt::checkAndPreparePermutation() const
   const int *pt=getConstPointer();
   int *pt2=CheckAndPreparePermutation(pt,pt+nbTuples);
   DataArrayInt *ret=DataArrayInt::New();
-  ret->useArray(pt2,true,C_DEALLOC,nbTuples,1);
+  ret->useArray(pt2,true,DeallocType::C_DEALLOC,nbTuples,1);
   return ret;
 }
 
@@ -4678,30 +4438,6 @@ void DataArrayInt::setSelectedComponents(const DataArrayInt *a, const std::vecto
 DataArrayIntIterator *DataArrayInt::iterator()
 {
   return new DataArrayIntIterator(this);
-}
-
-/*!
- * Creates a new DataArrayInt containing IDs (indices) of tuples holding value equal to a
- * given one. The ids are sorted in the ascending order.
- *  \param [in] val - the value to find within \a this.
- *  \return DataArrayInt * - a new instance of DataArrayInt. The caller is to delete this
- *          array using decrRef() as it is no more needed.
- *  \throw If \a this is not allocated.
- *  \throw If \a this->getNumberOfComponents() != 1.
- *  \sa DataArrayInt::findIdsEqualTuple
- */
-DataArrayInt *DataArrayInt::findIdsEqual(int val) const
-{
-  checkAllocated();
-  if(getNumberOfComponents()!=1)
-    throw INTERP_KERNEL::Exception("DataArrayInt::findIdsEqual : the array must have only one component, you can call 'rearrange' method before !");
-  const int *cptr(getConstPointer());
-  MCAuto<DataArrayInt> ret(DataArrayInt::New()); ret->alloc(0,1);
-  int nbOfTuples=getNumberOfTuples();
-  for(int i=0;i<nbOfTuples;i++,cptr++)
-    if(*cptr==val)
-      ret->pushBackSilent(i);
-  return ret.retn();
 }
 
 /*!
@@ -6041,7 +5777,7 @@ void DataArrayInt::computeOffsetsFull()
   ret[0]=0;
   for(int i=0;i<nbOfTuples;i++)
     ret[i+1]=work[i]+ret[i];
-  useArray(ret,true,C_DEALLOC,nbOfTuples+1,1);
+  useArray(ret,true,DeallocType::C_DEALLOC,nbOfTuples+1,1);
   declareAsNew();
 }
 
@@ -6745,6 +6481,424 @@ void DataArrayInt::powEqual(const DataArrayInt *other)
 }
 
 /*!
+ * This method works on a pair input (\b arrIn, \b arrIndxIn) where \b arrIn indexes is in \b arrIndxIn
+ * (\ref numbering-indirect).
+ * This method returns the result of the extraction ( specified by a set of ids in [\b idsOfSelectBg , \b idsOfSelectEnd ) ).
+ * The selection of extraction is done standardly in new2old format.
+ * This method returns indexed arrays (\ref numbering-indirect) using 2 arrays (arrOut,arrIndexOut).
+ *
+ * \param [in] idsOfSelectBg begin of set of ids of the input extraction (included)
+ * \param [in] idsOfSelectEnd end of set of ids of the input extraction (excluded)
+ * \param [in] arrIn arr origin array from which the extraction will be done.
+ * \param [in] arrIndxIn is the input index array allowing to walk into \b arrIn
+ * \param [out] arrOut the resulting array
+ * \param [out] arrIndexOut the index array of the resulting array \b arrOut
+ * \sa DataArrayInt::ExtractFromIndexedArraysSlice
+ */
+void DataArrayInt::ExtractFromIndexedArrays(const int *idsOfSelectBg, const int *idsOfSelectEnd, const DataArrayInt *arrIn, const DataArrayInt *arrIndxIn,
+                                                DataArrayInt* &arrOut, DataArrayInt* &arrIndexOut)
+{
+  if(!arrIn || !arrIndxIn)
+    throw INTERP_KERNEL::Exception("DataArrayInt::ExtractFromIndexedArrays : input pointer is NULL !");
+  arrIn->checkAllocated(); arrIndxIn->checkAllocated();
+  if(arrIn->getNumberOfComponents()!=1 || arrIndxIn->getNumberOfComponents()!=1)
+    throw INTERP_KERNEL::Exception("DataArrayInt::ExtractFromIndexedArrays : input arrays must have exactly one component !");
+  std::size_t sz=std::distance(idsOfSelectBg,idsOfSelectEnd);
+  const int *arrInPtr=arrIn->begin();
+  const int *arrIndxPtr=arrIndxIn->begin();
+  int nbOfGrps=arrIndxIn->getNumberOfTuples()-1;
+  if(nbOfGrps<0)
+    throw INTERP_KERNEL::Exception("DataArrayInt::ExtractFromIndexedArrays : The format of \"arrIndxIn\" is invalid ! Its nb of tuples should be >=1 !");
+  int maxSizeOfArr=arrIn->getNumberOfTuples();
+  MCAuto<DataArrayInt> arro=DataArrayInt::New();
+  MCAuto<DataArrayInt> arrIo=DataArrayInt::New();
+  arrIo->alloc((int)(sz+1),1);
+  const int *idsIt=idsOfSelectBg;
+  int *work=arrIo->getPointer();
+  *work++=0;
+  int lgth=0;
+  for(std::size_t i=0;i<sz;i++,work++,idsIt++)
+    {
+      if(*idsIt>=0 && *idsIt<nbOfGrps)
+        lgth+=arrIndxPtr[*idsIt+1]-arrIndxPtr[*idsIt];
+      else
+        {
+          std::ostringstream oss; oss << "DataArrayInt::ExtractFromIndexedArrays : id located on pos #" << i << " value is " << *idsIt << " ! Must be in [0," << nbOfGrps << ") !";
+          throw INTERP_KERNEL::Exception(oss.str());
+        }
+      if(lgth>=work[-1])
+        *work=lgth;
+      else
+        {
+          std::ostringstream oss; oss << "DataArrayInt::ExtractFromIndexedArrays : id located on pos #" << i << " value is " << *idsIt << " and at this pos arrIndxIn[" << *idsIt;
+          oss << "+1]-arrIndxIn[" << *idsIt << "] < 0 ! The input index array is bugged !";
+          throw INTERP_KERNEL::Exception(oss.str());
+        }
+    }
+  arro->alloc(lgth,1);
+  work=arro->getPointer();
+  idsIt=idsOfSelectBg;
+  for(std::size_t i=0;i<sz;i++,idsIt++)
+    {
+      if(arrIndxPtr[*idsIt]>=0 && arrIndxPtr[*idsIt+1]<=maxSizeOfArr)
+        work=std::copy(arrInPtr+arrIndxPtr[*idsIt],arrInPtr+arrIndxPtr[*idsIt+1],work);
+      else
+        {
+          std::ostringstream oss; oss << "DataArrayInt::ExtractFromIndexedArrays : id located on pos #" << i << " value is " << *idsIt << " arrIndx[" << *idsIt << "] must be >= 0 and arrIndx[";
+          oss << *idsIt << "+1] <= " << maxSizeOfArr << " (the size of arrIn)!";
+          throw INTERP_KERNEL::Exception(oss.str());
+        }
+    }
+  arrOut=arro.retn();
+  arrIndexOut=arrIo.retn();
+}
+
+/*!
+ * This method works on a pair input (\b arrIn, \b arrIndxIn) where \b arrIn indexes is in \b arrIndxIn
+ * (\ref numbering-indirect).
+ * This method returns the result of the extraction ( specified by a set of ids with a slice given by \a idsOfSelectStart, \a idsOfSelectStop and \a idsOfSelectStep ).
+ * The selection of extraction is done standardly in new2old format.
+ * This method returns indexed arrays (\ref numbering-indirect) using 2 arrays (arrOut,arrIndexOut).
+ *
+ * \param [in] idsOfSelectStart begin of set of ids of the input extraction (included)
+ * \param [in] idsOfSelectStop end of set of ids of the input extraction (excluded)
+ * \param [in] idsOfSelectStep
+ * \param [in] arrIn arr origin array from which the extraction will be done.
+ * \param [in] arrIndxIn is the input index array allowing to walk into \b arrIn
+ * \param [out] arrOut the resulting array
+ * \param [out] arrIndexOut the index array of the resulting array \b arrOut
+ * \sa DataArrayInt::ExtractFromIndexedArrays
+ */
+void DataArrayInt::ExtractFromIndexedArraysSlice(int idsOfSelectStart, int idsOfSelectStop, int idsOfSelectStep, const DataArrayInt *arrIn, const DataArrayInt *arrIndxIn,
+                                                 DataArrayInt* &arrOut, DataArrayInt* &arrIndexOut)
+{
+  if(!arrIn || !arrIndxIn)
+    throw INTERP_KERNEL::Exception("DataArrayInt::ExtractFromIndexedArraysSlice : input pointer is NULL !");
+  arrIn->checkAllocated(); arrIndxIn->checkAllocated();
+  if(arrIn->getNumberOfComponents()!=1 || arrIndxIn->getNumberOfComponents()!=1)
+    throw INTERP_KERNEL::Exception("DataArrayInt::ExtractFromIndexedArraysSlice : input arrays must have exactly one component !");
+  int sz=DataArrayInt::GetNumberOfItemGivenBESRelative(idsOfSelectStart,idsOfSelectStop,idsOfSelectStep,"MEDCouplingUMesh::ExtractFromIndexedArraysSlice : Input slice ");
+  const int *arrInPtr=arrIn->begin();
+  const int *arrIndxPtr=arrIndxIn->begin();
+  int nbOfGrps=arrIndxIn->getNumberOfTuples()-1;
+  if(nbOfGrps<0)
+    throw INTERP_KERNEL::Exception("DataArrayInt::ExtractFromIndexedArraysSlice : The format of \"arrIndxIn\" is invalid ! Its nb of tuples should be >=1 !");
+  int maxSizeOfArr=arrIn->getNumberOfTuples();
+  MCAuto<DataArrayInt> arro=DataArrayInt::New();
+  MCAuto<DataArrayInt> arrIo=DataArrayInt::New();
+  arrIo->alloc((int)(sz+1),1);
+  int idsIt=idsOfSelectStart;
+  int *work=arrIo->getPointer();
+  *work++=0;
+  int lgth=0;
+  for(int i=0;i<sz;i++,work++,idsIt+=idsOfSelectStep)
+    {
+      if(idsIt>=0 && idsIt<nbOfGrps)
+        lgth+=arrIndxPtr[idsIt+1]-arrIndxPtr[idsIt];
+      else
+        {
+          std::ostringstream oss; oss << "DataArrayInt::ExtractFromIndexedArraysSlice : id located on pos #" << i << " value is " << idsIt << " ! Must be in [0," << nbOfGrps << ") !";
+          throw INTERP_KERNEL::Exception(oss.str());
+        }
+      if(lgth>=work[-1])
+        *work=lgth;
+      else
+        {
+          std::ostringstream oss; oss << "DataArrayInt::ExtractFromIndexedArraysSlice : id located on pos #" << i << " value is " << idsIt << " and at this pos arrIndxIn[" << idsIt;
+          oss << "+1]-arrIndxIn[" << idsIt << "] < 0 ! The input index array is bugged !";
+          throw INTERP_KERNEL::Exception(oss.str());
+        }
+    }
+  arro->alloc(lgth,1);
+  work=arro->getPointer();
+  idsIt=idsOfSelectStart;
+  for(int i=0;i<sz;i++,idsIt+=idsOfSelectStep)
+    {
+      if(arrIndxPtr[idsIt]>=0 && arrIndxPtr[idsIt+1]<=maxSizeOfArr)
+        work=std::copy(arrInPtr+arrIndxPtr[idsIt],arrInPtr+arrIndxPtr[idsIt+1],work);
+      else
+        {
+          std::ostringstream oss; oss << "DataArrayInt::ExtractFromIndexedArraysSlice : id located on pos #" << i << " value is " << idsIt << " arrIndx[" << idsIt << "] must be >= 0 and arrIndx[";
+          oss << idsIt << "+1] <= " << maxSizeOfArr << " (the size of arrIn)!";
+          throw INTERP_KERNEL::Exception(oss.str());
+        }
+    }
+  arrOut=arro.retn();
+  arrIndexOut=arrIo.retn();
+}
+
+/*!
+ * This method works on an input pair (\b arrIn, \b arrIndxIn) where \b arrIn indexes is in \b arrIndxIn.
+ * This method builds an output pair (\b arrOut,\b arrIndexOut) that is a copy from \b arrIn for all cell ids \b not \b in [ \b idsOfSelectBg , \b idsOfSelectEnd ) and for
+ * cellIds \b in [ \b idsOfSelectBg , \b idsOfSelectEnd ) a copy coming from the corresponding values in input pair (\b srcArr, \b srcArrIndex).
+ * This method is an generalization of MEDCouplingUMesh::SetPartOfIndexedArraysSameIdx that performs the same thing but by without building explicitly a result output arrays.
+ *
+ * \param [in] idsOfSelectBg begin of set of ids of the input extraction (included)
+ * \param [in] idsOfSelectEnd end of set of ids of the input extraction (excluded)
+ * \param [in] arrIn arr origin array from which the extraction will be done.
+ * \param [in] arrIndxIn is the input index array allowing to walk into \b arrIn
+ * \param [in] srcArr input array that will be used as source of copy for ids in [ \b idsOfSelectBg, \b idsOfSelectEnd )
+ * \param [in] srcArrIndex index array of \b srcArr
+ * \param [out] arrOut the resulting array
+ * \param [out] arrIndexOut the index array of the resulting array \b arrOut
+ *
+ * \sa DataArrayInt::SetPartOfIndexedArraysSameIdx
+ */
+void DataArrayInt::SetPartOfIndexedArrays(const int *idsOfSelectBg, const int *idsOfSelectEnd, const DataArrayInt *arrIn, const DataArrayInt *arrIndxIn,
+                                              const DataArrayInt *srcArr, const DataArrayInt *srcArrIndex,
+                                              DataArrayInt* &arrOut, DataArrayInt* &arrIndexOut)
+{
+  if(arrIn==0 || arrIndxIn==0 || srcArr==0 || srcArrIndex==0)
+    throw INTERP_KERNEL::Exception("DataArrayInt::SetPartOfIndexedArrays : presence of null pointer in input parameter !");
+  MCAuto<DataArrayInt> arro=DataArrayInt::New();
+  MCAuto<DataArrayInt> arrIo=DataArrayInt::New();
+  int nbOfTuples=arrIndxIn->getNumberOfTuples()-1;
+  std::vector<bool> v(nbOfTuples,true);
+  int offset=0;
+  const int *arrIndxInPtr=arrIndxIn->begin();
+  const int *srcArrIndexPtr=srcArrIndex->begin();
+  for(const int *it=idsOfSelectBg;it!=idsOfSelectEnd;it++,srcArrIndexPtr++)
+    {
+      if(*it>=0 && *it<nbOfTuples)
+        {
+          v[*it]=false;
+          offset+=(srcArrIndexPtr[1]-srcArrIndexPtr[0])-(arrIndxInPtr[*it+1]-arrIndxInPtr[*it]);
+        }
+      else
+        {
+          std::ostringstream oss; oss << "DataArrayInt::SetPartOfIndexedArrays : On pos #" << std::distance(idsOfSelectBg,it) << " value is " << *it << " not in [0," << nbOfTuples << ") !";
+          throw INTERP_KERNEL::Exception(oss.str());
+        }
+    }
+  srcArrIndexPtr=srcArrIndex->begin();
+  arrIo->alloc(nbOfTuples+1,1);
+  arro->alloc(arrIn->getNumberOfTuples()+offset,1);
+  const int *arrInPtr=arrIn->begin();
+  const int *srcArrPtr=srcArr->begin();
+  int *arrIoPtr=arrIo->getPointer(); *arrIoPtr++=0;
+  int *arroPtr=arro->getPointer();
+  for(int ii=0;ii<nbOfTuples;ii++,arrIoPtr++)
+    {
+      if(v[ii])
+        {
+          arroPtr=std::copy(arrInPtr+arrIndxInPtr[ii],arrInPtr+arrIndxInPtr[ii+1],arroPtr);
+          *arrIoPtr=arrIoPtr[-1]+(arrIndxInPtr[ii+1]-arrIndxInPtr[ii]);
+        }
+      else
+        {
+          std::size_t pos=std::distance(idsOfSelectBg,std::find(idsOfSelectBg,idsOfSelectEnd,ii));
+          arroPtr=std::copy(srcArrPtr+srcArrIndexPtr[pos],srcArrPtr+srcArrIndexPtr[pos+1],arroPtr);
+          *arrIoPtr=arrIoPtr[-1]+(srcArrIndexPtr[pos+1]-srcArrIndexPtr[pos]);
+        }
+    }
+  arrOut=arro.retn();
+  arrIndexOut=arrIo.retn();
+}
+
+
+/*!
+ * This method works on an input pair (\b arrIn, \b arrIndxIn) where \b arrIn indexes is in \b arrIndxIn.
+ * This method builds an output pair (\b arrOut,\b arrIndexOut) that is a copy from \b arrIn for all cell ids \b not \b in [ \b idsOfSelectBg , \b idsOfSelectEnd ) and for
+ * cellIds \b in [\b idsOfSelectBg, \b idsOfSelectEnd) a copy coming from the corresponding values in input pair (\b srcArr, \b srcArrIndex).
+ * This method is an generalization of DataArrayInt::SetPartOfIndexedArraysSameIdx that performs the same thing but by without building explicitly a result output arrays.
+ *
+ * \param [in] start begin of set of ids of the input extraction (included)
+ * \param [in] end end of set of ids of the input extraction (excluded)
+ * \param [in] step step of the set of ids in range mode.
+ * \param [in] arrIn arr origin array from which the extraction will be done.
+ * \param [in] arrIndxIn is the input index array allowing to walk into \b arrIn
+ * \param [in] srcArr input array that will be used as source of copy for ids in [\b idsOfSelectBg, \b idsOfSelectEnd)
+ * \param [in] srcArrIndex index array of \b srcArr
+ * \param [out] arrOut the resulting array
+ * \param [out] arrIndexOut the index array of the resulting array \b arrOut
+ *
+ * \sa DataArrayInt::SetPartOfIndexedArraysSameIdx DataArrayInt::SetPartOfIndexedArrays
+ */
+void DataArrayInt::SetPartOfIndexedArraysSlice(int start, int end, int step, const DataArrayInt *arrIn, const DataArrayInt *arrIndxIn,
+                                               const DataArrayInt *srcArr, const DataArrayInt *srcArrIndex,
+                                               DataArrayInt* &arrOut, DataArrayInt* &arrIndexOut)
+{
+  if(arrIn==0 || arrIndxIn==0 || srcArr==0 || srcArrIndex==0)
+    throw INTERP_KERNEL::Exception("DataArrayInt::SetPartOfIndexedArraysSlice : presence of null pointer in input parameter !");
+  MCAuto<DataArrayInt> arro=DataArrayInt::New();
+  MCAuto<DataArrayInt> arrIo=DataArrayInt::New();
+  int nbOfTuples=arrIndxIn->getNumberOfTuples()-1;
+  int offset=0;
+  const int *arrIndxInPtr=arrIndxIn->begin();
+  const int *srcArrIndexPtr=srcArrIndex->begin();
+  int nbOfElemsToSet=DataArray::GetNumberOfItemGivenBESRelative(start,end,step,"DataArrayInt::SetPartOfIndexedArraysSlice : ");
+  int it=start;
+  for(int i=0;i<nbOfElemsToSet;i++,srcArrIndexPtr++,it+=step)
+    {
+      if(it>=0 && it<nbOfTuples)
+        offset+=(srcArrIndexPtr[1]-srcArrIndexPtr[0])-(arrIndxInPtr[it+1]-arrIndxInPtr[it]);
+      else
+        {
+          std::ostringstream oss; oss << "DataArrayInt::SetPartOfIndexedArraysSlice : On pos #" << i << " value is " << it << " not in [0," << nbOfTuples << ") !";
+          throw INTERP_KERNEL::Exception(oss.str());
+        }
+    }
+  srcArrIndexPtr=srcArrIndex->begin();
+  arrIo->alloc(nbOfTuples+1,1);
+  arro->alloc(arrIn->getNumberOfTuples()+offset,1);
+  const int *arrInPtr=arrIn->begin();
+  const int *srcArrPtr=srcArr->begin();
+  int *arrIoPtr=arrIo->getPointer(); *arrIoPtr++=0;
+  int *arroPtr=arro->getPointer();
+  for(int ii=0;ii<nbOfTuples;ii++,arrIoPtr++)
+    {
+      int pos=DataArray::GetPosOfItemGivenBESRelativeNoThrow(ii,start,end,step);
+      if(pos<0)
+        {
+          arroPtr=std::copy(arrInPtr+arrIndxInPtr[ii],arrInPtr+arrIndxInPtr[ii+1],arroPtr);
+          *arrIoPtr=arrIoPtr[-1]+(arrIndxInPtr[ii+1]-arrIndxInPtr[ii]);
+        }
+      else
+        {
+          arroPtr=std::copy(srcArrPtr+srcArrIndexPtr[pos],srcArrPtr+srcArrIndexPtr[pos+1],arroPtr);
+          *arrIoPtr=arrIoPtr[-1]+(srcArrIndexPtr[pos+1]-srcArrIndexPtr[pos]);
+        }
+    }
+  arrOut=arro.retn();
+  arrIndexOut=arrIo.retn();
+}
+
+
+/*!
+ * This method works on an input pair (\b arrIn, \b arrIndxIn) where \b arrIn indexes is in \b arrIndxIn.
+ * This method is an specialization of MEDCouplingUMesh::SetPartOfIndexedArrays in the case of assignment do not modify the index in \b arrIndxIn.
+ *
+ * \param [in] idsOfSelectBg begin of set of ids of the input extraction (included)
+ * \param [in] idsOfSelectEnd end of set of ids of the input extraction (excluded)
+ * \param [in,out] arrInOut arr origin array from which the extraction will be done.
+ * \param [in] arrIndxIn is the input index array allowing to walk into \b arrIn
+ * \param [in] srcArr input array that will be used as source of copy for ids in [ \b idsOfSelectBg , \b idsOfSelectEnd )
+ * \param [in] srcArrIndex index array of \b srcArr
+ *
+ * \sa DataArrayInt::SetPartOfIndexedArrays
+ */
+void DataArrayInt::SetPartOfIndexedArraysSameIdx(const int *idsOfSelectBg, const int *idsOfSelectEnd, DataArrayInt *arrInOut, const DataArrayInt *arrIndxIn,
+                                                     const DataArrayInt *srcArr, const DataArrayInt *srcArrIndex)
+{
+  if(arrInOut==0 || arrIndxIn==0 || srcArr==0 || srcArrIndex==0)
+    throw INTERP_KERNEL::Exception("DataArrayInt::SetPartOfIndexedArraysSameIdx : presence of null pointer in input parameter !");
+  int nbOfTuples=arrIndxIn->getNumberOfTuples()-1;
+  const int *arrIndxInPtr=arrIndxIn->begin();
+  const int *srcArrIndexPtr=srcArrIndex->begin();
+  int *arrInOutPtr=arrInOut->getPointer();
+  const int *srcArrPtr=srcArr->begin();
+  for(const int *it=idsOfSelectBg;it!=idsOfSelectEnd;it++,srcArrIndexPtr++)
+    {
+      if(*it>=0 && *it<nbOfTuples)
+        {
+          if(srcArrIndexPtr[1]-srcArrIndexPtr[0]==arrIndxInPtr[*it+1]-arrIndxInPtr[*it])
+            std::copy(srcArrPtr+srcArrIndexPtr[0],srcArrPtr+srcArrIndexPtr[1],arrInOutPtr+arrIndxInPtr[*it]);
+          else
+            {
+              std::ostringstream oss; oss << "DataArrayInt::SetPartOfIndexedArraysSameIdx : On pos #" << std::distance(idsOfSelectBg,it) << " id (idsOfSelectBg[" << std::distance(idsOfSelectBg,it)<< "]) is " << *it << " arrIndxIn[id+1]-arrIndxIn[id]!=srcArrIndex[pos+1]-srcArrIndex[pos] !";
+              throw INTERP_KERNEL::Exception(oss.str());
+            }
+        }
+      else
+        {
+          std::ostringstream oss; oss << "DataArrayInt::SetPartOfIndexedArraysSameIdx : On pos #" << std::distance(idsOfSelectBg,it) << " value is " << *it << " not in [0," << nbOfTuples << ") !";
+          throw INTERP_KERNEL::Exception(oss.str());
+        }
+    }
+}
+
+/*!
+ * This method works on an input pair (\b arr, \b arrIndx) where \b arr indexes is in \b arrIndx.
+ * This method will not impact the size of inout parameter \b arrIndx but the size of \b arr will be modified in case of suppression.
+ *
+ * \param [in] idsToRemoveBg begin of set of ids to remove in \b arr (included)
+ * \param [in] idsToRemoveEnd end of set of ids to remove in \b arr (excluded)
+ * \param [in,out] arr array in which the remove operation will be done.
+ * \param [in,out] arrIndx array in the remove operation will modify
+ * \param [in] offsetForRemoval (by default 0) offset so that for each i in [0,arrIndx->getNumberOfTuples()-1) removal process will be performed in the following range [arr+arrIndx[i]+offsetForRemoval,arr+arr[i+1])
+ * \return true if \b arr and \b arrIndx have been modified, false if not.
+ */
+bool DataArrayInt::RemoveIdsFromIndexedArrays(const int *idsToRemoveBg, const int *idsToRemoveEnd, DataArrayInt *arr, DataArrayInt *arrIndx, int offsetForRemoval)
+{
+  if(!arrIndx || !arr)
+    throw INTERP_KERNEL::Exception("DataArrayInt::RemoveIdsFromIndexedArrays : some input arrays are empty !");
+  if(offsetForRemoval<0)
+    throw INTERP_KERNEL::Exception("DataArrayInt::RemoveIdsFromIndexedArrays : offsetForRemoval should be >=0 !");
+  std::set<int> s(idsToRemoveBg,idsToRemoveEnd);
+  int nbOfGrps=arrIndx->getNumberOfTuples()-1;
+  int *arrIPtr=arrIndx->getPointer();
+  *arrIPtr++=0;
+  int previousArrI=0;
+  const int *arrPtr=arr->begin();
+  std::vector<int> arrOut;//no utility to switch to DataArrayInt because copy always needed
+  for(int i=0;i<nbOfGrps;i++,arrIPtr++)
+    {
+      if(*arrIPtr-previousArrI>offsetForRemoval)
+        {
+          for(const int *work=arrPtr+previousArrI+offsetForRemoval;work!=arrPtr+*arrIPtr;work++)
+            {
+              if(s.find(*work)==s.end())
+                arrOut.push_back(*work);
+            }
+        }
+      previousArrI=*arrIPtr;
+      *arrIPtr=(int)arrOut.size();
+    }
+  if(arr->getNumberOfTuples()==arrOut.size())
+    return false;
+  arr->alloc((int)arrOut.size(),1);
+  std::copy(arrOut.begin(),arrOut.end(),arr->getPointer());
+  return true;
+}
+
+/*!
+ * This method works on an input pair (\b arrIn, \b arrIndxIn) where \b arrIn indexes is in \b arrIndxIn.
+ * This method is an specialization of MEDCouplingUMesh::SetPartOfIndexedArrays in the case of assignment do not modify the index in \b arrIndxIn.
+ *
+ * \param [in] start begin of set of ids of the input extraction (included)
+ * \param [in] end end of set of ids of the input extraction (excluded)
+ * \param [in] step step of the set of ids in range mode.
+ * \param [in,out] arrInOut arr origin array from which the extraction will be done.
+ * \param [in] arrIndxIn is the input index array allowing to walk into \b arrIn
+ * \param [in] srcArr input array that will be used as source of copy for ids in [\b idsOfSelectBg, \b idsOfSelectEnd)
+ * \param [in] srcArrIndex index array of \b srcArr
+ *
+ * \sa DataArrayInt::SetPartOfIndexedArraysSlice DataArrayInt::SetPartOfIndexedArraysSameIdx
+ */
+void DataArrayInt::SetPartOfIndexedArraysSameIdxSlice(int start, int end, int step, DataArrayInt *arrInOut, const DataArrayInt *arrIndxIn,
+                                                      const DataArrayInt *srcArr, const DataArrayInt *srcArrIndex)
+{
+  if(arrInOut==0 || arrIndxIn==0 || srcArr==0 || srcArrIndex==0)
+    throw INTERP_KERNEL::Exception("DataArrayInt::SetPartOfIndexedArraysSameIdxSlice : presence of null pointer in input parameter !");
+  int nbOfTuples=arrIndxIn->getNumberOfTuples()-1;
+  const int *arrIndxInPtr=arrIndxIn->begin();
+  const int *srcArrIndexPtr=srcArrIndex->begin();
+  int *arrInOutPtr=arrInOut->getPointer();
+  const int *srcArrPtr=srcArr->begin();
+  int nbOfElemsToSet=DataArray::GetNumberOfItemGivenBESRelative(start,end,step,"DataArrayInt::SetPartOfIndexedArraysSameIdxSlice : ");
+  int it=start;
+  for(int i=0;i<nbOfElemsToSet;i++,srcArrIndexPtr++,it+=step)
+    {
+      if(it>=0 && it<nbOfTuples)
+        {
+          if(srcArrIndexPtr[1]-srcArrIndexPtr[0]==arrIndxInPtr[it+1]-arrIndxInPtr[it])
+            std::copy(srcArrPtr+srcArrIndexPtr[0],srcArrPtr+srcArrIndexPtr[1],arrInOutPtr+arrIndxInPtr[it]);
+          else
+            {
+              std::ostringstream oss; oss << "DataArrayInt::SetPartOfIndexedArraysSameIdxSlice : On pos #" << i << " id (idsOfSelectBg[" << i << "]) is " << it << " arrIndxIn[id+1]-arrIndxIn[id]!=srcArrIndex[pos+1]-srcArrIndex[pos] !";
+              throw INTERP_KERNEL::Exception(oss.str());
+            }
+        }
+      else
+        {
+          std::ostringstream oss; oss << "DataArrayInt::SetPartOfIndexedArraysSameIdxSlice : On pos #" << i << " value is " << it << " not in [0," << nbOfTuples << ") !";
+          throw INTERP_KERNEL::Exception(oss.str());
+        }
+    }
+}
+
+
+/*!
  * Returns a C array which is a renumbering map in "Old to New" mode for the input array.
  * This map, if applied to \a start array, would make it sorted. For example, if
  * \a start array contents are [9,10,0,6,4,11,3,7] then the contents of the result array is
@@ -6915,4 +7069,9 @@ int DataArrayIntTuple::intValue() const
 DataArrayInt *DataArrayIntTuple::buildDAInt(int nbOfTuples, int nbOfCompo) const
 {
   return this->buildDA(nbOfTuples,nbOfCompo);
+}
+
+DataArrayInt64 *DataArrayInt64::deepCopy() const
+{
+  return new DataArrayInt64(*this);
 }

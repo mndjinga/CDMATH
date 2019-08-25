@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2016  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2019  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -1636,7 +1636,10 @@ void WriteFieldT(const std::string& fileName, const typename MEDCoupling::Traits
           MCAuto<MEDCouplingUMesh> mread(mmuPtr->getMeshAtLevel(m->getMeshDimension()-mm->getMeshDimension()));
           if(f2->getTypeOfField()!=ON_NODES)
             {
-              m->tryToShareSameCoordsPermute(*mread,_EPS_FOR_NODE_COMP);
+              if(!m->getCoords()->isEqualWithoutConsideringStr(*mread->getCoords(),_EPS_FOR_NODE_COMP))
+                m->tryToShareSameCoordsPermute(*mread,_EPS_FOR_NODE_COMP);
+              else
+                mread->setCoords(m->getCoords());
               DataArrayInt *part(NULL);
               bool b(mread->areCellsIncludedIn(m,_COMP_FOR_CELL,part));
               MCAuto<DataArrayInt> partSafe(part);

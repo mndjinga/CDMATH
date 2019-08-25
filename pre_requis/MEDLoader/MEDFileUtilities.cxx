@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2016  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2019  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -228,7 +228,7 @@ MEDCoupling::MCAuto<MEDCoupling::DataArrayByte> MEDCoupling::MEDFileWritableStan
   }
   //
   MEDCoupling::MCAuto<MEDCoupling::DataArrayByte> ret(MEDCoupling::DataArrayByte::New());
-  ret->useArray(reinterpret_cast<char *>(memfile.app_image_ptr),true,C_DEALLOC,memfile.app_image_size,1);
+  ret->useArray(reinterpret_cast<char *>(memfile.app_image_ptr),true,DeallocType::C_DEALLOC,memfile.app_image_size,1);
   return ret;
 }
 

@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2016  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2019  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -132,16 +132,16 @@ namespace MEDCoupling
     MEDCOUPLING_EXPORT static MEDCouplingFieldDouble *MinFields(const MEDCouplingFieldDouble *f1, const MEDCouplingFieldDouble *f2);
     MEDCOUPLING_EXPORT MEDCouplingFieldDouble *min(const MEDCouplingFieldDouble& other) const { return MinFields(this,&other); }
     MEDCOUPLING_EXPORT MEDCouplingFieldDouble *negate() const;
-    MEDCOUPLING_EXPORT MEDCouplingFieldDouble *operator+(const MEDCouplingFieldDouble& other) const throw(INTERP_KERNEL::Exception) { return AddFields(this,&other); }
+    MEDCOUPLING_EXPORT MEDCouplingFieldDouble *operator+(const MEDCouplingFieldDouble& other) const { return AddFields(this,&other); }
     MEDCOUPLING_EXPORT const MEDCouplingFieldDouble &operator+=(const MEDCouplingFieldDouble& other);
     MEDCOUPLING_EXPORT static MEDCouplingFieldDouble *AddFields(const MEDCouplingFieldDouble *f1, const MEDCouplingFieldDouble *f2);
-    MEDCOUPLING_EXPORT MEDCouplingFieldDouble *operator-(const MEDCouplingFieldDouble& other) const throw(INTERP_KERNEL::Exception) { return SubstractFields(this,&other); }
+    MEDCOUPLING_EXPORT MEDCouplingFieldDouble *operator-(const MEDCouplingFieldDouble& other) const { return SubstractFields(this,&other); }
     MEDCOUPLING_EXPORT const MEDCouplingFieldDouble &operator-=(const MEDCouplingFieldDouble& other);
     MEDCOUPLING_EXPORT static MEDCouplingFieldDouble *SubstractFields(const MEDCouplingFieldDouble *f1, const MEDCouplingFieldDouble *f2);
-    MEDCouplingFieldDouble *operator*(const MEDCouplingFieldDouble& other) const throw(INTERP_KERNEL::Exception) { return MultiplyFields(this,&other); }
+    MEDCouplingFieldDouble *operator*(const MEDCouplingFieldDouble& other) const { return MultiplyFields(this,&other); }
     MEDCOUPLING_EXPORT const MEDCouplingFieldDouble &operator*=(const MEDCouplingFieldDouble& other);
     MEDCOUPLING_EXPORT static MEDCouplingFieldDouble *MultiplyFields(const MEDCouplingFieldDouble *f1, const MEDCouplingFieldDouble *f2);
-    MEDCOUPLING_EXPORT MEDCouplingFieldDouble *operator/(const MEDCouplingFieldDouble& other) const throw(INTERP_KERNEL::Exception) { return DivideFields(this,&other); }
+    MEDCOUPLING_EXPORT MEDCouplingFieldDouble *operator/(const MEDCouplingFieldDouble& other) const { return DivideFields(this,&other); }
     MEDCOUPLING_EXPORT const MEDCouplingFieldDouble &operator/=(const MEDCouplingFieldDouble& other);
     MEDCOUPLING_EXPORT static MEDCouplingFieldDouble *DivideFields(const MEDCouplingFieldDouble *f1, const MEDCouplingFieldDouble *f2);
     MEDCOUPLING_EXPORT MEDCouplingFieldDouble *operator^(const MEDCouplingFieldDouble& other) const;

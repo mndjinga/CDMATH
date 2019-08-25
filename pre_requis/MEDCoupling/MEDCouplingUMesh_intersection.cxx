@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2016  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2019  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -198,9 +198,13 @@ namespace MEDCoupling
     return ret;
   }
 
-  INTERP_KERNEL::Edge *MEDCouplingUMeshBuildQPFromEdge(INTERP_KERNEL::NormalizedCellType typ, std::map<int, std::pair<INTERP_KERNEL::Node *,bool> >& mapp2, const int *bg)
+  INTERP_KERNEL::Edge *MEDCouplingUMeshBuildQPFromEdge(INTERP_KERNEL::NormalizedCellType typ, std::map<int, INTERP_KERNEL::NodeWithUsage >& mapp2, const int *bg)
   {
     INTERP_KERNEL::Edge *ret=0;
+
+    mapp2[bg[0]].second = INTERP_KERNEL::USAGE_LINEAR;
+    mapp2[bg[1]].second = INTERP_KERNEL::USAGE_LINEAR;
+
     switch(typ)
     {
       case INTERP_KERNEL::NORM_SEG2:
@@ -220,7 +224,8 @@ namespace MEDCoupling
             ret=new INTERP_KERNEL::EdgeLin(mapp2[bg[0]].first,mapp2[bg[1]].first);
           else
             ret=new INTERP_KERNEL::EdgeArcCircle(mapp2[bg[0]].first,mapp2[bg[2]].first,mapp2[bg[1]].first);
-          mapp2[bg[2]].second=false;
+          if (mapp2[bg[2]].second != INTERP_KERNEL::USAGE_LINEAR) // switch the node usage to quadratic only if it is not used as an extreme point for another edge
+            mapp2[bg[2]].second = INTERP_KERNEL::USAGE_QUADRATIC_ONLY;
           break;
         }
       default:
@@ -239,7 +244,7 @@ namespace MEDCoupling
                                                                    std::map<INTERP_KERNEL::Node *,int>& mapp)
   {
     mapp.clear();
-    std::map<int, std::pair<INTERP_KERNEL::Node *,bool> > mapp2;//bool is for a flag specifying if node is boundary (true) or only a middle for SEG3.
+    std::map<int, INTERP_KERNEL::NodeWithUsage > mapp2;  // the last var is a flag specifying if node is an extreme node of the seg (LINEAR) or only a middle for SEG3 (QUADRATIC_ONLY).
     const double *coo=mDesc->getCoords()->getConstPointer();
     const int *c=mDesc->getNodalConnectivity()->getConstPointer();
     const int *cI=mDesc->getNodalConnectivityIndex()->getConstPointer();
@@ -249,7 +254,7 @@ namespace MEDCoupling
     for(std::set<int>::const_iterator it2=s.begin();it2!=s.end();it2++)
       {
         INTERP_KERNEL::Node *n=new INTERP_KERNEL::Node(coo[2*(*it2)],coo[2*(*it2)+1]);
-        mapp2[*it2]=std::pair<INTERP_KERNEL::Node *,bool>(n,true);
+        mapp2[*it2]=INTERP_KERNEL::NodeWithUsage(n,INTERP_KERNEL::USAGE_UNKNOWN);
       }
     INTERP_KERNEL::QuadraticPolygon *ret=new INTERP_KERNEL::QuadraticPolygon;
     for(std::vector<int>::const_iterator it=candidates.begin();it!=candidates.end();it++)
@@ -257,9 +262,60 @@ namespace MEDCoupling
         INTERP_KERNEL::NormalizedCellType typ=(INTERP_KERNEL::NormalizedCellType)c[cI[*it]];
         ret->pushBack(MEDCouplingUMeshBuildQPFromEdge(typ,mapp2,c+cI[*it]+1));
       }
-    for(std::map<int, std::pair<INTERP_KERNEL::Node *,bool> >::const_iterator it2=mapp2.begin();it2!=mapp2.end();it2++)
+    for(std::map<int, INTERP_KERNEL::NodeWithUsage >::const_iterator it2=mapp2.begin();it2!=mapp2.end();it2++)
       {
-        if((*it2).second.second)
+        if((*it2).second.second == INTERP_KERNEL::USAGE_LINEAR)
+          mapp[(*it2).second.first]=(*it2).first;
+        ((*it2).second.first)->decrRef();
+      }
+    return ret;
+  }
+
+  INTERP_KERNEL::QuadraticPolygon *MEDCouplingUMeshBuildQPFromMeshWithTree(const MEDCouplingUMesh *mDesc, const std::vector<int>& candidates,
+                                                                   std::map<INTERP_KERNEL::Node *,int>& mapp,
+                                                                   const BBTreePts<2,int> & nodeTree,
+                                                                   const std::map<int, INTERP_KERNEL::Node *>& mapRev)
+  {
+    mapp.clear();
+    std::map<int, INTERP_KERNEL::NodeWithUsage > mapp2;  // the last var is a flag specifying if node is an extreme node of the seg (LINEAR) or only a middle for SEG3 (QUADRATIC_ONLY).
+    const double *coo=mDesc->getCoords()->getConstPointer();
+    const int *c=mDesc->getNodalConnectivity()->getConstPointer();
+    const int *cI=mDesc->getNodalConnectivityIndex()->getConstPointer();
+    std::set<int> s;
+    for(std::vector<int>::const_iterator it=candidates.begin();it!=candidates.end();it++)
+      s.insert(c+cI[*it]+1,c+cI[(*it)+1]);
+    for(std::set<int>::const_iterator it2=s.begin();it2!=s.end();it2++)
+      {
+        INTERP_KERNEL::Node *n;
+        // Look for a potential node to merge
+        std::vector<int> candNode;
+        nodeTree.getElementsAroundPoint(coo+2*(*it2), candNode);
+        if (candNode.size() > 2)
+          throw INTERP_KERNEL::Exception("MEDCouplingUMesh::MEDCouplingUMeshBuildQPFromMeshWithTree(): some nodes are not properly merged (within eps) in input mesh!");
+        bool node_created=false;
+        if  (candNode.size())
+          {
+            auto itt=mapRev.find(candNode[0]);
+            if (itt != mapRev.end())  // we might hit a node which is in the coords array but not used in the connectivity in which case it won't be in the revMap
+              {
+                node_created=true;
+                n = (*itt).second;
+                n->incrRef();
+              }
+          }
+        if(!node_created)
+          n = new INTERP_KERNEL::Node(coo[2*(*it2)],coo[2*(*it2)+1]);
+        mapp2[*it2]=INTERP_KERNEL::NodeWithUsage(n,INTERP_KERNEL::USAGE_UNKNOWN);
+      }
+    INTERP_KERNEL::QuadraticPolygon *ret=new INTERP_KERNEL::QuadraticPolygon;
+    for(std::vector<int>::const_iterator it=candidates.begin();it!=candidates.end();it++)
+      {
+        INTERP_KERNEL::NormalizedCellType typ=(INTERP_KERNEL::NormalizedCellType)c[cI[*it]];
+        ret->pushBack(MEDCouplingUMeshBuildQPFromEdge(typ,mapp2,c+cI[*it]+1));  // this call will set quad points to false in the map
+      }
+    for(std::map<int, INTERP_KERNEL::NodeWithUsage >::const_iterator it2=mapp2.begin();it2!=mapp2.end();it2++)
+      {
+        if((*it2).second.second == INTERP_KERNEL::USAGE_LINEAR)
           mapp[(*it2).second.first]=(*it2).first;
         ((*it2).second.first)->decrRef();
       }
@@ -466,17 +522,17 @@ void MEDCouplingUMesh::BuildIntersectEdges(const MEDCouplingUMesh *m1, const MED
     {
       const std::vector<int>& divs=subDiv[i];
       int nnode=cI[1]-cI[0]-1;
-      std::map<int, std::pair<INTERP_KERNEL::Node *,bool> > mapp2;
+      std::map<int, INTERP_KERNEL::NodeWithUsage > mapp2;
       std::map<INTERP_KERNEL::Node *, int> mapp22;
       for(int j=0;j<nnode;j++)
         {
           INTERP_KERNEL::Node *nn=new INTERP_KERNEL::Node(coo[2*c[(*cI)+j+1]],coo[2*c[(*cI)+j+1]+1]);
           int nnid=c[(*cI)+j+1];
-          mapp2[nnid]=std::pair<INTERP_KERNEL::Node *,bool>(nn,true);
+          mapp2[nnid]=INTERP_KERNEL::NodeWithUsage(nn,INTERP_KERNEL::USAGE_UNKNOWN);
           mapp22[nn]=nnid+offset1;
         }
       INTERP_KERNEL::Edge *e=MEDCouplingUMeshBuildQPFromEdge((INTERP_KERNEL::NormalizedCellType)c[*cI],mapp2,c+(*cI)+1);
-      for(std::map<int, std::pair<INTERP_KERNEL::Node *,bool> >::const_iterator it=mapp2.begin();it!=mapp2.end();it++)
+      for(std::map<int, INTERP_KERNEL::NodeWithUsage >::const_iterator it=mapp2.begin();it!=mapp2.end();it++)
         ((*it).second.first)->decrRef();
       std::vector<INTERP_KERNEL::Node *> addNodes(divs.size());
       std::map<INTERP_KERNEL::Node *,int> mapp3;
@@ -566,8 +622,8 @@ MEDCouplingUMesh *BuildMesh1DCutFrom(const MEDCouplingUMesh *mesh1D, const std::
   MCAuto<MEDCouplingUMesh> ret(MEDCouplingUMesh::New(mesh1D->getName(),1));
   ret->setConnectivity(cOut,ciOut,true);
   MCAuto<DataArrayDouble> arr3(DataArrayDouble::New());
-  arr3->useArray(&addCoo[0],false,C_DEALLOC,(int)addCoo.size()/2,2);
-  MCAuto<DataArrayDouble> arr4(DataArrayDouble::New()); arr4->useArray(&addCooQuad[0],false,C_DEALLOC,(int)addCooQuad.size()/2,2);
+  arr3->useArray(&addCoo[0],false,DeallocType::C_DEALLOC,(int)addCoo.size()/2,2);
+  MCAuto<DataArrayDouble> arr4(DataArrayDouble::New()); arr4->useArray(&addCooQuad[0],false,DeallocType::C_DEALLOC,(int)addCooQuad.size()/2,2);
   std::vector<const DataArrayDouble *> coordss(4);
   coordss[0]=coords1; coordss[1]=mesh1D->getCoords(); coordss[2]=arr3; coordss[3]=arr4;
   MCAuto<DataArrayDouble> arr(DataArrayDouble::Aggregate(coordss));
@@ -807,10 +863,13 @@ private:
   int _iend;
   MCAuto<MEDCouplingUMesh> _mesh;
   MCAuto<INTERP_KERNEL::Edge> _edge;
-  int _left;
-  int _right;
+  int _left;    // index (local numbering) of the left 2D cell bordering the edge '_edge'
+  int _right;   // same as above, right side.
 };
 
+/*
+ * Update indices of left and right 2D cell bordering the current edge.
+ */
 void EdgeInfo::somethingHappendAt(int pos, const std::vector< MCAuto<INTERP_KERNEL::Edge> >& newLeft, const std::vector< MCAuto<INTERP_KERNEL::Edge> >& newRight)
 {
   const MEDCouplingUMesh *mesh(_mesh);
@@ -820,6 +879,8 @@ void EdgeInfo::somethingHappendAt(int pos, const std::vector< MCAuto<INTERP_KERN
     return ;
   if(_left>pos)
     { _left++; _right++; return ; }
+  if (_right > pos && _left != pos)
+    { _right++; return ; }
   if(_right==pos)
     {
       bool isLeft(std::find(newLeft.begin(),newLeft.end(),_edge)!=newLeft.end()),isRight(std::find(newRight.begin(),newRight.end(),_edge)!=newRight.end());
@@ -894,9 +955,9 @@ private:
   const CellInfo& get(int pos) const;
   CellInfo& get(int pos);
 private:
-  std::vector<CellInfo> _pool;
-  MCAuto<MEDCouplingUMesh> _ze_mesh;
-  std::vector<EdgeInfo> _edge_info;
+  std::vector<CellInfo> _pool;         // for a newly created 2D cell, the list of edges (int) and edges ptr constiuing it
+  MCAuto<MEDCouplingUMesh> _ze_mesh;   // the aggregated mesh
+  std::vector<EdgeInfo> _edge_info;    // for each new edge added when cuting the 2D cell, the information on left and right bordering 2D cell
 };
 
 VectorOfCellInfo::VectorOfCellInfo(const std::vector<int>& edges, const std::vector< MCAuto<INTERP_KERNEL::Edge> >& edgesPtr):_pool(1)
@@ -1065,7 +1126,12 @@ MEDCouplingUMesh *BuildMesh2DCutInternal(double eps, MEDCouplingUMesh *splitMesh
   else
     renumb->iota();
   //
-
+  // The 1D first piece is used to intersect the 2D cell resulting in max two 2D cells.
+  // The next 1D piece is localised (getPositionOf()) into this previous cut.
+  // The result of the next intersection replaces the former single 2D cell that has been cut in the
+  // pool. The neighbourhood information detained by pool._edge_info is also updated so that left and right
+  // adjacent 2D cell of a 1D piece is kept up to date.
+  // And so on and so forth.
   for(int iStart=0;iStart<nbCellsInSplitMesh1D;)
     {// split [0:nbCellsInSplitMesh1D) in contiguous parts [iStart:iEnd)
       int iEnd(iStart);
@@ -1230,6 +1296,7 @@ void MEDCouplingUMesh::Intersect1DMeshes(const MEDCouplingUMesh *m1Desc, const M
   colinear2.resize(nDescCell2);
   subDiv2.resize(nDescCell2);
   BBTree<SPACEDIM,int> myTree(bbox2,0,0,m2Desc->getNumberOfCells(),-eps);
+  BBTreePts<SPACEDIM,int> treeNodes2(m2Desc->getCoords()->begin(),0,0,m2Desc->getCoords()->getNumberOfTuples(),eps);
 
   std::vector<int> candidates1(1);
   int offset1(m1Desc->getNumberOfNodes());
@@ -1241,10 +1308,15 @@ void MEDCouplingUMesh::Intersect1DMeshes(const MEDCouplingUMesh *m1Desc, const M
       if(!candidates2.empty()) // candidates2 holds edges from the second mesh potentially intersecting current edge i in mesh1
         {
           std::map<INTERP_KERNEL::Node *,int> map1,map2;
+          std::map<int, INTERP_KERNEL::Node *> revMap2;
           // pol2 is not necessarily a closed polygon: just a set of (quadratic) edges (same as candidates2) in the Geometric DS format
           INTERP_KERNEL::QuadraticPolygon *pol2=MEDCouplingUMeshBuildQPFromMesh(m2Desc,candidates2,map2);
+          // Build revMap2
+          for (auto& kv : map2)
+            revMap2[kv.second] = kv.first;
           candidates1[0]=i;
-          INTERP_KERNEL::QuadraticPolygon *pol1=MEDCouplingUMeshBuildQPFromMesh(m1Desc,candidates1,map1);
+          // In the construction of pol1 we might reuse nodes from pol2, that we have identified as to be merged.
+          INTERP_KERNEL::QuadraticPolygon *pol1=MEDCouplingUMeshBuildQPFromMeshWithTree(m1Desc,candidates1,map1,treeNodes2, revMap2);
           // This following part is to avoid that some removed nodes (for example due to a merge between pol1 and pol2) are replaced by a newly created one
           // This trick guarantees that Node * are discriminant (i.e. form a unique identifier)
           std::set<INTERP_KERNEL::Node *> nodes;
@@ -1335,7 +1407,7 @@ void MEDCouplingUMesh::BuildIntersecting2DCellsFromEdges(double eps, const MEDCo
       const INTERP_KERNEL::CellModel& cm=INTERP_KERNEL::CellModel::GetCellModel(typ);
       // Populate mapp and mappRev with nodes from the current cell (i) from mesh1 - this also builds the Node* objects:
       MEDCouplingUMeshBuildQPFromMesh3(coo1,offset1,coo2,offset2,addCoords,desc1+descIndx1[i],desc1+descIndx1[i+1],intesctEdges1,/* output */mapp,mappRev);
-      // pol1 is the full cell from mesh2, in QP format, with all the additional intersecting nodes.
+      // pol1 is the full cell from mesh1, in QP format, with all the additional intersecting nodes.
       pol1.buildFromCrudeDataArray(mappRev,cm.isQuadratic(),conn1+connI1[i]+1,coo1,
           desc1+descIndx1[i],desc1+descIndx1[i+1],intesctEdges1);
       //
@@ -1348,6 +1420,8 @@ void MEDCouplingUMesh::BuildIntersecting2DCellsFromEdges(double eps, const MEDCo
       std::map<int,std::vector<INTERP_KERNEL::ElementaryEdge *> > edgesIn2ForShare; // common edges
       std::vector<INTERP_KERNEL::QuadraticPolygon> pol2s(candidates2.size());
       int ii=0;
+      // Build, for each intersecting cell candidate from mesh2, the corresponding QP.
+      // Again all the additional intersecting nodes are there.
       for(std::vector<int>::const_iterator it2=candidates2.begin();it2!=candidates2.end();it2++,ii++)
         {
           INTERP_KERNEL::NormalizedCellType typ2=(INTERP_KERNEL::NormalizedCellType)conn2[connI2[*it2]];
@@ -1358,7 +1432,13 @@ void MEDCouplingUMesh::BuildIntersecting2DCellsFromEdges(double eps, const MEDCo
           pol2s[ii].buildFromCrudeDataArray2(mappRev,cm2.isQuadratic(),conn2+connI2[*it2]+1,coo2,desc2+descIndx2[*it2],desc2+descIndx2[*it2+1],intesctEdges2,
               pol1,desc1+descIndx1[i],desc1+descIndx1[i+1],intesctEdges1,colinear2, /* output */ edgesIn2ForShare);
         }
+      // The cleaning below must be done after the full construction of all pol2s to correctly deal with shared edges:
+      for (auto &p: pol2s)
+        p.cleanDegeneratedConsecutiveEdges();
+      edgesIn2ForShare.clear();  // removing temptation to use it further since it might now contain invalid edges.
+      ///
       ii=0;
+      // Now rebuild intersected cells from all this:
       for(std::vector<int>::const_iterator it2=candidates2.begin();it2!=candidates2.end();it2++,ii++)
         {
           INTERP_KERNEL::ComposedEdge::InitLocationsWithOther(pol1,pol2s[ii]);
@@ -1720,7 +1800,7 @@ void MEDCouplingUMesh::Intersect2DMeshWith1DLine(const MEDCouplingUMesh *mesh2D,
     }
   //
   MCAuto<DataArrayDouble> addCooDa(DataArrayDouble::New());
-  addCooDa->useArray(&addCoo[0],false,C_DEALLOC,(int)addCoo.size()/2,2);
+  addCooDa->useArray(&addCoo[0],false,DeallocType::C_DEALLOC,(int)addCoo.size()/2,2);
   // Step 2: re-order newly created nodes according to the ordering found in m2
   std::vector< std::vector<int> > intersectEdge2;
   BuildIntersectEdges(m1Desc,mesh1D,addCoo,subDiv2,intersectEdge2);
@@ -1740,7 +1820,7 @@ void MEDCouplingUMesh::Intersect2DMeshWith1DLine(const MEDCouplingUMesh *mesh2D,
   if(!idsInDesc2DToBeRefined->empty())
     {
       DataArrayInt *out0(0),*outi0(0);
-      MEDCouplingUMesh::ExtractFromIndexedArrays(idsInDesc2DToBeRefined->begin(),idsInDesc2DToBeRefined->end(),dd3,dd4,out0,outi0);
+      DataArrayInt::ExtractFromIndexedArrays(idsInDesc2DToBeRefined->begin(),idsInDesc2DToBeRefined->end(),dd3,dd4,out0,outi0);
       MCAuto<DataArrayInt> outi0s(outi0);
       out0s=out0;
       out0s=out0s->buildUnique();
@@ -1977,7 +2057,7 @@ DataArrayInt *MEDCouplingUMesh::conformize2D(double eps)
   //
   MCAuto<DataArrayInt> mSafe,nSafe,oSafe,pSafe,qSafe,rSafe;
   DataArrayInt *m(0),*n(0),*o(0),*p(0),*q(0),*r(0);
-  MEDCouplingUMesh::ExtractFromIndexedArrays(ret->begin(),ret->end(),desc1,descIndx1,m,n); mSafe=m; nSafe=n;
+  DataArrayInt::ExtractFromIndexedArrays(ret->begin(),ret->end(),desc1,descIndx1,m,n); mSafe=m; nSafe=n;
   DataArrayInt::PutIntoToSkylineFrmt(intersectEdge,o,p); oSafe=o; pSafe=p;
   if(middleNeedsToBeUsed)
     { DataArrayInt::PutIntoToSkylineFrmt(middle,q,r); qSafe=q; rSafe=r; }

@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2016  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2019  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -30,16 +30,21 @@ namespace INTERP_KERNEL
   extern const unsigned MAX_SIZE_OF_LINE_XFIG_FILE=1024;
 }
 
-SegSegIntersector::SegSegIntersector(const EdgeLin& e1, const EdgeLin& e2):SameTypeEdgeIntersector(e1,e2)
+SegSegIntersector::SegSegIntersector(const EdgeLin& e1, const EdgeLin& e2):
+        SameTypeEdgeIntersector(e1,e2)
 {
-  _matrix[0]=(*(e2.getStartNode()))[0]-(*(e2.getEndNode()))[0];
-  _matrix[1]=(*(e1.getEndNode()))[0]-(*(e1.getStartNode()))[0];
-  _matrix[2]=(*(e2.getStartNode()))[1]-(*(e2.getEndNode()))[1];
-  _matrix[3]=(*(e1.getEndNode()))[1]-(*(e1.getStartNode()))[1];
-  _col[0]=_matrix[3]*(*(e1.getStartNode()))[0]-_matrix[1]*(*(e1.getStartNode()))[1];
-  _col[1]=-_matrix[2]*(*(e2.getStartNode()))[0]+_matrix[0]*(*(e2.getStartNode()))[1];
+  _matrix[0]=(*(e1.getEndNode()))[0]-(*(e1.getStartNode()))[0];
+  _matrix[1]=(*(e1.getEndNode()))[1]-(*(e1.getStartNode()))[1];
+  _matrix[2]=(*(e2.getEndNode()))[0]-(*(e2.getStartNode()))[0];
+  _matrix[3]=(*(e2.getEndNode()))[1]-(*(e2.getStartNode()))[1];
+
+  _determinant=_matrix[0]*_matrix[3]-_matrix[1]*_matrix[2];
+
+  _col[0]=_matrix[1]*(*(e1.getStartNode()))[0]-_matrix[0]*(*(e1.getStartNode()))[1];
+  _col[1]=_matrix[3]*(*(e2.getStartNode()))[0]-_matrix[2]*(*(e2.getStartNode()))[1];
+
   //Little trick to avoid problems if 'e1' and 'e2' are colinears and along Ox or Oy axes.
-  if(fabs(_matrix[3])>fabs(_matrix[1]))
+  if(fabs(_matrix[1])>fabs(_matrix[0]))
     _ind=0;
   else
     _ind=1;
@@ -47,12 +52,10 @@ SegSegIntersector::SegSegIntersector(const EdgeLin& e1, const EdgeLin& e2):SameT
 
 /*!
  * Must be called when 'this' and 'other' have been detected to be at least colinear. Typically they are overlapped.
- * Must be called after call of areOverlappedOrOnlyColinears.
  */
 bool SegSegIntersector::haveTheySameDirection() const
 {
-  return (_matrix[3]*_matrix[1]+_matrix[2]*_matrix[0])>0.;
-  //return (_matrix[_ind?1:0]>0. && _matrix[_ind?3:2]>0.) || (_matrix[_ind?1:0]<0. && _matrix[_ind?3:2]<0.);
+  return (_matrix[0]*_matrix[2]+_matrix[1]*_matrix[3])>0.;
 }
 
 /*!
@@ -85,8 +88,15 @@ void SegSegIntersector::getCurveAbscisse(Node *node, TypeOfLocInEdge& where, Mer
 std::list< IntersectElement > SegSegIntersector::getIntersectionsCharacteristicVal() const
 {
   std::list< IntersectElement > ret;
-  double x=_matrix[0]*_col[0]+_matrix[1]*_col[1];
-  double y=_matrix[2]*_col[0]+_matrix[3]*_col[1];
+  if (_earlyInter)
+    {
+      // Intersection was already found: it is a common node shared by _e1 and _e2 - see areOverlappedOrOnlyColinears()
+      ret.push_back(*_earlyInter);
+      return ret;
+    }
+
+  double x= (-_matrix[2]*_col[0]+_matrix[0]*_col[1]) / _determinant;
+  double y= (-_matrix[3]*_col[0]+_matrix[1]*_col[1]) / _determinant;
   //Only one intersect point possible
   Node *node=new Node(x,y);
   node->declareOn();
@@ -108,14 +118,15 @@ std::list< IntersectElement > SegSegIntersector::getIntersectionsCharacteristicV
  */
 bool SegSegIntersector::areColinears() const
 {
-  Bounds b;
-  b.prepareForAggregation();
-  b.aggregate(_e1.getBounds());
-  b.aggregate(_e2.getBounds());
-  double determinant=_matrix[0]*_matrix[3]-_matrix[1]*_matrix[2];
-  double dimChar=b.getCaracteristicDim();
+  Bounds b1, b2;
+  b1.prepareForAggregation();
+  b2.prepareForAggregation();
+  b1.aggregate(_e1.getBounds());
+  b2.aggregate(_e2.getBounds());
+  double dimCharE1(b1.getCaracteristicDim()) ,dimCharE2(b2.getCaracteristicDim());
 
-  return fabs(determinant)< 2.*dimChar*QuadraticPlanarPrecision::getPrecision(); // same criteria as in areOverlappedOrOnlyColinears, see comment below
+  // same criteria as in areOverlappedOrOnlyColinears, see comment below
+  return fabs(_determinant)<dimCharE1*dimCharE2*QuadraticPlanarPrecision::getPrecision();
 }
 
 /*!
@@ -126,32 +137,39 @@ bool SegSegIntersector::areColinears() const
  * \param areOverlapped if colinearity if true, this parameter looks if e1 and e2 are overlapped, i.e. is they lie on the same line (= this is different from
  * a true intersection, two segments can be in "overlap" mode, without intersecting)
  */
-void SegSegIntersector::areOverlappedOrOnlyColinears(const Bounds *whereToFind, bool& obviousNoIntersection, bool& areOverlapped)
+void SegSegIntersector::areOverlappedOrOnlyColinears(bool& obviousNoIntersection, bool& areOverlapped)
 {
-  double determinant=_matrix[0]*_matrix[3]-_matrix[1]*_matrix[2];
-  Bounds b;
-  b.prepareForAggregation();
-  b.aggregate(_e1.getBounds());
-  b.aggregate(_e2.getBounds());
-  double dimChar=b.getCaracteristicDim();
+  Bounds b1, b2;
+  b1.prepareForAggregation();
+  b2.prepareForAggregation();
+  b1.aggregate(_e1.getBounds());
+  b2.aggregate(_e2.getBounds());
+  double dimCharE1(b1.getCaracteristicDim()) ,dimCharE2(b2.getCaracteristicDim());
 
   // Same criteria as in areColinears(), see doc.
-  // [ABN] the 2 is not really justified, but the initial tests from Tony were written so closely to precision that I can't bother to change all of them ...
-  if(fabs(determinant)>2.*dimChar*QuadraticPlanarPrecision::getPrecision())
+  if(fabs(_determinant)>dimCharE1*dimCharE2*QuadraticPlanarPrecision::getPrecision())  // Non colinear vectors
     {
-      obviousNoIntersection=false; areOverlapped=false;
-      _matrix[0]/=determinant; _matrix[1]/=determinant; _matrix[2]/=determinant; _matrix[3]/=determinant;
-    }
-  else  // colinear vectors
-    {
-      //retrieving initial matrix and shuffling it (will be used in getIntersectionsCharacteristicVal())
-      double tmp=_matrix[0]; _matrix[0]=_matrix[3]; _matrix[3]=tmp;
-      _matrix[1]=-_matrix[1]; _matrix[2]=-_matrix[2];
-      //
-      double x=(*(_e1.getStartNode()))[0]-(*(_e2.getStartNode()))[0];
-      double y=(*(_e1.getStartNode()))[1]-(*(_e2.getStartNode()))[1];   // (x,y) is the vector between the two start points of e1 and e2
-      areOverlapped = fabs(_matrix[1]*y+_matrix[0]*x) < dimChar*QuadraticPlanarPrecision::getPrecision(); // test colinearity of (x,y) with e1
+      areOverlapped=false;
+      obviousNoIntersection=false;
 
+      // If they share one extremity, we can optimize since we already know where is the intersection:
+      bool a,b,c,d;
+      identifyEarlyIntersection(a,b,c,d);
+    }
+  else  // Colinear vectors
+    {
+      // Compute vectors joining tips of e1 and e2
+      double xS=(*(_e1.getStartNode()))[0]-(*(_e2.getStartNode()))[0];
+      double yS=(*(_e1.getStartNode()))[1]-(*(_e2.getStartNode()))[1];
+      double xE=(*(_e1.getEndNode()))[0]-(*(_e2.getEndNode()))[0];
+      double yE=(*(_e1.getEndNode()))[1]-(*(_e2.getEndNode()))[1];
+      double maxDimS(std::max(fabs(xS),fabs(yS))), maxDimE(std::max(fabs(xE), fabs(yE)));
+      bool isS = (maxDimS > maxDimE), isE1 = (dimCharE1 >= dimCharE2);
+      double x = isS ? xS : xE;
+      double y = isS ? yS : yE;
+      unsigned shift = isE1 ? 0 : 2;
+      // test colinearity of the greatest tip-joining vector and greatest vector among {e1, e2}
+      areOverlapped = fabs(x*_matrix[1+shift]-y*_matrix[0+shift]) < dimCharE1*dimCharE2*QuadraticPlanarPrecision::getPrecision();
       // explanation: if areOverlapped is true, we don't know yet if there will be an intersection (see meaning of areOverlapped in method doxy above)
       // if areOverlapped is false, we have two colinear vectors, not lying on the same line, so we're sure there is no intersec
       obviousNoIntersection = !areOverlapped;
@@ -325,29 +343,4 @@ double EdgeLin::getCharactValueEng(const double *node) const
   double car1_1x=node[0]-(*(_start))[0]; double car1_2x=(*(_end))[0]-(*(_start))[0];
   double car1_1y=node[1]-(*(_start))[1]; double car1_2y=(*(_end))[1]-(*(_start))[1];
   return (car1_1x*car1_2x+car1_1y*car1_2y)/(car1_2x*car1_2x+car1_2y*car1_2y);
-}
-
-void EdgeLin::fillGlobalInfoAbs(bool direction, const std::map<INTERP_KERNEL::Node *,int>& mapThis, const std::map<INTERP_KERNEL::Node *,int>& mapOther, int offset1, int offset2, double fact, double baryX, double baryY,
-                                std::vector<int>& edgesThis, std::vector<double>& addCoo, std::map<INTERP_KERNEL::Node *,int> mapAddCoo) const
-{
-  int tmp[2];
-  _start->fillGlobalInfoAbs(mapThis,mapOther,offset1,offset2,fact,baryX,baryY,addCoo,mapAddCoo,tmp);
-  _end->fillGlobalInfoAbs(mapThis,mapOther,offset1,offset2,fact,baryX,baryY,addCoo,mapAddCoo,tmp+1);
-  if(direction)
-    {
-      edgesThis.push_back(tmp[0]);
-      edgesThis.push_back(tmp[1]);
-    }
-  else
-    {
-      edgesThis.push_back(tmp[1]);
-      edgesThis.push_back(tmp[0]);
-    }
-}
-
-void EdgeLin::fillGlobalInfoAbs2(const std::map<INTERP_KERNEL::Node *,int>& mapThis, const std::map<INTERP_KERNEL::Node *,int>& mapOther, int offset1, int offset2, double fact, double baryX, double baryY,
-                                 std::vector<int>& edgesOther, std::vector<double>& addCoo, std::map<INTERP_KERNEL::Node *,int>& mapAddCoo) const
-{
-  _start->fillGlobalInfoAbs2(mapThis,mapOther,offset1,offset2,fact,baryX,baryY,addCoo,mapAddCoo,edgesOther);
-  _end->fillGlobalInfoAbs2(mapThis,mapOther,offset1,offset2,fact,baryX,baryY,addCoo,mapAddCoo,edgesOther);
 }

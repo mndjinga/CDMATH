@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2016  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2019  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -114,7 +114,9 @@ bool MEDCouplingField::areCompatibleForMerge(const MEDCouplingField *other) cons
 {
   if(!other)
     throw INTERP_KERNEL::Exception("MEDCouplingField::areCompatibleForMerge : input field is NULL !");
-  if(!_type->isEqual(other->_type,1.))
+  if(!_type || !other->_type)
+    throw INTERP_KERNEL::Exception("MEDCouplingField::areCompatibleForMerge : this or other has a nullptr spatial discretization !");
+  if(_type->getEnum()!=other->_type->getEnum())
     return false;
   if(_nature!=other->_nature)
     return false;

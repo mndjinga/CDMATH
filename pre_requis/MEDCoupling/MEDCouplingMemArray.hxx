@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2016  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2019  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -110,8 +110,9 @@ namespace MEDCoupling
     MEDCOUPLING_EXPORT void destroy();
     MEDCOUPLING_EXPORT ~MemArray() { destroy(); }
   public:
-    static void CPPDeallocator(void *pt, void *param);
-    static void CDeallocator(void *pt, void *param);
+    MEDCOUPLING_EXPORT static void CPPDeallocator(void *pt, void *param);
+    MEDCOUPLING_EXPORT static void CDeallocator(void *pt, void *param);
+    MEDCOUPLING_EXPORT static void COffsetDeallocator(void *pt, void *param);
   private:
     static void DestroyPointer(T *pt, Deallocator dealloc, void *param);
     static Deallocator BuildFromType(DeallocType type);
@@ -245,7 +246,7 @@ namespace MEDCoupling
     MEDCOUPLING_EXPORT void setIJSilent(int tupleId, int compoId, T newVal) { _mem[tupleId*_info_on_compo.size()+compoId]=newVal; }
     MEDCOUPLING_EXPORT T *getPointer() { return _mem.getPointer(); declareAsNew(); }
     MEDCOUPLING_EXPORT void pack() const;
-    MEDCOUPLING_EXPORT bool isAllocated() const;
+    MEDCOUPLING_EXPORT bool isAllocated() const override;
     MEDCOUPLING_EXPORT void checkAllocated() const;
     MEDCOUPLING_EXPORT void desallocate();
     MEDCOUPLING_EXPORT void reserve(std::size_t nbOfElems);
@@ -301,8 +302,8 @@ namespace MEDCoupling
     MEDCOUPLING_EXPORT MemArray<T>& accessToMemArray() { return _mem; }
     MEDCOUPLING_EXPORT const MemArray<T>& accessToMemArray() const { return _mem; }
   protected:
-    typename Traits<T>::ArrayType *mySelectByTupleId(const int *new2OldBg, const int *new2OldEnd) const;
-    typename Traits<T>::ArrayType *mySelectByTupleId(const DataArrayInt32& di) const;
+    typename Traits<T>::ArrayType *mySelectByTupleId(const mcIdType *new2OldBg, const mcIdType *new2OldEnd) const;
+    typename Traits<T>::ArrayType *mySelectByTupleId(const DataArrayIdType& di) const;
     typename Traits<T>::ArrayType *mySelectByTupleIdSafe(const int *new2OldBg, const int *new2OldEnd) const;
     typename Traits<T>::ArrayType *myKeepSelectedComponents(const std::vector<int>& compoIds) const;
     typename Traits<T>::ArrayType *mySelectByTupleIdSafeSlice(int bg, int end2, int step) const;
@@ -352,6 +353,8 @@ namespace MEDCoupling
     MEDCOUPLING_EXPORT void reprWithoutNameStream(std::ostream& stream) const;
     MEDCOUPLING_EXPORT void reprZipWithoutNameStream(std::ostream& stream) const;
     MEDCOUPLING_EXPORT void reprNotTooLongWithoutNameStream(std::ostream& stream) const;
+    MEDCOUPLING_EXPORT std::string repr() const;
+    MEDCOUPLING_EXPORT std::string reprZip() const;
     MEDCOUPLING_EXPORT std::string reprNotTooLong() const;
     template<class U>
     MCAuto< typename Traits<U>::ArrayType > convertToOtherTypeOfArr() const;
@@ -384,7 +387,7 @@ namespace MEDCoupling
     MEDCOUPLING_EXPORT DataArrayFloat *buildNewEmptyInstance() const { return DataArrayFloat::New(); }
     MEDCOUPLING_EXPORT DataArrayFloat *selectByTupleRanges(const std::vector<std::pair<int,int> >& ranges) const { return DataArrayTemplateFP<float>::mySelectByTupleRanges(ranges); }
     MEDCOUPLING_EXPORT DataArrayFloat *keepSelectedComponents(const std::vector<int>& compoIds) const { return DataArrayTemplateFP<float>::myKeepSelectedComponents(compoIds); }
-    MEDCOUPLING_EXPORT DataArrayFloat *selectByTupleId(const int *new2OldBg, const int *new2OldEnd) const { return DataArrayTemplateFP<float>::mySelectByTupleId(new2OldBg,new2OldEnd); }
+    MEDCOUPLING_EXPORT DataArrayFloat *selectByTupleId(const mcIdType *new2OldBg, const mcIdType *new2OldEnd) const { return this->mySelectByTupleId(new2OldBg,new2OldEnd); }
     MEDCOUPLING_EXPORT DataArrayFloat *selectByTupleIdSafe(const int *new2OldBg, const int *new2OldEnd) const { return DataArrayTemplateFP<float>::mySelectByTupleIdSafe(new2OldBg,new2OldEnd); }
     MEDCOUPLING_EXPORT DataArrayFloat *selectByTupleIdSafeSlice(int bg, int end2, int step) const { return DataArrayTemplateFP<float>::mySelectByTupleIdSafeSlice(bg,end2,step); }
     MEDCOUPLING_EXPORT void reprCppStream(const std::string& varName, std::ostream& stream) const;
@@ -414,8 +417,6 @@ namespace MEDCoupling
     MEDCOUPLING_EXPORT DataArrayDouble *buildNewEmptyInstance() const { return DataArrayDouble::New(); }
     MEDCOUPLING_EXPORT void checkMonotonic(bool increasing, double eps) const;
     MEDCOUPLING_EXPORT bool isMonotonic(bool increasing, double eps) const;
-    MEDCOUPLING_EXPORT std::string repr() const;
-    MEDCOUPLING_EXPORT std::string reprZip() const;
     MEDCOUPLING_EXPORT void writeVTK(std::ostream& ofs, int indent, const std::string& nameInFile, DataArrayByte *byteArr) const;
     MEDCOUPLING_EXPORT void reprCppStream(const std::string& varName, std::ostream& stream) const;
     MEDCOUPLING_EXPORT void reprQuickOverview(std::ostream& stream) const;
@@ -423,8 +424,8 @@ namespace MEDCoupling
     MEDCOUPLING_EXPORT bool isEqual(const DataArrayDouble& other, double prec) const;
     MEDCOUPLING_EXPORT bool isEqualIfNotWhy(const DataArrayDouble& other, double prec, std::string& reason) const;
     MEDCOUPLING_EXPORT bool isEqualWithoutConsideringStr(const DataArrayDouble& other, double prec) const;
-    MEDCOUPLING_EXPORT DataArrayDouble *selectByTupleId(const int *new2OldBg, const int *new2OldEnd) const { return DataArrayTemplateFP<double>::mySelectByTupleId(new2OldBg,new2OldEnd); }
-    MEDCOUPLING_EXPORT DataArrayDouble *selectByTupleId(const DataArrayInt32& di) const { return DataArrayTemplateFP<double>::mySelectByTupleId(di); }
+    MEDCOUPLING_EXPORT DataArrayDouble *selectByTupleId(const mcIdType *new2OldBg, const mcIdType *new2OldEnd) const { return this->mySelectByTupleId(new2OldBg,new2OldEnd); }
+    MEDCOUPLING_EXPORT DataArrayDouble *selectByTupleId(const DataArrayIdType& di) const { return this->mySelectByTupleId(di); }
     MEDCOUPLING_EXPORT DataArrayDouble *selectByTupleIdSafe(const int *new2OldBg, const int *new2OldEnd) const { return DataArrayTemplateFP<double>::mySelectByTupleIdSafe(new2OldBg,new2OldEnd); }
     MEDCOUPLING_EXPORT DataArrayDouble *keepSelectedComponents(const std::vector<int>& compoIds) const { return DataArrayTemplateFP<double>::myKeepSelectedComponents(compoIds); }
     MEDCOUPLING_EXPORT DataArrayDouble *selectByTupleIdSafeSlice(int bg, int end2, int step) const { return DataArrayTemplateFP<double>::mySelectByTupleIdSafeSlice(bg,end2,step); }
@@ -527,6 +528,7 @@ namespace MEDCoupling
   class DataArrayDiscrete : public DataArrayTemplateClassic<T>
   {
   public:
+    MEDCOUPLING_EXPORT static typename Traits<T>::ArrayType *New();
     MEDCOUPLING_EXPORT bool isEqual(const DataArrayDiscrete<T>& other) const;
     MEDCOUPLING_EXPORT bool isEqualIfNotWhy(const DataArrayDiscrete<T>& other, std::string& reason) const;
     MEDCOUPLING_EXPORT bool isEqualWithoutConsideringStr(const DataArrayDiscrete<T>& other) const;
@@ -539,6 +541,14 @@ namespace MEDCoupling
     MEDCOUPLING_EXPORT bool isMonotonic(bool increasing) const;
     MEDCOUPLING_EXPORT void checkStrictlyMonotonic(bool increasing) const;
     MEDCOUPLING_EXPORT bool isStrictlyMonotonic(bool increasing) const;
+    MEDCOUPLING_EXPORT int getHashCode() const;
+    MEDCOUPLING_EXPORT void reprCppStream(const std::string& varName, std::ostream& stream) const;
+    MEDCOUPLING_EXPORT void reprQuickOverview(std::ostream& stream) const;
+    MEDCOUPLING_EXPORT void reprQuickOverviewData(std::ostream& stream, std::size_t maxNbOfByteInRepr) const;
+    MEDCOUPLING_EXPORT void writeVTK(std::ostream& ofs, int indent, const std::string& type, const std::string& nameInFile, DataArrayByte *byteArr) const;
+    MEDCOUPLING_EXPORT void transformWithIndArr(const T *indArrBg, const T *indArrEnd);
+    MEDCOUPLING_EXPORT void transformWithIndArr(const MapKeyVal<T>& m);
+    MEDCOUPLING_EXPORT DataArrayIdType *findIdsEqual(T val) const;
   protected:
     template<class ALG>
     void switchOnTupleAlg(T val, std::vector<bool>& vec, ALG algo) const;
@@ -559,21 +569,12 @@ namespace MEDCoupling
 
   class DataArrayInt32 : public DataArrayDiscreteSigned<Int32>
   {
+    friend class DataArrayDiscrete<Int32>;
   public:
-    MEDCOUPLING_EXPORT static DataArrayInt32 *New();
     MEDCOUPLING_EXPORT int intValue() const;
-    MEDCOUPLING_EXPORT int getHashCode() const;
     MEDCOUPLING_EXPORT DataArrayInt32 *deepCopy() const;//ok
     MEDCOUPLING_EXPORT DataArrayInt32 *buildNewEmptyInstance() const { return DataArrayInt32::New(); }//ok
-    MEDCOUPLING_EXPORT std::string repr() const;
-    MEDCOUPLING_EXPORT std::string reprZip() const;
-    MEDCOUPLING_EXPORT void writeVTK(std::ostream& ofs, int indent, const std::string& type, const std::string& nameInFile, DataArrayByte *byteArr) const;
-    MEDCOUPLING_EXPORT void reprCppStream(const std::string& varName, std::ostream& stream) const;
-    MEDCOUPLING_EXPORT void reprQuickOverview(std::ostream& stream) const;
-    MEDCOUPLING_EXPORT void reprQuickOverviewData(std::ostream& stream, std::size_t maxNbOfByteInRepr) const;
-    MEDCOUPLING_EXPORT void transformWithIndArr(const int *indArrBg, const int *indArrEnd);
-    MEDCOUPLING_EXPORT void transformWithIndArr(const MapKeyVal<int>& m);
-    MEDCOUPLING_EXPORT DataArrayInt32 *transformWithIndArrR(const int *indArrBg, const int *indArrEnd) const;
+    MEDCOUPLING_EXPORT DataArrayInt32 *transformWithIndArrR(const int *indArr2Bg, const int *indArrEnd) const;
     MEDCOUPLING_EXPORT void splitByValueRange(const int *arrBg, const int *arrEnd,
                                               DataArrayInt32 *& castArr, DataArrayInt32 *& rankInsideCast, DataArrayInt32 *& castsPresent) const;
     MEDCOUPLING_EXPORT bool isRange(int& strt, int& sttoopp, int& stteepp) const;
@@ -582,8 +583,8 @@ namespace MEDCoupling
     MEDCOUPLING_EXPORT MCAuto< MapKeyVal<int> > invertArrayN2O2O2NOptimized() const;
     MEDCOUPLING_EXPORT MCAuto< MapKeyVal<int> > giveN2OOptimized() const;
     MEDCOUPLING_EXPORT DataArrayInt32 *invertArrayO2N2N2OBis(int newNbOfElem) const;
-    MEDCOUPLING_EXPORT DataArrayInt32 *selectByTupleId(const int *new2OldBg, const int *new2OldEnd) const { return DataArrayTemplate<int>::mySelectByTupleId(new2OldBg,new2OldEnd); }
-    MEDCOUPLING_EXPORT DataArrayInt32 *selectByTupleId(const DataArrayInt32& di) const { return DataArrayTemplate<int>::mySelectByTupleId(di); }
+    MEDCOUPLING_EXPORT DataArrayInt32 *selectByTupleId(const mcIdType *new2OldBg, const mcIdType *new2OldEnd) const { return this->mySelectByTupleId(new2OldBg,new2OldEnd); }
+    MEDCOUPLING_EXPORT DataArrayInt32 *selectByTupleId(const DataArrayIdType& di) const { return this->mySelectByTupleId(di); }
     MEDCOUPLING_EXPORT DataArrayInt32 *selectByTupleIdSafe(const int *new2OldBg, const int *new2OldEnd) const { return DataArrayTemplate<int>::mySelectByTupleIdSafe(new2OldBg,new2OldEnd); }
     MEDCOUPLING_EXPORT DataArrayInt32 *keepSelectedComponents(const std::vector<int>& compoIds) const { return DataArrayTemplate<int>::myKeepSelectedComponents(compoIds); }
     MEDCOUPLING_EXPORT DataArrayInt32 *selectByTupleIdSafeSlice(int bg, int end2, int step) const { return DataArrayTemplate<int>::mySelectByTupleIdSafeSlice(bg,end2,step); }
@@ -599,7 +600,6 @@ namespace MEDCoupling
     MEDCOUPLING_EXPORT bool hasUniqueValues() const;
     MEDCOUPLING_EXPORT void setSelectedComponents(const DataArrayInt32 *a, const std::vector<int>& compoIds);
     MEDCOUPLING_EXPORT DataArrayInt32Iterator *iterator();
-    MEDCOUPLING_EXPORT DataArrayInt32 *findIdsEqual(int val) const;
     MEDCOUPLING_EXPORT DataArrayInt32 *findIdsNotEqual(int val) const;
     MEDCOUPLING_EXPORT DataArrayInt32 *findIdsEqualList(const int *valsBg, const int *valsEnd) const;
     MEDCOUPLING_EXPORT DataArrayInt32 *findIdsNotEqualList(const int *valsBg, const int *valsEnd) const;
@@ -663,6 +663,21 @@ namespace MEDCoupling
     MEDCOUPLING_EXPORT MemArray<int>& accessToMemArray() { return _mem; }
     MEDCOUPLING_EXPORT const MemArray<int>& accessToMemArray() const { return _mem; }
   public:
+    MEDCOUPLING_EXPORT static void ExtractFromIndexedArrays(const int *idsOfSelectBg, const int *idsOfSelectEnd, const DataArrayInt *arrIn, const DataArrayInt *arrIndxIn,
+                                                    DataArrayInt* &arrOut, DataArrayInt* &arrIndexOut);
+    MEDCOUPLING_EXPORT static void ExtractFromIndexedArraysSlice(int idsOfSelectStart, int idsOfSelectStop, int idsOfSelectStep, const DataArrayInt *arrIn, const DataArrayInt *arrIndxIn,
+                                                     DataArrayInt* &arrOut, DataArrayInt* &arrIndexOut);
+    MEDCOUPLING_EXPORT static void SetPartOfIndexedArrays(const int *idsOfSelectBg, const int *idsOfSelectEnd, const DataArrayInt *arrIn, const DataArrayInt *arrIndxIn,
+                                                  const DataArrayInt *srcArr, const DataArrayInt *srcArrIndex,
+                                                  DataArrayInt* &arrOut, DataArrayInt* &arrIndexOut);
+    MEDCOUPLING_EXPORT static void SetPartOfIndexedArraysSlice(int start, int end, int step, const DataArrayInt *arrIn, const DataArrayInt *arrIndxIn,
+                                                   const DataArrayInt *srcArr, const DataArrayInt *srcArrIndex,
+                                                   DataArrayInt* &arrOut, DataArrayInt* &arrIndexOut);
+    MEDCOUPLING_EXPORT static void SetPartOfIndexedArraysSameIdx(const int *idsOfSelectBg, const int *idsOfSelectEnd, DataArrayInt *arrInOut, const DataArrayInt *arrIndxIn,
+                                                         const DataArrayInt *srcArr, const DataArrayInt *srcArrIndex);
+    MEDCOUPLING_EXPORT static void SetPartOfIndexedArraysSameIdxSlice(int start, int end, int step, DataArrayInt *arrInOut, const DataArrayInt *arrIndxIn,
+                                                          const DataArrayInt *srcArr, const DataArrayInt *srcArrIndex);
+    MEDCOUPLING_EXPORT static bool RemoveIdsFromIndexedArrays(const int *idsToRemoveBg, const int *idsToRemoveEnd, DataArrayInt *arr, DataArrayInt *arrIndx, int offsetForRemoval=0);
     MEDCOUPLING_EXPORT static int *CheckAndPreparePermutation(const int *start, const int *end);
     MEDCOUPLING_EXPORT static DataArrayInt32 *Range(int begin, int end, int step);
   public:
@@ -677,6 +692,19 @@ namespace MEDCoupling
 
   class DataArrayInt64 : public DataArrayDiscrete<Int64>
   {
+    friend class DataArrayDiscrete<Int64>;
+  public:
+    MEDCOUPLING_EXPORT DataArrayInt64 *deepCopy() const;
+    MEDCOUPLING_EXPORT DataArrayInt64 *buildNewEmptyInstance() const { return DataArrayInt64::New(); }//ok
+    MEDCOUPLING_EXPORT DataArrayInt64 *selectByTupleId(const mcIdType *new2OldBg, const mcIdType *new2OldEnd) const { return this->mySelectByTupleId(new2OldBg,new2OldEnd); }
+    MEDCOUPLING_EXPORT DataArrayInt64 *selectByTupleId(const DataArrayIdType& di) const { return this->mySelectByTupleId(di); }
+    MEDCOUPLING_EXPORT DataArrayInt64 *selectByTupleIdSafe(const int *new2OldBg, const int *new2OldEnd) const { return DataArrayTemplate<Int64>::mySelectByTupleIdSafe(new2OldBg,new2OldEnd); }
+    MEDCOUPLING_EXPORT DataArrayInt64 *keepSelectedComponents(const std::vector<int>& compoIds) const { return DataArrayTemplate<Int64>::myKeepSelectedComponents(compoIds); }
+    MEDCOUPLING_EXPORT DataArrayInt64 *selectByTupleIdSafeSlice(int bg, int end2, int step) const { return DataArrayTemplate<Int64>::mySelectByTupleIdSafeSlice(bg,end2,step); }
+    MEDCOUPLING_EXPORT DataArrayInt64 *selectByTupleRanges(const std::vector<std::pair<int,int> >& ranges) const { return DataArrayTemplate<Int64>::mySelectByTupleRanges(ranges); }
+  private:
+    ~DataArrayInt64() { }
+    DataArrayInt64() { }
   };
   
   template<class T>
@@ -706,8 +734,8 @@ namespace MEDCoupling
     MEDCOUPLING_EXPORT std::string repr() const;
     MEDCOUPLING_EXPORT std::string reprZip() const;
     MEDCOUPLING_EXPORT DataArrayInt *convertToIntArr() const;
-    MEDCOUPLING_EXPORT DataArrayChar *selectByTupleId(const int *new2OldBg, const int *new2OldEnd) const { return DataArrayTemplate<char>::mySelectByTupleId(new2OldBg,new2OldEnd); }
-    MEDCOUPLING_EXPORT DataArrayChar *selectByTupleId(const DataArrayInt& di) const { return DataArrayTemplate<char>::mySelectByTupleId(di); }
+    MEDCOUPLING_EXPORT DataArrayChar *selectByTupleId(const mcIdType *new2OldBg, const mcIdType *new2OldEnd) const { return this->mySelectByTupleId(new2OldBg,new2OldEnd); }
+    MEDCOUPLING_EXPORT DataArrayChar *selectByTupleId(const DataArrayIdType& di) const { return this->mySelectByTupleId(di); }
     MEDCOUPLING_EXPORT DataArrayChar *selectByTupleIdSafe(const int *new2OldBg, const int *new2OldEnd) const { return DataArrayTemplate<char>::mySelectByTupleIdSafe(new2OldBg,new2OldEnd); }
     MEDCOUPLING_EXPORT DataArrayChar *keepSelectedComponents(const std::vector<int>& compoIds) const { return DataArrayTemplate<char>::myKeepSelectedComponents(compoIds); }
     MEDCOUPLING_EXPORT DataArrayChar *selectByTupleIdSafeSlice(int bg, int end2, int step) const { return DataArrayTemplate<char>::mySelectByTupleIdSafeSlice(bg,end2,step); }

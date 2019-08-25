@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2016  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2019  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -20,6 +20,7 @@
 
 #include "MEDCouplingRefCountObject.hxx"
 #include "MEDCoupling_version.h"
+#include "MCType.hxx"
 
 #include "InterpKernelException.hxx"
 
@@ -51,6 +52,11 @@ void MEDCoupling::MEDCouplingVersionMajMinRel(int& maj, int& minor, int& releas)
 int MEDCoupling::MEDCouplingSizeOfVoidStar()
 {
   return 8*sizeof(std::size_t);
+}
+
+std::size_t MEDCoupling::MEDCouplingSizeOfIDs()
+{
+  return 8*sizeof(mcIdType);
 }
 
 /*!

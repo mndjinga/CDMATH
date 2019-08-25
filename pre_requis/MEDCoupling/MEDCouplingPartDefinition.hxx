@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2016  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2019  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -74,7 +74,7 @@ namespace MEDCoupling
     DataArrayPartDefinition *add2(const SlicePartDefinition *other) const;
     virtual ~DataArrayPartDefinition();
   private:
-    MCAuto<DataArrayInt> _arr;
+    MCAuto<DataArrayIdType> _arr;
   };
 
   class SlicePartDefinition : public PartDefinition
@@ -103,9 +103,9 @@ namespace MEDCoupling
     PartDefinition *add2(const SlicePartDefinition *other) const;
     virtual ~SlicePartDefinition();
   private:
-    int _start;
-    int _stop;
-    int _step;
+    mcIdType _start;
+    mcIdType _stop;
+    mcIdType _step;
   };
 }
 

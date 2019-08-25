@@ -1,5 +1,5 @@
 #  -*- coding: utf-8 -*-
-# Copyright (C) 2007-2016  CEA/DEN, EDF R&D
+# Copyright (C) 2007-2019  CEA/DEN, EDF R&D
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -23,7 +23,7 @@ import sys
 if sys.platform == "win32":
     from MEDCouplingCompat import *
 else:
-    from MEDCoupling import *
+    from medcoupling import *
 import unittest
 from math import pi,e,sqrt,cos,sin
 from datetime import datetime
@@ -439,6 +439,32 @@ class MEDCouplingIntersectTest(unittest.TestCase):
         self.assertEqual(e2, res2Tool.getValues())
         pass
 
+    def testIntersect2DMeshes11(self):
+        """ Dealing properly with respective polygon orientation in QuadraticPolygon::haveIAChanceToBeCompletedBy()
+        The two polygons below have same orientation, but one edge of pol1 is colinear to pol2 in opposite directions.
+        """
+        eps = 1.0e-8
+        back = MEDCouplingUMesh('lback', 2)
+        coo = DataArrayDouble([(-2.5,-2.5),(-2.5,2.5),(2.5,2.5),(2.5,-2.5),(0,0),(0,1.66667),(1.66667,1.66667),(1.66667,0)])
+        back.setCoords(coo)
+        c = DataArrayInt([5, 6, 7, 4, 5, 2, 3, 7, 6, 5, 3, 0, 1, 2, 6, 4, 7])
+        cI = DataArrayInt([0, 4, 9, 17])
+        back.setConnectivity(c, cI)
+
+        tool = MEDCouplingUMesh('ltool', 2)
+        coo = DataArrayDouble([(0,0),(0,2.5),(2.5,2.5),(2.5,0)])
+        tool.setCoords(coo)
+        c = DataArrayInt([5, 0, 1, 2, 3])
+        cI = DataArrayInt([0, 5])
+        tool.setConnectivity(c, cI)
+
+        result, res2Back, res2Tool = MEDCouplingUMesh.Intersect2DMeshes(back, tool, eps)
+        self.assertEqual(result.getNodalConnectivity().getValues(), [5, 7, 8, 6, 5, 7, 6, 10, 11, 5, 11, 3, 7, 5, 9, 10, 6, 8, 5, 8, 7, 3, 0, 1, 9])
+        self.assertEqual(result.getNodalConnectivityIndex().getValues(), [0, 4, 9, 13, 18, 25])
+        self.assertEqual(res2Back.getValues(), [0, 1, 1, 2, 2])
+        self.assertEqual(res2Tool.getValues(), [0, 0, -1, 0, -1])
+        pass
+
     def testSwig2Intersect2DMeshesQuadra1(self):
         import cmath
         def createDiagCircle(lX, lY, R, cells=[0,1]):
@@ -546,6 +572,129 @@ class MEDCouplingIntersectTest(unittest.TestCase):
         self.assertEqual(inter.getNodalConnectivityIndex().getValues(), [0,15])
         self.assertEqual(map1.getValues(), [0])
         self.assertEqual(map2.getValues(), [0])
+        pass
+
+    def testIntersect2DMeshesTmp9(self):
+        """ Tricky case: two triangular shapes intersecting, but not perfectly, at their tips. Several issues fixed:
+            - Bug fix: seg seg intersector epsilon is to be taken absolutely for colinearity test (even for very small vectors 
+            we don't want to have false positive on colinearity. So go back to a comparison with an angle.)
+            - when intersecting nodes are merged, they were not properly added on pol2.
+            - bug fix in compute residual: the stop condition is really on pol1Zip only.
+            - correcting polygons with flat corners, they were crashing residual computation
+        """
+        eps = 1.0e-6  # This is the key parameter. DO NOT CHANGE IT.
+        back = MEDCouplingUMesh('crh8_rse3', 2)
+        coo = DataArrayDouble([(-31.313754538446631,-32.512813836330515),(-31.531462871779969,-32.135731941766032),(-31.422608705113298,-32.324272889048274),(-31.690836433011114,-32.295105502997181),(-31.621640616088342,-32.204927758688783),(-31.502295485728872,-32.403959669663848)])
+        back.setCoords(coo)
+        c = DataArrayInt([32, 0, 3, 1, 5, 4, 2])
+        cI = DataArrayInt([0, 7])
+        back.setConnectivity(c, cI)
+
+        tool = MEDCouplingUMesh('TA-536193G_expl_20181022_merged', 2)
+        coo = DataArrayDouble([(-29.918137808525149,-26.883223901634544),(-32.919909136264039,-26.939612990540404),(-27.866900000000001,-28.016680435212603),(-31.313800000000001,-32.512799999999999),(-27.866900000000001,-28.933918793630923)])
+        tool.setCoords(coo)
+        c = DataArrayInt([5, 1, 0, 3, 5, 0, 2, 3, 5, 4, 3, 2])
+        cI = DataArrayInt([0, 4, 8, 12])
+        tool.setConnectivity(c, cI)
+
+        inter, res2Back, res2Tool = MEDCouplingUMesh.Intersect2DMeshes(back, tool, eps)
+
+        self.assertEqual(inter.getNodalConnectivity().getValues(), [5, 14, 13, 11, 12, 5, 13, 15, 11, 32, 12, 3, 1, 14, 16, 17, 18, 19, 5, 15, 0, 11])
+        self.assertEqual(inter.getNodalConnectivityIndex().getValues(), [0, 5, 9, 18, 22])
+        self.assertEqual(res2Back.getValues(), [0, 0, 0, 0])
+        self.assertEqual(res2Tool.getValues(), [0, 1, -1, -1])
+        pass
+
+    def testIntersect2DMeshesTmp10(self):
+        """ Fixing issues when one of the quadratic point of the tool mesh also serves as a regular point somewhere else.
+        WARNING : the tool mesh is not conform, but this was NOT the initial cause of the problem """
+        eps = 1.0e-6
+        back = MEDCouplingUMesh('layer_1', 2)
+        coo = DataArrayDouble([(0.000000000000000,0.000000000000000),(0.000000000000007,113.449999999999960),(113.449999999999960,0.000000000000000),(80.221264325613788,80.221264325613788),(0.000000000000003,56.724999999999980),(56.724999999999980,0.000000000000000)])
+        back.setCoords(coo)
+        c = DataArrayInt([32, 0, 1, 2, 4, 3, 5])
+        cI = DataArrayInt([0, 7])
+        back.setConnectivity(c, cI)
+
+        tool = MEDCouplingUMesh('layer_2', 2)
+        coo = DataArrayDouble([(35.499999704817512,0.000000000000011),(35.413523784223756,2.476354817916448),(35.478374361065050,1.238932132335084),(35.563158391762734,2.486818288978067),(35.649999999999999,0.000000000000000),(35.628282983230761,1.244167057444159),(35.488341087993248,2.481586553447257),(35.575000000000003,0.000000000000000),(35.154516440325750,4.940645084082323),(35.305526997492230,3.710760415787641),(35.154516440325743,-4.940645084082338),(34.960674956295250,-6.164510258681856),(35.413523784223763,-2.476354817916429),(35.305526997492230,-3.710760415787643),(35.563158391762734,-2.486818288978048),(35.488341087993248,-2.481586553447238),(35.478374361018354,-1.238932133672371),(35.628282983230761,-1.244167057444150)])
+        tool.setCoords(coo)
+        c = DataArrayInt([32, 0, 1, 3, 4, 2, 6, 5, 7,        # 32,  6, 7, 9, 10, 8, 12, 11, 13
+                             32, 12, 0, 4, 14, 16, 7, 17, 15,   # 32,  18, 6, 10, 20, 22, 13, 23, 21
+                             32, 8, 1, 12, 10, 9, 0, 13, 11])   # 32,  14, 7, 18, 16, 15, 6, 19, 17
+        cI = DataArrayInt([0, 9, 18, 27])
+        tool.setConnectivity(c, cI)
+        result, res2Back, res2Tool = MEDCouplingUMesh.Intersect2DMeshes(back, tool, eps)
+
+        self.assertEqual(result.getNodalConnectivity().getValues(), [32, 10, 6, 7, 9, 25, 26, 27, 28 ,
+                                                        32, 6, 0, 24, 14, 7, 29, 30, 31, 32, 33,
+                                                        32, 24, 1, 2, 10, 9, 7,   14, 34, 35, 36, 37, 38, 39, 40])
+        self.assertEqual(result.getNodalConnectivityIndex().getValues(), [0, 9, 20, 35])
+        self.assertEqual(res2Back.getValues(), [0, 0, 0])
+        self.assertEqual(res2Tool.getValues(), [0, 2, -1])
+        pass
+
+    def testIntersect2DMeshesTmp11(self):
+        """ BuildIntersectMeshes() was merging points too aggressively (again). """
+        eps = 1.0e-6
+        back = MEDCouplingUMesh('TA-536193G_expl_20180605_merged', 2)
+        coo = DataArrayDouble([(10.19999332472057,-27.86690000000001),(12.56691001291914,-29.23343998708087),(13.93345000000000,-24.13344332472058)])
+        back.setCoords(coo)
+        c = DataArrayInt([5, 2, 1, 0])
+        cI = DataArrayInt([0, 4])
+        back.setConnectivity(c, cI)
+
+        tool = MEDCouplingUMesh('layer_1', 2)
+        cooT = DataArrayDouble([(10.44742256875032,-27.61949543124968),(18.71050449103792,-25.35195658988450),(19.05428526420611,-25.33852836835490),(18.88239487762202,-25.34524247911970),(12.62880992941098,-19.37921975458838),(18.06779356578989,-20.52447528153846),(19.22203188321684,-22.45963506363725),(19.48103923179737,-24.51987105082425),(10.50946417376372,-28.13689270184920),(13.33582148027124,-18.82710073137066),(14.70572820761054,-18.80259652845168),(17.10708000587671,-19.67863183066471),(8.97033515262005,-22.58570640281439),(15.95921032839811,-19.09586394516776),(19.45191696393912,-23.47713337575327),(17.61005728815709,-20.07586106738862),(18.53287284946306,-21.55888206618472),(19.21102524614600,-24.89967567708313),(10.47844337125702,-27.87819406654944),(14.02163025718330,-18.86267048150560)])
+        tool.setCoords(cooT)
+        c = DataArrayInt([32, 2, 1, 0, 8, 9, 3, 4, 18, 12, 11])
+        cI = DataArrayInt([0, 11])
+        tool.setConnectivity(c, cI)
+
+        result, res2Back, res2Tool = MEDCouplingUMesh.Intersect2DMeshes(back, tool, eps)
+        self.assertEqual(result.getNodalConnectivity().getValues(), [32, 26, 25, 3, 23, 24, 27, 28, 29, 30, 31, 32, 24, 0, 26, 32, 33, 34, 32, 25, 2, 1, 23, 3, 35, 36, 37, 38, 39])
+        self.assertEqual(result.getNodalConnectivityIndex().getValues(), [0, 11, 18, 29])
+        self.assertEqual(res2Back.getValues(), [0, 0, 0])
+        self.assertEqual(res2Tool.getValues(), [0, -1, -1])
+
+        # Now the same with point #0 shifted so to almost match intersection point: the intersector should then merge
+        # with point from mesh 1:
+        cooT[0,:] = [10.44741058, -27.61948395]
+        result, res2Back, res2Tool = MEDCouplingUMesh.Intersect2DMeshes(back, tool, eps)
+        self.assertEqual(result.getNodalConnectivity().getValues(), [32, 25, 3, 23, 24, 26, 27, 28, 29, 32, 24, 0, 25, 30, 31, 32, 32, 3, 2, 1, 23, 33, 34, 35, 36])
+        self.assertEqual(result.getNodalConnectivityIndex().getValues(), [0, 9, 16, 25])
+        self.assertEqual(res2Back.getValues(), [0, 0, 0])
+        self.assertEqual(res2Tool.getValues(), [0, -1, -1])
+        pass
+
+    def testIntersect2DMeshesTmp12(self):
+        """ Optimisation of SegSeg and ArcCSeg intersector which also allows to handle some degenerated cases.
+        See method identifyEarlyIntersection() in C++ """
+        eps = 1e-6
+        back = MEDCouplingUMesh('merge', 2)
+        coo = DataArrayDouble([(-22.20967875173176154,32.26829201778234335),(-16.84032124826824273,35.36829201778233767),(-19.52500000000000213,33.81829201778234051),(-22.09987113059642283,32.67809963891765790),(-17.25012886940356438,35.47809963891765506),(-19.67499999999999361,34.07809963891765648),(-16.98614843981577138,35.62087212266773406),(-22.46315640161999028,32.70732818597191027)])
+        back.setCoords(coo)
+        c = DataArrayInt([32, 1, 0, 3, 4,    2, 7, 5, 6])
+        cI = DataArrayInt([0, 9])
+        back.setConnectivity(c, cI)
+        back.checkConsistency()
+
+        tool = MEDCouplingUMesh('layer_2', 2)
+        coo = DataArrayDouble([(-16.84032124826824273,35.36829201778233767),(-19.52500000000000924,33.81829201778234051),(-19.46500000000013841,33.71436896932812743),(-22.58118035378681299,31.71175166763502418),(-16.17259236578203740,35.41175166763498083),(-21.04692233083152786,32.75014443326846703),(-17.83899589140436603,34.60224162661226899),(-19.49500000000007560,33.76633049355523042),(-22.64145235112855659,31.81614582930458823),(-16.23286436312378100,35.51614582930454134),(-21.10697925592403834,32.85419191960125573),(-17.89907519522208545,34.70627619258202401),(-22.61131635245768479,31.76394874846980798),(-16.20272836445290920,35.46394874846976109),(-19.07887754666707991,34.07586093630563795),(-19.52453703982536481,33.81855930796379539),(-19.93627714687611530,33.92725120783563142),(-19.50943608541021135,34.17368800957415687),(-17.95959939746765599,34.72207647704399136),(-16.53659280569601009,35.44221892354343595),(-19.30170729324622414,33.94721012213472022),(-19.72285661614316155,34.05046960870489414),(-19.29415681603864741,34.12477447293989741),(-19.73040709335074183,33.87290525789970985),(-19.52476851991268703,33.81842566287306795)])
+        tool.setCoords(coo)
+        c = DataArrayInt([8, 14, 15, 16, 17,   20, 23, 21, 22,
+                             32, 2, 3, 8, 1,    5, 12, 10, 7,
+                             32, 4, 2, 1, 9,    6, 7, 11, 13,
+                             32, 9, 1, 15, 14, 0,     11, 24, 20, 18, 19])
+        cI = DataArrayInt([0, 9, 18, 27, 38])
+        tool.setConnectivity(c, cI)
+
+        result, res2Back, res2Tool = MEDCouplingUMesh.Intersect2DMeshes(back, tool, eps)
+
+        self.assertEqual(result.getNodalConnectivity().getValues(), [5, 24, 25, 22, 23, 32, 23, 9, 0, 3, 24, 33, 34, 35, 36, 37, 32, 25, 4, 8, 22, 38, 39, 40, 41])
+        self.assertEqual(result.getNodalConnectivityIndex().getValues(), [0, 5, 16, 25])
+        self.assertEqual(res2Back.getValues(), [0, 0, 0])
+        self.assertEqual(res2Tool.getValues(), [0, -1, -1])
         pass
 
     def testSwig2Intersect2DMeshWith1DLine1(self):
@@ -1050,6 +1199,33 @@ class MEDCouplingIntersectTest(unittest.TestCase):
         self.assertEqual(res1D.getNodalConnectivityIndex().getValues(),[0, 3, 6, 9, 12, 15])
         self.assertEqual(m1.getValues(), [0, 0, 0])
         self.assertEqual(m2.getValues(), [-1, -1, 0, 2, -1, -1, 0, 1, -1, -1])
+
+    def testSwig2Intersect2DMeshWith1DLine20(self):
+        """ A line intersecting a cell more than 3 times was triggering an internal error. """
+        mesh = MEDCouplingUMesh('merge', 2)
+        coo = DataArrayDouble([(0,0),(0,9),(3,9),(3,0),(0,1),(2,1),(0,2),(2,2),(3,3),(1,3),(3,4),(1,4),(0,5),(2,5),(0,6),(2,6),(3,7),(1,7),(3,8),(1,8)])
+        mesh.setCoords(coo)
+        c = DataArrayInt([5, 3, 0, 4, 5, 7, 6, 12, 13, 15, 14, 1, 2, 18, 19, 17, 16, 10, 11, 9, 8]) # offset 20
+        cI = DataArrayInt([0, 21])
+        mesh.setConnectivity(c, cI)
+
+        tool = MEDCouplingUMesh('tool', 1)
+        coo = DataArrayDouble([(1.5, 9.5),  (1.5, 1.5)])  # line crossing 4 times
+        tool.setCoords(coo)
+        c = DataArrayInt([NORM_SEG2,0,1])
+        cI = DataArrayInt([0, 3])
+        tool.setConnectivity(c, cI)
+
+        eps=1.0e-4 # not the pb here
+        res2D, res1D, resToSelf, mapLeftRight = MEDCouplingUMesh.Intersect2DMeshWith1DLine(mesh, tool, eps)
+        self.assertEqual(res1D.getNodalConnectivity().getValues(),[1, 20, 25,   1, 25, 26,   1, 26, 27,   1, 27, 24,   1, 24, 23,   1, 23, 28,   1, 28, 29,   1, 29, 22,   1, 22, 21])
+        self.assertEqual(res1D.getNodalConnectivityIndex().getValues(),[0, 3, 6, 9, 12, 15, 18, 21, 24, 27])
+        self.assertEqual(res2D.getNodalConnectivity().getValues(),[5, 2, 18, 26, 25,   5, 13, 15, 24, 27, 16, 10, 28, 23,   5, 8, 3, 0, 4, 5, 7, 22, 29,   5, 6, 12, 23, 28, 11, 9, 29, 22,   5, 14, 1, 25, 26, 19, 17, 27, 24])
+        self.assertEqual(res2D.getNodalConnectivityIndex().getValues(),[0, 5, 14, 23, 32, 41])
+
+        self.assertEqual(resToSelf.getValues(), [0, 0, 0, 0, 0])
+        self.assertEqual(mapLeftRight.getValues(), [-1, -1, 0, 4, -1, -1, 1, 4, -1, -1, 1, 3, -1, -1, 2, 3, -1, -1])
+        pass
 
     def testSwig2Conformize2D1(self):
         eps = 1.0e-8

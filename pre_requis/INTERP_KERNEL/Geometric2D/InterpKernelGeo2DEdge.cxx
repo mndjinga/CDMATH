@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2016  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2019  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -340,7 +340,7 @@ bool IntersectElement::isIncludedByBoth() const
   return _e1.isIn(_chararct_val_for_e1) && _e2.isIn(_chararct_val_for_e2);
 }
 
-bool EdgeIntersector::intersect(const Bounds *whereToFind, std::vector<Node *>& newNodes, bool& order, MergePoints& commonNode)
+bool EdgeIntersector::intersect(std::vector<Node *>& newNodes, bool& order, MergePoints& commonNode)
 {
   std::list< IntersectElement > listOfIntesc=getIntersectionsCharacteristicVal();
   std::list< IntersectElement >::iterator iter;
@@ -389,6 +389,37 @@ bool EdgeIntersector::intersect(const Bounds *whereToFind, std::vector<Node *>& 
       order=vecOfIntesc.front().isLowerOnOther(vecOfIntesc.back());
     }
   return true;
+}
+
+/*! If the 2 edges share one extremity, we can optimize since we already know where is the intersection.
+ *  In the case of ArcCSegIntersector, this also helps avoid degenerated cases.
+ */
+void EdgeIntersector::identifyEarlyIntersection(bool& i1S2S, bool& i1E2S, bool& i1S2E, bool& i1E2E)
+{
+  i1S2S = _e1.getStartNode() == _e2.getStartNode();
+  i1E2S = _e1.getEndNode() == _e2.getStartNode();
+  i1S2E = _e1.getStartNode() == _e2.getEndNode();
+  i1E2E = _e1.getEndNode() == _e2.getEndNode();
+  if (i1S2S || i1E2S || i1S2E || i1E2E)
+    {
+      Node * node;
+      bool i_1S(false),i_1E(false),i_2S(false),i_2E(false);
+      if (i1S2S || i1E2S)   // Common node is e2 start
+        {
+          node = _e2.getStartNode();
+          i_1S = i1S2S;        i_2S = true;
+          i_1E = i1E2S;        i_2E = false;
+        }
+      else                  // Common node is e2 end
+        {
+          node = _e2.getEndNode();
+          i_1S = i1S2E;        i_2S = false;
+          i_1E = i1E2E;        i_2E = true;
+        }
+      node->incrRef();
+      _earlyInter = new IntersectElement(_e1.getCharactValue(*node), _e2.getCharactValue(*node),
+          i_1S,i_1E,i_2S,i_2E,node,_e1,_e2,keepOrder());
+    }
 }
 
 /*!
@@ -631,7 +662,7 @@ bool Edge::intersectWith(const Edge *other, MergePoints& commonNode,
   delete merge;
   merge=0;
   EdgeIntersector *intersector=BuildIntersectorWith(this,other);
-  ret=Intersect(this,other,intersector,merge,commonNode,outVal1,outVal2);
+  ret=Intersect(this,other,intersector,commonNode,outVal1,outVal2);
   delete intersector;
   return ret;
 }
@@ -674,7 +705,7 @@ void Edge::Interpolate1DLin(const std::vector<double>& distrib1, const std::vect
                   ComposedEdge *f2=new ComposedEdge;
                   SegSegIntersector inters(*e1,*e2);
                   bool b1,b2;
-                  inters.areOverlappedOrOnlyColinears(0,b1,b2);
+                  inters.areOverlappedOrOnlyColinears(b1,b2);
                   if(IntersectOverlapped(e1,e2,&inters,commonNode,*f1,*f2))
                     {
                       result[i][j]=f1->getCommonLengthWith(*f2)/e1->getCurveLength();
@@ -734,19 +765,19 @@ void Edge::getMiddleOfPointsOriented(const double *p1, const double *p2, double 
   return getMiddleOfPoints(p1, p2, mid);
 }
 
-bool Edge::Intersect(const Edge *f1, const Edge *f2, EdgeIntersector *intersector, const Bounds *whereToFind, MergePoints& commonNode,
+bool Edge::Intersect(const Edge *f1, const Edge *f2, EdgeIntersector *intersector, MergePoints& commonNode,
                      ComposedEdge& outValForF1, ComposedEdge& outValForF2)
 {
   bool obviousNoIntersection;
   bool areOverlapped;
-  intersector->areOverlappedOrOnlyColinears(whereToFind,obviousNoIntersection,areOverlapped);
+  intersector->areOverlappedOrOnlyColinears(obviousNoIntersection,areOverlapped);
   if(areOverlapped)
     return IntersectOverlapped(f1,f2,intersector,commonNode,outValForF1,outValForF2);
   if(obviousNoIntersection)
     return false;
   std::vector<Node *> newNodes;
   bool order;
-  if(intersector->intersect(whereToFind,newNodes,order,commonNode))
+  if(intersector->intersect(newNodes,order,commonNode))
     {
       if(newNodes.empty())
         throw Exception("Internal error occurred - error in intersector implementation!");// This case should never happen
@@ -771,7 +802,7 @@ bool Edge::Intersect(const Edge *f1, const Edge *f2, EdgeIntersector *intersecto
         }
       return true;
     }
-  else//no intersection inside whereToFind
+  else
     return false;
 }
 
@@ -926,6 +957,22 @@ bool Edge::SplitOverlappedEdges(const Edge *e1, const Edge *e2, Node *nS, Node *
   }
 }
 
+void Edge::dumpToCout(const std::map<INTERP_KERNEL::Node *,int>& mapp, int index) const
+{
+  auto sI(mapp.find(getStartNode())), eI(mapp.find(getEndNode()));
+  int start = (sI == mapp.end() ? -1 : sI->second), end = (eI == mapp.end() ? -1 : eI->second);
+  std::string locs;
+  switch (getLoc())
+  {
+    case FULL_IN_1: locs="FULL_IN_1"; break;
+    case FULL_ON_1: locs="FULL_ON_1"; break;
+    case FULL_OUT_1: locs="FULL_OUT_1"; break;
+    case FULL_UNKNOWN: locs="FULL_UNKNOWN"; break;
+    default: locs="oh my God! This is so wrong.";
+  }
+  std::cout << "Edge [" << index << "] : ("<<  std::hex << this << std::dec << ") -> (" << start << ", " << end << ")\t" << locs << std::endl;
+}
+
 bool Edge::isEqual(const Edge& other) const
 {
   return _start->isEqual(*other._start) && _end->isEqual(*other._end);
@@ -1009,16 +1056,6 @@ void Edge::sortIdsAbs(const std::vector<INTERP_KERNEL::Node *>& addNodes, const 
   for(std::vector< std::pair<double,Node *> >::const_iterator it=an2.begin();it!=an2.end();it++)
     {
       int idd=(*mapp2.find((*it).second)).second;
-      if((*it).first<QuadraticPlanarPrecision::getPrecision())
-        {
-          startId=idd;
-          continue;
-        }
-      if((*it).first>1-QuadraticPlanarPrecision::getPrecision())
-        {
-          endId=idd;
-          continue;
-        }
       tmpp.push_back(idd);
     }
   std::vector<int> tmpp2(tmpp.size()+2);
@@ -1033,4 +1070,32 @@ void Edge::sortIdsAbs(const std::vector<INTERP_KERNEL::Node *>& addNodes, const 
       edgesThis.push_back(tmpp2[i]);
       edgesThis.push_back(tmpp2[i+1]);
     }
+}
+
+void Edge::fillGlobalInfoAbs(bool direction, const std::map<INTERP_KERNEL::Node *,int>& mapThis, const std::map<INTERP_KERNEL::Node *,int>& mapOther, int offset1, int offset2, double fact, double baryX, double baryY,
+                                std::vector<int>& edgesThis, std::vector<double>& addCoo, std::map<INTERP_KERNEL::Node *,int> mapAddCoo) const
+{
+  int tmp[2];
+  _start->fillGlobalInfoAbs(mapThis,mapOther,offset1,offset2,fact,baryX,baryY,addCoo,mapAddCoo,tmp);
+  _end->fillGlobalInfoAbs(mapThis,mapOther,offset1,offset2,fact,baryX,baryY,addCoo,mapAddCoo,tmp+1);
+  if(direction)
+    {
+      edgesThis.push_back(tmp[0]);
+      edgesThis.push_back(tmp[1]);
+    }
+  else
+    {
+      edgesThis.push_back(tmp[1]);
+      edgesThis.push_back(tmp[0]);
+    }
+}
+
+void Edge::fillGlobalInfoAbs2(const std::map<INTERP_KERNEL::Node *,int>& mapThis, const std::map<INTERP_KERNEL::Node *,int>& mapOther, int offset1, int offset2, double fact, double baryX, double baryY,
+                              short skipStartOrEnd,
+                              std::vector<int>& edgesOther, std::vector<double>& addCoo, std::map<INTERP_KERNEL::Node *,int>& mapAddCoo) const
+{
+  if (skipStartOrEnd != -1) // see meaning in splitAbs()
+    _start->fillGlobalInfoAbs2(mapThis,mapOther,offset1,offset2,fact,baryX,baryY,addCoo,mapAddCoo,edgesOther);
+  if (skipStartOrEnd != 1)
+  _end->fillGlobalInfoAbs2(mapThis,mapOther,offset1,offset2,fact,baryX,baryY,addCoo,mapAddCoo,edgesOther);
 }

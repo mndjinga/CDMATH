@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2016  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2019  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -34,7 +34,7 @@ namespace INTERP_KERNEL
     bool areColinears() const;
     bool haveTheySameDirection() const;
     void getPlacements(Node *start, Node *end, TypeOfLocInEdge& whereStart, TypeOfLocInEdge& whereEnd, MergePoints& commonNode) const;
-    void areOverlappedOrOnlyColinears(const Bounds *whereToFind, bool& obviousNoIntersection, bool& areOverlapped);
+    void areOverlappedOrOnlyColinears(bool& obviousNoIntersection, bool& areOverlapped);
     std::list< IntersectElement > getIntersectionsCharacteristicVal() const;
   private:
     void getCurveAbscisse(Node *node, TypeOfLocInEdge& where, MergePoints& commonNode) const;
@@ -42,7 +42,8 @@ namespace INTERP_KERNEL
     //! index on which all single index op will be performed. Filled in case colinearity is equal to true.
     int _ind;
     double _col[2];
-    double _matrix[4];//SPACEDIM*SPACEDIM
+    double _matrix[4];               //SPACEDIM*SPACEDIM  = [e1_x, e1_y, e2_x, e2_y]
+    double _determinant;
   };
 
   class INTERPKERNEL_EXPORT EdgeLin : public Edge
@@ -77,10 +78,6 @@ namespace INTERP_KERNEL
     EdgeLin() { }
     void updateBounds();
     Edge *buildEdgeLyingOnMe(Node *start, Node *end, bool direction) const;
-    void fillGlobalInfoAbs(bool direction, const std::map<INTERP_KERNEL::Node *,int>& mapThis, const std::map<INTERP_KERNEL::Node *,int>& mapOther, int offset1, int offset2, double fact, double baryX, double baryY,
-                           std::vector<int>& edgesThis, std::vector<double>& addCoo, std::map<INTERP_KERNEL::Node *,int> mapAddCoo) const;
-    void fillGlobalInfoAbs2(const std::map<INTERP_KERNEL::Node *,int>& mapThis, const std::map<INTERP_KERNEL::Node *,int>& mapOther, int offset1, int offset2, double fact, double baryX, double baryY,
-                            std::vector<int>& edgesOther, std::vector<double>& addCoo, std::map<INTERP_KERNEL::Node *,int>& mapAddCoo) const;
   };
 }
 

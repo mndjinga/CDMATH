@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2016  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2019  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -151,16 +151,16 @@ void Node::unApplySimilarity(double xBary, double yBary, double dimChar)
 void Node::fillGlobalInfoAbs(const std::map<INTERP_KERNEL::Node *,int>& mapThis, const std::map<INTERP_KERNEL::Node *,int>& mapOther, int offset1, int offset2, double fact, double baryX, double baryY,
                              std::vector<double>& addCoo, std::map<INTERP_KERNEL::Node *,int>& mapAddCoo, int *nodeId) const
 {
-  std::map<INTERP_KERNEL::Node *,int>::const_iterator it=mapThis.find(const_cast<Node *>(this));
+  std::map<INTERP_KERNEL::Node *,int>::const_iterator it=mapOther.find(const_cast<Node *>(this));
+  if(it!=mapOther.end())     // order matters, try in mapOther first.
+    {
+      *nodeId=(*it).second+offset1;
+      return;
+    }
+  it=mapThis.find(const_cast<Node *>(this));
   if(it!=mapThis.end())
     {
       *nodeId=(*it).second;
-      return;
-    }
-  it=mapOther.find(const_cast<Node *>(this));
-  if(it!=mapOther.end())
-    {
-      *nodeId=(*it).second+offset1;
       return;
     }
   it=mapAddCoo.find(const_cast<Node *>(this));
@@ -185,7 +185,9 @@ void Node::fillGlobalInfoAbs2(const std::map<INTERP_KERNEL::Node *,int>& mapThis
   int tmp;
   std::size_t sz1=addCoo.size();
   fillGlobalInfoAbs(mapThis,mapOther,offset1,offset2,fact,baryX,baryY,addCoo,mapAddCoo,&tmp);
-  if(sz1!=addCoo.size())
+  if(sz1!=addCoo.size()     // newly created point
+      || (tmp >= offset2    // or previously created point merged with a neighbour
+          && (pointsOther.size() == 0 || pointsOther.back() != tmp)))
     {
       pointsOther.push_back(tmp);
       return ;
@@ -193,6 +195,5 @@ void Node::fillGlobalInfoAbs2(const std::map<INTERP_KERNEL::Node *,int>& mapThis
   std::vector<int>::const_iterator it=std::find(pointsOther.begin(),pointsOther.end(),tmp);
   if(it!=pointsOther.end())
     return ;
-  if(tmp<offset1)
-    pointsOther.push_back(tmp);
+  pointsOther.push_back(tmp);
 }

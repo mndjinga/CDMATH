@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2017  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2019  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -55,7 +55,9 @@ void numarrdeal(void *pt, void *wron)
     {
       typedef void (*MyDeallocator)(void *,void *);
       MyDeallocator deall=(MyDeallocator)wronc[1];
-      deall(pt,NULL);
+      int64_t *offset=reinterpret_cast<int64_t*>(wronc[2]);
+      deall(pt,offset);
+      delete offset;
       Py_XDECREF(weakRefOnOwner);
     }
   delete [] wronc;

@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2016  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2019  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -116,3 +116,13 @@ void IteratorOnComposedEdge::insertElemEdges(ComposedEdge *elems, bool changeMyS
     }
 }
 
+/*!
+ * Erase current element and place iterator onto the PREVIOUS element (eventually looping)
+ */
+void IteratorOnComposedEdge::eraseCurrent()
+{
+  delete(*_deep_it);
+  _deep_it = _list_handle->erase(_deep_it);
+  // By default erase place the iterator after the removed element:
+  previousLoop();
+}

@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2016  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2019  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -1497,7 +1497,7 @@ void MEDCouplingBasicsTestInterp::testInterpolationCC()
       const double* arr = i ? arr1 : arr2;
       const int nb_coord = i ? 3 : 4;
       DataArrayDouble* coords = DataArrayDouble::New();
-      coords->useArray( arr, /*ownership=*/false, CPP_DEALLOC, nb_coord, 1 );
+      coords->useArray( arr, /*ownership=*/false, DeallocType::CPP_DEALLOC, nb_coord, 1 );
 
       mesh[i] = MEDCouplingCMesh::New();
       mesh[i]->setCoords( coords, coords, coords );
@@ -1559,7 +1559,7 @@ void MEDCouplingBasicsTestInterp::testInterpolationCU1D()
   MEDCouplingCMesh* meshC = MEDCouplingCMesh::New();
   DataArrayDouble* coords = DataArrayDouble::New();
   double arr[4] = { -1/3., 1/3., 2/3., 4/3. };
-  coords->useArray( arr, /*ownership=*/false, CPP_DEALLOC, 4, 1 );
+  coords->useArray( arr, /*ownership=*/false, DeallocType::CPP_DEALLOC, 4, 1 );
   meshC->setCoords( coords );
   coords->decrRef();
 
@@ -1597,7 +1597,7 @@ void MEDCouplingBasicsTestInterp::testInterpolationCU2D()
   MEDCouplingCMesh* meshC = MEDCouplingCMesh::New();
   DataArrayDouble* coords = DataArrayDouble::New();
   double arr[4] = { -1/3., 1/3., 2/3., 4/3. };
-  coords->useArray( arr, /*ownership=*/false, CPP_DEALLOC, 4, 1 );
+  coords->useArray( arr, /*ownership=*/false, DeallocType::CPP_DEALLOC, 4, 1 );
   meshC->setCoords( coords, coords );
   coords->decrRef();
 
@@ -1666,7 +1666,7 @@ void MEDCouplingBasicsTestInterp::testInterpolationCU3D()
   MEDCouplingCMesh* meshC = MEDCouplingCMesh::New();
   DataArrayDouble* coords = DataArrayDouble::New();
   double arr[4] = { -1/3., 1/3., 2/3., 4/3. };
-  coords->useArray( arr, /*ownership=*/false, CPP_DEALLOC, 4, 1 );
+  coords->useArray( arr, /*ownership=*/false, DeallocType::CPP_DEALLOC, 4, 1 );
   meshC->setCoords( coords, coords, coords );
   coords->decrRef();
 

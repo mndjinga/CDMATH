@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2016  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2019  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -25,17 +25,19 @@
 
 #include <set>
 #include <map>
+#include <atomic>
 #include <vector>
 #include <string>
 #include <cstddef>
 
 namespace MEDCoupling
 {
-  typedef enum
+  enum class DeallocType
   {
     C_DEALLOC = 2,
-    CPP_DEALLOC = 3
-  } DeallocType;
+    CPP_DEALLOC = 3,
+    C_DEALLOC_WITH_OFFSET = 4
+  };
 
   //! The various spatial discretization of a field
   typedef enum
@@ -62,6 +64,7 @@ namespace MEDCoupling
   MEDCOUPLING_EXPORT int MEDCouplingVersion();
   MEDCOUPLING_EXPORT void MEDCouplingVersionMajMinRel(int& maj, int& minor, int& releas);
   MEDCOUPLING_EXPORT int MEDCouplingSizeOfVoidStar();
+  MEDCOUPLING_EXPORT std::size_t MEDCouplingSizeOfIDs();
   MEDCOUPLING_EXPORT bool MEDCouplingByteOrder();
   MEDCOUPLING_EXPORT const char *MEDCouplingByteOrderStr();
   MEDCOUPLING_EXPORT bool IsCXX11Compiled();
@@ -95,7 +98,7 @@ namespace MEDCoupling
   protected:
     virtual ~RefCountObjectOnly();
   private:
-    mutable int _cnt;
+    mutable std::atomic<int> _cnt;
   };
 
   class RefCountObject : public RefCountObjectOnly, public BigMemoryObject

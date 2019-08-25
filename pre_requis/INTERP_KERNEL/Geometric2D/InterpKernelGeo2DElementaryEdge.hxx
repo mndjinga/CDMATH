@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2016  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2019  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -50,6 +50,7 @@ namespace INTERP_KERNEL
     INTERPKERNEL_EXPORT void applySimilarity(double xBary, double yBary, double dimChar) { _ptr->applySimilarity(xBary,yBary,dimChar); }
     INTERPKERNEL_EXPORT void unApplySimilarity(double xBary, double yBary, double dimChar) { _ptr->unApplySimilarity(xBary,yBary,dimChar); }
     INTERPKERNEL_EXPORT void getAllNodes(std::set<Node *>& output) const;
+    INTERPKERNEL_EXPORT bool hasSameExtremities(const ElementaryEdge& other) const;
     INTERPKERNEL_EXPORT void getBarycenter(double *bary, double& weigh) const;
     INTERPKERNEL_EXPORT ElementaryEdge *clone() const;
     INTERPKERNEL_EXPORT void initLocations() const;
@@ -64,6 +65,7 @@ namespace INTERP_KERNEL
     INTERPKERNEL_EXPORT bool intresicEqual(const ElementaryEdge *other) const;
     INTERPKERNEL_EXPORT bool intresicEqualDirSensitive(const ElementaryEdge *other) const;
     INTERPKERNEL_EXPORT void dumpInXfigFile(std::ostream& stream, int resolution, const Bounds& box) const;
+    INTERPKERNEL_EXPORT void dumpToCout(const std::map<INTERP_KERNEL::Node *,int>& mapp, int index) const;
     INTERPKERNEL_EXPORT bool getDirection() const { return _direction; }
     INTERPKERNEL_EXPORT bool intresincEqCoarse(const Edge *other) const;
     INTERPKERNEL_EXPORT bool isEqual(const ElementaryEdge& other) const;
@@ -71,6 +73,7 @@ namespace INTERP_KERNEL
     INTERPKERNEL_EXPORT void fillGlobalInfoAbs(const std::map<INTERP_KERNEL::Node *,int>& mapThis, const std::map<INTERP_KERNEL::Node *,int>& mapOther, int offset1, int offset2, double fact, double baryX, double baryY,
                                                std::vector<int>& edgesThis, std::vector<double>& addCoo, std::map<INTERP_KERNEL::Node *,int> mapAddCoo) const;
     INTERPKERNEL_EXPORT void fillGlobalInfoAbs2(const std::map<INTERP_KERNEL::Node *,int>& mapThis, const std::map<INTERP_KERNEL::Node *,int>& mapOther, int offset1, int offset2, double fact, double baryX, double baryY,
+                                                short skipStartOrEnd,
                                                 std::vector<int>& edgesOther, std::vector<double>& addCoo, std::map<INTERP_KERNEL::Node *,int>& mapAddCoo) const;
     INTERPKERNEL_EXPORT static ElementaryEdge *BuildEdgeFromStartEndDir(bool direction, INTERP_KERNEL::Node *start, INTERP_KERNEL::Node *end);
   private:

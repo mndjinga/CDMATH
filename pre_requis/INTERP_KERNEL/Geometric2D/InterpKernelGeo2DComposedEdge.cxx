@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2016  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2019  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -310,6 +310,14 @@ void ComposedEdge::dumpInXfigFile(std::ostream& stream, int resolution, const Bo
     (*iter)->dumpInXfigFile(stream,resolution,box);
 }
 
+void ComposedEdge::dumpToCout(const std::map<INTERP_KERNEL::Node *,int>& mapp) const
+{
+  int i=0;
+  for(std::list<ElementaryEdge *>::const_iterator iter=_sub_edges.begin();iter!=_sub_edges.end();iter++, i++)
+    (*iter)->dumpToCout(mapp, i);
+  std::cout << std::endl;
+}
+
 Node *ComposedEdge::getEndNode() const
 {
   return _sub_edges.back()->getEndNode();
@@ -589,9 +597,9 @@ double ComposedEdge::isInOrOutAlg(Node *nodeToTest, const std::set<Node*>& nodes
       if(val)
         {
           Edge *e=val->getPtr();
-          std::auto_ptr<EdgeIntersector> intersc(Edge::BuildIntersectorWith(e1,e));
+          std::unique_ptr<EdgeIntersector> intersc(Edge::BuildIntersectorWith(e1,e));
           bool obviousNoIntersection,areOverlapped;
-          intersc->areOverlappedOrOnlyColinears(0,obviousNoIntersection,areOverlapped);  // first parameter never used
+          intersc->areOverlappedOrOnlyColinears(obviousNoIntersection,areOverlapped);
           if(obviousNoIntersection)
             {
               continue;

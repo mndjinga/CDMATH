@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2016  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2019  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -33,7 +33,7 @@ namespace INTERP_KERNEL
     bool haveTheySameDirection() const;
     bool areColinears() const;
     void getPlacements(Node *start, Node *end, TypeOfLocInEdge& whereStart, TypeOfLocInEdge& whereEnd, MergePoints& commonNode) const;
-    void areOverlappedOrOnlyColinears(const Bounds *whereToFind, bool& obviousNoIntersection, bool& areOverlapped);
+    void areOverlappedOrOnlyColinears(bool& obviousNoIntersection, bool& areOverlapped);
     std::list< IntersectElement > getIntersectionsCharacteristicVal() const;
   private:
     //! return angle in ]-Pi;Pi[ - 'node' must be on curve of '_e1'
@@ -44,7 +44,7 @@ namespace INTERP_KERNEL
     const EdgeArcCircle& getE1() const { return (const EdgeArcCircle&)_e1; }
     const EdgeArcCircle& getE2() const { return (const EdgeArcCircle&)_e2; }
   private:
-    double _dist;
+    double _dist;       // distance between the two arc centers
   };
 
   /**
@@ -57,7 +57,7 @@ namespace INTERP_KERNEL
     //virtual overloading
     bool areColinears() const;
     void getPlacements(Node *start, Node *end, TypeOfLocInEdge& whereStart, TypeOfLocInEdge& whereEnd, MergePoints& commonNode) const;
-    void areOverlappedOrOnlyColinears(const Bounds *whereToFind, bool& obviousNoIntersection, bool& areOverlapped);
+    void areOverlappedOrOnlyColinears(bool& obviousNoIntersection, bool& areOverlapped);
     std::list< IntersectElement > getIntersectionsCharacteristicVal() const;
   private:
     const EdgeArcCircle& getE1() const { return (const EdgeArcCircle&)_e1; }
@@ -68,6 +68,7 @@ namespace INTERP_KERNEL
     double _drSq;         //!< Square of the norm of the seg
     double _cross;        //!< See areOverlappedOrOnlyColinears()
     double _deltaRoot_div_dr;    //!< See areOverlappedOrOnlyColinears()
+    bool _i1S2E,_i1E2E;
   };
 
   class INTERPKERNEL_EXPORT EdgeArcCircle : public Edge
@@ -124,10 +125,7 @@ namespace INTERP_KERNEL
   protected:
     void updateBounds();
     Edge *buildEdgeLyingOnMe(Node *start, Node *end, bool direction=true) const;
-    void fillGlobalInfoAbs(bool direction, const std::map<INTERP_KERNEL::Node *,int>& mapThis, const std::map<INTERP_KERNEL::Node *,int>& mapOther, int offset1, int offset2, double fact, double baryX, double baryY,
-                           std::vector<int>& edgesThis, std::vector<double>& addCoo, std::map<INTERP_KERNEL::Node *,int> mapAddCoo) const;
-    void fillGlobalInfoAbs2(const std::map<INTERP_KERNEL::Node *,int>& mapThis, const std::map<INTERP_KERNEL::Node *,int>& mapOther, int offset1, int offset2, double fact, double baryX, double baryY,
-                            std::vector<int>& edgesOther, std::vector<double>& addCoo, std::map<INTERP_KERNEL::Node *,int>& mapAddCoo) const;
+
   protected:
     //! Absolute angle where the arc starts. Value between -Pi and Pi
     double _angle0;

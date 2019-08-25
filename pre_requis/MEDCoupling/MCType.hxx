@@ -1,4 +1,4 @@
-// Copyright (C) 2017  CEA/DEN, EDF R&D
+// Copyright (C) 2017-2019  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -21,11 +21,20 @@
 #ifndef __MEDCOUPLING_MCTYPE_HXX__
 #define __MEDCOUPLING_MCTYPE_HXX__
 
+#include <cstdint>
+#include <stddef.h>
+#include <cstddef>
+
 namespace MEDCoupling
 {
-  typedef long Int64;
-  typedef int Int32;
-  typedef int mcIdType;
+  using Int64 = std::int64_t;
+  using Int32 = std::int32_t;
+#ifndef MEDCOUPLING_USE_64BIT_IDS
+  using mcIdType = std::int32_t;
+#else
+  using mcIdType = std::int64_t;
+#endif
+  inline mcIdType ToIdType(std::size_t val) { return mcIdType(val); }
 }
 
 #define DataArrayInt DataArrayInt32

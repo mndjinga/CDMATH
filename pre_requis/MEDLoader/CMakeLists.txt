@@ -1,4 +1,4 @@
-# Copyright (C) 2012-2016  CEA/DEN, EDF R&D
+# Copyright (C) 2012-2019  CEA/DEN, EDF R&D
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -39,6 +39,7 @@ IF(WIN32)
   ENDIF(MEDCOUPLING_MEDLOADER_USE_XDR)
 ELSE(WIN32)
   SET(MEDLOADER_XDR_INCLUDE_DIRS ${XDR_INCLUDE_DIRS})
+  SET(MEDLOADER_XDR_LIBRARIES ${XDR_LIBRARIES})
 ENDIF(WIN32)
 
 INCLUDE_DIRECTORIES(
