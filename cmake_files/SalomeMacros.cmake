@@ -1,4 +1,4 @@
-# Copyright (C) 2012-2016  CEA/DEN, EDF R&D, OPEN CASCADE
+# Copyright (C) 2012-2019  CEA/DEN, EDF R&D, OPEN CASCADE
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -93,7 +93,7 @@ ENDMACRO(PARSE_ARGUMENTS)
 #----------------------------------------------------------------------------
 # SALOME_INSTALL_SCRIPTS is a macro useful for installing scripts.
 #
-# USAGE: SALOME_INSTALL_SCRIPTS(file_list path [WORKING_DIRECTORY dir] [DEF_PERMS])
+# USAGE: SALOME_INSTALL_SCRIPTS(file_list path [WORKING_DIRECTORY dir] [DEF_PERMS] [TARGET_NAME name])
 #
 # ARGUMENTS:
 # file_list: IN : list of files to be installed. This list should be quoted.
@@ -101,24 +101,27 @@ ENDMACRO(PARSE_ARGUMENTS)
 # 
 # By default files to be installed as executable scripts.
 # If DEF_PERMS option is provided, than permissions for installed files are
-# only OWNER_WRITE, OWNER_READ, GROUP_READ, and WORLD_READ. 
+# only OWNER_WRITE, OWNER_READ, GROUP_READ, and WORLD_READ.
+# WORKING_DIRECTORY option may be used to specify the relative or absolute
+# path to the directory containing source files listed in file_list argument.
+# If TARGET_NAME option is specified, the name of the target being created
+# with this macro is returned via the given variable.
 #----------------------------------------------------------------------------
 MACRO(SALOME_INSTALL_SCRIPTS file_list path)
-  PARSE_ARGUMENTS(SALOME_INSTALL_SCRIPTS "WORKING_DIRECTORY" "DEF_PERMS" ${ARGN})
+  PARSE_ARGUMENTS(SALOME_INSTALL_SCRIPTS "WORKING_DIRECTORY;TARGET_NAME;EXTRA_DPYS" "DEF_PERMS" ${ARGN})
   SET(PERMS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ)
   IF(NOT SALOME_INSTALL_SCRIPTS_DEF_PERMS)
     SET(PERMS ${PERMS} OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE)
   ENDIF(NOT SALOME_INSTALL_SCRIPTS_DEF_PERMS)
   SET(_all_pyc)
   SET(_all_pyo)
-  SET(_all_subdirs)
   FOREACH(file ${file_list})
     SET(PREFIX "")
     SET(_source_prefix "")
     GET_FILENAME_COMPONENT(file_name ${file} NAME)
     IF(NOT IS_ABSOLUTE ${file})
       IF(SALOME_INSTALL_SCRIPTS_WORKING_DIRECTORY)
-	    SET(PREFIX "${SALOME_INSTALL_SCRIPTS_WORKING_DIRECTORY}/")
+        SET(PREFIX "${SALOME_INSTALL_SCRIPTS_WORKING_DIRECTORY}/")
       ENDIF(SALOME_INSTALL_SCRIPTS_WORKING_DIRECTORY)
       SET(_source_prefix "${CMAKE_CURRENT_SOURCE_DIR}/")
     ENDIF(NOT IS_ABSOLUTE ${file})
@@ -130,28 +133,22 @@ MACRO(SALOME_INSTALL_SCRIPTS file_list path)
       # Generate and install the pyc and pyo
       # [ABN] Important: we avoid references or usage of CMAKE_INSTALL_PREFIX which is not correctly set 
       # when using CPack.       
-      SET(_pyc_file "${CMAKE_CURRENT_BINARY_DIR}/${we_ext}.pyc")
-      SET(_pyo_file "${CMAKE_CURRENT_BINARY_DIR}/${we_ext}.pyo")
+      SET(_pyc_file "${CMAKE_CURRENT_BINARY_DIR}/${we_ext}.cpython-${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR}.pyc")
+      SET(_pyo_file "${CMAKE_CURRENT_BINARY_DIR}/${we_ext}.cpython-${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR}.opt-1.pyc")
       LIST(APPEND _all_pyc ${_pyc_file})
       LIST(APPEND _all_pyo ${_pyo_file})
       ADD_CUSTOM_COMMAND(
-           OUTPUT ${_pyc_file}
-           COMMAND ${PYTHON_EXECUTABLE} -c "import py_compile ; py_compile.compile('${_source_prefix}${file}', '${_pyc_file}', doraise=True )"
-           DEPENDS ${PREFIX}${file}
-           VERBATIM
-       )
-      ADD_CUSTOM_COMMAND(
-           OUTPUT ${_pyo_file}
-           COMMAND ${PYTHON_EXECUTABLE} -O -c "import py_compile ; py_compile.compile('${_source_prefix}${file}', '${_pyo_file}', doraise=True )"
-           DEPENDS ${PREFIX}${file}
-           VERBATIM
-       )
+        OUTPUT ${_pyc_file} ${_pyo_file}
+        COMMAND ${PYTHON_EXECUTABLE} -c "from py_compile import compile; compile('${_source_prefix}${file}', '${_pyc_file}', doraise=True, optimize=0); compile('${_source_prefix}${file}', '${_pyo_file}', doraise=True, optimize=1)"
+        DEPENDS ${PREFIX}${file}
+        VERBATIM
+      )
       # Install the .pyo and the .pyc
-      INSTALL(FILES ${_pyc_file} DESTINATION ${path} PERMISSIONS ${PERMS})
-      INSTALL(FILES ${_pyo_file} DESTINATION ${path} PERMISSIONS ${PERMS})
+      INSTALL(FILES ${_pyc_file} DESTINATION ${path}/__pycache__ PERMISSIONS ${PERMS})
+      INSTALL(FILES ${_pyo_file} DESTINATION ${path}/__pycache__ PERMISSIONS ${PERMS})
     ENDIF(ext STREQUAL .py)
 
-  # get relativa path (from CMAKE_SOURCE_DIR to CMAKE_CURRENT_SOURCE_DIR)
+  # get relative path (from CMAKE_SOURCE_DIR to CMAKE_CURRENT_SOURCE_DIR)
   STRING(REGEX REPLACE ${CMAKE_SOURCE_DIR} "" rel_dir ${CMAKE_CURRENT_SOURCE_DIR})
   # convert "/" to "_"
   IF(rel_dir)
@@ -168,7 +165,14 @@ MACRO(SALOME_INSTALL_SCRIPTS file_list path)
      WHILE(TARGET "PYCOMPILE${unique_name}_${_cnt}")
        MATH(EXPR _cnt ${_cnt}+1)
      ENDWHILE()
-     ADD_CUSTOM_TARGET("PYCOMPILE${unique_name}_${_cnt}" ALL DEPENDS ${_all_pyc} ${_all_pyo})
+     SET(_target_name "PYCOMPILE${unique_name}_${_cnt}")
+     ADD_CUSTOM_TARGET(${_target_name} ALL DEPENDS ${_all_pyc} ${_all_pyo})
+     IF(SALOME_INSTALL_SCRIPTS_TARGET_NAME)
+       SET(${SALOME_INSTALL_SCRIPTS_TARGET_NAME} ${_target_name})
+     ENDIF(SALOME_INSTALL_SCRIPTS_TARGET_NAME)
+     IF(SALOME_INSTALL_SCRIPTS_EXTRA_DPYS)
+       ADD_DEPENDENCIES(${_target_name} ${SALOME_INSTALL_SCRIPTS_EXTRA_DPYS})
+     ENDIF(SALOME_INSTALL_SCRIPTS_EXTRA_DPYS)
   ENDIF()
 ENDMACRO(SALOME_INSTALL_SCRIPTS)
 
@@ -176,12 +180,13 @@ ENDMACRO(SALOME_INSTALL_SCRIPTS)
 # SALOME_CONFIGURE_FILE is a macro useful for copying a file to another location 
 # and modify its contents.
 #
-# USAGE: SALOME_CONFIGURE_FILE(in_file out_file [INSTALL dir])
+# USAGE: SALOME_CONFIGURE_FILE(in_file out_file [INSTALL dir [EXEC_PERMS]])
 #
 # ARGUMENTS:
 # in_file: IN : input file (if relative path is given, full file path is computed from current source dir).
 # out_file: IN : output file (if relative path is given, full file path is computed from current build dir).
 # If INSTALL is specified, then 'out_file' will be installed to the 'dir' directory.
+# In this case, EXEC_PERMS can be used to set execution permission for installed file.
 #----------------------------------------------------------------------------
 MACRO(SALOME_CONFIGURE_FILE IN_FILE OUT_FILE)
   IF(IS_ABSOLUTE ${IN_FILE})
@@ -196,9 +201,13 @@ MACRO(SALOME_CONFIGURE_FILE IN_FILE OUT_FILE)
   ENDIF()
   MESSAGE(STATUS "Creation of ${_out_file}")
   CONFIGURE_FILE(${_in_file} ${_out_file} @ONLY)
-  PARSE_ARGUMENTS(SALOME_CONFIGURE_FILE "INSTALL" "" ${ARGN})
+  PARSE_ARGUMENTS(SALOME_CONFIGURE_FILE "INSTALL" "EXEC_PERMS" ${ARGN})
   IF(SALOME_CONFIGURE_FILE_INSTALL)
-    INSTALL(FILES ${_out_file} DESTINATION ${SALOME_CONFIGURE_FILE_INSTALL})
+    SET(PERMS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ)
+    IF(SALOME_CONFIGURE_FILE_EXEC_PERMS)
+      SET(PERMS ${PERMS} OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE)
+    ENDIF(SALOME_CONFIGURE_FILE_EXEC_PERMS)
+    INSTALL(FILES ${_out_file} DESTINATION ${SALOME_CONFIGURE_FILE_INSTALL} PERMISSIONS ${PERMS})
   ENDIF(SALOME_CONFIGURE_FILE_INSTALL)
 ENDMACRO(SALOME_CONFIGURE_FILE)
 
@@ -438,7 +447,7 @@ ENDMACRO()
 
 
 ####################################################################
-# SALOME_FIND_PACKAGE_DETECT_CONFLICTS(pkg referenceVariable upCount)
+# SALOME_FIND_PACKAGE_AND_DETECT_CONFLICTS(pkg referenceVariable upCount)
 #    pkg              : name of the system package to be detected
 #    referenceVariable: variable containing a path that can be browsed up to 
 # retrieve the package root directory (xxx_ROOT_DIR)
@@ -970,12 +979,65 @@ ENDMACRO(SALOME_CONFIGURE_PREPARE)
 # version 2.7.12+ and the interp is 2.7.12 ...
 #
 MACRO(SALOME_EXTRACT_VERSION version_string major minor patch)
-  IF(${version_string} MATCHES "[0-9]+[^0-9]*\\.[0-9]+[^0-9]*\\.[0-9]+[^0-9]*")
-    STRING(REGEX REPLACE "^([0-9]+)[^0-9]*\\.[0-9]+[^0-9]*\\.[0-9]+[^0-9]*" "\\1" ${major} "${version_string}")
-    STRING(REGEX REPLACE "^[0-9]+[^0-9]*\\.([0-9]+)[^0-9]*\\.[0-9]+[^0-9]*" "\\1" ${minor} "${version_string}")
-    STRING(REGEX REPLACE "^[0-9]+[^0-9]*\\.[0-9]+[^0-9]*\\.([0-9]+)[^0-9]*" "\\1" ${patch} "${version_string}")
+  IF(${version_string} MATCHES "[0-9]+[^0-9.]*\\.[0-9]+[^0-9.]*\\.*[0-9]*[^0-9]*[0-9]*")
+    STRING(REGEX REPLACE "^([0-9]+)[^0-9.]*\\.[0-9]+[^0-9.]*\\.*[0-9]*[^0-9]*[0-9]*$" "\\1" ${major} "${version_string}")
+    STRING(REGEX REPLACE "^[0-9]+[^0-9.]*\\.([0-9]+)[^0-9.]*\\.*[0-9]*[^0-9]*[0-9]*$" "\\1" ${minor} "${version_string}")
+
+    IF(${version_string} MATCHES "[0-9]+[^0-9.]*\\.[0-9]+[^0-9.]*\\.[0-9]+[^0-9]*[0-9]*")
+        # X.Y.Z format (python 3.5.2 ...)
+        STRING(REGEX REPLACE "^[0-9]+[^0-9.]*\\.[0-9]+[^0-9.]*\\.([0-9]+)[^0-9]*[0-9]*$" "\\1" ${patch} "${version_string}")
+    ELSE()
+        # X.Y format (python 3.5 ...)
+        SET(${patch} "0")
+    ENDIF()
   ELSE()
     MESSAGE("MACRO(SALOME_EXTRACT_VERSION ${version_string} ${major} ${minor} ${patch}")
     MESSAGE(FATAL_ERROR "Problem parsing version string, I can't parse it properly.")
   ENDIF()
 ENDMACRO(SALOME_EXTRACT_VERSION)
+
+#######################################################################
+#
+# This macro checks that swig files were generated.
+# It is requared under Windows platform, because sometimes under Windows platform
+# the genetarion of the swig wrappings tooks long time. And seems swig opens 
+# file at the begining of generation process and after that swig 
+# begins the generation of the content. In its turn Microsoft Visual Studio
+# tryes to compile file immediately after creation and as a result compilation breaks.
+MACRO(SWIG_CHECK_GENERATION swig_module)
+  IF(WIN32)
+    SET(SCRIPT 
+"@echo off
+:check
+( (call ) >> @SWIG_GEN_FILE_NAME@ ) 2>null && (
+  echo The file @SWIG_GEN_FILE_NAME@ was created. & goto :eof
+) || (
+  echo The file @SWIG_GEN_FILE_NAME@ is still being created !!! & goto :check
+)
+:eof")
+    SET(W_LIST)
+    LIST(LENGTH swig_generated_sources NB_GEN_FILES)  
+    IF(NOT ${NB_GEN_FILES})
+      LIST(LENGTH swig_generated_file_fullname NB_GEN_FILES)
+      SET(W_LIST ${swig_generated_file_fullname})
+    ELSE()
+      SET(W_LIST ${swig_generated_sources})
+    ENDIF()
+    IF(${NB_GEN_FILES})
+      LIST(GET W_LIST 0 SWIG_GEN_FILE_NAME)
+      STRING(CONFIGURE ${SCRIPT} SCRIPT)
+      GET_FILENAME_COMPONENT(SWIG_GEN_FILE_NAME_DIR ${SWIG_GEN_FILE_NAME} DIRECTORY)
+      GET_FILENAME_COMPONENT(SWIG_GEN_FILE_NAME_WE ${SWIG_GEN_FILE_NAME} NAME_WE)
+      SET(SCRIPT_FILE_NAME ${SWIG_GEN_FILE_NAME_DIR}/${SWIG_GEN_FILE_NAME_WE}.bat)
+      FILE(WRITE ${SCRIPT_FILE_NAME} ${SCRIPT})
+      ADD_CUSTOM_TARGET(${SWIG_MODULE_${swig_module}_REAL_NAME}_ready
+                        DEPENDS ${SWIG_GEN_FILE_NAME}
+                        COMMAND ${SCRIPT_FILE_NAME}
+                        COMMENT "Waiting for swig wrappings !!!")
+      ADD_DEPENDENCIES(${SWIG_MODULE_${swig_module}_REAL_NAME} ${SWIG_MODULE_${swig_module}_REAL_NAME}_ready)
+    ELSE()
+       MESSAGE(FATAL "swig sources for targer ${swig_module} are not found !!!")
+     ENDIF()
+  ENDIF()
+ENDMACRO(SWIG_CHECK_GENERATION)
+
