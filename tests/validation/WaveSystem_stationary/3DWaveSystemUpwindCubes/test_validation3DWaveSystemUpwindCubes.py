@@ -40,6 +40,7 @@ def test_validation3DWaveSystemUpwindCubes(bctype,scaling):
         #error_p_tab[i], error_u_tab[i], mesh_size_tab[i], t_final[i], ndt_final[i], max_vel[i], diag_data_press[i], diag_data_vel[i], time_tab[i] =WaveSystemUpwind.solve(my_mesh, mesh_name+str(my_mesh.getNumberOfCells()), resolution,scaling,meshType,testColor,cfl,bctype)
         error_p_tab[i], error_u_tab[i], mesh_size_tab[i], t_final[i], ndt_final[i], max_vel[i], diag_data_press[i], diag_data_vel[i], time_tab[i] =WaveSystemUpwind.solve_file(mesh_path+filename, mesh_name, resolution,scaling,meshType,testColor,cfl,bctype)
         print "max_vel[i]= ",max_vel[i], " error_p_tab[i]= ", error_p_tab[i]
+        time_tab[i]=log10(time_tab[i])
         assert max_vel[i]>0.8 and max_vel[i]<2
         if error_p_tab[i]>0 :
             error_p_tab[i]=log10(error_p_tab[i])
@@ -97,7 +98,7 @@ def test_validation3DWaveSystemUpwindCubes(bctype,scaling):
     plt.savefig(mesh_name+"_3DWaveSystemUpwind_"+"MaxVelNorm.png")
     
     for i in range(nbMeshes):
-        mesh_size_tab[i] = 0.5*log10(mesh_size_tab[i])
+        mesh_size_tab[i] = 1./3*log10(mesh_size_tab[i])
 
     # Least square linear regression
     # Find the best a,b such that f(x)=ax+b best approximates the convergence curve
@@ -114,7 +115,7 @@ def test_validation3DWaveSystemUpwindCubes(bctype,scaling):
     ap=( a3*b1p-a2*b2p)/det
     bp=(-a2*b1p+a1*b2p)/det
     
-    print "FV upwind on 3D cubee meshes : scheme order for pressure is ", -ap
+    print "FV upwind on 3D cube meshes : scheme order for pressure is ", -ap
 
     b1u=np.dot(error_u_tab,mesh_size_tab)   
     b2u=np.sum(error_u_tab)
@@ -127,7 +128,7 @@ def test_validation3DWaveSystemUpwindCubes(bctype,scaling):
     plt.close()
     plt.plot(mesh_size_tab, error_p_tab, label='|error on stationary pressure|')
     plt.legend()
-    plt.xlabel('number of cells')
+    plt.xlabel('1/3 log( number of cells )')
     plt.ylabel('|error p|')
     plt.title('Convergence of finite volumes \n for the stationary Wave System on 3D cube meshes')
     plt.savefig(mesh_name+"_Pressure_3DWaveSystemUpwind_"+"ConvergenceCurve.png")
@@ -135,7 +136,7 @@ def test_validation3DWaveSystemUpwindCubes(bctype,scaling):
     plt.close()
     plt.plot(mesh_size_tab, error_u_tab, label='log(|error on stationary velocity|)')
     plt.legend()
-    plt.xlabel('number of cells')
+    plt.xlabel('1/3 log( number of cells )')
     plt.ylabel('|error u|')
     plt.title('Convergence of finite volumes \n for the stationary Wave System on 3D cube meshes')
     plt.savefig(mesh_name+"_Velocity_3DWaveSystemUpwind_"+"ConvergenceCurve.png")
@@ -144,7 +145,7 @@ def test_validation3DWaveSystemUpwindCubes(bctype,scaling):
     plt.close()
     plt.plot(mesh_size_tab, time_tab, label='log(cpu time)')
     plt.legend()
-    plt.xlabel('number of cells')
+    plt.xlabel('1/3 log( number of cells )')
     plt.ylabel('cpu time')
     plt.title('Computational time of finite volumes \n for the stationary Wave System on 3D cube meshes')
     plt.savefig(mesh_name+"_3DWaveSystemUpwind_"+"_scaling_"+str(scaling)+"_ComputationalTime.png")

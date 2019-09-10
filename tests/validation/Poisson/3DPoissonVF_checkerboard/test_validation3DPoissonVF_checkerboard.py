@@ -35,7 +35,6 @@ def test_validation3DVF_checkerboard():
         plt.plot(curv_abs, diag_data[i], label= str(mesh_size_tab[i]) + ' cells')
         error_tab[i]=log10(error_tab[i])
         time_tab[i]=log10(time_tab[i])
-        mesh_size_tab[i] = 1./3*log10(mesh_size_tab[i])
         i=i+1
         
     end = time.time()
@@ -46,6 +45,9 @@ def test_validation3DVF_checkerboard():
     plt.ylabel('Value on diagonal line')
     plt.title('Plot over diagonal line for finite volumes \n for Laplace operator on 3D checkerboard meshes')
     plt.savefig(mesh_name+"_3DPoissonVF_PlotOverDiagonalLine.png")
+
+    for i in range(nbMeshes):
+        mesh_size_tab[i] = 1./3*log10(mesh_size_tab[i])
 
     # Least square linear regression
     # Find the best a,b such that f(x)=ax+b best approximates the convergence curve

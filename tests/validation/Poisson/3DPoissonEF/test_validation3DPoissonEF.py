@@ -31,7 +31,6 @@ def test_validation3DEF():
         plt.plot(curv_abs, diag_data[i], label= str(mesh_size_tab[i]) + ' nodes')
         error_tab[i]=log10(error_tab[i])
         time_tab[i]=log10(time_tab[i])
-        mesh_size_tab[i] = 1./3*log10(mesh_size_tab[i])
         i=i+1
         
     end = time.time()
@@ -42,6 +41,9 @@ def test_validation3DEF():
     plt.ylabel('Value on diagonal line')
     plt.title('Plot over diagonal line for finite elements \n for Laplace operator on 3D tetrahedral meshes')
     plt.savefig(mesh_name+"_3DPoissonFE_PlotOverDiagonalLine.png")
+
+    for i in range(nbMeshes):
+        mesh_size_tab[i] = 1./3*log10(mesh_size_tab[i])
 
     # Least square linear regression
     # Find the best a,b such that f(x)=ax+b best approximates the convergence curve
