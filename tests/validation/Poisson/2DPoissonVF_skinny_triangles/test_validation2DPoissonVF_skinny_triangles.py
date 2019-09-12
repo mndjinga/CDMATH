@@ -103,10 +103,5 @@ def test_validation2DVF_skinny_triangles():
     with open('Convergence_Poisson_2DVF_'+mesh_name+'.json', 'w') as outfile:  
         json.dump(convergence_synthesis, outfile)
 
-    import os
-    os.system("jupyter-nbconvert --to notebook --execute Convergence_Poisson_FV5_SQUARE_long_triangles.ipynb")
-    os.system("jupyter-nbconvert --to html Convergence_Poisson_FV5_SQUARE_long_triangles.ipynb")
-    os.system("jupyter-nbconvert --to pdf Convergence_Poisson_FV5_SQUARE_long_triangles.ipynb")
-
 if __name__ == """__main__""":
     test_validation2DVF_skinny_triangles()
