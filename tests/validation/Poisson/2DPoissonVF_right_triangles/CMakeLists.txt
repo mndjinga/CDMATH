@@ -3,11 +3,7 @@ SET(SCRIPT
   ../../scripts/Poisson2DVF/FiniteVolumes2DPoisson_SQUARE.py
     test_validation2DPoissonVF_right_triangles.py
   )
-FILE(GLOB MY_MESHES_AND_PICTURES  "../../../ressources/2DLongTriangles/squareWithLongTriangles_*" )
-
-SET(NOTEBOOK ../../../doc/2DPoissonVF/2DPoissonVF_long_triangles/Convergence_Poisson_FV5_SQUARE_long_triangles.ipynb )
-
-file(COPY ${SCRIPT} ${NOTEBOOK} ${MY_MESHES_AND_PICTURES} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+file(COPY ${SCRIPT} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 if (CDMATH_WITH_PYTHON AND CDMATH_WITH_PETSC AND CDMATH_WITH_POSTPRO)
 
