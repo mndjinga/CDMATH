@@ -4,7 +4,7 @@
 ### input : xcenter, ycenter, Radius, n
 ### output : CircleWithSquares.vtu
 
-import MEDCoupling as mc
+import medcoupling as mc
 import math
 import MEDLoader as ML
 
@@ -30,7 +30,7 @@ def mesh_disk_with_squares(xcenter=0.,ycenter=0., Radius=1.,n=17,mesh_name="disk
     d[3,1] = -dy/2
     d.setInfoOnComponents(["X [m]","Y [m]"])
     
-    print "Uniform array ?", d.magnitude().isUniform(0.5*math.sqrt(dx*dx+dy*dy),1e-10)
+    print( "Uniform array ?", d.magnitude().isUniform(0.5*math.sqrt(dx*dx+dy*dy),1e-10) )
     
     # translation of the first cell
     translationToPerform = []
@@ -40,7 +40,7 @@ def mesh_disk_with_squares(xcenter=0.,ycenter=0., Radius=1.,n=17,mesh_name="disk
                 translationToPerform.append([xmin+(0.5+i)*dx,ymin+(0.5+j)*dy] )
     
     ncells= len(translationToPerform) 
-    print "Meshing a disk with squares ",n," nb of cells=",ncells
+    print( "Meshing a disk with squares ",n," nb of cells=",ncells )
       
     ds = ncells*[None]
     for pos,t in enumerate(translationToPerform):
@@ -53,8 +53,8 @@ def mesh_disk_with_squares(xcenter=0.,ycenter=0., Radius=1.,n=17,mesh_name="disk
     # Build an unstructured mesh representing the final pattern
     mesh = mc.MEDCouplingUMesh(mesh_name,2)
     mesh.setCoords(d2)
-    print "Mesh dimension is", mesh.getMeshDimension()
-    print "Spatial dimension is", mesh.getCoords().getNumberOfComponents()
+    print( "Mesh dimension is", mesh.getMeshDimension() )
+    print( "Spatial dimension is", mesh.getCoords().getNumberOfComponents() )
     mesh.allocateCells(ncells)
     for i in xrange(ncells):
             cell_connec = range(4*i,4*(i+1))
@@ -64,7 +64,7 @@ def mesh_disk_with_squares(xcenter=0.,ycenter=0., Radius=1.,n=17,mesh_name="disk
     # Identifying duplicate nodes
     oldNbOfNodes=mesh.getNumberOfNodes()        
     arr, areNodesMerged, newNbOfNodes=mesh.mergeNodes(1e-10)
-    print "oldNbOfNodes=",oldNbOfNodes,"newNbOfNodes",newNbOfNodes
+    print( "oldNbOfNodes=",oldNbOfNodes,"newNbOfNodes",newNbOfNodes )
     
     # Check that everything is coherent (will throw if not)
     mesh.checkConsistencyLight()

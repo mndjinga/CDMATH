@@ -4,7 +4,7 @@
 ### input : xmin, xmax, nx, ymin, ymax, ny, zmin, zmax, nz
 ### output : cubeWithCuboids.vtu, cubeWithCuboids.med
 
-import MEDCoupling as mc
+import medcoupling as mc
 import MEDLoader as ML
 
 ## Create a 3D grid mesh of a cuboid with lengths x_end-x_start, y_end-y_start and z_end-z_start
@@ -28,7 +28,7 @@ def create3DGrid(xmin, xmax, nx, ymin, ymax, ny, zmin, zmax, nz, mesh_name="Mesh
 
 def mesh_cube_with_cuboids(xmin,xmax,nx,ymin,ymax,ny,zmin, zmax, nz, mesh_name="cubeWithCuboids"):
     
-    print "Meshing a cube with cuboids nx=",nx,"ny=",ny,"nz=",nz
+    print( "Meshing a cube with cuboids nx=",nx,"ny=",ny,"nz=",nz )
     mesh=create3DGrid(xmin, xmax, nx, ymin, ymax, ny, zmin, zmax, nz, mesh_name="Mesh_cube_with_cuboids")
     myMesh = mesh.buildUnstructured()
 

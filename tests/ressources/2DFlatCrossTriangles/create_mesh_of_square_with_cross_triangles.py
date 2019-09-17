@@ -4,7 +4,7 @@
 ### input : xmin, xmax, nx, ymin, ymax, ny
 ### output : squareWithCrossTriangles.vtu, squareWithCrossTriangles.med
 
-import MEDCoupling as mc
+import medcoupling as mc
 import MEDLoader as ML
 
 ## Create a 2D grid mesh of a rectangle with lengths x_end-x_start and y_end-y_start
@@ -24,7 +24,7 @@ def create2DGrid(xmin, xmax, nx, ymin, ymax, ny, mesh_name="Mesh_rectangle_with_
 
 def mesh_square_with_cross_triangles(xmin,xmax,nx,ymin,ymax,ny,mesh_name="squareWithCrossTriangles"):
     
-    print "Meshing a square with cross triangles nx=",nx,"ny=",ny
+    print( "Meshing a square with cross triangles nx=",nx,"ny=",ny )
     mesh=create2DGrid(xmin, xmax, nx, ymin, ymax, ny, mesh_name="Mesh_rectangle_with_cross_triangles")
     myQuadMesh = mesh.buildUnstructured()
     

@@ -1,6 +1,6 @@
 # -*- coding: UTF8 -*-
 
-import MEDCoupling as MC
+import medcoupling as MC
 import MEDLoader as ML
 
 ## Create a 2D uniform grid mesh of a square with length x_end-x_start

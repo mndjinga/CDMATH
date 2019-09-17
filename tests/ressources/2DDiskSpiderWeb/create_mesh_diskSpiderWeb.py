@@ -4,7 +4,7 @@
 ### input : xcenter, ycenter, radius, nr, ntheta
 ### output : diskWithspiderWeb.vtu, diskWithspiderWeb.med
 
-import MEDCoupling as mc
+import medcoupling as mc
 import MEDLoader as ML
 from math import pi
 
@@ -39,8 +39,8 @@ def drawPolarGrid(center_x, center_y, r0, r1, angle0, angle1, n_r, n_theta):
   oldNbOfNodes=m.getNumberOfNodes()
   arr, areNodesMerged, newNbOfNodes=m.mergeNodes(1e-10)
   
-  print "oldNbOfNodes=",oldNbOfNodes,"newNbOfNodes=",newNbOfNodes
-  print "m.getNumberOfCells()=", m.getNumberOfCells()
+  print( "oldNbOfNodes=",oldNbOfNodes,"newNbOfNodes=",newNbOfNodes )
+  print( "m.getNumberOfCells()=", m.getNumberOfCells() )
   
   m.checkConsistencyLight()
   

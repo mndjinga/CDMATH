@@ -4,7 +4,7 @@
 ### input : xcenter, ycenter, Radius, ny
 ### output : HexagonsMesh.vtu
 
-import MEDCoupling as mc
+import medcoupling as mc
 import MEDLoader as ML
 import math
 
@@ -28,7 +28,7 @@ def mesh_disk_with_hexagons(xcenter=0., ycenter=0.,Radius=1.,ny=16,mesh_name="di
     d = d.fromPolarToCart()
     d.setInfoOnComponents(["X [m]","Y [m]"])
     
-    print "Uniform array ?", d.magnitude().isUniform(hradius,1e-12)
+    print( "Uniform array ?", d.magnitude().isUniform(hradius,1e-12) )
     
     # translations of the first cell that are inside the circle
     translationToPerform = []
@@ -38,7 +38,7 @@ def mesh_disk_with_hexagons(xcenter=0., ycenter=0.,Radius=1.,ny=16,mesh_name="di
                 translationToPerform.append([xmin+(1.5*j+1)*hradius,ymin+(2*i+(j%2)+1)*r] )
     
     ncells= len(translationToPerform) 
-    print "Meshing a disk with hexagons nx=",nx,"ny=",ny,"nb of cells=",ncells
+    print( "Meshing a disk with hexagons nx=",nx,"ny=",ny,"nb of cells=",ncells )
       
     ds = ncells*[None]
     for pos,t in enumerate(translationToPerform):
@@ -55,21 +55,21 @@ def mesh_disk_with_hexagons(xcenter=0., ycenter=0.,Radius=1.,ny=16,mesh_name="di
     b = a - 1
     myNewNbOfTuples = oldNbOfTuples - sum(b.getValues())
     o2n, newNbOfTuples = mc.DataArrayInt.ConvertIndexArrayToO2N(oldNbOfTuples,c,cI)
-    print "Have I got the right number of tuples?"
-    print "myNewNbOfTuples = %d, newNbOfTuples = %d" % (myNewNbOfTuples, newNbOfTuples)
+    print( "Have I got the right number of tuples ?" )
+    print( "myNewNbOfTuples = %d, newNbOfTuples = %d" % (myNewNbOfTuples, newNbOfTuples) )
     assert(myNewNbOfTuples == newNbOfTuples)
-    print "Old number of tuple was ", oldNbOfTuples
+    print( "Old number of tuple was ", oldNbOfTuples )
     
     # Extracting the unique set of tuples
     d3 = d2.renumberAndReduce(o2n, newNbOfTuples)
     n2o = o2n.invertArrayO2N2N2O(newNbOfTuples)
     d3_bis = d2[n2o]
-    print "Are d3 and d3_bis equal ? %s" % (str(d3.isEqual(d3_bis, 1e-12)))
+    print( "Are d3 and d3_bis equal ? %s" % (str(d3.isEqual(d3_bis, 1e-12))) )
     # Now build an unstructured mesh representing the final pattern
     mesh = mc.MEDCouplingUMesh(mesh_name,2)
     mesh.setCoords(d3)
-    print "Mesh dimension is", mesh.getMeshDimension()
-    print "Spatial dimension is", mesh.getCoords().getNumberOfComponents()
+    print( "Mesh dimension is", mesh.getMeshDimension() )
+    print( "Spatial dimension is", mesh.getCoords().getNumberOfComponents() )
     mesh.allocateCells(ncells)
     for i in xrange(ncells):
             cell_connec = o2n[6*i:6*(i+1)]

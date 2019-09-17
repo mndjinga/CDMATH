@@ -4,7 +4,7 @@
 ### input : xmin, xmax, nx, ymin, ymax, ny
 ### output : squareWithBrickWall.vtu squareWithBrickWall.med
 
-import MEDCoupling as mc
+import medcoupling as mc
 import math
 import MEDLoader as ML
 
@@ -13,7 +13,7 @@ def createBrickWallMesh( xmin=0., xmax=1., nx=15, ymin=0., ymax=1., ny=15,mesh_n
     dx = (xmax-xmin)/nx
     dy=(ymax-ymin)/ny
     
-    print "Creating BrickWall mesh with nx=",nx,"ny=",ny, "nb cells=",nx*ny
+    print( "Creating BrickWall mesh with nx=",nx,"ny=",ny, "nb cells=",nx*ny )
     
     # Building the initial rectangular cell, centered at 0,0
     d = mc.DataArrayDouble(4,2)
@@ -28,7 +28,7 @@ def createBrickWallMesh( xmin=0., xmax=1., nx=15, ymin=0., ymax=1., ny=15,mesh_n
     
     d.setInfoOnComponents(["X [m]","Y [m]"])
     
-    print "Uniform array ?", d.magnitude().isUniform(0.5*math.sqrt(dx*dx+dy*dy),1e-10)
+    print( "Uniform array ?", d.magnitude().isUniform(0.5*math.sqrt(dx*dx+dy*dy),1e-10) )
     
     # translation of the first cell
     translationToPerform = [[(0.5*(1+j%2)+i)*dx,(0.5+j)*dy] for i in range(nx) for j in range(ny)]
@@ -43,8 +43,8 @@ def createBrickWallMesh( xmin=0., xmax=1., nx=15, ymin=0., ymax=1., ny=15,mesh_n
     # Build an unstructured mesh representing the final pattern
     mesh = mc.MEDCouplingUMesh(mesh_name,2)
     mesh.setCoords(d2)
-    print "Mesh dimension is", mesh.getMeshDimension()
-    print "Spatial dimension is", mesh.getCoords().getNumberOfComponents()
+    print( "Mesh dimension is", mesh.getMeshDimension() )
+    print( "Spatial dimension is", mesh.getCoords().getNumberOfComponents() )
     mesh.allocateCells(nx*ny)
     for i in xrange(nx*ny):
             cell_connec = range(4*i,4*(i+1))
@@ -54,7 +54,7 @@ def createBrickWallMesh( xmin=0., xmax=1., nx=15, ymin=0., ymax=1., ny=15,mesh_n
     # Identifying duplicate nodes
     oldNbOfNodes=mesh.getNumberOfNodes()        
     arr, areNodesMerged, newNbOfNodes=mesh.mergeNodes(1e-10)
-    print "oldNbOfNodes=",oldNbOfNodes,"newNbOfNodes",newNbOfNodes
+    print( "oldNbOfNodes=",oldNbOfNodes,"newNbOfNodes",newNbOfNodes )
     
     # Crée des polygones pour rendre conforme les mailles
     mesh.conformize2D(1e-10)

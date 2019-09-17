@@ -4,7 +4,7 @@
 ### input : xmin, xmax, ymin, ymax, ny
 ### output : squareWithHexagons.vtu, squareWithHexagons.med
 
-import MEDCoupling as mc
+import medcoupling as mc
 import math
 import MEDLoader as ML
 
@@ -14,7 +14,7 @@ def mesh_square_with_hexagons(xmin=0,xmax=1,ymin=0,ymax=1,ny=14,mesh_name="squar
     r = math.sqrt(3.)/2*radius
     nx = int( 2*(xmax-xmin)/(3.*radius) )
     
-    print "Meshing a square with hexagons nx=",nx,"ny=",ny, "ncells=",nx*ny
+    print( "Meshing a square with hexagons nx=",nx,"ny=",ny, "ncells=",nx*ny )
     
     # Building the coordinates of the initial hexagon, centered at 0,0
     d = mc.DataArrayDouble(6,2)
@@ -24,7 +24,7 @@ def mesh_square_with_hexagons(xmin=0,xmax=1,ymin=0,ymax=1,ny=14,mesh_name="squar
     d = d.fromPolarToCart()
     d.setInfoOnComponents(["X [m]","Y [m]"])
     
-    print "Uniform array ?", d.magnitude().isUniform(radius,1e-12)
+    print( "Uniform array ?", d.magnitude().isUniform(radius,1e-12) )
     
     # translations of the first cell
     translationToPerform = [[xmin+(1.5*j+1)*radius,ymin+(2*i+(j%2)+1)*r] for i in range(ny) for j in range(nx)]
@@ -39,8 +39,8 @@ def mesh_square_with_hexagons(xmin=0,xmax=1,ymin=0,ymax=1,ny=14,mesh_name="squar
     # Build an unstructured mesh representing the final pattern
     mesh = mc.MEDCouplingUMesh(mesh_name,2)
     mesh.setCoords(d2)
-    print "Mesh dimension is", mesh.getMeshDimension()
-    print "Spatial dimension is", mesh.getCoords().getNumberOfComponents()
+    print( "Mesh dimension is", mesh.getMeshDimension() )
+    print( "Spatial dimension is", mesh.getCoords().getNumberOfComponents() )
     mesh.allocateCells(nx*ny)
     for i in xrange(nx*ny):
             cell_connec = range(6*i,6*(i+1))
@@ -50,7 +50,7 @@ def mesh_square_with_hexagons(xmin=0,xmax=1,ymin=0,ymax=1,ny=14,mesh_name="squar
     # Identifying duplicate nodes
     oldNbOfNodes=mesh.getNumberOfNodes()        
     arr, areNodesMerged, newNbOfNodes=mesh.mergeNodes(1e-10)
-    print "oldNbOfNodes=",oldNbOfNodes,"newNbOfNodes",newNbOfNodes
+    print( "oldNbOfNodes=",oldNbOfNodes,"newNbOfNodes",newNbOfNodes )
     
     # Crée les éléments 1D pour pouvoir imposer les conditions aux limites
     mesh_1d = mesh.computeSkin()

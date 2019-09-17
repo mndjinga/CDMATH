@@ -1,6 +1,6 @@
 # -*-coding:utf-8 -*
 
-import MEDCoupling as mc
+import medcoupling as mc
 import MEDLoader as ML
 
 ## Create a 2D grid mesh of a rectangle with lengths x_end-x_start and y_end-y_start

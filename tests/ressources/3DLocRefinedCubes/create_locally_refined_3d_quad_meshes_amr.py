@@ -1,6 +1,6 @@
 # -*- coding: UTF8 -*-
 
-import MEDCoupling as MC
+import medcoupling as MC
 import MEDLoader as ML
 
 ## Create a 3D uniform grid mesh of a cube with length x_end-x_start
