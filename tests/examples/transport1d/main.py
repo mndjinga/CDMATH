@@ -23,7 +23,7 @@ def main():
 
     # Initial conditions
     sigma = math.sqrt(0.2)
-    for i in xrange(my_mesh.getNumberOfCells()):
+    for i in range(my_mesh.getNumberOfCells()):
         x = my_mesh.getCell(i).x()
         conc[i] = 0.5 / (sigma * math.sqrt(2 * pi)) * math.exp(-0.5 * math.pow((x / sigma), 2))
         pass
@@ -44,7 +44,7 @@ def main():
     while (it < ntmax and time <= tmax):
         print("-- Iter: " + str(it) + ", Time: " + str(time) + ", dt: " + str(dt))
         conc[0] = conc[0] - u * dt / dx * (conc[0] - conc[my_mesh.getNumberOfCells() - 1])
-        for j in xrange(1, my_mesh.getNumberOfCells()):
+        for j in range(1, my_mesh.getNumberOfCells()):
             conc[j] = conc[j] - u * dt / dx * (conc[j] - conc[j - 1])
             pass
         time += dt

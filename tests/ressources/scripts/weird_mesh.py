@@ -32,11 +32,11 @@ def getWeirdMesh(xmin, xmax, ymin, ymax, lx, ly, str, func=None, extr=-1, unpo=F
     mesh.allocateCells(len(polys))
     off = 0
     for p in polys:
-        mesh.insertNextCell(ml.NORM_POLYGON, len(p), [off + i for i in xrange(len(p))])
+        mesh.insertNextCell(ml.NORM_POLYGON, len(p), [off + i for i in range(len(p))])
         off += len(p)
     mesh.finishInsertingCells()
 
-    pts = [p for i in xrange(len(polys)) for p in polys[i]]
+    pts = [p for i in xange(len(polys)) for p in polys[i]]
     co = ml.DataArrayDouble(pts, len(pts), 2)
     mesh.setCoords(co)
 
@@ -70,8 +70,8 @@ def getWeirdMesh(xmin, xmax, ymin, ymax, lx, ly, str, func=None, extr=-1, unpo=F
     noms_cl = [["left", "right"]]
     if extr > 0: noms_cl.append(["front", "back"])
     noms_cl.append(["down", "up"])
-    for i in xrange(2 + (extr > 0)):  # frontieres en x puis y (puis en z si extr)
-        for j in xrange(2):  # min puis max
+    for i in range(2 + (extr > 0)):  # frontieres en x puis y (puis en z si extr)
+        for j in range(2):  # min puis max
             g = []
             for idx, b in enumerate(bf):
                 if abs(b[i] - [[xmin, xmax], [ymin, ymax], [0., 1.]][i][j]) < 1e-5:

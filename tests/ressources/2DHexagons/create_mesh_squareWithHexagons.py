@@ -42,8 +42,8 @@ def mesh_square_with_hexagons(xmin=0,xmax=1,ymin=0,ymax=1,ny=14,mesh_name="squar
     print( "Mesh dimension is", mesh.getMeshDimension() )
     print( "Spatial dimension is", mesh.getCoords().getNumberOfComponents() )
     mesh.allocateCells(nx*ny)
-    for i in xrange(nx*ny):
-            cell_connec = range(6*i,6*(i+1))
+    for i in range(nx*ny):
+            cell_connec = [6*i,6*i+1,6*i+2,6*i+3,6*i+4,6*i+5]
             mesh.insertNextCell(mc.NORM_POLYGON, cell_connec)
             pass
     

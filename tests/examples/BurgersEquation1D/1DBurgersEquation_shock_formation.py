@@ -58,7 +58,7 @@ def Du_ncsv(u_l, u_i, u_r):
     return Du
 
 def Burgers1D():
-    print "Simulation of 1D Burgers' equation with various explicit schemes"
+    print( "Simulation of 1D Burgers' equation with various explicit schemes" )
 
     ##################### Simulation parameters
     a = 0.0 # space domain :  a <= x <= b
@@ -120,7 +120,7 @@ def Burgers1D():
             upw = max(np.abs(u_godunov))
             dt = cfl * dx / upw
             # Loop on all cells
-            for i in xrange(0,nx):
+            for i in range(0,nx):
                 if (i==0):
                     flux_iminus = 0.5*u_godunov[0]*u_godunov[0]#Flux at the left Neumann boundary
                 if (i==nx-1):
@@ -132,7 +132,7 @@ def Burgers1D():
                 flux_iminus = flux_iplus;
             u_godunov = Unp1
     
-            for i in xrange(0,nx):
+            for i in range(0,nx):
                 if (i==0):
                     Du = Du_ncsv(u_ncsv[0],    u_ncsv[0],    u_ncsv[1])# Neumann boundary condition
                 elif (i==nx-1):
@@ -143,7 +143,7 @@ def Burgers1D():
                 Unp1_ncsv[i] = u_ncsv[i] - dt/dx*u_ncsv[i]*Du
             u_ncsv = Unp1_ncsv
 
-            for i in xrange(0,nx):
+            for i in range(0,nx):
                 if (i==0):
                     flux_iminus = 1./3.*u_csv2[0]*u_csv2[0]*u_csv2[0]#Flux at the left Neumann boundary
                 if (i==nx-1):

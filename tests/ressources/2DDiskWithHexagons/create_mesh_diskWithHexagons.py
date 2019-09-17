@@ -71,8 +71,8 @@ def mesh_disk_with_hexagons(xcenter=0., ycenter=0.,Radius=1.,ny=16,mesh_name="di
     print( "Mesh dimension is", mesh.getMeshDimension() )
     print( "Spatial dimension is", mesh.getCoords().getNumberOfComponents() )
     mesh.allocateCells(ncells)
-    for i in xrange(ncells):
-            cell_connec = o2n[6*i:6*(i+1)]
+    for i in range(ncells):
+            cell_connec = o2n[6*i,6*i+1,6*i+2,6*i+3,6*i+4,6*i+5]
             mesh.insertNextCell(mc.NORM_POLYGON, cell_connec.getValues())
             pass
     

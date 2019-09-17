@@ -163,7 +163,7 @@ class TestsLinearSolverSwig(unittest.TestCase):
 
         LS11 = LinearSolver(A2, B2, 500, 1.E-10, "GMRES", "ILU")
         X11 = LS11.solve()
-        for i in xrange(X11.getNumberOfRows()):
+        for i in range(X11.getNumberOfRows()):
             self.assertTrue(abs(X11[i] - Xana2[i]) < 1.E-10)
             pass
 
@@ -175,7 +175,7 @@ class TestsLinearSolverSwig(unittest.TestCase):
 
         LS11 = LinearSolver(A2, B2, 500, 1.E-10, "CG", "ILU")
         X11 = LS11.solve()
-        for i in xrange(X11.getNumberOfRows()):
+        for i in range(X11.getNumberOfRows()):
             self.assertTrue(abs(X11[i] - Xana2[i]) < 1.E-10)
             pass
 
@@ -187,7 +187,7 @@ class TestsLinearSolverSwig(unittest.TestCase):
 
         LS11 = LinearSolver(A2, B2, 500, 1.E-10, "LGMRES", "ILU")
         X11 = LS11.solve()
-        for i in xrange(X11.getNumberOfRows()):
+        for i in range(X11.getNumberOfRows()):
             self.assertTrue(abs(X11[i] - Xana2[i]) < 1.E-10)
             pass
 
@@ -199,7 +199,7 @@ class TestsLinearSolverSwig(unittest.TestCase):
 
         LS11 = LinearSolver(A2, B2, 500, 1.E-10, "BICG", "ILU")
         X11 = LS11.solve()
-        for i in xrange(X11.getNumberOfRows()):
+        for i in range(X11.getNumberOfRows()):
             self.assertTrue(abs(X11[i] - Xana2[i]) < 1.E-10)
             pass
 
@@ -211,7 +211,7 @@ class TestsLinearSolverSwig(unittest.TestCase):
 
         LS11 = LinearSolver(A2, B2, 500, 1.E-10, "CR", "ILU")
         X11 = LS11.solve()
-        for i in xrange(X11.getNumberOfRows()):
+        for i in range(X11.getNumberOfRows()):
             self.assertTrue(abs(X11[i] - Xana2[i]) < 1.E-10)
             pass
 
@@ -223,7 +223,7 @@ class TestsLinearSolverSwig(unittest.TestCase):
 
         LS11 = LinearSolver(A2, B2, 500, 1.E-10, "CGS", "ILU")
         X11 = LS11.solve()
-        for i in xrange(X11.getNumberOfRows()):
+        for i in range(X11.getNumberOfRows()):
             self.assertTrue(abs(X11[i] - Xana2[i]) < 1.E-10)
             pass
 
@@ -235,7 +235,7 @@ class TestsLinearSolverSwig(unittest.TestCase):
 
         LS11 = LinearSolver(A2, B2, 500, 1.E-10, "BICG", "ILU")
         X11 = LS11.solve()
-        for i in xrange(X11.getNumberOfRows()):
+        for i in range(X11.getNumberOfRows()):
             self.assertTrue(abs(X11[i] - Xana2[i]) < 1.E-10)
             pass
 
@@ -247,7 +247,7 @@ class TestsLinearSolverSwig(unittest.TestCase):
 
         LS11 = LinearSolver(A2, B2, 500, 1.E-10, "GCR", "ILU")
         X11 = LS11.solve()
-        for i in xrange(X11.getNumberOfRows()):
+        for i in range(X11.getNumberOfRows()):
             self.assertTrue(abs(X11[i] - Xana2[i]) < 1.E-10)
             pass
 
@@ -259,7 +259,7 @@ class TestsLinearSolverSwig(unittest.TestCase):
 
         LS11 = LinearSolver(A2, B2, 500, 1.E-10, "LSQR", "ILU")
         X11 = LS11.solve()
-        for i in xrange(X11.getNumberOfRows()):
+        for i in range(X11.getNumberOfRows()):
             self.assertTrue(abs(X11[i] - Xana2[i]) < 1.E-10)
             pass
 

@@ -56,9 +56,9 @@ def mesh_disk_with_squares(xcenter=0.,ycenter=0., Radius=1.,n=17,mesh_name="disk
     print( "Mesh dimension is", mesh.getMeshDimension() )
     print( "Spatial dimension is", mesh.getCoords().getNumberOfComponents() )
     mesh.allocateCells(ncells)
-    for i in xrange(ncells):
-            cell_connec = range(4*i,4*(i+1))
-            mesh.insertNextCell(mc.NORM_POLYGON, cell_connec)
+    for i in range(ncells):
+            cell_connec = [4*i,4*i+1,4*i+2,4*i+3)
+            mesh.insertNextCell(mc.NORM_QUAD4, cell_connec)
             pass
     
     # Identifying duplicate nodes

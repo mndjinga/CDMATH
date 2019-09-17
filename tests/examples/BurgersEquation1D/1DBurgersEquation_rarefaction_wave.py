@@ -44,7 +44,7 @@ def Flux_Godunov(u_l, u_r):
     return flux
 
 def Burgers1D():
-    print "Simulation of 1D Burgers' equation with upwind and godunov explicit schemes"
+    print( "Simulation of 1D Burgers' equation with upwind and godunov explicit schemes" )
     
     ##################### Simulation parameters
     a = -1. # space domain :  a <= x <= b
@@ -104,7 +104,7 @@ def Burgers1D():
             upw = max(np.abs(u_upwind))
             dt = cfl * dx / upw
             # Loop on all cells
-            for i in xrange(0,nx):
+            for i in range(0,nx):
                 if (i==0):
                     flux_iminus = 0.5*u_upwind[0]*u_upwind[0]#Flux at the left Neumann boundary
                 if (i==nx-1):
@@ -116,7 +116,7 @@ def Burgers1D():
                 flux_iminus = flux_iplus;
             u_upwind = Unp1
     
-            for i in xrange(0,nx):
+            for i in range(0,nx):
                 if (i==0):
                     flux_iminus = 0.5*u_godunov[0]*u_godunov[0]#Flux at the left Neumann boundary
                 if (i==nx-1):

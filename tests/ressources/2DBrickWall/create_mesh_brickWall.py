@@ -46,9 +46,9 @@ def createBrickWallMesh( xmin=0., xmax=1., nx=15, ymin=0., ymax=1., ny=15,mesh_n
     print( "Mesh dimension is", mesh.getMeshDimension() )
     print( "Spatial dimension is", mesh.getCoords().getNumberOfComponents() )
     mesh.allocateCells(nx*ny)
-    for i in xrange(nx*ny):
-            cell_connec = range(4*i,4*(i+1))
-            mesh.insertNextCell(mc.NORM_POLYGON, cell_connec)
+    for i in range(nx*ny):
+            cell_connec = [4*i,4*i+1,4*i+2,4*i+3)
+            mesh.insertNextCell(mc.NORM_QUAD4, cell_connec)
             pass
     
     # Identifying duplicate nodes
