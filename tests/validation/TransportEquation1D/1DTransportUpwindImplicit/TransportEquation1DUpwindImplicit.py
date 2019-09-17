@@ -30,7 +30,7 @@ def upwindSchemeMatrix(nx,cfl):
 
 def solve(nx,cfl,a,b, isSmooth):
     start = time.time()
-    print "Transport equation, implicit scheme, nx= ", nx, " cfl= ", cfl
+    print("Transport equation, implicit scheme, nx= ", nx, " cfl= ", cfl)
     ##################### Simulation parameters
     dx = (b - a) / nx #space step
 
@@ -46,11 +46,11 @@ def solve(nx,cfl,a,b, isSmooth):
     
     ########################## Initial data
     if(isSmooth):
-        print "Smooth initial data"
+        print("Smooth initial data")
         u_initial = [ 0.5*(1+sin(2*pi*xi-pi*.5))  for xi in x];# to be used with a=0, b=1
         u = [ 0.5*(1+sin(2*pi*xi-pi*.5))  for xi in x];# to be used with a=0, b=1
     else:
-        print "Stiff initial data"
+        print("Stiff initial data")
         u_initial = [ int(1./3<xi)*int(xi<2./3)  for xi in x];# to be used with a=0, b=1
         u = [ int(1./3<xi)*int(xi<2./3)  for xi in x];# to be used with a=0, b=1
         
@@ -94,7 +94,7 @@ def solve(nx,cfl,a,b, isSmooth):
         LS.setSndMember(Un)
         Un=LS.solve()
         if(not LS.getStatus()):
-            print "Linear system did not converge ", iterGMRES, " GMRES iterations"
+            print("Linear system did not converge ", iterGMRES, " GMRES iterations")
             raise ValueError("Pas de convergence du système linéaire");
         for i in range(nx):
             u[i]=Un[i]

@@ -93,7 +93,7 @@ def test_validation1DTransportEquationCenteredImplicit(cfl,isSmooth):
     au=( a3*b1u-a2*b2u)/det
     bu=(-a2*b1u+a1*b2u)/det
     
-    print "Implicit Centered scheme for Transport Equation on 1D regular grid : scheme order is ", -au
+    print("Implicit Centered scheme for Transport Equation on 1D regular grid : scheme order is ", -au)
     
     # Plot of convergence curve
     plt.close()

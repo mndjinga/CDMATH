@@ -135,7 +135,7 @@ def test_validation2DWaveSystemPStagFlatCrossTriangles(scaling):
     ap=( a3*b1p-a2*b2p)/det
     bp=(-a2*b1p+a1*b2p)/det
     
-    print "FV PStag on 2D flat cross triangle meshes : scheme order for pressure is ", -ap
+    print("FV PStag on 2D flat cross triangle meshes : scheme order for pressure is ", -ap)
 
     b1u=np.dot(error_u_tab,mesh_size_tab)   
     b2u=np.sum(error_u_tab)
@@ -143,9 +143,9 @@ def test_validation2DWaveSystemPStagFlatCrossTriangles(scaling):
     bu=(-a2*b1u+a1*b2u)/det
     
     if(scaling==0):
-        print "FVPStag on 2D flat cross triangle meshes : scheme order for velocity without scaling is ", -au
+        print("FVPStag on 2D flat cross triangle meshes : scheme order for velocity without scaling is ", -au)
     else:
-        print "FVPStag on 2D flat cross triangle meshes : scheme order for velocity with scaling is ", -au
+        print("FVPStag on 2D flat cross triangle meshes : scheme order for velocity with scaling is ", -au)
     
     # Plot of convergence curves
     plt.close()

@@ -130,7 +130,7 @@ def computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt,test_bc,velocity):
                     implMat.addValue(j*nbComp,cellAutre*nbComp,Am)
                     implMat.addValue(j*nbComp,        j*nbComp,Am*(-1.))
                 elif(test_bc!="Neumann" and Fk.getGroupName() != "Neumann"):#Nothing to do for Neumann boundary condition
-                    print Fk.getGroupName()
+                    print( Fk.getGroupName() )
                     raise ValueError("computeFluxes: Unknown boundary condition name");
                 
     return implMat
@@ -207,7 +207,7 @@ def TransportEquationVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolu
             LS.setSndMember(Un+S*dt)
             Un=LS.solve();
             if(not LS.getStatus()):
-                print "Linear system did not converge ", LS.getNumberOfIter(), " GMRES iterations"
+                print( "Linear system did not converge ", LS.getNumberOfIter(), " GMRES iterations" )
                 raise ValueError("Pas de convergence du système linéaire");
             dUn-=Un
 
@@ -228,9 +228,9 @@ def TransportEquationVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolu
         #Sauvegardes
         if(it%output_freq==0 or it>=ntmax or isStationary or time >=tmax):
             print"-- Iter: " + str(it) + ", Time: " + str(time) + ", dt: " + str(dt)
-            print "Variation temporelle relative : ", maxVector[0]
+            print("Variation temporelle relative : ", maxVector[0] )
             if(isImplicit):
-                print "Linear system converged in ", LS.getNumberOfIter(), " GMRES iterations"
+                print("Linear system converged in ", LS.getNumberOfIter(), " GMRES iterations")
 
             delta=0
             for k in range(nbCells):
@@ -241,21 +241,21 @@ def TransportEquationVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolu
             unknown_field.setTime(time,it);
             unknown_field.writeVTK("TransportEquation"+str(dim)+"DUpwind"+meshName,False);
 
-            print "Ecart au stationnaire exact = ",delta
-            print
-    print"-- Iter: " + str(it) + ", Time: " + str(time) + ", dt: " + str(dt)
-    print "Variation temporelle relative : ", maxVector[0]
+            print("Ecart au stationnaire exact = ",delta)
+            print()
+    print( "-- Iter: " + str(it) + ", Time: " + str(time) + ", dt: " + str(dt) =
+    print( "Variation temporelle relative : ", maxVector[0] )
 
     if(it>=ntmax):
-        print "Nombre de pas de temps maximum ntmax= ", ntmax, " atteint"
+        print( "Nombre de pas de temps maximum ntmax= ", ntmax, " atteint" )
         raise ValueError("Maximum number of time steps reached : Stationary state not found !!!!!!!")
     elif(isStationary):
-        print "Régime stationnaire atteint au pas de temps ", it, ", t= ", time
+        print( "Régime stationnaire atteint au pas de temps ", it, ", t= ", time )
         if(not with_source and test_bc=="Periodic"):
-            print "Mass loss: ", (total_masse_initial-unknown_field.integral()).norm(), " precision required= ", precision
+            print( "Mass loss: ", (total_masse_initial-unknown_field.integral()).norm(), " precision required= ", precision )
             assert (total_mass_initial-unknown_field.integral()).norm()<precision
             if():
-        print "------------------------------------------------------------------------------------"
+        print("------------------------------------------------------------------------------------")
 
         unknown_field.setTime(time,0);
         unknown_field.writeVTK("TransportEquation"+str(dim)+"DUpwind"+meshName+"_Stat");
@@ -270,7 +270,7 @@ def TransportEquationVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolu
         
         return delta, nbCells, time, it, unknown_field.getNormEuclidean().max(), diag_data_u
     else:
-        print "Temps maximum Tmax= ", tmax, " atteint"
+        print("Temps maximum Tmax= ", tmax, " atteint" )
         raise ValueError("Maximum time reached : Stationary state not found !!!!!!!")
 
 
@@ -287,18 +287,18 @@ def solve(my_mesh, meshName, resolution, meshType, testColor, cfl, test_bc, with
     else:
         test_initial_data="Spherical shock"
 
-    print test_name
-    print "Numerical method : ", test_method
+    print( test_name )
+    print("Numerical method : ", test_method )
     isImplicit=True
     if( isImplicit>0):
-        print "Time scheme : Implicit"
+        print("Time scheme : Implicit" )
         test_desc["Numerical_method_time_discretization"]="Implicit"
     else:
-        print "Time scheme : Explicit"
+        print("Time scheme : Explicit" )
         test_desc["Numerical_method_time_discretization"]="Explicit"
-    print "Initial data : ", test_initial_data
-    print "Boundary conditions : ",test_bc
-    print "Mesh name : ",meshName , ", ", my_mesh.getNumberOfCells(), " cells"
+    print("Initial data : ", test_initial_data )
+    print("Boundary conditions : ",test_bc )
+    print("Mesh name : ",meshName , ", ", my_mesh.getNumberOfCells(), " cells" )
     
     # Problem data
     tmax = 10000.

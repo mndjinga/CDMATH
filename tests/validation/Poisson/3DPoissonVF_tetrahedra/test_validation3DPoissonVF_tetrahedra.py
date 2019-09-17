@@ -59,7 +59,7 @@ def test_validation3DVF_tetrahedra():
     a=( a3*b1-a2*b2)/det
     b=(-a2*b1+a1*b2)/det
     
-    print "FV on 3D tetrahedral mesh : scheme order is ", -a
+    print( "FV on 3D tetrahedral mesh : scheme order is ", -a)
     assert abs(a+0.81)<0.01
     
     # Plot of convergence curve

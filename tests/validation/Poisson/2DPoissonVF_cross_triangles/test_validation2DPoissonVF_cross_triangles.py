@@ -61,7 +61,7 @@ def test_validation2DVF_cross_triangles():
     a=( a3*b1-a2*b2)/det
     b=(-a2*b1+a1*b2)/det
     
-    print "FV on 2D cross triangles mesh : scheme order is ", -a
+    print( "FV on 2D cross triangles mesh : scheme order is ", -a )
     assert abs(a+0.27)<0.001
     
     # Plot of convergence curve

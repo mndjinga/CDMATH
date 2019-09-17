@@ -15,7 +15,7 @@ p0=rho0*c0*c0#reference pressure
 precision=1e-5
 
 def initial_conditions_disk_vortex(my_mesh):
-    print "Disk vortex initial data"
+    print("Disk vortex initial data")
     dim     = my_mesh.getMeshDimension()
     nbCells = my_mesh.getNumberOfCells()
 
@@ -189,7 +189,7 @@ def computeDivergenceMatrix(my_mesh,nbVoisinsMax,dt,scaling,test_bc):
                     implMat.addValue(j*nbComp,j*nbComp,Am*(-1.)*idMoinsJacCL)
                     
                 elif(test_bc!="Neumann" and Fk.getGroupName() != "Neumann"):#Nothing to do for Neumann boundary condition
-                    print Fk.getGroupName()
+                    print(Fk.getGroupName())
                     raise ValueError("computeFluxes: Unknown boundary condition name");
 
     return implMat
@@ -231,7 +231,7 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,sc
             pressure_field, velocity_field = initial_conditions_disk_vortex(my_mesh)
             stat_pressure, stat_velocity   = initial_conditions_disk_vortex(my_mesh)
         else:
-            print "Mesh name : ", meshName
+            print("Mesh name : ", meshName)
             raise ValueError("Mesh name should contain substring square, cube or disk")
         S = cdmath.Vector(nbCells*(dim+1))#source term is zero
 
@@ -324,7 +324,7 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,sc
                 Un[k*(dim+1)+0] = c0*Vn[k*(dim+1)+0]
             
         if(not LS.getStatus()):
-            print "Linear system did not converge ", iterGMRES, " GMRES iterations"
+            print("Linear system did not converge ", iterGMRES, " GMRES iterations")
             raise ValueError("Pas de convergence du système linéaire");
         dUn-=Un
         
@@ -348,10 +348,10 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,sc
         if(it==1 or it%output_freq==0 or it>=ntmax or isStationary or time >=tmax):
             print"-- Iter: " + str(it) + ", Time: " + str(time) + ", dt: " + str(dt)
             if(with_source):
-                print "Variation temporelle relative : pressure ", maxVector[0]    ,", velocity x", maxVector[1]/rho0 ,", velocity y", maxVector[2]/rho0
+                print("Variation temporelle relative : pressure ", maxVector[0]    ,", velocity x", maxVector[1]/rho0 ,", velocity y", maxVector[2]/rho0)
             else:
-                print "Variation temporelle relative : pressure ", maxVector[0]/p0 ,", velocity x", maxVector[1]/rho0 ,", velocity y", maxVector[2]/rho0
-            print "Linear system converged in ", LS.getNumberOfIter(), " GMRES iterations"
+                print("Variation temporelle relative : pressure ", maxVector[0]/p0 ,", velocity x", maxVector[1]/rho0 ,", velocity y", maxVector[2]/rho0)
+            print("Linear system converged in ", LS.getNumberOfIter(), " GMRES iterations")
 
             delta_press=0
             delta_v=cdmath.Vector(dim)
@@ -378,29 +378,29 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,sc
             velocity_field.writeVTK("WaveSystem"+str(dim)+"DCentered"+meshName+"_velocity",False);
 
             if(with_source):
-                print "Ecart au stationnaire exact : error_p= ",delta_press   ," error_||u||= ",delta_v.maxVector()[0]
+                print("Ecart au stationnaire exact : error_p= ",delta_press   ," error_||u||= ",delta_v.maxVector()[0])
             else:
-                print "Ecart au stationnaire exact : error_p= ",delta_press/p0," error_||u||= ",delta_v.maxVector()[0]
+                print("Ecart au stationnaire exact : error_p= ",delta_press/p0," error_||u||= ",delta_v.maxVector()[0])
             print
     print"-- Iter: " + str(it) + ", Time: " + str(time) + ", dt: " + str(dt)
     if(with_source):
-        print "Variation temporelle relative : pressure ", maxVector[0]    ,", velocity x", maxVector[1]/rho0 ,", velocity y", maxVector[2]/rho0
+        print("Variation temporelle relative : pressure ", maxVector[0]    ,", velocity x", maxVector[1]/rho0 ,", velocity y", maxVector[2]/rho0)
     else:
-        print "Variation temporelle relative : pressure ", maxVector[0]/p0 ,", velocity x", maxVector[1]/rho0 ,", velocity y", maxVector[2]/rho0
+        print("Variation temporelle relative : pressure ", maxVector[0]/p0 ,", velocity x", maxVector[1]/rho0 ,", velocity y", maxVector[2]/rho0)
     print
 
     if(it>=ntmax):
-        print "Nombre de pas de temps maximum ntmax= ", ntmax, " atteint"
+        print("Nombre de pas de temps maximum ntmax= ", ntmax, " atteint")
         raise ValueError("Maximum number of time steps reached : Stationary state not found !!!!!!!")
     elif(isStationary):
-        print "Régime stationnaire atteint au pas de temps ", it, ", t= ", time
+        print("Régime stationnaire atteint au pas de temps ", it, ", t= ", time)
         if(not with_source):
-            print "Mass loss: ", (total_pressure_initial-pressure_field.integral()).norm()/p0, " precision required= ", precision
-            print "Momentum loss: ", (total_velocity_initial-velocity_field.integral()).norm()/velocity_field.normL1().norm(), " precision required= ", precision
+            print("Mass loss: ", (total_pressure_initial-pressure_field.integral()).norm()/p0, " precision required= ", precision)
+            print("Momentum loss: ", (total_velocity_initial-velocity_field.integral()).norm()/velocity_field.normL1().norm(), " precision required= ", precision)
             assert (total_pressure_initial-pressure_field.integral()).norm()/p0<precision
             if(test_bc=="Periodic"):
                 assert (total_velocity_initial-velocity_field.integral()).norm()<2*precision
-        print "------------------------------------------------------------------------------------"
+        print("------------------------------------------------------------------------------------")
 
         pressure_field.setTime(time,0);
         pressure_field.writeVTK("WaveSystem"+str(dim)+"DCentered"+meshName+"_pressure_Stat");
@@ -423,7 +423,7 @@ def WaveSystemVF(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolution,sc
         else:
             return delta_press   , delta_v.maxVector()[0], nbCells, time, it, velocity_field.getNormEuclidean().max(), diag_data_press, diag_data_vel,test_desc["Linear_system_max_actual_condition number"]
     else:
-        print "Temps maximum Tmax= ", tmax, " atteint"
+        print("Temps maximum Tmax= ", tmax, " atteint")
         raise ValueError("Maximum time reached : Stationary state not found !!!!!!!")
 
 
@@ -439,13 +439,13 @@ def solve(my_mesh,meshName,resolution,scaling, meshType, testColor,cfl,test_bc="
         test_initial_data="zero pressure, zero velocity"
     else:
         test_initial_data="Vortex(Constant pressure, divergence free velocity)"
-    print test_name
-    print "Numerical method : ", test_method
-    print "Initial data : ", test_initial_data
-    print "Boundary conditions : ",test_bc
-    print "Mesh name : ",meshName , ", ", my_mesh.getNumberOfCells(), " cells"
+    print(test_name)
+    print("Numerical method : ", test_method)
+    print("Initial data : ", test_initial_data)
+    print("Boundary conditions : ",test_bc)
+    print("Mesh name : ",meshName , ", ", my_mesh.getNumberOfCells(), " cells")
     if( scaling>0):
-        print "Use of scaling strategy for better preconditioning"
+        print("Use of scaling strategy for better preconditioning")
 
     # Problem data
     tmax = 1000.

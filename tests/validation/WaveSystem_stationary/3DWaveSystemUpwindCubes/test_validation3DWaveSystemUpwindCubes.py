@@ -39,7 +39,6 @@ def test_validation3DWaveSystemUpwindCubes(bctype,scaling):
         #my_mesh=cdmath.Mesh(0,1,nx,0,1,nx,0,1,nx)
         #error_p_tab[i], error_u_tab[i], mesh_size_tab[i], t_final[i], ndt_final[i], max_vel[i], diag_data_press[i], diag_data_vel[i], time_tab[i] =WaveSystemUpwind.solve(my_mesh, mesh_name+str(my_mesh.getNumberOfCells()), resolution,scaling,meshType,testColor,cfl,bctype)
         error_p_tab[i], error_u_tab[i], mesh_size_tab[i], t_final[i], ndt_final[i], max_vel[i], diag_data_press[i], diag_data_vel[i], time_tab[i] =WaveSystemUpwind.solve_file(mesh_path+filename, mesh_name, resolution,scaling,meshType,testColor,cfl,bctype)
-        print "max_vel[i]= ",max_vel[i], " error_p_tab[i]= ", error_p_tab[i]
         time_tab[i]=log10(time_tab[i])
         assert max_vel[i]>0.8 and max_vel[i]<2
         if error_p_tab[i]>0 :
@@ -115,14 +114,14 @@ def test_validation3DWaveSystemUpwindCubes(bctype,scaling):
     ap=( a3*b1p-a2*b2p)/det
     bp=(-a2*b1p+a1*b2p)/det
     
-    print "FV upwind on 3D cube meshes : scheme order for pressure is ", -ap
+    print("FV upwind on 3D cube meshes : scheme order for pressure is ", -ap)
 
     b1u=np.dot(error_u_tab,mesh_size_tab)   
     b2u=np.sum(error_u_tab)
     au=( a3*b1u-a2*b2u)/det
     bu=(-a2*b1u+a1*b2u)/det
     
-    print "FV upwind on 3D cube meshes : scheme order for velocity is ", -au
+    print("FV upwind on 3D cube meshes : scheme order for velocity is ", -au)
     
     # Plot of convergence curves
     plt.close()

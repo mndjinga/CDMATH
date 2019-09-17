@@ -279,7 +279,7 @@ def WaveSystemStaggered(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolu
                 Un[k] = c0*Vn[k]
             
         if(not LS.getStatus()):
-            print "Linear system did not converge ", iterGMRES, " GMRES iterations"
+            print("Linear system did not converge ", iterGMRES, " GMRES iterations")
             raise ValueError("Pas de convergence du système linéaire");
         dUn-=Un
         
@@ -300,9 +300,9 @@ def WaveSystemStaggered(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolu
     
         #Sauvegardes
         if(it%output_freq==0 or it>=ntmax or isStationary or time >=tmax):
-            print "-- Iter: " + str(it) + ", Time: " + str(time) + ", dt: " + str(dt)
-            print "Variation temporelle relative : pressure ", max_dp/p0 ,", velocity ", max_dq/rho0
-            print "Linear system converged in ", LS.getNumberOfIter(), " GMRES iterations"
+            print("-- Iter: " + str(it) + ", Time: " + str(time) + ", dt: " + str(dt))
+            print("Variation temporelle relative : pressure ", max_dp/p0 ,", velocity ", max_dq/rho0)
+            print("Linear system converged in ", LS.getNumberOfIter(), " GMRES iterations")
 
             delta_press=0
             delta_v=cdmath.Vector(dim)
@@ -328,23 +328,23 @@ def WaveSystemStaggered(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolu
             velocity_field.setTime(time,it);
             velocity_field.writeVTK("WaveSystem"+str(dim)+"DStaggered"+meshName+"_velocity",False);
 
-            print "Ecart au stationnaire exact : error_p= ",delta_press/p0," error_||u||= ",delta_v.maxVector()[0]
+            print("Ecart au stationnaire exact : error_p= ",delta_press/p0," error_||u||= ",delta_v.maxVector()[0])
             print
     print"-- Iter: " + str(it) + ", Time: " + str(time) + ", dt: " + str(dt)
-    print "Variation temporelle relative : pressure ", max_dp/p0 ,", velocity ", max_dq/rho0 
+    print("Variation temporelle relative : pressure ", max_dp/p0 ,", velocity ", max_dq/rho0 )
     print
 
     if(it>=ntmax):
-        print "Nombre de pas de temps maximum ntmax= ", ntmax, " atteint"
+        print("Nombre de pas de temps maximum ntmax= ", ntmax, " atteint")
         raise ValueError("Maximum number of time steps reached : Stationary state not found !!!!!!!")
     elif(isStationary):
-        print "Régime stationnaire atteint au pas de temps ", it, ", t= ", time
-        print "Mass loss: ", (total_pressure_initial-pressure_field.integral()).norm()/p0, " precision required= ", precision
-        print "Momentum loss: ", (total_velocity_initial-velocity_field.integral()).norm()/velocity_field.normL1().norm(), " precision required= ", precision
+        print("Régime stationnaire atteint au pas de temps ", it, ", t= ", time)
+        print("Mass loss: ", (total_pressure_initial-pressure_field.integral()).norm()/p0, " precision required= ", precision)
+        print("Momentum loss: ", (total_velocity_initial-velocity_field.integral()).norm()/velocity_field.normL1().norm(), " precision required= ", precision)
         assert (total_pressure_initial-pressure_field.integral()).norm()/p0<precision
         if(test_bc=="Periodic"):
             assert (total_velocity_initial-velocity_field.integral()).norm()<2*precision
-        print "------------------------------------------------------------------------------------"
+        print("------------------------------------------------------------------------------------")
 
         pressure_field.setTime(time,0);
         pressure_field.writeVTK("WaveSystem"+str(dim)+"DStaggered"+meshName+"_pressure_Stat");
@@ -364,7 +364,7 @@ def WaveSystemStaggered(ntmax, tmax, cfl, my_mesh, output_freq, meshName, resolu
         
         return delta_press/p0, delta_v.maxVector()[0], nbCells, time, it, velocity_field.getNormEuclidean().max(), diag_data_press, diag_data_vel,test_desc["Linear_system_max_actual_condition number"]
     else:
-        print "Temps maximum Tmax= ", tmax, " atteint"
+        print("Temps maximum Tmax= ", tmax, " atteint")
         raise ValueError("Maximum time reached : Stationary state not found !!!!!!!")
 
 
@@ -378,13 +378,13 @@ def solve(my_mesh,meshName,resolution,scaling, meshType, testColor,cfl):
     test_method="Staggered"
     test_initial_data="Constant pressure, divergence free velocity"
     test_bc="Periodic"
-    print test_name
-    print "Numerical method : ", test_method
-    print "Initial data : ", test_initial_data
-    print "Boundary conditions : ",test_bc
-    print "Mesh name : ",meshName , ", ", my_mesh.getNumberOfCells(), " cells"
+    print(test_name)
+    print("Numerical method : ", test_method)
+    print("Initial data : ", test_initial_data)
+    print("Boundary conditions : ",test_bc)
+    print("Mesh name : ",meshName , ", ", my_mesh.getNumberOfCells(), " cells")
     if( scaling>0):
-        print "Use of scaling strategy for a better preconditioning"
+        print("Use of scaling strategy for a better preconditioning")
 
     # Problem data
     tmax = 1000.

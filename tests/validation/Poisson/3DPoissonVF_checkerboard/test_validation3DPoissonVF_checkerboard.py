@@ -24,8 +24,8 @@ def test_validation3DVF_checkerboard():
     plt.close('all')
     i=0
     
-    print "!!!!!!!!!!!!!!!! Warning !!!!!!!!!!!!!!!!!!!"
-    print "Mesh was badly generated (look for instance  at boundary groups)"
+    print( "!!!!!!!!!!!!!!!! Warning !!!!!!!!!!!!!!!!!!!")
+    print( "Mesh was badly generated (look for instance  at boundary groups)")
     
     # Storing of numerical errors, mesh sizes and diagonal values
     for filename in meshList:

@@ -94,7 +94,7 @@ def test_validation1DTransportEquationUpwindExplicit(cfl,isSmooth):
     a=( a3*b1u-a2*b2u)/det
     b=(-a2*b1u+a1*b2u)/det
     
-    print "Explicit Upwind scheme for Transport Equation on 1D regular grid : scheme order is ", -a
+    print("Explicit Upwind scheme for Transport Equation on 1D regular grid : scheme order is ", -a)
     
     assert -a>0.48 and -a<1.02
     

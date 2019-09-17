@@ -169,9 +169,9 @@ def solve(filename,resolution,meshType, testColor):
     LS.setComputeConditionNumber()
     SolSyst=LS.solve()
 
-    print "Preconditioner used : ", LS.getNameOfPc()
-    print "Number of iterations used : ", LS.getNumberOfIter()
-    print "Final residual : ", LS.getResidu()
+    print( "Preconditioner used : ", LS.getNameOfPc() )
+    print( "Number of iterations used : ", LS.getNumberOfIter() )
+    print( "Final residual : ", LS.getResidu() )
     print("Linear system solved")
     
     test_desc["Linear_solver_algorithm"]=LS.getNameOfMethod()
@@ -215,7 +215,7 @@ def solve(filename,resolution,meshType, testColor):
     
     print("Absolute error = max(| exact solution - numerical solution |) = ",erreur_abs )
     print("Relative error = max(| exact solution - numerical solution |)/max(| exact solution |) = ",erreur_abs/max_abs_sol_exacte)
-    print ("Maximum numerical solution = ", max_sol_num, " Minimum numerical solution = ", min_sol_num)
+    print("Maximum numerical solution = ", max_sol_num, " Minimum numerical solution = ", min_sol_num)
 
     test_desc["Computational_time_taken_by_run"]=end-start
     test_desc["Absolute_error"]=erreur_abs

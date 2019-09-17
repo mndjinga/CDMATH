@@ -150,8 +150,8 @@ def solve(filename,resolution,meshType, testColor):
     LS.setComputeConditionNumber()
     SolSyst=LS.solve()
     
-    print "Preconditioner used : ", LS.getNameOfPc()
-    print "Number of iterations used : ", LS.getNumberOfIter()
+    print( "Preconditioner used : ", LS.getNameOfPc() )
+    print( "Number of iterations used : ", LS.getNumberOfIter() )
     print("Linear system solved")
     
     test_desc["Linear_solver_algorithm"]=LS.getNameOfMethod()
@@ -189,7 +189,7 @@ def solve(filename,resolution,meshType, testColor):
             erreur_abs = abs(my_RHSfield[i]/(2*pi*pi) - my_ResultField[i])
     
     print("Relative error = max(| exact solution - numerical solution |)/max(| exact solution |) = ",erreur_abs/max_abs_sol_exacte)
-    print ("Maximum numerical solution = ", max_sol_num, " Minimum numerical solution = ", min_sol_num)
+    print("Maximum numerical solution = ", max_sol_num, " Minimum numerical solution = ", min_sol_num)
     
     #Postprocessing : 
     #================

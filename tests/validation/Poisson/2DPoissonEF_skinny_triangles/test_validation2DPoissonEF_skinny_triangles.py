@@ -75,7 +75,7 @@ def test_validation2DEF_skinny_triangles():
     a=( a3*b1-a2*b2)/det
     b=(-a2*b1+a1*b2)/det
     
-    print "FE on 2D skinny triangle mesh : scheme order is ", -a
+    print( "FE on 2D skinny triangle mesh : scheme order is ", -a )
     assert abs(a+1.397)<0.1
 
     # Plot of convergence curves

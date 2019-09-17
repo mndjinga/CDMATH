@@ -30,7 +30,7 @@ def centeredSchemeMatrix(nx,cfl):
 
 def solve(nx,cfl,a,b, isSmooth):
     start = time.time()
-    print "Transport equation, implicit scheme, nx= ", nx, " cfl= ", cfl
+    print("Transport equation, implicit scheme, nx= ", nx, " cfl= ", cfl)
     ##################### Simulation parameters
     dx = (b - a) / nx #space step
 
@@ -46,11 +46,11 @@ def solve(nx,cfl,a,b, isSmooth):
     
     ########################## Initial data
     if(isSmooth):
-        print "Smooth initial data"
+        print("Smooth initial data")
         u_initial = [ 0.5*(1+sin(2*pi*xi-pi*.5))  for xi in x];# to be used with a=0, b=1
         u = [ 0.5*(1+sin(2*pi*xi-pi*.5))  for xi in x];# to be used with a=0, b=1
     else:
-        print "Stiff initial data"
+        print("Stiff initial data")
         u_initial = [ int(1./3<xi)*int(xi<2./3)  for xi in x];# to be used with a=0, b=1
         u = [ int(1./3<xi)*int(xi<2./3)  for xi in x];# to be used with a=0, b=1
         
@@ -94,17 +94,17 @@ def solve(nx,cfl,a,b, isSmooth):
         LS.setSndMember(Un)
         Un=LS.solve()
         if(not LS.getStatus()):
-            print "Linear system did not converge ", iterGMRES, " GMRES iterations"
+            print("Linear system did not converge ", iterGMRES, " GMRES iterations")
             raise ValueError("Pas de convergence du système linéaire");
         for i in range(nx):
             u[i]=Un[i]
 
         if ( max(u) > max_initial ):
-            print "-- Iter: " + str(it) + " max principle violated : max(t) > max(0) : max(t)= ",max(u), " max(0)= ", max_initial
+            print("-- Iter: " + str(it) + " max principle violated : max(t) > max(0) : max(t)= ",max(u), " max(0)= ", max_initial)
         if ( min(u) < min_initial ):
-            print "-- Iter: " + str(it) + " min principle violated : min(t) < min(0) : min(t)= ",min(u), " min(0)= ", min_initial
+            print("-- Iter: " + str(it) + " min principle violated : min(t) < min(0) : min(t)= ",min(u), " min(0)= ", min_initial)
         if ( np.sum([abs(u[i] - u[(i-1)%nx]) for i in range(nx)]) > total_var_initial ):
-            print "-- Iter: " + str(it) + " total variation increased : var(t) > var(0) : var(t)= ", np.sum([abs(u[i] - u[(i-1)%nx]) for i in range(nx)]), " var(0)= ", total_var_initial
+            print("-- Iter: " + str(it) + " total variation increased : var(t) > var(0) : var(t)= ", np.sum([abs(u[i] - u[(i-1)%nx]) for i in range(nx)]), " var(0)= ", total_var_initial)
 
         Time += dt
         it += 1
@@ -119,10 +119,10 @@ def solve(nx,cfl,a,b, isSmooth):
             pass
         pass
 
-    print "Exact solution minimum   : ", min(u_initial), "Numerical solution minimum   : ",  min(u)
-    print "Exact solution maximum   : ", max(u_initial), "Numerical solution maximum   : ",  max(u)
-    print "Exact solution variation : ", np.sum([abs(u_initial[i] - u_initial[(i-1)%nx]) for i in range(nx)]), "Numerical solution variation : ",  np.sum([abs(u[i] - u[(i-1)%nx]) for i in range(nx)])
-    print "l1 numerical error       : ", dx*np.sum([abs(u[i] - u_initial[i]) for i in range(nx)])        
+    print("Exact solution minimum   : ", min(u_initial), "Numerical solution minimum   : ",  min(u))
+    print("Exact solution maximum   : ", max(u_initial), "Numerical solution maximum   : ",  max(u))
+    print("Exact solution variation : ", np.sum([abs(u_initial[i] - u_initial[(i-1)%nx]) for i in range(nx)]), "Numerical solution variation : ",  np.sum([abs(u[i] - u[(i-1)%nx]) for i in range(nx)]))
+    print("l1 numerical error       : ", dx*np.sum([abs(u[i] - u_initial[i]) for i in range(nx)]) )
 
     print("Simulation of transport equation with an implicit centered scheme done.")
     
