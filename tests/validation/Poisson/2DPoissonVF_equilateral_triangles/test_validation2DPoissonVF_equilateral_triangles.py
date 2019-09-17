@@ -11,7 +11,7 @@ def test_validation2DVF_equilateral_triangles():
     start = time.time()
     ### 2D FV equilateral triangles mesh
     #meshList=[5,20,50,100,200]
-    meshList=['squareWithequilateralTriangles5','squareWithequilateralTriangles20','squareWithequilateralTriangles50','squareWithequilateralTriangles100','squareWithequilateralTriangles200']
+    meshList=['squareWithEquilateralTriangles5','squareWithEquilateralTriangles20','squareWithEquilateralTriangles50','squareWithEquilateralTriangles100','squareWithEquilateralTriangles200']
     mesh_path='../../../ressources/2DEquilateralTriangles/'
     meshType="Regular_equilateral_triangles"
     testColor="Green"
@@ -62,7 +62,7 @@ def test_validation2DVF_equilateral_triangles():
     b=(-a2*b1+a1*b2)/det
     
     print( "FV on 2D equilateral triangles mesh : scheme order is ", -a)
-    assert abs(a+0.04)<0.01
+    assert abs(a+1.98)<0.01
     
     # Plot of convergence curve
     plt.close()
