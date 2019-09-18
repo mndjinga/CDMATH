@@ -517,6 +517,7 @@ LinearSolver::solve( void )
 		MatNullSpace nullsp;
 		MatNullSpaceCreate(PETSC_COMM_WORLD, PETSC_TRUE, 0, PETSC_NULL, &nullsp);
 		MatSetNullSpace(_mat, nullsp);
+		MatSetTransposeNullSpace(_mat, nullsp);
 		MatNullSpaceDestroy(&nullsp);
 	}
 
