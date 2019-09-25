@@ -11773,7 +11773,7 @@ div#notebook {
 
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[6]:</div>
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">display</span><span class="p">,</span> <span class="n">Markdown</span>
@@ -11802,7 +11802,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[7]:</div>
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="n">display</span><span class="p">(</span><span class="n">Markdown</span><span class="p">(</span><span class="n">PoissonProblemOnSquare</span><span class="p">))</span>
@@ -11855,7 +11855,7 @@ where $D$ is the diffusion matrix.</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[8]:</div>
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="n">display</span><span class="p">(</span><span class="n">Markdown</span><span class="p">(</span><span class="n">BibliographyFV5</span><span class="p">))</span>
@@ -11876,28 +11876,32 @@ where $D$ is the diffusion matrix.</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h2 id="Some-bibliographical-remarks">Some bibliographical remarks<a class="anchor-link" href="#Some-bibliographical-remarks">&#194;&#182;</a></h2><ul>
-<li>Order 1 convergence on triangular meshes<br>
-<em>R. Herbin, An error estimate for a four point finite volume scheme for the convection-diffusion equation on a triangular mesh, Num. Meth. P.D.E., 165-173, 1995.</em></li>
+<h2 id="Some-bibliographical-remarks-about-the-two-points-finite-volume-scheme">Some bibliographical remarks about the two points finite volume scheme<a class="anchor-link" href="#Some-bibliographical-remarks-about-the-two-points-finite-volume-scheme">&#194;&#182;</a></h2><ul>
+<li><p>Order 2 convergence on orthogonal meshes : neighbouring cells  $C_i$ and $C_j$ must be separated by a face (or edge in 2D) $f_{ij}$ that is perpendicular to the straight line connecting the center of masses $x_i$ of $C_i$ and $x_j$ of $C_j$<br>
+*R. Eymard, T. Gallouët, R. Herbin, Finite Volume Methods, Handbook for Numerical Analysis, Ph. Ciarlet, J.L. Lions eds, North Holland, 2000, 715-1022.</p>
+</li>
+<li><p>Order 1 convergence on not too deformed triangular meshes : the triangles edges must be in $O(h)$ and the triangle areas must be in $O(h^2)$ (angles must not shrink to $0{}^\circ$ nor $180{}^\circ$)<br>
+<em>R. Herbin, An error estimate for a four point finite volume scheme for the convection-diffusion equation on a triangular mesh, Num. Meth. P.D.E., 165-173, 1995.</em></p>
+</li>
 </ul>
 <ul>
-<li>On triangular meshes, the FV5 scheme order is 2 provided <ul>
-<li>the center of the circumscribed circle is used instead of the center of mass in each cell</li>
+<li>Order 2 convergence on triangular meshes, provided <ul>
+<li>the center of the circumscribed circle is used instead of the center of mass in each cell for the evaluation of the source term and analytical solution</li>
 <li>the Delaunay conditions are satisfied (no neighboring cell is included in the circumscribed circle of an arbitrary cell)</li>
 </ul>
 </li>
 </ul>
 <ul>
-<li>Non convergence on highly deformed meshes<br>
+<li>Non convergence on flat degenerating triangular meshes<br>
 <em>K. Domelevo, P. Omnes, A finite volume method for the Laplace equation on almost arbitrary 2D grids, Mathematical Modelling and Numerical Analysis, 2005</em></li>
 </ul>
 <ul>
-<li>The scheme is order 1 if the mesh is conforming except on a line<br>
+<li>Order 1 if the mesh is conforming except on a line<br>
 <em>J. Droniou, C. Le Potier, Construction and Convergence Study of Schemes Preserving the Elliptic Local Maximum Principle, SIAM Journal on Numerical Analysis, 2011</em></li>
 </ul>
 <ul>
-<li>The scheme is order 2 if Delaunay type conditions, $f\in H^1$ and meshes are generated from an initial mesh either by subdivisions,symmetry or translation<br>
-<em>J. Droniou, Improved L^2 estimate for gradient schemes and super-convergence of the TPFA finite volume scheme, 2018</em></li>
+<li>Order 2 on triangular meshes provided 1) Delaunay type conditions are satisfied and 2) $f\in H^1$ and meshes are generated from an initial mesh either by subdivisions,symmetry or translation<br>
+<em>J. Droniou, Improved L^2 estimate for gradient schemes and super-convergence of the TPFA finite volume scheme, IMA Journal of Numerical Analysis, 2018</em></li>
 </ul>
 <ul>
 <li>It is possible to converge with order 1 on the gradient, but only order 1 on the function ie there is no equivalent of the Aubin-Nitsche lemma in the finite volume context<br>
@@ -11914,7 +11918,7 @@ where $D$ is the diffusion matrix.</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[9]:</div>
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="n">display</span><span class="p">(</span><span class="n">Markdown</span><span class="p">(</span><span class="n">DescriptionFV5PoissonProblem</span><span class="p">))</span>
@@ -11958,91 +11962,6 @@ $$
 F_{boundary}=\frac{u(x_f)-u_i}{d_{if}},
 $$
 for a boundary face with center $x_f$, inner cell $i$ and distance between face and cell centers $d_{if}$</p>
-
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[10]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="n">display</span><span class="p">(</span><span class="n">Markdown</span><span class="p">(</span><span class="n">CodeFV5PoissonProblem</span><span class="p">))</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-
-<div class="output_markdown rendered_html output_subarea ">
-<h2 id="The-script">The script<a class="anchor-link" href="#The-script">&#194;&#182;</a></h2><div class="highlight"><pre><span></span><span class="c1">#Discrétisation du second membre et extraction du nb max de voisins d&#39;une cellule</span>
-<span class="c1">#================================================================================</span>
-<span class="n">my_RHSfield</span> <span class="o">=</span> <span class="n">cdmath</span><span class="o">.</span><span class="n">Field</span><span class="p">(</span><span class="s2">&quot;RHS_field&quot;</span><span class="p">,</span> <span class="n">cdmath</span><span class="o">.</span><span class="n">CELLS</span><span class="p">,</span> <span class="n">my_mesh</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-<span class="n">maxNbNeighbours</span><span class="o">=</span><span class="mi">0</span><span class="c1">#This is to determine the number of non zero coefficients in the sparse finite element rigidity matrix</span>
-
-<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nbCells</span><span class="p">):</span> 
-    <span class="n">Ci</span> <span class="o">=</span> <span class="n">my_mesh</span><span class="o">.</span><span class="n">getCell</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
-    <span class="n">x</span> <span class="o">=</span> <span class="n">Ci</span><span class="o">.</span><span class="n">x</span><span class="p">()</span>
-    <span class="n">y</span> <span class="o">=</span> <span class="n">Ci</span><span class="o">.</span><span class="n">y</span><span class="p">()</span>
-
-    <span class="n">my_RHSfield</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="mi">2</span><span class="o">*</span><span class="n">pi</span><span class="o">*</span><span class="n">pi</span><span class="o">*</span><span class="n">sin</span><span class="p">(</span><span class="n">pi</span><span class="o">*</span><span class="n">x</span><span class="p">)</span><span class="o">*</span><span class="n">sin</span><span class="p">(</span><span class="n">pi</span><span class="o">*</span><span class="n">y</span><span class="p">)</span><span class="c1">#mettre la fonction definie au second membre de l edp</span>
-    <span class="c1"># compute maximum number of neighbours</span>
-    <span class="n">maxNbNeighbours</span><span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">Ci</span><span class="o">.</span><span class="n">getNumberOfFaces</span><span class="p">(),</span><span class="n">maxNbNeighbours</span><span class="p">)</span>
-
-<span class="c1"># Construction de la matrice et du vecteur second membre du système linéaire</span>
-<span class="c1">#===========================================================================</span>
-<span class="n">Rigidite</span><span class="o">=</span><span class="n">cdmath</span><span class="o">.</span><span class="n">SparseMatrixPetsc</span><span class="p">(</span><span class="n">nbCells</span><span class="p">,</span><span class="n">nbCells</span><span class="p">,</span><span class="n">maxNbNeighbours</span><span class="p">)</span><span class="c1"># warning : third argument is max number of non zero coefficients per line of the matrix</span>
-<span class="n">RHS</span><span class="o">=</span><span class="n">cdmath</span><span class="o">.</span><span class="n">Vector</span><span class="p">(</span><span class="n">nbCells</span><span class="p">)</span>
-<span class="c1">#Parcours des cellules du domaine</span>
-<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nbCells</span><span class="p">):</span>
-    <span class="n">RHS</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="n">my_RHSfield</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="c1">#la valeur moyenne du second membre f dans la cellule i</span>
-    <span class="n">Ci</span><span class="o">=</span><span class="n">my_mesh</span><span class="o">.</span><span class="n">getCell</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">Ci</span><span class="o">.</span><span class="n">getNumberOfFaces</span><span class="p">()):</span><span class="c1"># parcours des faces voisinnes</span>
-        <span class="n">Fj</span><span class="o">=</span><span class="n">my_mesh</span><span class="o">.</span><span class="n">getFace</span><span class="p">(</span><span class="n">Ci</span><span class="o">.</span><span class="n">getFaceId</span><span class="p">(</span><span class="n">j</span><span class="p">))</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">Fj</span><span class="o">.</span><span class="n">isBorder</span><span class="p">():</span>
-            <span class="n">k</span><span class="o">=</span><span class="n">Fj</span><span class="o">.</span><span class="n">getCellId</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">k</span><span class="o">==</span><span class="n">i</span> <span class="p">:</span>
-                <span class="n">k</span><span class="o">=</span><span class="n">Fj</span><span class="o">.</span><span class="n">getCellId</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-            <span class="n">Ck</span><span class="o">=</span><span class="n">my_mesh</span><span class="o">.</span><span class="n">getCell</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
-            <span class="n">distance</span><span class="o">=</span><span class="n">Ci</span><span class="o">.</span><span class="n">getBarryCenter</span><span class="p">()</span><span class="o">.</span><span class="n">distance</span><span class="p">(</span><span class="n">Ck</span><span class="o">.</span><span class="n">getBarryCenter</span><span class="p">())</span>
-            <span class="n">coeff</span><span class="o">=</span><span class="n">Fj</span><span class="o">.</span><span class="n">getMeasure</span><span class="p">()</span><span class="o">/</span><span class="n">Ci</span><span class="o">.</span><span class="n">getMeasure</span><span class="p">()</span><span class="o">/</span><span class="n">distance</span>
-            <span class="n">Rigidite</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">k</span><span class="p">,</span><span class="o">-</span><span class="n">coeff</span><span class="p">)</span> <span class="c1"># terme extradiagonal</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">coeff</span><span class="o">=</span><span class="n">Fj</span><span class="o">.</span><span class="n">getMeasure</span><span class="p">()</span><span class="o">/</span><span class="n">Ci</span><span class="o">.</span><span class="n">getMeasure</span><span class="p">()</span><span class="o">/</span><span class="n">Ci</span><span class="o">.</span><span class="n">getBarryCenter</span><span class="p">()</span><span class="o">.</span><span class="n">distance</span><span class="p">(</span><span class="n">Fj</span><span class="o">.</span><span class="n">getBarryCenter</span><span class="p">())</span>
-            <span class="c1">#For the particular case where the mesh boundary does not coincide with the domain boundary</span>
-            <span class="n">x</span><span class="o">=</span><span class="n">Fj</span><span class="o">.</span><span class="n">getBarryCenter</span><span class="p">()</span><span class="o">.</span><span class="n">x</span><span class="p">()</span>
-            <span class="n">y</span><span class="o">=</span><span class="n">Fj</span><span class="o">.</span><span class="n">getBarryCenter</span><span class="p">()</span><span class="o">.</span><span class="n">y</span><span class="p">()</span>
-            <span class="n">RHS</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">+=</span><span class="n">coeff</span><span class="o">*</span><span class="n">sin</span><span class="p">(</span><span class="n">pi</span><span class="o">*</span><span class="n">x</span><span class="p">)</span><span class="o">*</span><span class="n">sin</span><span class="p">(</span><span class="n">pi</span><span class="o">*</span><span class="n">y</span><span class="p">)</span><span class="c1">#mettre ici la condition limite du problème de Dirichlet</span>
-        <span class="n">Rigidite</span><span class="o">.</span><span class="n">addValue</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">i</span><span class="p">,</span><span class="n">coeff</span><span class="p">)</span> <span class="c1"># terme diagonal</span>
-
-
-<span class="c1"># Résolution du système linéaire</span>
-<span class="c1">#=================================</span>
-<span class="n">LS</span><span class="o">=</span><span class="n">cdmath</span><span class="o">.</span><span class="n">LinearSolver</span><span class="p">(</span><span class="n">Rigidite</span><span class="p">,</span><span class="n">RHS</span><span class="p">,</span><span class="mi">500</span><span class="p">,</span><span class="mf">1.E-6</span><span class="p">,</span><span class="s2">&quot;GMRES&quot;</span><span class="p">,</span><span class="s2">&quot;ILU&quot;</span><span class="p">)</span>
-<span class="n">SolSyst</span><span class="o">=</span><span class="n">LS</span><span class="o">.</span><span class="n">solve</span><span class="p">()</span>
-
-<span class="c1"># Automatic postprocessing :  save 2D picture and plot diagonal data</span>
-<span class="c1">#===========================</span>
-<span class="n">PV_routines</span><span class="o">.</span><span class="n">Save_PV_data_to_picture_file</span><span class="p">(</span><span class="s2">&quot;my_ResultField_0.vtu&#39;,&quot;</span><span class="n">ResultField</span><span class="s2">&quot;,&#39;CELLS&#39;,&quot;</span><span class="n">my_ResultField</span><span class="s2">&quot;)</span>
-<span class="n">diag_data</span><span class="o">=</span><span class="n">VTK_routines</span><span class="o">.</span><span class="n">Extract_field_data_over_line_to_numpyArray</span><span class="p">(</span><span class="n">my_ResultField</span><span class="p">,[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">resolution</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">curv_abs</span><span class="p">,</span> <span class="n">diag_data</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">nbCells</span><span class="p">)</span><span class="o">+</span> <span class="s1">&#39; cells mesh&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s2">&quot;FV5_on_square_PlotOverDiagonalLine.png&quot;</span><span class="p">)</span>
-</pre></div>
 
 </div>
 
@@ -12743,6 +12662,91 @@ for a boundary face with center $x_f$, inner cell $i$ and distance between face 
 
 </div>
 </div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span></span><span class="n">display</span><span class="p">(</span><span class="n">Markdown</span><span class="p">(</span><span class="n">CodeFV5PoissonProblem</span><span class="p">))</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h2 id="The-script">The script<a class="anchor-link" href="#The-script">&#194;&#182;</a></h2><div class="highlight"><pre><span></span><span class="c1">#Discrétisation du second membre et extraction du nb max de voisins d&#39;une cellule</span>
+<span class="c1">#================================================================================</span>
+<span class="n">my_RHSfield</span> <span class="o">=</span> <span class="n">cdmath</span><span class="o">.</span><span class="n">Field</span><span class="p">(</span><span class="s2">&quot;RHS_field&quot;</span><span class="p">,</span> <span class="n">cdmath</span><span class="o">.</span><span class="n">CELLS</span><span class="p">,</span> <span class="n">my_mesh</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">maxNbNeighbours</span><span class="o">=</span><span class="mi">0</span><span class="c1">#This is to determine the number of non zero coefficients in the sparse finite element rigidity matrix</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nbCells</span><span class="p">):</span> 
+    <span class="n">Ci</span> <span class="o">=</span> <span class="n">my_mesh</span><span class="o">.</span><span class="n">getCell</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">Ci</span><span class="o">.</span><span class="n">x</span><span class="p">()</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">Ci</span><span class="o">.</span><span class="n">y</span><span class="p">()</span>
+
+    <span class="n">my_RHSfield</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="mi">2</span><span class="o">*</span><span class="n">pi</span><span class="o">*</span><span class="n">pi</span><span class="o">*</span><span class="n">sin</span><span class="p">(</span><span class="n">pi</span><span class="o">*</span><span class="n">x</span><span class="p">)</span><span class="o">*</span><span class="n">sin</span><span class="p">(</span><span class="n">pi</span><span class="o">*</span><span class="n">y</span><span class="p">)</span><span class="c1">#mettre la fonction definie au second membre de l edp</span>
+    <span class="c1"># compute maximum number of neighbours</span>
+    <span class="n">maxNbNeighbours</span><span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">Ci</span><span class="o">.</span><span class="n">getNumberOfFaces</span><span class="p">(),</span><span class="n">maxNbNeighbours</span><span class="p">)</span>
+
+<span class="c1"># Construction de la matrice et du vecteur second membre du système linéaire</span>
+<span class="c1">#===========================================================================</span>
+<span class="n">Rigidite</span><span class="o">=</span><span class="n">cdmath</span><span class="o">.</span><span class="n">SparseMatrixPetsc</span><span class="p">(</span><span class="n">nbCells</span><span class="p">,</span><span class="n">nbCells</span><span class="p">,</span><span class="n">maxNbNeighbours</span><span class="p">)</span><span class="c1"># warning : third argument is max number of non zero coefficients per line of the matrix</span>
+<span class="n">RHS</span><span class="o">=</span><span class="n">cdmath</span><span class="o">.</span><span class="n">Vector</span><span class="p">(</span><span class="n">nbCells</span><span class="p">)</span>
+<span class="c1">#Parcours des cellules du domaine</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nbCells</span><span class="p">):</span>
+    <span class="n">RHS</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="n">my_RHSfield</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="c1">#la valeur moyenne du second membre f dans la cellule i</span>
+    <span class="n">Ci</span><span class="o">=</span><span class="n">my_mesh</span><span class="o">.</span><span class="n">getCell</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">Ci</span><span class="o">.</span><span class="n">getNumberOfFaces</span><span class="p">()):</span><span class="c1"># parcours des faces voisinnes</span>
+        <span class="n">Fj</span><span class="o">=</span><span class="n">my_mesh</span><span class="o">.</span><span class="n">getFace</span><span class="p">(</span><span class="n">Ci</span><span class="o">.</span><span class="n">getFaceId</span><span class="p">(</span><span class="n">j</span><span class="p">))</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">Fj</span><span class="o">.</span><span class="n">isBorder</span><span class="p">():</span>
+            <span class="n">k</span><span class="o">=</span><span class="n">Fj</span><span class="o">.</span><span class="n">getCellId</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">k</span><span class="o">==</span><span class="n">i</span> <span class="p">:</span>
+                <span class="n">k</span><span class="o">=</span><span class="n">Fj</span><span class="o">.</span><span class="n">getCellId</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">Ck</span><span class="o">=</span><span class="n">my_mesh</span><span class="o">.</span><span class="n">getCell</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+            <span class="n">distance</span><span class="o">=</span><span class="n">Ci</span><span class="o">.</span><span class="n">getBarryCenter</span><span class="p">()</span><span class="o">.</span><span class="n">distance</span><span class="p">(</span><span class="n">Ck</span><span class="o">.</span><span class="n">getBarryCenter</span><span class="p">())</span>
+            <span class="n">coeff</span><span class="o">=</span><span class="n">Fj</span><span class="o">.</span><span class="n">getMeasure</span><span class="p">()</span><span class="o">/</span><span class="n">Ci</span><span class="o">.</span><span class="n">getMeasure</span><span class="p">()</span><span class="o">/</span><span class="n">distance</span>
+            <span class="n">Rigidite</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">k</span><span class="p">,</span><span class="o">-</span><span class="n">coeff</span><span class="p">)</span> <span class="c1"># terme extradiagonal</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">coeff</span><span class="o">=</span><span class="n">Fj</span><span class="o">.</span><span class="n">getMeasure</span><span class="p">()</span><span class="o">/</span><span class="n">Ci</span><span class="o">.</span><span class="n">getMeasure</span><span class="p">()</span><span class="o">/</span><span class="n">Ci</span><span class="o">.</span><span class="n">getBarryCenter</span><span class="p">()</span><span class="o">.</span><span class="n">distance</span><span class="p">(</span><span class="n">Fj</span><span class="o">.</span><span class="n">getBarryCenter</span><span class="p">())</span>
+            <span class="c1">#For the particular case where the mesh boundary does not coincide with the domain boundary</span>
+            <span class="n">x</span><span class="o">=</span><span class="n">Fj</span><span class="o">.</span><span class="n">getBarryCenter</span><span class="p">()</span><span class="o">.</span><span class="n">x</span><span class="p">()</span>
+            <span class="n">y</span><span class="o">=</span><span class="n">Fj</span><span class="o">.</span><span class="n">getBarryCenter</span><span class="p">()</span><span class="o">.</span><span class="n">y</span><span class="p">()</span>
+            <span class="n">RHS</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">+=</span><span class="n">coeff</span><span class="o">*</span><span class="n">sin</span><span class="p">(</span><span class="n">pi</span><span class="o">*</span><span class="n">x</span><span class="p">)</span><span class="o">*</span><span class="n">sin</span><span class="p">(</span><span class="n">pi</span><span class="o">*</span><span class="n">y</span><span class="p">)</span><span class="c1">#mettre ici la condition limite du problème de Dirichlet</span>
+        <span class="n">Rigidite</span><span class="o">.</span><span class="n">addValue</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">i</span><span class="p">,</span><span class="n">coeff</span><span class="p">)</span> <span class="c1"># terme diagonal</span>
+
+
+<span class="c1"># Résolution du système linéaire</span>
+<span class="c1">#=================================</span>
+<span class="n">LS</span><span class="o">=</span><span class="n">cdmath</span><span class="o">.</span><span class="n">LinearSolver</span><span class="p">(</span><span class="n">Rigidite</span><span class="p">,</span><span class="n">RHS</span><span class="p">,</span><span class="mi">500</span><span class="p">,</span><span class="mf">1.E-6</span><span class="p">,</span><span class="s2">&quot;GMRES&quot;</span><span class="p">,</span><span class="s2">&quot;ILU&quot;</span><span class="p">)</span>
+<span class="n">SolSyst</span><span class="o">=</span><span class="n">LS</span><span class="o">.</span><span class="n">solve</span><span class="p">()</span>
+
+<span class="c1"># Automatic postprocessing :  save 2D picture and plot diagonal data</span>
+<span class="c1">#===========================</span>
+<span class="n">PV_routines</span><span class="o">.</span><span class="n">Save_PV_data_to_picture_file</span><span class="p">(</span><span class="s2">&quot;my_ResultField_0.vtu&#39;,&quot;</span><span class="n">ResultField</span><span class="s2">&quot;,&#39;CELLS&#39;,&quot;</span><span class="n">my_ResultField</span><span class="s2">&quot;)</span>
+<span class="n">diag_data</span><span class="o">=</span><span class="n">VTK_routines</span><span class="o">.</span><span class="n">Extract_field_data_over_line_to_numpyArray</span><span class="p">(</span><span class="n">my_ResultField</span><span class="p">,[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">resolution</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">curv_abs</span><span class="p">,</span> <span class="n">diag_data</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">nbCells</span><span class="p">)</span><span class="o">+</span> <span class="s1">&#39; cells mesh&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s2">&quot;FV5_on_square_PlotOverDiagonalLine.png&quot;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
 </div>
     </div>
   </div>
