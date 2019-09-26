@@ -254,7 +254,7 @@ public: //----------------------------------------------------------------
 	/**
 	 * \brief computes the skin surrounding the mesh
 	 */
-	MEDCoupling::MCAuto<MEDCoupling::MEDCouplingMesh> getBoundaryMesh ( void )  const ;
+	Mesh getBoundaryMesh ( void )  const ;
 
 	/**
 	 * \brief return the list of face group names
@@ -462,6 +462,8 @@ private: //----------------------------------------------------------------
     std::vector< int > _boundaryFaceIds;
     /* List of boundary nodes*/
     std::vector< int > _boundaryNodeIds;
+    /* Boundary mesh */
+    const MEDCoupling::MEDCouplingUMesh * _boundaryMesh;
 };
 
 #endif /* MESH_HXX_ */

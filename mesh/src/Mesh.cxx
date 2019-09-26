@@ -664,7 +664,11 @@ Mesh::setMesh( void )
 	DataArrayInt *revDesc  = DataArrayInt::New();
 	DataArrayInt *revDescI = DataArrayInt::New();
 	MEDCouplingUMesh* mu = _mesh->buildUnstructured();
+
 	mu->unPolyze();
+	/* Save the boundary mesh for later use*/
+	_boundaryMesh = mu->computeSkin();
+	
 	MEDCouplingUMesh* mu2=mu->buildDescendingConnectivity2(desc,descI,revDesc,revDescI);//mesh of dimension N-1 containing the cell interfaces
     
     const int *tmp = desc->getConstPointer();
@@ -1936,13 +1940,12 @@ Mesh::minRatioVolSurf()
     return dx_min;
 }
 
-/* 
- * MEDCoupling::MCAuto<MEDCoupling::MEDCouplingMesh> 
+Mesh
 Mesh::getBoundaryMesh ( void )  const 
 {
-	_mesh.computeSkin();
+	return Mesh(_boundaryMesh);
 }
-*/
+
 int 
 Mesh::getMaxNbNeighbours(EntityType type) const
 {
