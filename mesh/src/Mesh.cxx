@@ -127,6 +127,34 @@ Mesh::Mesh( const MEDCoupling::MEDCouplingIMesh* mesh )
 	setMesh();
 }
 
+Mesh::Mesh( const MEDCoupling::MEDCouplingUMesh* mesh )
+{
+	_spaceDim=mesh->getSpaceDimension();
+	_meshDim=mesh->getMeshDimension();
+    _isStructured=false;
+	double* Box0=new double[2*_spaceDim];
+	mesh->getBoundingBox(Box0);
+    _name=mesh->getName();
+    _indexFacePeriodicSet=false;
+    
+	_xMin=Box0[0];
+	_xMax=Box0[1];
+	if (_spaceDim>=2)
+	{
+		_yMin=Box0[2];
+		_yMax=Box0[3];
+	}
+	if (_spaceDim>=3)
+	{
+		_zMin=Box0[4];
+		_zMax=Box0[5];
+	}
+
+	_mesh=mesh->deepCopy();
+	delete [] Box0 ;
+	setMesh();
+}
+
 //----------------------------------------------------------------------
 Mesh::Mesh( const Mesh& mesh )
 //----------------------------------------------------------------------
@@ -1907,6 +1935,14 @@ Mesh::minRatioVolSurf()
     
     return dx_min;
 }
+
+/* 
+ * MEDCoupling::MCAuto<MEDCoupling::MEDCouplingMesh> 
+Mesh::getBoundaryMesh ( void )  const 
+{
+	_mesh.computeSkin();
+}
+*/
 int 
 Mesh::getMaxNbNeighbours(EntityType type) const
 {

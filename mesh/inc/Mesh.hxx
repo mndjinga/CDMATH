@@ -107,6 +107,7 @@ public: //----------------------------------------------------------------
 	Mesh( double xmin, double xmax, int nx, double ymin, double ymax, int ny, double zmin, double zmax, int nz, int split_to_tetrahedra_policy=-1, std::string meshName="MESH3D_Regular_Cuboid_Grid") ;
 
 	Mesh( const MEDCoupling::MEDCouplingIMesh* mesh ) ;
+	Mesh( const MEDCoupling::MEDCouplingUMesh* mesh ) ;
 
 	/**
 	 * \brief constructor with data
@@ -249,6 +250,11 @@ public: //----------------------------------------------------------------
 	 * @return _mesh
 	 */
 	MEDCoupling::MCAuto<MEDCoupling::MEDCouplingMesh> getMEDCouplingMesh ( void )  const ;
+
+	/**
+	 * \brief computes the skin surrounding the mesh
+	 */
+	MEDCoupling::MCAuto<MEDCoupling::MEDCouplingMesh> getBoundaryMesh ( void )  const ;
 
 	/**
 	 * \brief return the list of face group names
