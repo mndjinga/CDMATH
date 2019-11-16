@@ -89,7 +89,7 @@ def solve(my_mesh,filename,resolution, meshType, testColor):
                 #For the particular case where the mesh boundary does not coincide with the domain boundary
                 x=Fj.getBarryCenter().x()
                 y=Fj.getBarryCenter().y()
-                RHS[i]+=coeff*sin(pi*x)*sin(pi*y)#mettre ici la condition limite du problème de Dirichlet
+                RHS[i]+=coeff*sin(pi*x)*sin(pi*y)#mettre ici  la solution exacte de l'edp
             Rigidite.addValue(i,i,coeff) # terme diagonal
     
     print("Linear system matrix building done")

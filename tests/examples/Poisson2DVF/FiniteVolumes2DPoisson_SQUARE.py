@@ -82,6 +82,10 @@ for i in range(nbCells):
 			Rigidite.setValue(i,k,-coeff) # terme extradiagonal
 		else:
 			coeff=Fj.getMeasure()/Ci.getMeasure()/Ci.getBarryCenter().distance(Fj.getBarryCenter())
+                #For the particular case where the mesh boundary does not coincide with the domain boundary
+                x=Fj.getBarryCenter().x()
+                y=Fj.getBarryCenter().y()
+                RHS[i]+=coeff*sin(pi*x)*sin(pi*y)#mettre ici  la solution exacte de l'edp
 		Rigidite.addValue(i,i,coeff) # terme diagonal
 
 print("Linear system matrix building done")
