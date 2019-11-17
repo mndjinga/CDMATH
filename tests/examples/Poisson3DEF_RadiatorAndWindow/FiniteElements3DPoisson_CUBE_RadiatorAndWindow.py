@@ -154,19 +154,19 @@ for i in range(nbCells):
 	for j in [nodeId0,nodeId1,nodeId2,nodeId3] : 
 		if boundaryNodes.count(j)==0: #seuls les noeuds intérieurs contribuent au système linéaire (matrice de rigidité et second membre)
 			j_int=interiorNodes.index(j)#indice du noeud j en tant que noeud intérieur
-			borderCell=0
+			boundaryContributionAdded=False#Needed in case j is a border cell
 			#Ajout de la contribution de la cellule ttétraédrique i au second membre du noeud j 
 			for k in [nodeId0,nodeId1,nodeId2,nodeId3] : 
 				if boundaryNodes.count(k)==0 : #seuls les noeuds intérieurs contribuent à la matrice du système linéaire
 					k_int = interiorNodes.index(k)#indice du noeud k en tant que noeud intérieur
 					Rigidite.addValue(j_int,k_int,GradShapeFuncs[j]*GradShapeFuncs[k]/Ci.getMeasure())
-				elif borderCell==0:#k est l'indice d'un noeud frontière
+				elif boundaryContributionAdded == False: #si condition limite non nulle au bord (ou maillage non recouvrant), ajouter la contribution du bord au second membre de la cellule j
 					# Valeurs de g_h aux noeuds du tétraèdre
 					T0 = boundaryValue(nodeId0)
 					T1 = boundaryValue(nodeId1)
 					T2 = boundaryValue(nodeId2)
 					T3 = boundaryValue(nodeId3)
-					borderCell=1
+					boundaryContributionAdded==True#Contribution from the boundary to matrix line j is done in one step
 					GradGh = gradientNodal(M,[T0,T1,T2,T3])/6
 					RHS[j_int] += -(GradGh*GradShapeFuncs[j])/Ci.getMeasure()
             
