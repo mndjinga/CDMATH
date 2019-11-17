@@ -6,7 +6,7 @@ TransportEquation1D/1DTransportCenteredImplicit
 Poisson/2DPoissonEF_Delaunay_triangles
 Poisson/2DPoissonEF_flat_cross_triangles 
 Poisson/2DPoissonEF_skinny_triangles 
-Poisson/2DPoissonEF_StiffBCDisk
+Poisson/2DPoissonEF_StiffBCDisk_delaunay_triangles
 Poisson/2DPoissonVF_Delaunay_triangles 
 Poisson/2DPoissonVF_equilateral_triangles 
 Poisson/2DPoissonVF_right_triangles
@@ -20,6 +20,10 @@ Poisson/2DPoissonVF_deformedQuadrangles
 Poisson/2DPoissonVF_hexagons 
 Poisson/2DPoissonVF_brickwall
 Poisson/2DPoissonVF_long_rectangles
+Poisson/2DPoissonVF_StiffBCDisk_delaunay_triangles
+Poisson/2DPoissonVF_StiffBCDisk_squares
+Poisson/2DPoissonVF_StiffBCDisk_hexagons
+Poisson/2DPoissonVF_StiffBCDisk_spiderWeb
 Poisson/3DSpherePoissonEF 
 Poisson/3DPoissonEF 
 Poisson/3DPoissonVF_checkerboard 
