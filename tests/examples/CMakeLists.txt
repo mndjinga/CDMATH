@@ -3,7 +3,7 @@ file(GLOB NICE_EXAMPLES_TO_INSTALL
   HeatEquation1DExplicit HeatEquation1DImplicit BurgersEquation1D # 1D Heat and Burgers' equations
   TransportEquation1DUpwindExplicit TransportEquation1DUpwindImplicit TransportEquation1DCenteredImplicit TransportEquation1DCenteredExplicit # 1D Transport equation 
   TransportEquation
-  Poisson2DEF Poisson2DEF_DISK Poisson2DEF_DISK_StiffBC Poisson2DVF Poisson2DVF_disk Poisson3DEF Poisson3DEF_BALL Poisson3DVF Poisson3DVF_BALL Poisson3DEF_RadiatorAndWindow
+  Poisson2DEF Poisson2DEF_DISK Poisson2DEF_DISK_StiffBC Poisson2DVF Poisson2DVF_DISK Poisson2DVF_DISK_StiffBC Poisson3DEF Poisson3DEF_BALL Poisson3DVF Poisson3DVF_BALL Poisson3DEF_RadiatorAndWindow
   Poisson3DSphereEF Poisson3DTorusEF 
   WaveSystem1DUpwind WaveSystem1DUpwind_RiemannProblem WaveSystem1Staggered_RiemannProblem WaveSystem2DUpwind_RiemannProblem
 WaveSystem_Stationary/WaveSystemUpwind WaveSystem_Stationary/WaveSystemCentered WaveSystem_Stationary/WaveSystemPStag WaveSystem_Stationary/WaveSystemStaggered 
@@ -23,6 +23,7 @@ IF (CDMATH_WITH_PYTHON AND CDMATH_WITH_PETSC AND CDMATH_WITH_POSTPRO)
     ADD_SUBDIRECTORY(BurgersEquation1D)
     ADD_SUBDIRECTORY(Poisson2DVF)
     ADD_SUBDIRECTORY(Poisson2DVF_DISK)
+    ADD_SUBDIRECTORY(Poisson2DVF_DISK_StiffBC)
     ADD_SUBDIRECTORY(Poisson2DEF)
     ADD_SUBDIRECTORY(Poisson2DEF_DISK)
     ADD_SUBDIRECTORY(Poisson2DEF_DISK_StiffBC)
