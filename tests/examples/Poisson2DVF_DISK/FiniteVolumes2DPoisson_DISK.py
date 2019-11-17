@@ -142,8 +142,8 @@ print("Numerical solution of 2D Poisson equation on a disk using finite volumes 
 #Calcul de l'erreur commise par rapport à la solution exacte
 #===========================================================
 max_abs_sol_exacte=max(my_ExactSol.max(),-my_ExactSol.min())
-max_sol_num=my_ExactSol.max()
-min_sol_num=my_ExactSol.min()
+max_sol_num=my_ResultField.max()
+min_sol_num=my_ResultField.min()
 erreur_abs=0
 for i in range(nbCells) :
     if erreur_abs < abs(my_ExactSol[i] - my_ResultField[i]) :
