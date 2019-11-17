@@ -16,7 +16,6 @@ import VTK_routines
 
 test_desc={}
 test_desc["Initial_data"]="None"
-test_desc["Numerical_method_name"]="P1 FE"
 test_desc["Boundary_conditions"]="Dirichlet"
 test_desc["Global_name"]="FE simulation of the 2D Poisson equation"
 test_desc["Global_comment"]="Condition limite discontinue, Maillage triangulaire"

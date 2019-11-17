@@ -120,7 +120,7 @@ def solve(my_mesh,filename,resolution, meshType, testColor):
     #sauvegarde sur le disque dur du résultat dans un fichier paraview
     my_ResultField.writeVTK("FiniteVolumes2DPoisson_SQUARE_"+meshType+str(nbCells))
     
-    print("Numerical solution of 2D Poisson equation on a square using finite elements done")
+    print("Numerical solution of 2D Poisson equation on a square using finite volumes done")
     
     end = time.time()
 
