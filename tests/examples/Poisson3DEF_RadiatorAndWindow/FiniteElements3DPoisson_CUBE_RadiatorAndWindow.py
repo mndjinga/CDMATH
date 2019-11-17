@@ -134,6 +134,7 @@ for i in range(nbCells):
 	M[3,2]=N3.z()
 	M[3,3]=1
 
+	#Values of each shape function at each node
 	values0=[1,0,0,0]
 	values1=[0,1,0,0]
 	values2=[0,0,1,0]
@@ -144,7 +145,7 @@ for i in range(nbCells):
 	GradShapeFunc2 = gradientNodal(M,values2)/6
 	GradShapeFunc3 = gradientNodal(M,values3)/6
 	
-	#Création d'un tableau (numéro du noeud, gradient de la fonction de forme
+	#Création d'un tableau (numéro du noeud, gradient de la fonction de forme)
 	GradShapeFuncs={nodeId0 : GradShapeFunc0}
 	GradShapeFuncs[nodeId1]=GradShapeFunc1
 	GradShapeFuncs[nodeId2]=GradShapeFunc2
