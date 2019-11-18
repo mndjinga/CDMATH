@@ -73,7 +73,7 @@ def test_validation2DVF_StiffBC_hexagons():
     b=(-a2*b1+a1*b2)/det
     
     print( "FV on 2D disk with hexagonal mesh : l2 scheme order is ", -a )
-    #assert abs(a+2.12)<0.1
+    assert abs(a-0.25)<0.01
 
     # Plot of convergence curves
     plt.close()
