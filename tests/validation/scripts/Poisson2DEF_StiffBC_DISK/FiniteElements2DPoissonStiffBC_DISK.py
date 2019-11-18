@@ -175,10 +175,19 @@ def solve(filename,resolution,meshType, testColor):
                         k_int=interiorNodes.index(k)#indice du noeud k en tant que noeud intérieur
                         Rigidite.addValue(j_int,k_int,GradShapeFuncs[j]*GradShapeFuncs[k]/Ci.getMeasure())
                     elif boundaryContributionAdded == False: #si condition limite non nulle au bord (ou maillage non recouvrant), ajouter la contribution du bord au second membre de la cellule j
-                        u0=my_ExactSol[nodeId0]
-                        u1=my_ExactSol[nodeId1]
-                        u2=my_ExactSol[nodeId2]
-                        boundaryContributionAdded==True#Contribution from the boundary to matrix line j is done in one step
+                        if boundaryNodes.count(nodeId0)!=0 :
+                            u0=my_ExactSol[nodeId0]
+                        else:
+                            u0=0
+                        if boundaryNodes.count(nodeId1)!=0 :
+                            u1=my_ExactSol[nodeId1]
+                        else:
+                            u1=0
+                        if boundaryNodes.count(nodeId2)!=0 :
+                            u2=my_ExactSol[nodeId2]
+                        else:
+                            u2=0
+                        boundaryContributionAdded=True#Contribution from the boundary to matrix line j is done in one step
                         GradGh = gradientNodal(M,[u0,u1,u2])/2
                         RHS[j_int] += -(GradGh*GradShapeFuncs[j])/Ci.getMeasure()
 
@@ -186,7 +195,7 @@ def solve(filename,resolution,meshType, testColor):
     
     # Résolution du système linéaire
     #=================================
-    LS=cdmath.LinearSolver(Rigidite,RHS,100,1.E-6,"CG","ILU")#Remplacer CG par CHOLESKY pour solveur direct
+    LS=cdmath.LinearSolver(Rigidite,RHS,100,1.E-6,"CG","LU")#Remplacer CG par CHOLESKY pour solveur direct
     LS.setComputeConditionNumber()
     SolSyst=LS.solve()
     
