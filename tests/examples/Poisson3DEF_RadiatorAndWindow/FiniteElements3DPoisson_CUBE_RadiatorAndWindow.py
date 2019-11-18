@@ -167,7 +167,7 @@ for i in range(nbCells):
 					T1 = boundaryValue(nodeId1)
 					T2 = boundaryValue(nodeId2)
 					T3 = boundaryValue(nodeId3)
-					boundaryContributionAdded==True#Contribution from the boundary to matrix line j is done in one step
+					boundaryContributionAdded=True#Contribution from the boundary to matrix line j is done in one step
 					GradGh = gradientNodal(M,[T0,T1,T2,T3])/6
 					RHS[j_int] += -(GradGh*GradShapeFuncs[j])/Ci.getMeasure()
             
