@@ -142,8 +142,8 @@ print("Numerical solution of 2D Poisson equation on a disk using finite volumes 
 l2_norm_sol_exacte=my_ExactSol.normL2()[0]
 l2_error = (my_ExactSol - my_ResultField).normL2()[0]
 
-print("Absolute error = max(| exact solution - numerical solution |) = ",l2_error )
-print("Relative error = max(| exact solution - numerical solution |)/max(| exact solution |) = ",l2_error/l2_norm_sol_exacte)
+print("L2 absolute error = norm( exact solution - numerical solution ) = ",l2_error )
+print("L2 relative error = norm( exact solution - numerical solution )/norm( exact solution ) = ",l2_error/l2_norm_sol_exacte)
 print ("Maximum numerical solution = ", my_ResultField.max(), " Minimum numerical solution = ", my_ResultField.min())
 print ("Maximum exact solution = ", my_ExactSol.max(), " Minimum exact solution = ", my_ExactSol.min())
 
