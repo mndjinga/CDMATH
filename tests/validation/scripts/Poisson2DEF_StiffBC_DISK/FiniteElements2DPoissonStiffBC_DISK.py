@@ -9,7 +9,7 @@
 #================================================================================================================================
 
 import cdmath
-from math import atan2
+from math import atan, pi
 from numpy import sign
 import time, json
 import PV_routines
@@ -77,6 +77,7 @@ def solve(filename,resolution,meshType, testColor):
     maxNbNeighbours = 0#This is to determine the number of non zero coefficients in the sparse finite element rigidity matrix
     interiorNodes=[]
     boundaryNodes=[]
+    eps=1e-10
     
     #parcours des noeuds pour discrétisation du second membre et extraction 1) des noeuds intérieur 2) des noeuds frontière 3) du nb max voisins d'un noeud
     for i in range(nbNodes):
@@ -85,7 +86,18 @@ def solve(filename,resolution,meshType, testColor):
         y = Ni.y()
     
         #Robust calculation of atan(2x/(x**2+y**2-1)
-        my_ExactSol[i]=atan2(2*x*sign(x**2+y**2-1),abs(x**2+y**2-1))#mettre la solution exacte de l'edp
+        #my_ExactSol[i]=atan2(2*x*sign(x**2+y**2-1),abs(x**2+y**2-1))#mettre la solution exacte de l'edp
+        if x**2+y**2-1 > eps :
+            raise ValueError("x**2+y**2 > 1 !!! Domain should be the unit disk.")
+        elif x**2+y**2-1 < -eps :
+            my_ExactSol[i] = atan(2*x/(x**2+y**2-1))
+        elif x>0 : #x**2+y**2-1=0-
+            my_ExactSol[i] = -pi/2
+        elif x<0 : #x**2+y**2-1=0-
+            my_ExactSol[i] =  pi/2
+        else : #x=0
+            my_ExactSol[i] = 0
+
         if my_mesh.isBorderNode(i): # Détection des noeuds frontière
             boundaryNodes.append(i)
             nbBoundaryNodes=nbBoundaryNodes+1

@@ -9,8 +9,7 @@
 #================================================================================================================================
 
 import cdmath
-from math import atan2
-from numpy import sign
+from math import atan, pi
 import time, json
 import PV_routines
 import VTK_routines
@@ -52,6 +51,8 @@ def solve(my_mesh,filename,resolution, meshType, testColor):
     #================================================================================
     my_ExactSol = cdmath.Field("Exact_field", cdmath.CELLS, my_mesh, 1)
     maxNbNeighbours=0#This is to determine the number of non zero coefficients in the sparse finite element rigidity matrix
+    eps=1e-10
+    
     #parcours des cellules pour discrétisation du second membre et extraction du nb max de voisins d'une cellule
     for i in range(nbCells): 
         Ci = my_mesh.getCell(i)
@@ -59,7 +60,17 @@ def solve(my_mesh,filename,resolution, meshType, testColor):
         y = Ci.y()
 
         #Robust calculation of atan(2x/(x**2+y**2-1)
-        my_ExactSol[i]=atan2(2*x*sign(x**2+y**2-1),abs(x**2+y**2-1))#mettre la solution exacte de l'edp
+        if x**2+y**2-1 > eps :
+            raise ValueError("x**2+y**2 > 1 !!! Domain should be the unit disk.")
+        elif x**2+y**2-1 < -eps :
+            my_ExactSol[i] = atan(2*x/(x**2+y**2-1))
+        elif x>0 : #x**2+y**2-1=0-
+            my_ExactSol[i] = -pi/2
+        elif x<0 : #x**2+y**2-1=0-
+            my_ExactSol[i] =  pi/2
+        else : #x=0
+            my_ExactSol[i] = 0
+
         # compute maximum number of neighbours
         maxNbNeighbours= max(1+Ci.getNumberOfFaces(),maxNbNeighbours)
     
@@ -90,7 +101,16 @@ def solve(my_mesh,filename,resolution, meshType, testColor):
                 #For the particular case where the mesh boundary does not coincide with the domain boundary
                 x=Fj.getBarryCenter().x()
                 y=Fj.getBarryCenter().y()
-                RHS[i]+=coeff*atan2(2*x,(x**2+y**2-1))#mettre ici  la solution exacte de l'edp
+                if x**2+y**2-1 > eps :
+                    raise ValueError("x**2+y**2 > 1 !!! Domain should be the unit disk.")
+                elif x**2+y**2-1 < -eps :
+                    RHS[i]+= coeff*atan(2*x/(x**2+y**2-1))
+                elif x>0 : #x**2+y**2-1=0-
+                    RHS[i]+= coeff*(-pi/2)
+                elif x<0 : #x**2+y**2-1=0-
+                    RHS[i]+= coeff*pi/2
+                else : #x=0
+                    RHS[i]+=  0
             Rigidite.addValue(i,i,coeff) # terme diagonal
     
     print("Linear system matrix building done")

@@ -9,8 +9,8 @@
 #================================================================================================================================
 
 import cdmath
-from math import atan2, sqrt
-from numpy import sign, linspace
+from math import atan, pi, sqrt
+from numpy import linspace
 import matplotlib.pyplot as plt
 import PV_routines
 import VTK_routines
@@ -20,7 +20,7 @@ if len(sys.argv) >1 :#non rectangular mesh
     my_mesh = cdmath.Mesh(sys.argv[1])
 else :
     raise ValueError("Give an input mesh of the disk")
-	
+    
 nbCells = my_mesh.getNumberOfCells()
 
 if( my_mesh.getSpaceDimension()!=2 or my_mesh.getMeshDimension()!=2) :
@@ -32,18 +32,29 @@ print "Number of cells  = ", nbCells
 #Discrétisation du second membre et extraction du nb max de voisins d'une cellule
 #================================================================================
 my_ExactSol = cdmath.Field("Exact_field", cdmath.CELLS, my_mesh, 1)
+eps=1e-10
 
 maxNbNeighbours=0#This is to determine the number of non zero coefficients in the sparse finite element rigidity matrix
 #parcours des cellules pour discrétisation du second membre et extraction du nb max de voisins d'une cellule
 for i in range(nbCells): 
-	Ci = my_mesh.getCell(i)
-	x = Ci.x()
-	y = Ci.y()
+    Ci = my_mesh.getCell(i)
+    x = Ci.x()
+    y = Ci.y()
 
-	#Robust calculation of atan(2x/(x**2+y**2-1)
-	my_ExactSol[i]=atan2(2*x*sign(x**2+y**2-1),abs(x**2+y**2-1))#mettre la solution exacte de l'edp
-	# compute maximum number of neighbours
-	maxNbNeighbours= max(1+Ci.getNumberOfFaces(),maxNbNeighbours)
+    #Robust calculation of atan(2x/(x**2+y**2-1)
+    if x**2+y**2-1 > eps :
+        raise ValueError("x**2+y**2 > 1 !!! Domain should be the unit disk.")
+    elif x**2+y**2-1 < -eps :
+        my_ExactSol[i] = atan(2*x/(x**2+y**2-1))
+    elif x>0 : #x**2+y**2-1=0-
+        my_ExactSol[i] = -pi/2
+    elif x<0 : #x**2+y**2-1=0-
+        my_ExactSol[i] =  pi/2
+    else : #x=0
+        my_ExactSol[i] = 0
+        
+    # compute maximum number of neighbours
+    maxNbNeighbours= max(1+Ci.getNumberOfFaces(),maxNbNeighbours)
 
 print("Right hand side discretisation done")
 print "Maximum number of neighbours = ", maxNbNeighbours
@@ -54,24 +65,33 @@ Rigidite=cdmath.SparseMatrixPetsc(nbCells,nbCells,maxNbNeighbours)# warning : th
 RHS=cdmath.Vector(nbCells)
 #Parcours des cellules du domaine
 for i in range(nbCells):
-	Ci=my_mesh.getCell(i)
-	for j in range(Ci.getNumberOfFaces()):# parcours des faces voisinnes
-		Fj=my_mesh.getFace(Ci.getFaceId(j))
-		if not Fj.isBorder():
-			k=Fj.getCellId(0)
-			if k==i :
-				k=Fj.getCellId(1)
-			Ck=my_mesh.getCell(k)
-			distance=Ci.getBarryCenter().distance(Ck.getBarryCenter())
-			coeff=Fj.getMeasure()/Ci.getMeasure()/distance
-			Rigidite.setValue(i,k,-coeff) # terme extradiagonal
-		else:
-			coeff=Fj.getMeasure()/Ci.getMeasure()/Ci.getBarryCenter().distance(Fj.getBarryCenter())
-			#For the particular case where the mesh boundary does not coincide with the domain boundary
-			x=Fj.getBarryCenter().x()
-			y=Fj.getBarryCenter().y()
-			RHS[i]+=coeff*atan2(2*x,(x**2+y**2-1))#mettre ici la solution exacte de l'edp
-		Rigidite.addValue(i,i,coeff) # terme diagonal
+    Ci=my_mesh.getCell(i)
+    for j in range(Ci.getNumberOfFaces()):# parcours des faces voisinnes
+        Fj=my_mesh.getFace(Ci.getFaceId(j))
+        if not Fj.isBorder():
+            k=Fj.getCellId(0)
+            if k==i :
+                k=Fj.getCellId(1)
+            Ck=my_mesh.getCell(k)
+            distance=Ci.getBarryCenter().distance(Ck.getBarryCenter())
+            coeff=Fj.getMeasure()/Ci.getMeasure()/distance
+            Rigidite.setValue(i,k,-coeff) # terme extradiagonal
+        else:
+            coeff=Fj.getMeasure()/Ci.getMeasure()/Ci.getBarryCenter().distance(Fj.getBarryCenter())
+            #For the particular case where the mesh boundary does not coincide with the domain boundary
+            x=Fj.getBarryCenter().x()
+            y=Fj.getBarryCenter().y()
+            if x**2+y**2-1 > eps :
+                raise ValueError("x**2+y**2 > 1 !!! Domain should be the unit disk.")
+            elif x**2+y**2-1 < -eps :
+                RHS[i]+= coeff*atan(2*x/(x**2+y**2-1))
+            elif x>0 : #x**2+y**2-1=0-
+                RHS[i]+= coeff*(-pi/2)
+            elif x<0 : #x**2+y**2-1=0-
+                RHS[i]+= coeff*pi/2
+            else : #x=0
+                RHS[i]+=  0
+        Rigidite.addValue(i,i,coeff) # terme diagonal
 
 print("Linear system matrix building done")
 

@@ -9,7 +9,7 @@
 #================================================================================================================================
 
 import cdmath
-from math import atan2
+from math import atan, pi
 from numpy import sign, linspace
 import matplotlib.pyplot as plt
 import PV_routines
@@ -36,7 +36,7 @@ my_mesh = cdmath.Mesh("diskWithTriangles.med")
 if( my_mesh.getSpaceDimension()!=2 or my_mesh.getMeshDimension()!=2) :
     raise ValueError("Wrong space or mesh dimension : space and mesh dimensions should be 2")
 if(not my_mesh.isTriangular()) :
-	raise ValueError("Wrong cell types : mesh is not made of triangles")
+    raise ValueError("Wrong cell types : mesh is not made of triangles")
 
 nbNodes = my_mesh.getNumberOfNodes()
 nbCells = my_mesh.getNumberOfCells()
@@ -53,23 +53,34 @@ nbBoundaryNodes = 0
 maxNbNeighbours = 0#This is to determine the number of non zero coefficients in the sparse finite element rigidity matrix
 interiorNodes=[]
 boundaryNodes=[]
+eps=1e-10
 
 #parcours des noeuds pour discrétisation du second membre et extraction 1) des noeuds intérieur 2) des noeuds frontière 3) du nb max voisins d'un noeud
 for i in range(nbNodes):
-	Ni=my_mesh.getNode(i)
-	x = Ni.x()
-	y = Ni.y()
+    Ni=my_mesh.getNode(i)
+    x = Ni.x()
+    y = Ni.y()
 
-	#Robust calculation of atan(2x/(x**2+y**2-1)
-	my_ExactSol[i]=atan2(2*x*sign(x**2+y**2-1),abs(x**2+y**2-1))#mettre la solution exacte de l'edp
-    
-	if my_mesh.isBorderNode(i): # Détection des noeuds frontière
-		boundaryNodes.append(i)
-		nbBoundaryNodes=nbBoundaryNodes+1
-	else: # Détection des noeuds intérieurs
-		interiorNodes.append(i)
-		nbInteriorNodes=nbInteriorNodes+1
-		maxNbNeighbours= max(1+Ni.getNumberOfCells(),maxNbNeighbours) #true only in 2D, otherwise use function Ni.getNumberOfEdges()
+    #Robust calculation of atan(2x/(x**2+y**2-1)
+    #my_ExactSol[i]=atan2(2*x*sign(x**2+y**2-1),abs(x**2+y**2-1))#mettre la solution exacte de l'edp
+    if x**2+y**2-1 > eps :
+        raise ValueError("x**2+y**2 > 1 !!! Domain should be the unit disk.")
+    elif x**2+y**2-1 < -eps :
+        my_ExactSol[i] = atan(2*x/(x**2+y**2-1))
+    elif x>0 : #x**2+y**2-1=0-
+        my_ExactSol[i] = -pi/2
+    elif x<0 : #x**2+y**2-1=0-
+        my_ExactSol[i] =  pi/2
+    else : #x=0
+        my_ExactSol[i] = 0
+        
+    if my_mesh.isBorderNode(i): # Détection des noeuds frontière
+        boundaryNodes.append(i)
+        nbBoundaryNodes=nbBoundaryNodes+1
+    else: # Détection des noeuds intérieurs
+        interiorNodes.append(i)
+        nbInteriorNodes=nbInteriorNodes+1
+        maxNbNeighbours= max(1+Ni.getNumberOfCells(),maxNbNeighbours) #true only in 2D, otherwise use function Ni.getNumberOfEdges()
 
 print("Right hand side discretisation done")
 print("Number of interior nodes=", nbInteriorNodes)
@@ -90,60 +101,60 @@ GradShapeFunc2=cdmath.Vector(2)
 #On parcourt les triangles du domaine
 for i in range(nbCells):
 
-	Ci=my_mesh.getCell(i)
+    Ci=my_mesh.getCell(i)
 
-	#Contribution à la matrice de rigidité
-	nodeId0=Ci.getNodeId(0)
-	nodeId1=Ci.getNodeId(1)
-	nodeId2=Ci.getNodeId(2)
+    #Contribution à la matrice de rigidité
+    nodeId0=Ci.getNodeId(0)
+    nodeId1=Ci.getNodeId(1)
+    nodeId2=Ci.getNodeId(2)
 
-	N0=my_mesh.getNode(nodeId0)
-	N1=my_mesh.getNode(nodeId1)
-	N2=my_mesh.getNode(nodeId2)
+    N0=my_mesh.getNode(nodeId0)
+    N1=my_mesh.getNode(nodeId1)
+    N2=my_mesh.getNode(nodeId2)
 
-	M[0,0]=N0.x()
-	M[0,1]=N0.y()
-	M[0,2]=1
-	M[1,0]=N1.x()
-	M[1,1]=N1.y()
-	M[1,2]=1
-	M[2,0]=N2.x()
-	M[2,1]=N2.y()
-	M[2,2]=1
+    M[0,0]=N0.x()
+    M[0,1]=N0.y()
+    M[0,2]=1
+    M[1,0]=N1.x()
+    M[1,1]=N1.y()
+    M[1,2]=1
+    M[2,0]=N2.x()
+    M[2,1]=N2.y()
+    M[2,2]=1
 
-	#Values of each shape function at each node
-	values0=[1,0,0]
-	values1=[0,1,0]
-	values2=[0,0,1]
+    #Values of each shape function at each node
+    values0=[1,0,0]
+    values1=[0,1,0]
+    values2=[0,0,1]
 
-	GradShapeFunc0 = gradientNodal(M,values0)/2
-	GradShapeFunc1 = gradientNodal(M,values1)/2
-	GradShapeFunc2 = gradientNodal(M,values2)/2
+    GradShapeFunc0 = gradientNodal(M,values0)/2
+    GradShapeFunc1 = gradientNodal(M,values1)/2
+    GradShapeFunc2 = gradientNodal(M,values2)/2
 
-	#Création d'un tableau (numéro du noeud, gradient de la fonction de forme
-	GradShapeFuncs={nodeId0 : GradShapeFunc0}
-	GradShapeFuncs[nodeId1]=GradShapeFunc1
-	GradShapeFuncs[nodeId2]=GradShapeFunc2
+    #Création d'un tableau (numéro du noeud, gradient de la fonction de forme
+    GradShapeFuncs={nodeId0 : GradShapeFunc0}
+    GradShapeFuncs[nodeId1]=GradShapeFunc1
+    GradShapeFuncs[nodeId2]=GradShapeFunc2
 
 
-	# Remplissage de  la matrice de rigidité et du second membre
-	for j in [nodeId0,nodeId1,nodeId2] :
-		if boundaryNodes.count(j)==0 : #seuls les noeuds intérieurs contribuent au système linéaire (matrice de rigidité et second membre)
-			j_int=interiorNodes.index(j)#indice du noeud j en tant que noeud intérieur
-			#Pas de contribution au second membre car pas de terme source
-			boundaryContributionAdded=False#Needed in case j is a border cell
-			#Contribution de la cellule triangulaire i à la ligne j_int du système linéaire
-			for k in [nodeId0,nodeId1,nodeId2] : 
-				if boundaryNodes.count(k)==0 : #seuls les noeuds intérieurs contribuent à la matrice du système linéaire
-					k_int=interiorNodes.index(k)#indice du noeud k en tant que noeud intérieur
-					Rigidite.addValue(j_int,k_int,GradShapeFuncs[j]*GradShapeFuncs[k]/Ci.getMeasure())
-				elif boundaryContributionAdded == False: #si condition limite non nulle au bord (ou maillage non recouvrant), ajouter la contribution du bord au second membre de la cellule j
-					u0=my_ExactSol[nodeId0]
-					u1=my_ExactSol[nodeId1]
-					u2=my_ExactSol[nodeId2]
-					boundaryContributionAdded==True#Contribution from the boundary to matrix line j is done in one step
-					GradGh = gradientNodal(M,[u0,u1,u2])/2
-					RHS[j_int] += -(GradGh*GradShapeFuncs[j])/Ci.getMeasure()
+    # Remplissage de  la matrice de rigidité et du second membre
+    for j in [nodeId0,nodeId1,nodeId2] :
+        if boundaryNodes.count(j)==0 : #seuls les noeuds intérieurs contribuent au système linéaire (matrice de rigidité et second membre)
+            j_int=interiorNodes.index(j)#indice du noeud j en tant que noeud intérieur
+            #Pas de contribution au second membre car pas de terme source
+            boundaryContributionAdded=False#Needed in case j is a border cell
+            #Contribution de la cellule triangulaire i à la ligne j_int du système linéaire
+            for k in [nodeId0,nodeId1,nodeId2] : 
+                if boundaryNodes.count(k)==0 : #seuls les noeuds intérieurs contribuent à la matrice du système linéaire
+                    k_int=interiorNodes.index(k)#indice du noeud k en tant que noeud intérieur
+                    Rigidite.addValue(j_int,k_int,GradShapeFuncs[j]*GradShapeFuncs[k]/Ci.getMeasure())
+                elif boundaryContributionAdded == False: #si condition limite non nulle au bord (ou maillage non recouvrant), ajouter la contribution du bord au second membre de la cellule j
+                    u0=my_ExactSol[nodeId0]
+                    u1=my_ExactSol[nodeId1]
+                    u2=my_ExactSol[nodeId2]
+                    boundaryContributionAdded==True#Contribution from the boundary to matrix line j is done in one step
+                    GradGh = gradientNodal(M,[u0,u1,u2])/2
+                    RHS[j_int] += -(GradGh*GradShapeFuncs[j])/Ci.getMeasure()
 
 print("Linear system matrix building done")
 
