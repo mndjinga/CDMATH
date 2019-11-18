@@ -32,7 +32,7 @@ print "Number of cells  = ", nbCells
 #Discrétisation du second membre et extraction du nb max de voisins d'une cellule
 #================================================================================
 my_ExactSol = cdmath.Field("Exact_field", cdmath.CELLS, my_mesh, 1)
-eps=1e-10
+eps=2e-1#For coarse meshes
 
 maxNbNeighbours=0#This is to determine the number of non zero coefficients in the sparse finite element rigidity matrix
 #parcours des cellules pour discrétisation du second membre et extraction du nb max de voisins d'une cellule
@@ -83,7 +83,8 @@ for i in range(nbCells):
             x=Fj.getBarryCenter().x()
             y=Fj.getBarryCenter().y()
             if x**2+y**2-1 > eps :
-                raise ValueError("x**2+y**2 > 1 !!! Domain should be the unit disk.")
+                print("eps=",eps, ", x**2+y**2 - 1=",x**2+y**2 - 1)
+                raise ValueError("!!! Domain should be the unit disk.")
             elif x**2+y**2-1 < -eps :
                 RHS[i]+= coeff*atan(2*x/(x**2+y**2-1))
             elif x>0 : #x**2+y**2-1=0-
