@@ -244,7 +244,7 @@ def solve(filename,resolution,meshType, testColor):
     #Postprocessing : 
     #================
     # Extraction of the diagonal data
-    diag_data=VTK_routines.Extract_field_data_over_line_to_numpyArray(my_ResultField,[0,1,0],[1,0,0], resolution)
+    diag_data=VTK_routines.Extract_field_data_over_line_to_numpyArray(my_ResultField,[0,-1,0],[0,1,0], resolution)
     # save 2D picture
     PV_routines.Save_PV_data_to_picture_file("FiniteElements2DPoissonStiffBC_DISK_"+meshType+str(nbNodes)+'_0.vtu',"ResultField",'NODES',"FiniteElements2DPoissonStiffBC_DISK_"+meshType+str(nbNodes))
     PV_routines.Save_PV_data_to_picture_file("ExactSol2DPoissonStiffBC_DISK_"+meshType+str(nbNodes)+'_0.vtu',"Exact_field",'NODES',"ExactSol2DPoissonStiffBC_DISK_"+meshType+str(nbNodes))

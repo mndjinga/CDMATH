@@ -197,7 +197,7 @@ PV_routines.Save_PV_data_to_picture_file("ExactSol2DPoissonStiffBC_DISK_"+'_0.vt
 # extract and plot diagonal values
 resolution=100
 curv_abs=linspace(-1,1,resolution+1)
-diag_data=VTK_routines.Extract_field_data_over_line_to_numpyArray(my_ResultField,[-0.5,-0.5,0],[0.5,0.5,0], resolution)
+diag_data=VTK_routines.Extract_field_data_over_line_to_numpyArray(my_ResultField,[0,-1,0],[0,1,0], resolution)
 plt.plot(curv_abs, diag_data, label= '2D disk mesh with '+str(nbNodes) + ' nodes')
 plt.legend()
 plt.xlabel('Position on diagonal line')

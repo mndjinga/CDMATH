@@ -121,7 +121,7 @@ PV_routines.Save_PV_data_to_picture_file("FiniteVolumes2DPoisson_DISK_ResultFiel
 # extract and plot diagonal values
 resolution=100
 curv_abs=linspace(0,sqrt(2),resolution+1)
-diag_data=VTK_routines.Extract_field_data_over_line_to_numpyArray(my_ResultField,[0,1,0],[1,0,0], resolution)
+diag_data=VTK_routines.Extract_field_data_over_line_to_numpyArray(my_ResultField,[0,-1,0],[0,1,0], resolution)
 plt.legend()
 plt.xlabel('Position on diagonal line')
 plt.ylabel('Value on diagonal line')
