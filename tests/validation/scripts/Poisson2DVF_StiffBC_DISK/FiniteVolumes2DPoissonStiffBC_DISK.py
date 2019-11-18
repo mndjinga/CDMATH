@@ -10,6 +10,7 @@
 
 import cdmath
 from math import atan2
+from numpy import sign
 import time, json
 import PV_routines
 import VTK_routines
@@ -57,7 +58,8 @@ def solve(my_mesh,filename,resolution, meshType, testColor):
         x = Ci.x()
         y = Ci.y()
 
-        my_ExactSol[i]=atan2(2*x,(x**2+y**2-1))#mettre la fonction definie au second membre de l edp
+        #Robust calculation of atan(2x/(x**2+y**2-1)
+        my_ExactSol[i]=atan2(2*x*sign(x**2+y**2-1),abs(x**2+y**2-1))#mettre la solution exacte de l'edp
         # compute maximum number of neighbours
         maxNbNeighbours= max(1+Ci.getNumberOfFaces(),maxNbNeighbours)
     

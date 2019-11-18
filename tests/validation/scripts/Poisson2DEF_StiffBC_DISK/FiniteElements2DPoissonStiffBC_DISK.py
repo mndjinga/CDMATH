@@ -10,6 +10,7 @@
 
 import cdmath
 from math import atan2
+from numpy import sign
 import time, json
 import PV_routines
 import VTK_routines
@@ -83,7 +84,8 @@ def solve(filename,resolution,meshType, testColor):
         x = Ni.x()
         y = Ni.y()
     
-        my_ExactSol[i]=atan2(2*x,(x*x+y*y-1))#mettre la solution exacte de l'edp
+        #Robust calculation of atan(2x/(x**2+y**2-1)
+        my_ExactSol[i]=atan2(2*x*sign(x**2+y**2-1),abs(x**2+y**2-1))#mettre la solution exacte de l'edp
         if my_mesh.isBorderNode(i): # Détection des noeuds frontière
             boundaryNodes.append(i)
             nbBoundaryNodes=nbBoundaryNodes+1

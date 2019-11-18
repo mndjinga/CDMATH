@@ -10,7 +10,7 @@
 
 import cdmath
 from math import atan2, sqrt
-import numpy as np
+from numpy import sign, linspace
 import matplotlib.pyplot as plt
 import PV_routines
 import VTK_routines
@@ -40,7 +40,8 @@ for i in range(nbCells):
 	x = Ci.x()
 	y = Ci.y()
 
-	my_ExactSol[i]=atan2(2*x,(x**2+y**2-1))#mettre la solution exacte de l'edp
+	#Robust calculation of atan(2x/(x**2+y**2-1)
+	my_ExactSol[i]=atan2(2*x*sign(x**2+y**2-1),abs(x**2+y**2-1))#mettre la solution exacte de l'edp
 	# compute maximum number of neighbours
 	maxNbNeighbours= max(1+Ci.getNumberOfFaces(),maxNbNeighbours)
 
@@ -99,7 +100,7 @@ PV_routines.Save_PV_data_to_picture_file("FiniteVolumes2DPoisson_DISK_ResultFiel
 
 # extract and plot diagonal values
 resolution=100
-curv_abs=np.linspace(0,sqrt(2),resolution+1)
+curv_abs=linspace(0,sqrt(2),resolution+1)
 diag_data=VTK_routines.Extract_field_data_over_line_to_numpyArray(my_ResultField,[0,1,0],[1,0,0], resolution)
 plt.legend()
 plt.xlabel('Position on diagonal line')
