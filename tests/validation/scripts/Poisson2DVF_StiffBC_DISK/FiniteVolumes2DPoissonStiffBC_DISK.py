@@ -61,7 +61,8 @@ def solve(my_mesh,filename,resolution, meshType, testColor):
 
         #Robust calculation of atan(2x/(x**2+y**2-1)
         if x**2+y**2-1 > eps :
-            raise ValueError("x**2+y**2 > 1 !!! Domain should be the unit disk.")
+            print("eps=",eps, ", x**2+y**2 - 1=",x**2+y**2 - 1)
+            raise ValueError("!!! Domain should be the unit disk.")
         elif x**2+y**2-1 < -eps :
             my_ExactSol[i] = atan(2*x/(x**2+y**2-1))
         elif x>0 : #x**2+y**2-1=0-
@@ -148,17 +149,12 @@ def solve(my_mesh,filename,resolution, meshType, testColor):
 
     #Calcul de l'erreur commise par rapport à la solution exacte
     #===========================================================
-    max_abs_sol_exacte=max(my_ExactSol.max(),-my_ExactSol.min())
-    max_sol_num=my_ResultField.max()
-    min_sol_num=my_ResultField.min()
-    erreur_abs=0
-    for i in range(nbCells) :
-        if erreur_abs < abs(my_ExactSol[i] - my_ResultField[i]) :
-            erreur_abs = abs(my_ExactSol[i] - my_ResultField[i])
+    l2_norm_sol_exacte=my_ExactSol.normL2()[0]
+    l2_error = (my_ExactSol - my_ResultField).normL2()[0]
     
-    print("Relative error = max(| exact solution - numerical solution |)/max(| exact solution |) = ",erreur_abs/max_abs_sol_exacte)
-    print("Maximum numerical solution = ", max_sol_num, " Minimum numerical solution = ", min_sol_num)
-    print ("Maximum exact solution = ", my_ExactSol.max(), " Minimum exact solution = ", my_ExactSol.min())
+    print("L2 relative error = norm( exact solution - numerical solution )/norm( exact solution ) = ", l2_error/l2_norm_sol_exacte)
+    print("Maximum numerical solution = ", my_ResultField.max(), " Minimum numerical solution = ", my_ResultField.min())
+    print("Maximum exact solution = ", my_ExactSol.max(), " Minimum exact solution = ", my_ExactSol.min())
 
     #Postprocessing :
     #================
@@ -169,13 +165,13 @@ def solve(my_mesh,filename,resolution, meshType, testColor):
     PV_routines.Save_PV_data_to_picture_file("ExactSol2DPoissonStiffBC_DISK_"+meshType+str(nbCells)+'_0.vtu',"Exact_field",'CELLS',"ExactSol2DPoissonStiffBC_DISK_"+meshType+str(nbCells))
 
     test_desc["Computational_time_taken_by_run"]=end-start
-    test_desc["Absolute_error"]=erreur_abs
-    test_desc["Relative_error"]=erreur_abs/max_abs_sol_exacte
+    test_desc["Absolute_error"]=l2_error
+    test_desc["Relative_error"]=l2_error/l2_norm_sol_exacte
 
     with open('test_PoissonStiffBC'+str(my_mesh.getMeshDimension())+'D_VF_'+"DISK_"+str(nbCells)+ "Cells.json", 'w') as outfile:  
         json.dump(test_desc, outfile)
 
-    return erreur_abs/max_abs_sol_exacte, nbCells, diag_data, min_sol_num, max_sol_num, end - start
+    return l2_error/l2_norm_sol_exacte, nbCells, diag_data, my_ResultField.min(), my_ResultField.max(), end - start
 
 
 def solve_file( filename,resolution, meshType, testColor):

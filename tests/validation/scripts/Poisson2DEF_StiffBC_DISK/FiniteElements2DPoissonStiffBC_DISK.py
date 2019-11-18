@@ -77,7 +77,7 @@ def solve(filename,resolution,meshType, testColor):
     maxNbNeighbours = 0#This is to determine the number of non zero coefficients in the sparse finite element rigidity matrix
     interiorNodes=[]
     boundaryNodes=[]
-    eps=1e-10
+    eps=1e-6
     
     #parcours des noeuds pour discrétisation du second membre et extraction 1) des noeuds intérieur 2) des noeuds frontière 3) du nb max voisins d'un noeud
     for i in range(nbNodes):
@@ -88,7 +88,8 @@ def solve(filename,resolution,meshType, testColor):
         #Robust calculation of atan(2x/(x**2+y**2-1)
         #my_ExactSol[i]=atan2(2*x*sign(x**2+y**2-1),abs(x**2+y**2-1))#mettre la solution exacte de l'edp
         if x**2+y**2-1 > eps :
-            raise ValueError("x**2+y**2 > 1 !!! Domain should be the unit disk.")
+            print("eps=",eps, ", x**2+y**2 - 1=",x**2+y**2 - 1)
+            raise ValueError("!!! Domain should be the unit disk.")
         elif x**2+y**2-1 < -eps :
             my_ExactSol[i] = atan(2*x/(x**2+y**2-1))
         elif x>0 : #x**2+y**2-1=0-
@@ -229,17 +230,12 @@ def solve(filename,resolution,meshType, testColor):
 
     #Calcul de l'erreur commise par rapport à la solution exacte
     #===========================================================
-    max_abs_sol_exacte=max(my_ExactSol.max(),-my_ExactSol.min())
-    max_sol_num=my_ResultField.max()
-    min_sol_num=my_ResultField.min()
-    erreur_abs=0
-    for i in range(nbNodes) :
-        if erreur_abs < abs(my_ExactSol[i] - my_ResultField[i]) :
-            erreur_abs = abs(my_ExactSol[i] - my_ResultField[i])
+    l2_norm_sol_exacte=my_ExactSol.normL2()[0]
+    l2_error = (my_ExactSol - my_ResultField).normL2()[0]
     
-    print("Relative error = max(| exact solution - numerical solution |)/max(| exact solution |) = ",erreur_abs/max_abs_sol_exacte)
-    print("Maximum numerical solution = ", max_sol_num, " Minimum numerical solution = ", min_sol_num)
-    print ("Maximum exact solution = ", my_ExactSol.max(), " Minimum exact solution = ", my_ExactSol.min())
+    print("L2 relative error = norm( exact solution - numerical solution )/norm( exact solution ) = ", l2_error/l2_norm_sol_exacte)
+    print("Maximum numerical solution = ", my_ResultField.max(), " Minimum numerical solution = ", my_ResultField.min())
+    print("Maximum exact solution = ", my_ExactSol.max(), " Minimum exact solution = ", my_ExactSol.min())
     
     #Postprocessing : 
     #================
@@ -250,13 +246,13 @@ def solve(filename,resolution,meshType, testColor):
     PV_routines.Save_PV_data_to_picture_file("ExactSol2DPoissonStiffBC_DISK_"+meshType+str(nbNodes)+'_0.vtu',"Exact_field",'NODES',"ExactSol2DPoissonStiffBC_DISK_"+meshType+str(nbNodes))
     
     test_desc["Computational_time_taken_by_run"]=end-start
-    test_desc["Absolute_error"]=erreur_abs
-    test_desc["Relative_error"]=erreur_abs/max_abs_sol_exacte
+    test_desc["Absolute_error"]=l2_error
+    test_desc["Relative_error"]=l2_error/l2_norm_sol_exacte
 
     with open('test_PoissonStiffBC'+str(my_mesh.getMeshDimension())+'D_EF_'+"DISK_"+meshType+str(nbCells)+ "Cells.json", 'w') as outfile:  
         json.dump(test_desc, outfile)
 
-    return erreur_abs/max_abs_sol_exacte, nbNodes, diag_data, min_sol_num, max_sol_num, end - start
+    return l2_error/l2_norm_sol_exacte, nbNodes, diag_data, my_ResultField.min(), my_ResultField.max(), end - start
 
 if __name__ == """__main__""":
     solve("diskWithTriangles",100,"Unstructured_triangles","Green")

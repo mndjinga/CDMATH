@@ -43,6 +43,7 @@ for i in range(nbCells):
 
     #Robust calculation of atan(2x/(x**2+y**2-1)
     if x**2+y**2-1 > eps :
+        print("eps=",eps, ", x**2+y**2 - 1=",x**2+y**2 - 1)
         raise ValueError("x**2+y**2 > 1 !!! Domain should be the unit disk.")
     elif x**2+y**2-1 < -eps :
         my_ExactSol[i] = atan(2*x/(x**2+y**2-1))
@@ -138,17 +139,12 @@ print("Numerical solution of 2D Poisson equation on a disk using finite volumes 
 
 #Calcul de l'erreur commise par rapport à la solution exacte
 #===========================================================
-max_abs_sol_exacte=max(my_ExactSol.max(),-my_ExactSol.min())
-max_sol_num=my_ResultField.max()
-min_sol_num=my_ResultField.min()
-erreur_abs=0
-for i in range(nbCells) :
-    if erreur_abs < abs(my_ExactSol[i] - my_ResultField[i]) :
-        erreur_abs = abs(my_ExactSol[i] - my_ResultField[i])
+l2_norm_sol_exacte=my_ExactSol.normL2()[0]
+l2_error = (my_ExactSol - my_ResultField).normL2()[0]
 
-print("Absolute error = max(| exact solution - numerical solution |) = ",erreur_abs )
-print("Relative error = max(| exact solution - numerical solution |)/max(| exact solution |) = ",erreur_abs/max_abs_sol_exacte)
-print ("Maximum numerical solution = ", max_sol_num, " Minimum numerical solution = ", min_sol_num)
+print("Absolute error = max(| exact solution - numerical solution |) = ",l2_error )
+print("Relative error = max(| exact solution - numerical solution |)/max(| exact solution |) = ",l2_error/l2_norm_sol_exacte)
+print ("Maximum numerical solution = ", my_ResultField.max(), " Minimum numerical solution = ", my_ResultField.min())
 print ("Maximum exact solution = ", my_ExactSol.max(), " Minimum exact solution = ", my_ExactSol.min())
 
-assert erreur_abs/max_abs_sol_exacte <1.
+assert l2_error/l2_norm_sol_exacte <1.

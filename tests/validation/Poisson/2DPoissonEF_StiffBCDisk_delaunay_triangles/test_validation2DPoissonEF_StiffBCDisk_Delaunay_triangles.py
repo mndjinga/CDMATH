@@ -72,8 +72,8 @@ def test_validation2DEF_StiffBC_Delaunay_triangles():
     a=( a3*b1-a2*b2)/det
     b=(-a2*b1+a1*b2)/det
     
-    print( "FE on 2D disk with Delaunay triangle mesh : scheme order is ", -a )
-    assert abs(a+2.12)<0.1
+    print( "FE on 2D disk with Delaunay triangle mesh : l2 scheme order is ", -a )
+    assert abs(a+0.89)<0.01
 
     # Plot of convergence curves
     plt.close()
