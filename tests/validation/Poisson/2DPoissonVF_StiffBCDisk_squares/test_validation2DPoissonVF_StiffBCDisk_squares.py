@@ -72,8 +72,8 @@ def test_validation2DVF_StiffBC_squares():
     a=( a3*b1-a2*b2)/det
     b=(-a2*b1+a1*b2)/det
     
-    print( "FV on 2D disk with square mesh : scheme order is ", -a )
-    assert abs(a+1.28)<0.01
+    print( "FV on 2D disk with square mesh : l2 scheme order is ", -a )
+    assert abs(a+0.05)<0.01
 
     # Plot of convergence curves
     plt.close()
