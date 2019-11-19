@@ -51,7 +51,7 @@ def solve(my_mesh,filename,resolution, meshType, testColor):
     #================================================================================
     my_ExactSol = cdmath.Field("Exact_field", cdmath.CELLS, my_mesh, 1)
     maxNbNeighbours=0#This is to determine the number of non zero coefficients in the sparse finite element rigidity matrix
-    eps=2e-1#For coarse meshes
+    eps=1e-6#For coarse meshes
     
     #parcours des cellules pour discrétisation du second membre et extraction du nb max de voisins d'une cellule
     for i in range(nbCells): 
@@ -61,13 +61,13 @@ def solve(my_mesh,filename,resolution, meshType, testColor):
 
         #Robust calculation of atan(2x/(x**2+y**2-1)
         if x**2+y**2-1 > eps :
-            print("eps=",eps, ", x**2+y**2 - 1=",x**2+y**2 - 1)
-            raise ValueError("!!! Domain should be the unit disk.")
-        elif x**2+y**2-1 < -eps :
+            print("!!! Warning Mesh ",meshType," !!! Cell is not in the unit disk.",", eps=",eps, ", x**2+y**2 - 1=",x**2+y**2 - 1)
+            #raise ValueError("Exact solution computation !!! Domain should be the unit disk.")
+        if x**2+y**2-1 < -eps :
             my_ExactSol[i] = atan(2*x/(x**2+y**2-1))
-        elif x>0 : #x**2+y**2-1=0-
+        elif x>0 : #x**2+y**2-1>=0
             my_ExactSol[i] = -pi/2
-        elif x<0 : #x**2+y**2-1=0-
+        elif x<0 : #x**2+y**2-1>=0
             my_ExactSol[i] =  pi/2
         else : #x=0
             my_ExactSol[i] = 0
@@ -84,6 +84,7 @@ def solve(my_mesh,filename,resolution, meshType, testColor):
     #===========================================================================
     Rigidite=cdmath.SparseMatrixPetsc(nbCells,nbCells,maxNbNeighbours) # warning : third argument is maximum number of non zero coefficients per line of the matrix
     RHS=cdmath.Vector(nbCells)
+
     #Parcours des cellules du domaine
     for i in range(nbCells):
         Ci=my_mesh.getCell(i)
@@ -103,13 +104,13 @@ def solve(my_mesh,filename,resolution, meshType, testColor):
                 x=Fj.getBarryCenter().x()
                 y=Fj.getBarryCenter().y()
                 if x**2+y**2-1 > eps :
-                    print("eps=",eps, ", x**2+y**2 - 1=",x**2+y**2 - 1)
-                    raise ValueError("!!! Domain should be the unit disk.")
-                elif x**2+y**2-1 < -eps :
+                    print("!!! Warning Mesh ", meshType," !!! Face is not in the unit disk.",", eps=",eps, ", x**2+y**2 - 1=",x**2+y**2 - 1)
+                    #raise ValueError("!!! Domain should be the unit disk.")
+                if x**2+y**2-1 < -eps :
                     RHS[i]+= coeff*atan(2*x/(x**2+y**2-1))
-                elif x>0 : #x**2+y**2-1=0-
+                elif x>0 : #x**2+y**2-1>=0
                     RHS[i]+= coeff*(-pi/2)
-                elif x<0 : #x**2+y**2-1=0-
+                elif x<0 : #x**2+y**2-1>=0
                     RHS[i]+= coeff*pi/2
                 else : #x=0
                     RHS[i]+=  0

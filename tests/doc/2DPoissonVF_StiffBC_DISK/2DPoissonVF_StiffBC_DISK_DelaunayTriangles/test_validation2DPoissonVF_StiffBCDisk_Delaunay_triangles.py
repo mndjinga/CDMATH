@@ -27,7 +27,7 @@ def test_validation2DVF_StiffBC_Delaunay_triangles():
     i=0
     # Storing of numerical errors, mesh sizes and diagonal values
     for filename in meshList:
-        error_tab[i], mesh_size_tab[i], diag_data[i], min_tab[i], max_tab[i], time_tab[i] =FiniteVolumes2DPoissonStiffBC_DISK.solve_file(mesh_path+filename, resolution, meshType, testColor)
+        error_tab[i], mesh_size_tab[i], diag_data[i], min_tab[i], max_tab[i], time_tab[i] =FiniteVolumes2DPoissonStiffBC_DISK.solve_file(mesh_path+filename, resolution, mesh_name, testColor)
         assert min_tab[i]>-1.6 
         assert max_tab[i]<1.6
         plt.plot(curv_abs, diag_data[i], label= str(mesh_size_tab[i]) + ' nodes')
@@ -72,8 +72,8 @@ def test_validation2DVF_StiffBC_Delaunay_triangles():
     a=( a3*b1-a2*b2)/det
     b=(-a2*b1+a1*b2)/det
     
-    print( "FV on 2D disk with Delaunay triangle mesh : scheme order is ", -a )
-    #assert abs(a+2.12)<0.1
+    print( "FV on 2D disk with Delaunay triangle mesh : l2 scheme order is ", -a )
+    assert abs(a+0.42)<0.01
 
     # Plot of convergence curves
     plt.close()

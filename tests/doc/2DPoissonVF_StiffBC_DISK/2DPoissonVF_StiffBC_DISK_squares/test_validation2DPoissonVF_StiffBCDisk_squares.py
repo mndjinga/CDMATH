@@ -27,7 +27,7 @@ def test_validation2DVF_StiffBC_squares():
     i=0
     # Storing of numerical errors, mesh sizes and diagonal values
     for filename in meshList:
-        error_tab[i], mesh_size_tab[i], diag_data[i], min_tab[i], max_tab[i], time_tab[i] =FiniteVolumes2DPoissonStiffBC_DISK.solve_file(mesh_path+filename, resolution, meshType, testColor)
+        error_tab[i], mesh_size_tab[i], diag_data[i], min_tab[i], max_tab[i], time_tab[i] =FiniteVolumes2DPoissonStiffBC_DISK.solve_file(mesh_path+filename, resolution, mesh_name, testColor)
         assert min_tab[i]>-1.6
         assert max_tab[i]<1.6
         plt.plot(curv_abs, diag_data[i], label= str(mesh_size_tab[i]) + ' nodes')
@@ -72,8 +72,8 @@ def test_validation2DVF_StiffBC_squares():
     a=( a3*b1-a2*b2)/det
     b=(-a2*b1+a1*b2)/det
     
-    print( "FV on 2D disk with square mesh : scheme order is ", -a )
-    assert abs(a+1.28)<0.01
+    print( "FV on 2D disk with square mesh : l2 scheme order is ", -a )
+    assert abs(a+1.03)<0.01
 
     # Plot of convergence curves
     plt.close()

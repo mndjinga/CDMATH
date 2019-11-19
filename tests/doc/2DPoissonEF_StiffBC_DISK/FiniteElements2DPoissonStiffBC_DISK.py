@@ -77,7 +77,7 @@ def solve(filename,resolution,meshType, testColor):
     maxNbNeighbours = 0#This is to determine the number of non zero coefficients in the sparse finite element rigidity matrix
     interiorNodes=[]
     boundaryNodes=[]
-    eps=1e-10
+    eps=1e-6
     
     #parcours des noeuds pour discrétisation du second membre et extraction 1) des noeuds intérieur 2) des noeuds frontière 3) du nb max voisins d'un noeud
     for i in range(nbNodes):
@@ -88,12 +88,13 @@ def solve(filename,resolution,meshType, testColor):
         #Robust calculation of atan(2x/(x**2+y**2-1)
         #my_ExactSol[i]=atan2(2*x*sign(x**2+y**2-1),abs(x**2+y**2-1))#mettre la solution exacte de l'edp
         if x**2+y**2-1 > eps :
-            raise ValueError("x**2+y**2 > 1 !!! Domain should be the unit disk.")
-        elif x**2+y**2-1 < -eps :
+            print("!!! Warning Mesh ", meshType," !!! Node is not in the unit disk.",", eps=",eps, ", x**2+y**2 - 1=",x**2+y**2 - 1)
+            #raise ValueError("!!! Domain should be the unit disk.")
+        if x**2+y**2-1 < -eps :
             my_ExactSol[i] = atan(2*x/(x**2+y**2-1))
-        elif x>0 : #x**2+y**2-1=0-
+        elif x>0 : #x**2+y**2-1>=0
             my_ExactSol[i] = -pi/2
-        elif x<0 : #x**2+y**2-1=0-
+        elif x<0 : #x**2+y**2-1>=0
             my_ExactSol[i] =  pi/2
         else : #x=0
             my_ExactSol[i] = 0
