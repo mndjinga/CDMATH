@@ -29,9 +29,9 @@ test_desc["Mesh_is_unstructured"]=True
 test_desc["Geometry"]="Disk"
 test_desc["Part_of_mesh_convergence_analysis"]=True
 
-def solve(my_mesh,filename,resolution, meshType, testColor):
+def solve(my_mesh,filename,resolution, meshName, testColor):
     start = time.time()
-    test_desc["Mesh_type"]=meshType
+    test_desc["Mesh_name"]=meshName
     test_desc["Test_color"]=testColor
     
     nbCells = my_mesh.getNumberOfCells()
@@ -61,7 +61,7 @@ def solve(my_mesh,filename,resolution, meshType, testColor):
 
         #Robust calculation of atan(2x/(x**2+y**2-1)
         if x**2+y**2-1 > eps :
-            print("!!! Warning Mesh ",meshType," !!! Cell is not in the unit disk.",", eps=",eps, ", x**2+y**2-1=",x**2+y**2 - 1)
+            print("!!! Warning Mesh ",meshName," !!! Cell is not in the unit disk.",", eps=",eps, ", x**2+y**2-1=",x**2+y**2 - 1)
             #raise ValueError("Exact solution computation !!! Domain should be the unit disk.")
         if x**2+y**2-1 < -eps :
             my_ExactSol[i] = atan(2*x/(x**2+y**2-1))
@@ -104,7 +104,7 @@ def solve(my_mesh,filename,resolution, meshType, testColor):
                 x=Fj.getBarryCenter().x()
                 y=Fj.getBarryCenter().y()
                 if x**2+y**2-1 > eps :
-                    print("!!! Warning Mesh ", meshType," !!! Face is not in the unit disk.",", eps=",eps, ", x**2+y**2-1=",x**2+y**2 - 1)
+                    print("!!! Warning Mesh ", meshName," !!! Face is not in the unit disk.",", eps=",eps, ", x**2+y**2-1=",x**2+y**2 - 1)
                     #raise ValueError("!!! Domain should be the unit disk.")
                 if x**2+y**2-1 < -eps :
                     RHS[i]+= coeff*atan(2*x/(x**2+y**2-1))
@@ -142,7 +142,7 @@ def solve(my_mesh,filename,resolution, meshType, testColor):
     for i in range(nbCells):
         my_ResultField[i]=SolSyst[i];
     #sauvegarde sur le disque dur du résultat dans un fichier paraview
-    my_ResultField.writeVTK("FiniteVolumes2DPoissonStiffBC_DISK_"+meshType+str(nbCells))
+    my_ResultField.writeVTK("FiniteVolumes2DPoissonStiffBC_DISK_"+meshName+str(nbCells))
     
     print("Numerical solution of 2D Poisson equation on a disk using finite volumes done")
     
@@ -162,7 +162,7 @@ def solve(my_mesh,filename,resolution, meshType, testColor):
 	# Extraction of the diagonal data
     diag_data=VTK_routines.Extract_field_data_over_line_to_numpyArray(my_ResultField,[0,-1,0],[0,1,0], resolution)
     # save 2D picture
-    PV_routines.Save_PV_data_to_picture_file("FiniteVolumes2DPoissonStiffBC_DISK_"+meshType+str(nbCells)+'_0.vtu',"ResultField",'CELLS',"FiniteVolumes2DPoissonStiffBC_DISK_"+meshType+str(nbCells))
+    PV_routines.Save_PV_data_to_picture_file("FiniteVolumes2DPoissonStiffBC_DISK_"+meshName+str(nbCells)+'_0.vtu',"ResultField",'CELLS',"FiniteVolumes2DPoissonStiffBC_DISK_"+meshName+str(nbCells))
 
     test_desc["Computational_time_taken_by_run"]=end-start
     test_desc["Absolute_error"]=l2_error
@@ -174,9 +174,9 @@ def solve(my_mesh,filename,resolution, meshType, testColor):
     return l2_error/l2_norm_sol_exacte, nbCells, diag_data, my_ResultField.min(), my_ResultField.max(), end - start
 
 
-def solve_file( filename,resolution, meshType, testColor):
+def solve_file( filename,resolution, meshName, testColor):
     my_mesh = cdmath.Mesh(filename+".med")
-    return solve(my_mesh, filename,resolution, meshType, testColor)
+    return solve(my_mesh, filename,resolution, meshName, testColor)
     
 if __name__ == """__main__""":
     solve("diskWithTriangles",100,"Unstructured_triangles","Green")

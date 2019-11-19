@@ -32,7 +32,8 @@ def gradientNodal(M, values):
 
 #Chargement du maillage triangulaire du disque unité
 #=======================================================================================
-my_mesh = cdmath.Mesh("diskWithTriangles.med")
+meshName="diskWithTriangles"
+my_mesh = cdmath.Mesh(meshName+".med")
 if( my_mesh.getSpaceDimension()!=2 or my_mesh.getMeshDimension()!=2) :
     raise ValueError("Wrong space or mesh dimension : space and mesh dimensions should be 2")
 if(not my_mesh.isTriangular()) :
@@ -64,7 +65,7 @@ for i in range(nbNodes):
     #Robust calculation of atan(2x/(x**2+y**2-1)
     #my_ExactSol[i]=atan2(2*x*sign(x**2+y**2-1),abs(x**2+y**2-1))#mettre la solution exacte de l'edp
     if x**2+y**2-1 > eps :
-        print("!!! Warning Mesh ", meshType," !!! Node is not in the unit disk.",", eps=",eps, ", x**2+y**2-1=",x**2+y**2 - 1)
+        print("!!! Warning Mesh ", meshName," !!! Node is not in the unit disk.",", eps=",eps, ", x**2+y**2-1=",x**2+y**2 - 1)
         #raise ValueError("x**2+y**2 > 1 !!! Domain should be the unit disk.")
     if x**2+y**2-1 < -eps :
         my_ExactSol[i] = atan(2*x/(x**2+y**2-1))

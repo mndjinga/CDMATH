@@ -17,6 +17,7 @@ import VTK_routines
 import sys
 
 if len(sys.argv) >1 :#non rectangular mesh
+    meshName=sys.argv[1]
     my_mesh = cdmath.Mesh(sys.argv[1])
 else :
     raise ValueError("Give an input mesh of the disk")
@@ -43,7 +44,7 @@ for i in range(nbCells):
 
     #Robust calculation of atan(2x/(x**2+y**2-1)
     if x**2+y**2-1 > eps :
-        print("!!! Warning Mesh ", meshType," !!! Cell is not in the unit disk."," eps=",eps, ", x**2+y**2-1=",x**2+y**2 - 1)
+        print("!!! Warning Mesh ", meshName," !!! Cell is not in the unit disk."," eps=",eps, ", x**2+y**2-1=",x**2+y**2 - 1)
         #raise ValueError("x**2+y**2 > 1 !!! Domain should be the unit disk.")
     if x**2+y**2-1 < -eps :
         my_ExactSol[i] = atan(2*x/(x**2+y**2-1))
@@ -84,7 +85,7 @@ for i in range(nbCells):
             x=Fj.getBarryCenter().x()
             y=Fj.getBarryCenter().y()
             if x**2+y**2-1 > eps :
-                print("!!! Warning Mesh ", meshType," !!! Face is not in the unit disk.",", eps=",eps, ", x**2+y**2-1=",x**2+y**2 - 1)
+                print("!!! Warning Mesh ", meshName," !!! Face is not in the unit disk.",", eps=",eps, ", x**2+y**2-1=",x**2+y**2 - 1)
                 #raise ValueError("!!! Domain should be the unit disk.")
             if x**2+y**2-1 < -eps :
                 RHS[i]+= coeff*atan(2*x/(x**2+y**2-1))
