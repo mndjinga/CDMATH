@@ -476,6 +476,11 @@ Mesh::getBoundaryNodeIds() const
 }
 
 bool
+Mesh::is1DNetwork() const
+{
+	return _eltsTypes.size()==1 && _eltsTypes[0]==INTERP_KERNEL::NORM_SEG2;
+}
+bool
 Mesh::isTriangular() const
 {
 	return _eltsTypes.size()==1 && _eltsTypes[0]==INTERP_KERNEL::NORM_TRI3;
