@@ -1187,6 +1187,8 @@ Mesh::Mesh( double xmin, double xmax, int nx, std::string meshName )
 	const int *tmpA =revDesc->getConstPointer();
 	const int *tmpAI=revDescI->getConstPointer();
 
+	_eltsTypes=mu->getAllGeoTypesSorted();
+
 	DataArrayDouble *baryCell = mu->computeCellCenterOfMass() ;
 	const double *coorBary=baryCell->getConstPointer();
 
@@ -1366,6 +1368,8 @@ Mesh::Mesh( std::vector<double> points, std::string meshName )
 	_cells    = new Cell[_numberOfCells] ;
 
     _numberOfEdges = _numberOfCells;
+
+	_eltsTypes=mu->getAllGeoTypesSorted();
 
 	MEDCouplingFieldDouble* fieldl=mu->getMeasureField(true);
 	DataArrayDouble *longueur = fieldl->getArray();
