@@ -1,7 +1,7 @@
 CDMATH
 ======
 
-CDMATH is a geometrical and numerical toolbox designed for numerical analysts who work on the discretisation of partial differential equations on general shapes and meshes and who would rather focus on high-level scripting. The library originates from [CDMATH](http://cdmath.jimdo.com), a collaborative workgroup with the same name. It is based on the [MEDcoupling](https://docs.salome-platform.org/latest/dev/MEDCoupling/tutorial/index.html) C++/python library of the [SALOME](http://www.salome-platform.org/) project for the handling of meshes and fields, and on the C++ library [PETSC](https://www.mcs.anl.gov/petsc/) for the handling of matrices and linear solvers. The library is currently developed for linux distributions and is maintained on Ubuntu 14.04 LTS, 16.04 LTS and 18.04 LTS, as well as on Fedora 24, 26 and 29.
+CDMATH is a geometrical and numerical toolbox designed for numerical analysts who work on the discretisation of partial differential equations on general shapes and meshes and who would rather focus on high-level scripting. The library originates from [CDMATH](http://cdmath.jimdo.com), a collaborative workgroup with the same name. It is based on the [MEDcoupling](https://docs.salome-platform.org/latest/dev/MEDCoupling/tutorial/index.html) C++/python library of the [SALOME](http://www.salome-platform.org/) project for the handling of meshes and fields, and on the C++ library [PETSC](https://www.mcs.anl.gov/petsc/) for the handling of matrices and linear solvers. The library is currently developed for linux distributions and is maintained on Ubuntu 14.04 LTS, 16.04 LTS and 18.04 LTS, as well as on Fedora 24, 26, 28 and 29.
 
 Examples of use
 ---------------
@@ -11,6 +11,7 @@ Examples of use
 - [Shock formation and numerical capture issues for the 1D Burgers' equations](tests/doc/1DBurgersEquation/BurgersEquation1D.ipynb)
 - [Numerical convergence and maximum principle analysis for the linear finite element method applied to the 2D Poisson equation](tests/doc/2DPoissonEF/Convergence_Poisson_FE_SQUARE.ipynb)
 - [Numerical convergence analysis for the FV5 finite volume method applied to the 2D Poisson equation](tests/doc/2DPoissonVF/Convergence_Poisson_FV5_SQUARE.ipynb)
+- [Numerical convergence analysis for the linear finite element and FV5 finite volume methods applied to the 2D Poisson equation with discontinuous boundary conditions](tests/doc/2DPoisson_StiffBC_DISK/2DPoisson_StiffBC_DISK.ipynb)
 - [Numerical convergence analysis for the FV5 finite volume method applied to a 2D anisotropic diffusion equation](tests/doc/2DDiffusionVF/Convergence_Diffusion_FV5_SQUARE.ipynb)
 - [Influence of the mesh on the convergence and low Mach precision for the UPWIND finite volume method applied to the 2D wave system](tests/doc/2DWaveSystemVF_stationary/Convergence_WaveSystem_Upwind_SQUARE.ipynb)
 - [Influence of the mesh on the convergence and low Mach precision  for the CENTERED finite volume method applied to the 2D wave system](tests/doc/2DWaveSystemVF_stationary/Convergence_WaveSystem_Centered_SQUARE.ipynb)
