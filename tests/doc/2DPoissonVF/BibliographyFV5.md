@@ -1,6 +1,6 @@
 ## Some bibliographical remarks about the two points finite volume scheme
 
-- Order 2 convergence on orthogonal meshes : neighbouring cells  $C_i$ and $C_j$ must be separated by a face (or edge in 2D) $f_{ij}$ that is perpendicular to the straight line connecting the center of masses $x_i$ of $C_i$ and $x_j$ of $C_j$  
+- Order 1 convergence on orthogonal meshes : neighbouring cells  $C_i$ and $C_j$ must be separated by a face (or edge in 2D) $f_{ij}$ that is perpendicular to the straight line connecting the center of masses $x_i$ of $C_i$ and $x_j$ of $C_j$  
   *R. Eymard, T. Gallouët, R. Herbin, Finite Volume Methods, Handbook for Numerical Analysis, Ph. Ciarlet, J.L. Lions eds, North Holland, 2000, 715-1022. 
 
 - Order 1 convergence on not too deformed triangular meshes : the triangles edges must be in $O(h)$ and the triangle areas must be in $O(h^2)$ (angles must not shrink to $0{}^\circ$ nor $180{}^\circ$)   
