@@ -84,8 +84,8 @@ for i in range(nbCells):
 	N1=my_mesh.getNode(nodeId1)
 
 	#Formule des gradients voir EF P1 -> calcul déterminants
-	GradShapeFunc0[0]= (N0.x()-N1.x())
-	GradShapeFunc1[0]=-(N1.x()-N0.x())
+	GradShapeFunc0[0]= 1
+	GradShapeFunc1[0]=-1
 
 	#Création d'un tableau (numéro du noeud, gradient de la fonction de forme
 	GradShapeFuncs={nodeId0 : GradShapeFunc0}
@@ -133,7 +133,7 @@ PV_routines.Save_PV_data_to_picture_file("FiniteElements1DPoisson_ResultField"+'
 
 # extract and plot diagonal values
 resolution=100
-curv_abs=np.linspace(0,sqrt(2),resolution+1)
+curv_abs=np.linspace(0,1,resolution+1)
 diag_data=VTK_routines.Extract_field_data_over_line_to_numpyArray(my_ResultField,[0,0,0],[1,0,0], resolution)
 plt.plot(curv_abs, diag_data, label= '1D mesh with '+str(nbNodes) + ' nodes')
 plt.legend()
