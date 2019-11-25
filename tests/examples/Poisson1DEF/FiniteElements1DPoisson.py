@@ -3,14 +3,14 @@
 # Name        : Résolution EF de l'équation de Poisson 1D -\triangle u = f avec conditions aux limites de Dirichlet u=0
 # Author      : Michaël Ndjinga
 # Copyright   : CEA Saclay 2019
-# Description : Utilisation de la méthode des éléménts finis P1 avec champs u et f discrétisés aux noeuds d'un maillage uniforme
+# Description : Utilisation de la méthode des éléménts finis P1 avec champs u et f discrétisés aux noeuds d'un maillage 1D quelconque
 #		        Création et sauvegarde du champ résultant ainsi que du champ second membre en utilisant la librairie CDMATH
 #               Comparaison de la solution numérique avec la solution exacte u=-sin(pi*x)
 #================================================================================================================================
 
 import cdmath
 from math import sin, pi, sqrt
-import numpy as np
+from numpy import linspace
 import matplotlib.pyplot as plt
 import PV_routines
 import VTK_routines
@@ -21,8 +21,7 @@ nx=100
 my_mesh = cdmath.Mesh(0,1,nx)
 if( my_mesh.getSpaceDimension()!=1 or my_mesh.getMeshDimension()!=1) :
     raise ValueError("Wrong space or mesh dimension : space and mesh dimensions should be 1")
-if(not my_mesh.is1DNetwork()) :
-	raise ValueError("Wrong cell types : mesh is not made of segments")
+
 eps=1e-6
 my_mesh.setGroupAtPlan(0.,0,eps,"DirichletBorder")#Bord GAUCHE
 my_mesh.setGroupAtPlan(1.,0,eps,"DirichletBorder")#Bord DROIT
@@ -30,7 +29,7 @@ my_mesh.setGroupAtPlan(1.,0,eps,"DirichletBorder")#Bord DROIT
 nbNodes = my_mesh.getNumberOfNodes()
 nbCells = my_mesh.getNumberOfCells()
 
-print("Mesh loading done")
+print("Mesh loading/building done")
 print("Number of nodes=", nbNodes)
 print("Number of cells=", nbCells)
 
@@ -55,7 +54,7 @@ for i in range(nbNodes):
 	else: # Détection des noeuds intérieurs
 		interiorNodes.append(i)
 		nbInteriorNodes=nbInteriorNodes+1
-		maxNbNeighbours= max(1+Ni.getNumberOfCells(),maxNbNeighbours) #true only if meshDim=1 or spaceDim=2, otherwise use function Ni.getNumberOfEdges()
+		maxNbNeighbours= max(1+Ni.getNumberOfCells(),maxNbNeighbours)
 
 print("Right hand side discretisation done")
 print("nb of interior nodes=", nbInteriorNodes)
@@ -129,11 +128,11 @@ my_ResultField.writeVTK("FiniteElements1DPoisson_ResultField")
 # Postprocessing :
 #=================
 # save 1D picture
-PV_routines.Save_PV_data_to_picture_file("FiniteElements1DPoisson_ResultField"+'_0.vtu',"ResultField",'NODES',"FiniteElements1DPoisson_SQUARE_ResultField")
+PV_routines.Save_PV_data_to_picture_file("FiniteElements1DPoisson_ResultField"+'_0.vtu',"ResultField",'NODES',"FiniteElements1DPoisson_ResultField")
 
 # extract and plot diagonal values
 resolution=100
-curv_abs=np.linspace(0,1,resolution+1)
+curv_abs=linspace(0,1,resolution+1)
 diag_data=VTK_routines.Extract_field_data_over_line_to_numpyArray(my_ResultField,[0,0,0],[1,0,0], resolution)
 plt.plot(curv_abs, diag_data, label= '1D mesh with '+str(nbNodes) + ' nodes')
 plt.legend()
