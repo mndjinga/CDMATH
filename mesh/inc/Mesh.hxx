@@ -335,7 +335,6 @@ public: //----------------------------------------------------------------
 	bool isBorderNode(int nodeid) const ;
 	bool isBorderFace(int faceid) const ;
 	
-    bool is1DNetwork() const;
 	bool isTriangular() const ;
 	bool isTetrahedral() const ;
 	bool isQuadrangular() const ;
