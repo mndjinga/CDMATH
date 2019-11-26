@@ -68,9 +68,9 @@ for i in range(nbNodes):
         #raise ValueError("!!! Domain should be the unit square.")
     if abs(x*y) > eps :
         my_ExactSol[i] = atan((x*x-y*y)/(2*x*y))
-    elif x**2-y**2-1>0
+    elif x**2-y**2>0 :
         my_ExactSol[i] = pi/2
-    elif x**2-y**2-1<0
+    elif x**2-y**2<0 :
         my_ExactSol[i] = -pi/2
     else : #x=0
         my_ExactSol[i] = 0
