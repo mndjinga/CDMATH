@@ -105,7 +105,7 @@ def solve(my_mesh,filename,resolution, meshName, testColor):
                 y=Fj.getBarryCenter().y()
                 #Robust calculation of atan((x*x-y*y)/(2*x*y))
                 if x<-eps or x>1+eps or y<-eps or y>1+eps :
-                    print("!!! Warning Mesh ", meshName," !!! Node is not in the unit square.",", eps=",eps, ", x= ",x, ", y= ",y)
+                    print("!!! Warning Mesh ", meshName," !!! Cell is not in the unit square.",", eps=",eps, ", x= ",x, ", y= ",y)
                     #raise ValueError("!!! Domain should be the unit square.")
                 if abs(x*y) > eps :
                     RHS[i]+= atan((x*x-y*y)/(2*x*y))*coeff
