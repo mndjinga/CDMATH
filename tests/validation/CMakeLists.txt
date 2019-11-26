@@ -7,6 +7,7 @@ Poisson/2DPoissonEF_Delaunay_triangles
 Poisson/2DPoissonEF_flat_cross_triangles 
 Poisson/2DPoissonEF_skinny_triangles 
 Poisson/2DPoissonEF_StiffBCDisk_delaunay_triangles
+Poisson/2DPoissonEF_StiffBCSquare_delaunay_triangles
 Poisson/2DPoissonVF_Delaunay_triangles 
 Poisson/2DPoissonVF_equilateral_triangles 
 Poisson/2DPoissonVF_right_triangles
