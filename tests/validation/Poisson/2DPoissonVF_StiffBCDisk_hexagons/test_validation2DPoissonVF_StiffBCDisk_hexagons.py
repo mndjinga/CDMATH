@@ -10,7 +10,7 @@ def test_validation2DVF_StiffBC_hexagons():
     start = time.time()
     #### 2D FV hexagon mesh of a disk
     meshList=['diskWithHexagons_1','diskWithHexagons_2','diskWithHexagons_3','diskWithHexagons_4','diskWithHexagons_5']
-    meshType="Unstructured_triangles"
+    meshType="Structured_hexagons"
     testColor="Green"
     nbMeshes=len(meshList)
     error_tab=[0]*nbMeshes
