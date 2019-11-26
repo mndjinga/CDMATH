@@ -188,13 +188,13 @@ for j in range(nbBoundaryNodes):
     my_ResultField[boundaryNodes[j]]=my_ExactSol[boundaryNodes[j]];#remplissage des valeurs pour les noeuds frontière (condition limite)
 #sauvegarde sur le disque dur du résultat dans un fichier paraview
 my_ResultField.writeVTK("FiniteElements2DPoissonStiffBC_DISK_ResultField")
-my_ExactSol.writeVTK("ExactSol2DPoissonStiffBC_DISK_")
+my_ExactSol.writeVTK("ExactSol2DPoissonStiffBC_DISK")
 
 # Postprocessing :
 #=================
 # save 2D picture
 PV_routines.Save_PV_data_to_picture_file("FiniteElements2DPoissonStiffBC_DISK_ResultField"+'_0.vtu',"ResultField",'NODES',"FiniteElements2DPoissonStiffBC_DISK_ResultField")
-PV_routines.Save_PV_data_to_picture_file("ExactSol2DPoissonStiffBC_DISK_"+'_0.vtu',"Exact_field",'NODES',"ExactSol2DPoissonStiffBC_DISK_")
+PV_routines.Save_PV_data_to_picture_file("ExactSol2DPoissonStiffBC_DISK"+'_0.vtu',"Exact_field",'NODES',"ExactSol2DPoissonStiffBC_DISK")
 
 # extract and plot diagonal values
 resolution=100

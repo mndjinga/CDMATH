@@ -99,7 +99,7 @@ my_ResultField.writeVTK("FiniteVolumes1DPoisson_ResultField")
 
 #Postprocessing : 
 #===============
-# save D picture
+# save 1D picture
 PV_routines.Save_PV_data_to_picture_file("FiniteVolumes1DPoisson_ResultField"+'_0.vtu',"ResultField",'CELLS',"FiniteVolumes1DPoisson_ResultField")
 
 # extract and plot diagonal values
