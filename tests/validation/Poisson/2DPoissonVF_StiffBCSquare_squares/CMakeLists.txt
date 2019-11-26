@@ -4,7 +4,7 @@ SET(SCRIPT
   test_validation2DPoissonVF_StiffBCSquare_squares.py
   )
 
-FILE(GLOB MY_MESHES_AND_PICTURES  "../../../ressources/2DTriangles/squareWithTriangles_*" )
+FILE(GLOB MY_MESHES_AND_PICTURES  "../../../ressources/2DCartesien/squareWithSquares_*" )
 
 file(COPY ${SCRIPT} ${MY_MESHES_AND_PICTURES} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
