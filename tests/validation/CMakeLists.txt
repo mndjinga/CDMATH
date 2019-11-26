@@ -27,6 +27,7 @@ Poisson/2DPoissonVF_StiffBCDisk_hexagons
 Poisson/2DPoissonVF_StiffBCDisk_spiderWeb
 Poisson/2DPoissonVF_StiffBCSquare_squares
 Poisson/2DPoissonVF_StiffBCSquare_hexagons
+Poisson/2DPoissonVF_StiffBCSquare_equilateralTriangles
 Poisson/3DSpherePoissonEF 
 Poisson/3DPoissonEF 
 Poisson/3DPoissonVF_checkerboard 
