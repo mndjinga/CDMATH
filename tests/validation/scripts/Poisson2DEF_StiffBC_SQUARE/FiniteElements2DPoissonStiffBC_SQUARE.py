@@ -240,7 +240,6 @@ def solve(filename,resolution,meshName, testColor):
     diag_data=VTK_routines.Extract_field_data_over_line_to_numpyArray(my_ResultField,[0,0,0],[1,1,0], resolution)
     # save 2D picture
     PV_routines.Save_PV_data_to_picture_file("FiniteElements2DPoissonStiffBC_SQUARE_"+meshName+str(nbNodes)+'_0.vtu',"ResultField",'NODES',"FiniteElements2DPoissonStiffBC_SQUARE_"+meshName+str(nbNodes))
-    PV_routines.Save_PV_data_to_picture_file("ExactSol2DPoissonStiffBC_SQUARE_"+meshName+str(nbNodes)+'_0.vtu',"Exact_field",'NODES',"ExactSol2DPoissonStiffBC_SQUARE_"+meshName+str(nbNodes))
     
     test_desc["Computational_time_taken_by_run"]=end-start
     test_desc["Absolute_error"]=l2_error
