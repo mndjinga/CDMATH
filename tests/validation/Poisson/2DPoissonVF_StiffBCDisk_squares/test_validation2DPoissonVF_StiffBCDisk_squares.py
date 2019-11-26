@@ -41,7 +41,7 @@ def test_validation2DVF_StiffBC_squares():
     plt.legend()
     plt.xlabel('Position on diagonal line')
     plt.ylabel('Value on diagonal line')
-    plt.title('Plot over diagonal line for finite volumes \n for Laplace operator on 2D disk with square meshes')
+    plt.title('Plot over diagonal line for finite volumes for Laplace operator \n on 2D disk with square meshes')
     plt.savefig(mesh_name+"_2DPoissonVF_StiffBC_PlotOverDiagonalLine.png")
 
     
@@ -52,7 +52,7 @@ def test_validation2DVF_StiffBC_squares():
     plt.legend()
     plt.xlabel('Number of nodes')
     plt.ylabel('Value')
-    plt.title('Min/Max of Finite volumes \n for Laplace operator on 2D disk with square meshes')
+    plt.title('Min/Max of Finite volumes for Laplace operator \n on 2D disk with square meshes')
     plt.savefig(mesh_name+"_2DPoissonVF_StiffBC_MinMax.png")
     
     for i in range(nbMeshes):
@@ -82,7 +82,7 @@ def test_validation2DVF_StiffBC_squares():
     plt.legend()
     plt.xlabel('log(sqrt(number of nodes))')
     plt.ylabel('log(error)')
-    plt.title('Convergence of finite volumes \n for Laplace operator on 2D disk with square meshes')
+    plt.title('Convergence of finite volumes for Laplace operator \n on 2D disk with square meshes')
     plt.savefig(mesh_name+"_2DPoissonVF_StiffBC_ConvergenceCurve.png")
     
     # Plot of computational time
@@ -91,7 +91,7 @@ def test_validation2DVF_StiffBC_squares():
     plt.legend()
     plt.xlabel('log(sqrt(number of nodes))')
     plt.ylabel('log(cpu time)')
-    plt.title('Computational time of finite volumes \n for Laplace operator on 2D disk with square meshes')
+    plt.title('Computational time of finite volumes for Laplace operator \n on 2D disk with square meshes')
     plt.savefig(mesh_name+"_2DPoissonVF_StiffBC_ComputationalTime.png")
     
     plt.close('all')

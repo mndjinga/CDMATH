@@ -52,7 +52,7 @@ def test_validation2DEF_StiffBC_Delaunay_triangles():
     plt.legend()
     plt.xlabel('Number of nodes')
     plt.ylabel('Value')
-    plt.title('Min/Max of Finite elements \n for Laplace operator on 2D disk with Delaunay triangle meshes')
+    plt.title('Min/Max of Finite elements for Laplace operator \n on 2D disk with Delaunay triangle meshes')
     plt.savefig(mesh_name+"_2DPoissonEF_StiffBC_MinMax.png")
     
     for i in range(nbMeshes):
@@ -82,7 +82,7 @@ def test_validation2DEF_StiffBC_Delaunay_triangles():
     plt.legend()
     plt.xlabel('log(sqrt(number of nodes))')
     plt.ylabel('log(error)')
-    plt.title('Convergence of finite elements \n for Laplace operator on 2D disk with Delaunay triangle meshes')
+    plt.title('Convergence of finite elements \n for Laplace operator \n on 2D disk with Delaunay triangle meshes')
     plt.savefig(mesh_name+"_2DPoissonEF_StiffBC_ConvergenceCurve.png")
     
     # Plot of computational time
@@ -91,7 +91,7 @@ def test_validation2DEF_StiffBC_Delaunay_triangles():
     plt.legend()
     plt.xlabel('log(sqrt(number of nodes))')
     plt.ylabel('log(cpu time)')
-    plt.title('Computational time of finite elements \n for Laplace operator on 2D disk with Delaunay triangle meshes')
+    plt.title('Computational time of finite elements for Laplace operator \n on 2D disk with Delaunay triangle meshes')
     plt.savefig(mesh_name+"_2DPoissonEF_StiffBC_ComputationalTime.png")
     
     plt.close('all')
