@@ -51,6 +51,7 @@ if (CDMATH_WITH_PETSC)
 
     find_package (PETSc 3.4 REQUIRED)
     petsc_get_version ()
+    string(REPLACE ";" ":"  PETSC_INCLUDES_PATH "${PETSC_INCLUDES}")# use colon instead of semicolon in environment file env_CDMATH.sh
 
   else ( DEFINED ENV{PETSC_DIR} )
     message ( STATUS "PETSC_DIR not set, searching petsc in the system" )
