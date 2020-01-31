@@ -126,7 +126,7 @@ endif ()
 # Swig interface
 if (CDMATH_WITH_PYTHON)
    find_package (PYTHON REQUIRED)
-   find_package (SWIG REQUIRED)
+   find_package (SWIG 3.0 REQUIRED)
    set (CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, python-dev, python-numpy, swig")
    set (CPACK_RPM_PACKAGE_REQUIRES "${CPACK_RPM_PACKAGE_REQUIRES}, python-devel, numpy, swig")
    add_subdirectory (${CDMATH_SWIG_DIR})
