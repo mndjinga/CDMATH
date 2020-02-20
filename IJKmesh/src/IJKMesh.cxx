@@ -207,14 +207,20 @@ Mesh::isBorderNode(int nodeid) const
 }
 
 bool
+Mesh::isTriangular() const
+{
+	return false;
+}
+
+bool
 Mesh::isQuadrangular() const
 {
-	return _eltsTypes.size()==1 && _eltsTypes[0]==INTERP_KERNEL::NORM_QUAD4;
+	return _meshDim==2;
 }
 bool
 Mesh::isHexahedral() const
 {
-	return _eltsTypes.size()==1 && _eltsTypes[0]==INTERP_KERNEL::NORM_HEXA8;
+	return _meshDim==3;
 }
 bool
 Mesh::isStructured() const
@@ -225,37 +231,17 @@ Mesh::isStructured() const
 std::string 
 Mesh::getElementTypes() const
 {
-    std::string result;    
-    for(int i=0; i< _eltsTypes.size(); i++)
-    {
-        if( _eltsTypes[i]==INTERP_KERNEL::NORM_POINT1)
-            result += "Points ";
-        else if( _eltsTypes[i]==INTERP_KERNEL::NORM_SEG2)
-            result += "Segments ";
-        else if( _eltsTypes[i]==INTERP_KERNEL::NORM_TRI3)
-            result += "Triangles ";
-        else if( _eltsTypes[i]==INTERP_KERNEL::NORM_QUAD4)
-            result += "Quadrangles ";
-        else if( _eltsTypes[i]==INTERP_KERNEL::NORM_POLYGON)
-            result += "Polygons ";
-        else if( _eltsTypes[i]==INTERP_KERNEL::NORM_TETRA4)
-            result += "Tetrahedra ";
-        else if( _eltsTypes[i]==INTERP_KERNEL::NORM_PYRA5)
-            result += "Pyramids ";
-        else if( _eltsTypes[i]==INTERP_KERNEL::NORM_PENTA6)
-            result += "Pentahedra ";
-        else if( _eltsTypes[i]==INTERP_KERNEL::NORM_HEXA8)
-            result += "Hexahedra ";
-        else if( _eltsTypes[i]==INTERP_KERNEL::NORM_POLYHED)
-            result += "Polyhedrons ";
-        else
-		{
-			cout<< "Mesh " + _name + " contains an element of type " <<endl;
-			cout<< _eltsTypes[i]<<endl;
-			throw CdmathException("Mesh::getElementTypes : recognised cell med types are NORM_POINT1, NORM_SEG2, NORM_TRI3, NORM_QUAD4, NORM_TETRA4, NORM_PYRA5, NORM_PENTA6, NORM_HEXA8, NORM_POLYGON, NORM_POLYHED");
-        }
-    }
-    return result;
+	if( _meshDim==1 )
+		return "Segments ";
+	else if( _meshDim==2 )
+		return "Quadrangles ";
+	else if( _meshDim==3 )
+		return "Hexahedra ";
+	else
+	{
+		cout<< "Mesh " + _name + " does not have acceptable dimension. Dimension is " << _meshDim<<endl;
+		throw CdmathException("Mesh::getElementTypes : wrong dimension");
+	}
 }
 
 //----------------------------------------------------------------------
@@ -371,6 +357,13 @@ Mesh::Mesh( double xmin, double xmax, int nx, double ymin, double ymax, int ny, 
 	delete [] originPtr;
 	delete [] dxyzPtr;
 	delete [] nodeStrctPtr;
+
+	_numberOfCells = _mesh->getNumberOfCells() ;
+
+	_numberOfNodes = _mesh->getNumberOfNodes() ;
+
+	_numberOfFaces = nx*(ny+1)+ny*(nx+1);
+    
 }
 
 //----------------------------------------------------------------------
@@ -437,6 +430,13 @@ Mesh::Mesh( double xmin, double xmax, int nx, double ymin, double ymax, int ny, 
 	delete [] originPtr;
 	delete [] dxyzPtr;
 	delete [] nodeStrctPtr;
+
+	_numberOfCells = _mesh->getNumberOfCells() ;
+
+	_numberOfNodes = _mesh->getNumberOfNodes() ;
+
+	_numberOfFaces = nx*ny*(nz+1)+nx*nz*(ny+1)+ny*nz*(nx+1);
+	
 }
 
 //----------------------------------------------------------------------
