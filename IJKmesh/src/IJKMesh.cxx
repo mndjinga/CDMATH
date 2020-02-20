@@ -35,7 +35,6 @@ Mesh::Mesh( void )
 	_numberOfNodes = 0;
 	_numberOfFaces = 0;
 	_numberOfCells = 0;
-	_numberOfEdges = 0;
 	_xMin=0.;
 	_xMax=0.;
 	_yMin=0.;
@@ -130,7 +129,6 @@ Mesh::Mesh( const IJKMesh& m )
 	_numberOfNodes = m.getNumberOfNodes();
 	_numberOfFaces = m.getNumberOfFaces();
 	_numberOfCells = m.getNumberOfCells();
-	_numberOfEdges = m.getNumberOfEdges();
 	_faceGroupNames = m.getNameOfFaceGroups() ;
 	_faceGroups = m.getFaceGroups() ;
 	_nodeGroupNames = m.getNameOfNodeGroups() ;
@@ -310,11 +308,9 @@ Mesh::Mesh( double xmin, double xmax, int nx, std::string meshName )
 
 	_numberOfCells = _mesh->getNumberOfCells() ;
 
-	_numberOfNodes = mu->getNumberOfNodes() ;
+	_numberOfNodes = _mesh->getNumberOfNodes() ;
 
 	_numberOfFaces = _numberOfNodes;
-
-    _numberOfEdges = _numberOfCells;
     
 }
 
@@ -582,14 +578,6 @@ Mesh::getNumberOfFaces ( void ) const
 }
 
 //----------------------------------------------------------------------
-int
-Mesh::getNumberOfEdges ( void ) const
-//----------------------------------------------------------------------
-{
-	return _numberOfEdges ;
-}
-
-//----------------------------------------------------------------------
 Cell&
 Mesh::getCell ( int i ) const
 //----------------------------------------------------------------------
@@ -648,7 +636,6 @@ Mesh::operator= ( const IJKMesh& mesh )
 	_numberOfNodes = mesh.getNumberOfNodes();
 	_numberOfFaces = mesh.getNumberOfFaces();
 	_numberOfCells = mesh.getNumberOfCells();
-	_numberOfEdges = mesh.getNumberOfEdges();
     _indexFacePeriodicSet= mesh.isIndexFacePeriodicSet();
     if(_indexFacePeriodicSet)
         _indexFacePeriodicMap=mesh.getIndexFacePeriodic();

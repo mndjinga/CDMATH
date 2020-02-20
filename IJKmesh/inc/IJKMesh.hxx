@@ -165,12 +165,6 @@ public: //----------------------------------------------------------------
 	int getNumberOfCells ( void )  const ;
 
 	/**
-	 * return the number of edges in this mesh
-	 * @return _numberOfEdges
-	 */
-	int getNumberOfEdges ( void )  const ;
-
-	/**
 	 * return The cell i in this mesh
 	 * @return _cells[i]
 	 */
@@ -344,11 +338,6 @@ private: //----------------------------------------------------------------
 	 * The number of cells in this mesh.
 	 */
 	int _numberOfCells;
-
-	/*
-	 * The number of edges in this mesh.
-	 */
-	int _numberOfEdges;//Useful to deduce the number of non zero coefficients in the finite element matrix 
 
 	/*
 	 * The names of face groups.
