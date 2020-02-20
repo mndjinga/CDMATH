@@ -10,7 +10,7 @@
 #include "IJKCell.hxx"
 #include "IJKFace.hxx"
 
-#include "MEDFileMesh.hxx"
+#include "MEDFileCMesh.hxx"
 #include "MEDLoader.hxx"
 #include "MEDCouplingIMesh.hxx"
 
@@ -110,7 +110,6 @@ Mesh::Mesh( const MEDCoupling::MEDCouplingIMesh* mesh )
 	delete [] dxyzPtr;
 	delete [] nodeStrctPtr;
 	delete [] Box0 ;
-	setMesh();
 }
 
 //----------------------------------------------------------------------
@@ -156,7 +155,7 @@ void
 Mesh::readMeshMed( const std::string filename, const int meshLevel)
 //----------------------------------------------------------------------
 {
-	MEDFileIMesh *m=MEDFileIMesh::New(filename.c_str());//reads the first mesh encountered in the file, otherwise call New (const char *fileName, const char *mName, int dt=-1, int it=-1)
+	MEDFileCMesh *m=MEDFileCMesh::New(filename.c_str());//reads the first mesh encountered in the file, otherwise call New (const char *fileName, const char *mName, int dt=-1, int it=-1)
 	_mesh=m->getMeshAtLevel(meshLevel);
     _mesh->checkConsistencyLight();
 	_mesh->setName(_mesh->getName());
@@ -191,191 +190,22 @@ Mesh::readMeshMed( const std::string filename, const int meshLevel)
     else
         throw CdmathException("Mesh::readMeshMed med file does not contain a structured MedcouplingIMesh mesh");
     
-	MEDCouplingIMesh*  mu = setMesh();
-	setGroups(m, mu);
 	cout<<endl<< "Loaded file "<< filename<<endl;
     cout<<"Structured Mesh name= "<<m->getName()<<", mesh dim="<< _meshDim<< ", space dim="<< _spaceDim<< ", nb cells= "<<getNumberOfCells()<< ", nb nodes= "<<getNumberOfNodes()<<endl;
 
 	m->decrRef();
-	mu->decrRef();
 }
 
 void
-Mesh::setGroupAtFaceByCoords(double x, double y, double z, double eps, std::string groupName)
+Mesh::setPeriodicFaces()
 {
-	int nbFace=getNumberOfFaces();
-	bool flag=false;
-	for (int iface=0;iface<nbFace;iface++)
-	{
-		double FX=_faces[iface].x();
-		double FY=_faces[iface].y();
-		double FZ=_faces[iface].z();
-		if (abs(FX-x)<eps && abs(FY-y)<eps && abs(FZ-z)<eps)
-		{
-			_faces[iface].setGroupName(groupName);
-			IntTab nodesID= _faces[iface].getNodesId();
-			int nbNodes = _faces[iface].getNumberOfNodes();
-			for(int inode=0 ; inode<nbNodes ; inode++)
-				_nodes[nodesID[inode]].setGroupName(groupName);
-
-			flag=true;
-		}
-	}
-	if (flag)
-    {
-		_faceGroupNames.push_back(groupName);
-		_nodeGroupNames.push_back(groupName);
-        //To do : update _faceGroups and _nodeGroups
-    }
-}
-
-void
-Mesh::setGroupAtPlan(double value, int direction, double eps, std::string groupName)
-{
-	int nbFace=getNumberOfFaces();
-	bool flag=false;
-	for (int iface=0;iface<nbFace;iface++)
-	{
-		double cord=_faces[iface].getBarryCenter()[direction];
-		if (abs(cord-value)<eps)
-		{
-			_faces[iface].setGroupName(groupName);
-			IntTab nodesID= _faces[iface].getNodesId();
-			int nbNodes = _faces[iface].getNumberOfNodes();
-			for(int inode=0 ; inode<nbNodes ; inode++)
-                {
-				_nodes[nodesID[inode]].setGroupName(groupName);
-                }
-
-			flag=true;
-		}
-	}
-	if (flag)
-    {
-		_faceGroupNames.push_back(groupName);
-		_nodeGroupNames.push_back(groupName);
-        //To do : update _faceGroups, _nodeGroups
-    }
-}
-
-std::map<int,int>
-Mesh::getIndexFacePeriodic( void ) const
-{
-    return _indexFacePeriodicMap;
-}
-
-void
-Mesh::setPeriodicFaces(bool check_groups, bool use_central_inversion)
-{
-    if(_indexFacePeriodicSet)
-        return;
-        
-    double eps=1.E-10;
-
-    for (int indexFace=0;indexFace<_boundaryFaceIds.size() ; indexFace++)
-    {
-        Face my_face=_faces[_boundaryFaceIds[indexFace]];
-        int iface_perio=-1;
-        if(_meshDim==1)
-        {
-            for (int iface=0;iface<_boundaryFaceIds.size() ; iface++)
-                if(iface!=indexFace)
-                {
-                    iface_perio=_boundaryFaceIds[iface];
-                    break;
-                }
-        }
-        else if(_meshDim==2)
-        {
-            double x=my_face.x();
-            double y=my_face.y();
-            
-            for (int iface=0;iface<_boundaryFaceIds.size() ; iface++)
-            {
-                Face face_i=_faces[_boundaryFaceIds[iface]];
-                double xi=face_i.x();
-                double yi=face_i.y();
-                if (   (abs(y-yi)<eps || abs(x-xi)<eps )// Case of a square geometry
-                    && ( !check_groups || my_face.getGroupName()!=face_i.getGroupName()) //In case groups need to be checked
-                    && ( !use_central_inversion || abs(y+yi) + abs(x+xi)<eps ) // Case of a central inversion
-                    && fabs(my_face.getMeasure() - face_i.getMeasure())<eps
-                    && fabs(my_face.getXN()      + face_i.getXN())<eps
-                    && fabs(my_face.getYN()      + face_i.getYN())<eps
-                    && fabs(my_face.getZN()      + face_i.getZN())<eps )
-                {
-                    iface_perio=_boundaryFaceIds[iface];
-                    break;
-                }
-            }
-        }
-        else if(_meshDim==3)
-        {
-            double x=my_face.x();
-            double y=my_face.y();
-            double z=my_face.z();
-        
-            for (int iface=0;iface<_boundaryFaceIds.size() ; iface++)
-            {
-                Face face_i=_faces[_boundaryFaceIds[iface]];
-                double xi=face_i.x();
-                double yi=face_i.y();
-                double zi=face_i.z();
-                if ( ((abs(y-yi)<eps && abs(x-xi)<eps) || (abs(x-xi)<eps && abs(z-zi)<eps) || (abs(y-yi)<eps && abs(z-zi)<eps))// Case of a cube geometry
-                    && ( !check_groups || my_face.getGroupName()!=face_i.getGroupName()) //In case groups need to be checked
-                    && ( !use_central_inversion || abs(y+yi) + abs(x+xi) + abs(z+zi)<eps )// Case of a central inversion
-                    && fabs(my_face.getMeasure() - face_i.getMeasure())<eps
-                    && fabs(my_face.getXN()      + face_i.getXN())<eps
-                    && fabs(my_face.getYN()      + face_i.getYN())<eps
-                    && fabs(my_face.getZN()      + face_i.getZN())<eps )
-                {
-                    iface_perio=_boundaryFaceIds[iface];
-                    break;
-                }
-            }  
-        }
-        else
-            throw CdmathException("Mesh::setPeriodicFaces: Mesh dimension should be 1, 2 or 3");
-        
-        if (iface_perio==-1)
-            throw CdmathException("Mesh::setPeriodicFaces: periodic face not found, iface_perio==-1 " );
-        else
-            _indexFacePeriodicMap[_boundaryFaceIds[indexFace]]=iface_perio;
-    }
     _indexFacePeriodicSet=true;    
-}
-
-int
-Mesh::getIndexFacePeriodic(int indexFace, bool check_groups, bool use_central_inversion)
-{
-	if (!_faces[indexFace].isBorder())
-        {
-            cout<<"Pb with indexFace= "<<indexFace<<endl;
-            throw CdmathException("Mesh::getIndexFacePeriodic: not a border face" );
-        }
-        
-    if(!_indexFacePeriodicSet)
-        setPeriodicFaces(check_groups, use_central_inversion);
-
-    std::map<int,int>::const_iterator  it = _indexFacePeriodicMap.find(indexFace);
-    if( it != _indexFacePeriodicMap.end() )
-        return it->second;
-    else
-    {
-        cout<<"Pb with indexFace= "<<indexFace<<endl;
-        throw CdmathException("Mesh::getIndexFacePeriodic: not a periodic face" );
-    }
 }
 
 bool
 Mesh::isBorderNode(int nodeid) const
 {
 	return getNode(nodeid).isBorder();
-}
-
-bool
-Mesh::isBorderFace(int faceid) const
-{
-	return getFace(faceid).isBorder();
 }
 
 bool
@@ -428,112 +258,6 @@ Mesh::getElementTypes() const
         }
     }
     return result;
-}
-
-void
-Mesh::setGroups( const MEDFileIMesh* medmesh, MEDCouplingIMesh*  mu)
-{
-	//Searching for face groups
-	vector<string> faceGroups=medmesh->getGroupsNames() ;
-
-	for (unsigned int i=0;i<faceGroups.size();i++ )
-	{
-		string groupName=faceGroups[i];
-		vector<int> nonEmptyGrp(medmesh->getGrpNonEmptyLevels(groupName));
-		//We check if the group has a relative dimension equal to -1 
-		//before call to the function getGroup(-1,groupName.c_str())
-		vector<int>::iterator it = find(nonEmptyGrp.begin(), nonEmptyGrp.end(), -1);
-		if (it != nonEmptyGrp.end())
-		{
-			cout<<"Boundary face group named "<< groupName << " found"<<endl;
-			MEDCouplingIMesh *m=medmesh->getGroup(-1,groupName.c_str());
-			_faceGroups.push_back(m);
-			_faceGroupNames.push_back(groupName);
-			DataArrayDouble *baryCell = m->computeCellCenterOfMass() ;
-			const double *coorBary=baryCell->getConstPointer();
-
-			int nbCellsSubMesh=m->getNumberOfCells();
-			for (int ic(0), k(0); ic<nbCellsSubMesh; ic++, k+=_spaceDim)
-			{
-				vector<double> coorBaryXyz(3,0);
-				for (int d=0; d<_spaceDim; d++)
-					coorBaryXyz[d] = coorBary[k+d];
-				Point p1(coorBaryXyz[0],coorBaryXyz[1],coorBaryXyz[2]) ;
-
-				int flag=0;
-				for (int iface=0;iface<_numberOfFaces;iface++ )
-				{
-					Point p2=_faces[iface].getBarryCenter();
-					if(p1.distance(p2)<1.E-10)
-					{
-						_faces[iface].setGroupName(groupName);
-						flag=1;
-						break;
-					}
-				}
-				if (flag==0)
-					throw CdmathException("No face belonging to group " + groupName + " found");
-			}
-			baryCell->decrRef();
-			//m->decrRef();
-		}
-	}
-
-	//Searching for node groups
-	vector<string> nodeGroups=medmesh->getGroupsOnSpecifiedLev(1) ;
-
-	for (unsigned int i=0;i<nodeGroups.size();i++ )
-	{
-		string groupName=nodeGroups[i];
-		DataArrayInt * nodeGroup=medmesh->getNodeGroupArr( groupName );
-		const int *nodeids=nodeGroup->getConstPointer();
-
-		if(nodeids!=NULL)
-		{
-			cout<<"Boundary node group named "<< groupName << " found"<<endl;
-
-			_nodeGroups.push_back(nodeGroup);
-			_nodeGroupNames.push_back(groupName);
-
-			int nbNodesSubMesh=nodeGroup->getNumberOfTuples();//nodeGroup->getNbOfElems();
-
-			DataArrayDouble *coo = mu->getCoords() ;
-			const double *cood=coo->getConstPointer();
-
-			for (int ic(0); ic<nbNodesSubMesh; ic++)
-			{
-				vector<double> coorP(3,0);
-				for (int d=0; d<_spaceDim; d++)
-					coorP[d] = cood[nodeids[ic]*_spaceDim+d];
-				Point p1(coorP[0],coorP[1],coorP[2]) ;
-
-				int flag=0;
-				for (int inode=0;inode<_numberOfNodes;inode++ )
-				{
-					Point p2=_nodes[inode].getPoint();
-					if(p1.distance(p2)<1.E-10)
-					{
-						_nodes[inode].setGroupName(groupName);
-						flag=1;
-						break;
-					}
-				}
-				if (flag==0)
-					throw CdmathException("No node belonging to group " + groupName + " found");
-			}
-		}
-	}
-}
-
-//----------------------------------------------------------------------
-MEDCouplingIMesh* 
-Mesh::setMesh( void )
-//----------------------------------------------------------------------
-{
-
-	// _cells, _nodes and _faces (with normal) initialization:
-	
-    return mu;
 }
 
 //----------------------------------------------------------------------
@@ -592,38 +316,6 @@ Mesh::Mesh( double xmin, double xmax, int nx, std::string meshName )
 
     _numberOfEdges = _numberOfCells;
     
-
-		Point p(coorBary[id],0.0,0.0) ;
-		Cell ci( nbVertices, nbVertices, lon[id], p ) ;
-        double xn = (cood[nodeIdsOfCell[nbVertices-1]] - cood[nodeIdsOfCell[0]] > 0.0) ? -1.0 : 1.0;
-
-        int nbFaces=tmpI[id+1]-tmpI[id];
-        const int *work=tmp+tmpI[id];
-		
-        for( int el=0;el<nbFaces;el++ )
-		{
-			ci.addNormalVector(el,xn,0.0,0.0) ;
-			ci.addFaceId(el,work[el]) ;
-			xn = - xn;
-		}
-
-        
-		Node vi( nbCells, nbFaces, nbNeighbourNodes, p ) ;
-        for( int el=0;el<nbCells;el++ )
-			vi.addCellId(el,workc[el]) ;
-		for( int el=0;el<nbFaces;el++ )
-			vi.addFaceId(el,id) ;
-        for( int el=0;el<nbNeighbourNodes;el++ )
-			vi.addNeighbourNodeId(el,workn[el]) ;
-
-
-		int nbVertices=1;
-		Face fi( nbVertices, nbCells, 1.0, p, 1., 0., 0. ) ;
-        for( int el=0;el<nbVertices;el++ )
-			fi.addNodeId(el,id) ;
-
-		for( int el=0;el<nbCells;el++ )
-			fi.addCellId(el,workc[el]) ;
 }
 
 //----------------------------------------------------------------------
@@ -683,8 +375,6 @@ Mesh::Mesh( double xmin, double xmax, int nx, double ymin, double ymax, int ny, 
 	delete [] originPtr;
 	delete [] dxyzPtr;
 	delete [] nodeStrctPtr;
-    
-	setMesh();
 }
 
 //----------------------------------------------------------------------
@@ -751,8 +441,6 @@ Mesh::Mesh( double xmin, double xmax, int nx, double ymin, double ymax, int ny, 
 	delete [] originPtr;
 	delete [] dxyzPtr;
 	delete [] nodeStrctPtr;
-    
-	setMesh();
 }
 
 //----------------------------------------------------------------------
@@ -997,24 +685,7 @@ Mesh::minRatioVolSurf()
 int 
 Mesh::getMaxNbNeighbours(EntityType type) const
 {
-    double result=0;
-    
-    if (type==CELLS)
-	{
-        for(int i=0; i<_numberOfCells; i++)
-            if(result < _cells[i].getNumberOfFaces())
-                result=_cells[i].getNumberOfFaces();
-	}
-    else if(type==NODES)
-	{
-        for(int i=0; i<_numberOfNodes; i++)
-            if(result < _nodes[i].getNumberOfEdges())
-                result=_nodes[i].getNumberOfEdges();
-	}
-    else
-		throw CdmathException("Mesh::getMaxNbNeighbours : entity type is not accepted. Should be CELLS or NODES");
-
-    return result;
+    return 2*_meshDim;
 }
 //----------------------------------------------------------------------
 void

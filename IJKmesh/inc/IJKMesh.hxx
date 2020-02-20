@@ -24,10 +24,10 @@
  * if dim=2, union of two grids : nx,ny+1  and nx,ny+1
  * if dim=3, union of three grids : nx,ny,nz+1, nx,ny+1,nz  and nx+1,ny,nz
  * 
- * - number  of nodes surounding each cell
- * - number  of faces surounding each cell
+ * - number  of nodes surounding each cell : known constant : 2*_Ndim
+ * - number  of faces surounding each cell : known constant : 2 _Ndim
  * - normal vectors surrounding each cell
- * - measure of each cell
+ * - measure of each cell : known constant : dx*dy*dz
  */
 
 namespace MEDCoupling
@@ -249,18 +249,6 @@ public: //----------------------------------------------------------------
 	std::vector<std::string> getNameOfNodeGroups( void )  const ;
 
 	/**
-	 * return the list of face groups
-	 * return _faceGroups
-	 */
-	std::vector<MEDCoupling::MEDCouplingIMesh *> getFaceGroups( void )  const ;
-
-	/**
-	 * return the list of node groups
-	 * return _nodeGroups
-	 */
-	std::vector<MEDCoupling::DataArrayInt32 *> getNodeGroups( void )  const ;
-
-	/**
 	 * write mesh in the VTK format
 	 */
 	void writeVTK ( const std::string fileName ) const ;
@@ -270,17 +258,12 @@ public: //----------------------------------------------------------------
 	 */
 	void writeMED ( const std::string fileName ) const ;
 
-	void setGroupAtPlan(double value, int direction, double eps, std::string groupName) ;
-
-	void setGroupAtFaceByCoords(double x, double y, double z, double eps, std::string groupName) ;
-
 	/*
      * Functions to manage periodic boundary condition in square/cubic geometries 
      */
-    void setPeriodicFaces(bool check_groups= false, bool use_central_inversion=false) ;
+    void setPeriodicFaces() ;
     int getIndexFacePeriodic(int indexFace, bool check_groups= false, bool use_central_inversion=false);
     void setBoundaryNodes();
-    std::map<int,int> getIndexFacePeriodic( void ) const;
     bool isIndexFacePeriodicSet() const ;
     
 	bool isBorderNode(int nodeid) const ;
@@ -315,10 +298,6 @@ public: //----------------------------------------------------------------
 
 private: //----------------------------------------------------------------
 
-	MEDCoupling::MEDCouplingIMesh*  setMesh( void ) ;
-
-	void setGroups( const MEDCoupling::MEDFileIMesh* medmesh, MEDCoupling::MEDCouplingIMesh*  mu) ;
-
     std::string _name;
     
 	/**
@@ -347,9 +326,9 @@ private: //----------------------------------------------------------------
 
 	double _zMax;
 
-	std::vector<int> _nxyz;
+	std::vector<int> _nxyz;//Number of cells in each direction
 
-	std::vector<double> _dxyz;
+	std::vector<double> _dxyz;//lenght depth and height of each cell
 
 	/*
 	 * The number of nodes in this mesh.

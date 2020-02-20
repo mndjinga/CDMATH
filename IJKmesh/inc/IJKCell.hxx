@@ -10,10 +10,10 @@
 
 /**
  * IJKCell class is defined by
- * - number of nodes surrounding every cell of the mesh
- * - number of faces surrounding every cell of the mesh
+ * - number of nodes surrounding every cell of the mesh : known constant
+ * - number of faces surrounding every cell of the mesh : known constant
  * - number of cells surrounding this cell : two cells are neighbours if they have a common face (neighbour_policy 0), a comon edge (neighbour_policy 1) or a common node (neighbour_policy 2)
- * - measure of this cell
+ * - measure of this cell : known constant
  * - barycenter of this cell
  * 
  * - methods to determine neighbouring faces and nodes indices from mesh structure
@@ -134,12 +134,12 @@ class IJKCell
 	/*
 	 * The index of this cell.
 	 */
-    int _cellIndex;
+    int _cellIndex;// necessaire ???
     
 	/*
 	 * The coordinate of barycenter the cell.
 	 */
-	Point _point ;
+	Point _point ;// necessaire ??? se déduit des cordonnées IJK
 
     /*
      * The number of cells surrounding this cell.
