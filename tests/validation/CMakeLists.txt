@@ -33,6 +33,9 @@ Poisson/3DPoissonEF
 Poisson/3DPoissonVF_checkerboard 
 Poisson/3DPoissonVF_tetrahedra 
 Poisson/3DPoissonVF_cubes
+AnisotropicDiffusion/2DDiffusionEF_Delaunay_triangles
+AnisotropicDiffusion/2DDiffusionEF_flat_cross_triangles 
+AnisotropicDiffusion/2DDiffusionEF_skinny_triangles 
 AnisotropicDiffusion/2DDiffusionVF_checkerboard 
 AnisotropicDiffusion/2DDiffusionVF_loc_ref 
 AnisotropicDiffusion/2DDiffusionVF_Delaunay_triangles 
