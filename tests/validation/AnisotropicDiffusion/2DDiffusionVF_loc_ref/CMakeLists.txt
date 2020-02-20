@@ -1,6 +1,6 @@
 
 SET(SCRIPT
-  ../../scripts/Diffusion2DVF/FiniteVolumes2DDiffusion_SQUARE.py
+  ../../scripts/AnisotropicDiffusion2DVF/FiniteVolumes2DDiffusion_SQUARE.py
     test_validation2DDiffusionVF_loc_ref.py
   )
 FILE(GLOB MY_MESHES_AND_PICTURES  "../../../ressources/2DLocRefinedSquares/squareWithLocRefSquares_*" )

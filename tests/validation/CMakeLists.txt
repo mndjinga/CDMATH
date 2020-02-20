@@ -33,17 +33,17 @@ Poisson/3DPoissonEF
 Poisson/3DPoissonVF_checkerboard 
 Poisson/3DPoissonVF_tetrahedra 
 Poisson/3DPoissonVF_cubes
-Diffusion/2DDiffusionVF_checkerboard 
-Diffusion/2DDiffusionVF_loc_ref 
-Diffusion/2DDiffusionVF_Delaunay_triangles 
-Diffusion/2DDiffusionVF_squares 
-Diffusion/2DDiffusionVF_deformedQuadrangles 
-Diffusion/2DDiffusionVF_hexagons 
-Diffusion/2DDiffusionVF_brickwall
-Diffusion/2DDiffusionVF_cross_triangles
-Diffusion/2DDiffusionVF_long_rectangles
-Diffusion/2DDiffusionVF_skinny_triangles
-Diffusion/2DDiffusionVF_flat_cross_triangles
+AnisotropicDiffusion/2DDiffusionVF_checkerboard 
+AnisotropicDiffusion/2DDiffusionVF_loc_ref 
+AnisotropicDiffusion/2DDiffusionVF_Delaunay_triangles 
+AnisotropicDiffusion/2DDiffusionVF_squares 
+AnisotropicDiffusion/2DDiffusionVF_deformedQuadrangles 
+AnisotropicDiffusion/2DDiffusionVF_hexagons 
+AnisotropicDiffusion/2DDiffusionVF_brickwall
+AnisotropicDiffusion/2DDiffusionVF_cross_triangles
+AnisotropicDiffusion/2DDiffusionVF_long_rectangles
+AnisotropicDiffusion/2DDiffusionVF_skinny_triangles
+AnisotropicDiffusion/2DDiffusionVF_flat_cross_triangles
 WaveSystem_stationary/2DWaveSystemPStagSquares 
 WaveSystem_stationary/2DWaveSystemPStagDelaunayTriangles 
 WaveSystem_stationary/2DWaveSystemPStagCrossTriangles 
@@ -162,13 +162,13 @@ IF (CDMATH_WITH_PYTHON AND CDMATH_WITH_PETSC AND CDMATH_WITH_POSTPRO)
     if(NOT ${is_2DDiffusion} EQUAL -1)
     install(
       DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${dir}/
-      DESTINATION share/doc/convergence/2DDiffusionVF
+      DESTINATION share/doc/convergence/2DAnisotropicDiffusionVF
       FILES_MATCHING PATTERN "*_SQUARE.ipynb"
                      PATTERN "*_SQUARE.pdf"
     )
     install(
       DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${dir}/
-      DESTINATION share/doc/convergence/2DDiffusionVF/${dir}
+      DESTINATION share/doc/convergence/2DAnisotropicDiffusionVF/${dir}
       FILES_MATCHING PATTERN "*.png"
                      PATTERN "*.ipynb"
                      PATTERN "*.py"

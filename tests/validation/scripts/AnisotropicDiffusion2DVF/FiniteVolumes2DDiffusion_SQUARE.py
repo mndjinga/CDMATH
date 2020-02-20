@@ -1,6 +1,6 @@
 # -*-coding:utf-8 -*
 #===============================================================================================================================
-# Name        : Résolution VF de l'équation de Diffusion anisotrope -(\partial_{xx} u + K \partial_{yy} u) = f avec conditions aux limites de Dirichlet u=0
+# Name        : Résolution VF de l'équation de diffusion anisotrope -(\partial_{xx} u + K \partial_{yy} u) = f avec conditions aux limites de Dirichlet u=0
 # Author      : Michaël Ndjinga
 # Copyright   : CEA Saclay 2019
 # Description : Utilisation de la méthode des volumes finis avec champs u et f discrétisés aux cellules d'un maillage quelconque
@@ -17,9 +17,9 @@ import VTK_routines
 test_desc={}
 test_desc["Initial_data"]="None"
 test_desc["Boundary_conditions"]="Dirichlet"
-test_desc["Global_name"]="FV simulation of the 2D Diffusion equation"
+test_desc["Global_name"]="FV simulation of the 2D anisotropic diffusion equation"
 test_desc["Global_comment"]="2 points FV diffusion scheme"
-test_desc["PDE_model"]="Diffusion"
+test_desc["PDE_model"]="Anisotropic diffusion"
 test_desc["PDE_is_stationary"]=True
 test_desc["PDE_search_for_stationary_solution"]=False
 test_desc["Numerical_method_name"]="VF5"
@@ -123,15 +123,15 @@ def solve(my_mesh,filename,resolution, meshType, testColor):
     for i in range(nbCells):
         my_ResultField[i]=SolSyst[i];
     #sauvegarde sur le disque dur du résultat dans un fichier paraview
-    my_ResultField.writeVTK("FiniteVolumes2DDiffusion_SQUARE_"+meshType+str(nbCells))
+    my_ResultField.writeVTK("FiniteVolumes2DAnisotropicDiffusion_SQUARE_"+meshType+str(nbCells))
     
-    print("Numerical solution of 2D Diffusion equation on a square using finite elements done")
+    print("Numerical solution of 2D anisotropic diffusion equation on a square using finite elements done")
     
     end = time.time()
 
     #Calcul de l'erreur commise par rapport à la solution exacte
     #===========================================================
-    #The following formulas use the fact that the exact solution is equal the right hand side divided by (1+K)*pi*pi
+    #The following formulas use the fact that the exact solution is equal to the right hand side divided by (1+K)*pi*pi
     max_abs_sol_exacte=max(my_RHSfield.max(),-my_RHSfield.min())/((1+K)*pi*pi)
     max_sol_num=my_ResultField.max()
     min_sol_num=my_ResultField.min()
@@ -148,13 +148,13 @@ def solve(my_mesh,filename,resolution, meshType, testColor):
 	# Extraction of the diagonal data
     diag_data=VTK_routines.Extract_field_data_over_line_to_numpyArray(my_ResultField,[0,1,0],[1,0,0], resolution)
     # save 2D picture
-    PV_routines.Save_PV_data_to_picture_file("FiniteVolumes2DDiffusion_SQUARE_"+meshType+str(nbCells)+'_0.vtu',"ResultField",'CELLS',"FiniteVolumes2DDiffusion_SQUARE_"+meshType+str(nbCells))
+    PV_routines.Save_PV_data_to_picture_file("FiniteVolumes2DAnisotropicDiffusion_SQUARE_"+meshType+str(nbCells)+'_0.vtu',"ResultField",'CELLS',"FiniteVolumes2DAnisotropicDiffusion_SQUARE_"+meshType+str(nbCells))
 
     test_desc["Computational_time_taken_by_run"]=end-start
     test_desc["Absolute_error"]=erreur_abs
     test_desc["Relative_error"]=erreur_abs/max_abs_sol_exacte
 
-    with open('test_Diffusion'+str(my_mesh.getMeshDimension())+'D_VF_'+str(nbCells)+ "Cells.json", 'w') as outfile:  
+    with open('test_AnisotropicDiffusion'+str(my_mesh.getMeshDimension())+'D_VF_'+str(nbCells)+ "Cells.json", 'w') as outfile:  
         json.dump(test_desc, outfile)
 
     return erreur_abs/max_abs_sol_exacte, nbCells, diag_data, min_sol_num, max_sol_num, end - start
