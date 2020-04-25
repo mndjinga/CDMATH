@@ -1,7 +1,7 @@
 CDMATH
 ======
 
-CDMATH is a geometrical and numerical toolbox designed for numerical analysts who work on the discretisation of partial differential equations on general shapes and meshes and who would rather focus on high-level scripting. The library originates from [CDMATH](http://cdmath.jimdo.com), a collaborative workgroup with the same name. It is based on the [MEDcoupling](https://docs.salome-platform.org/latest/dev/MEDCoupling/tutorial/index.html) C++/python library of the [SALOME](http://www.salome-platform.org/) project for the handling of meshes and fields, and on the C++ library [PETSC](https://www.mcs.anl.gov/petsc/) for the handling of matrices and linear solvers. The library is currently developed for linux distributions and is maintained on Ubuntu 14.04 LTS, 16.04 LTS and 18.04 LTS, as well as on Fedora 24, 26, 28 and 29.
+CDMATH is a geometrical and numerical toolbox designed for numerical analysts who work on the discretisation of partial differential equations on general shapes and meshes and would rather focus on high-level scripting. The library originates from [CDMATH](http://cdmath.jimdo.com), a collaborative workgroup with the same name. It is based on the [MEDcoupling](https://docs.salome-platform.org/latest/dev/MEDCoupling/tutorial/index.html) C++/python library of the [SALOME](http://www.salome-platform.org/) project for the handling of meshes and fields, and on the C++ library [PETSC](https://www.mcs.anl.gov/petsc/) for the handling of matrices and linear solvers. The library is currently developed for linux distributions and is maintained on Ubuntu 14.04 LTS, 16.04 LTS and 18.04 LTS, as well as on Fedora 24, 26, 28 and 29.
 
 Examples of use
 ---------------
@@ -37,12 +37,12 @@ Set environment for the compilation of CDMATH
 ---------------------------------------------
 Dependencies. The following packages list is sufficient on Ubuntu 14.04, Ubuntu 16.04, Ubuntu 18.04 :
 
- - `cmake` (mandatory)
+ - `cmake3` (mandatory)
  - `g++` or another C++ compiler (mandatory)
  - `libhdf5-dev` (mandatory)
- - `python-dev`, `python-numpy` and `swig`, if you want to use CDMATH commands in yous Python scritps. Use the compilation option `-DCDMATH_WITH_PYTHON=ON`. (highly recommended)
- - `python-matplotlib` and `paraview` for postprocessing tools such as plotting curves (matplotlib) or generating 3D views (paraview). Use the compilation option `-DCDMATH_WITH_POSTPRO=ON` (recommended).
- - `petsc` if you want to solve large spase linear system. Typically required for implicit methods. Use the compilation option `-DCDMATH_WITH_DOCUMENTATION=ON` (recommended).
+ - `python-dev`, `python-numpy` and `swig`, if you want to use CDMATH commands in Python scripts. Use the compilation option `-DCDMATH_WITH_PYTHON=ON`. (highly recommended)
+ - `python-matplotlib` and `paraview` for postprocessing tools such as plotting curves (matplotlib) or generating 3D view images (paraview). Use the compilation option `-DCDMATH_WITH_POSTPRO=ON` (recommended).
+ - `petsc` if you want to solve large spase linear systems. Typically required for implicit methods. Use the compilation option `-DCDMATH_WITH_DOCUMENTATION=ON` (recommended).
  - `jupyter`, in order to generate and visualise nice reports from test case simulations (optional)
  - `doxygen`, `graphviz` and `mscgen`, if you want to generate a nice source code documentation in `~/workspace/cdmath/cdmath_install/doc/`. Use the compilation option `-DCDMATH_WITH_PETSC=ON`. (optional)
  - `libcppunit-dev`, if you want to generate unit tests. Use the compilation option `-DCDMATH_WITH_TESTS=ON` (optional).
