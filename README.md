@@ -42,9 +42,9 @@ Dependencies. The following packages list is sufficient on Ubuntu 14.04, Ubuntu 
  - `libhdf5-dev` (mandatory)
  - `python-dev`, `python-numpy` and `swig`, if you want to use CDMATH commands in Python scripts. Use the compilation option `-DCDMATH_WITH_PYTHON=ON`. (highly recommended)
  - `python-matplotlib` and `paraview` for postprocessing tools such as plotting curves (matplotlib) or generating 3D view images (paraview). Use the compilation option `-DCDMATH_WITH_POSTPRO=ON` (recommended).
- - `petsc` if you want to solve large spase linear systems. Typically required for implicit methods. Use the compilation option `-DCDMATH_WITH_DOCUMENTATION=ON` (recommended).
+ - `petsc` if you want to solve large spase linear systems. Typically required for implicit methods. Use the compilation option `-DCDMATH_WITH_PETSC=ON` (recommended).
  - `jupyter`, in order to generate and visualise nice reports from test case simulations (optional)
- - `doxygen`, `graphviz` and `mscgen`, if you want to generate a nice source code documentation in `~/workspace/cdmath/cdmath_install/doc/`. Use the compilation option `-DCDMATH_WITH_PETSC=ON`. (optional)
+ - `doxygen`, `graphviz` and `mscgen`, if you want to generate a nice source code documentation in `~/workspace/cdmath/cdmath_install/doc/`. Use the compilation option `-DCDMATH_WITH_DOCUMENTATION=ON` (optional).
  - `libcppunit-dev`, if you want to generate unit tests. Use the compilation option `-DCDMATH_WITH_TESTS=ON` (optional).
  - `libopenmpi-dev`, in particular if you need to use the compilation option `-DMEDFILE_USE_MPI=ON` (optional).
  - `rpm`, if you want to generate RPM installation packages. Use the compilation option `-DCDMATH_WITH_PACKAGE=ON` (optional).
