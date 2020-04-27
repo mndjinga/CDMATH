@@ -24,8 +24,8 @@ def test_validation3DTorusEF():
     # Storing of numerical errors and mesh sizes
     for filename in meshList:
         error_tab[i], mesh_size_tab[i], min_sol_num, max_sol_num, time_tab[i] =FiniteElements3DPoissonTorus.solve(mesh_path+filename, resolution,meshType,testColor)
-        assert min_sol_num>-1.1 
-        assert max_sol_num<1.1
+        assert min_sol_num>-1.2 
+        assert max_sol_num<1.15
         error_tab[i]=log10(error_tab[i])
         time_tab[i]=log10(time_tab[i])
         with open('./FiniteElementsOnTorusPoisson_PlotOnSortedLines'+meshType+str(mesh_size_tab[i])+'0.csv') as f:

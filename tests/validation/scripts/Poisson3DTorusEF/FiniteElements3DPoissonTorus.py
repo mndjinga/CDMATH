@@ -207,16 +207,16 @@ def solve(filename,resolution,meshType, testColor):
     
     #Calcul de l'erreur commise par rapport à la solution exacte
     #===========================================================
-	max_abs_sol_exacte=exactSolField.getNormEuclidean().max()
-	erreur_abs=(exactSolField - my_ResultField).getNormEuclidean().max()
+    max_abs_sol_exacte=exactSolField.getNormEuclidean().max()
+    erreur_abs=(exactSolField - my_ResultField).getNormEuclidean().max()
     max_sol_num=my_ResultField.max()
     min_sol_num=my_ResultField.min()
 
-	print("Absolute error =  max(| exact solution - numerical solution |)/max(| exact solution |) = ",erreur_abs/max_abs_sol_exacte)
+    print("Absolute error =  max(| exact solution - numerical solution |)/max(| exact solution |) = ",erreur_abs/max_abs_sol_exacte)
     print("Maximum numerical solution = ", max_sol_num, " Minimum numerical solution = ", min_sol_num)
     print("Maximum exact solution = ", exactSolField.max(), " Minimum exact solution = ", exactSolField.min())
 	
-	assert erreur_abs/max_abs_sol_exacte <1.
+    assert erreur_abs/max_abs_sol_exacte <1.
 
     test_desc["Computational_time_taken_by_run"]=end-start
     test_desc["Absolute_error"]=erreur_abs
