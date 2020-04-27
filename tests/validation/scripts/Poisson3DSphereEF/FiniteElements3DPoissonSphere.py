@@ -217,7 +217,7 @@ def solve(filename,resolution,meshType, testColor):
     print("Absolute error = max(| exact solution - numerical solution |) = ",erreur_abs )
     print("Relative error = max(| exact solution - numerical solution |)/max(| exact solution |) = ",erreur_abs/max_abs_sol_exacte)
     print("Maximum numerical solution = ", max_sol_num, " Minimum numerical solution = ", min_sol_num)
-    print("Maximum exact solution = ", my_RHSfield.max()/12, " Minimum exact solution = ", my_RHSfield.min()/12
+    print("Maximum exact solution = ", my_RHSfield.max()/12, " Minimum exact solution = ", my_RHSfield.min()/12 )
 
     test_desc["Computational_time_taken_by_run"]=end-start
     test_desc["Absolute_error"]=erreur_abs
