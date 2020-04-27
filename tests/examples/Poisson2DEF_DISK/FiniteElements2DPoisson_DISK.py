@@ -169,6 +169,6 @@ for i in range(nbNodes) :
 print("Absolute error = max(| exact solution - numerical solution |) = ",erreur_abs )
 print("Relative error = max(| exact solution - numerical solution |)/max(| exact solution |) = ",erreur_abs/max_abs_sol_exacte)
 print("Maximum numerical solution = ", max_sol_num, " Minimum numerical solution = ", min_sol_num)
-print("Maximum exact solution = ", my_RHSfield.max()/(2*pi*pi), " Minimum exact solution = ", my_RHSfield.min()/(2*pi*pi) )
+print("Maximum exact solution = ", my_ExactSol.max(), " Minimum exact solution = ", my_ExactSol.min() )
 
 assert erreur_abs/max_abs_sol_exacte <1.
