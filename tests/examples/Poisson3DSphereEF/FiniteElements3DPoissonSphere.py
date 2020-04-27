@@ -205,6 +205,7 @@ max_abs_sol_exacte = max_abs_sol_exacte/12
 
 print("Absolute error = max(| exact solution - numerical solution |) = ",erreur_abs )
 print("Relative error = max(| exact solution - numerical solution |)/max(| exact solution |) = ",erreur_abs/max_abs_sol_exacte)
-print ("Maximum numerical solution = ", max_sol_num, " Minimum numerical solution = ", min_sol_num)
+print("Maximum numerical solution = ", max_sol_num, " Minimum numerical solution = ", min_sol_num)
+print("Maximum exact solution = ", my_RHSfield.max()/12, " Minimum exact solution = ", my_RHSfield.min()/12
 
 assert erreur_abs/max_abs_sol_exacte <1.

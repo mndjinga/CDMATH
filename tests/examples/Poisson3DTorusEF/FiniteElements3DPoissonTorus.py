@@ -173,8 +173,8 @@ max_sol_exacte=exactSolField.getNormEuclidean().max()
  #max_sol_exacte=exactSolField.max()
 erreur_max=(exactSolField - my_ResultField).getNormEuclidean().max()
 print("Absolute error =  max(| exact solution - numerical solution |)/max(| exact solution |) = ",erreur_max/max_sol_exacte)
-print("The max exact solution is =",max_sol_exacte )
-print("The max numerical solution is =",my_ResultField.getNormEuclidean().max())
+print("Maximum numerical solution = ", max_sol_num, " Minimum numerical solution = ", min_sol_num)
+print("Maximum exact solution = ", exactSolField.max(), " Minimum exact solution = ", exactSolField.min())
 
 assert erreur_max/max_sol_exacte <1.
 

@@ -190,6 +190,7 @@ def solve(filename,resolution,meshType, testColor):
     
     print("Relative error = max(| exact solution - numerical solution |)/max(| exact solution |) = ",erreur_abs/max_abs_sol_exacte)
     print("Maximum numerical solution = ", max_sol_num, " Minimum numerical solution = ", min_sol_num)
+    print("Maximum exact solution = ", my_RHSfield.max()/(2*pi*pi), " Minimum exact solution = ", my_RHSfield.min()/(2*pi*pi)
     
     #Postprocessing : 
     #================
