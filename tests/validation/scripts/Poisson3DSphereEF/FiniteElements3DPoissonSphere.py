@@ -117,7 +117,6 @@ def solve(filename,resolution,meshType, testColor):
         normalFace1[2]=Ci.getNormalVector(1,2)
     
         normalCell = normalFace0.crossProduct(normalFace1)
-        test = normalFace0.tensProduct(normalFace1)
         normalCell = normalCell/normalCell.norm()
     
         cellMat=cdmath.Matrix(4)
