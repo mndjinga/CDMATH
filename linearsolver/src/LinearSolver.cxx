@@ -277,12 +277,12 @@ LinearSolver::setMatrix(const GenericMatrix& matrix)
 
 	if (matrix.isSparseMatrix())
 	{
-		if(matrix.containsPetscMatrix())
+		if(matrix.containsPetscMatrix())//Matrix is already a petsc structure
 		{
 			const SparseMatrixPetsc& Smat = dynamic_cast<const SparseMatrixPetsc&>(matrix);
 			_mat=Smat.getPetscMatrix();
 		}
-		else
+		else//Matrix is in A. Mekkas sparse structure
 		{
 			const SparseMatrix& Smat = dynamic_cast<const SparseMatrix&>(matrix);
 			PetscInt nnz[numberOfRows];
@@ -309,7 +309,7 @@ LinearSolver::setMatrix(const GenericMatrix& matrix)
 			}
 		}
 	}
-	else
+	else//Matrix is in A. Mekkas dense structure
 	{
 		MatCreate(PETSC_COMM_WORLD, &_mat);
 		MatSetSizes(_mat, PETSC_DECIDE, PETSC_DECIDE, numberOfRows, numberOfColumns);
@@ -317,11 +317,11 @@ LinearSolver::setMatrix(const GenericMatrix& matrix)
 
 		PetscScalar *a;
 		PetscMalloc(numberOfRows*numberOfColumns*sizeof(PetscScalar),&a);
+		MatSeqDenseSetPreallocation(_mat,a);
+
 		for (int i=0;i<numberOfRows;i++)
 			for (int j=0;j<numberOfColumns;j++)
 				a[i+j*numberOfRows]=matrix(i,j);
-
-		MatSeqDenseSetPreallocation(_mat,a);
 	}
 	//Assemblage final
 	MatAssemblyBegin(_mat, MAT_FINAL_ASSEMBLY);
