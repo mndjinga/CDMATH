@@ -4,7 +4,7 @@
 # Author      : Michaël Ndjinga
 # Copyright   : CEA Saclay 2016
 # Description : Utilisation de la méthode des volumes finis avec champs u et f discrétisés aux cellules d'un maillage quelconque
-#				Création et sauvegarde du champ résultant ainsi que du champ second membre en utilisant CDMATH
+#                Création et sauvegarde du champ résultant ainsi que du champ second membre en utilisant CDMATH
 #               Comparaison de la solution numérique avec la solution exacte u=sin(pi*x)*sin(pi*y)
 #================================================================================================================================
 
@@ -51,13 +51,13 @@ my_RHSfield = cdmath.Field("RHS_field", cdmath.CELLS, my_mesh, 1)
 maxNbNeighbours=0#This is to determine the number of non zero coefficients in the sparse finite element rigidity matrix
 #parcours des cellules pour discrétisation du second membre et extraction du nb max de voisins d'une cellule
 for i in range(nbCells): 
-	Ci = my_mesh.getCell(i)
-	x = Ci.x()
-	y = Ci.y()
+    Ci = my_mesh.getCell(i)
+    x = Ci.x()
+    y = Ci.y()
 
-	my_RHSfield[i]=2*pi*pi*sin(pi*x)*sin(pi*y)#mettre la fonction definie au second membre de l edp
-	# compute maximum number of neighbours
-	maxNbNeighbours= max(1+Ci.getNumberOfFaces(),maxNbNeighbours)
+    my_RHSfield[i]=2*pi*pi*sin(pi*x)*sin(pi*y)#mettre la fonction definie au second membre de l edp
+    # compute maximum number of neighbours
+    maxNbNeighbours= max(1+Ci.getNumberOfFaces(),maxNbNeighbours)
 
 print("Right hand side discretisation done")
 print "Max nb of neighbours = ", maxNbNeighbours
@@ -68,25 +68,25 @@ Rigidite=cdmath.SparseMatrixPetsc(nbCells,nbCells,maxNbNeighbours)# warning : th
 RHS=cdmath.Vector(nbCells)
 #Parcours des cellules du domaine
 for i in range(nbCells):
-	RHS[i]=my_RHSfield[i] #la valeur moyenne du second membre f dans la cellule i
-	Ci=my_mesh.getCell(i)
-	for j in range(Ci.getNumberOfFaces()):# parcours des faces voisinnes
-		Fj=my_mesh.getFace(Ci.getFaceId(j))
-		if not Fj.isBorder():
-			k=Fj.getCellId(0)
-			if k==i :
-				k=Fj.getCellId(1)
-			Ck=my_mesh.getCell(k)
-			distance=Ci.getBarryCenter().distance(Ck.getBarryCenter())
-			coeff=Fj.getMeasure()/Ci.getMeasure()/distance
-			Rigidite.setValue(i,k,-coeff) # terme extradiagonal
-		else:
-			coeff=Fj.getMeasure()/Ci.getMeasure()/Ci.getBarryCenter().distance(Fj.getBarryCenter())
-                #For the particular case where the mesh boundary does not coincide with the domain boundary
-                x=Fj.getBarryCenter().x()
-                y=Fj.getBarryCenter().y()
-                RHS[i]+=coeff*sin(pi*x)*sin(pi*y)#mettre ici  la solution exacte de l'edp
-		Rigidite.addValue(i,i,coeff) # terme diagonal
+    RHS[i]=my_RHSfield[i] #la valeur moyenne du second membre f dans la cellule i
+    Ci=my_mesh.getCell(i)
+    for j in range(Ci.getNumberOfFaces()):# parcours des faces voisinnes
+        Fj=my_mesh.getFace(Ci.getFaceId(j))
+        if not Fj.isBorder():
+            k=Fj.getCellId(0)
+            if k==i :
+                k=Fj.getCellId(1)
+            Ck=my_mesh.getCell(k)
+            distance=Ci.getBarryCenter().distance(Ck.getBarryCenter())
+            coeff=Fj.getMeasure()/Ci.getMeasure()/distance
+            Rigidite.setValue(i,k,-coeff) # terme extradiagonal
+        else:
+            coeff=Fj.getMeasure()/Ci.getMeasure()/Ci.getBarryCenter().distance(Fj.getBarryCenter())
+            #For the particular case where the mesh boundary does not coincide with the domain boundary
+            x=Fj.getBarryCenter().x()
+            y=Fj.getBarryCenter().y()
+            RHS[i]+=coeff*sin(pi*x)*sin(pi*y)#mettre ici  la solution exacte de l'edp
+        Rigidite.addValue(i,i,coeff) # terme diagonal
 
 print("Linear system matrix building done")
 
