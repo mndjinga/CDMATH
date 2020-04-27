@@ -170,8 +170,10 @@ print("Numerical solution of Poisson equation on a torus using finite elements d
 #Calcul de l'erreur commise par rapport à la solution exacte
 #===========================================================
 max_sol_exacte=exactSolField.getNormEuclidean().max()
- #max_sol_exacte=exactSolField.max()
 erreur_max=(exactSolField - my_ResultField).getNormEuclidean().max()
+max_sol_num=my_ResultField.max()
+min_sol_num=my_ResultField.min()
+
 print("Absolute error =  max(| exact solution - numerical solution |)/max(| exact solution |) = ",erreur_max/max_sol_exacte)
 print("Maximum numerical solution = ", max_sol_num, " Minimum numerical solution = ", min_sol_num)
 print("Maximum exact solution = ", exactSolField.max(), " Minimum exact solution = ", exactSolField.min())
