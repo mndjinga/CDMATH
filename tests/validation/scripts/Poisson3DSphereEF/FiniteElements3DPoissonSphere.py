@@ -5,6 +5,8 @@
 # Copyright   : CEA Saclay 2017
 # Description : Utilisation de la méthode des éléménts finis P1 avec champs u et f discrétisés aux noeuds d'un maillage triangulaire
 #				Création et sauvegarde du champ résultant ainsi que du champ second membre en utilisant la librairie CDMATH
+#               Solution exacte = f/12 : il s'agit d'un vecteur propre du laplacien sur la sphère
+#               Résolution d'un système linéaire à matrice singulière : les vecteurs constants sont dans le noyau
 #================================================================================================================================
 
 import cdmath
@@ -164,8 +166,8 @@ def solve(filename,resolution,meshType, testColor):
     
     # Résolution du système linéaire
     #=================================
-    LS=cdmath.LinearSolver(Rigidite,RHS,100,1.E-2,"CG","ILU")#Remplacer CG par CHOLESKY pour solveur direct
-    LS.isSingular()#En raison de l'absence de bord
+    LS=cdmath.LinearSolver(Rigidite,RHS,100,1.E-6,"GMRES","ILU")
+    LS.setMatrixIsSingular()#En raison de l'absence de bord
     LS.setComputeConditionNumber()
     SolSyst=LS.solve()
 

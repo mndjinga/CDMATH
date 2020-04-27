@@ -7,6 +7,8 @@
 #               Création et sauvegarde du champ résultant ainsi que du champ second membre en utilisant la librairie CDMATH
 #               Référence : M. A. Olshanskii, A. Reusken, and J. Grande. A finite element method for elliptic equations
 #                           on surfaces. SIAM J. Num. Anal., 47, p. 3355
+#               Solution exacte = f/12 : il s'agit d'un vecteur propre du laplacien sur la sphère
+#               Résolution d'un système linéaire à matrice singulière : les vecteurs constants sont dans le noyau
 #================================================================================================================================
 
 import cdmath
@@ -139,8 +141,8 @@ print("Linear system matrix building done")
 
 # Résolution du système linéaire
 #=================================
-LS=cdmath.LinearSolver(Rigidite,RHS,100,1.E-2,"GMRES","ILU")#Remplacer CG par CHOLESKY pour solveur direct
-LS.isSingular()#En raison de l'absence de bord
+LS=cdmath.LinearSolver(Rigidite,RHS,100,1.E-6,"GMRES","ILU")
+LS.setMatrixIsSingular()#En raison de l'absence de bord
 SolSyst=LS.solve()
 print "Preconditioner used : ", LS.getNameOfPc()
 print "Number of iterations used : ", LS.getNumberOfIter()

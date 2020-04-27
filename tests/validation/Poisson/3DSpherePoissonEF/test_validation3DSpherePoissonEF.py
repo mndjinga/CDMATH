@@ -61,7 +61,7 @@ def test_validation3DSphereEF():
     b=(-a2*b1+a1*b2)/det
     
     print( "FE on 3D sphere triangle mesh : scheme order is ", -a)
-    assert abs(a+0.6)<0.1
+    assert abs(a+0.816)<0.1
 
     # Plot of convergence curves
     plt.close()
