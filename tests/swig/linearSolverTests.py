@@ -17,42 +17,54 @@ class TestsLinearSolverSwig(unittest.TestCase):
 
         A *= A.transpose()
 
+        self.assertEqual(A[0,0], 13)
+        self.assertEqual(A[0,1],-14)
+        self.assertEqual(A[1,0],-14)
+        self.assertEqual(A[1,1], 20)
+
         Xana = Vector(2)
         Xana[0] = 1.
         Xana[1] = 2.
 
         B = A * Xana
-#        LS=LinearSolver(A,B,500,1.E-10,"GMRES","LU");
-#        X=LS.solve();
-#        self.assertTrue(abs(X[0]-Xana[0])<1.E-10);
-#        self.assertTrue(abs(X[1]-Xana[1])<1.E-10);
-#
-#        self.assertEqual(LS.getStatus(),True);
 
-#        self.assertEqual(LS.getNumberMaxOfIter(),500);
-#        self.assertEqual(LS.getTolerance(),1.E-10);
-#        self.assertEqual(LS.getNameOfMethod(),"GMRES");
-#        self.assertEqual(LS.getNumberOfIter(),1);
-#        self.assertEqual(LS.isMatrixSingular(),False);
-#        self.assertEqual(LS.getNameOfPc(),"LU");
-#
+        self.assertEqual(B[0],-15)
+        self.assertEqual(B[1], 26)
+
+        LS=LinearSolver(A,B,500,1.E-10,"GMRES","LU");
+        X=LS.solve();
+        self.assertTrue(abs(X[0]-Xana[0])<1.E-10);
+        self.assertTrue(abs(X[1]-Xana[1])<1.E-10);
+        self.assertEqual(LS.getStatus(),True);
+
+        self.assertEqual(LS.getNumberMaxOfIter(),500);
+        self.assertEqual(LS.getTolerance(),1.E-10);
+        self.assertEqual(LS.getNameOfMethod(),"GMRES");
+        self.assertEqual(LS.getNumberOfIter(),1);
+        self.assertEqual(LS.isMatrixSingular(),False);
+        self.assertEqual(LS.getNameOfPc(),"LU");
+
         LS2 = LinearSolver(A, B, 500, 1.E-10, "CG")
         A1 = SparseMatrix(2, 2)
-        A1[0, 0] = 1.
-        A1[0, 1] = -2.
-        A1[1, 0] = -2.
-        A1[1, 1] = 4.
+        A1[0, 0] =  1.
+        A1[0, 1] = -1.
+        A1[1, 0] = -1.
+        A1[1, 1] =  1.
+
+        B1 = Vector(2)
+        B1[0] = 2.
+        B1[1] =-2.
 
         LS2.setMatrix(A1 * -1.)
-        LS2.setSndMember(B * -1)
-        LS2.setTolerance(1.E-20)
+        LS2.setSndMember(B1 * -1)
+        LS2.setTolerance(1.E-10)
         LS2.setNumberMaxOfIter(10)
         LS2.setMatrixIsSingular(True)
         X2 = LS2.solve()
-        self.assertTrue(abs(X2[0] - (-4.55555555556)) < 1.E-10)
-        self.assertTrue(abs(X2[1] - 4.55555555556) < 1.E-10)
+        self.assertTrue(abs(X2[0] -   1) < 1.E-10)
+        self.assertTrue(abs(X2[1] - (-1)) < 1.E-10)
         self.assertEqual(LS2.getStatus(), True)
-        self.assertEqual(LS2.getNumberOfIter(), 2)
+        self.assertEqual(LS2.getNumberOfIter(), 1)
         self.assertEqual(LS2.isMatrixSingular(), True)
         self.assertEqual(LS2.getNameOfMethod(), "CG")
 #
@@ -84,20 +96,21 @@ class TestsLinearSolverSwig(unittest.TestCase):
         self.assertEqual(LS3.getStatus(), True)
         self.assertEqual(LS3.getNameOfMethod(), "GMRES")
 
-#        LS3=LinearSolver(A,B,500,1.E-10,"BICG","LU");
-#        X3=LS3.solve();
-#        self.assertTrue(abs(X3[0]-Xana[0])<1.E-10);
-#        self.assertTrue(abs(X3[1]-Xana[1])<1.E-10);
-#        self.assertEqual(LS3.getStatus(),True);
-#        self.assertEqual(LS3.getNameOfMethod(),"BICG");
-#        self.assertEqual(LS3.getNameOfPc(),"LU");
-#
+        LS3=LinearSolver(A,B,500,1.E-10,"BICG","LU");
+        X3=LS3.solve();
+        self.assertTrue(abs(X3[0]-Xana[0])<1.E-10);
+        self.assertTrue(abs(X3[1]-Xana[1])<1.E-10);
+        self.assertEqual(LS3.getStatus(),True);
+        self.assertEqual(LS3.getNameOfMethod(),"BICG");
+        self.assertEqual(LS3.getNameOfPc(),"LU");
+
         LS3 = LinearSolver(A, B, 500, 1.E-10, "BICG")
         X3 = LS3.solve()
         self.assertTrue(abs(X3[0] - Xana[0]) < 1.E-10)
         self.assertTrue(abs(X3[1] - Xana[1]) < 1.E-10)
         self.assertEqual(LS3.getStatus(), True)
         self.assertEqual(LS3.getNameOfMethod(), "BICG")
+        self.assertEqual(LS3.getNameOfPc(),"");
 
         LS3 = LinearSolver(A, B, 500, 1.E-10, "GCR")
         X3 = LS3.solve()
@@ -120,15 +133,15 @@ class TestsLinearSolverSwig(unittest.TestCase):
         self.assertEqual(LS3.getStatus(), True)
         self.assertEqual(LS3.getNameOfMethod(), "CHOLESKY")
 
-#        LS3=LinearSolver(A,B,500,1.E-10,"LU");
-#        X3=LS3.solve();
-#        self.assertTrue(abs(X3[0]-Xana[0])<1.E-10);
-#        self.assertTrue(abs(X3[1]-Xana[1])<1.E-10);
-#        self.assertEqual(LS3.getStatus(),True);
-#        self.assertEqual(LS3.getNameOfMethod(),"LU");
-#        self.assertEqual(LS3.getNameOfPc(),"");
+        LS3=LinearSolver(A,B,500,1.E-10,"LU");
+        X3=LS3.solve();
+        self.assertTrue(abs(X3[0]-Xana[0])<1.E-10);
+        self.assertTrue(abs(X3[1]-Xana[1])<1.E-10);
+        self.assertEqual(LS3.getStatus(),True);
+        self.assertEqual(LS3.getNameOfMethod(),"LU");
+        self.assertEqual(LS3.getNameOfPc(),"");
 
-        A2 = SparseMatrix(6, 6, 16)
+        A2 = SparseMatrixPetsc(6, 6, 16)
         A2[0, 0] = 2.
         A2[0, 1] = -1.
 
