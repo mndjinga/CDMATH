@@ -233,9 +233,9 @@ LinearSolver::isSparseMatrix( void ) const
 }
 
 bool
-LinearSolver::isSingular( void ) const
+LinearSolver::isMatrixSingular( void ) const
 {
-	return (_isSingular);
+	return _isSingular;
 }
 
 int
@@ -348,7 +348,7 @@ LinearSolver::setSndMember(const Vector& secondMember)
 }
 
 void
-LinearSolver::setSingularity(bool sing)
+LinearSolver::setMatrixIsSingular(bool sing)
 {
 	_isSingular=sing;
 }
@@ -380,7 +380,7 @@ LinearSolver::LinearSolver ( const LinearSolver& LS )
 	_residu=LS.getResidu();
 	_convergence=LS.getStatus();
 	_numberOfIter=LS.getNumberOfIter();
-	_isSingular=LS.isSingular();
+	_isSingular=LS.isMatrixSingular();
 	_nameOfPc=LS.getNameOfPc();
 	_mat=NULL;
 	MatDuplicate(LS.getPetscMatrix(),MAT_COPY_VALUES,&_mat);
@@ -512,12 +512,20 @@ LinearSolver::solve( void )
 	Vec X;
 	VecDuplicate(_smb,&X);
 
-	if (isSingular())
+	if (_isSingular)//Matrix should be symmetric semi-definite with constant vectors in its kernel
 	{
+		//Check that the matrix is symmetric
+		PetscBool isSymetric;
+		MatIsSymmetric(_mat,_tol,&isSymetric);
+		if(!isSymetric)
+			{
+				cout<<"Singular matrix is not symmetric, tolerance= "<< _tol<<endl;
+				throw CdmathException("Singular matrix should be symmetric with kernel composed of constant vectors");
+			}
 		MatNullSpace nullsp;
-		MatNullSpaceCreate(PETSC_COMM_WORLD, PETSC_TRUE, 0, PETSC_NULL, &nullsp);
+		MatNullSpaceCreate(PETSC_COMM_WORLD, PETSC_TRUE, 0, PETSC_NULL, &nullsp);//Declaration of a kernel containing exclusively constant vectors
+		MatSetTransposeNullSpace(_mat, nullsp);//Transpose matrix has the same kernel since the matrix is symmetric
 		MatSetNullSpace(_mat, nullsp);
-		MatSetTransposeNullSpace(_mat, nullsp);
 		MatNullSpaceDestroy(&nullsp);
 	}
 
@@ -615,7 +623,7 @@ LinearSolver::operator= ( const LinearSolver& linearSolver )
 	_residu=linearSolver.getResidu();
 	_convergence=linearSolver.getStatus();
 	_numberOfIter=linearSolver.getNumberOfIter();
-	_isSingular=linearSolver.isSingular();
+	_isSingular=linearSolver.isMatrixSingular();
 	_secondMember=linearSolver.getSndMember();
 	_isSparseMatrix=linearSolver.isSparseMatrix();
 	_nameOfPc="";

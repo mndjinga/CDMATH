@@ -76,9 +76,9 @@ public: //----------------------------------------------------------------
 
 	void setSndMember(const Vector& secondMember) ;
 
-	void setSingularity(bool sing) ;
+	void setMatrixIsSingular(bool sing=true) ;
 
-	bool isSingular( void ) const;
+	bool isMatrixSingular( void ) const;
 
 	bool isSparseMatrix( void ) const ;
 

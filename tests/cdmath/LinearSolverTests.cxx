@@ -53,7 +53,7 @@ LinearSolverTests::testClassLinearSolver( void )
 	CPPUNIT_ASSERT_EQUAL(LS1.getTolerance(),1.E-10);
 	CPPUNIT_ASSERT_EQUAL(LS1.getNameOfMethod(),(string)"GMRES");
 	CPPUNIT_ASSERT_EQUAL(LS1.getNumberOfIter(),1);
-	CPPUNIT_ASSERT_EQUAL(LS1.isSingular(),false);
+	CPPUNIT_ASSERT_EQUAL(LS1.isMatrixSingular(),false);
 	CPPUNIT_ASSERT_EQUAL(LS1.getNameOfPc(),(string)"LU");
 	
 	LinearSolver LS2(A,B,500,1.E-10,"CG");
@@ -66,14 +66,14 @@ LinearSolverTests::testClassLinearSolver( void )
 	LS2.setSndMember(-1*B);
 	LS2.setTolerance(1.E-20);
 	LS2.setNumberMaxOfIter(10);
-	LS2.setSingularity(true);
+	LS2.setMatrixIsSingular(true);
 	Vector X2=LS2.solve();
 
 	CPPUNIT_ASSERT_DOUBLES_EQUAL(-4.55555555556, X2(0), 1.E-10);
 	CPPUNIT_ASSERT_DOUBLES_EQUAL(4.55555555556, X2(1), 1.E-10);
 	CPPUNIT_ASSERT_EQUAL(LS2.getStatus(),true);
 	CPPUNIT_ASSERT_EQUAL(LS2.getNumberOfIter(),2);
-	CPPUNIT_ASSERT_EQUAL(LS2.isSingular(),true);
+	CPPUNIT_ASSERT_EQUAL(LS2.isMatrixSingular(),true);
 	CPPUNIT_ASSERT_EQUAL(LS2.getNameOfMethod(),(string)"CG");
 
 	LinearSolver LS3(A,B,500,1.E-10,"BCGS");

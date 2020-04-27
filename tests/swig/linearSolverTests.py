@@ -33,11 +33,11 @@ class TestsLinearSolverSwig(unittest.TestCase):
 #        self.assertEqual(LS.getTolerance(),1.E-10);
 #        self.assertEqual(LS.getNameOfMethod(),"GMRES");
 #        self.assertEqual(LS.getNumberOfIter(),1);
-#        self.assertEqual(LS.isSingular(),False);
+#        self.assertEqual(LS.isMatrixSingular(),False);
 #        self.assertEqual(LS.getNameOfPc(),"LU");
 #
         LS2 = LinearSolver(A, B, 500, 1.E-10, "CG")
-        A1 = Matrix(2, 2)
+        A1 = SparseMatrix(2, 2)
         A1[0, 0] = 1.
         A1[0, 1] = -2.
         A1[1, 0] = -2.
@@ -47,13 +47,13 @@ class TestsLinearSolverSwig(unittest.TestCase):
         LS2.setSndMember(B * -1)
         LS2.setTolerance(1.E-20)
         LS2.setNumberMaxOfIter(10)
-        LS2.setSingularity(True)
+        LS2.setMatrixIsSingular(True)
         X2 = LS2.solve()
         self.assertTrue(abs(X2[0] - (-4.55555555556)) < 1.E-10)
         self.assertTrue(abs(X2[1] - 4.55555555556) < 1.E-10)
         self.assertEqual(LS2.getStatus(), True)
         self.assertEqual(LS2.getNumberOfIter(), 2)
-        self.assertEqual(LS2.isSingular(), True)
+        self.assertEqual(LS2.isMatrixSingular(), True)
         self.assertEqual(LS2.getNameOfMethod(), "CG")
 #
         LS3 = LinearSolver(A, B, 500, 1.E-10, "BICG")
