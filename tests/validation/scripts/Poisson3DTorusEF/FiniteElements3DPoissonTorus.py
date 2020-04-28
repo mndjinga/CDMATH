@@ -174,7 +174,7 @@ def solve(filename,resolution,meshType, testColor):
     
     # Résolution du système linéaire
     #=================================
-    LS=cdmath.LinearSolver(Rigidite,RHS,100,1.E-6,"GMRES","ILU")
+    LS=cdmath.LinearSolver(Rigidite,RHS,100,1.E-6,"CG","CHOLESKY")
     LS.setMatrixIsSingular()#En raison de l'absence de bord
     LS.setComputeConditionNumber()
     SolSyst=LS.solve()

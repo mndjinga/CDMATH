@@ -8,7 +8,7 @@ convergence_synthesis=dict(FiniteElements3DPoissonTorus.test_desc)
 def test_validation3DTorusEF():
     start = time.time()
     #### 3D torus FE triangle mesh
-    meshList=['meshTorus_1','meshTorus_2','meshTorus_3','meshTorus_4','meshTorus_5']
+    meshList=['meshTorus_1','meshTorus_2','meshTorus_3','meshTorus_4']
     meshType="Unstructured_3D_triangles"
     testColor="Green"
     nbMeshes=len(meshList)
@@ -33,7 +33,7 @@ def test_validation3DTorusEF():
             x = [line.split(",")[0] for line in lines[1:]]
             y = [line.split(",")[1] for line in lines[1:]]
 
-        plt.plot(y, x, label= str(mesh_size_tab[i]) + ' cells')
+        plt.plot(y, x, label= str(mesh_size_tab[i]) + ' nodes')
         mesh_size_tab[i] = 0.5*log10(mesh_size_tab[i])
         i=i+1
 
@@ -61,7 +61,7 @@ def test_validation3DTorusEF():
     b=(-a2*b1+a1*b2)/det
     
     print( "FE on 3D torus triangle mesh : scheme order is ", -a)
-    assert abs(a+0.816)<0.1
+    assert abs(a+1.65)<0.1
 
     # Plot of convergence curves
     plt.close()

@@ -33,7 +33,7 @@ def test_validation3DSphereEF():
             x = [line.split(",")[0] for line in lines[1:]]
             y = [line.split(",")[1] for line in lines[1:]]
 
-        plt.plot(y, x, label= str(mesh_size_tab[i]) + ' cells')
+        plt.plot(y, x, label= str(mesh_size_tab[i]) + ' nodes')
         mesh_size_tab[i] = 0.5*log10(mesh_size_tab[i])
         i=i+1
 
