@@ -240,13 +240,6 @@ def solve(filename,resolution,meshType, testColor):
     pvs.SaveScreenshot("./FiniteElementsOnTorusPoisson"+"_Slice_"+meshType+str(nbNodes)+'.png', magnification=1, quality=100, view=renderView1)
     plotOnSortedLines1 = pvs.PlotOnSortedLines(Input=slice1)
     pvs.SaveData('./FiniteElementsOnTorusPoisson_PlotOnSortedLines'+meshType+str(nbNodes)+'.csv', proxy=plotOnSortedLines1)
-    lineChartView2 = pvs.CreateView('XYChartView')
-    plotOnSortedLines1Display = pvs.Show(plotOnSortedLines1, lineChartView2)
-    plotOnSortedLines1Display.UseIndexForXAxis = 0
-    plotOnSortedLines1Display.XArrayName = 'arc_length'
-    plotOnSortedLines1Display.SeriesVisibility = ['ResultField (1)']
-    pvs.SaveScreenshot("./FiniteElementsOnTorusPoisson"+"_PlotOnSortedLine_"+meshType+str(nbNodes)+'.png', magnification=1, quality=100, view=lineChartView2)
-    pvs.Delete(lineChartView2)
 
     with open('test_Poisson'+str(my_mesh.getMeshDimension())+'D_EF_'+meshType+str(nbCells)+ "Cells.json", 'w') as outfile:  
         json.dump(test_desc, outfile)

@@ -30,10 +30,10 @@ def test_validation3DTorusEF():
         time_tab[i]=log10(time_tab[i])
         with open('./FiniteElementsOnTorusPoisson_PlotOnSortedLines'+meshType+str(mesh_size_tab[i])+'0.csv') as f:
             lines = f.readlines()
-            x = [line.split(",")[0] for line in lines[1:]]
-            y = [line.split(",")[1] for line in lines[1:]]
+            y = [float(line.split(",")[0]) for line in lines[1:]]
+            x = [float(line.split(",")[1]) for line in lines[1:]]
 
-        plt.plot(y, x, label= str(mesh_size_tab[i]) + ' cells')
+        plt.plot(x, y, label= str(mesh_size_tab[i]) + ' nodes')
         mesh_size_tab[i] = 0.5*log10(mesh_size_tab[i])
         i=i+1
 
