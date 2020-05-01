@@ -1,17 +1,20 @@
 # -*-coding:utf-8 -*
 #===============================================================================================================================
-# Name        : Résolution EF de l'équation de Laplace-Beltrami -\triangle u = f sur un tore
+# Name        : Résolution EF de l'équation de Laplace-Beltrami -\triangle u = f sur la frontière d'un cube
 # Author      : Michael Ndjinga
-# Copyright   : CEA Saclay 2017
+# Copyright   : CEA Saclay 2020
 # Description : Utilisation de la méthode des éléménts finis P1 avec champs u et f discrétisés aux noeuds d'un maillage triangulaire
-#                Création et sauvegarde du champ résultant ainsi que du champ second membre en utilisant la librairie CDMATH
-#               Solution exacte = f/12 : il s'agit d'un vecteur propre du laplacien sur le tore
+#               Création et sauvegarde du champ résultant ainsi que du champ second membre en utilisant la librairie CDMATH
 #               Résolution d'un système linéaire à matrice singulière : les vecteurs constants sont dans le noyau
+#               Comparaison de la solution numérique avec la solution exacte définie face par face :
+#                              u=sin(2*pi*x)*sin(2*pi*y) (haut et bas)
+#                              u=sin(2*pi*x)*sin(2*pi*z) (gauche et droite)
+#                              u=sin(2*pi*y)*sin(2*pi*z) (avant et arrière)
 #================================================================================================================================
 
 import cdmath
 import time, json
-from math import sin, cos, atan2, sqrt
+from math import sin, pi
 import PV_routines
 import VTK_routines
 import paraview.simple as pvs
@@ -19,7 +22,7 @@ import paraview.simple as pvs
 test_desc={}
 test_desc["Initial_data"]="No"
 test_desc["Boundary_conditions"]="None"
-test_desc["Global_name"]="FE simulation of the Poisson equation on a torus"
+test_desc["Global_name"]="FE simulation of the Poisson equation on a cube skin"
 test_desc["Global_comment"]="Triangular mesh, compact surface (no boundary)"
 test_desc["PDE_model"]="Poisson-Beltrami"
 test_desc["PDE_is_stationary"]=True
@@ -36,11 +39,7 @@ def solve(filename,resolution,meshType, testColor):
     test_desc["Mesh_type"]=meshType
     test_desc["Test_color"]=testColor
     
-    # Torus radii (calculation  will fail if the mesh is not correct)
-    R=1 #Grand rayon
-    r=0.6 #Petit rayon
-
-    #Chargement du maillage triangulaire du tore
+    #Chargement du maillage triangulaire du cube unité [0,1]x[0,1]x[0,1]
     #=======================================================================================
     my_mesh = cdmath.Mesh(filename+".med")
     if(not my_mesh.isTriangular()) :
@@ -65,9 +64,9 @@ def solve(filename,resolution,meshType, testColor):
     #Discrétisation du second membre et détermination des noeuds intérieurs
     #======================================================================
     my_RHSfield = cdmath.Field("RHS_field", cdmath.NODES, my_mesh, 1)
-    exactSolField = cdmath.Field("Exact solution field", cdmath.NODES, my_mesh, 1)
     maxNbNeighbours = 0#This is to determine the number of non zero coefficients in the sparse finite element rigidity matrix
     
+    eps=1e-6
     #parcours des noeuds pour discrétisation du second membre et extraction du nb max voisins d'un noeud
     for i in range(nbNodes):
         Ni=my_mesh.getNode(i)
@@ -75,11 +74,15 @@ def solve(filename,resolution,meshType, testColor):
         y = Ni.y()
         z = Ni.z()
     
-        theta=atan2(z,sqrt(x*x+y*y)-R)
-        phi=atan2(y,x)
+        if   abs(x)<eps or abs(x-1)<eps: #AVANT et ARRIERE
+            my_RHSfield[i]=8*pi*pi*sin(2*pi*y)*sin(2*pi*z)
+        elif abs(y)<eps or abs(y-1)<eps: #GAUCHE et DROITE
+            my_RHSfield[i]=8*pi*pi*sin(2*pi*x)*sin(2*pi*z)
+        elif abs(z)<eps or abs(z-1)<eps: #HAUT et BAS
+            my_RHSfield[i]=8*pi*pi*sin(2*pi*y)*sin(2*pi*z)
+        else:
+            raise ValueError("Domain should be the unit cube skin with 6 faces")
 
-        exactSolField[i] = sin(3*phi)*cos(3*theta+ phi) # for the exact solution we use the funtion given in the article of Olshanskii, Reusken 2009, page 19
-        my_RHSfield[i] = 9*sin(3*phi)*cos(3*theta+ phi)/(r*r) + (10*sin(3*phi)*cos(3*theta+ phi) + 6*cos(3*phi)*sin(3*theta+ phi))/((R+r*cos(theta))*(R+r*cos(theta))) - 3*sin(theta)*sin(3*phi)*sin(3*theta+ phi)/(r*(R+r*cos(theta))) #for the right hand side we use the function given in the article of Olshanskii, Reusken 2009, page 19
         if my_mesh.isBorderNode(i): # Détection des noeuds frontière
             raise ValueError("Mesh should not contain borders")
         else:
@@ -174,14 +177,14 @@ def solve(filename,resolution,meshType, testColor):
     
     # Résolution du système linéaire
     #=================================
-    LS=cdmath.LinearSolver(Rigidite,RHS,100,1.E-6,"CG","CHOLESKY")
+    LS=cdmath.LinearSolver(Rigidite,RHS,100,1.E-6,"GMRES","ILU")
     LS.setMatrixIsSingular()#En raison de l'absence de bord
     LS.setComputeConditionNumber()
     SolSyst=LS.solve()
 
-    print( "Preconditioner used : ", LS.getNameOfPc() )
-    print( "Number of iterations used : ", LS.getNumberOfIter() )
-    print( "Final residual : ", LS.getResidu() )
+    print("Preconditioner used : ", LS.getNameOfPc() )
+    print("Number of iterations used : ", LS.getNumberOfIter() )
+    print("Final residual : ", LS.getResidu() )
     print("Linear system solved")
     
     test_desc["Linear_solver_algorithm"]=LS.getNameOfMethod()
@@ -198,25 +201,35 @@ def solve(filename,resolution,meshType, testColor):
     for j in range(nbNodes):
         my_ResultField[j]=SolSyst[j];#remplissage des valeurs pour les noeuds intérieurs
     #sauvegarde sur le disque dur du résultat dans un fichier paraview
-    my_ResultField.writeVTK("FiniteElementsOnTorusPoisson_"+meshType+str(nbNodes))
+    my_ResultField.writeVTK("FiniteElementsOnCubeSkinPoisson_"+meshType+str(nbNodes))
     
     end = time.time()
 
     print("Integral of the numerical solution", my_ResultField.integral(0))
-    print("Numerical solution of poisson equation on a torus using finite elements done")
+    print("Numerical solution of poisson equation on a cube skin using finite elements done")
     
     #Calcul de l'erreur commise par rapport à la solution exacte
     #===========================================================
-    max_abs_sol_exacte=exactSolField.getNormEuclidean().max()
-    erreur_abs=(exactSolField - my_ResultField).getNormEuclidean().max()
-    max_sol_num=my_ResultField.max()
-    min_sol_num=my_ResultField.min()
-
-    print("Absolute error =  max(| exact solution - numerical solution |)/max(| exact solution |) = ",erreur_abs/max_abs_sol_exacte)
+    #The following formulas use the fact that the exact solution is equal the right hand side divided by 8*pi*pi
+    max_abs_sol_exacte=0
+    erreur_abs=0
+    max_sol_num=0
+    min_sol_num=0
+    for i in range(nbNodes) :
+        if max_abs_sol_exacte < abs(my_RHSfield[i]) :
+            max_abs_sol_exacte = abs(my_RHSfield[i])
+        if erreur_abs < abs(my_RHSfield[i]/(8*pi*pi) - my_ResultField[i]) :
+            erreur_abs = abs(my_RHSfield[i]/(8*pi*pi) - my_ResultField[i])
+        if max_sol_num < my_ResultField[i] :
+            max_sol_num = my_ResultField[i]
+        if min_sol_num > my_ResultField[i] :
+            min_sol_num = my_ResultField[i]
+    max_abs_sol_exacte = max_abs_sol_exacte/(8*pi*pi)
+    
+    print("Absolute error = max(| exact solution - numerical solution |) = ",erreur_abs )
+    print("Relative error = max(| exact solution - numerical solution |)/max(| exact solution |) = ",erreur_abs/max_abs_sol_exacte)
     print("Maximum numerical solution = ", max_sol_num, " Minimum numerical solution = ", min_sol_num)
-    print("Maximum exact solution = ", exactSolField.max(), " Minimum exact solution = ", exactSolField.min())
-	
-    assert erreur_abs/max_abs_sol_exacte <1.
+    print("Maximum exact solution = ", my_RHSfield.max()/(8*pi*pi), " Minimum exact solution = ", my_RHSfield.min()/(8*pi*pi) )
 
     test_desc["Computational_time_taken_by_run"]=end-start
     test_desc["Absolute_error"]=erreur_abs
@@ -225,21 +238,21 @@ def solve(filename,resolution,meshType, testColor):
     #Postprocessing : 
     #================
     # save 3D picture
-    PV_routines.Save_PV_data_to_picture_file("FiniteElementsOnTorusPoisson_"+meshType+str(nbNodes)+'_0.vtu',"ResultField",'NODES',"FiniteElementsOnTorusPoisson_"+meshType+str(nbNodes))
+    PV_routines.Save_PV_data_to_picture_file("FiniteElementsOnCubeSkinPoisson_"+meshType+str(nbNodes)+'_0.vtu',"ResultField",'NODES',"FiniteElementsOnCubeSkinPoisson_"+meshType+str(nbNodes))
     # save 3D clip
-    VTK_routines.Clip_VTK_data_to_VTK("FiniteElementsOnTorusPoisson_"+meshType+str(nbNodes)+'_0.vtu',"Clip_VTK_data_to_VTK_"+ "FiniteElementsOnTorusPoisson_"+meshType+str(nbNodes)+'_0.vtu',[0.25,0.25,0.25], [-0.5,-0.5,-0.5],resolution )
-    PV_routines.Save_PV_data_to_picture_file("Clip_VTK_data_to_VTK_"+"FiniteElementsOnTorusPoisson_"+meshType+str(nbNodes)+'_0.vtu',"ResultField",'NODES',"Clip_VTK_data_to_VTK_"+"FiniteElementsOnTorusPoisson_"+meshType+str(nbNodes))
+    VTK_routines.Clip_VTK_data_to_VTK("FiniteElementsOnCubeSkinPoisson_"+meshType+str(nbNodes)+'_0.vtu',"Clip_VTK_data_to_VTK_"+ "FiniteElementsOnCubeSkinPoisson_"+meshType+str(nbNodes)+'_0.vtu',[0.25,0.25,0.25], [-0.5,-0.5,-0.5],resolution )
+    PV_routines.Save_PV_data_to_picture_file("Clip_VTK_data_to_VTK_"+"FiniteElementsOnCubeSkinPoisson_"+meshType+str(nbNodes)+'_0.vtu',"ResultField",'NODES',"Clip_VTK_data_to_VTK_"+"FiniteElementsOnCubeSkinPoisson_"+meshType+str(nbNodes))
     # save plot around circumference
-    finiteElementsOnTorus_0vtu = pvs.XMLUnstructuredGridReader(FileName=["FiniteElementsOnTorusPoisson_"+meshType+str(nbNodes)+'_0.vtu'])
-    slice1 = pvs.Slice(Input=finiteElementsOnTorus_0vtu)
+    finiteElementsOnCubeSkin_0vtu = pvs.XMLUnstructuredGridReader(FileName=["FiniteElementsOnCubeSkinPoisson_"+meshType+str(nbNodes)+'_0.vtu'])
+    slice1 = pvs.Slice(Input=finiteElementsOnCubeSkin_0vtu)
     slice1.SliceType.Normal = [0.5, 0.5, 0.5]
     renderView1 = pvs.GetActiveViewOrCreate('RenderView')
-    finiteElementsOnTorus_0vtuDisplay = pvs.Show(finiteElementsOnTorus_0vtu, renderView1)
-    pvs.ColorBy(finiteElementsOnTorus_0vtuDisplay, ('POINTS', 'ResultField'))
+    finiteElementsOnCubeSkin_0vtuDisplay = pvs.Show(finiteElementsOnCubeSkin_0vtu, renderView1)
+    pvs.ColorBy(finiteElementsOnCubeSkin_0vtuDisplay, ('POINTS', 'ResultField'))
     slice1Display = pvs.Show(slice1, renderView1)
-    pvs.SaveScreenshot("./FiniteElementsOnTorusPoisson"+"_Slice_"+meshType+str(nbNodes)+'.png', magnification=1, quality=100, view=renderView1)
+    pvs.SaveScreenshot("./FiniteElementsOnCubeSkinPoisson"+"_Slice_"+meshType+str(nbNodes)+'.png', magnification=1, quality=100, view=renderView1)
     plotOnSortedLines1 = pvs.PlotOnSortedLines(Input=slice1)
-    pvs.SaveData('./FiniteElementsOnTorusPoisson_PlotOnSortedLines'+meshType+str(nbNodes)+'.csv', proxy=plotOnSortedLines1)
+    pvs.SaveData('./FiniteElementsOnCubeSkinPoisson_PlotOnSortedLines'+meshType+str(nbNodes)+'.csv', proxy=plotOnSortedLines1)
 
     with open('test_Poisson'+str(my_mesh.getMeshDimension())+'D_EF_'+meshType+str(nbCells)+ "Cells.json", 'w') as outfile:  
         json.dump(test_desc, outfile)
@@ -247,4 +260,4 @@ def solve(filename,resolution,meshType, testColor):
     return erreur_abs/max_abs_sol_exacte, nbNodes, min_sol_num, max_sol_num, end - start
     
 if __name__ == """__main__""":
-    solve("meshTorus",100,"Unstructured_3D_triangles","Green")
+    solve("meshCubeSkin",100,"Unstructured_3D_triangles","Green")

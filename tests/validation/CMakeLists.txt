@@ -30,6 +30,7 @@ Poisson/2DPoissonVF_StiffBCSquare_hexagons
 Poisson/2DPoissonVF_StiffBCSquare_equilateralTriangles
 Poisson/3DSpherePoissonEF 
 Poisson/3DTorusPoissonEF 
+Poisson/3DCubeSkinPoissonEF 
 Poisson/3DPoissonEF 
 Poisson/3DPoissonVF_checkerboard 
 Poisson/3DPoissonVF_tetrahedra 

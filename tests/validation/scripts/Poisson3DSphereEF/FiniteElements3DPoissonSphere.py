@@ -18,7 +18,7 @@ import paraview.simple as pvs
 
 test_desc={}
 test_desc["Initial_data"]="No"
-test_desc["Boundary_conditions"]="Dirichlet"
+test_desc["Boundary_conditions"]="None"
 test_desc["Global_name"]="FE simulation of the Poisson equation on a sphere"
 test_desc["Global_comment"]="Triangular mesh, compact surface (no boundary)"
 test_desc["PDE_model"]="Poisson-Beltrami"

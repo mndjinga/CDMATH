@@ -153,9 +153,9 @@ print("Linear system matrix building done")
 LS=cdmath.LinearSolver(Rigidite,RHS,100,1.E-6,"GMRES","ILU")
 LS.setMatrixIsSingular()#En raison de l'absence de bord
 SolSyst=LS.solve()
-print "Preconditioner used : ", LS.getNameOfPc()
-print "Number of iterations used : ", LS.getNumberOfIter()
-print "Final residual : ", LS.getResidu()
+print("Preconditioner used : ", LS.getNameOfPc() )
+print("Number of iterations used : ", LS.getNumberOfIter() )
+print("Final residual : ", LS.getResidu() )
 print("Linear system solved")
 
 # Création du champ résultat
@@ -218,4 +218,4 @@ print("Relative error = max(| exact solution - numerical solution |)/max(| exact
 print("Maximum numerical solution = ", max_sol_num, " Minimum numerical solution = ", min_sol_num)
 print("Maximum exact solution = ", my_RHSfield.max()/(8*pi*pi), " Minimum exact solution = ", my_RHSfield.min()/(8*pi*pi) )
 
-assert erreur_abs/max_abs_sol_exacte <2.
+assert erreur_abs/max_abs_sol_exacte <1.
