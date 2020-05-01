@@ -45,15 +45,15 @@ def initial_conditions_wave_system_staggered(my_mesh):
         #Warning : boundary values should be the same for left and right as well as top and down (front and back in 3D) boundaries
         if(dim==2):
             y = Ci.y()
-            velocity_field[i,0] =  sin(pi*(x-0.5*dx))*cos(pi*y) # value on the left face
-            velocity_field[i,1] = -sin(pi*(y-0.5*dy))*cos(pi*x) # value on the bottom face
+            velocity_field[i,0] =  sin(2*pi*(x-0.5*dx))*cos(2*pi*y) # value on the left face
+            velocity_field[i,1] = -sin(2*pi*(y-0.5*dy))*cos(2*pi*x) # value on the bottom face
             velocity_field[i,2] =  0
         elif(dim==3):
             y = Ci.y()
             z = Ci.z()
-            velocity_field[i,0] =    sin(pi*(x-0.5*dx))*cos(pi*y)*cos(pi*z) # value on the back face
-            velocity_field[i,1] =    sin(pi*(y-0.5*dy))*cos(pi*x)*cos(pi*z) # value on the left face
-            velocity_field[i,2] = -2*sin(pi*(z-0.5*dz))*cos(pi*x)*cos(pi*y) # value on the bottom face
+            velocity_field[i,0] =    sin(2*pi*(x-0.5*dx))*cos(2*pi*y)*cos(2*pi*z) # value on the back face
+            velocity_field[i,1] =    sin(2*pi*(y-0.5*dy))*cos(2*pi*x)*cos(2*pi*z) # value on the left face
+            velocity_field[i,2] = -2*sin(2*pi*(z-0.5*dz))*cos(2*pi*x)*cos(2*pi*y) # value on the bottom face
         else :
                 raise ValueError("initial_conditions_wave_system_staggered: the 1D mesh not yet implemented");
         

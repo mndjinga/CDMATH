@@ -49,7 +49,6 @@ def initial_conditions_square_vortex(my_mesh):
 
     for i in range(nbCells):
         x = my_mesh.getCell(i).x()
-        y = my_mesh.getCell(i).y()
 
         pressure_field[i] = p0
         if(dim==1):
@@ -57,14 +56,16 @@ def initial_conditions_square_vortex(my_mesh):
             velocity_field[i,1] = 0
             velocity_field[i,2] = 0
         elif(dim==2):
-            velocity_field[i,0] =  sin(pi*x)*cos(pi*y)
-            velocity_field[i,1] = -sin(pi*y)*cos(pi*x)
+            y = my_mesh.getCell(i).y()
+            velocity_field[i,0] =  sin(2*pi*x)*cos(2*pi*y)
+            velocity_field[i,1] = -sin(2*pi*y)*cos(2*pi*x)
             velocity_field[i,2] = 0
         elif(dim==3):
+            y = my_mesh.getCell(i).y()
             z = my_mesh.getCell(i).z()
-            velocity_field[i,0] =    sin(pi*x)*cos(pi*y)*cos(pi*z)
-            velocity_field[i,1] =    sin(pi*y)*cos(pi*x)*cos(pi*z)
-            velocity_field[i,2] = -2*sin(pi*z)*cos(pi*x)*cos(pi*y)
+            velocity_field[i,0] =    sin(2*pi*x)*cos(2*pi*y)*cos(2*pi*z)
+            velocity_field[i,1] =    sin(2*pi*y)*cos(2*pi*x)*cos(2*pi*z)
+            velocity_field[i,2] = -2*sin(2*pi*z)*cos(2*pi*x)*cos(2*pi*y)
         
     return pressure_field, velocity_field
 
