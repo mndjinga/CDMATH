@@ -5,7 +5,7 @@
 # Copyright   : CEA Saclay 2016
 # Description : Utilisation de la méthode des volumes finis avec champs u et f discrétisés aux cellules d'un maillage quelconque
 #				Création et sauvegarde du champ résultant ainsi que du champ second membre en utilisant CDMATH
-#               Comparaison de la solution numérique avec la solution exacte u=-sin(pi*x)*sin(pi*y)*sin(pi*z)
+#               Comparaison de la solution numérique avec la solution exacte u=sin(pi*x)*sin(pi*y)*sin(pi*z)
 #================================================================================================================================
 
 import cdmath
@@ -97,9 +97,9 @@ print("Linear system matrix building done")
 LS=cdmath.LinearSolver(Rigidite,RHS,500,1.E-6,"GMRES","ILU")
 SolSyst=LS.solve()
 
-print "Preconditioner used : ", LS.getNameOfPc()
-print "Number of iterations used : ", LS.getNumberOfIter()
-print "Final residual : ", LS.getResidu()
+print("Preconditioner used : ", LS.getNameOfPc())
+print("Number of iterations used : ", LS.getNumberOfIter())
+print("Final residual : ", LS.getResidu())
 print("Linear system solved")
 
 # Création du champ résultat
@@ -148,6 +148,6 @@ for i in range(nbCells) :
 
 print("Absolute error = max(| exact solution - numerical solution |) = ",erreur_abs )
 print("Relative error = max(| exact solution - numerical solution |)/max(| exact solution |) = ",erreur_abs/max_abs_sol_exacte)
-print ("Maximum numerical solution = ", max_sol_num, " Minimum numerical solution = ", min_sol_num)
+print("Maximum numerical solution = ", max_sol_num, " Minimum numerical solution = ", min_sol_num)
 
 assert erreur_abs/max_abs_sol_exacte <1.

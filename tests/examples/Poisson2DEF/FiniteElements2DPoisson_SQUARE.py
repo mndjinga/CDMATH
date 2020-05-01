@@ -5,7 +5,7 @@
 # Copyright   : CEA Saclay 2016
 # Description : Utilisation de la méthode des éléménts finis P1 avec champs u et f discrétisés aux noeuds d'un maillage triangulaire
 #		        Création et sauvegarde du champ résultant ainsi que du champ second membre en utilisant la librairie CDMATH
-#               Comparaison de la solution numérique avec la solution exacte u=-sin(pi*x)*sin(pi*y)
+#               Comparaison de la solution numérique avec la solution exacte u=sin(pi*x)*sin(pi*y)
 #================================================================================================================================
 
 import cdmath
@@ -122,9 +122,9 @@ print("Linear system matrix building done")
 LS=cdmath.LinearSolver(Rigidite,RHS,100,1.E-6,"CG","ILU")#Remplacer CG par CHOLESKY pour solveur direct
 SolSyst=LS.solve()
 
-print "Preconditioner used : ", LS.getNameOfPc()
-print "Number of iterations used : ", LS.getNumberOfIter()
-print "Final residual : ", LS.getResidu()
+print("Preconditioner used : ", LS.getNameOfPc())
+print("Number of iterations used : ", LS.getNumberOfIter())
+print("Final residual : ", LS.getResidu())
 print("Linear system solved")
 
 # Création du champ résultat

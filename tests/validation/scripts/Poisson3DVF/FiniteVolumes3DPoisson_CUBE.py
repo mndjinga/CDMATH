@@ -5,7 +5,7 @@
 # Copyright   : CEA Saclay 2018
 # Description : Utilisation de la méthode des volumes finis avec champs u et f discrétisés aux cellules d'un maillage quelconque
 #				Création et sauvegarde du champ résultant ainsi que du champ second membre en utilisant CDMATH
-#               Comparaison de la solution num"rique avec la solution exacte u=-sin(pi*x)*sin(pi*y)*sin(pi*z)
+#               Comparaison de la solution num"rique avec la solution exacte u=sin(pi*x)*sin(pi*y)*sin(pi*z)
 #================================================================================================================================
 
 import cdmath
@@ -113,8 +113,8 @@ def solve(my_mesh, filename,resolution, meshType, testColor):
     LS.setComputeConditionNumber()
     SolSyst=LS.solve()
     
-    print( "Preconditioner used : ", LS.getNameOfPc() )
-    print( "Number of iterations used : ", LS.getNumberOfIter() )
+    print("Preconditioner used : ", LS.getNameOfPc() )
+    print("Number of iterations used : ", LS.getNumberOfIter() )
     print("Linear system solved")
     
     test_desc["Linear_solver_algorithm"]=LS.getNameOfMethod()

@@ -5,7 +5,7 @@
 # Copyright   : CEA Saclay 2017
 # Description : Utilisation de la méthode des éléménts finis P1 avec champs u et f discrétisés aux noeuds d'un maillage tétraédrique
 #		        Création et sauvegarde du champ résultant ainsi que du champ second membre en utilisant la librairie CDMATH
-#               Comparaison de la solution num"rique avec la solution exacte u=-sin(pi*x)*sin(pi*y)*sin(pi*z)
+#               Comparaison de la solution num"rique avec la solution exacte u=sin(pi*x)*sin(pi*y)*sin(pi*z)
 #================================================================================================================================
 
 import cdmath
@@ -162,8 +162,8 @@ def solve(filename,resolution, meshType, testColor):
     LS.setComputeConditionNumber()
     SolSyst=LS.solve()
 
-    print( "Preconditioner used : ", LS.getNameOfPc() )
-    print( "Number of iterations used : ", LS.getNumberOfIter() )
+    print("Preconditioner used : ", LS.getNameOfPc() )
+    print("Number of iterations used : ", LS.getNumberOfIter() )
     print("Linear system solved")
     
     

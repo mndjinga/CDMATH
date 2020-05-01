@@ -100,8 +100,8 @@ def solve(my_mesh,filename,resolution, meshType, testColor):
     LS.setComputeConditionNumber()
     SolSyst=LS.solve()
     
-    print( "Preconditioner used : ", LS.getNameOfPc() )
-    print( "Number of iterations used : ", LS.getNumberOfIter() )
+    print("Preconditioner used : ", LS.getNameOfPc() )
+    print("Number of iterations used : ", LS.getNumberOfIter() )
     print("Linear system solved")
     
     test_desc["Linear_solver_algorithm"]=LS.getNameOfMethod()
