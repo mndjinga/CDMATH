@@ -49,13 +49,13 @@ for i in range(nbNodes):
 	y = Ni.y()
 	z = Ni.z()
 
-	if   abs(x)<eps or abs(x-1)<eps:#AVANT et ARRIERE
-		my_RHSfield[i]=sin(2*pi*y)*sin(2*pi*z)
-	elif abs(y)<eps or abs(y-1)<eps:#GAUCHE et DROITE
-		my_RHSfield[i]=sin(2*pi*x)*sin(2*pi*z)
-	elif abs(z)<eps or abs(z-1)<eps:#HAUT et BAS
-		my_RHSfield[i]=sin(2*pi*y)*sin(2*pi*z)
-	else
+	if   abs(x)<eps or abs(x-1)<eps: #AVANT et ARRIERE
+		my_RHSfield[i]=8*pi*pi*sin(2*pi*y)*sin(2*pi*z)
+	elif abs(y)<eps or abs(y-1)<eps: #GAUCHE et DROITE
+		my_RHSfield[i]=8*pi*pi*sin(2*pi*x)*sin(2*pi*z)
+	elif abs(z)<eps or abs(z-1)<eps: #HAUT et BAS
+		my_RHSfield[i]=8*pi*pi*sin(2*pi*y)*sin(2*pi*z)
+	else:
 		raise ValueError("Domain should be the unit cube skin with 6 faces")
 
 	if my_mesh.isBorderNode(i): # Détection des noeuds frontière
@@ -218,4 +218,4 @@ print("Relative error = max(| exact solution - numerical solution |)/max(| exact
 print("Maximum numerical solution = ", max_sol_num, " Minimum numerical solution = ", min_sol_num)
 print("Maximum exact solution = ", my_RHSfield.max()/(8*pi*pi), " Minimum exact solution = ", my_RHSfield.min()/(8*pi*pi) )
 
-assert erreur_abs/max_abs_sol_exacte <1.
+assert erreur_abs/max_abs_sol_exacte <2.
