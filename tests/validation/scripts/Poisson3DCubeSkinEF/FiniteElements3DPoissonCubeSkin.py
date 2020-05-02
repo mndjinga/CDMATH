@@ -79,7 +79,7 @@ def solve(filename,resolution,meshType, testColor):
         elif abs(y)<eps or abs(y-1)<eps: #GAUCHE et DROITE
             my_RHSfield[i]=8*pi*pi*sin(2*pi*x)*sin(2*pi*z)
         elif abs(z)<eps or abs(z-1)<eps: #HAUT et BAS
-            my_RHSfield[i]=8*pi*pi*sin(2*pi*y)*sin(2*pi*z)
+            my_RHSfield[i]=8*pi*pi*sin(2*pi*x)*sin(2*pi*y)
         else:
             raise ValueError("Domain should be the unit cube skin with 6 faces")
 
@@ -199,7 +199,7 @@ def solve(filename,resolution,meshType, testColor):
     #===========================
     my_ResultField = cdmath.Field("ResultField", cdmath.NODES, my_mesh, 1)
     for j in range(nbNodes):
-        my_ResultField[j]=SolSyst[j];#remplissage des valeurs pour les noeuds intérieurs
+        my_ResultField[j]=SolSyst[j];#remplissage des valeurs issues du système linéaire dans le champs résultat
     #sauvegarde sur le disque dur du résultat dans un fichier paraview
     my_ResultField.writeVTK("FiniteElementsOnCubeSkinPoisson_"+meshType+str(nbNodes))
     
@@ -240,7 +240,7 @@ def solve(filename,resolution,meshType, testColor):
     # save 3D picture
     PV_routines.Save_PV_data_to_picture_file("FiniteElementsOnCubeSkinPoisson_"+meshType+str(nbNodes)+'_0.vtu',"ResultField",'NODES',"FiniteElementsOnCubeSkinPoisson_"+meshType+str(nbNodes))
     # save 3D clip
-    VTK_routines.Clip_VTK_data_to_VTK("FiniteElementsOnCubeSkinPoisson_"+meshType+str(nbNodes)+'_0.vtu',"Clip_VTK_data_to_VTK_"+ "FiniteElementsOnCubeSkinPoisson_"+meshType+str(nbNodes)+'_0.vtu',[0.25,0.25,0.25], [-0.5,-0.5,-0.5],resolution )
+    VTK_routines.Clip_VTK_data_to_VTK("FiniteElementsOnCubeSkinPoisson_"+meshType+str(nbNodes)+'_0.vtu',"Clip_VTK_data_to_VTK_"+ "FiniteElementsOnCubeSkinPoisson_"+meshType+str(nbNodes)+'_0.vtu',[0.75,0.75,0.75], [0.,0.5,-0.5],resolution )
     PV_routines.Save_PV_data_to_picture_file("Clip_VTK_data_to_VTK_"+"FiniteElementsOnCubeSkinPoisson_"+meshType+str(nbNodes)+'_0.vtu',"ResultField",'NODES',"Clip_VTK_data_to_VTK_"+"FiniteElementsOnCubeSkinPoisson_"+meshType+str(nbNodes))
     # save plot around circumference
     finiteElementsOnCubeSkin_0vtu = pvs.XMLUnstructuredGridReader(FileName=["FiniteElementsOnCubeSkinPoisson_"+meshType+str(nbNodes)+'_0.vtu'])

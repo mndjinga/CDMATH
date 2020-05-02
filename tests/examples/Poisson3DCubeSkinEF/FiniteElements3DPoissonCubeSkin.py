@@ -54,7 +54,7 @@ for i in range(nbNodes):
 	elif abs(y)<eps or abs(y-1)<eps: #GAUCHE et DROITE
 		my_RHSfield[i]=8*pi*pi*sin(2*pi*x)*sin(2*pi*z)
 	elif abs(z)<eps or abs(z-1)<eps: #HAUT et BAS
-		my_RHSfield[i]=8*pi*pi*sin(2*pi*y)*sin(2*pi*z)
+		my_RHSfield[i]=8*pi*pi*sin(2*pi*x)*sin(2*pi*y)
 	else:
 		raise ValueError("Domain should be the unit cube skin with 6 faces")
 
@@ -162,22 +162,23 @@ print("Linear system solved")
 #===========================
 my_ResultField = cdmath.Field("ResultField", cdmath.NODES, my_mesh, 1)
 for j in range(nbNodes):
-    my_ResultField[j]=SolSyst[j];#remplissage des valeurs pour les noeuds intérieurs
+    my_ResultField[j]=SolSyst[j];#remplissage des valeurs issues du système linéaire dans le champs résultat
 #sauvegarde sur le disque dur du résultat dans un fichier paraview
 my_ResultField.writeVTK("FiniteElementsOnCubeSkinPoisson")
+my_RHSfield.writeVTK("RHS_CubeSkinPoisson")
 
 #Postprocessing :
 #================
 # save 3D picture
 PV_routines.Save_PV_data_to_picture_file("FiniteElementsOnCubeSkinPoisson"+'_0.vtu',"ResultField",'NODES',"FiniteElementsOnCubeSkinPoisson")
 resolution=100
-VTK_routines.Clip_VTK_data_to_VTK("FiniteElementsOnCubeSkinPoisson"+'_0.vtu',"Clip_VTK_data_to_VTK_"+ "FiniteElementsOnCubeSkinPoisson"+'_0.vtu',[0.25,0.25,0.25], [-0.5,-0.5,-0.5],resolution )
+VTK_routines.Clip_VTK_data_to_VTK("FiniteElementsOnCubeSkinPoisson"+'_0.vtu',"Clip_VTK_data_to_VTK_"+ "FiniteElementsOnCubeSkinPoisson"+'_0.vtu',[0.75,0.75,0.75], [0.,0.5,-0.5],resolution )
 PV_routines.Save_PV_data_to_picture_file("Clip_VTK_data_to_VTK_"+"FiniteElementsOnCubeSkinPoisson"+'_0.vtu',"ResultField",'NODES',"Clip_VTK_data_to_VTK_"+"FiniteElementsOnCubeSkinPoisson")
 
 # Plot  over slice circle
 finiteElementsOnCubeSkin_0vtu = pvs.XMLUnstructuredGridReader(FileName=["FiniteElementsOnCubeSkinPoisson"+'_0.vtu'])
 slice1 = pvs.Slice(Input=finiteElementsOnCubeSkin_0vtu)
-slice1.SliceType.Normal = [0.5, 0.5, 0.5]
+slice1.SliceType.Normal = [0, 1, 0]
 renderView1 = pvs.GetActiveViewOrCreate('RenderView')
 finiteElementsOnCubeSkin_0vtuDisplay = pvs.Show(finiteElementsOnCubeSkin_0vtu, renderView1)
 pvs.ColorBy(finiteElementsOnCubeSkin_0vtuDisplay, ('POINTS', 'ResultField'))
@@ -205,11 +206,11 @@ min_sol_num=0
 for i in range(nbNodes) :
     if max_abs_sol_exacte < abs(my_RHSfield[i]) :
         max_abs_sol_exacte = abs(my_RHSfield[i])
-    if erreur_abs < abs(my_RHSfield[i]/(8*pi*pi) - my_ResultField[i]) :
+    if erreur_abs  < abs(my_RHSfield[i]/(8*pi*pi) - my_ResultField[i]) :
         erreur_abs = abs(my_RHSfield[i]/(8*pi*pi) - my_ResultField[i])
-    if max_sol_num < my_ResultField[i] :
+    if max_sol_num  < my_ResultField[i] :
         max_sol_num = my_ResultField[i]
-    if min_sol_num > my_ResultField[i] :
+    if min_sol_num  > my_ResultField[i] :
         min_sol_num = my_ResultField[i]
 max_abs_sol_exacte = max_abs_sol_exacte/(8*pi*pi)
 
