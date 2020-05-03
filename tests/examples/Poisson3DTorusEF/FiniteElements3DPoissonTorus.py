@@ -25,8 +25,8 @@ if(my_mesh.getMeshDimension()!=2) :
 	raise ValueError("Wrong mesh dimension : expected a surface of dimension 2")
 if(my_mesh.getSpaceDimension()!=3) :
 	raise ValueError("Wrong space dimension : expected a space of dimension 3")
-nbNodes = my_mesh.getNumberOfNodes()
 
+nbNodes = my_mesh.getNumberOfNodes()
 nbCells = my_mesh.getNumberOfCells()
 
 print("Mesh building/loading done")
@@ -59,7 +59,7 @@ for i in range(nbNodes):
 	if my_mesh.isBorderNode(i): # Détection des noeuds frontière
 		raise ValueError("Mesh should not contain borders")
 	else:
-		maxNbNeighbours = max(1+Ni.getNumberOfCells(),maxNbNeighbours)#true only for planar cells, otherwise use function Ni.getNumberOfEdges()
+		maxNbNeighbours = max(1+Ni.getNumberOfCells(),maxNbNeighbours) #true only for planar cells, otherwise use function Ni.getNumberOfEdges()
 
 print("Right hand side discretisation done")
 print("Max nb of neighbours=", maxNbNeighbours)
@@ -148,12 +148,12 @@ print("Linear system matrix building done")
 
 # Résolution du système linéaire
 #=================================
-LS=cdmath.LinearSolver(Rigidite,RHS,100,1.E-6,"CG","ILU")#Remplacer CG par CHOLESKY pour solveur direct
+LS=cdmath.LinearSolver(Rigidite,RHS,100,1.E-6,"GMRES","ILU")#Remplacer CG par CHOLESKY pour solveur direct
 LS.setMatrixIsSingular()#En raison de l'absence de bord
 SolSyst=LS.solve()
-print "Preconditioner used : ", LS.getNameOfPc()
-print "Number of iterations used : ", LS.getNumberOfIter()
-print "Final residual : ", LS.getResidu()
+print( "Preconditioner used : ", LS.getNameOfPc() )
+print( "Number of iterations used : ", LS.getNumberOfIter() )
+print( "Final residual : ", LS.getResidu() )
 print("Linear system solved")
 
 # Création du champ résultat
@@ -174,11 +174,9 @@ erreur_max=(exactSolField - my_ResultField).getNormEuclidean().max()
 max_sol_num=my_ResultField.max()
 min_sol_num=my_ResultField.min()
 
-print("Absolute error =  max(| exact solution - numerical solution |)/max(| exact solution |) = ",erreur_max/max_sol_exacte)
+print("Relative error =  max(| exact solution - numerical solution |)/max(| exact solution |) = ",erreur_max/max_sol_exacte)
 print("Maximum numerical solution = ", max_sol_num, " Minimum numerical solution = ", min_sol_num)
 print("Maximum exact solution = ", exactSolField.max(), " Minimum exact solution = ", exactSolField.min())
-
-assert erreur_max/max_sol_exacte <1.
 
 #Postprocessing : 
 #================
@@ -205,3 +203,5 @@ plotOnSortedLines1Display.XArrayName = 'arc_length'
 plotOnSortedLines1Display.SeriesVisibility = ['Numerical result field (1)']
 pvs.SaveScreenshot("./FiniteElementsOnTorusPoisson"+"_PlotOnSortedLine_"+'.png', magnification=1, quality=100, view=lineChartView2)
 pvs.Delete(lineChartView2)
+
+assert erreur_max/max_sol_exacte <1.

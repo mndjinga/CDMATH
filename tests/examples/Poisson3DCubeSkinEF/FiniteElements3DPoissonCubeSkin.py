@@ -167,6 +167,31 @@ for j in range(nbNodes):
 my_ResultField.writeVTK("FiniteElementsOnCubeSkinPoisson")
 my_RHSfield.writeVTK("RHS_CubeSkinPoisson")
 
+print("Integral of the numerical solution", my_ResultField.integral(0))
+print("Numerical solution of Poisson equation on a cube skin using finite elements done")
+
+#Calcul de l'erreur commise par rapport à la solution exacte
+#===========================================================
+#The following formulas use the fact that the exact solution is equal the right hand side divided by 8*pi*pi
+max_abs_sol_exacte=0
+erreur_abs=0
+max_sol_num=0
+min_sol_num=0
+for i in range(nbNodes) :
+    if max_abs_sol_exacte < abs(my_RHSfield[i]) :
+        max_abs_sol_exacte = abs(my_RHSfield[i])
+    if erreur_abs  < abs(my_RHSfield[i]/(8*pi*pi) - my_ResultField[i]) :
+        erreur_abs = abs(my_RHSfield[i]/(8*pi*pi) - my_ResultField[i])
+    if max_sol_num  < my_ResultField[i] :
+        max_sol_num = my_ResultField[i]
+    if min_sol_num  > my_ResultField[i] :
+        min_sol_num = my_ResultField[i]
+max_abs_sol_exacte = max_abs_sol_exacte/(8*pi*pi)
+
+print("Relative error = max(| exact solution - numerical solution |)/max(| exact solution |) = ",erreur_abs/max_abs_sol_exacte)
+print("Maximum numerical solution = ", max_sol_num, " Minimum numerical solution = ", min_sol_num)
+print("Maximum exact solution = ", my_RHSfield.max()/(8*pi*pi), " Minimum exact solution = ", my_RHSfield.min()/(8*pi*pi) )
+
 #Postprocessing :
 #================
 # save 3D picture
@@ -192,31 +217,5 @@ plotOnSortedLines1Display.XArrayName = 'arc_length'
 plotOnSortedLines1Display.SeriesVisibility = ['ResultField (1)']
 pvs.SaveScreenshot("./FiniteElementsOnCubeSkinPoisson"+"_PlotOnSortedLine_"+'.png', magnification=1, quality=100, view=lineChartView2)
 pvs.Delete(lineChartView2)
-
-print("Integral of the numerical solution", my_ResultField.integral(0))
-print("Numerical solution of Poisson equation on a cube skin using finite elements done")
-
-#Calcul de l'erreur commise par rapport à la solution exacte
-#===========================================================
-#The following formulas use the fact that the exact solution is equal the right hand side divided by 8*pi*pi
-max_abs_sol_exacte=0
-erreur_abs=0
-max_sol_num=0
-min_sol_num=0
-for i in range(nbNodes) :
-    if max_abs_sol_exacte < abs(my_RHSfield[i]) :
-        max_abs_sol_exacte = abs(my_RHSfield[i])
-    if erreur_abs  < abs(my_RHSfield[i]/(8*pi*pi) - my_ResultField[i]) :
-        erreur_abs = abs(my_RHSfield[i]/(8*pi*pi) - my_ResultField[i])
-    if max_sol_num  < my_ResultField[i] :
-        max_sol_num = my_ResultField[i]
-    if min_sol_num  > my_ResultField[i] :
-        min_sol_num = my_ResultField[i]
-max_abs_sol_exacte = max_abs_sol_exacte/(8*pi*pi)
-
-print("Absolute error = max(| exact solution - numerical solution |) = ",erreur_abs )
-print("Relative error = max(| exact solution - numerical solution |)/max(| exact solution |) = ",erreur_abs/max_abs_sol_exacte)
-print("Maximum numerical solution = ", max_sol_num, " Minimum numerical solution = ", min_sol_num)
-print("Maximum exact solution = ", my_RHSfield.max()/(8*pi*pi), " Minimum exact solution = ", my_RHSfield.min()/(8*pi*pi) )
 
 assert erreur_abs/max_abs_sol_exacte <1.
