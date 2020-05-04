@@ -220,7 +220,7 @@ LinearSolver::setLinearSolver(const GenericMatrix& matrix, const Vector& secondM
 		throw CdmathException(msg);
 	}
 
-	PetscInitialize(0, (char ***)"", PETSC_NULL, PETSC_NULL);
+	PetscInitialize(0, (char ***)"", PETSC_NULL, PETSC_NULL);//All constructors lead here so we initialize petsc here
 	setMatrix(matrix);
 	setSndMember(secondMember);
 }
@@ -448,9 +448,6 @@ LinearSolver::getPetscPc() const
 Vector
 LinearSolver::solve( void )
 {
-
-	PetscInitialize(0,(char ***)"", PETSC_NULL, PETSC_NULL);
-
 	if (_nameOfMethod.compare("GMRES")==0)
 		KSPSetType(_ksp,KSPGMRES);
 	else if (_nameOfMethod.compare("LGMRES")==0)
