@@ -19,8 +19,8 @@ Examples of use
 - [Influence of the mesh on the convergence and low Mach precision  for the PSEUDO-STAGGERED (colocated) finite volume method applied to the 2D wave system](tests/doc/2DWaveSystemVF_stationary/Convergence_WaveSystem_PStag_SQUARE.ipynb)
 - [Finite elements for the Poisson problem on a cube in 3D (by S. Kameni Ngwamou, PhD student)](tests/doc/3DPoissonEF/FiniteElements3DPoisson_CUBE.ipynb)
 - [Finite elements for the stationary diffusion of the temperature in a 3D room. Influence of the radiator position (by S. Kameni Ngwamou, PhD student)](tests/doc/3DRoomCoolingEF/3DRoomCoolingEF.ipynb)
-- [Surface Finite elements for the Poisson-Beltrami problem on a sphere in 3D (by M. Nguemfouo, PhD student)](tests/doc/3DPoissonSphereEF/SynthesConvergenceSphere.pdf)
-- [Surface Finite elements for the Poisson-Beltrami problem on a torus in 3D (by M. Nguemfouo, PhD student)](tests/doc/3DPoissonTorusEF/SynthesConvergenceFETorus.pdf)
+- [Surface Finite elements for the Poisson-Beltrami problem on a sphere in 3D (by M. Nguemfouo, PhD student)](tests/doc/3DPoissonSphereEF/SynthesisConvergenceFESphere.pdf)
+- [Surface Finite elements for the Poisson-Beltrami problem on a torus in 3D (by M. Nguemfouo, PhD student)](tests/doc/3DPoissonTorusEF/SynthesisConvergenceFETorus.pdf)
 
 Download CDMATH sources to compile
 ----------------------------------
