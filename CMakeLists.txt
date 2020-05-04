@@ -56,14 +56,14 @@ if (CDMATH_WITH_PETSC)
   else ( DEFINED ENV{PETSC_DIR} )
     message ( STATUS "PETSC_DIR not set, searching petsc in the system" )
 
-    if ( IS_DIRECTORY "/usr/include/petsc/" AND EXISTS "/usr/lib64/libpetsc.so")  #Case fedora/redhat system install
+    if ( IS_DIRECTORY "/usr/include/petsc/" AND EXISTS "/usr/lib64/libpetscgfy.so")  #Case fedora/redhat system install
       message ( STATUS "PETSC includes found in /usr/include/petsc/" )
       message ( STATUS "PETSC library found in /usr/lib64" )
       set(PETSC_DIR /usr/)
       set(PETSC_INCLUDES  /usr/include/petsc /usr/include/petsc/petsc/mpiuni)
       set(PETSC_LIBRARIES /usr/lib64/libpetsc.so)
 
-      set(PETSC_VERSION "3.7") #3.7 for fedora 25/26 , 3.9 for fedora 29
+      set(PETSC_VERSION "3.8") #3.8 for fedora 26 , 3.9 for fedora 29 , 3.10 for fedora 30, , 3.12 for fedora 32
       set (CPACK_RPM_PACKAGE_REQUIRES   "${CPACK_RPM_PACKAGE_REQUIRES}, petsc-devel (>= 3.4)") # This is not fully working yet. 
 
     #elseif ( IS_DIRECTORY "/usr/lib/petsc/") #Case ubuntu/debian system install
@@ -80,25 +80,27 @@ if (CDMATH_WITH_PETSC)
     #  set(PETSC_INCLUDES  /usr/local/lib/python2.7/dist-packages/petsc/include /usr/include/openmpi)
     #  set(PETSC_LIBRARIES /usr/local/lib/python2.7/dist-packages/petsc/lib/libpetsc.so)
 
-    #  set(PETSC_VERSION "3.8") #value for Ubuntu 16.04 
+    #  set(PETSC_VERSION "3.4") #value for Ubuntu 14.04 
+    #  set(PETSC_VERSION "3.6") #value for Ubuntu 16.04 
+    #  set(PETSC_VERSION "3.7") #value for Ubuntu 18.04 
 
     else ()  # No petsc in system, do compile petsc
-      message (STATUS "PETSC not found in the system, petsc 3.10.3 will be installed" )
+      message (STATUS "PETSC not found in the system, petsc 3.13.1 will be installed" )
       set(PETSC_SRC ${CDMATH_SOURCE_DIR}/pre_requis/PETSc)
-      set(PETSC_DIR ${CMAKE_INSTALL_PREFIX}/share/petsc-3.10.3) # Location of the final install 
+      set(PETSC_DIR ${CMAKE_INSTALL_PREFIX}/share/petsc-3.13.1) # Location of the final install 
       set(PETSC_INCLUDES  ${PETSC_DIR}/include/  ${PETSC_DIR}/include/petsc/mpiuni)
       set(PETSC_LIBRARIES ${PETSC_DIR}/lib/libpetsc.so)
-      set(PETSC_VERSION "3.10.3")  
+      set(PETSC_VERSION "3.13.1")  
 
       include(ExternalProject)
 
       ExternalProject_Add (PETSc
-      URL               ${PETSC_SRC}/petsc-lite-3.10.3.tar.gz   
-      SOURCE_DIR        ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/petsc-3.10.3
+      URL               ${PETSC_SRC}/petsc-lite-3.13.1.tar.gz   
+      SOURCE_DIR        ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/petsc-3.13.1
       BUILD_IN_SOURCE   TRUE
-      CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=${PETSC_DIR} --with-debugging=0 --with-mpi=0 --download-fblaslapack=${PETSC_SRC}/fblaslapack-3.4.2.tar.gz
+      CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=${PETSC_DIR} --with-debugging=0 --with-mpi=0 --download-f2cblaslapack=${PETSC_SRC}/f2cblaslapack-3.4.2.q4.tar.gz --with-fc=0 --download-slepc=${PETSC_SRC}/slepc-3.13.1.tar.gz
       BUILD_COMMAND     make all
-      TEST_COMMAND      make test
+      TEST_COMMAND      make check
       INSTALL_COMMAND   make install
       INSTALL_DIR       ${PETSC_DIR}
       LOG_DOWNLOAD      TRUE           # Wrap download in script to log output
