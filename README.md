@@ -17,8 +17,10 @@ Examples of use
 - [Influence of the mesh on the convergence and low Mach precision  for the CENTERED finite volume method applied to the 2D wave system](tests/doc/2DWaveSystemVF_stationary/Convergence_WaveSystem_Centered_SQUARE.ipynb)
 - [Influence of the mesh on the convergence and low Mach precision  for the STAGGERED finite volume method applied to the 2D wave system](tests/doc/2DWaveSystemVF_stationary/Convergence_WaveSystem_Staggered_SQUARE_squares.ipynb)
 - [Influence of the mesh on the convergence and low Mach precision  for the PSEUDO-STAGGERED (colocated) finite volume method applied to the 2D wave system](tests/doc/2DWaveSystemVF_stationary/Convergence_WaveSystem_PStag_SQUARE.ipynb)
-- [Dirichlet problem for the 3D Poisson equation on a cube (by S. Kameni Ngwamou, PhD student)](tests/doc/3DPoissonEF/FiniteElements3DPoisson_CUBE.ipynb)
-- [3D Stationary diffusion in a room with a cold window and a hot radiator. Influence of the radiator position (by S. Kameni Ngwamou, PhD student)](tests/doc/3DRoomCoolingEF/3DRoomCoolingEF.ipynb)
+- [Finite elements for the Poisson problem on a cube in 3D (by S. Kameni Ngwamou, PhD student)](tests/doc/3DPoissonEF/FiniteElements3DPoisson_CUBE.ipynb)
+- [Finite elements for the stationary diffusion of the temperature in a 3D room. Influence of the radiator position (by S. Kameni Ngwamou, PhD student)](tests/doc/3DRoomCoolingEF/3DRoomCoolingEF.ipynb)
+- [Surface Finite elements for the Poisson-Beltrami problem on a sphere in 3D (by M. Nguemfouo, PhD student)](tests/doc/3DPoissonSphereEF/SynthesConvergenceSphere.pdf)
+- [Surface Finite elements for the Poisson-Beltrami problem on a torus in 3D (by M. Nguemfouo, PhD student)](tests/doc/3DPoissonTorusEF/SynthesConvergenceFETorus.pdf)
 
 Download CDMATH sources to compile
 ----------------------------------
