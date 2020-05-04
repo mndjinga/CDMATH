@@ -573,21 +573,20 @@ Vec
 LinearSolver::vectorToVec(const Vector& myVector) const
 {
 	int numberOfRows=myVector.getNumberOfRows();
-	Vec X;
+	const double* values = myVector.getValues().getValues();
+	
+	Vec result;
+	VecCreate(PETSC_COMM_WORLD,&result);
+	VecSetSizes(result,PETSC_DECIDE,numberOfRows);
+	VecSetBlockSize(result,numberOfRows);
+	VecSetFromOptions(result);
+	int idx=0;//Index where to add the block of values
+	VecSetValuesBlocked(result,1,&idx,values,INSERT_VALUES);
 
-	VecCreate(PETSC_COMM_WORLD,&X);
-	VecSetSizes(X,PETSC_DECIDE,numberOfRows);
-	VecSetFromOptions(X);
-	for (PetscInt i=0; i<numberOfRows; i++)
-	{
-		double value = myVector(i);
-		VecSetValues(X,1,&i,&value,INSERT_VALUES);
-	}
+	VecAssemblyBegin(result);
+	VecAssemblyEnd(result);
 
-	VecAssemblyBegin(X);
-	VecAssemblyEnd(X);
-
-	return X;
+	return result;
 }
 
 Vector
@@ -595,22 +594,14 @@ LinearSolver::vecToVector(const Vec& vec) const
 {
 	PetscInt numberOfRows;
 	VecGetSize(vec,&numberOfRows);
-    //double * petscValues;
-    //VecGetArrays(vec,numberOfRows,petscValues);
+    double * petscValues;
+    VecGetArray(vec,&petscValues);
     
-	Vector X(numberOfRows);
-    //DoubleTab values(numberOfRows,petscValues());
-    //X.setValues(values);
+    DoubleTab values (numberOfRows,petscValues);
+	Vector result(numberOfRows);
+    result.setValues(values);
 
-	double value;
-
-	for (PetscInt i=0; i<numberOfRows; i++)
-	{
-		VecGetValues(vec,1,&i,&value);
-		X(i)=value;
-	}
-
-	return (X);
+	return result;
 }
 
 //----------------------------------------------------------------------
