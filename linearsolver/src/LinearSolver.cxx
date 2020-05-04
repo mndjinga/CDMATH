@@ -522,11 +522,15 @@ LinearSolver::solve( void )
 				cout<<"Singular matrix is not symmetric, tolerance= "<< _tol<<endl;
 				throw CdmathException("Singular matrix should be symmetric with kernel composed of constant vectors");
 			}
-		MatNullSpace nullsp;
-		MatNullSpaceCreate(PETSC_COMM_WORLD, PETSC_TRUE, 0, PETSC_NULL, &nullsp);//Declaration of a kernel containing exclusively constant vectors
-		MatSetTransposeNullSpace(_mat, nullsp);//Transpose matrix has the same kernel since the matrix is symmetric
-		MatSetNullSpace(_mat, nullsp);
-		MatNullSpaceDestroy(&nullsp);
+		else
+		{
+			MatSetOption(_mat,MAT_HERMITIAN, PETSC_TRUE);
+			MatNullSpace nullsp;
+			MatNullSpaceCreate(PETSC_COMM_WORLD, PETSC_TRUE, 0, PETSC_NULL, &nullsp);//Declaration of a kernel containing exclusively constant vectors
+			MatSetTransposeNullSpace(_mat, nullsp);//Transpose matrix has the same kernel since the matrix is symmetric
+			MatSetNullSpace(_mat, nullsp);
+			MatNullSpaceDestroy(&nullsp);
+		}
 	}
 
 	if(_computeConditionNumber)
