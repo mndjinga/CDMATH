@@ -109,6 +109,9 @@ private:
 	Mat _mat;
 
 	int _numberOfNonZeros ;//The maximum number of nonzeros coefficients per line (or an upper bound)
+	
+	Vector vecToVector(const Vec& vec) const ;
+	Vec vectorToVec( const Vector& myVector ) const ;
 };
 
 

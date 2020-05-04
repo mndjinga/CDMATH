@@ -331,34 +331,14 @@ Vector
 SparseMatrixPetsc::operator* (const Vector& vec) const
 {
 	int numberOfRows=vec.getNumberOfRows();
-	Vec X;
-
-	VecCreate(PETSC_COMM_WORLD,&X);
-	VecSetSizes(X,PETSC_DECIDE,numberOfRows);
-	VecSetFromOptions(X);
-	double value ;
-	for (PetscInt i=0; i<numberOfRows; i++)
-	{
-		value = vec(i);
-		VecSetValues(X,1,&i,&value,INSERT_VALUES);
-	}
-
-	VecAssemblyBegin(X);
-	VecAssemblyEnd(X);
-
+	Vec X=vectorToVec(vec);
 	Vec Y;
 	VecDuplicate (X,&Y);
 	MatAssemblyBegin(_mat, MAT_FINAL_ASSEMBLY);
 	MatAssemblyEnd(_mat, MAT_FINAL_ASSEMBLY);
 	MatMult(_mat,X,Y);
 
-	Vector result(numberOfRows);
-	for (PetscInt i=0; i<numberOfRows; i++)
-	{
-		VecGetValues(Y,1,&i,&value);
-		result(i)=value;
-	}
-	return result;
+	return vecToVector(Y);
 }
 
 SparseMatrixPetsc&
@@ -449,4 +429,38 @@ void
 SparseMatrixPetsc::zeroEntries()
 {
     MatZeroEntries(_mat);
+}
+
+Vector
+SparseMatrixPetsc::vecToVector(const Vec& vec) const
+{
+	PetscInt numberOfRows;
+	VecGetSize(vec,&numberOfRows);
+    double * petscValues;
+    VecGetArray(vec,&petscValues);
+    
+    DoubleTab values (numberOfRows,petscValues);
+	Vector result(numberOfRows);
+    result.setValues(values);
+
+	return result;
+}
+Vec
+SparseMatrixPetsc::vectorToVec(const Vector& myVector) const
+{
+	int numberOfRows=myVector.getNumberOfRows();
+	const double* values = myVector.getValues().getValues();
+	
+	Vec result;
+	VecCreate(PETSC_COMM_WORLD,&result);
+	VecSetSizes(result,PETSC_DECIDE,numberOfRows);
+	VecSetBlockSize(result,numberOfRows);
+	VecSetFromOptions(result);
+	int idx=0;//Index where to add the block of values
+	VecSetValuesBlocked(result,1,&idx,values,INSERT_VALUES);
+
+	VecAssemblyBegin(result);
+	VecAssemblyEnd(result);
+
+	return result;
 }
