@@ -62,7 +62,7 @@ if (CDMATH_WITH_PETSC)
       set(SLEPC_DIR ${PETSC_DIR}/${PETSC_ARCH})
       message ( STATUS "PETSC_DIR set, checking variable SLEPC_DIR : " ${SLEPC_DIR} )
       set(SLEPC_INCLUDES "${SLEPC_DIR}/include" "${SLEPC_DIR}/${PETSC_ARCH}/include")
-      set(SLEPC_LIBRARIES "${SLEPC_DIR}/${PETSC_ARCH}/lib/libslepc.so")
+      set(SLEPC_LIBRARIES "${SLEPC_DIR}/lib/libslepc.so")
       string(REPLACE ";" ":"  SLEPC_INCLUDES_PATH "${SLEPC_INCLUDE_DIR}")# use colon instead of semicolon in environment file env_CDMATH.sh
   else ( DEFINED ENV{PETSC_DIR} )
     message ( STATUS "PETSC_DIR not set, searching petsc in the system" )
@@ -128,7 +128,7 @@ if (CDMATH_WITH_PETSC)
       #define slepc variables
       set(SLEPC_DIR ${PETSC_DIR}/${PETSC_ARCH})
       set(SLEPC_INCLUDES "${SLEPC_DIR}/include" "${SLEPC_DIR}/${PETSC_ARCH}/include")
-      set(SLEPC_LIBRARIES "${SLEPC_DIR}/${PETSC_ARCH}/lib/libslepc.so")
+      set(SLEPC_LIBRARIES "${SLEPC_DIR}/lib/libslepc.so")
       string(REPLACE ";" ":"  SLEPC_INCLUDES_PATH "${SLEPC_INCLUDE_DIR}")# use colon instead of semicolon in environment file env_CDMATH.sh
     endif ()
   endif ( DEFINED ENV{PETSC_DIR} )
