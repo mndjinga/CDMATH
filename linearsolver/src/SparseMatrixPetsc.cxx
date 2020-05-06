@@ -9,6 +9,7 @@
 #include "CdmathException.hxx"
 
 #include <cstring>
+#include <slepceps.h>
 
 using namespace std;
 
