@@ -53,10 +53,21 @@ if (CDMATH_WITH_PETSC)
     petsc_get_version ()
     string(REPLACE ";" ":"  PETSC_INCLUDES_PATH "${PETSC_INCLUDES}")# use colon instead of semicolon in environment file env_CDMATH.sh
 
+#    set (SLEPC_DIR ${PETSC_DIR}/${PETSC_ARCH})
+#    message ( STATUS "PETSC_DIR set, checking variable SLEPC_DIR : " ${SLEPC_DIR} )
+#    find_package (SLEPc 3.4 REQUIRED)
+#    string(REPLACE ";" ":"  SLEPC_INCLUDES_PATH "${SLEPC_INCLUDE_DIR}")# use colon instead of semicolon in environment file env_CDMATH.sh
+
+      #define slepc variables
+      set(SLEPC_DIR ${PETSC_DIR}/${PETSC_ARCH})
+      message ( STATUS "PETSC_DIR set, checking variable SLEPC_DIR : " ${SLEPC_DIR} )
+      set(SLEPC_INCLUDES "${SLEPC_DIR}/include" "${SLEPC_DIR}/${PETSC_ARCH}/include")
+      set(SLEPC_LIBRARIES "${SLEPC_DIR}/${PETSC_ARCH}/lib/libslepc.so")
+      string(REPLACE ";" ":"  SLEPC_INCLUDES_PATH "${SLEPC_INCLUDE_DIR}")# use colon instead of semicolon in environment file env_CDMATH.sh
   else ( DEFINED ENV{PETSC_DIR} )
     message ( STATUS "PETSC_DIR not set, searching petsc in the system" )
 
-    if ( IS_DIRECTORY "/usr/include/petsc/" AND EXISTS "/usr/lib64/libpetscgfy.so")  #Case fedora/redhat system install
+    if ( IS_DIRECTORY "/usr/include/petsc/" AND EXISTS "/usr/lib64/libpetsc.so" AND DEFINED $ENV{SLEPC_DIR} )  #Case fedora/redhat system install
       message ( STATUS "PETSC includes found in /usr/include/petsc/" )
       message ( STATUS "PETSC library found in /usr/lib64" )
       set(PETSC_DIR /usr/)
@@ -65,6 +76,9 @@ if (CDMATH_WITH_PETSC)
 
       set(PETSC_VERSION "3.8") #3.8 for fedora 26 , 3.9 for fedora 29 , 3.10 for fedora 30, , 3.12 for fedora 32
       set (CPACK_RPM_PACKAGE_REQUIRES   "${CPACK_RPM_PACKAGE_REQUIRES}, petsc-devel (>= 3.4)") # This is not fully working yet. 
+
+      message ( STATUS "Checking variable SLEPC_DIR : " $ENV{SLEPC_DIR} )
+      find_package (SLEPc 3.4 REQUIRED)
 
     #elseif ( IS_DIRECTORY "/usr/lib/petsc/") #Case ubuntu/debian system install
     #  message ( STATUS "PETSC found in /usr/lib/petsc/" )
@@ -84,7 +98,7 @@ if (CDMATH_WITH_PETSC)
     #  set(PETSC_VERSION "3.6") #value for Ubuntu 16.04 
     #  set(PETSC_VERSION "3.7") #value for Ubuntu 18.04 
 
-    else ()  # No petsc in system, do compile petsc
+    else ()  # No petsc in system, do compile petsc along with slepc as an external package
       message (STATUS "PETSC not found in the system, petsc 3.13.1 will be installed" )
       set(PETSC_SRC ${CDMATH_SOURCE_DIR}/pre_requis/PETSc)
       set(PETSC_DIR ${CMAKE_INSTALL_PREFIX}/share/petsc-3.13.1) # Location of the final install 
@@ -111,6 +125,11 @@ if (CDMATH_WITH_PETSC)
       LOG_INSTALL       TRUE           # Wrap install in script to log output
        )
 
+      #define slepc variables
+      set(SLEPC_DIR ${PETSC_DIR}/${PETSC_ARCH})
+      set(SLEPC_INCLUDES "${SLEPC_DIR}/include" "${SLEPC_DIR}/${PETSC_ARCH}/include")
+      set(SLEPC_LIBRARIES "${SLEPC_DIR}/${PETSC_ARCH}/lib/libslepc.so")
+      string(REPLACE ";" ":"  SLEPC_INCLUDES_PATH "${SLEPC_INCLUDE_DIR}")# use colon instead of semicolon in environment file env_CDMATH.sh
     endif ()
   endif ( DEFINED ENV{PETSC_DIR} )
 
