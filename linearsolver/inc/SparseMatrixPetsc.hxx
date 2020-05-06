@@ -9,6 +9,7 @@
 #define SOURCE_DIRECTORY__BASE_INC_SparseMatrixPetsc_HXX_
 
 #include <iostream>
+#include <vector>
 
 #include "GenericMatrix.hxx"
 #include "Vector.hxx"
@@ -104,6 +105,8 @@ public:
     
     void diagonalShift(double lambda);
     void zeroEntries();//sets the matrix coefficients to zero
+    
+    std::vector< Vector > eigenvectors(int nev);
     
 private:
 	Mat _mat;
