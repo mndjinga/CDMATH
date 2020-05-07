@@ -19,6 +19,7 @@ IF (CDMATH_WITH_TESTS)
       INCLUDE_DIRECTORIES(
         ${LINEARSOLVER_DIR}/inc
         ${PETSC_INCLUDES}
+        ${SLEPC_INCLUDES}
         )
       SET(_extra_lib_TESTS linearsolver ${PETSC_LIBRARIES} ${SLEPC_LIBRARIES})
   endif (CDMATH_WITH_PETSC)
