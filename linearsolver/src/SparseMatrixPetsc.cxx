@@ -497,7 +497,8 @@ SparseMatrixPetsc::eigenvectors(int nev)
   */
   EPSSetOperators(eps,_mat,NULL);
   EPSSetProblemType(eps,EPS_HEP);
-  EPSSetWhichEigenpairs(eps,EPS_SMALLEST_REAL);//Or EPS_SMALLEST_MAGNITUDE ?
+  EPSSetWhichEigenpairs(eps,EPS_SMALLEST_MAGNITUDE);//Or EPS_SMALLEST_REAL ?
+  EPSSetDimensions(eps,nev,PETSC_DEFAULT,PETSC_DEFAULT);
 
   /*
      Set solver parameters at runtime
