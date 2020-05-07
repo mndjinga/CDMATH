@@ -27,6 +27,8 @@ SparseMatrixPetscTests::testClassSparseMatrixPetsc( void )
 	CPPUNIT_ASSERT_EQUAL( 3.0, A(1,0) );
 	CPPUNIT_ASSERT_EQUAL( 4.0, A(1,1) );
 
+	CPPUNIT_ASSERT_EQUAL( false, A.isSymmetric(1.e-5) );
+
     SparseMatrixPetsc A1(2,2);
     A1=A;
 	CPPUNIT_ASSERT_EQUAL( 1.0, A1(0,0) );
@@ -117,10 +119,14 @@ SparseMatrixPetscTests::testClassSparseMatrixPetsc( void )
 	CPPUNIT_ASSERT_EQUAL( false, A3.isSquare() );
 
     A.setValue(0,0,1.);
-    A.setValue(0,1,-2.);
-    A.setValue(1,0,-2.);
-    A.setValue(1,1,4.);
-	CPPUNIT_ASSERT_EQUAL( true, A.isSymmetric(1.e-5) );
+    A.setValue(0,1,-1.);
+    A.setValue(1,0,-1.);
+    A.setValue(1,1,1.);
+	CPPUNIT_ASSERT_EQUAL( true, A.isSymmetric(1.e-10) );
+
+	std::vector< Vector > Vp = A.eigenvectors(2);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0, Vp[0][0] - Vp[0][1],1.e-5);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0, Vp[1][0] + Vp[1][1],1.e-5);
 
 	SparseMatrixPetsc A4(4,4);
     A4.setValue(0,0,1.);
@@ -214,4 +220,3 @@ SparseMatrixPetscTests::testClassSparseMatrixPetsc( void )
 	CPPUNIT_ASSERT_EQUAL( 6.0, A8(1,0) );
 	CPPUNIT_ASSERT_EQUAL( 8.0, A8(1,1) );
 }
-
