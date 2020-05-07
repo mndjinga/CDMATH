@@ -580,3 +580,12 @@ SparseMatrixPetsc::eigenvectors(int nev)
     throw CdmathException("No eigenvector found");	
   }
 }
+
+bool SparseMatrixPetsc::isSymmetric(double tol) const
+{
+	//Check that the matrix is symmetric
+	PetscBool isSymetric;
+	MatIsSymmetric(_mat,tol,&isSymetric);
+
+	return isSymetric;
+}

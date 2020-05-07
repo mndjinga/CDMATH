@@ -108,6 +108,8 @@ public:
     
     std::vector< Vector > eigenvectors(int nev);
     
+    bool isSymmetric(double tol=1.e-6) const ;
+    
 private:
 	Mat _mat;
 

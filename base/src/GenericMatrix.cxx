@@ -5,8 +5,9 @@
  *      Authors: CDMATH
  */
 
-#include "GenericMatrix.hxx"
+#include <math.h> 
 
+#include "GenericMatrix.hxx"
 #include "CdmathException.hxx"
 
 using namespace std;
@@ -62,7 +63,7 @@ GenericMatrix::setValues(const DoubleTab& values)
 }
 
 bool
-GenericMatrix::isSymmetric() const
+GenericMatrix::isSymmetric(double tol) const
 {
 	if( ! isSquare() )
 		throw "isSymmetric::Matrix is not square!!!";
@@ -73,7 +74,7 @@ GenericMatrix::isSymmetric() const
 
 	for(int i=0; i<dim-1; i++)
 		for(int j=i+1; j<dim; j++)
-			if((*this)(i,j) != (*this)(j,i))
+			if(fabs((*this)(i,j) - (*this)(j,i))> tol )
 			{
 				res = false;
 				break;

@@ -120,7 +120,7 @@ SparseMatrixPetscTests::testClassSparseMatrixPetsc( void )
     A.setValue(0,1,-2.);
     A.setValue(1,0,-2.);
     A.setValue(1,1,4.);
-	CPPUNIT_ASSERT_EQUAL( true, A.isSymmetric() );
+	CPPUNIT_ASSERT_EQUAL( true, A.isSymmetric(1.e-5) );
 
 	SparseMatrixPetsc A4(4,4);
     A4.setValue(0,0,1.);
