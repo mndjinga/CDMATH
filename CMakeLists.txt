@@ -52,18 +52,23 @@ if (CDMATH_WITH_PETSC)
     find_package (PETSc 3.4 REQUIRED)
     petsc_get_version ()
     string(REPLACE ";" ":"  PETSC_INCLUDES_PATH "${PETSC_INCLUDES}")# use colon instead of semicolon in environment file env_CDMATH.sh
+    message ( STATUS "PETSC found. Version is ${PETSC_VERSION_MAJOR}.${PETSC_VERSION_MINOR}.${PETSC_VERSION_SUBMINOR}" )
 
 #    set (SLEPC_DIR ${PETSC_DIR}/${PETSC_ARCH})
 #    message ( STATUS "PETSC_DIR set, checking variable SLEPC_DIR : " ${SLEPC_DIR} )
 #    find_package (SLEPc 3.4 REQUIRED)
-#    string(REPLACE ";" ":"  SLEPC_INCLUDES_PATH "${SLEPC_INCLUDE_DIR}")# use colon instead of semicolon in environment file env_CDMATH.sh
+#    string(REPLACE ";" ":"  SLEPC_INCLUDES_PATH "${SLEPC_INCLUDES}")# use colon instead of semicolon in environment file env_CDMATH.sh
 
       #define slepc variables
       set(SLEPC_DIR ${PETSC_DIR}/${PETSC_ARCH})
-      message ( STATUS "PETSC_DIR set, checking variable SLEPC_DIR : " ${SLEPC_DIR} )
-      set(SLEPC_INCLUDES "${SLEPC_DIR}/include" "${SLEPC_DIR}/${PETSC_ARCH}/include")
-      set(SLEPC_LIBRARIES "${SLEPC_DIR}/lib/libslepc.so")
-      string(REPLACE ";" ":"  SLEPC_INCLUDES_PATH "${SLEPC_INCLUDE_DIR}")# use colon instead of semicolon in environment file env_CDMATH.sh
+      message ( STATUS "Checking variable SLEPC_DIR" )
+      if ( IS_DIRECTORY ${SLEPC_DIR}/include AND EXISTS ${SLEPC_DIR}/lib/libslepc.so)
+        set(SLEPC_INCLUDES ${SLEPC_DIR}/include)
+        set(SLEPC_LIBRARIES ${SLEPC_DIR}/lib/libslepc.so)
+        message( STATUS "SLEPC found at ${SLEPC_DIR}" )
+      else()
+        message( WARNING "SLEPC not found" )
+      endif()
   else ( DEFINED ENV{PETSC_DIR} )
     message ( STATUS "PETSC_DIR not set, searching petsc in the system" )
 
@@ -74,26 +79,39 @@ if (CDMATH_WITH_PETSC)
       set(PETSC_INCLUDES  /usr/include/petsc /usr/include/petsc/petsc/mpiuni)
       set(PETSC_LIBRARIES /usr/lib64/libpetsc.so)
 
-      set(PETSC_VERSION "3.8") #3.8 for fedora 26 , 3.9 for fedora 29 , 3.10 for fedora 30, , 3.12 for fedora 32
+      #set(PETSC_VERSION "3.8") #3.8 for fedora 26 , 3.9 for fedora 29 , 3.10 for fedora 30, , 3.12 for fedora 32
+      petsc_get_version ()
       set (CPACK_RPM_PACKAGE_REQUIRES   "${CPACK_RPM_PACKAGE_REQUIRES}, petsc-devel (>= 3.4)") # This is not fully working yet. 
 
       message ( STATUS "Checking variable SLEPC_DIR : " $ENV{SLEPC_DIR} )
-      find_package (SLEPc 3.4 REQUIRED)
+      if ( IS_DIRECTORY ${SLEPC_DIR}/include AND EXISTS ${SLEPC_DIR}/lib/libslepc.so)
+        set(SLEPC_INCLUDES ${SLEPC_DIR}/include)
+        set(SLEPC_LIBRARIES ${SLEPC_DIR}/lib/libslepc.so)
+        message( STATUS "SLEPC found at $ENV{SLEPC_DIR}" )
+      else()
+        message( WARNING "SLEPC not found" )
+      endif()
 
-    #elseif ( IS_DIRECTORY "/usr/lib/petsc/") #Case ubuntu/debian system install
-    #  message ( STATUS "PETSC found in /usr/lib/petsc/" )
+    #elseif ( IS_DIRECTORY "/usr/lib/petsc/" AND EXISTS "/usr/lib/petsc/lib/libpetsc_real.so") #Case ubuntu/debian system install
+    #  message ( STATUS "PETSC found in /usr/lib/petsc/ abnd exists /usr/lib/petsc/lib/libpetsc_real.so")
     #  set(PETSC_DIR /usr/lib/petsc/)
+    #  set(PETSC_INCLUDES  ${PETSC_DIR}/include ${PETSC_DIR}/include/petsc/mpiuni)
+    #  set(PETSC_LIBRARIES ${PETSC_DIR}/libpetsc_real.so)
 
     #  find_package (PETSc 3.4 REQUIRED)
     #  petsc_get_version ()
     #  set (CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, petsc-dev   (>= 3.4)") # This is not fully working yet. 
 
+    #  set(SLEPC_DIR /usr/lib/slepc/)
+    #  set(SLEPC_INCLUDES  ${SLEPC_DIR}/include )
+    #  set(SLEPC_LIBRARIES ${SLEPC_DIR}/libslepc_real.so)
+
     #elseif ( IS_DIRECTORY "/usr/local/lib/python2.7/dist-packages/petsc") #Case ubuntu/debian system pip install
     #  message ( STATUS "PETSC found in /usr/local/lib/python2.7/dist-packages/petsc" )
     #  set(PETSC_DIR /usr/local/lib/python2.7/dist-packages/petsc)
-    #  set(PETSC_INCLUDES  /usr/local/lib/python2.7/dist-packages/petsc/include /usr/include/openmpi)
-    #  set(PETSC_LIBRARIES /usr/local/lib/python2.7/dist-packages/petsc/lib/libpetsc.so)
-
+    #  set(PETSC_INCLUDES  ${PETSC_DIR}/include /usr/include/openmpi)
+    #  set(PETSC_LIBRARIES ${PETSC_DIR}/lib/libpetsc.so)
+    #  petsc_get_version ()
     #  set(PETSC_VERSION "3.4") #value for Ubuntu 14.04 
     #  set(PETSC_VERSION "3.6") #value for Ubuntu 16.04 
     #  set(PETSC_VERSION "3.7") #value for Ubuntu 18.04 
@@ -127,8 +145,8 @@ if (CDMATH_WITH_PETSC)
 
       #define slepc variables
       set(SLEPC_DIR ${PETSC_DIR}/${PETSC_ARCH})
-      set(SLEPC_INCLUDES "${SLEPC_DIR}/include" "${SLEPC_DIR}/${PETSC_ARCH}/include")
-      set(SLEPC_LIBRARIES "${SLEPC_DIR}/lib/libslepc.so")
+      set(SLEPC_INCLUDES ${SLEPC_DIR}/include ${SLEPC_DIR}/${PETSC_ARCH}/include)
+      set(SLEPC_LIBRARIES ${SLEPC_DIR}/lib/libslepc.so)
       string(REPLACE ";" ":"  SLEPC_INCLUDES_PATH "${SLEPC_INCLUDE_DIR}")# use colon instead of semicolon in environment file env_CDMATH.sh
     endif ()
   endif ( DEFINED ENV{PETSC_DIR} )
