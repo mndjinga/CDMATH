@@ -448,54 +448,6 @@ class TestsCDMATHSwig(unittest.TestCase):
         self.assertTrue("Bord1" == f2.getGroupName())
         return
 
-    def testClassDoubleTab(self):
-        T = DoubleTab(3)
-        T[0] = 1
-        T[1] = 2
-        T[2] = 3
-        self.assertTrue(1 == T[0])
-        self.assertTrue(2 == T[1])
-        self.assertTrue(3 == T[2])
-
-        T1 = DoubleTab(T)
-        self.assertTrue(1 == T1[0])
-        self.assertTrue(2 == T1[1])
-        self.assertTrue(3 == T1[2])
-
-        T2 = DoubleTab()
-        T2 = T
-        self.assertTrue(1 == T2[0])
-        self.assertTrue(2 == T2[1])
-        self.assertTrue(3 == T2[2])
-
-        T4 = DoubleTab(3, 3)
-        T5 = DoubleTab(3)
-        T5[0] = 1
-        T5[1] = 2
-        T5[2] = 3
-        T5 += T4
-        self.assertTrue(4 == T5[0])
-        self.assertTrue(5 == T5[1])
-        self.assertTrue(6 == T5[2])
-
-        T8 = DoubleTab(3)
-        T8[0] = 1
-        T8[1] = 2
-        T8[2] = 3
-        T8 -= T4
-        self.assertTrue(-2 == T8[0])
-        self.assertTrue(-1 == T8[1])
-        self.assertTrue(0 == T8[2])
-
-        T12 = DoubleTab(3)
-        T12[0] = 1
-        T12[1] = 2
-        T12[2] = 3
-        self.assertTrue(1 == T12.getValues()[0])
-        self.assertTrue(2 == T12.getValues()[1])
-        self.assertTrue(3 == T12.getValues()[2])
-        return
-
     def testClassMesh(self):
         import os
         M1 = Mesh(0.0, 4.0, 4)
