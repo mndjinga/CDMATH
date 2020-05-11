@@ -14,7 +14,6 @@
 #include <cppunit/XmlOutputter.h>
 #include <cppunit/CompilerOutputter.h>
 
-#include "SparseMatrixTests.hxx"
 #include "MatrixTests.hxx"
 #include "VectorTests.hxx"
 #include "PointTests.hxx"
@@ -50,7 +49,6 @@ int main( int argc, char* argv[] )
     runner.addTest( IntTabTests::suite() );
     runner.addTest( DoubleTabTests::suite() );
     runner.addTest( MatrixTests::suite() );
-    runner.addTest( SparseMatrixTests::suite() );
     runner.addTest( PointTests::suite() );
     runner.addTest( NodeTests::suite() );
     runner.addTest( CellTests::suite() );
