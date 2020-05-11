@@ -14,19 +14,6 @@ def FieldIdiv(self,*args):
     import _cdmath
     return _cdmath.Field____idiv___(self,self, *args)
 
-def DoubleTabIadd(self,*args):
-    import _cdmath
-    return _cdmath.DoubleTab____iadd___(self,self, *args)
-def DoubleTabIsub(self,*args):
-    import _cdmath
-    return _cdmath.DoubleTab____isub___(self,self, *args)
-def DoubleTabImul(self,*args):
-    import _cdmath
-    return _cdmath.DoubleTab____imul___(self,self, *args)
-def DoubleTabIdiv(self,*args):
-    import _cdmath
-    return _cdmath.DoubleTab____idiv___(self,self, *args)
-
 def MatrixIadd(self,*args):
     import _cdmath
     return _cdmath.Matrix____iadd___(self,self, *args)
@@ -57,7 +44,6 @@ def VectorIdiv(self,*args):
 %{
 #include "Matrix.hxx"
 #include "Vector.hxx"
-#include "DoubleTab.hxx"
 #include "Point.hxx"
 #include "Node.hxx"
 #include "Cell.hxx"
@@ -78,7 +64,6 @@ def VectorIdiv(self,*args):
 %include std_string.i
 
 %include "GenericMatrix.hxx"
-%include "DoubleTab.hxx"
 %include "Matrix.hxx"
 %include "Vector.hxx"
 %include "Point.hxx"
@@ -187,114 +172,6 @@ def VectorIdiv(self,*args):
          oss << "# " << i << " : " << (*self)(i) << std::endl;
      return oss.str();
   }
-}
-
-%extend DoubleTab
-{
-  DoubleTab __sub__(const DoubleTab& f)
-  {
-    return (*self)-f;
-  }
-
-  DoubleTab __add__(const DoubleTab& f)
-  {
-    return (*self)+f;
-  }
-
-  double __mul__(const DoubleTab& f)
-  {
-    return (*self)*f;
-  }
-
-  DoubleTab __mul__(double value)
-  {
-    return (*self)*value;
-  }
-
-  DoubleTab __mul__(int value)
-  {
-    return (*self)*value;
-  }
-
-  DoubleTab __div__(double value)
-  {
-    return (*self)/value;
-  }
-
-  DoubleTab __div__(int value)
-  {
-    return (*self)/value;
-  }
-
-  PyObject *___iadd___(PyObject *trueSelf, const DoubleTab& f)
-  {
-    (*self)+=f;
-    Py_XINCREF(trueSelf);
-    return trueSelf;
-  }
-
-  PyObject *___iadd___(PyObject *trueSelf, double value)
-  {
-    (*self)+=value;
-    Py_XINCREF(trueSelf);
-    return trueSelf;
-  }
-
-  PyObject *___isub___(PyObject *trueSelf, const DoubleTab& f)
-  {
-    (*self)-=f;
-    Py_XINCREF(trueSelf);
-    return trueSelf;
-  }
-
-  PyObject *___isub___(PyObject *trueSelf, double value)
-  {
-    (*self)-=value;
-    Py_XINCREF(trueSelf);
-    return trueSelf;
-  }
-
-  PyObject *___imul___(PyObject *trueSelf, double val)
-  {
-    (*self)*=val;
-    Py_XINCREF(trueSelf);
-    return trueSelf;
-  }
-
-  PyObject *___idiv___(PyObject *trueSelf, double val)
-  {
-    (*self)/=val;
-    Py_XINCREF(trueSelf);
-    return trueSelf;
-  }
-
-  std::string __repr__()
-  {
-     std::ostringstream oss;
-     oss << "Number of Values : " << (*self).size() << std::endl;
-     oss << "Data content : " << std::endl;
-     for (int i=0;i<(*self).size();i++)
-         oss << "# " << i << " : " << (*self)[i] << std::endl;
-     return oss.str();
-  }
-
-  double __getitem__(int i)
-  {
-    const double& tmp=(*self)[i];
-    return double(tmp);
-  }
-
-  void __setitem__(int i, double val)
-  {
-    (*self)[i]=val;
-  }
-
-  PyObject *getValues()
-  {
-     const double *vals=self->getValues();
-     return convertDblArrToPyList(vals,self->size());
-  }
-
 }
 
 %extend Matrix
@@ -552,11 +429,6 @@ Field.__iadd__=FieldIadd
 Field.__isub__=FieldIsub
 Field.__imul__=FieldImul
 Field.__idiv__=FieldIdiv
-
-DoubleTab.__iadd__=DoubleTabIadd
-DoubleTab.__isub__=DoubleTabIsub
-DoubleTab.__imul__=DoubleTabImul
-DoubleTab.__idiv__=DoubleTabIdiv
 
 Matrix.__iadd__=MatrixIadd
 Matrix.__isub__=MatrixIsub
