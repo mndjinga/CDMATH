@@ -194,6 +194,9 @@ SparseMatrixPetsc::~SparseMatrixPetsc()
 Mat
 SparseMatrixPetsc::getPetscMatrix() const
 {
+	MatAssemblyBegin(_mat, MAT_FINAL_ASSEMBLY);
+	MatAssemblyEnd(_mat, MAT_FINAL_ASSEMBLY);
+
 	return (_mat);
 }
 
