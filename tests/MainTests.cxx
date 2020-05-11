@@ -23,7 +23,6 @@
 #include "FieldTests.hxx"
 #include "MeshTests.hxx"
 #include "DoubleTabTests.hxx"
-#include "IntTabTests.hxx"
 #ifdef CDMATH_WITH_PETSC
     #include "LinearSolverTests.hxx"
 	#include "SparseMatrixPetscTests.hxx"
@@ -46,7 +45,6 @@ int main( int argc, char* argv[] )
     controller.addListener( &progress );
     // Add the top suite to the test runner
     CppUnit::TextUi::TestRunner runner;
-    runner.addTest( IntTabTests::suite() );
     runner.addTest( DoubleTabTests::suite() );
     runner.addTest( MatrixTests::suite() );
     runner.addTest( PointTests::suite() );
