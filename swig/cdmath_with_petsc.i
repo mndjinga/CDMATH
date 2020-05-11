@@ -27,19 +27,6 @@ def DoubleTabIdiv(self,*args):
     import _cdmath
     return _cdmath.DoubleTab____idiv___(self,self, *args)
 
-def IntTabIadd(self,*args):
-    import _cdmath
-    return _cdmath.IntTab____iadd___(self,self, *args)
-def IntTabIsub(self,*args):
-    import _cdmath
-    return _cdmath.IntTab____isub___(self,self, *args)
-def IntTabImul(self,*args):
-    import _cdmath
-    return _cdmath.IntTab____imul___(self,self, *args)
-def IntTabIdiv(self,*args):
-    import _cdmath
-    return _cdmath.IntTab____idiv___(self,self, *args)
-
 def MatrixIadd(self,*args):
     import _cdmath
     return _cdmath.Matrix____iadd___(self,self, *args)
@@ -84,7 +71,6 @@ def VectorIdiv(self,*args):
 #include "Matrix.hxx"
 #include "Vector.hxx"
 #include "DoubleTab.hxx"
-#include "IntTab.hxx"
 #include "Point.hxx"
 #include "Node.hxx"
 #include "Cell.hxx"
@@ -107,7 +93,6 @@ def VectorIdiv(self,*args):
 %include std_string.i
 
 %include "GenericMatrix.hxx"
-%include "IntTab.hxx"
 %include "DoubleTab.hxx"
 %include "Matrix.hxx"
 %include "Vector.hxx"
@@ -119,79 +104,6 @@ def VectorIdiv(self,*args):
 %include "Field.hxx"
 %include "LinearSolver.hxx"
 %include "SparseMatrixPetsc.hxx"
-
-%extend IntTab
-{
-  PyObject *___iadd___(PyObject *trueSelf, const IntTab& f)
-  {
-    (*self)+=f;
-    Py_XINCREF(trueSelf);
-    return trueSelf;
-  }
-
-  PyObject *___iadd___(PyObject *trueSelf, double value)
-  {
-    (*self)+=value;
-    Py_XINCREF(trueSelf);
-    return trueSelf;
-  }
-
-  PyObject *___isub___(PyObject *trueSelf, const IntTab& f)
-  {
-    (*self)-=f;
-    Py_XINCREF(trueSelf);
-    return trueSelf;
-  }
-
-  PyObject *___isub___(PyObject *trueSelf, double value)
-  {
-    (*self)-=value;
-    Py_XINCREF(trueSelf);
-    return trueSelf;
-  }
-
-  PyObject *___imul___(PyObject *trueSelf, double val)
-  {
-    (*self)*=val;
-    Py_XINCREF(trueSelf);
-    return trueSelf;
-  }
-
-  PyObject *___idiv___(PyObject *trueSelf, double val)
-  {
-    (*self)/=val;
-    Py_XINCREF(trueSelf);
-    return trueSelf;
-  }
-
-  std::string __repr__()
-  {
-     std::ostringstream oss;
-     oss << "Number of Values : " << (*self).size() << std::endl;
-     oss << "Data content : " << std::endl;
-     for (int i=0;i<(*self).size();i++)
-         oss << "# " << i << " : " << (*self)(i) << std::endl;
-     return oss.str();
-  }
-
-  int __getitem__(int i)
-  {
-    const int& tmp=(*self)(i);
-    return int(tmp);
-  }
-
-  void __setitem__(int i, int val)
-  {
-    (*self)(i)=val;
-  }
-
-  PyObject *getValues()
-  {
-     const int *vals=self->getValues();
-     return convertIntArrToPyList(vals,self->size());
-  }
-
-}
 
 %extend Vector
 {
@@ -762,11 +674,6 @@ Field.__iadd__=FieldIadd
 Field.__isub__=FieldIsub
 Field.__imul__=FieldImul
 Field.__idiv__=FieldIdiv
-
-IntTab.__iadd__=IntTabIadd
-IntTab.__isub__=IntTabIsub
-IntTab.__imul__=IntTabImul
-IntTab.__idiv__=IntTabIdiv
 
 DoubleTab.__iadd__=DoubleTabIadd
 DoubleTab.__isub__=DoubleTabIsub
