@@ -14,7 +14,6 @@
 
 #include "CdmathException.hxx"
 #include "LinearSolver.hxx"
-#include "SparseMatrix.hxx"
 #include "SparseMatrixPetsc.hxx"
 
 using namespace std;
@@ -275,39 +274,10 @@ LinearSolver::setMatrix(const GenericMatrix& matrix)
 	int numberOfRows=matrix.getNumberOfRows();
 	int numberOfColumns=matrix.getNumberOfColumns();
 
-	if (matrix.isSparseMatrix())
+	if (matrix.isSparseMatrix())//Matrix is already a petsc structure
 	{
-		if(matrix.containsPetscMatrix())//Matrix is already a petsc structure
-		{
 			const SparseMatrixPetsc& Smat = dynamic_cast<const SparseMatrixPetsc&>(matrix);
 			_mat=Smat.getPetscMatrix();
-		}
-		else//Matrix is in A. Mekkas sparse structure
-		{
-			const SparseMatrix& Smat = dynamic_cast<const SparseMatrix&>(matrix);
-			PetscInt nnz[numberOfRows];
-			IntTab iRows=Smat.getIndexRows();
-			IntTab iColumns=Smat.getIndexColumns();
-			for (int i=0;i<numberOfRows;i++)
-				nnz[i]=iRows[i+1]-iRows[i];
-			MatCreateSeqAIJ(MPI_COMM_SELF,numberOfRows,numberOfColumns,PETSC_DEFAULT,nnz,&_mat);
-			DoubleTab values=Smat.getValues();
-			for (int i=0;i<numberOfRows;i++)
-			{
-				PetscInt    cols[nnz[i]];
-				PetscScalar    vals[nnz[i]];
-				for (int j=0;j<nnz[i];j++)
-				{
-					cols[j]=iColumns[iRows[i]+j]-1;
-					vals[j]=values[iRows[i]+j];
-				}
-				MatSetValues(_mat,1,
-						&i,
-						nnz[i],
-						cols,
-						vals,INSERT_VALUES);
-			}
-		}
 	}
 	else//Matrix is in A. Mekkas dense structure
 	{

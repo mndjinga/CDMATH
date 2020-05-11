@@ -7,7 +7,6 @@
 
 #include "Matrix.hxx"
 #include "Vector.hxx"
-#include "SparseMatrix.hxx"
 #include "LinearSolverTests.hxx"
 #include "SparseMatrixPetsc.hxx"
 
@@ -26,6 +25,7 @@ LinearSolverTests::testClassLinearSolver( void )
 
     A*=A.transpose();
 
+	CPPUNIT_ASSERT_EQUAL(A.isSparseMatrix(),false);
 	CPPUNIT_ASSERT_DOUBLES_EQUAL(A(0,0),  13, 1.E-10);
 	CPPUNIT_ASSERT_DOUBLES_EQUAL(A(0,1), -14, 1.E-10);
 	CPPUNIT_ASSERT_DOUBLES_EQUAL(A(1,0), -14, 1.E-10);
@@ -57,7 +57,7 @@ LinearSolverTests::testClassLinearSolver( void )
 	CPPUNIT_ASSERT_EQUAL(LS1.getNameOfPc(),(string)"LU");
 	
 	LinearSolver LS2(A,B,500,1.E-10,"CG");
-	SparseMatrix A1(2,2);
+	SparseMatrixPetsc A1(2,2,4);
     A1.setValue(0,0,1.);
     A1.setValue(0,1,-2.);
     A1.setValue(1,0,-2.);
