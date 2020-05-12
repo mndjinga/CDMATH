@@ -568,22 +568,20 @@ SparseMatrixPetsc::getEigenvectors(int nev, double ** valP, double ***vecP, doub
       } else {
         PetscPrintf(PETSC_COMM_WORLD,"   %12f       %12g\n",(double)kr,(double)error);
       }
-      *valP[i]=kr;
+      *(*valP + i)=kr;
       VecGetArray(xr,&myVecp);
-      memcpy((*vecP)[i],myVecp,_numberOfRows*sizeof(double)) ;
+      *(*vecP+  i)=new double [_numberOfRows];
+      //memcpy((*vecP)[i],myVecp,_numberOfRows*sizeof(double)) ;
     }
     PetscPrintf(PETSC_COMM_WORLD,"\n");
     /*
      Free work space
     */
-	cout<<"!!!!!!!!!start destroying" <<endl;
     EPSDestroy(&eps);
-	cout<<"!!!!!!!!!coucou eps" <<endl;
     VecDestroy(&xr);
-	cout<<"!!!!!!!!!coucou xr" <<endl;
     VecDestroy(&xi);
-	cout<<"!!!!!!!!!coucou xi" <<endl;
     SlepcFinalize();
+
     return nconv;
   }
   else
@@ -611,18 +609,14 @@ SparseMatrixPetsc::getEigenvectors(int nev, double tol)
 	
     std::vector< Vector > result(nconv);
 
-	cout<<"!!!!!!!!!coucou 11111"<< " _numberOfRows= "<< _numberOfRows <<endl;
     for (int i=0;i<nconv;i++) 
     {
 		DoubleTab values (_numberOfRows,vecP[i]);
-	cout<<"!!!!!!!!!coucou 222222"<<endl;
         Vector myVecP(_numberOfRows);
         myVecP.setValues(values);
-	cout<<"!!!!!!!!!coucou 333333"<<endl;
         result[i]=myVecP;
 	}
 
-	cout<<"!!!!!!!!!coucou 4444"<<endl;
 	delete valP;
     for (int i=0;i<nconv;i++) 
 		delete vecP[i];
