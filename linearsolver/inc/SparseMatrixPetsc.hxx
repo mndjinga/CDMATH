@@ -106,7 +106,7 @@ public:
     void diagonalShift(double lambda);
     void zeroEntries();//sets the matrix coefficients to zero
     
-    int getEigenvectors(int nev, double * valP, double **vecP, double tol=1e-6);
+    int getEigenvectors(int nev, double ** valP, double ***vecP, double tol=1e-6);
     std::vector< Vector > getEigenvectors(int nev, double tol=1e-6);
     
     bool isSymmetric(double tol=1.e-6) const ;

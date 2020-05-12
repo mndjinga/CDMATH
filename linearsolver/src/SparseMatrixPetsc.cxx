@@ -470,7 +470,7 @@ SparseMatrixPetsc::vectorToVec(const Vector& myVector) const
 }
 
 int 
-SparseMatrixPetsc::getEigenvectors(int nev, double * valP, double **vecP, double tol)
+SparseMatrixPetsc::getEigenvectors(int nev, double ** valP, double ***vecP, double tol)
 {
   EPS            eps;         /* eigenproblem solver context */
   EPSType        type;
@@ -478,6 +478,12 @@ SparseMatrixPetsc::getEigenvectors(int nev, double * valP, double **vecP, double
   PetscScalar    kr,ki;
   Vec            xr,xi;
   PetscInt       i,maxit,its, nconv;
+
+  if(!isSymmetric(tol))
+    {
+    cout<<"SparseMatrixPetsc::getEigenvectors() : matrix is not symmetric, tolerance= "<< tol<<endl;
+    throw CdmathException("SparseMatrixPetsc::getEigenvectors : Matrix should be symmetric for eigenvalues computation");
+    }
 
   SlepcInitialize(0, (char ***)"", PETSC_NULL, PETSC_NULL);
 
@@ -534,6 +540,10 @@ SparseMatrixPetsc::getEigenvectors(int nev, double * valP, double **vecP, double
   EPSGetConverged(eps,&nconv);
   PetscPrintf(PETSC_COMM_WORLD," Number of converged eigenpairs: %D\n\n",nconv);
 
+    *valP=new double[nconv];
+    *vecP=new double * [nconv];
+    double * myVecp;
+    
   if (nconv>0) {
     /*
        Display eigenvalues and relative errors
@@ -542,8 +552,6 @@ SparseMatrixPetsc::getEigenvectors(int nev, double * valP, double **vecP, double
          "           k          ||Ax-kx||/||kx||\n"
          "   ----------------- ------------------\n");
 
-    valP=new double[nconv];
-    vecP=new double * [nconv];
     for (int i=0;i<nconv;i++) {
       /*
         Get converged eigenpairs: i-th eigenvalue is stored in kr (real part) and
@@ -560,16 +568,21 @@ SparseMatrixPetsc::getEigenvectors(int nev, double * valP, double **vecP, double
       } else {
         PetscPrintf(PETSC_COMM_WORLD,"   %12f       %12g\n",(double)kr,(double)error);
       }
-      valP[i]=kr;
-      VecGetArray(xr,&vecP[i]);
+      *valP[i]=kr;
+      VecGetArray(xr,&myVecp);
+      memcpy((*vecP)[i],myVecp,_numberOfRows*sizeof(double)) ;
     }
     PetscPrintf(PETSC_COMM_WORLD,"\n");
     /*
      Free work space
     */
+	cout<<"!!!!!!!!!start destroying" <<endl;
     EPSDestroy(&eps);
+	cout<<"!!!!!!!!!coucou eps" <<endl;
     VecDestroy(&xr);
+	cout<<"!!!!!!!!!coucou xr" <<endl;
     VecDestroy(&xi);
+	cout<<"!!!!!!!!!coucou xi" <<endl;
     SlepcFinalize();
     return nconv;
   }
@@ -583,124 +596,39 @@ SparseMatrixPetsc::getEigenvectors(int nev, double * valP, double **vecP, double
     VecDestroy(&xi);
     SlepcFinalize();
 
-    throw CdmathException("No eigenvector found");	
+    throw CdmathException("SparseMatrixPetsc::getEigenvectors : No eigenvector found");	
   }	
 }
 
 std::vector< Vector > 
 SparseMatrixPetsc::getEigenvectors(int nev, double tol)
 {
-  EPS            eps;         /* eigenproblem solver context */
-  EPSType        type;
-  PetscReal      error;
-  PetscScalar    kr,ki;
-  Vec            xr,xi;
-  PetscInt       i,maxit,its,nconv;
+	int nconv;
+	double * valP;
+	double **vecP;
 
-  SlepcInitialize(0, (char ***)"", PETSC_NULL, PETSC_NULL);
-
-  MatAssemblyBegin(_mat,MAT_FINAL_ASSEMBLY);
-  MatAssemblyEnd(_mat,MAT_FINAL_ASSEMBLY);
-
-  MatCreateVecs(_mat,NULL,&xr);
-  MatCreateVecs(_mat,NULL,&xi);
-
-  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-                Create the eigensolver and set various options
-     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-  /*
-     Create eigensolver context
-  */
-  EPSCreate(PETSC_COMM_WORLD,&eps);
-
-  /*
-     Set operators. In this case, it is a standard eigenvalue problem
-  */
-  EPSSetOperators(eps,_mat,NULL);
-  EPSSetProblemType(eps,EPS_HEP);
-  EPSSetWhichEigenpairs(eps,EPS_SMALLEST_MAGNITUDE);//Or EPS_SMALLEST_REAL ?
-  EPSSetDimensions(eps,nev,PETSC_DEFAULT,PETSC_DEFAULT);
-
-  /*
-     Set solver parameters at runtime
-  */
-  EPSSetFromOptions(eps);
-
-  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-                      Solve the eigensystem
-     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-
-  EPSSolve(eps);
-  /*
-     Optional: Get some information from the solver and display it
-  */
-  EPSGetIterationNumber(eps,&its);
-  PetscPrintf(PETSC_COMM_WORLD," Number of iterations of the method: %D\n",its);
-  EPSGetType(eps,&type);
-  PetscPrintf(PETSC_COMM_WORLD," Solution method: %s\n\n",type);
-  EPSGetDimensions(eps,&nev,NULL,NULL);
-  PetscPrintf(PETSC_COMM_WORLD," Number of requested eigenvalues: %D\n",nev);
-  EPSGetTolerances(eps,&tol,&maxit);
-  PetscPrintf(PETSC_COMM_WORLD," Stopping condition: tol=%.4g, maxit=%D\n",(double)tol,maxit);
-
-  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-                    Display solution and clean up
-     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-  /*
-     Get number of converged approximate eigenpairs
-  */
-  EPSGetConverged(eps,&nconv);
-  PetscPrintf(PETSC_COMM_WORLD," Number of converged eigenpairs: %D\n\n",nconv);
-
-  if (nconv>0) {
-    /*
-       Display eigenvalues and relative errors
-    */
-    PetscPrintf(PETSC_COMM_WORLD,
-         "           k          ||Ax-kx||/||kx||\n"
-         "   ----------------- ------------------\n");
-
+	nconv=getEigenvectors(nev, &valP, &vecP, tol);
+	
     std::vector< Vector > result(nconv);
-    for (int i=0;i<nconv;i++) {
-      /*
-        Get converged eigenpairs: i-th eigenvalue is stored in kr (real part) and
-        ki (imaginary part)
-      */
-      EPSGetEigenpair(eps,i,&kr,&ki,xr,xi);
-      /*
-         Compute the relative error associated to each eigenpair
-      */
-      EPSComputeError(eps,i,EPS_ERROR_RELATIVE,&error);
 
-      if (ki!=0.0) {
-        PetscPrintf(PETSC_COMM_WORLD," %9f%+9fi %12g\n",(double)kr,(double)ki,(double)error);
-      } else {
-        PetscPrintf(PETSC_COMM_WORLD,"   %12f       %12g\n",(double)kr,(double)error);
-      }
-      result[i]=vecToVector(xr);
-    }
-    PetscPrintf(PETSC_COMM_WORLD,"\n");
-    /*
-     Free work space
-    */
-    EPSDestroy(&eps);
-    VecDestroy(&xr);
-    VecDestroy(&xi);
-    SlepcFinalize();
+	cout<<"!!!!!!!!!coucou 11111"<< " _numberOfRows= "<< _numberOfRows <<endl;
+    for (int i=0;i<nconv;i++) 
+    {
+		DoubleTab values (_numberOfRows,vecP[i]);
+	cout<<"!!!!!!!!!coucou 222222"<<endl;
+        Vector myVecP(_numberOfRows);
+        myVecP.setValues(values);
+	cout<<"!!!!!!!!!coucou 333333"<<endl;
+        result[i]=myVecP;
+	}
+
+	cout<<"!!!!!!!!!coucou 4444"<<endl;
+	delete valP;
+    for (int i=0;i<nconv;i++) 
+		delete vecP[i];
+	delete vecP;	
+	
     return result;
-  }
-  else
-  {
-	/*
-     Free work space
-    */
-    EPSDestroy(&eps);
-    VecDestroy(&xr);
-    VecDestroy(&xi);
-    SlepcFinalize();
-
-    throw CdmathException("No eigenvector found");	
-  }
 }
 
 bool SparseMatrixPetsc::isSymmetric(double tol) const
