@@ -50,11 +50,11 @@ for i in range(nbNodes):
 	z = Ni.z()
 
 	if   abs(x)<eps or abs(x-1)<eps: #AVANT et ARRIERE
-		my_RHSfield[i]=8*pi*pi*sin(2*pi*y)*sin(2*pi*z)
+		my_RHSfield[i]= 8*pi*pi*sin(2*pi*y)*sin(2*pi*z)
 	elif abs(y)<eps or abs(y-1)<eps: #GAUCHE et DROITE
-		my_RHSfield[i]=8*pi*pi*sin(2*pi*x)*sin(2*pi*z)
+		my_RHSfield[i]=-8*pi*pi*sin(2*pi*x)*sin(2*pi*z) #Minus sign to have a smooth function of the curvilinear variable
 	elif abs(z)<eps or abs(z-1)<eps: #HAUT et BAS
-		my_RHSfield[i]=8*pi*pi*sin(2*pi*x)*sin(2*pi*y)
+		my_RHSfield[i]= 8*pi*pi*sin(2*pi*x)*sin(2*pi*y)
 	else:
 		raise ValueError("Domain should be the unit cube skin with 6 faces")
 
