@@ -625,6 +625,34 @@ SparseMatrixPetsc::getEigenvectors(int nev, double tol)
     return result;
 }
 
+MEDCoupling::DataArrayDouble *
+SparseMatrixPetsc::getEigenvectorsDataArrayDouble(int nev, double tol)
+{
+	int nconv;
+	double * valP;
+	double **vecP;
+
+	nconv=getEigenvectors(nev, &valP, &vecP, tol);
+	
+	std::vector< int > compoId(1);
+	MEDCoupling::DataArrayDouble *arrays=MEDCoupling::DataArrayDouble::New();
+	MEDCoupling::DataArrayDouble *array =MEDCoupling::DataArrayDouble::New();
+	arrays->alloc(_numberOfRows,nconv);	
+	
+    for (int i=0;i<nconv;i++) 
+    {
+		array->useArray(vecP[i],true, MEDCoupling::DeallocType::CPP_DEALLOC, _numberOfRows,1);
+		compoId[0]=i;
+		arrays->setSelectedComponents(array,compoId);
+		arrays->setInfoOnComponent(i,std::to_string(valP[i]));
+	}
+	delete valP;
+    for (int i=0;i<nconv;i++) 
+		delete vecP[i];
+	delete vecP;	
+	
+    return arrays;
+}
 bool SparseMatrixPetsc::isSymmetric(double tol) const
 {
 	//Check that the matrix is symmetric

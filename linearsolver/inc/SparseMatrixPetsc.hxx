@@ -11,7 +11,7 @@
 #include <iostream>
 #include <vector>
 
-#include "GenericMatrix.hxx"
+#include "MEDCouplingUMesh.hxx"
 #include "Vector.hxx"
 #include <petsc.h>
 
@@ -108,7 +108,8 @@ public:
     
     int getEigenvectors(int nev, double ** valP, double ***vecP, double tol=1e-6);
     std::vector< Vector > getEigenvectors(int nev, double tol=1e-6);
-    
+    MEDCoupling::DataArrayDouble * getEigenvectorsDataArrayDouble(int nev, double tol=1e-6);
+        
     bool isSymmetric(double tol=1.e-6) const ;
     
 private:
