@@ -111,6 +111,7 @@ public:
     std::vector< double > getEigenvalues(int nev, EPSWhich which=EPS_SMALLEST_MAGNITUDE, double tol=1e-6) const;
     std::vector< Vector > getEigenvectors(int nev, EPSWhich which=EPS_SMALLEST_MAGNITUDE, double tol=1e-6) const;
     MEDCoupling::DataArrayDouble * getEigenvectorsDataArrayDouble(int nev, EPSWhich which=EPS_SMALLEST_MAGNITUDE, double tol=1e-6) const;
+    std::vector< double > getSingularValues(int nsv, SVDWhich which=SVD_SMALLEST, double tol=1e-6) const;
     double getConditionNumber(bool isSingular=false, double tol=1e-6) const;
         
     bool isSymmetric(double tol=1.e-6) const ;

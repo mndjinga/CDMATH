@@ -814,3 +814,21 @@ SparseMatrixPetsc::getConditionNumber(bool isSingular, double tol) const
     return sigma_max/sigma_min;
 }
 
+std::vector< double > 
+SparseMatrixPetsc::getSingularValues(int nsv, SVDWhich which, double tol) const
+{
+	int nconv;
+	double * valS;
+	
+	nconv=computeSVD(nsv, &valS, which, tol);
+	
+    std::vector< double > result(nconv);
+	
+    for (int i=0;i<nconv;i++) 
+        result[i]=valS[i];
+
+	delete valS;
+	
+    return result;
+}
+
