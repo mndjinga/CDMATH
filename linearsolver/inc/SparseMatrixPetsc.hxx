@@ -106,7 +106,6 @@ public:
     void diagonalShift(double lambda);
     void zeroEntries();//sets the matrix coefficients to zero
     
-    int getEigenvectors(int nev, double ** valP, double ***vecP, double tol=1e-6);
     std::vector< Vector > getEigenvectors(int nev, double tol=1e-6);
     MEDCoupling::DataArrayDouble * getEigenvectorsDataArrayDouble(int nev, double tol=1e-6);
         
@@ -117,6 +116,8 @@ private:
 
 	int _numberOfNonZeros ;//The maximum number of nonzeros coefficients per line (or an upper bound)
 	
+	int computeSpectrum(int nev, double ** valP, double ***vecP, double tol=1e-6);
+
 	Vector vecToVector(const Vec& vec) const ;
 	Vec vectorToVec( const Vector& myVector ) const ;
 };

@@ -470,7 +470,7 @@ SparseMatrixPetsc::vectorToVec(const Vector& myVector) const
 }
 
 int 
-SparseMatrixPetsc::getEigenvectors(int nev, double ** valP, double ***vecP, double tol)
+SparseMatrixPetsc::computeSpectrum(int nev, double ** valP, double ***vecP, double tol)
 {
   EPS            eps;         /* eigenproblem solver context */
   EPSType        type;
@@ -605,7 +605,7 @@ SparseMatrixPetsc::getEigenvectors(int nev, double tol)
 	double * valP;
 	double **vecP;
 
-	nconv=getEigenvectors(nev, &valP, &vecP, tol);
+	nconv=computeSpectrum(nev, &valP, &vecP, tol);
 	
     std::vector< Vector > result(nconv);
 
@@ -632,7 +632,7 @@ SparseMatrixPetsc::getEigenvectorsDataArrayDouble(int nev, double tol)
 	double * valP;
 	double **vecP;
 
-	nconv=getEigenvectors(nev, &valP, &vecP, tol);
+	nconv=computeSpectrum(nev, &valP, &vecP, tol);
 	
 	std::vector< int > compoId(1);
 	MEDCoupling::DataArrayDouble *arrays=MEDCoupling::DataArrayDouble::New();
