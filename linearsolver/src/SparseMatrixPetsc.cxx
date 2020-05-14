@@ -513,7 +513,8 @@ SparseMatrixPetsc::computeSpectrum(int nev, double ** valP, double ***vecP, EPSW
 	EPSSetProblemType(eps,EPS_NHEP);
   EPSSetWhichEigenpairs(eps,which);
   EPSSetDimensions(eps,nev,PETSC_DEFAULT,PETSC_DEFAULT);
-
+  EPSSetTolerances(eps,tol,PETSC_DEFAULT);
+  
   /*
      Set solver parameters at runtime
   */
@@ -631,6 +632,7 @@ SparseMatrixPetsc::computeSVD(int nsv, double ** valS, SVDWhich which, double to
   SVDSetOperator(svd,_mat);
   SVDSetWhichSingularTriplets(svd,which);
   SVDSetDimensions(svd,nsv,PETSC_DEFAULT,PETSC_DEFAULT);
+  SVDSetTolerances(svd,tol,PETSC_DEFAULT);
 
   /*
      Set solver parameters at runtime
