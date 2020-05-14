@@ -132,6 +132,29 @@ SparseMatrixPetscTests::testClassSparseMatrixPetsc( void )
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0, Vp[0][0] - Vp[0][1],1.e-5);
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0, Vp[1][0] + Vp[1][1],1.e-5);
 
+    A.setValue(0,0,-1.);
+    A.setValue(0,1, 1.);
+    A.setValue(1,0, 1.);
+    A.setValue(1,1,-1.);
+
+	std::vector< double > sigma = A.getSingularValues(2);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0, sigma[0],1.e-5);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 2, sigma[1],1.e-5);
+
+
+    A.setValue(0,0, 0.);
+    A.setValue(0,1, 1.);
+    A.setValue(1,0, 1.);
+    A.setValue(1,1, 0.);
+
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1, A.getConditionNumber(1.e-10),1.e-5);
+
+	SparseMatrixPetsc A33(3,3,2);
+    A33.setValue(1,2, 1.);
+    A33.setValue(2,1, 1.);
+
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1, A33.getConditionNumber(true,1.e-10),1.e-5);
+
 	SparseMatrixPetsc A4(4,4);
     A4.setValue(0,0,1.);
     A4.setValue(0,1,2.);
