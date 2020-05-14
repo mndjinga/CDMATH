@@ -720,10 +720,10 @@ SparseMatrixPetsc::getEigenvalues(int nev, EPSWhich which, double tol) const
     for (int i=0;i<nconv;i++) 
         result[i]=valP[i];
 
-	delete valP;
+	delete[] valP;
     for (int i=0;i<nconv;i++) 
-		delete vecP[i];
-	delete vecP;	
+		delete[] vecP[i];
+	delete[] vecP;	
 	
     return result;
 }
@@ -747,10 +747,10 @@ SparseMatrixPetsc::getEigenvectors(int nev, EPSWhich which, double tol) const
         result[i]=myVecP;
 	}
 
-	delete valP;
+	delete[] valP;
     for (int i=0;i<nconv;i++) 
-		delete vecP[i];
-	delete vecP;	
+		delete[] vecP[i];
+	delete[] vecP;	
 	
     return result;
 }
@@ -776,10 +776,10 @@ SparseMatrixPetsc::getEigenvectorsDataArrayDouble(int nev, EPSWhich which, doubl
 		arrays->setSelectedComponents(array,compoId);
 		arrays->setInfoOnComponent(i,std::to_string(valP[i]));
 	}
-	delete valP;
+	delete[] valP;
     for (int i=0;i<nconv;i++) 
-		delete vecP[i];
-	delete vecP;	
+		delete[] vecP[i];
+	delete[] vecP;	
 	
     return arrays;
 }
@@ -801,7 +801,7 @@ SparseMatrixPetsc::getConditionNumber(bool isSingular, double tol) const
 	if(nconv<nsv)
 		throw CdmathException("SparseMatrixPetsc::getConditionNumber could not find the lowest singular value");
     sigma_min=valS[nsv-1];
-    delete valS;
+    delete[] valS;
     
     /*** Largest singular value ***/
     nsv=1;
@@ -809,7 +809,7 @@ SparseMatrixPetsc::getConditionNumber(bool isSingular, double tol) const
 	if(nconv<nsv)
 		throw CdmathException("SparseMatrixPetsc::getConditionNumber could not find the largest singular value");
     sigma_max=valS[nsv-1];
-    delete valS;
+    delete[] valS;
     
     return sigma_max/sigma_min;
 }
@@ -827,7 +827,7 @@ SparseMatrixPetsc::getSingularValues(int nsv, SVDWhich which, double tol) const
     for (int i=0;i<nconv;i++) 
         result[i]=valS[i];
 
-	delete valS;
+	delete[] valS;
 	
     return result;
 }
