@@ -106,6 +106,7 @@ public:
     void diagonalShift(double lambda);
     void zeroEntries();//sets the matrix coefficients to zero
     
+    std::vector< double > getEigenvalues(int nev, double tol=1e-6);
     std::vector< Vector > getEigenvectors(int nev, double tol=1e-6);
     MEDCoupling::DataArrayDouble * getEigenvectorsDataArrayDouble(int nev, double tol=1e-6);
         

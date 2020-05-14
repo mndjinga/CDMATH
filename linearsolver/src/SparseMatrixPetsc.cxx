@@ -571,7 +571,7 @@ SparseMatrixPetsc::computeSpectrum(int nev, double ** valP, double ***vecP, doub
       *(*valP + i)=kr;
       VecGetArray(xr,&myVecp);
       *(*vecP+  i)=new double [_numberOfRows];
-      //memcpy((*vecP)[i],myVecp,_numberOfRows*sizeof(double)) ;
+      memcpy(*(*vecP+  i),myVecp,_numberOfRows*sizeof(double)) ;
     }
     PetscPrintf(PETSC_COMM_WORLD,"\n");
     /*
@@ -596,6 +596,28 @@ SparseMatrixPetsc::computeSpectrum(int nev, double ** valP, double ***vecP, doub
 
     throw CdmathException("SparseMatrixPetsc::getEigenvectors : No eigenvector found");	
   }	
+}
+
+std::vector< double > 
+SparseMatrixPetsc::getEigenvalues(int nev, double tol)
+{
+	int nconv;
+	double * valP;
+	double **vecP;
+
+	nconv=computeSpectrum(nev, &valP, &vecP, tol);
+	
+    std::vector< double > result(nconv);
+	
+    for (int i=0;i<nconv;i++) 
+        result[i]=valP[i];
+
+	delete valP;
+    for (int i=0;i<nconv;i++) 
+		delete vecP[i];
+	delete vecP;	
+	
+    return result;
 }
 
 std::vector< Vector > 
