@@ -15,6 +15,7 @@
 #include "Vector.hxx"
 #include <petsc.h>
 #include <slepceps.h>
+#include <slepcsvd.h>
 
 class SparseMatrixPetsc: public GenericMatrix {
 
@@ -107,9 +108,10 @@ public:
     void diagonalShift(double lambda);
     void zeroEntries();//sets the matrix coefficients to zero
     
-    std::vector< double > getEigenvalues(int nev, EPSWhich which=EPS_SMALLEST_MAGNITUDE, double tol=1e-6);
-    std::vector< Vector > getEigenvectors(int nev, EPSWhich which=EPS_SMALLEST_MAGNITUDE, double tol=1e-6);
-    MEDCoupling::DataArrayDouble * getEigenvectorsDataArrayDouble(int nev, EPSWhich which=EPS_SMALLEST_MAGNITUDE, double tol=1e-6);
+    std::vector< double > getEigenvalues(int nev, EPSWhich which=EPS_SMALLEST_MAGNITUDE, double tol=1e-6) const;
+    std::vector< Vector > getEigenvectors(int nev, EPSWhich which=EPS_SMALLEST_MAGNITUDE, double tol=1e-6) const;
+    MEDCoupling::DataArrayDouble * getEigenvectorsDataArrayDouble(int nev, EPSWhich which=EPS_SMALLEST_MAGNITUDE, double tol=1e-6) const;
+    double getConditionNumber(bool isSingular=false, double tol=1e-6) const;
         
     bool isSymmetric(double tol=1.e-6) const ;
     
@@ -118,7 +120,8 @@ private:
 
 	int _numberOfNonZeros ;//The maximum number of nonzeros coefficients per line (or an upper bound)
 	
-	int computeSpectrum(int nev, double ** valP, double ***vecP, EPSWhich which=EPS_SMALLEST_MAGNITUDE, double tol=1e-6);
+	int computeSpectrum(int nev, double ** valP, double ***vecP, EPSWhich which=EPS_SMALLEST_MAGNITUDE, double tol=1e-6) const;
+	int computeSVD     (int nsv, double ** valS,                 SVDWhich which=SVD_SMALLEST          , double tol=1e-6) const;
 
 	Vector vecToVector(const Vec& vec) const ;
 	Vec vectorToVec( const Vector& myVector ) const ;

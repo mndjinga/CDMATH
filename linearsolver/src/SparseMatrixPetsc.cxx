@@ -468,8 +468,17 @@ SparseMatrixPetsc::vectorToVec(const Vector& myVector) const
 	return result;
 }
 
+bool SparseMatrixPetsc::isSymmetric(double tol) const
+{
+	//Check that the matrix is symmetric
+	PetscBool isSymetric;
+	MatIsSymmetric(_mat,tol,&isSymetric);
+
+	return isSymetric;
+}
+
 int 
-SparseMatrixPetsc::computeSpectrum(int nev, double ** valP, double ***vecP, EPSWhich which, double tol)
+SparseMatrixPetsc::computeSpectrum(int nev, double ** valP, double ***vecP, EPSWhich which, double tol) const
 {
   EPS            eps;         /* eigenproblem solver context */
   EPSType        type;
@@ -477,12 +486,6 @@ SparseMatrixPetsc::computeSpectrum(int nev, double ** valP, double ***vecP, EPSW
   PetscScalar    kr,ki;
   Vec            xr,xi;
   PetscInt       i,maxit,its, nconv;
-
-  if(!isSymmetric(tol))
-    {
-    cout<<"SparseMatrixPetsc::getEigenvectors() : matrix is not symmetric, tolerance= "<< tol<<endl;
-    throw CdmathException("SparseMatrixPetsc::getEigenvectors : Matrix should be symmetric for eigenvalues computation");
-    }
 
   SlepcInitialize(0, (char ***)"", PETSC_NULL, PETSC_NULL);
 
@@ -504,7 +507,10 @@ SparseMatrixPetsc::computeSpectrum(int nev, double ** valP, double ***vecP, EPSW
      Set operators. In this case, it is a standard eigenvalue problem
   */
   EPSSetOperators(eps,_mat,NULL);
-  EPSSetProblemType(eps,EPS_HEP);
+  if(isSymmetric(tol))
+	EPSSetProblemType(eps,EPS_HEP);
+  else
+	EPSSetProblemType(eps,EPS_NHEP);
   EPSSetWhichEigenpairs(eps,which);
   EPSSetDimensions(eps,nev,PETSC_DEFAULT,PETSC_DEFAULT);
 
@@ -539,9 +545,9 @@ SparseMatrixPetsc::computeSpectrum(int nev, double ** valP, double ***vecP, EPSW
   EPSGetConverged(eps,&nconv);
   PetscPrintf(PETSC_COMM_WORLD," Number of converged eigenpairs: %D\n\n",nconv);
 
-    *valP=new double[nconv];
-    *vecP=new double * [nconv];
-    double * myVecp;
+  *valP=new double[nconv];
+  *vecP=new double * [nconv];
+  double * myVecp;
     
   if (nconv>0) {
     /*
@@ -593,12 +599,115 @@ SparseMatrixPetsc::computeSpectrum(int nev, double ** valP, double ***vecP, EPSW
     VecDestroy(&xi);
     SlepcFinalize();
 
-    throw CdmathException("SparseMatrixPetsc::getEigenvectors : No eigenvector found");	
+    throw CdmathException("SparseMatrixPetsc::computeSpectrum : No eigenvector found");	
+  }	
+}
+
+int 
+SparseMatrixPetsc::computeSVD(int nsv, double ** valS, SVDWhich which, double tol) const
+{
+  SVD            svd;         /* Singular value decomposition solver context */
+  SVDType        type;
+  PetscReal      error;
+  PetscScalar    sigma;
+  PetscInt       i,maxit,its, nconv;
+
+  SlepcInitialize(0, (char ***)"", PETSC_NULL, PETSC_NULL);
+
+  MatAssemblyBegin(_mat,MAT_FINAL_ASSEMBLY);
+  MatAssemblyEnd(_mat,MAT_FINAL_ASSEMBLY);
+
+  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+                Create the singular value solver and set various options
+     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+  /*
+     Create singular value decomposition context
+  */
+  SVDCreate(PETSC_COMM_WORLD,&svd);
+
+  /*
+     Set operators. In this case, it is a standard singular value problem
+  */
+  SVDSetOperator(svd,_mat);
+  SVDSetWhichSingularTriplets(svd,which);
+  SVDSetDimensions(svd,nsv,PETSC_DEFAULT,PETSC_DEFAULT);
+
+  /*
+     Set solver parameters at runtime
+  */
+  SVDSetFromOptions(svd);
+
+  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+                      Solve the SVD problem
+     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+
+  SVDSolve(svd);
+  /*
+     Optional: Get some information from the solver and display it
+  */
+  SVDGetIterationNumber(svd,&its);
+  PetscPrintf(PETSC_COMM_WORLD," Number of iterations of the method: %D\n",its);
+  SVDGetType(svd,&type);
+  PetscPrintf(PETSC_COMM_WORLD," Solution method: %s\n\n",type);
+  SVDGetDimensions(svd,&nsv,NULL,NULL);
+  PetscPrintf(PETSC_COMM_WORLD," Number of requested eingular values: %D\n",nsv);
+  SVDGetTolerances(svd,&tol,&maxit);
+  PetscPrintf(PETSC_COMM_WORLD," Stopping condition: tol=%.4g, maxit=%D\n",(double)tol,maxit);
+
+  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+                    Display solution and clean up
+     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+  /*
+     Get number of converged approximate singular values
+  */
+  SVDGetConverged(svd,&nconv);
+  PetscPrintf(PETSC_COMM_WORLD," Number of converged singular values: %D\n\n",nconv);
+
+  *valS=new double[nconv];
+    
+  if (nconv>0) {
+    /*
+       Display eigenvalues and relative errors
+    */
+    PetscPrintf(PETSC_COMM_WORLD,
+         "           k          ||Ax-kx||/||kx||\n"
+         "   ----------------- ------------------\n");
+
+    for (int i=0;i<nconv;i++) {
+      /*
+        Get converged singular values: i-th eigenvalue is stored in valS
+      */
+      SVDGetSingularTriplet(svd,i,*valS+i,NULL,NULL);
+      /*
+         Compute the relative error associated to each singular value
+      */
+      SVDComputeError( svd, i, SVD_ERROR_RELATIVE, &error );
+
+      PetscPrintf(PETSC_COMM_WORLD,"   %12f       %12g\n",(double)*(*valS+i),(double)error);
+    }
+    PetscPrintf(PETSC_COMM_WORLD,"\n");
+    /*
+     Free work space
+    */
+    SVDDestroy(&svd);
+    SlepcFinalize();
+
+    return nconv;
+  }
+  else
+  {
+	/*
+     Free work space
+    */
+    SVDDestroy(&svd);
+    SlepcFinalize();
+
+    throw CdmathException("SparseMatrixPetsc::computeSVD : singular value decomposition failed");	
   }	
 }
 
 std::vector< double > 
-SparseMatrixPetsc::getEigenvalues(int nev, EPSWhich which, double tol)
+SparseMatrixPetsc::getEigenvalues(int nev, EPSWhich which, double tol) const
 {
 	int nconv;
 	double * valP;
@@ -620,7 +729,7 @@ SparseMatrixPetsc::getEigenvalues(int nev, EPSWhich which, double tol)
 }
 
 std::vector< Vector > 
-SparseMatrixPetsc::getEigenvectors(int nev, EPSWhich which, double tol)
+SparseMatrixPetsc::getEigenvectors(int nev, EPSWhich which, double tol) const
 {
 	int nconv;
 	double * valP;
@@ -647,7 +756,7 @@ SparseMatrixPetsc::getEigenvectors(int nev, EPSWhich which, double tol)
 }
 
 MEDCoupling::DataArrayDouble *
-SparseMatrixPetsc::getEigenvectorsDataArrayDouble(int nev, EPSWhich which, double tol)
+SparseMatrixPetsc::getEigenvectorsDataArrayDouble(int nev, EPSWhich which, double tol) const
 {
 	int nconv;
 	double * valP;
@@ -674,11 +783,34 @@ SparseMatrixPetsc::getEigenvectorsDataArrayDouble(int nev, EPSWhich which, doubl
 	
     return arrays;
 }
-bool SparseMatrixPetsc::isSymmetric(double tol) const
-{
-	//Check that the matrix is symmetric
-	PetscBool isSymetric;
-	MatIsSymmetric(_mat,tol,&isSymetric);
 
-	return isSymetric;
+double 
+SparseMatrixPetsc::getConditionNumber(bool isSingular, double tol) const
+{
+	int nsv, nconv;
+	double * valS;
+	double sigma_max, sigma_min;
+	
+	/*** Lowest singular value, first check if matrix is singular ***/
+    if(isSingular)
+        nsv=2;
+    else
+		nsv=1 ;
+
+	nconv=computeSVD(nsv, &valS, SVD_SMALLEST, tol);
+	if(nconv<nsv)
+		throw CdmathException("SparseMatrixPetsc::getConditionNumber could not find the lowest singular value");
+    sigma_min=valS[nsv-1];
+    delete valS;
+    
+    /*** Largest singular value ***/
+    nsv=1;
+	nconv=computeSVD(nsv, &valS, SVD_LARGEST, tol);
+	if(nconv<nsv)
+		throw CdmathException("SparseMatrixPetsc::getConditionNumber could not find the largest singular value");
+    sigma_max=valS[nsv-1];
+    delete valS;
+    
+    return sigma_max/sigma_min;
 }
+
