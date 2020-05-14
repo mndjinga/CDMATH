@@ -470,6 +470,9 @@ SparseMatrixPetsc::vectorToVec(const Vector& myVector) const
 
 bool SparseMatrixPetsc::isSymmetric(double tol) const
 {
+	MatAssemblyBegin(_mat, MAT_FINAL_ASSEMBLY);
+	MatAssemblyEnd(_mat, MAT_FINAL_ASSEMBLY);
+
 	//Check that the matrix is symmetric
 	PetscBool isSymetric;
 	MatIsSymmetric(_mat,tol,&isSymetric);
