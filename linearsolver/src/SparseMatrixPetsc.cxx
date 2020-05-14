@@ -9,7 +9,6 @@
 #include "CdmathException.hxx"
 
 #include <cstring>
-#include <slepceps.h>
 
 using namespace std;
 
@@ -470,7 +469,7 @@ SparseMatrixPetsc::vectorToVec(const Vector& myVector) const
 }
 
 int 
-SparseMatrixPetsc::computeSpectrum(int nev, double ** valP, double ***vecP, double tol)
+SparseMatrixPetsc::computeSpectrum(int nev, double ** valP, double ***vecP, EPSWhich which, double tol)
 {
   EPS            eps;         /* eigenproblem solver context */
   EPSType        type;
@@ -506,7 +505,7 @@ SparseMatrixPetsc::computeSpectrum(int nev, double ** valP, double ***vecP, doub
   */
   EPSSetOperators(eps,_mat,NULL);
   EPSSetProblemType(eps,EPS_HEP);
-  EPSSetWhichEigenpairs(eps,EPS_SMALLEST_MAGNITUDE);//Or EPS_SMALLEST_REAL ?
+  EPSSetWhichEigenpairs(eps,which);
   EPSSetDimensions(eps,nev,PETSC_DEFAULT,PETSC_DEFAULT);
 
   /*
@@ -599,13 +598,13 @@ SparseMatrixPetsc::computeSpectrum(int nev, double ** valP, double ***vecP, doub
 }
 
 std::vector< double > 
-SparseMatrixPetsc::getEigenvalues(int nev, double tol)
+SparseMatrixPetsc::getEigenvalues(int nev, EPSWhich which, double tol)
 {
 	int nconv;
 	double * valP;
 	double **vecP;
 
-	nconv=computeSpectrum(nev, &valP, &vecP, tol);
+	nconv=computeSpectrum(nev, &valP, &vecP, which, tol);
 	
     std::vector< double > result(nconv);
 	
@@ -621,13 +620,13 @@ SparseMatrixPetsc::getEigenvalues(int nev, double tol)
 }
 
 std::vector< Vector > 
-SparseMatrixPetsc::getEigenvectors(int nev, double tol)
+SparseMatrixPetsc::getEigenvectors(int nev, EPSWhich which, double tol)
 {
 	int nconv;
 	double * valP;
 	double **vecP;
 
-	nconv=computeSpectrum(nev, &valP, &vecP, tol);
+	nconv=computeSpectrum(nev, &valP, &vecP, which, tol);
 	
     std::vector< Vector > result(nconv);
 
@@ -648,13 +647,13 @@ SparseMatrixPetsc::getEigenvectors(int nev, double tol)
 }
 
 MEDCoupling::DataArrayDouble *
-SparseMatrixPetsc::getEigenvectorsDataArrayDouble(int nev, double tol)
+SparseMatrixPetsc::getEigenvectorsDataArrayDouble(int nev, EPSWhich which, double tol)
 {
 	int nconv;
 	double * valP;
 	double **vecP;
 
-	nconv=computeSpectrum(nev, &valP, &vecP, tol);
+	nconv=computeSpectrum(nev, &valP, &vecP, which, tol);
 	
 	std::vector< int > compoId(1);
 	MEDCoupling::DataArrayDouble *arrays=MEDCoupling::DataArrayDouble::New();

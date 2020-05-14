@@ -14,6 +14,7 @@
 #include "MEDCouplingUMesh.hxx"
 #include "Vector.hxx"
 #include <petsc.h>
+#include <slepceps.h>
 
 class SparseMatrixPetsc: public GenericMatrix {
 
@@ -106,9 +107,9 @@ public:
     void diagonalShift(double lambda);
     void zeroEntries();//sets the matrix coefficients to zero
     
-    std::vector< double > getEigenvalues(int nev, double tol=1e-6);
-    std::vector< Vector > getEigenvectors(int nev, double tol=1e-6);
-    MEDCoupling::DataArrayDouble * getEigenvectorsDataArrayDouble(int nev, double tol=1e-6);
+    std::vector< double > getEigenvalues(int nev, EPSWhich which=EPS_SMALLEST_MAGNITUDE, double tol=1e-6);
+    std::vector< Vector > getEigenvectors(int nev, EPSWhich which=EPS_SMALLEST_MAGNITUDE, double tol=1e-6);
+    MEDCoupling::DataArrayDouble * getEigenvectorsDataArrayDouble(int nev, EPSWhich which=EPS_SMALLEST_MAGNITUDE, double tol=1e-6);
         
     bool isSymmetric(double tol=1.e-6) const ;
     
@@ -117,7 +118,7 @@ private:
 
 	int _numberOfNonZeros ;//The maximum number of nonzeros coefficients per line (or an upper bound)
 	
-	int computeSpectrum(int nev, double ** valP, double ***vecP, double tol=1e-6);
+	int computeSpectrum(int nev, double ** valP, double ***vecP, EPSWhich which=EPS_SMALLEST_MAGNITUDE, double tol=1e-6);
 
 	Vector vecToVector(const Vec& vec) const ;
 	Vec vectorToVec( const Vector& myVector ) const ;
