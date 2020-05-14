@@ -100,10 +100,12 @@ LinearSolver::setComputeConditionNumber(bool display)
 double 
 LinearSolver::getConditionNumber() const
 {
-    if(_computeConditionNumber and _convergence)
+    if(_computeConditionNumber and _convergence and !_isSingular)
         return _conditionNumber;
     else if(!_computeConditionNumber)
         throw CdmathException("LinearSolver::getConditionNumber(): Condition number can not be evaluated without prior call to setComputeConditionNumber()");
+    else if(_isSingular)//matrix is singular
+        throw CdmathException("LinearSolver::getConditionNumber(): Condition number can not be evaluated by PETSC for singular matrices (division by zero)");
     else //_convergence = false
         throw CdmathException("LinearSolver::getConditionNumber(): Condition number can not be evaluated without prior successful resolution of a linear system");
 }
@@ -526,7 +528,7 @@ LinearSolver::solve( void )
 		throw CdmathException(msg);
 	}
 
-	if(_computeConditionNumber)
+	if(_computeConditionNumber and !_isSingular)
 	{
 		PetscReal sv_max, sv_min;
 		KSPComputeExtremeSingularValues(_ksp, &sv_max, &sv_min);
