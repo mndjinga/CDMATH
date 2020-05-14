@@ -146,6 +146,11 @@ for i in range(nbCells):
 
 print("Linear system matrix building done")
 
+# Conditionnement de la matrice de rigidité
+#=================================
+cond = Rigidite.getConditionNumber()
+print("Condition number is ",cond)
+
 # Résolution du système linéaire
 #=================================
 LS=cdmath.LinearSolver(Rigidite,RHS,100,1.E-6,"GMRES","ILU")#Remplacer CG par CHOLESKY pour solveur direct

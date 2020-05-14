@@ -7,9 +7,9 @@
 #               Création et sauvegarde du champ résultant ainsi que du champ second membre en utilisant la librairie CDMATH
 #               Résolution d'un système linéaire à matrice singulière : les vecteurs constants sont dans le noyau
 #               Comparaison de la solution numérique avec la solution exacte définie face par face :
-#                              u=sin(2*pi*x)*sin(2*pi*y) (haut et bas)
-#                              u=sin(2*pi*x)*sin(2*pi*z) (gauche et droite)
-#                              u=sin(2*pi*y)*sin(2*pi*z) (avant et arrière)
+#                              u= sin(2*pi*x)*sin(2*pi*y) (haut et bas)
+#                              u=-sin(2*pi*x)*sin(2*pi*z) (gauche et droite)
+#                              u= sin(2*pi*y)*sin(2*pi*z) (avant et arrière)
 #================================================================================================================================
 
 import cdmath
@@ -147,6 +147,11 @@ for i in range(nbCells):
 			Rigidite.addValue(j,k,GradShapeFuncs[j]*GradShapeFuncs[k]/Ci.getMeasure())
 
 print("Linear system matrix building done")
+
+# Conditionnement de la matrice de rigidité
+#=================================
+cond = Rigidite.getConditionNumber(True)
+print("Condition number is ",cond)
 
 # Résolution du système linéaire
 #=================================
