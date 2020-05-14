@@ -141,7 +141,7 @@ SparseMatrixPetscTests::testClassSparseMatrixPetsc( void )
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0, sigma[0],1.e-5);
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( 2, sigma[1],1.e-5);
 
-
+	/* Condition number of a symmetric non singular matrix */
     A.setValue(0,0, 0.);
     A.setValue(0,1, 1.);
     A.setValue(1,0, 1.);
@@ -149,11 +149,18 @@ SparseMatrixPetscTests::testClassSparseMatrixPetsc( void )
 
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1, A.getConditionNumber(1.e-10),1.e-5);
 
+	/* Condition number of a symmetric singular matrix */
 	SparseMatrixPetsc A33(3,3,2);
     A33.setValue(1,2, 1.);
     A33.setValue(2,1, 1.);
 
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1, A33.getConditionNumber(true,1.e-10),1.e-5);
+
+	/* Condition number of a non symmetric singular matrix */
+    A33.setValue(1,2, 1.);
+    A33.setValue(2,1, 4.);
+
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 4, A33.getConditionNumber(true,1.e-10),1.e-5);
 
 	SparseMatrixPetsc A4(4,4);
     A4.setValue(0,0,1.);

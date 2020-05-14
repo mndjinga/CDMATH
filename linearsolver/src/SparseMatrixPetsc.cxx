@@ -789,31 +789,62 @@ SparseMatrixPetsc::getEigenvectorsDataArrayDouble(int nev, EPSWhich which, doubl
 double 
 SparseMatrixPetsc::getConditionNumber(bool isSingular, double tol) const
 {
-	int nsv, nconv;
-	double * valS;
-	double sigma_max, sigma_min;
+	if(isSymmetric(tol))//Eigenvalues computation is more robust that singular values computation
+	{
+		int nev, nconv;
+		double lambda_max, lambda_min;
+		std::vector< double > my_ev;
+		
+		/*** Lowest eigenvalue, first check if matrix is singular ***/
+	    if(isSingular)
+	        nev=2;
+	    else
+			nev=1 ;
 	
-	/*** Lowest singular value, first check if matrix is singular ***/
-    if(isSingular)
-        nsv=2;
-    else
-		nsv=1 ;
-
-	nconv=computeSVD(nsv, &valS, SVD_SMALLEST, tol);
-	if(nconv<nsv)
-		throw CdmathException("SparseMatrixPetsc::getConditionNumber could not find the lowest singular value");
-    sigma_min=valS[nsv-1];
-    delete[] valS;
-    
-    /*** Largest singular value ***/
-    nsv=1;
-	nconv=computeSVD(nsv, &valS, SVD_LARGEST, tol);
-	if(nconv<nsv)
-		throw CdmathException("SparseMatrixPetsc::getConditionNumber could not find the largest singular value");
-    sigma_max=valS[nsv-1];
-    delete[] valS;
-    
-    return sigma_max/sigma_min;
+		my_ev=getEigenvalues( nev, EPS_SMALLEST_MAGNITUDE, tol);
+		nconv=my_ev.size();
+		if(nconv<nev)
+			throw CdmathException("SparseMatrixPetsc::getConditionNumber could not find the lowest eigenvalue");
+	    lambda_min=my_ev[nev-1];
+	    
+	    /*** Largest eigenvalue ***/
+	    nev=1;
+		my_ev=getEigenvalues( nev, EPS_LARGEST_MAGNITUDE, tol);
+		nconv=my_ev.size();
+		if(nconv<nev)
+			throw CdmathException("SparseMatrixPetsc::getConditionNumber could not find the largest eigenvalue");
+	    lambda_max=my_ev[nev-1];
+	    
+	    return fabs(lambda_max)/fabs(lambda_min);		
+	}
+	else//Singular values computation is more robust than eigenvalues computation
+	{
+		int nsv, nconv;
+		double * valS;
+		double sigma_max, sigma_min;
+		
+		/*** Lowest singular value, first check if matrix is singular ***/
+	    if(isSingular)
+	        nsv=2;
+	    else
+			nsv=1 ;
+	
+		nconv=computeSVD(nsv, &valS, SVD_SMALLEST, tol);
+		if(nconv<nsv)
+			throw CdmathException("SparseMatrixPetsc::getConditionNumber could not find the lowest singular value");
+	    sigma_min=valS[nsv-1];
+	    delete[] valS;
+	    
+	    /*** Largest singular value ***/
+	    nsv=1;
+		nconv=computeSVD(nsv, &valS, SVD_LARGEST, tol);
+		if(nconv<nsv)
+			throw CdmathException("SparseMatrixPetsc::getConditionNumber could not find the largest singular value");
+	    sigma_max=valS[nsv-1];
+	    delete[] valS;
+	    
+	    return sigma_max/sigma_min;
+	}
 }
 
 std::vector< double > 
