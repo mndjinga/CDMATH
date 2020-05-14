@@ -807,7 +807,7 @@ SparseMatrixPetsc::getConditionNumber(bool isSingular, double tol) const
 		my_ev=getEigenvalues( nev, EPS_SMALLEST_MAGNITUDE, tol);
 		nconv=my_ev.size();
 		if(nconv<nev)
-			throw CdmathException("SparseMatrixPetsc::getConditionNumber could not find the lowest eigenvalue");
+			throw CdmathException("SparseMatrixPetsc::getConditionNumber could not find the smallest eigenvalue");
 	    lambda_min=my_ev[nev-1];
 	    
 	    /*** Largest eigenvalue ***/
@@ -834,7 +834,7 @@ SparseMatrixPetsc::getConditionNumber(bool isSingular, double tol) const
 	
 		nconv=computeSVD(nsv, &valS, SVD_SMALLEST, tol);
 		if(nconv<nsv)
-			throw CdmathException("SparseMatrixPetsc::getConditionNumber could not find the lowest singular value");
+			throw CdmathException("SparseMatrixPetsc::getConditionNumber could not find the smallest singular value");
 	    sigma_min=valS[nsv-1];
 	    delete[] valS;
 	    
