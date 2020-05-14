@@ -124,6 +124,10 @@ SparseMatrixPetscTests::testClassSparseMatrixPetsc( void )
     A.setValue(1,1,1.);
 	CPPUNIT_ASSERT_EQUAL( true, A.isSymmetric(1.e-10) );
 
+	std::vector< double > vp = A.getEigenvalues(2);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0, vp[0],1.e-5);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 2, vp[1],1.e-5);
+
 	std::vector< Vector > Vp = A.getEigenvectors(2);
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0, Vp[0][0] - Vp[0][1],1.e-5);
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0, Vp[1][0] + Vp[1][1],1.e-5);
