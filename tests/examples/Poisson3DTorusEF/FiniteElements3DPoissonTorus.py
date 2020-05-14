@@ -148,7 +148,7 @@ print("Linear system matrix building done")
 
 # Conditionnement de la matrice de rigidité
 #=================================
-cond = Rigidite.getConditionNumber()
+cond = Rigidite.getConditionNumber(True)
 print("Condition number is ",cond)
 
 # Résolution du système linéaire
