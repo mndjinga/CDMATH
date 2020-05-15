@@ -132,6 +132,8 @@ SparseMatrixPetscTests::testClassSparseMatrixPetsc( void )
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0, Vp[0][0] - Vp[0][1],1.e-5);
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0, Vp[1][0] + Vp[1][1],1.e-5);
 
+	MEDCoupling::DataArrayDouble * VpArrayDouble = A.getEigenvectorsDataArrayDouble(2);
+
     A.setValue(0,0,-1.);
     A.setValue(0,1, 1.);
     A.setValue(1,0, 1.);

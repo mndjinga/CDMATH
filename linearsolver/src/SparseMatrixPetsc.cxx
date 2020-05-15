@@ -510,9 +510,9 @@ SparseMatrixPetsc::computeSpectrum(int nev, double ** valP, double ***vecP, EPSW
      Set operators. In this case, it is a standard eigenvalue problem
   */
   EPSSetOperators(eps,_mat,NULL);
-  if(isSymmetric(tol))
-	EPSSetProblemType(eps,EPS_HEP);
-  else
+  //if(isSymmetric(tol))
+	//EPSSetProblemType(eps,EPS_HEP);
+  //else
 	EPSSetProblemType(eps,EPS_NHEP);
   EPSSetWhichEigenpairs(eps,which);
   EPSSetDimensions(eps,nev,PETSC_DEFAULT,PETSC_DEFAULT);
@@ -782,8 +782,6 @@ SparseMatrixPetsc::getEigenvectorsDataArrayDouble(int nev, EPSWhich which, doubl
 		arrays->setInfoOnComponent(i,std::to_string(valP[i]));
 	}
 	delete[] valP;
-    for (int i=0;i<nconv;i++) 
-		delete[] vecP[i];
 	delete[] vecP;	
 	
     return arrays;
