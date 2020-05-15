@@ -870,11 +870,19 @@ void
 SparseMatrixPetsc::leftDiagonalScale(Vector v)
 {
 	Vec vec=vectorToVec(v);
+
+	MatAssemblyBegin(_mat, MAT_FINAL_ASSEMBLY);
+	MatAssemblyEnd(_mat, MAT_FINAL_ASSEMBLY);
+
 	MatDiagonalScale(_mat, vec, NULL);
 }
 void 
 SparseMatrixPetsc::rightDiagonalScale(Vector v)
 {
 	Vec vec=vectorToVec(v);
+
+	MatAssemblyBegin(_mat, MAT_FINAL_ASSEMBLY);
+	MatAssemblyEnd(_mat, MAT_FINAL_ASSEMBLY);
+
 	MatDiagonalScale(_mat, NULL, vec);
 }
