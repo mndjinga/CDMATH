@@ -1,6 +1,6 @@
 # -*-coding:utf-8 -*
 #===============================================================================================================================
-# Name        : Calcul EF du spectre de l'opérateur de Laplace-Beltrami -\triangle sur une sphere (harmoniques sphéruiques)
+# Name        : Calcul EF du spectre de l'opérateur de Laplace-Beltrami -\triangle sur une surface en 3D
 # Author      : Michael Ndjinga
 # Copyright   : CEA Saclay 2020
 # Description : Utilisation de la méthode des éléménts finis P1 avec champs discrétisés aux noeuds d'un maillage triangulaire
@@ -13,10 +13,12 @@ import numpy as np
 import PV_routines
 import VTK_routines
 import paraview.simple as pvs
+import sys
 
-#Chargement du maillage triangulaire de la sphère
-#=======================================================================================
-my_mesh = cdmath.Mesh("meshSphere.med")
+#Chargement du maillage triangulaire de la surface
+#=================================================
+my_mesh = cdmath.Mesh(sys.argv[1])
+mesh_name=sys.argv[2]
 if(not my_mesh.isTriangular()) :
 	raise ValueError("Wrong cell types : mesh is not made of triangles")
 if(my_mesh.getMeshDimension()!=2) :
@@ -126,11 +128,11 @@ for i in range(nbNodes):
 	nodal_volumes[i]=1/nodal_volumes[i]
 Rigidite.leftDiagonalScale(nodal_volumes)
 
-nev=4
+nev=9
 d=Rigidite.getEigenvectorsDataArrayDouble(nev)
 my_eigenfield = cdmath.Field("Eigenvectors field", cdmath.NODES, my_mesh, nev)
 my_eigenfield.setFieldByDataArrayDouble(d)
 
 # Sauvegarde du champ résultat
 #===========================
-my_eigenfield.writeVTK("spectrumFiniteElementsOnSpherePoisson")
+my_eigenfield.writeVTK("spectrumFiniteElementsOn"+mesh_name+"Poisson")
