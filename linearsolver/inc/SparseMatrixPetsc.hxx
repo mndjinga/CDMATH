@@ -116,6 +116,9 @@ public:
         
     bool isSymmetric(double tol=1.e-6) const ;
     
+    void  leftDiagonalScale(Vector v);
+    void rightDiagonalScale(Vector v);
+    
 private:
 	Mat _mat;
 

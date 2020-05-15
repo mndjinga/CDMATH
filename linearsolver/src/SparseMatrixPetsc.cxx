@@ -866,3 +866,15 @@ SparseMatrixPetsc::getSingularValues(int nsv, SVDWhich which, double tol) const
     return result;
 }
 
+void 
+SparseMatrixPetsc::leftDiagonalScale(Vector v)
+{
+	Vec vec=vectorToVec(v);
+	MatDiagonalScale(_mat, vec, NULL);
+}
+void 
+SparseMatrixPetsc::rightDiagonalScale(Vector v)
+{
+	Vec vec=vectorToVec(v);
+	MatDiagonalScale(_mat, NULL, vec);
+}
