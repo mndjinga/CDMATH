@@ -48,7 +48,6 @@ Dependencies. The following packages list is sufficient on Ubuntu 14.04, Ubuntu 
  - `jupyter`, in order to generate and visualise nice reports from test case simulations (optional)
  - `doxygen`, `graphviz` and `mscgen`, if you want to generate a nice source code documentation in `~/workspace/cdmath/cdmath_install/doc/`. Use the compilation option `-DCDMATH_WITH_DOCUMENTATION=ON` (optional).
  - `libcppunit-dev`, if you want to generate unit tests. Use the compilation option `-DCDMATH_WITH_TESTS=ON` (optional).
- - `libopenmpi-dev`, in particular if you need to use the compilation option `-DMEDFILE_USE_MPI=ON` (optional).
  - `rpm`, if you want to generate RPM installation packages. Use the compilation option `-DCDMATH_WITH_PACKAGE=ON` (optional).
 
 Directories. Create the suggested build and installation folders:
@@ -79,7 +78,6 @@ Run validation tests:
 Notes for compilation options:
 * Eclipse: The Cmake options `-G"Eclipse CDT4 - Unix Makefiles" -D_ECLIPSE_VERSION=4.3` create project files if you want to develop CDMATH with Eclipse Kepler or higher.
 * HDF5: On some systems (not Ubuntu 14.04 nor Ubuntu 16.04), you may have to use the compilation option `-DHDF5_ROOT_DIR=/path/to/hdf5/library` too.
-* MPI: On some systems (not Ubuntu 14.04, nor Ubuntu 16.04), you may have to use the compilation option `-DMPI_ROOT_DIR=/path/to/mpi/library` too. You may also have to set the environment variable `export MPI_ROOT_DIR=/path/to/mpi/library`. Moreover, on some systems (not Ubuntu 14.04, nor Ubuntu 16.04), the compilation option `-DMEDFILE_USE_MPI=ON` may be mandatory and be set to `ON`.
 * PETSc: If the library Petsc is already installed in your system (packages libpetsc-dev for ubuntu and petsc-devel for fedora 25 and 26), you may save time and disk space by using the installed library instead of installing a new one. In order to do so use the compilation options `-DPETSC_DIR=/path/to/petsc/installation/petsc -DPETSC_ARCH=arch-linux2-c-opt`. If you prefer to compile PETSc yourself from the sources you may follow the instructions given in [the official documentation](http://www.mcs.anl.gov/petsc/documentation/installation.html).
 
 Use of CDMATH
