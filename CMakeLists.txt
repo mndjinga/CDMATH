@@ -43,6 +43,36 @@ find_package (HDF5 REQUIRED)
 set (CPACK_DEBIAN_PACKAGE_DEPENDS "libhdf5-dev")
 set (CPACK_RPM_PACKAGE_REQUIRES "hdf5-devel")
 
+#MED
+message (STATUS "Compiling MED" )
+set(MED_SRC ${CDMATH_SOURCE_DIR}/pre_requis/)
+set(MED_INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/MEDFile) # Location of the final install 
+
+      include(ExternalProject)
+
+      ExternalProject_Add (MED
+      URL               ${MED_SRC}/med-4.0.0.tar.gz  
+      SOURCE_DIR        ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/med-4.0.0
+      BUILD_IN_SOURCE   TRUE
+      CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=${MED_INSTALL_DIR} 
+      BUILD_COMMAND     make
+      TEST_COMMAND      make check
+      INSTALL_COMMAND   make install
+      INSTALL_DIR       ${MED_INSTALL_DIR}
+      LOG_DOWNLOAD      TRUE           # Wrap download in script to log output
+      LOG_UPDATE        TRUE           # Wrap update in script to log output
+      LOG_CONFIGURE     TRUE           # Wrap configure in script to log output
+      LOG_BUILD         TRUE           # Wrap build in script to log output
+      LOG_TEST          TRUE           # Wrap test in script to log output
+      LOG_INSTALL       TRUE           # Wrap install in script to log output
+       )
+
+set (MED3_DIR ${MED_INSTALL_DIR} )
+set (MEDFILE_INCLUDE_DIRS ${MED_SRC}/MEDIncludes)
+set (MED3_INCLUDE_DIRS ${MED_INSTALL_DIR}/include)
+set (MEDFILE_C_LIBRARIES med medC)
+
+
 # PETSc
 if (CDMATH_WITH_PETSC)
     message ( STATUS "Checking variable PETSC_DIR : " $ENV{PETSC_DIR} )
