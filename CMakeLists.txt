@@ -38,42 +38,7 @@ set (MED_INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/MEDFile)
 set (MED3_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/pre_requis/MEDFile/include ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/MEDFile/include)
 set (MEDFILE_C_LIBRARIES med medC)
 
-# HDF5
-find_package (HDF5 REQUIRED)
-set (CPACK_DEBIAN_PACKAGE_DEPENDS "libhdf5-dev")
-set (CPACK_RPM_PACKAGE_REQUIRES "hdf5-devel")
-
-#MED
-message (STATUS "Compiling MED" )
-set(MED_SRC ${CDMATH_SOURCE_DIR}/pre_requis/)
-set(MED_INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/MEDFile) # Location of the final install 
-
-      include(ExternalProject)
-
-      ExternalProject_Add (MED
-      URL               ${MED_SRC}/med-4.0.0.tar.gz  
-      SOURCE_DIR        ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/med-4.0.0
-      BUILD_IN_SOURCE   TRUE
-      CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=${MED_INSTALL_DIR} 
-      BUILD_COMMAND     make
-      TEST_COMMAND      make check
-      INSTALL_COMMAND   make install
-      INSTALL_DIR       ${MED_INSTALL_DIR}
-      LOG_DOWNLOAD      TRUE           # Wrap download in script to log output
-      LOG_UPDATE        TRUE           # Wrap update in script to log output
-      LOG_CONFIGURE     TRUE           # Wrap configure in script to log output
-      LOG_BUILD         TRUE           # Wrap build in script to log output
-      LOG_TEST          TRUE           # Wrap test in script to log output
-      LOG_INSTALL       TRUE           # Wrap install in script to log output
-       )
-
-set (MED3_DIR ${MED_INSTALL_DIR} )
-set (MEDFILE_INCLUDE_DIRS ${MED_SRC}/MEDIncludes)
-set (MED3_INCLUDE_DIRS ${MED_INSTALL_DIR}/include)
-set (MEDFILE_C_LIBRARIES med medC)
-
-
-# PETSc
+# PETSc and HDF5
 if (CDMATH_WITH_PETSC)
     message ( STATUS "Checking variable PETSC_DIR : " $ENV{PETSC_DIR} )
 
@@ -84,21 +49,20 @@ if (CDMATH_WITH_PETSC)
     string(REPLACE ";" ":"  PETSC_INCLUDES_PATH "${PETSC_INCLUDES}")# use colon instead of semicolon in environment file env_CDMATH.sh
     message ( STATUS "PETSC found. Version is ${PETSC_VERSION_MAJOR}.${PETSC_VERSION_MINOR}.${PETSC_VERSION_SUBMINOR}" )
 
-#    set (SLEPC_DIR ${PETSC_DIR}/${PETSC_ARCH})
-#    message ( STATUS "PETSC_DIR set, checking variable SLEPC_DIR : " ${SLEPC_DIR} )
-#    find_package (SLEPc 3.4 REQUIRED)
-#    string(REPLACE ";" ":"  SLEPC_INCLUDES_PATH "${SLEPC_INCLUDES}")# use colon instead of semicolon in environment file env_CDMATH.sh
+    #define slepc variables
+    set(SLEPC_DIR ${PETSC_DIR}/${PETSC_ARCH})
+    message ( STATUS "Checking variable SLEPC_DIR" )
+    if ( IS_DIRECTORY ${SLEPC_DIR}/include AND EXISTS ${SLEPC_DIR}/lib/libslepc.so)
+      set(SLEPC_INCLUDES ${SLEPC_DIR}/include)
+      set(SLEPC_LIBRARIES ${SLEPC_DIR}/lib/libslepc.so)
+      message( STATUS "SLEPC found at ${SLEPC_DIR}" )
+    else()
+      message( WARNING "SLEPC not found at ${SLEPC_DIR}" )
+    endif()
 
-      #define slepc variables
-      set(SLEPC_DIR ${PETSC_DIR}/${PETSC_ARCH})
-      message ( STATUS "Checking variable SLEPC_DIR" )
-      if ( IS_DIRECTORY ${SLEPC_DIR}/include AND EXISTS ${SLEPC_DIR}/lib/libslepc.so)
-        set(SLEPC_INCLUDES ${SLEPC_DIR}/include)
-        set(SLEPC_LIBRARIES ${SLEPC_DIR}/lib/libslepc.so)
-        message( STATUS "SLEPC found at ${SLEPC_DIR}" )
-      else()
-        message( WARNING "SLEPC not found at ${SLEPC_DIR}" )
-      endif()
+    #HDF5 to be found in petsc external packages
+    set(HDF5_ROOT $ENV{PETSC_DIR}/$ENV{PETSC_ARCH})# define hint for hdf5 installation in petsc external packages
+
   else ( DEFINED ENV{PETSC_DIR} )
     message ( STATUS "PETSC_DIR not set, searching petsc in the system" )
 
@@ -121,6 +85,10 @@ if (CDMATH_WITH_PETSC)
       else()
         message( WARNING "SLEPC not found" )
       endif()
+
+      #HDF5 to be found in the system
+      set (CPACK_DEBIAN_PACKAGE_DEPENDS "libhdf5-dev")
+      set (CPACK_RPM_PACKAGE_REQUIRES "hdf5-devel")
 
     #elseif ( IS_DIRECTORY "/usr/lib/petsc/" AND EXISTS "/usr/lib/petsc/lib/libpetsc_real.so") #Case ubuntu/debian system install
     #  message ( STATUS "PETSC found in /usr/lib/petsc/ abnd exists /usr/lib/petsc/lib/libpetsc_real.so")
@@ -160,7 +128,7 @@ if (CDMATH_WITH_PETSC)
       URL               ${PETSC_SRC}/petsc-lite-3.13.1.tar.gz   
       SOURCE_DIR        ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/petsc-3.13.1
       BUILD_IN_SOURCE   TRUE
-      CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=${PETSC_DIR} --with-debugging=0 --with-mpi=0 --download-f2cblaslapack=${PETSC_SRC}/f2cblaslapack-3.4.2.q4.tar.gz --with-fc=0 --download-slepc=${PETSC_SRC}/slepc-3.13.1.tar.gz
+      CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=${PETSC_DIR} --with-debugging=0 --with-mpi=0 --download-f2cblaslapack=${PETSC_SRC}/f2cblaslapack-3.4.2.q4.tar.gz --with-fc=0 --download-slepc=${PETSC_SRC}/slepc-3.13.1.tar.gz --download-hdf5=${PETSC_SRC}/hdf5-1.10.3.tar.gz
       BUILD_COMMAND     make all
       TEST_COMMAND      make check
       INSTALL_COMMAND   make install
@@ -175,9 +143,13 @@ if (CDMATH_WITH_PETSC)
 
       #define slepc variables
       set(SLEPC_DIR ${PETSC_DIR}/${PETSC_ARCH})
-      set(SLEPC_INCLUDES ${SLEPC_DIR}/include ${SLEPC_DIR}/${PETSC_ARCH}/include)
+      set(SLEPC_INCLUDES ${SLEPC_DIR}/include)
       set(SLEPC_LIBRARIES ${SLEPC_DIR}/lib/libslepc.so)
       string(REPLACE ";" ":"  SLEPC_INCLUDES_PATH "${SLEPC_INCLUDE_DIR}")# use colon instead of semicolon in environment file env_CDMATH.sh
+
+      #HDF5 to be found in petsc external packages
+      set(HDF5_ROOT $ENV{PETSC_DIR}/$ENV{PETSC_ARCH})# define hint for hdf5 installation in petsc external packages
+
     endif ()
   endif ( DEFINED ENV{PETSC_DIR} )
 
@@ -186,6 +158,9 @@ if (CDMATH_WITH_PETSC)
   endif( ${PETSC_VERSION} VERSION_GREATER 3.5 )
 
 endif( CDMATH_WITH_PETSC )
+
+#HDF5
+find_package (HDF5 REQUIRED)
 
 # Paraview
 if (CDMATH_WITH_PYTHON AND CDMATH_WITH_POSTPRO)
