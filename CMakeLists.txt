@@ -26,17 +26,9 @@ set (INTERP_KERNEL_DIR ${PRE_REQUIS_DIR}/INTERP_KERNEL)
 set (MED_COUPLING_DIR ${PRE_REQUIS_DIR}/MEDCoupling)
 set (MED_COUPLING_SWIG_DIR ${PRE_REQUIS_DIR}/MEDCoupling_Swig)
 set (MED_LOADER_DIR ${PRE_REQUIS_DIR}/MEDLoader)
-set (MED3_DIR ${PRE_REQUIS_DIR}/MEDFile)
-set (MEDFILE_INCLUDE_DIRS ${PRE_REQUIS_DIR}/MEDIncludes)
 
 set (TESTS_DIR ${CDMATH_SOURCE_DIR}/tests)
 list (APPEND CMAKE_MODULE_PATH "${CDMATH_SOURCE_DIR}/cmake_files")
-
-set (MACHINE PCLINUX)
-set (MED3_DEFINITIONS "-D${MACHINE}")
-set (MED_INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/MEDFile)
-set (MED3_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/pre_requis/MEDFile/include ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/MEDFile/include)
-set (MEDFILE_C_LIBRARIES med medC)
 
 # PETSc and HDF5
 if (CDMATH_WITH_PETSC)
@@ -161,6 +153,45 @@ endif( CDMATH_WITH_PETSC )
 
 #HDF5
 find_package (HDF5 REQUIRED)
+
+#MED
+message (STATUS "Configuring MED" )
+message (STATUS "HDF5 home is ${HDF5_ROOT}")
+string(FIND "${HDF5_LIBRARIES}" "libhdf5.so" pos)
+string(SUBSTRING "${HDF5_LIBRARIES}" 0 ${pos} HDF5_LIBRARY_DIR)
+message (STATUS "HDF5 library dir is ${HDF5_LIBRARY_DIR}")
+message (STATUS "HDF5 include dir is ${HDF5_INCLUDE_DIRS}")
+
+set(MED_SRC ${CDMATH_SOURCE_DIR}/pre_requis/)
+set(MED_INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/MEDFile) # Location of the final install 
+set (MACHINE PCLINUX)
+set (MED3_DEFINITIONS "-D${MACHINE} -DMEDFILE_INSTALL_DOC=OFF")#Comment ne pas compiler la doc ?
+set (MED_INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/MEDFile)
+
+include(ExternalProject)
+
+ExternalProject_Add (MED
+      URL               ${MED_SRC}/med-4.0.0.tar.gz  
+      SOURCE_DIR        ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/med-4.0.0
+      BUILD_IN_SOURCE   TRUE
+      CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=${MED_INSTALL_DIR}  --with-hdf5=${HDF5_ROOT} --with-hdf5-include=${HDF5_INCLUDE_DIRS} --with-hdf5-lib=${HDF5_LIBRARY_DIR} --with-hdf5-bin=${HDF5_ROOT}/bin  --with-swig=yes --disable-doc
+      BUILD_COMMAND     make
+      TEST_COMMAND      make check
+      INSTALL_COMMAND   make install
+      INSTALL_DIR       ${MED_INSTALL_DIR}
+      LOG_DOWNLOAD      TRUE           # Wrap download in script to log output
+      LOG_UPDATE        TRUE           # Wrap update in script to log output
+      LOG_CONFIGURE     TRUE           # Wrap configure in script to log output
+      LOG_BUILD         TRUE           # Wrap build in script to log output
+      LOG_TEST          TRUE           # Wrap test in script to log output
+      LOG_INSTALL       TRUE           # Wrap install in script to log output
+)
+
+set (MED3_DIR ${MED_INSTALL_DIR} )
+set (MEDFILE_INCLUDE_DIRS ${MED3_DIR}/includes)# A mettre à jour
+set (MED3_INCLUDE_DIRS ${MED_INSTALL_DIR}/include)
+set (MEDFILE_C_LIBRARIES med medC)
+
 
 # Paraview
 if (CDMATH_WITH_PYTHON AND CDMATH_WITH_POSTPRO)
