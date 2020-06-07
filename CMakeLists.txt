@@ -166,7 +166,7 @@ set(MED_INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/med-4.0.0_install) # 
 include(ExternalProject)
 
 ExternalProject_Add (MED
-      URL               ${MED_SRC}/med-4.0.0.tar.gz  
+      URL               ${MED_SRC}/med-4.0.0.tar.gz  #location of med tarball
       SOURCE_DIR        ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/med-4.0.0
       BUILD_IN_SOURCE   TRUE
       CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=${MED_INSTALL_DIR}  --with-hdf5=${HDF5_ROOT} --with-hdf5-include=${HDF5_INCLUDE_DIRS} --with-hdf5-lib=${HDF5_LIBRARY_DIR} --with-hdf5-bin=${HDF5_ROOT}/bin  --with-swig=yes 
@@ -189,14 +189,14 @@ set (MEDFILE_C_LIBRARIES med medC)
 #MEDCoupling
 message (STATUS "MEDCoupling installation" )
 
-set(MEDCOUPLING_SRC ${CDMATH_SOURCE_DIR}/pre_requis/)
+set(MEDCOUPLING_SRC ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/medCoupling-9.4.0/) # location of sources after unzip
 set(MEDCOUPLING_INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/medCoupling-9.4.0_install) # Location of the final install
 
 include(ExternalProject)
 
 ExternalProject_Add (MEDCoupling
-      URL               ${MEDCOUPLING_SRC}/medCoupling-9.4.0.tar.gz  
-      SOURCE_DIR        ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/medCoupling-9.4.0/
+      URL               ${CDMATH_SOURCE_DIR}/pre_requis/medCoupling-9.4.0.tar.gz  #location of medcoupling tarball
+      SOURCE_DIR        ${MEDCOUPLING_SRC}
       BUILD_IN_SOURCE   TRUE
       CMAKE_COMMAND cmake <SOURCE_DIR>/medCoupling-9.4.0 -DCMAKE_INSTALL_PREFIX=${MEDCOUPLING_INSTALL_DIR} -DCONFIGURATION_ROOT_DIR=<SOURCE_DIR>/configuration-9.4.0/ -DMEDFILE_ROOT_DIR=${MED_INSTALL_DIR} -DMEDCOUPLING_ENABLE_PARTITIONER=OFF -DMEDCOUPLING_PARTITIONER_METIS=OFF -DMEDCOUPLING_PARTITIONER_SCOTCH=OFF -DMEDCOUPLING_ENABLE_RENUMBER=OFF -DMEDCOUPLING_BUILD_DOC=OFF
       BUILD_COMMAND     make
@@ -210,10 +210,11 @@ ExternalProject_Add (MEDCoupling
       LOG_INSTALL       TRUE           # Wrap install in script to log output
 )
 
-set (INTERP_KERNEL_DIR     ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/medCoupling-9.4.0/INTERP_KERNEL)
-set (MED_COUPLING_DIR      ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/medCoupling-9.4.0/MEDCoupling)
-set (MED_COUPLING_SWIG_DIR ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/medCoupling-9.4.0/MEDCoupling_Swig)
-set (MED_LOADER_DIR        ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/medCoupling-9.4.0/MEDLoader)
+set (INTERP_KERNEL_DIR     ${MEDCOUPLING_SRC}/medCoupling-9.4.0/src/INTERP_KERNEL)
+set (MED_COUPLING_DIR      ${MEDCOUPLING_SRC}/medCoupling-9.4.0/src/MEDCoupling)
+set (MED_COUPLING_SWIG_DIR ${MEDCOUPLING_SRC}/medCoupling-9.4.0/src/MEDCoupling_Swig)
+set (MED_LOADER_DIR        ${MEDCOUPLING_SRC}/medCoupling-9.4.0/src/MEDLoader)
+set (MED_COUPLING_INCLUDE_DIR      ${MEDCOUPLING_INSTALL_DIR}/include)
 
 # Paraview
 if (CDMATH_WITH_PYTHON AND CDMATH_WITH_POSTPRO)
