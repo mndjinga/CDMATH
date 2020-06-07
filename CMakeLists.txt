@@ -181,8 +181,7 @@ ExternalProject_Add (MED
       LOG_INSTALL       TRUE           # Wrap install in script to log output
 )
 
-set (MEDFILE_INCLUDE_DIRS ${MED_INSTALL_DIR}/include)# Nécessaire pour le medloader
-set (MED3_INCLUDE_DIRS ${MED_INSTALL_DIR}/include)# Nécessaire pour sous-dossiers mesh, swig et tests
+set (MEDFILE_INCLUDE_DIRS ${MED_INSTALL_DIR}/include)# Nécessaire pour le medloader et les sous-dossiers mesh, et IJKMesh
 
 add_library(med   SHARED IMPORTED)
 set_property(TARGET med PROPERTY IMPORTED_LOCATION ${MED_INSTALL_DIR}/lib/libmed.so)
