@@ -54,7 +54,7 @@ if (CDMATH_WITH_PETSC)
   else ( DEFINED ENV{PETSC_DIR} )
     message ( STATUS "PETSC_DIR not set, searching petsc in the system" )
 
-    if ( IS_DIRECTORY "/usr/include/petsc/" AND EXISTS "/usr/lib64/libpetsc.so" AND DEFINED $ENV{SLEPC_DIR} )  #Case fedora/redhat system install
+    if ( IS_DIRECTORY "/usr/include/petsc/" AND EXISTS "/usr/lib64/libpetsc.so" AND DEFINED ENV{SLEPC_DIR} )  #Case fedora/redhat system install
       message ( STATUS "PETSC includes found in /usr/include/petsc/" )
       message ( STATUS "PETSC library found in /usr/lib64" )
       set(PETSC_DIR /usr/)
@@ -79,7 +79,7 @@ if (CDMATH_WITH_PETSC)
       set (CPACK_RPM_PACKAGE_REQUIRES "hdf5-devel")
 
     #elseif ( IS_DIRECTORY "/usr/lib/petsc/" AND EXISTS "/usr/lib/petsc/lib/libpetsc_real.so") #Case ubuntu/debian system install
-    #  message ( STATUS "PETSC found in /usr/lib/petsc/ abnd exists /usr/lib/petsc/lib/libpetsc_real.so")
+    #  message ( STATUS "PETSC found in /usr/lib/petsc/ and exists /usr/lib/petsc/lib/libpetsc_real.so")
     #  set(PETSC_DIR /usr/lib/petsc/)
     #  set(PETSC_INCLUDES  ${PETSC_DIR}/include ${PETSC_DIR}/include/petsc/mpiuni)
     #  set(PETSC_LIBRARIES ${PETSC_DIR}/libpetsc_real.so)
@@ -150,13 +150,13 @@ endif( CDMATH_WITH_PETSC )
 #HDF5
 find_package (HDF5 REQUIRED)
 
+add_library(hdf5   SHARED IMPORTED)
+set_property(TARGET hdf5 PROPERTY IMPORTED_LOCATION ${HDF5_ROOT}/lib/libhdf5.so)
+
 #MED
-message (STATUS "MED installation" )
 message (STATUS "HDF5 home is ${HDF5_ROOT}")
 string(FIND "${HDF5_LIBRARIES}" "libhdf5.so" pos)
 string(SUBSTRING "${HDF5_LIBRARIES}" 0 ${pos} HDF5_LIBRARY_DIR)
-message (STATUS "HDF5 library dir is ${HDF5_LIBRARY_DIR}")
-message (STATUS "HDF5 include dir is ${HDF5_INCLUDE_DIRS}")
 
 set(MED_SRC ${CDMATH_SOURCE_DIR}/pre_requis/)
 set(MACHINE PCLINUX)
@@ -183,17 +183,20 @@ ExternalProject_Add (MED
 
 set (MEDFILE_INCLUDE_DIRS ${MED_INSTALL_DIR}/include)# Nécessaire pour le medloader
 set (MED3_INCLUDE_DIRS ${MED_INSTALL_DIR}/include)# Nécessaire pour sous-dossiers mesh, swig et tests
-set (MEDFILE_C_LIBRARIES med medC)
+
+add_library(med   SHARED IMPORTED)
+set_property(TARGET med PROPERTY IMPORTED_LOCATION ${MED_INSTALL_DIR}/lib/libmed.so)
+add_library(medC   SHARED IMPORTED)
+set_property(TARGET medC PROPERTY IMPORTED_LOCATION ${MED_INSTALL_DIR}/lib/libmedC.so)
 
 #MEDCoupling
-message (STATUS "MEDCoupling installation" )
-
 set(MEDCOUPLING_SRC ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/medCoupling-9.4.0/) # location of sources after unzip
 set(MEDCOUPLING_INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/medCoupling-9.4.0_install) # Location of the final install
 
 ExternalProject_Add (MEDCoupling
       URL               ${CDMATH_SOURCE_DIR}/pre_requis/medCoupling-9.4.0.tar.gz  #location of medcoupling tarball
       SOURCE_DIR        ${MEDCOUPLING_SRC}
+#      PREFIX            ${MEDCOUPLING_SRC}/medCoupling-9.4.0
       BUILD_IN_SOURCE   TRUE
       CMAKE_COMMAND cmake <SOURCE_DIR>/medCoupling-9.4.0 -DCMAKE_INSTALL_PREFIX=${MEDCOUPLING_INSTALL_DIR} -DCONFIGURATION_ROOT_DIR=<SOURCE_DIR>/configuration-9.4.0/ -DMEDFILE_ROOT_DIR=${MED_INSTALL_DIR} -DMEDCOUPLING_ENABLE_PARTITIONER=OFF -DMEDCOUPLING_PARTITIONER_METIS=OFF -DMEDCOUPLING_PARTITIONER_SCOTCH=OFF -DMEDCOUPLING_ENABLE_RENUMBER=OFF -DMEDCOUPLING_BUILD_DOC=OFF
       BUILD_COMMAND     make
@@ -207,7 +210,17 @@ ExternalProject_Add (MEDCoupling
       LOG_INSTALL       TRUE           # Wrap install in script to log output
 )
 
-set (MED_COUPLING_INCLUDE_DIR      ${MEDCOUPLING_INSTALL_DIR}/include)
+set(MEDCOUPLING_INCLUDE_DIR  ${MEDCOUPLING_INSTALL_DIR}/include)
+
+add_library(medloader   SHARED IMPORTED)
+set_property(TARGET medloader PROPERTY IMPORTED_LOCATION ${MEDCOUPLING_INSTALL_DIR}/lib/libmedloader.so)
+add_library(medcoupling SHARED IMPORTED ${MEDCOUPLING_INSTALL_DIR}/lib/libmedcoupling.so)
+set_property(TARGET medcoupling PROPERTY IMPORTED_LOCATION ${MEDCOUPLING_INSTALL_DIR}/lib/libmedcoupling.so)
+
+ExternalProject_Add_StepDependencies( MEDCoupling build MED )#MED doit être compilé avant MEDCoupling
+if(DEFINED PETSc)
+  ExternalProject_Add_StepDependencies( MED build PETSc )#PETSc doit être compilé avant MED
+endif()
 
 # Paraview
 if (CDMATH_WITH_PYTHON AND CDMATH_WITH_POSTPRO)
@@ -225,7 +238,6 @@ if (CDMATH_WITH_PYTHON)
 endif ()
 
 find_package (XDR REQUIRED)
-add_subdirectory (${PRE_REQUIS_DIR})
 add_subdirectory (${BASE_DIR})
 add_subdirectory (${MESH_DIR})
 

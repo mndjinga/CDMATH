@@ -1,7 +1,0 @@
-%MedException(MEDparameterCr)
-%MedException(MEDnParameter)
-%MedException(MEDparameterInfo)
-%MedException(MEDparameterInfoByName)
-%MedException(MEDparameterValueWr)
-%MedException(MEDparameterValueRd)
-%MedException(MEDparameterComputationStepInfo)

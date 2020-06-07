@@ -1,7 +1,0 @@
-%MedException(MEDinterpCr)
-%MedException(MEDinterpBaseFunctionWr)
-%MedException(MEDnInterp)
-%MedException(MEDinterpInfo)
-%MedException(MEDinterpInfoByName)
-%MedException(MEDinterpBaseFunctionRd)
-%MedException(MEDinterpBaseFunctionCoefSize)

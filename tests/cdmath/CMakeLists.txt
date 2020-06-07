@@ -1,11 +1,6 @@
 INCLUDE_DIRECTORIES(
   ${CPPUNIT_INCLUDE_DIRS}
-  ${HDF5_INCLUDE_DIRS}
-  ${MED3_INCLUDE_DIRS}
-  ${PRE_REQUIS_DIR}/MEDLoader
-  ${PRE_REQUIS_DIR}/MEDCoupling
-  ${PRE_REQUIS_DIR}/INTERP_KERNEL
-  ${PRE_REQUIS_DIR}/INTERP_KERNEL/Bases
+  ${MEDCOUPLING_INCLUDE_DIR}
   ${MESH_DIR}/inc 
   ${BASE_DIR}/inc
   )
@@ -30,12 +25,11 @@ file(COPY ${MESH_MED} DESTINATION ${CMAKE_BINARY_DIR}/tests)
 if (CDMATH_WITH_PETSC)
     FILE(GLOB TestMesh_SOURCES . *.cxx)
     ADD_LIBRARY(TestMesh SHARED ${TestMesh_SOURCES})
-    TARGET_LINK_LIBRARIES(TestMesh base mesh linearsolver ${HDF5_LIBRARIES} medloader ${PETSC_LIBRARIES} ${SLEPC_LIBRARIES})
+    TARGET_LINK_LIBRARIES(TestMesh base mesh linearsolver ${HDF5_LIBRARIES} medloader medcoupling med ${PETSC_LIBRARIES} ${SLEPC_LIBRARIES})
 else (CDMATH_WITH_PETSC)  
     FILE(GLOB TestMesh_SOURCES . CellTests.cxx FaceTests.cxx FieldTests.cxx MatrixTests.cxx MeshTests.cxx NodeTests.cxx PointTests.cxx VectorTests.cxx)
     ADD_LIBRARY(TestMesh SHARED ${TestMesh_SOURCES})
-    TARGET_LINK_LIBRARIES(TestMesh base mesh ${HDF5_LIBRARIES} medloader)
+    TARGET_LINK_LIBRARIES(TestMesh base mesh ${HDF5_LIBRARIES} medloader medcoupling med)
 endif (CDMATH_WITH_PETSC) 
-  
 
 INSTALL(TARGETS TestMesh DESTINATION lib)
