@@ -22,10 +22,6 @@ set (LINEARSOLVER_DIR ${CDMATH_SOURCE_DIR}/linearsolver)
 set (CDMATH_SWIG_DIR ${CDMATH_SOURCE_DIR}/swig)
 set (CDMATH_POSTPRO_DIR ${CDMATH_SOURCE_DIR}/postprocessing)
 set (PRE_REQUIS_DIR ${CDMATH_SOURCE_DIR}/pre_requis)
-set (INTERP_KERNEL_DIR ${PRE_REQUIS_DIR}/INTERP_KERNEL)
-set (MED_COUPLING_DIR ${PRE_REQUIS_DIR}/MEDCoupling)
-set (MED_COUPLING_SWIG_DIR ${PRE_REQUIS_DIR}/MEDCoupling_Swig)
-set (MED_LOADER_DIR ${PRE_REQUIS_DIR}/MEDLoader)
 
 set (TESTS_DIR ${CDMATH_SOURCE_DIR}/tests)
 list (APPEND CMAKE_MODULE_PATH "${CDMATH_SOURCE_DIR}/cmake_files")
@@ -155,7 +151,7 @@ endif( CDMATH_WITH_PETSC )
 find_package (HDF5 REQUIRED)
 
 #MED
-message (STATUS "Configuring MED" )
+message (STATUS "MED installation" )
 message (STATUS "HDF5 home is ${HDF5_ROOT}")
 string(FIND "${HDF5_LIBRARIES}" "libhdf5.so" pos)
 string(SUBSTRING "${HDF5_LIBRARIES}" 0 ${pos} HDF5_LIBRARY_DIR)
@@ -163,10 +159,9 @@ message (STATUS "HDF5 library dir is ${HDF5_LIBRARY_DIR}")
 message (STATUS "HDF5 include dir is ${HDF5_INCLUDE_DIRS}")
 
 set(MED_SRC ${CDMATH_SOURCE_DIR}/pre_requis/)
-set(MED_INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/MEDFile) # Location of the final install 
 set(MACHINE PCLINUX)
 set(MED3_DEFINITIONS "-D${MACHINE} -DMEDFILE_INSTALL_DOC=OFF")#Comment ne pas compiler la doc ?
-set(MED_INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/med-4.0.0_install)
+set(MED_INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/med-4.0.0_install) # Location of the final install
 
 include(ExternalProject)
 
@@ -176,7 +171,6 @@ ExternalProject_Add (MED
       BUILD_IN_SOURCE   TRUE
       CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=${MED_INSTALL_DIR}  --with-hdf5=${HDF5_ROOT} --with-hdf5-include=${HDF5_INCLUDE_DIRS} --with-hdf5-lib=${HDF5_LIBRARY_DIR} --with-hdf5-bin=${HDF5_ROOT}/bin  --with-swig=yes 
       BUILD_COMMAND     make
-      TEST_COMMAND      make check
       INSTALL_COMMAND   make install
       INSTALL_DIR       ${MED_INSTALL_DIR}
       LOG_DOWNLOAD      TRUE           # Wrap download in script to log output
@@ -192,6 +186,34 @@ set (MEDFILE_INCLUDE_DIRS ${MED3_DIR}/include)# A mettre à jour
 set (MED3_INCLUDE_DIRS ${MED_INSTALL_DIR}/include)
 set (MEDFILE_C_LIBRARIES med medC)
 
+#MEDCoupling
+message (STATUS "MEDCoupling installation" )
+
+set(MEDCOUPLING_SRC ${CDMATH_SOURCE_DIR}/pre_requis/)
+set(MEDCOUPLING_INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/medCoupling-9.4.0_install) # Location of the final install
+
+include(ExternalProject)
+
+ExternalProject_Add (MEDCoupling
+      URL               ${MEDCOUPLING_SRC}/medCoupling-9.4.0.tar.gz  
+      SOURCE_DIR        ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/medCoupling-9.4.0/
+      BUILD_IN_SOURCE   TRUE
+      CMAKE_COMMAND cmake <SOURCE_DIR>/medCoupling-9.4.0 -DCMAKE_INSTALL_PREFIX=${MEDCOUPLING_INSTALL_DIR} -DCONFIGURATION_ROOT_DIR=<SOURCE_DIR>/configuration-9.4.0/ -DMEDFILE_ROOT_DIR=${MED_INSTALL_DIR} -DMEDCOUPLING_ENABLE_PARTITIONER=OFF -DMEDCOUPLING_PARTITIONER_METIS=OFF -DMEDCOUPLING_PARTITIONER_SCOTCH=OFF -DMEDCOUPLING_ENABLE_RENUMBER=OFF -DMEDCOUPLING_BUILD_DOC=OFF
+      BUILD_COMMAND     make
+      INSTALL_COMMAND   make install
+      INSTALL_DIR       ${MEDCOUPLING_INSTALL_DIR}
+      LOG_DOWNLOAD      TRUE           # Wrap download in script to log output
+      LOG_UPDATE        TRUE           # Wrap update in script to log output
+      LOG_CONFIGURE     TRUE           # Wrap configure in script to log output
+      LOG_BUILD         TRUE           # Wrap build in script to log output
+      LOG_TEST          TRUE           # Wrap test in script to log output
+      LOG_INSTALL       TRUE           # Wrap install in script to log output
+)
+
+set (INTERP_KERNEL_DIR     ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/medCoupling-9.4.0/INTERP_KERNEL)
+set (MED_COUPLING_DIR      ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/medCoupling-9.4.0/MEDCoupling)
+set (MED_COUPLING_SWIG_DIR ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/medCoupling-9.4.0/MEDCoupling_Swig)
+set (MED_LOADER_DIR        ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/medCoupling-9.4.0/MEDLoader)
 
 # Paraview
 if (CDMATH_WITH_PYTHON AND CDMATH_WITH_POSTPRO)
