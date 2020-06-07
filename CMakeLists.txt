@@ -181,9 +181,8 @@ ExternalProject_Add (MED
       LOG_INSTALL       TRUE           # Wrap install in script to log output
 )
 
-set (MED3_DIR ${MED_INSTALL_DIR} )
-set (MEDFILE_INCLUDE_DIRS ${MED3_DIR}/include)# A mettre à jour
-set (MED3_INCLUDE_DIRS ${MED_INSTALL_DIR}/include)
+set (MEDFILE_INCLUDE_DIRS ${MED_INSTALL_DIR}/include)# Nécessaire pour le medloader
+set (MED3_INCLUDE_DIRS ${MED_INSTALL_DIR}/include)# Nécessaire pour sous-dossiers mesh, swig et tests
 set (MEDFILE_C_LIBRARIES med medC)
 
 #MEDCoupling
@@ -191,8 +190,6 @@ message (STATUS "MEDCoupling installation" )
 
 set(MEDCOUPLING_SRC ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/medCoupling-9.4.0/) # location of sources after unzip
 set(MEDCOUPLING_INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/medCoupling-9.4.0_install) # Location of the final install
-
-include(ExternalProject)
 
 ExternalProject_Add (MEDCoupling
       URL               ${CDMATH_SOURCE_DIR}/pre_requis/medCoupling-9.4.0.tar.gz  #location of medcoupling tarball
@@ -210,10 +207,6 @@ ExternalProject_Add (MEDCoupling
       LOG_INSTALL       TRUE           # Wrap install in script to log output
 )
 
-set (INTERP_KERNEL_DIR     ${MEDCOUPLING_SRC}/medCoupling-9.4.0/src/INTERP_KERNEL)
-set (MED_COUPLING_DIR      ${MEDCOUPLING_SRC}/medCoupling-9.4.0/src/MEDCoupling)
-set (MED_COUPLING_SWIG_DIR ${MEDCOUPLING_SRC}/medCoupling-9.4.0/src/MEDCoupling_Swig)
-set (MED_LOADER_DIR        ${MEDCOUPLING_SRC}/medCoupling-9.4.0/src/MEDLoader)
 set (MED_COUPLING_INCLUDE_DIR      ${MEDCOUPLING_INSTALL_DIR}/include)
 
 # Paraview
