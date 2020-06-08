@@ -17,6 +17,7 @@ option (CDMATH_WITH_POSTPRO "Install postprocessing Python modules." OFF)
 option (CDMATH_WITH_PACKAGE "Generate RPM, Debian and tarball packages." OFF)
 option (CDMATH_WITH_TESTS "Compile unit testing." OFF)
 option (MEDFILE_ROOT_DIR "MED library path" OFF)
+option (PETSC_DIR "PETSc library path" OFF)
 
 # Base directories
 set (BASE_DIR ${CDMATH_SOURCE_DIR}/base)
@@ -30,10 +31,10 @@ set (TESTS_DIR ${CDMATH_SOURCE_DIR}/tests)
 list (APPEND CMAKE_MODULE_PATH "${CDMATH_SOURCE_DIR}/cmake_files")
 
 # PETSc and HDF5
-if (CDMATH_WITH_PETSC)
+if (CDMATH_WITH_PETSC OR PETSC_DIR)
     message ( STATUS "Checking variable PETSC_DIR : " $ENV{PETSC_DIR} )
 
-  if ( DEFINED ENV{PETSC_DIR} )
+  if ( DEFINED ENV{PETSC_DIR} OR PETSC_DIR )
 
     find_package (PETSc 3.4 REQUIRED)
     petsc_get_version ()
@@ -54,7 +55,7 @@ if (CDMATH_WITH_PETSC)
     #HDF5 to be found in petsc external packages
     set(HDF5_ROOT $ENV{PETSC_DIR}/$ENV{PETSC_ARCH})# define hint for hdf5 installation in petsc external packages
 
-  else ( DEFINED ENV{PETSC_DIR} )
+  else ( DEFINED ENV{PETSC_DIR} OR PETSC_DIR )
     message ( STATUS "PETSC_DIR not set, searching petsc in the system" )
 
     if ( IS_DIRECTORY "/usr/include/petsc/" AND EXISTS "/usr/lib64/libpetsc.so" AND DEFINED ENV{SLEPC_DIR} )  #Case fedora/redhat system install
@@ -105,7 +106,7 @@ if (CDMATH_WITH_PETSC)
     #  set(PETSC_VERSION "3.6") #value for Ubuntu 16.04 
     #  set(PETSC_VERSION "3.7") #value for Ubuntu 18.04 
 
-    else ()  # No petsc in system, do compile petsc along with slepc as an external package
+    else ( IS_DIRECTORY "/usr/include/petsc/" AND EXISTS "/usr/lib64/libpetsc.so" AND DEFINED ENV{SLEPC_DIR} )  # No petsc in system, do compile petsc along with slepc as an external package
       message (STATUS "PETSC not found in the system, petsc 3.13.1 will be installed" )
       set(PETSC_SRC ${CDMATH_SOURCE_DIR}/pre_requis/PETSc)
       set(PETSC_DIR ${CMAKE_INSTALL_PREFIX}/share/petsc-3.13.1) # Location of the final install 
@@ -139,14 +140,14 @@ if (CDMATH_WITH_PETSC)
       #HDF5 to be found in petsc external packages
       set(HDF5_ROOT $ENV{PETSC_DIR}/$ENV{PETSC_ARCH})# define hint for hdf5 installation in petsc external packages
 
-    endif ()
-  endif ( DEFINED ENV{PETSC_DIR} )
+    endif ( IS_DIRECTORY "/usr/include/petsc/" AND EXISTS "/usr/lib64/libpetsc.so" AND DEFINED ENV{SLEPC_DIR} )
+  endif ( DEFINED ENV{PETSC_DIR} OR PETSC_DIR )
 
   if( ${PETSC_VERSION} VERSION_GREATER 3.5 )
     add_definitions(-DPETSC_VERSION_GREATER_3_5)
   endif( ${PETSC_VERSION} VERSION_GREATER 3.5 )
 
-endif( CDMATH_WITH_PETSC )
+endif( CDMATH_WITH_PETSC OR PETSC_DIR )
 
 #HDF5
 find_package (HDF5 REQUIRED)
@@ -164,7 +165,7 @@ if( MEDFILE_ROOT_DIR OR ENV{MEDFILE_ROOT_DIR})
   message (STATUS "Seeking MEDFile library in ${MEDFILE_ROOT_DIR}")
   find_package (MEDFile REQUIRED)
 
-else( MEDFILE_ROOT_DIR)
+else( MEDFILE_ROOT_DIR OR ENV{MEDFILE_ROOT_DIR})
   message (STATUS "HDF5 home is ${HDF5_ROOT}")
   string(FIND "${HDF5_LIBRARIES}" "libhdf5.so" pos)
   string(SUBSTRING "${HDF5_LIBRARIES}" 0 ${pos} HDF5_LIBRARY_DIR)
@@ -192,7 +193,7 @@ else( MEDFILE_ROOT_DIR)
   
   set(MEDFILE_INCLUDE_DIRS ${MEDFILE_ROOT_DIR}/include)# Nécessaire pour le medloader et les sous-dossiers mesh, et IJKMesh
   set(MEDFILE_C_LIBRARIES med medC)# Nécessaire pour le medloader
-endif( MEDFILE_ROOT_DIR)
+endif( MEDFILE_ROOT_DIR OR ENV{MEDFILE_ROOT_DIR})
 
 add_library(med   SHARED IMPORTED)
 set_property(TARGET med PROPERTY IMPORTED_LOCATION ${MEDFILE_ROOT_DIR}/lib/libmed.so)
