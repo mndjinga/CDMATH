@@ -22,7 +22,7 @@ option (MEDFILE_ROOT_DIR "MED library path" OFF)
 option (MEDCOUPLING_ROOT_DIR "MEDCoupling library path" OFF)
 option (DOWNLOAD_PETSC "PETSc tarball path/url" ${CDMATH_SOURCE_DIR}/pre_requis/PETSc/petsc-lite-3.13.1.tar.gz )
 option (DOWNLOAD_MED "MED tarball path/url" ${CDMATH_SOURCE_DIR}/pre_requis/med-4.0.0.tar.gz)
-option (DOWNLOAD_MEDCOUPLING "MEDCoupling tarball path/url" OFF)
+option (DOWNLOAD_MEDCOUPLING "MEDCoupling tarball path/url" ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/medCoupling-9.4.0.tar.gz)
 option (DOWNLOAD_HDF5   "HDF5 tarball path/url" ${CDMATH_SOURCE_DIR}/pre_requis/PETSc/hdf5-1.10.3.tar.gz)
 option (DOWNLOAD_SLEPC "SLEPC tarball path/url" ${CDMATH_SOURCE_DIR}/pre_requis/PETSc/slepc-3.13.1.tar.gz)
 
@@ -168,7 +168,6 @@ else( MEDFILE_ROOT_DIR OR ENV{MEDFILE_ROOT_DIR})
   string(FIND "${HDF5_LIBRARIES}" "libhdf5.so" pos)
   string(SUBSTRING "${HDF5_LIBRARIES}" 0 ${pos} HDF5_LIBRARY_DIR)
   
-  set(MED_SRC ${CDMATH_SOURCE_DIR}/pre_requis/)
   set(MACHINE PCLINUX)
   set(MEDFILE_DEFINITIONS "-D${MACHINE} -DMEDFILE_INSTALL_DOC=OFF")#Comment ne pas compiler la doc ?
   set(MEDFILE_ROOT_DIR ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/med_install) # Location of the final install
@@ -193,7 +192,9 @@ else( MEDFILE_ROOT_DIR OR ENV{MEDFILE_ROOT_DIR})
   set(MEDFILE_C_LIBRARIES med medC)# Nécessaire pour le medloader
 endif( MEDFILE_ROOT_DIR OR ENV{MEDFILE_ROOT_DIR})
 
-string(REPLACE ";" ":"  MEDFILE_C_LIBRARIES_PATH "${MEDFILE_C_LIBRARIES}")# use colon instead of semicolon in environment file env_CDMATH.sh
+#For the environment file
+set(MEDFILE_C_LIBRARIES_PATH ${MEDFILE_ROOT_DIR}/lib/libmed.so ${MEDFILE_ROOT_DIR}/lib/libmedC.so)
+string(REPLACE ";" ":"  MEDFILE_C_LIBRARIES_PATH "${MEDFILE_C_LIBRARIES_PATH}")# use colon instead of semicolon in environment file env_CDMATH.sh
 
 add_library(med   SHARED IMPORTED)
 set_property(TARGET med  PROPERTY IMPORTED_LOCATION ${MEDFILE_ROOT_DIR}/lib/libmed.so)
@@ -215,12 +216,11 @@ if( MEDCOUPLING_ROOT_DIR OR ENV{MEDCOUPLING_ROOT_DIR})
 
 else( MEDCOUPLING_ROOT_DIR OR ENV{MEDCOUPLING_ROOT_DIR})
 
-  set(MEDCOUPLING_SRC ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/medCoupling-9.4.0/) # location of sources after unzip
-  set(MEDCOUPLING_ROOT_DIR ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/medCoupling-9.4.0_install) # Location of the final install
+  set(MEDCOUPLING_ROOT_DIR ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/medCoupling_install) # Location of the final install
 
   ExternalProject_Add (MEDCoupling
-        URL               ${CDMATH_SOURCE_DIR}/pre_requis/medCoupling-9.4.0.tar.gz  #location of medcoupling tarball
-        SOURCE_DIR        ${MEDCOUPLING_SRC}
+        URL               ${DOWNLOAD_MEDCOUPLING}  #location of medcoupling tarball
+        SOURCE_DIR        ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/
   #      PREFIX            ${MEDCOUPLING_SRC}/medCoupling-9.4.0
         BUILD_IN_SOURCE   TRUE
         CMAKE_COMMAND cmake <SOURCE_DIR>/medCoupling-9.4.0 -DCMAKE_INSTALL_PREFIX=${MEDCOUPLING_ROOT_DIR} -DCONFIGURATION_ROOT_DIR=<SOURCE_DIR>/configuration-9.4.0/ -DMEDFILE_ROOT_DIR=${MEDFILE_ROOT_DIR} -DMEDCOUPLING_ENABLE_PARTITIONER=OFF -DMEDCOUPLING_PARTITIONER_METIS=OFF -DMEDCOUPLING_PARTITIONER_SCOTCH=OFF -DMEDCOUPLING_ENABLE_RENUMBER=OFF -DMEDCOUPLING_BUILD_DOC=OFF -DHDF5_ROOT_DIR=${HDF5_ROOT}
@@ -238,11 +238,14 @@ endif( MEDCOUPLING_ROOT_DIR OR ENV{MEDCOUPLING_ROOT_DIR} )
 
 set(MEDCOUPLING_INCLUDE_DIR  ${MEDCOUPLING_ROOT_DIR}/include)
 
+#For the environment file
+set(MEDCOUPLING_LIBRARIES_PATH    ${MEDCOUPLING_ROOT_DIR}/lib/libmedloader.so ${MEDCOUPLING_ROOT_DIR}/lib/libmedcoupling.so)
+string(REPLACE ";" ":"  MEDCOUPLING_LIBRARIES_PATH "${MEDCOUPLING_LIBRARIES_PATH}")# use colon instead of semicolon in environment file env_CDMATH.sh
+
 add_library(medloader   SHARED IMPORTED )
 set_property(TARGET medloader   PROPERTY IMPORTED_LOCATION ${MEDCOUPLING_ROOT_DIR}/lib/libmedloader.so)
 add_library(medcoupling SHARED IMPORTED )
 set_property(TARGET medcoupling PROPERTY IMPORTED_LOCATION ${MEDCOUPLING_ROOT_DIR}/lib/libmedcoupling.so)
-
 
 if(DEFINED MED AND DEFINED PETSc)
   ExternalProject_Add_StepDependencies( MED build PETSc )#PETSc doit être compilé avant MED car c'est PETSc qui compile HDF5
