@@ -223,9 +223,9 @@ ExternalProject_Add (MEDCoupling
 
 set(MEDCOUPLING_INCLUDE_DIR  ${MEDCOUPLING_INSTALL_DIR}/include)
 
-add_library(medloader   SHARED IMPORTED)
-set_property(TARGET medloader PROPERTY IMPORTED_LOCATION ${MEDCOUPLING_INSTALL_DIR}/lib/libmedloader.so)
-add_library(medcoupling SHARED IMPORTED ${MEDCOUPLING_INSTALL_DIR}/lib/libmedcoupling.so)
+add_library(medloader   SHARED IMPORTED )
+set_property(TARGET medloader   PROPERTY IMPORTED_LOCATION ${MEDCOUPLING_INSTALL_DIR}/lib/libmedloader.so)
+add_library(medcoupling SHARED IMPORTED )
 set_property(TARGET medcoupling PROPERTY IMPORTED_LOCATION ${MEDCOUPLING_INSTALL_DIR}/lib/libmedcoupling.so)
 
 
