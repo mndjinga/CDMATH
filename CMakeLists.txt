@@ -17,6 +17,7 @@ option (CDMATH_WITH_POSTPRO "Install postprocessing Python modules." OFF)
 option (CDMATH_WITH_PACKAGE "Generate RPM, Debian and tarball packages." OFF)
 option (CDMATH_WITH_TESTS "Compile unit testing." OFF)
 option (MEDFILE_ROOT_DIR "MED library path" OFF)
+option (MEDCOUPLING_ROOT_DIR "MEDCoupling library path" OFF)
 option (PETSC_DIR "PETSc library path" OFF)
 
 # Base directories
@@ -196,37 +197,52 @@ else( MEDFILE_ROOT_DIR OR ENV{MEDFILE_ROOT_DIR})
 endif( MEDFILE_ROOT_DIR OR ENV{MEDFILE_ROOT_DIR})
 
 add_library(med   SHARED IMPORTED)
-set_property(TARGET med PROPERTY IMPORTED_LOCATION ${MEDFILE_ROOT_DIR}/lib/libmed.so)
+set_property(TARGET med  PROPERTY IMPORTED_LOCATION ${MEDFILE_ROOT_DIR}/lib/libmed.so)
 add_library(medC   SHARED IMPORTED)
 set_property(TARGET medC PROPERTY IMPORTED_LOCATION ${MEDFILE_ROOT_DIR}/lib/libmedC.so)
 
 #MEDCoupling
-set(MEDCOUPLING_SRC ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/medCoupling-9.4.0/) # location of sources after unzip
-set(MEDCOUPLING_INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/medCoupling-9.4.0_install) # Location of the final install
+if( MEDCOUPLING_ROOT_DIR OR ENV{MEDCOUPLING_ROOT_DIR})
 
-ExternalProject_Add (MEDCoupling
-      URL               ${CDMATH_SOURCE_DIR}/pre_requis/medCoupling-9.4.0.tar.gz  #location of medcoupling tarball
-      SOURCE_DIR        ${MEDCOUPLING_SRC}
-#      PREFIX            ${MEDCOUPLING_SRC}/medCoupling-9.4.0
-      BUILD_IN_SOURCE   TRUE
-      CMAKE_COMMAND cmake <SOURCE_DIR>/medCoupling-9.4.0 -DCMAKE_INSTALL_PREFIX=${MEDCOUPLING_INSTALL_DIR} -DCONFIGURATION_ROOT_DIR=<SOURCE_DIR>/configuration-9.4.0/ -DMEDFILE_ROOT_DIR=${MEDFILE_ROOT_DIR} -DMEDCOUPLING_ENABLE_PARTITIONER=OFF -DMEDCOUPLING_PARTITIONER_METIS=OFF -DMEDCOUPLING_PARTITIONER_SCOTCH=OFF -DMEDCOUPLING_ENABLE_RENUMBER=OFF -DMEDCOUPLING_BUILD_DOC=OFF -DHDF5_ROOT_DIR=${HDF5_ROOT}
-      BUILD_COMMAND     make
-      INSTALL_COMMAND   make install
-      INSTALL_DIR       ${MEDCOUPLING_INSTALL_DIR}
-      LOG_DOWNLOAD      TRUE           # Wrap download in script to log output
-      LOG_UPDATE        TRUE           # Wrap update in script to log output
-      LOG_CONFIGURE     TRUE           # Wrap configure in script to log output
-      LOG_BUILD         TRUE           # Wrap build in script to log output
-      LOG_TEST          TRUE           # Wrap test in script to log output
-      LOG_INSTALL       TRUE           # Wrap install in script to log output
-)
+  if( NOT MEDCOUPLING_ROOT_DIR )
+    set(MEDCOUPLING_ROOT_DIR ENV{MEDCOUPLING_ROOT_DIR} )
+  endif( NOT MEDCOUPLING_ROOT_DIR )
 
-set(MEDCOUPLING_INCLUDE_DIR  ${MEDCOUPLING_INSTALL_DIR}/include)
+  message (STATUS "Seeking MEDCoupling library in ${MEDCOUPLING_ROOT_DIR}")
+
+  if( NOT EXISTS ${MEDCOUPLING_ROOT_DIR}/lib/libmedloader.so OR NOT EXISTS ${MEDCOUPLING_ROOT_DIR}/lib/libmedcoupling.so OR NOT EXISTS ${MEDCOUPLING_ROOT_DIR}/include/MEDCoupling.hxx)
+    message (FATAL_ERROR "MEDCoupling library not found in ${MEDCOUPLING_ROOT_DIR}")
+  endif( NOT EXISTS ${MEDCOUPLING_ROOT_DIR}/lib/libmedloader.so OR NOT EXISTS ${MEDCOUPLING_ROOT_DIR}/lib/libmedcoupling.so OR NOT EXISTS ${MEDCOUPLING_ROOT_DIR}/include/MEDCoupling.hxx)
+
+else( MEDCOUPLING_ROOT_DIR OR ENV{MEDCOUPLING_ROOT_DIR})
+
+  set(MEDCOUPLING_SRC ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/medCoupling-9.4.0/) # location of sources after unzip
+  set(MEDCOUPLING_ROOT_DIR ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/medCoupling-9.4.0_install) # Location of the final install
+
+  ExternalProject_Add (MEDCoupling
+        URL               ${CDMATH_SOURCE_DIR}/pre_requis/medCoupling-9.4.0.tar.gz  #location of medcoupling tarball
+        SOURCE_DIR        ${MEDCOUPLING_SRC}
+  #      PREFIX            ${MEDCOUPLING_SRC}/medCoupling-9.4.0
+        BUILD_IN_SOURCE   TRUE
+        CMAKE_COMMAND cmake <SOURCE_DIR>/medCoupling-9.4.0 -DCMAKE_INSTALL_PREFIX=${MEDCOUPLING_ROOT_DIR} -DCONFIGURATION_ROOT_DIR=<SOURCE_DIR>/configuration-9.4.0/ -DMEDFILE_ROOT_DIR=${MEDFILE_ROOT_DIR} -DMEDCOUPLING_ENABLE_PARTITIONER=OFF -DMEDCOUPLING_PARTITIONER_METIS=OFF -DMEDCOUPLING_PARTITIONER_SCOTCH=OFF -DMEDCOUPLING_ENABLE_RENUMBER=OFF -DMEDCOUPLING_BUILD_DOC=OFF -DHDF5_ROOT_DIR=${HDF5_ROOT}
+        BUILD_COMMAND     make
+        INSTALL_COMMAND   make install
+        INSTALL_DIR       ${MEDCOUPLING_ROOT_DIR}
+        LOG_DOWNLOAD      TRUE           # Wrap download in script to log output
+        LOG_UPDATE        TRUE           # Wrap update in script to log output
+        LOG_CONFIGURE     TRUE           # Wrap configure in script to log output
+        LOG_BUILD         TRUE           # Wrap build in script to log output
+        LOG_TEST          TRUE           # Wrap test in script to log output
+        LOG_INSTALL       TRUE           # Wrap install in script to log output
+  )
+endif( MEDCOUPLING_ROOT_DIR OR ENV{MEDCOUPLING_ROOT_DIR} )
+
+set(MEDCOUPLING_INCLUDE_DIR  ${MEDCOUPLING_ROOT_DIR}/include)
 
 add_library(medloader   SHARED IMPORTED )
-set_property(TARGET medloader   PROPERTY IMPORTED_LOCATION ${MEDCOUPLING_INSTALL_DIR}/lib/libmedloader.so)
+set_property(TARGET medloader   PROPERTY IMPORTED_LOCATION ${MEDCOUPLING_ROOT_DIR}/lib/libmedloader.so)
 add_library(medcoupling SHARED IMPORTED )
-set_property(TARGET medcoupling PROPERTY IMPORTED_LOCATION ${MEDCOUPLING_INSTALL_DIR}/lib/libmedcoupling.so)
+set_property(TARGET medcoupling PROPERTY IMPORTED_LOCATION ${MEDCOUPLING_ROOT_DIR}/lib/libmedcoupling.so)
 
 
 if(DEFINED MED)
