@@ -21,7 +21,7 @@ option (HDF5_ROOT_DIR "HDF5 library path" OFF)
 option (MEDFILE_ROOT_DIR "MED library path" OFF)
 option (MEDCOUPLING_ROOT_DIR "MEDCoupling library path" OFF)
 option (DOWNLOAD_PETSC "PETSc tarball path/url" ${CDMATH_SOURCE_DIR}/pre_requis/PETSc/petsc-lite-3.13.1.tar.gz )
-option (DOWNLOAD_MED "MED tarball path/url" OFF)
+option (DOWNLOAD_MED "MED tarball path/url" ${CDMATH_SOURCE_DIR}/pre_requis/med-4.0.0.tar.gz)
 option (DOWNLOAD_MEDCOUPLING "MEDCoupling tarball path/url" OFF)
 option (DOWNLOAD_HDF5   "HDF5 tarball path/url" ${CDMATH_SOURCE_DIR}/pre_requis/PETSc/hdf5-1.10.3.tar.gz)
 option (DOWNLOAD_SLEPC "SLEPC tarball path/url" ${CDMATH_SOURCE_DIR}/pre_requis/PETSc/slepc-3.13.1.tar.gz)
@@ -104,7 +104,7 @@ if (CDMATH_WITH_PETSC OR PETSC_DIR OR DOWNLOAD_PETSC)
     #elseif ( IS_DIRECTORY "/usr/local/lib/python2.7/dist-packages/petsc") #Case ubuntu/debian system pip install
 
     else ( IS_DIRECTORY "/usr/include/petsc/" AND EXISTS "/usr/lib64/libpetsc.so" AND IS_DIRECTORY "/usr/include/slepc/" AND EXISTS "/usr/lib64/libslepc.so" )  # No petsc in system, do compile petsc along with slepc as an external package
-      message (STATUS "PETSC not found in the system, will be downloaded and compiled" )
+      message (STATUS "PETSC not found in the system, PETSC (with SLEPC and HDF5) will be downloaded and compiled" )
       set(PETSC_SRC ${CDMATH_SOURCE_DIR}/pre_requis/PETSc)
       set(PETSC_DIR ${CMAKE_INSTALL_PREFIX}/share/petsc_install) # Location of the final install 
       set(PETSC_INCLUDES  ${PETSC_DIR}/include/  ${PETSC_DIR}/include/petsc/mpiuni)
@@ -135,7 +135,6 @@ if (CDMATH_WITH_PETSC OR PETSC_DIR OR DOWNLOAD_PETSC)
       set(SLEPC_DIR ${PETSC_DIR}/${PETSC_ARCH})
       set(SLEPC_INCLUDES ${SLEPC_DIR}/include)
       set(SLEPC_LIBRARIES ${SLEPC_DIR}/lib/libslepc.so)
-      string(REPLACE ";" ":"  SLEPC_INCLUDES_PATH "${SLEPC_INCLUDE_DIR}")# use colon instead of semicolon in environment file env_CDMATH.sh
 
       #HDF5 to be found in petsc external packages
       set(HDF5_ROOT $ENV{PETSC_DIR}/$ENV{PETSC_ARCH})# define hint for hdf5 installation in petsc external packages
@@ -151,7 +150,6 @@ endif( CDMATH_WITH_PETSC OR PETSC_DIR  OR DOWNLOAD_PETSC )
 
 #HDF5
 find_package (HDF5 REQUIRED)
-
 add_library(hdf5   SHARED IMPORTED)
 set_property(TARGET hdf5 PROPERTY IMPORTED_LOCATION ${HDF5_ROOT}/lib/libhdf5.so)
 
@@ -173,11 +171,11 @@ else( MEDFILE_ROOT_DIR OR ENV{MEDFILE_ROOT_DIR})
   set(MED_SRC ${CDMATH_SOURCE_DIR}/pre_requis/)
   set(MACHINE PCLINUX)
   set(MEDFILE_DEFINITIONS "-D${MACHINE} -DMEDFILE_INSTALL_DOC=OFF")#Comment ne pas compiler la doc ?
-  set(MEDFILE_ROOT_DIR ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/med-4.0.0_install) # Location of the final install
+  set(MEDFILE_ROOT_DIR ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/med_install) # Location of the final install
   
   ExternalProject_Add (MED
-        URL               ${MED_SRC}/med-4.0.0.tar.gz  #location of med tarball
-        SOURCE_DIR        ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/med-4.0.0
+        URL               ${DOWNLOAD_MED}  #location of med tarball
+        SOURCE_DIR        ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/med_src
         BUILD_IN_SOURCE   TRUE
         CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=${MEDFILE_ROOT_DIR}  --with-hdf5=${HDF5_ROOT} --with-hdf5-include=${HDF5_INCLUDE_DIRS} --with-hdf5-lib=${HDF5_LIBRARY_DIR} --with-hdf5-bin=${HDF5_ROOT}/bin  --with-swig=yes 
         BUILD_COMMAND     make
@@ -194,6 +192,8 @@ else( MEDFILE_ROOT_DIR OR ENV{MEDFILE_ROOT_DIR})
   set(MEDFILE_INCLUDE_DIRS ${MEDFILE_ROOT_DIR}/include)# Nécessaire pour le medloader et les sous-dossiers mesh, et IJKMesh
   set(MEDFILE_C_LIBRARIES med medC)# Nécessaire pour le medloader
 endif( MEDFILE_ROOT_DIR OR ENV{MEDFILE_ROOT_DIR})
+
+string(REPLACE ";" ":"  MEDFILE_C_LIBRARIES_PATH "${MEDFILE_C_LIBRARIES}")# use colon instead of semicolon in environment file env_CDMATH.sh
 
 add_library(med   SHARED IMPORTED)
 set_property(TARGET med  PROPERTY IMPORTED_LOCATION ${MEDFILE_ROOT_DIR}/lib/libmed.so)
