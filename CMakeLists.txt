@@ -20,11 +20,12 @@ option (PETSC_DIR "PETSc library path" OFF)
 option (HDF5_ROOT_DIR "HDF5 library path" OFF)
 option (MEDFILE_ROOT_DIR "MED library path" OFF)
 option (MEDCOUPLING_ROOT_DIR "MEDCoupling library path" OFF)
-option (DOWNLOAD_PETSC "PETSc tarball path/url" ${CDMATH_SOURCE_DIR}/pre_requis/PETSc/petsc-lite-3.13.1.tar.gz )
-option (DOWNLOAD_MED "MED tarball path/url" ${CDMATH_SOURCE_DIR}/pre_requis/med-4.0.0.tar.gz)
-option (DOWNLOAD_MEDCOUPLING "MEDCoupling tarball path/url" ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/medCoupling-9.4.0.tar.gz)
-option (DOWNLOAD_HDF5   "HDF5 tarball path/url" ${CDMATH_SOURCE_DIR}/pre_requis/PETSc/hdf5-1.10.3.tar.gz)
-option (DOWNLOAD_SLEPC "SLEPC tarball path/url" ${CDMATH_SOURCE_DIR}/pre_requis/PETSc/slepc-3.13.1.tar.gz)
+set (DOWNLOAD_MED         ${CDMATH_SOURCE_DIR}/pre_requis/med-4.0.0.tar.gz               CACHE STRING "MED tarball path/url")
+set (DOWNLOAD_MEDCOUPLING ${CDMATH_SOURCE_DIR}/pre_requis/medCoupling-9.4.0.tar.gz       CACHE STRING "MEDCoupling tarball path/url" )
+set (DOWNLOAD_PETSC       ${CDMATH_SOURCE_DIR}/pre_requis/PETSc/petsc-lite-3.13.1.tar.gz CACHE STRING "PETSc tarball path/url" )
+set (DOWNLOAD_HDF5        ${CDMATH_SOURCE_DIR}/pre_requis/PETSc/hdf5-1.10.3.tar.gz       CACHE STRING "HDF5 tarball path/url" )
+set (DOWNLOAD_SLEPC       ${CDMATH_SOURCE_DIR}/pre_requis/PETSc/slepc-3.13.1.tar.gz      CACHE STRING "SLEPC tarball path/url" )
+
 
 # Base directories
 set (BASE_DIR ${CDMATH_SOURCE_DIR}/base)
@@ -38,10 +39,13 @@ set (TESTS_DIR ${CDMATH_SOURCE_DIR}/tests)
 list (APPEND CMAKE_MODULE_PATH "${CDMATH_SOURCE_DIR}/cmake_files")
 
 # PETSc and HDF5
-if (CDMATH_WITH_PETSC OR PETSC_DIR OR DOWNLOAD_PETSC)
+if (CDMATH_WITH_PETSC OR PETSC_DIR OR DOWNLOAD_PETSC OR DEFINED ENV{PETSC_DIR} )
     message ( STATUS "Checking variable PETSC_DIR : " $ENV{PETSC_DIR} )
 
   if ( DEFINED ENV{PETSC_DIR} OR PETSC_DIR)
+    if(NOT PETSC_DIR)
+      set(PETSC_DIR $ENV{PETSC_DIR})
+    endif(NOT PETSC_DIR)
 
     find_package (PETSc 3.4 REQUIRED)
     petsc_get_version ()
@@ -114,11 +118,12 @@ if (CDMATH_WITH_PETSC OR PETSC_DIR OR DOWNLOAD_PETSC)
       URL               ${DOWNLOAD_PETSC}   
       SOURCE_DIR        ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/PETSc
       BUILD_IN_SOURCE   TRUE
-      CONFIGURE_COMMAND ./configure --prefix=${PETSC_DIR} --with-debugging=0 --with-mpi=0 --download-f2cblaslapack=${PETSC_SRC}/f2cblaslapack-3.4.2.q4.tar.gz --with-fc=0 --download-slepc=${DOWNLOAD_SLEPC} --download-hdf5=${DOWNLOAD_HDF5}
+      CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=${PETSC_DIR} --with-debugging=0 --with-mpi=0 --download-f2cblaslapack=${PETSC_SRC}/f2cblaslapack-3.4.2.q4.tar.gz --with-fc=0 --download-slepc=${DOWNLOAD_SLEPC} --download-hdf5=${DOWNLOAD_HDF5}
       BUILD_COMMAND     make all
       TEST_COMMAND      make check
       INSTALL_COMMAND   make install
       INSTALL_DIR       ${PETSC_DIR}
+      STAMP_DIR         ${CMAKE_CURRENT_BINARY_DIR}/pre_requis
       LOG_DOWNLOAD      TRUE           # Wrap download in script to log output
       LOG_UPDATE        TRUE           # Wrap update in script to log output
       LOG_CONFIGURE     TRUE           # Wrap configure in script to log output
@@ -146,7 +151,7 @@ if (CDMATH_WITH_PETSC OR PETSC_DIR OR DOWNLOAD_PETSC)
     add_definitions(-DPETSC_VERSION_GREATER_3_5)
   endif( ${PETSC_VERSION} VERSION_GREATER 3.5 )
 
-endif( CDMATH_WITH_PETSC OR PETSC_DIR  OR DOWNLOAD_PETSC )
+endif( CDMATH_WITH_PETSC OR PETSC_DIR  OR DOWNLOAD_PETSC OR DEFINED ENV{PETSC_DIR} )
 
 #HDF5
 find_package (HDF5 REQUIRED)
@@ -172,14 +177,24 @@ else( MEDFILE_ROOT_DIR OR ENV{MEDFILE_ROOT_DIR})
   set(MEDFILE_DEFINITIONS "-D${MACHINE} -DMEDFILE_INSTALL_DOC=OFF")#Comment ne pas compiler la doc ?
   set(MEDFILE_ROOT_DIR ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/med_install) # Location of the final install
   
+  #extraction of the tarball archive name
+  string(LENGTH "${DOWNLOAD_MED}" tarball_url_length)#length of the name of the tarball
+  string(FIND "${DOWNLOAD_MED}" "/" start_tarball_name REVERSE )# last occurence of "/"
+  MATH(EXPR start_tarball_name '${start_tarball_name}+1')#start after the occurence of "/"
+  MATH(EXPR tarball_name_length '${tarball_url_length}-${start_tarball_name}-7')#name ends before .tar.gz that counts for 7 characters
+  string(SUBSTRING ${DOWNLOAD_MED} ${start_tarball_name} ${tarball_name_length} MED_TARBALL_NAME)
+
+  message(STATUS "MED tarball name is ${MED_TARBALL_NAME}")
+
   ExternalProject_Add (MED
         URL               ${DOWNLOAD_MED}  #location of med tarball
-        SOURCE_DIR        ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/
+        SOURCE_DIR        ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/${MED_TARBALL_NAME}
         BUILD_IN_SOURCE   TRUE
-        CONFIGURE_COMMAND ./configure --prefix=${MEDFILE_ROOT_DIR}  --with-hdf5=${HDF5_ROOT} --with-hdf5-include=${HDF5_INCLUDE_DIRS} --with-hdf5-lib=${HDF5_LIBRARY_DIR} --with-hdf5-bin=${HDF5_ROOT}/bin  --with-swig=yes 
+        CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=${MEDFILE_ROOT_DIR}  --with-hdf5=${HDF5_ROOT} --with-hdf5-include=${HDF5_ROOT}/include --with-hdf5-lib=${HDF5_LIBRARY_DIR} --with-hdf5-bin=${HDF5_ROOT}/bin  --with-swig=yes 
         BUILD_COMMAND     make
         INSTALL_COMMAND   make install
         INSTALL_DIR       ${MEDFILE_ROOT_DIR}
+        STAMP_DIR         ${CMAKE_CURRENT_BINARY_DIR}/pre_requis
         LOG_DOWNLOAD      TRUE           # Wrap download in script to log output
         LOG_UPDATE        TRUE           # Wrap update in script to log output
         LOG_CONFIGURE     TRUE           # Wrap configure in script to log output
@@ -218,15 +233,26 @@ else( MEDCOUPLING_ROOT_DIR OR ENV{MEDCOUPLING_ROOT_DIR})
 
   set(MEDCOUPLING_ROOT_DIR ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/medCoupling_install) # Location of the final install
 
+  #extraction of the tarball archive name
+  string(LENGTH ${DOWNLOAD_MEDCOUPLING} tarball_url_length)#length of the tarball
+  string(FIND ${DOWNLOAD_MEDCOUPLING} "/" start_tarball_name REVERSE )# last occurence of "/"
+  MATH(EXPR start_tarball_name '${start_tarball_name}+1')#start after the occurence of "/"
+  MATH(EXPR tarball_name_length "${tarball_url_length}-${start_tarball_name}-7")#name ends before .tar.gz that counts for 7 characters
+  string(SUBSTRING ${DOWNLOAD_MEDCOUPLING} ${start_tarball_name} ${tarball_name_length} MEDCOUPLING_TARBALL_NAME)
+
+  message(STATUS "MEDCOUPLING tarball name is ${MEDCOUPLING_TARBALL_NAME}")
+
   ExternalProject_Add (MEDCoupling
         URL               ${DOWNLOAD_MEDCOUPLING}  #location of medcoupling tarball
-        SOURCE_DIR        ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/
-  #      PREFIX            ${MEDCOUPLING_SRC}/medCoupling-9.4.0
-        BUILD_IN_SOURCE   TRUE
-        CMAKE_COMMAND cmake ./medCoupling-9.4.0 -DCMAKE_INSTALL_PREFIX=${MEDCOUPLING_ROOT_DIR} -DCONFIGURATION_ROOT_DIR=./configuration-9.4.0/ -DMEDFILE_ROOT_DIR=${MEDFILE_ROOT_DIR} -DMEDCOUPLING_ENABLE_PARTITIONER=OFF -DMEDCOUPLING_PARTITIONER_METIS=OFF -DMEDCOUPLING_PARTITIONER_SCOTCH=OFF -DMEDCOUPLING_ENABLE_RENUMBER=OFF -DMEDCOUPLING_BUILD_DOC=OFF -DHDF5_ROOT_DIR=${HDF5_ROOT}
+        DEPENDS           MED
+        SOURCE_DIR        ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/${MEDCOUPLING_TARBALL_NAME}
+#        BUILD_IN_SOURCE   FALSE
+#        BINARY_DIR        ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/${MEDCOUPLING_TARBALL_NAME}/${MEDCOUPLING_TARBALL_NAME}
+        CONFIGURE_COMMAND cmake <SOURCE_DIR>/${MEDCOUPLING_TARBALL_NAME} -DCMAKE_INSTALL_PREFIX=${MEDCOUPLING_ROOT_DIR} -DCONFIGURATION_ROOT_DIR=<SOURCE_DIR>/configuration-* -DMEDFILE_ROOT_DIR=${MEDFILE_ROOT_DIR} -DMEDCOUPLING_ENABLE_PARTITIONER=OFF -DMEDCOUPLING_PARTITIONER_METIS=OFF -DMEDCOUPLING_PARTITIONER_SCOTCH=OFF -DMEDCOUPLING_ENABLE_RENUMBER=OFF -DMEDCOUPLING_BUILD_DOC=OFF -DHDF5_ROOT_DIR=${HDF5_ROOT}
         BUILD_COMMAND     make
         INSTALL_COMMAND   make install
         INSTALL_DIR       ${MEDCOUPLING_ROOT_DIR}
+        STAMP_DIR         ${CMAKE_CURRENT_BINARY_DIR}/pre_requis
         LOG_DOWNLOAD      TRUE           # Wrap download in script to log output
         LOG_UPDATE        TRUE           # Wrap update in script to log output
         LOG_CONFIGURE     TRUE           # Wrap configure in script to log output
