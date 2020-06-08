@@ -245,13 +245,14 @@ add_library(medcoupling SHARED IMPORTED )
 set_property(TARGET medcoupling PROPERTY IMPORTED_LOCATION ${MEDCOUPLING_ROOT_DIR}/lib/libmedcoupling.so)
 
 
-if(DEFINED MED)
-  ExternalProject_Add_StepDependencies( MEDCoupling build MED )#MED doit être compilé avant MEDCoupling
-  if(DEFINED PETSc)
-    ExternalProject_Add_StepDependencies( MED build PETSc )#PETSc doit être compilé avant MED
-  endif(DEFINED PETSc)
-endif(DEFINED MED)
+if(DEFINED MED AND DEFINED PETSc)
+  ExternalProject_Add_StepDependencies( MED build PETSc )#PETSc doit être compilé avant MED car c'est PETSc qui compile HDF5
+endif(DEFINED MED AND DEFINED PETSc)
 
+if(DEFINED MED AND DEFINED MEDCoupling)
+  ExternalProject_Add_StepDependencies( MEDCoupling build MED )#MED doit être compilé avant MEDCoupling
+endif(DEFINED MED AND DEFINED MEDCoupling)
+ 
 # Paraview
 if (CDMATH_WITH_PYTHON AND CDMATH_WITH_POSTPRO)
   set (PV_LIB_DIR /usr/lib/python2.7/dist-packages/:/usr/lib64/paraview/)
