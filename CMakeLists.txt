@@ -16,9 +16,15 @@ option (CDMATH_WITH_PYTHON "Compile Python interface for CDMATH." OFF)
 option (CDMATH_WITH_POSTPRO "Install postprocessing Python modules." OFF)
 option (CDMATH_WITH_PACKAGE "Generate RPM, Debian and tarball packages." OFF)
 option (CDMATH_WITH_TESTS "Compile unit testing." OFF)
+option (PETSC_DIR "PETSc library path" OFF)
+option (HDF5_ROOT_DIR "HDF5 library path" OFF)
 option (MEDFILE_ROOT_DIR "MED library path" OFF)
 option (MEDCOUPLING_ROOT_DIR "MEDCoupling library path" OFF)
-option (PETSC_DIR "PETSc library path" OFF)
+option (DOWNLOAD_PETSC "PETSc tarball path/url" ${CDMATH_SOURCE_DIR}/pre_requis/PETSc/petsc-lite-3.13.1.tar.gz )
+option (DOWNLOAD_MED "MED tarball path/url" OFF)
+option (DOWNLOAD_MEDCOUPLING "MEDCoupling tarball path/url" OFF)
+option (DOWNLOAD_HDF5   "HDF5 tarball path/url" ${CDMATH_SOURCE_DIR}/pre_requis/PETSc/hdf5-1.10.3.tar.gz)
+option (DOWNLOAD_SLEPC "SLEPC tarball path/url" ${CDMATH_SOURCE_DIR}/pre_requis/PETSc/slepc-3.13.1.tar.gz)
 
 # Base directories
 set (BASE_DIR ${CDMATH_SOURCE_DIR}/base)
@@ -32,17 +38,17 @@ set (TESTS_DIR ${CDMATH_SOURCE_DIR}/tests)
 list (APPEND CMAKE_MODULE_PATH "${CDMATH_SOURCE_DIR}/cmake_files")
 
 # PETSc and HDF5
-if (CDMATH_WITH_PETSC OR PETSC_DIR)
+if (CDMATH_WITH_PETSC OR PETSC_DIR OR DOWNLOAD_PETSC)
     message ( STATUS "Checking variable PETSC_DIR : " $ENV{PETSC_DIR} )
 
-  if ( DEFINED ENV{PETSC_DIR} OR PETSC_DIR )
+  if ( DEFINED ENV{PETSC_DIR} OR PETSC_DIR)
 
     find_package (PETSc 3.4 REQUIRED)
     petsc_get_version ()
     string(REPLACE ";" ":"  PETSC_INCLUDES_PATH "${PETSC_INCLUDES}")# use colon instead of semicolon in environment file env_CDMATH.sh
     message ( STATUS "PETSC found. Version is ${PETSC_VERSION_MAJOR}.${PETSC_VERSION_MINOR}.${PETSC_VERSION_SUBMINOR}" )
 
-    #define slepc variables
+    #Define and search slepc variables
     set(SLEPC_DIR ${PETSC_DIR}/${PETSC_ARCH})
     message ( STATUS "Checking variable SLEPC_DIR" )
     if ( IS_DIRECTORY ${SLEPC_DIR}/include AND EXISTS ${SLEPC_DIR}/lib/libslepc.so)
@@ -50,7 +56,7 @@ if (CDMATH_WITH_PETSC OR PETSC_DIR)
       set(SLEPC_LIBRARIES ${SLEPC_DIR}/lib/libslepc.so)
       message( STATUS "SLEPC found at ${SLEPC_DIR}" )
     else()
-      message( WARNING "SLEPC not found at ${SLEPC_DIR}" )
+      message( FATAL_ERROR "SLEPC not found at ${SLEPC_DIR}" )
     endif()
 
     #HDF5 to be found in petsc external packages
@@ -59,7 +65,7 @@ if (CDMATH_WITH_PETSC OR PETSC_DIR)
   else ( DEFINED ENV{PETSC_DIR} OR PETSC_DIR )
     message ( STATUS "PETSC_DIR not set, searching petsc in the system" )
 
-    if ( IS_DIRECTORY "/usr/include/petsc/" AND EXISTS "/usr/lib64/libpetsc.so" AND DEFINED ENV{SLEPC_DIR} )  #Case fedora/redhat system install
+    if ( IS_DIRECTORY "/usr/include/petsc/" AND EXISTS "/usr/lib64/libpetsc.so" AND IS_DIRECTORY "/usr/include/slepc/" AND EXISTS "/usr/lib64/libslepc.so" )  #Case fedora/redhat system install
       message ( STATUS "PETSC includes found in /usr/include/petsc/" )
       message ( STATUS "PETSC library found in /usr/lib64" )
       set(PETSC_DIR /usr/)
@@ -70,20 +76,17 @@ if (CDMATH_WITH_PETSC OR PETSC_DIR)
       petsc_get_version ()
       set (CPACK_RPM_PACKAGE_REQUIRES   "${CPACK_RPM_PACKAGE_REQUIRES}, petsc-devel (>= 3.4)") # This is not fully working yet. 
 
-      message ( STATUS "Checking variable SLEPC_DIR : " $ENV{SLEPC_DIR} )
-      if ( IS_DIRECTORY ${SLEPC_DIR}/include AND EXISTS ${SLEPC_DIR}/lib/libslepc.so)
-        set(SLEPC_INCLUDES ${SLEPC_DIR}/include)
-        set(SLEPC_LIBRARIES ${SLEPC_DIR}/lib/libslepc.so)
-        message( STATUS "SLEPC found at $ENV{SLEPC_DIR}" )
-      else()
-        message( WARNING "SLEPC not found" )
-      endif()
+      message( STATUS "SLEPC includes found in /usr/include/slepc/" )
+      message( STATUS "SLEPC library found in /usr/lib64/slepc/" )
+      set(SLEPC_DIR /usr/)
+      set(SLEPC_INCLUDES ${SLEPC_DIR}/include)
+      set(SLEPC_LIBRARIES ${SLEPC_DIR}/lib/libslepc.so)
 
       #HDF5 to be found in the system
       set (CPACK_DEBIAN_PACKAGE_DEPENDS "libhdf5-dev")
       set (CPACK_RPM_PACKAGE_REQUIRES "hdf5-devel")
 
-    #elseif ( IS_DIRECTORY "/usr/lib/petsc/" AND EXISTS "/usr/lib/petsc/lib/libpetsc_real.so") #Case ubuntu/debian system install
+    #elseif ( IS_DIRECTORY "/usr/lib/petsc/" AND EXISTS "/usr/lib/petsc/lib/libpetsc_real.so" AND IS_DIRECTORY "/usr/lib/slepc/" AND EXISTS "/usr/lib/slepc/lib/libslepc_real.so") #Case ubuntu/debian system install
     #  message ( STATUS "PETSC found in /usr/lib/petsc/ and exists /usr/lib/petsc/lib/libpetsc_real.so")
     #  set(PETSC_DIR /usr/lib/petsc/)
     #  set(PETSC_INCLUDES  ${PETSC_DIR}/include ${PETSC_DIR}/include/petsc/mpiuni)
@@ -93,33 +96,25 @@ if (CDMATH_WITH_PETSC OR PETSC_DIR)
     #  petsc_get_version ()
     #  set (CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, petsc-dev   (>= 3.4)") # This is not fully working yet. 
 
+    #  message ( STATUS "SLEPC found in /usr/lib/slepc/ and exists /usr/lib/slepc/lib/libslepc_real.so")
     #  set(SLEPC_DIR /usr/lib/slepc/)
     #  set(SLEPC_INCLUDES  ${SLEPC_DIR}/include )
     #  set(SLEPC_LIBRARIES ${SLEPC_DIR}/libslepc_real.so)
 
     #elseif ( IS_DIRECTORY "/usr/local/lib/python2.7/dist-packages/petsc") #Case ubuntu/debian system pip install
-    #  message ( STATUS "PETSC found in /usr/local/lib/python2.7/dist-packages/petsc" )
-    #  set(PETSC_DIR /usr/local/lib/python2.7/dist-packages/petsc)
-    #  set(PETSC_INCLUDES  ${PETSC_DIR}/include /usr/include/openmpi)
-    #  set(PETSC_LIBRARIES ${PETSC_DIR}/lib/libpetsc.so)
-    #  petsc_get_version ()
-    #  set(PETSC_VERSION "3.4") #value for Ubuntu 14.04 
-    #  set(PETSC_VERSION "3.6") #value for Ubuntu 16.04 
-    #  set(PETSC_VERSION "3.7") #value for Ubuntu 18.04 
 
-    else ( IS_DIRECTORY "/usr/include/petsc/" AND EXISTS "/usr/lib64/libpetsc.so" AND DEFINED ENV{SLEPC_DIR} )  # No petsc in system, do compile petsc along with slepc as an external package
-      message (STATUS "PETSC not found in the system, petsc 3.13.1 will be installed" )
+    else ( IS_DIRECTORY "/usr/include/petsc/" AND EXISTS "/usr/lib64/libpetsc.so" AND IS_DIRECTORY "/usr/include/slepc/" AND EXISTS "/usr/lib64/libslepc.so" )  # No petsc in system, do compile petsc along with slepc as an external package
+      message (STATUS "PETSC not found in the system, will be downloaded and compiled" )
       set(PETSC_SRC ${CDMATH_SOURCE_DIR}/pre_requis/PETSc)
-      set(PETSC_DIR ${CMAKE_INSTALL_PREFIX}/share/petsc-3.13.1) # Location of the final install 
+      set(PETSC_DIR ${CMAKE_INSTALL_PREFIX}/share/petsc_install) # Location of the final install 
       set(PETSC_INCLUDES  ${PETSC_DIR}/include/  ${PETSC_DIR}/include/petsc/mpiuni)
-      set(PETSC_LIBRARIES ${PETSC_DIR}/lib/libpetsc.so)
-      set(PETSC_VERSION "3.13.1")  
+      set(PETSC_LIBRARIES ${PETSC_DIR}/lib/libpetsc.so) 
 
       ExternalProject_Add (PETSc
-      URL               ${PETSC_SRC}/petsc-lite-3.13.1.tar.gz   
-      SOURCE_DIR        ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/petsc-3.13.1
+      URL               ${DOWNLOAD_PETSC}   
+      SOURCE_DIR        ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/petsc_src
       BUILD_IN_SOURCE   TRUE
-      CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=${PETSC_DIR} --with-debugging=0 --with-mpi=0 --download-f2cblaslapack=${PETSC_SRC}/f2cblaslapack-3.4.2.q4.tar.gz --with-fc=0 --download-slepc=${PETSC_SRC}/slepc-3.13.1.tar.gz --download-hdf5=${PETSC_SRC}/hdf5-1.10.3.tar.gz
+      CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=${PETSC_DIR} --with-debugging=0 --with-mpi=0 --download-f2cblaslapack=${PETSC_SRC}/f2cblaslapack-3.4.2.q4.tar.gz --with-fc=0 --download-slepc=${DOWNLOAD_SLEPC} --download-hdf5=${DOWNLOAD_HDF5}
       BUILD_COMMAND     make all
       TEST_COMMAND      make check
       INSTALL_COMMAND   make install
@@ -132,6 +127,10 @@ if (CDMATH_WITH_PETSC OR PETSC_DIR)
       LOG_INSTALL       TRUE           # Wrap install in script to log output
        )
 
+      petsc_get_version ()
+      string(REPLACE ";" ":"  PETSC_INCLUDES_PATH "${PETSC_INCLUDES}")# use colon instead of semicolon in environment file env_CDMATH.sh
+      message ( STATUS "PETSC found. Version is ${PETSC_VERSION_MAJOR}.${PETSC_VERSION_MINOR}.${PETSC_VERSION_SUBMINOR}" )
+
       #define slepc variables
       set(SLEPC_DIR ${PETSC_DIR}/${PETSC_ARCH})
       set(SLEPC_INCLUDES ${SLEPC_DIR}/include)
@@ -141,14 +140,14 @@ if (CDMATH_WITH_PETSC OR PETSC_DIR)
       #HDF5 to be found in petsc external packages
       set(HDF5_ROOT $ENV{PETSC_DIR}/$ENV{PETSC_ARCH})# define hint for hdf5 installation in petsc external packages
 
-    endif ( IS_DIRECTORY "/usr/include/petsc/" AND EXISTS "/usr/lib64/libpetsc.so" AND DEFINED ENV{SLEPC_DIR} )
+    endif ( IS_DIRECTORY "/usr/include/petsc/" AND EXISTS "/usr/lib64/libpetsc.so" AND IS_DIRECTORY "/usr/include/slepc/" AND EXISTS "/usr/lib64/libslepc.so"  )
   endif ( DEFINED ENV{PETSC_DIR} OR PETSC_DIR )
 
   if( ${PETSC_VERSION} VERSION_GREATER 3.5 )
     add_definitions(-DPETSC_VERSION_GREATER_3_5)
   endif( ${PETSC_VERSION} VERSION_GREATER 3.5 )
 
-endif( CDMATH_WITH_PETSC OR PETSC_DIR )
+endif( CDMATH_WITH_PETSC OR PETSC_DIR  OR DOWNLOAD_PETSC )
 
 #HDF5
 find_package (HDF5 REQUIRED)
