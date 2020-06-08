@@ -160,7 +160,7 @@ string(SUBSTRING "${HDF5_LIBRARIES}" 0 ${pos} HDF5_LIBRARY_DIR)
 
 set(MED_SRC ${CDMATH_SOURCE_DIR}/pre_requis/)
 set(MACHINE PCLINUX)
-set(MED3_DEFINITIONS "-D${MACHINE} -DMEDFILE_INSTALL_DOC=OFF")#Comment ne pas compiler la doc ?
+set(MEDFILE_DEFINITIONS "-D${MACHINE} -DMEDFILE_INSTALL_DOC=OFF")#Comment ne pas compiler la doc ?
 set(MED_INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/med-4.0.0_install) # Location of the final install
 
 include(ExternalProject)
@@ -181,7 +181,8 @@ ExternalProject_Add (MED
       LOG_INSTALL       TRUE           # Wrap install in script to log output
 )
 
-set (MEDFILE_INCLUDE_DIRS ${MED_INSTALL_DIR}/include)# Nécessaire pour le medloader et les sous-dossiers mesh, et IJKMesh
+set(MEDFILE_INCLUDE_DIRS ${MED_INSTALL_DIR}/include)# Nécessaire pour le medloader et les sous-dossiers mesh, et IJKMesh
+set(MEDFILE_C_LIBRARIES med medC)# Nécessaire pour le medloader
 
 add_library(med   SHARED IMPORTED)
 set_property(TARGET med PROPERTY IMPORTED_LOCATION ${MED_INSTALL_DIR}/lib/libmed.so)
