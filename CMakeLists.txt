@@ -7,6 +7,8 @@ project (CDMATH)
 set (CDMATH_VERSION_MAJOR 1)
 set (CDMATH_VERSION_MINOR 0)
 
+include(ExternalProject)#For PETSc, MED and MEDCoupling
+
 # Project options
 option (CDMATH_WITH_PETSC "Compile CDMATH with PETSc linking." OFF)
 option (CDMATH_WITH_DOCUMENTATION "Generate documentation with doxygen." OFF)
@@ -14,6 +16,7 @@ option (CDMATH_WITH_PYTHON "Compile Python interface for CDMATH." OFF)
 option (CDMATH_WITH_POSTPRO "Install postprocessing Python modules." OFF)
 option (CDMATH_WITH_PACKAGE "Generate RPM, Debian and tarball packages." OFF)
 option (CDMATH_WITH_TESTS "Compile unit testing." OFF)
+option (MEDFILE_ROOT_DIR "MED library path" OFF)
 
 # Base directories
 set (BASE_DIR ${CDMATH_SOURCE_DIR}/base)
@@ -110,8 +113,6 @@ if (CDMATH_WITH_PETSC)
       set(PETSC_LIBRARIES ${PETSC_DIR}/lib/libpetsc.so)
       set(PETSC_VERSION "3.13.1")  
 
-      include(ExternalProject)
-
       ExternalProject_Add (PETSc
       URL               ${PETSC_SRC}/petsc-lite-3.13.1.tar.gz   
       SOURCE_DIR        ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/petsc-3.13.1
@@ -154,40 +155,49 @@ add_library(hdf5   SHARED IMPORTED)
 set_property(TARGET hdf5 PROPERTY IMPORTED_LOCATION ${HDF5_ROOT}/lib/libhdf5.so)
 
 #MED
-message (STATUS "HDF5 home is ${HDF5_ROOT}")
-string(FIND "${HDF5_LIBRARIES}" "libhdf5.so" pos)
-string(SUBSTRING "${HDF5_LIBRARIES}" 0 ${pos} HDF5_LIBRARY_DIR)
+if( MEDFILE_ROOT_DIR OR ENV{MEDFILE_ROOT_DIR})
 
-set(MED_SRC ${CDMATH_SOURCE_DIR}/pre_requis/)
-set(MACHINE PCLINUX)
-set(MEDFILE_DEFINITIONS "-D${MACHINE} -DMEDFILE_INSTALL_DOC=OFF")#Comment ne pas compiler la doc ?
-set(MED_INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/med-4.0.0_install) # Location of the final install
+  if( NOT MEDFILE_ROOT_DIR )
+    set(MEDFILE_ROOT_DIR ENV{MEDFILE_ROOT_DIR} )
+  endif( NOT MEDFILE_ROOT_DIR )
 
-include(ExternalProject)
+  message (STATUS "Seeking MEDFile library in ${MEDFILE_ROOT_DIR}")
+  find_package (MEDFile REQUIRED)
 
-ExternalProject_Add (MED
-      URL               ${MED_SRC}/med-4.0.0.tar.gz  #location of med tarball
-      SOURCE_DIR        ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/med-4.0.0
-      BUILD_IN_SOURCE   TRUE
-      CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=${MED_INSTALL_DIR}  --with-hdf5=${HDF5_ROOT} --with-hdf5-include=${HDF5_INCLUDE_DIRS} --with-hdf5-lib=${HDF5_LIBRARY_DIR} --with-hdf5-bin=${HDF5_ROOT}/bin  --with-swig=yes 
-      BUILD_COMMAND     make
-      INSTALL_COMMAND   make install
-      INSTALL_DIR       ${MED_INSTALL_DIR}
-      LOG_DOWNLOAD      TRUE           # Wrap download in script to log output
-      LOG_UPDATE        TRUE           # Wrap update in script to log output
-      LOG_CONFIGURE     TRUE           # Wrap configure in script to log output
-      LOG_BUILD         TRUE           # Wrap build in script to log output
-      LOG_TEST          TRUE           # Wrap test in script to log output
-      LOG_INSTALL       TRUE           # Wrap install in script to log output
-)
-
-set(MEDFILE_INCLUDE_DIRS ${MED_INSTALL_DIR}/include)# Nécessaire pour le medloader et les sous-dossiers mesh, et IJKMesh
-set(MEDFILE_C_LIBRARIES med medC)# Nécessaire pour le medloader
+else( MEDFILE_ROOT_DIR)
+  message (STATUS "HDF5 home is ${HDF5_ROOT}")
+  string(FIND "${HDF5_LIBRARIES}" "libhdf5.so" pos)
+  string(SUBSTRING "${HDF5_LIBRARIES}" 0 ${pos} HDF5_LIBRARY_DIR)
+  
+  set(MED_SRC ${CDMATH_SOURCE_DIR}/pre_requis/)
+  set(MACHINE PCLINUX)
+  set(MEDFILE_DEFINITIONS "-D${MACHINE} -DMEDFILE_INSTALL_DOC=OFF")#Comment ne pas compiler la doc ?
+  set(MEDFILE_ROOT_DIR ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/med-4.0.0_install) # Location of the final install
+  
+  ExternalProject_Add (MED
+        URL               ${MED_SRC}/med-4.0.0.tar.gz  #location of med tarball
+        SOURCE_DIR        ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/med-4.0.0
+        BUILD_IN_SOURCE   TRUE
+        CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=${MEDFILE_ROOT_DIR}  --with-hdf5=${HDF5_ROOT} --with-hdf5-include=${HDF5_INCLUDE_DIRS} --with-hdf5-lib=${HDF5_LIBRARY_DIR} --with-hdf5-bin=${HDF5_ROOT}/bin  --with-swig=yes 
+        BUILD_COMMAND     make
+        INSTALL_COMMAND   make install
+        INSTALL_DIR       ${MEDFILE_ROOT_DIR}
+        LOG_DOWNLOAD      TRUE           # Wrap download in script to log output
+        LOG_UPDATE        TRUE           # Wrap update in script to log output
+        LOG_CONFIGURE     TRUE           # Wrap configure in script to log output
+        LOG_BUILD         TRUE           # Wrap build in script to log output
+        LOG_TEST          TRUE           # Wrap test in script to log output
+        LOG_INSTALL       TRUE           # Wrap install in script to log output
+  )
+  
+  set(MEDFILE_INCLUDE_DIRS ${MEDFILE_ROOT_DIR}/include)# Nécessaire pour le medloader et les sous-dossiers mesh, et IJKMesh
+  set(MEDFILE_C_LIBRARIES med medC)# Nécessaire pour le medloader
+endif( MEDFILE_ROOT_DIR)
 
 add_library(med   SHARED IMPORTED)
-set_property(TARGET med PROPERTY IMPORTED_LOCATION ${MED_INSTALL_DIR}/lib/libmed.so)
+set_property(TARGET med PROPERTY IMPORTED_LOCATION ${MEDFILE_ROOT_DIR}/lib/libmed.so)
 add_library(medC   SHARED IMPORTED)
-set_property(TARGET medC PROPERTY IMPORTED_LOCATION ${MED_INSTALL_DIR}/lib/libmedC.so)
+set_property(TARGET medC PROPERTY IMPORTED_LOCATION ${MEDFILE_ROOT_DIR}/lib/libmedC.so)
 
 #MEDCoupling
 set(MEDCOUPLING_SRC ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/medCoupling-9.4.0/) # location of sources after unzip
@@ -198,7 +208,7 @@ ExternalProject_Add (MEDCoupling
       SOURCE_DIR        ${MEDCOUPLING_SRC}
 #      PREFIX            ${MEDCOUPLING_SRC}/medCoupling-9.4.0
       BUILD_IN_SOURCE   TRUE
-      CMAKE_COMMAND cmake <SOURCE_DIR>/medCoupling-9.4.0 -DCMAKE_INSTALL_PREFIX=${MEDCOUPLING_INSTALL_DIR} -DCONFIGURATION_ROOT_DIR=<SOURCE_DIR>/configuration-9.4.0/ -DMEDFILE_ROOT_DIR=${MED_INSTALL_DIR} -DMEDCOUPLING_ENABLE_PARTITIONER=OFF -DMEDCOUPLING_PARTITIONER_METIS=OFF -DMEDCOUPLING_PARTITIONER_SCOTCH=OFF -DMEDCOUPLING_ENABLE_RENUMBER=OFF -DMEDCOUPLING_BUILD_DOC=OFF -DHDF5_ROOT_DIR=${HDF5_ROOT}
+      CMAKE_COMMAND cmake <SOURCE_DIR>/medCoupling-9.4.0 -DCMAKE_INSTALL_PREFIX=${MEDCOUPLING_INSTALL_DIR} -DCONFIGURATION_ROOT_DIR=<SOURCE_DIR>/configuration-9.4.0/ -DMEDFILE_ROOT_DIR=${MEDFILE_ROOT_DIR} -DMEDCOUPLING_ENABLE_PARTITIONER=OFF -DMEDCOUPLING_PARTITIONER_METIS=OFF -DMEDCOUPLING_PARTITIONER_SCOTCH=OFF -DMEDCOUPLING_ENABLE_RENUMBER=OFF -DMEDCOUPLING_BUILD_DOC=OFF -DHDF5_ROOT_DIR=${HDF5_ROOT}
       BUILD_COMMAND     make
       INSTALL_COMMAND   make install
       INSTALL_DIR       ${MEDCOUPLING_INSTALL_DIR}
@@ -217,10 +227,13 @@ set_property(TARGET medloader PROPERTY IMPORTED_LOCATION ${MEDCOUPLING_INSTALL_D
 add_library(medcoupling SHARED IMPORTED ${MEDCOUPLING_INSTALL_DIR}/lib/libmedcoupling.so)
 set_property(TARGET medcoupling PROPERTY IMPORTED_LOCATION ${MEDCOUPLING_INSTALL_DIR}/lib/libmedcoupling.so)
 
-ExternalProject_Add_StepDependencies( MEDCoupling build MED )#MED doit être compilé avant MEDCoupling
-if(DEFINED PETSc)
-  ExternalProject_Add_StepDependencies( MED build PETSc )#PETSc doit être compilé avant MED
-endif()
+
+if(DEFINED MED)
+  ExternalProject_Add_StepDependencies( MEDCoupling build MED )#MED doit être compilé avant MEDCoupling
+  if(DEFINED PETSc)
+    ExternalProject_Add_StepDependencies( MED build PETSc )#PETSc doit être compilé avant MED
+  endif(DEFINED PETSc)
+endif(DEFINED MED)
 
 # Paraview
 if (CDMATH_WITH_PYTHON AND CDMATH_WITH_POSTPRO)
