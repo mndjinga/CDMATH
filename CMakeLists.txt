@@ -114,7 +114,7 @@ if (CDMATH_WITH_PETSC OR PETSC_DIR OR DOWNLOAD_PETSC)
       URL               ${DOWNLOAD_PETSC}   
       SOURCE_DIR        ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/PETSc
       BUILD_IN_SOURCE   TRUE
-      CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=${PETSC_DIR} --with-debugging=0 --with-mpi=0 --download-f2cblaslapack=${PETSC_SRC}/f2cblaslapack-3.4.2.q4.tar.gz --with-fc=0 --download-slepc=${DOWNLOAD_SLEPC} --download-hdf5=${DOWNLOAD_HDF5}
+      CONFIGURE_COMMAND ./configure --prefix=${PETSC_DIR} --with-debugging=0 --with-mpi=0 --download-f2cblaslapack=${PETSC_SRC}/f2cblaslapack-3.4.2.q4.tar.gz --with-fc=0 --download-slepc=${DOWNLOAD_SLEPC} --download-hdf5=${DOWNLOAD_HDF5}
       BUILD_COMMAND     make all
       TEST_COMMAND      make check
       INSTALL_COMMAND   make install
@@ -176,7 +176,7 @@ else( MEDFILE_ROOT_DIR OR ENV{MEDFILE_ROOT_DIR})
         URL               ${DOWNLOAD_MED}  #location of med tarball
         SOURCE_DIR        ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/
         BUILD_IN_SOURCE   TRUE
-        CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=${MEDFILE_ROOT_DIR}  --with-hdf5=${HDF5_ROOT} --with-hdf5-include=${HDF5_INCLUDE_DIRS} --with-hdf5-lib=${HDF5_LIBRARY_DIR} --with-hdf5-bin=${HDF5_ROOT}/bin  --with-swig=yes 
+        CONFIGURE_COMMAND ./configure --prefix=${MEDFILE_ROOT_DIR}  --with-hdf5=${HDF5_ROOT} --with-hdf5-include=${HDF5_INCLUDE_DIRS} --with-hdf5-lib=${HDF5_LIBRARY_DIR} --with-hdf5-bin=${HDF5_ROOT}/bin  --with-swig=yes 
         BUILD_COMMAND     make
         INSTALL_COMMAND   make install
         INSTALL_DIR       ${MEDFILE_ROOT_DIR}
@@ -223,7 +223,7 @@ else( MEDCOUPLING_ROOT_DIR OR ENV{MEDCOUPLING_ROOT_DIR})
         SOURCE_DIR        ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/
   #      PREFIX            ${MEDCOUPLING_SRC}/medCoupling-9.4.0
         BUILD_IN_SOURCE   TRUE
-        CMAKE_COMMAND cmake <SOURCE_DIR>/medCoupling-9.4.0 -DCMAKE_INSTALL_PREFIX=${MEDCOUPLING_ROOT_DIR} -DCONFIGURATION_ROOT_DIR=<SOURCE_DIR>/configuration-9.4.0/ -DMEDFILE_ROOT_DIR=${MEDFILE_ROOT_DIR} -DMEDCOUPLING_ENABLE_PARTITIONER=OFF -DMEDCOUPLING_PARTITIONER_METIS=OFF -DMEDCOUPLING_PARTITIONER_SCOTCH=OFF -DMEDCOUPLING_ENABLE_RENUMBER=OFF -DMEDCOUPLING_BUILD_DOC=OFF -DHDF5_ROOT_DIR=${HDF5_ROOT}
+        CMAKE_COMMAND cmake ./medCoupling-9.4.0 -DCMAKE_INSTALL_PREFIX=${MEDCOUPLING_ROOT_DIR} -DCONFIGURATION_ROOT_DIR=./configuration-9.4.0/ -DMEDFILE_ROOT_DIR=${MEDFILE_ROOT_DIR} -DMEDCOUPLING_ENABLE_PARTITIONER=OFF -DMEDCOUPLING_PARTITIONER_METIS=OFF -DMEDCOUPLING_PARTITIONER_SCOTCH=OFF -DMEDCOUPLING_ENABLE_RENUMBER=OFF -DMEDCOUPLING_BUILD_DOC=OFF -DHDF5_ROOT_DIR=${HDF5_ROOT}
         BUILD_COMMAND     make
         INSTALL_COMMAND   make install
         INSTALL_DIR       ${MEDCOUPLING_ROOT_DIR}
@@ -255,7 +255,7 @@ if(DEFINED MED AND DEFINED MEDCoupling)
   ExternalProject_Add_StepDependencies( MEDCoupling build MED )#MED doit être compilé avant MEDCoupling
 endif(DEFINED MED AND DEFINED MEDCoupling)
  
-# Paraview
+# Paraview variables for env_CDMATH.sh
 if (CDMATH_WITH_PYTHON AND CDMATH_WITH_POSTPRO)
   set (PV_LIB_DIR /usr/lib/python2.7/dist-packages/:/usr/lib64/paraview/)
   set (PV_PYTHON_DIR /usr/lib/python2.7/dist-packages:/usr/lib64/paraview/site-packages/:/usr/lib64/paraview/site-packages/paraview/:/usr/lib64/paraview/site-packages/vtk/:/usr/lib64/paraview/python2.7/site-packages/:/usr/lib64/paraview/python2.7/site-packages/paraview/:/usr/lib64/paraview/python2.7/site-packages/vtkmodules:/usr/lib64/paraview/python3.7/site-packages/:/usr/lib64/paraview/python3.7/site-packages/paraview/:/usr/lib64/paraview/python3.7/site-packages/vtkmodules)
