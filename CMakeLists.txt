@@ -112,7 +112,7 @@ if (CDMATH_WITH_PETSC OR PETSC_DIR OR DOWNLOAD_PETSC)
 
       ExternalProject_Add (PETSc
       URL               ${DOWNLOAD_PETSC}   
-      SOURCE_DIR        ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/petsc_src
+      SOURCE_DIR        ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/PETSc
       BUILD_IN_SOURCE   TRUE
       CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=${PETSC_DIR} --with-debugging=0 --with-mpi=0 --download-f2cblaslapack=${PETSC_SRC}/f2cblaslapack-3.4.2.q4.tar.gz --with-fc=0 --download-slepc=${DOWNLOAD_SLEPC} --download-hdf5=${DOWNLOAD_HDF5}
       BUILD_COMMAND     make all
@@ -175,7 +175,7 @@ else( MEDFILE_ROOT_DIR OR ENV{MEDFILE_ROOT_DIR})
   
   ExternalProject_Add (MED
         URL               ${DOWNLOAD_MED}  #location of med tarball
-        SOURCE_DIR        ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/med_src
+        SOURCE_DIR        ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/
         BUILD_IN_SOURCE   TRUE
         CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=${MEDFILE_ROOT_DIR}  --with-hdf5=${HDF5_ROOT} --with-hdf5-include=${HDF5_INCLUDE_DIRS} --with-hdf5-lib=${HDF5_LIBRARY_DIR} --with-hdf5-bin=${HDF5_ROOT}/bin  --with-swig=yes 
         BUILD_COMMAND     make
