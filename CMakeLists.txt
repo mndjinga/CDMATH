@@ -180,8 +180,8 @@ else( MEDFILE_ROOT_DIR OR ENV{MEDFILE_ROOT_DIR})
   #extraction of the tarball archive name
   string(LENGTH "${DOWNLOAD_MED}" tarball_url_length)#length of the name of the tarball
   string(FIND "${DOWNLOAD_MED}" "/" start_tarball_name REVERSE )# last occurence of "/"
-  MATH(EXPR start_tarball_name '${start_tarball_name}+1')#start after the occurence of "/"
-  MATH(EXPR tarball_name_length '${tarball_url_length}-${start_tarball_name}-7')#name ends before .tar.gz that counts for 7 characters
+  MATH(EXPR start_tarball_name "${start_tarball_name}+1")#start after the occurence of "/"
+  MATH(EXPR tarball_name_length "${tarball_url_length}-${start_tarball_name}-7")#name ends before .tar.gz that counts for 7 characters
   string(SUBSTRING ${DOWNLOAD_MED} ${start_tarball_name} ${tarball_name_length} MED_TARBALL_NAME)
 
   message(STATUS "MED tarball name is ${MED_TARBALL_NAME}")
@@ -236,7 +236,7 @@ else( MEDCOUPLING_ROOT_DIR OR ENV{MEDCOUPLING_ROOT_DIR})
   #extraction of the tarball archive name
   string(LENGTH ${DOWNLOAD_MEDCOUPLING} tarball_url_length)#length of the tarball
   string(FIND ${DOWNLOAD_MEDCOUPLING} "/" start_tarball_name REVERSE )# last occurence of "/"
-  MATH(EXPR start_tarball_name '${start_tarball_name}+1')#start after the occurence of "/"
+  MATH(EXPR start_tarball_name "${start_tarball_name}+1")#start after the occurence of "/"
   MATH(EXPR tarball_name_length "${tarball_url_length}-${start_tarball_name}-7")#name ends before .tar.gz that counts for 7 characters
   string(SUBSTRING ${DOWNLOAD_MEDCOUPLING} ${start_tarball_name} ${tarball_name_length} MEDCOUPLING_TARBALL_NAME)
 
