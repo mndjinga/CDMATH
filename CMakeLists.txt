@@ -231,7 +231,7 @@ if( MEDCOUPLING_ROOT_DIR OR DEFINED ENV{MEDCOUPLING_ROOT_DIR})
     message (STATUS "MEDCoupling library found in ${MEDCOUPLING_ROOT_DIR}")
   endif( NOT EXISTS ${MEDCOUPLING_ROOT_DIR}/lib/libmedloader.so OR NOT EXISTS ${MEDCOUPLING_ROOT_DIR}/lib/libmedcoupling.so OR NOT EXISTS ${MEDCOUPLING_ROOT_DIR}/include/MEDCoupling.hxx)
 
-else( MEDCOUPLING_ROOT_DIR OR ENV{MEDCOUPLING_ROOT_DIR})
+else( MEDCOUPLING_ROOT_DIR OR DEFINED ENV{MEDCOUPLING_ROOT_DIR})
 
   set(MEDCOUPLING_ROOT_DIR ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/medCoupling_install) # Location of the final install
 
@@ -262,7 +262,7 @@ else( MEDCOUPLING_ROOT_DIR OR ENV{MEDCOUPLING_ROOT_DIR})
         LOG_TEST          TRUE           # Wrap test in script to log output
         LOG_INSTALL       TRUE           # Wrap install in script to log output
   )
-endif( MEDCOUPLING_ROOT_DIR OR ENV{MEDCOUPLING_ROOT_DIR} )
+endif( MEDCOUPLING_ROOT_DIR OR DEFINED ENV{MEDCOUPLING_ROOT_DIR} )
 
 set(MEDCOUPLING_INCLUDE_DIR  ${MEDCOUPLING_ROOT_DIR}/include)
 
