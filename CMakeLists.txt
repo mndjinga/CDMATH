@@ -17,7 +17,7 @@ option (CDMATH_WITH_POSTPRO "Install postprocessing Python modules." OFF)
 option (CDMATH_WITH_PACKAGE "Generate RPM, Debian and tarball packages." OFF)
 option (CDMATH_WITH_TESTS "Compile unit testing." OFF)
 set (PETSC_DIR            OFF CACHE STRING "PETSc library path" )
-set (HDF5_ROOT_DIR        OFF CACHE STRING "HDF5 library path" )
+set (HDF5_ROOT        OFF CACHE STRING "HDF5 library path" )
 set (MEDFILE_ROOT_DIR     OFF CACHE STRING "MED library path" )
 set (MEDCOUPLING_ROOT_DIR OFF CACHE STRING "MEDCoupling library path" )
 set (DOWNLOAD_MED         ${CDMATH_SOURCE_DIR}/pre_requis/med-4.0.0.tar.gz               CACHE STRING "MED tarball path/url")
@@ -64,7 +64,9 @@ if (CDMATH_WITH_PETSC OR PETSC_DIR OR DOWNLOAD_PETSC OR DEFINED ENV{PETSC_DIR} )
     endif()
 
     #HDF5 to be found in petsc external packages
-    set(HDF5_ROOT $ENV{PETSC_DIR}/$ENV{PETSC_ARCH})# define hint for hdf5 installation in petsc external packages
+    if( NOT HDF5_ROOT AND NOT DEFINED ENV{HDF5_ROOT} )
+      set(HDF5_ROOT $ENV{PETSC_DIR}/$ENV{PETSC_ARCH})# define hint for hdf5 installation in petsc external packages
+    endif( NOT HDF5_ROOT AND NOT DEFINED ENV{HDF5_ROOT} )
 
   else ( DEFINED ENV{PETSC_DIR} OR PETSC_DIR )
     message ( STATUS "PETSC_DIR not set, searching petsc in the system" )
@@ -142,7 +144,9 @@ if (CDMATH_WITH_PETSC OR PETSC_DIR OR DOWNLOAD_PETSC OR DEFINED ENV{PETSC_DIR} )
       set(SLEPC_LIBRARIES ${SLEPC_DIR}/lib/libslepc.so)
 
       #HDF5 to be found in petsc external packages
-      set(HDF5_ROOT $ENV{PETSC_DIR}/$ENV{PETSC_ARCH})# define hint for hdf5 installation in petsc external packages
+      if( NOT HDF5_ROOT AND NOT DEFINED ENV{HDF5_ROOT} )#hdf5 is not defined in the environment
+        set(HDF5_ROOT $ENV{PETSC_DIR}/$ENV{PETSC_ARCH})# define hint for hdf5 installation in petsc external packages
+      endif( NOT HDF5_ROOT AND NOT DEFINED ENV{HDF5_ROOT} )
 
     endif ( IS_DIRECTORY "/usr/include/petsc/" AND EXISTS "/usr/lib64/libpetsc.so" AND IS_DIRECTORY "/usr/include/slepc/" AND EXISTS "/usr/lib64/libslepc.so"  )
   endif ( DEFINED ENV{PETSC_DIR} OR PETSC_DIR )
@@ -154,6 +158,9 @@ if (CDMATH_WITH_PETSC OR PETSC_DIR OR DOWNLOAD_PETSC OR DEFINED ENV{PETSC_DIR} )
 endif( CDMATH_WITH_PETSC OR PETSC_DIR  OR DOWNLOAD_PETSC OR DEFINED ENV{PETSC_DIR} )
 
 #HDF5
+if ( NOT HDF5_ROOT AND DEFINED ENV{HDF5_ROOT} )#hdf5 is defined in the environment
+  set(HDF5_ROOT $ENV{HDF5_ROOT})
+endif( NOT HDF5_ROOT AND DEFINED ENV{HDF5_ROOT} )
 find_package (HDF5 REQUIRED)
 add_library(hdf5   SHARED IMPORTED)
 set_property(TARGET hdf5 PROPERTY IMPORTED_LOCATION ${HDF5_ROOT}/lib/libhdf5.so)
