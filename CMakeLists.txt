@@ -254,6 +254,8 @@ else( MEDCOUPLING_ROOT_DIR OR DEFINED ENV{MEDCOUPLING_ROOT_DIR})
   message(STATUS "MEDCOUPLING tarball name is ${MEDCOUPLING_TARBALL_NAME}")
   message(STATUS "MEDCOUPLING version is ${MEDCOUPLING_VERSION_NAME}")
 
+  SET(ENV{HDF5_ROOT} ${HDF5_ROOT})#MEDCoupling install process seems to require an environment variable
+
   ExternalProject_Add (MEDCoupling
         URL               ${DOWNLOAD_MEDCOUPLING}  #location of medcoupling tarball
         SOURCE_DIR        ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/${MEDCOUPLING_TARBALL_NAME}
