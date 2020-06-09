@@ -16,10 +16,10 @@ option (CDMATH_WITH_PYTHON "Compile Python interface for CDMATH." OFF)
 option (CDMATH_WITH_POSTPRO "Install postprocessing Python modules." OFF)
 option (CDMATH_WITH_PACKAGE "Generate RPM, Debian and tarball packages." OFF)
 option (CDMATH_WITH_TESTS "Compile unit testing." OFF)
-option (PETSC_DIR "PETSc library path" OFF)
-option (HDF5_ROOT_DIR "HDF5 library path" OFF)
-option (MEDFILE_ROOT_DIR "MED library path" OFF)
-option (MEDCOUPLING_ROOT_DIR "MEDCoupling library path" OFF)
+set (PETSC_DIR            OFF CACHE STRING "PETSc library path" )
+set (HDF5_ROOT_DIR        OFF CACHE STRING "HDF5 library path" )
+set (MEDFILE_ROOT_DIR     OFF CACHE STRING "MED library path" )
+set (MEDCOUPLING_ROOT_DIR OFF CACHE STRING "MEDCoupling library path" )
 set (DOWNLOAD_MED         ${CDMATH_SOURCE_DIR}/pre_requis/med-4.0.0.tar.gz               CACHE STRING "MED tarball path/url")
 set (DOWNLOAD_MEDCOUPLING ${CDMATH_SOURCE_DIR}/pre_requis/medCoupling-9.4.0.tar.gz       CACHE STRING "MEDCoupling tarball path/url" )
 set (DOWNLOAD_PETSC       ${CDMATH_SOURCE_DIR}/pre_requis/PETSc/petsc-lite-3.13.1.tar.gz CACHE STRING "PETSc tarball path/url" )
@@ -168,7 +168,7 @@ if( MEDFILE_ROOT_DIR OR DEFINED ENV{MEDFILE_ROOT_DIR})
   message (STATUS "Seeking MEDFile library in ${MEDFILE_ROOT_DIR}")
   find_package (MEDFile REQUIRED)
 
-else( MEDFILE_ROOT_DIR OR ENV{MEDFILE_ROOT_DIR})
+else( MEDFILE_ROOT_DIR OR DEFINED ENV{MEDFILE_ROOT_DIR})
   message (STATUS "HDF5 home is ${HDF5_ROOT}")
   string(FIND "${HDF5_LIBRARIES}" "libhdf5.so" pos)
   string(SUBSTRING "${HDF5_LIBRARIES}" 0 ${pos} HDF5_LIBRARY_DIR)
@@ -205,7 +205,7 @@ else( MEDFILE_ROOT_DIR OR ENV{MEDFILE_ROOT_DIR})
   
   set(MEDFILE_INCLUDE_DIRS ${MEDFILE_ROOT_DIR}/include)# Nécessaire pour le medloader et les sous-dossiers mesh, et IJKMesh
   set(MEDFILE_C_LIBRARIES med medC)# Nécessaire pour le medloader
-endif( MEDFILE_ROOT_DIR OR ENV{MEDFILE_ROOT_DIR})
+endif( MEDFILE_ROOT_DIR OR DEFINED ENV{MEDFILE_ROOT_DIR})
 
 #For the environment file
 set(MEDFILE_C_LIBRARIES_PATH ${MEDFILE_ROOT_DIR}/lib/libmed.so ${MEDFILE_ROOT_DIR}/lib/libmedC.so)
