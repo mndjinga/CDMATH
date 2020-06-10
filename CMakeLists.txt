@@ -142,9 +142,16 @@ if (CDMATH_WITH_PETSC OR PETSC_DIR OR DOWNLOAD_PETSC OR DEFINED ENV{PETSC_DIR} )
       set(PETSC_INCLUDES  ${PETSC_DIR}/include/  ${PETSC_DIR}/include/petsc/mpiuni)
       set(PETSC_LIBRARIES ${PETSC_DIR}/lib/libpetsc.so) 
 
+      #extract tarball name
+      string(LENGTH ${DOWNLOAD_PETSC} tarball_url_length)#length of the tarball
+      string(FIND   ${DOWNLOAD_PETSC} "/" start_tarball_name REVERSE )# last occurence of "/"
+      MATH(EXPR start_tarball_name "${start_tarball_name}+1")#start after the occurence of "/"
+      MATH(EXPR tarball_name_length "${tarball_url_length}-${start_tarball_name}-7")#name ends before .tar.gz that counts for 7 characters
+      string(SUBSTRING ${DOWNLOAD_PETSC} ${start_tarball_name} ${tarball_name_length} PETSC_TARBALL_NAME)
+
       ExternalProject_Add (PETSc
       URL               ${DOWNLOAD_PETSC}   
-      SOURCE_DIR        ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/PETSc
+      SOURCE_DIR        ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/${MED_TARBALL_NAME}
       BUILD_IN_SOURCE   TRUE
       CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=${PETSC_DIR} --with-debugging=0 --with-mpi=0 --download-f2cblaslapack=${DOWNLOAD_F2CBLASLAPACK} --with-fc=0 --download-slepc=${DOWNLOAD_SLEPC} --download-hdf5=${DOWNLOAD_HDF5}
       BUILD_COMMAND     make all
@@ -166,11 +173,6 @@ if (CDMATH_WITH_PETSC OR PETSC_DIR OR DOWNLOAD_PETSC OR DEFINED ENV{PETSC_DIR} )
       message( STATUS "PETSc, SLEPc and HDF5 will be installed at ${PETSC_DIR}/${PETSC_ARCH}")
 
       #get petsc version
-      string(LENGTH ${DOWNLOAD_PETSC} tarball_url_length)#length of the tarball
-      string(FIND   ${DOWNLOAD_PETSC} "/" start_tarball_name REVERSE )# last occurence of "/"
-      MATH(EXPR start_tarball_name "${start_tarball_name}+1")#start after the occurence of "/"
-      MATH(EXPR tarball_name_length "${tarball_url_length}-${start_tarball_name}-7")#name ends before .tar.gz that counts for 7 characters
-      string(SUBSTRING ${DOWNLOAD_PETSC} ${start_tarball_name} ${tarball_name_length} PETSC_TARBALL_NAME)
       string(SUBSTRING ${PETSC_TARBALL_NAME} 6 ${tarball_name_length} PETSC_VERSION)
 
       #define slepc variables
