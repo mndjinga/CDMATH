@@ -17,14 +17,15 @@ option (CDMATH_WITH_POSTPRO "Install postprocessing Python modules." OFF)
 option (CDMATH_WITH_PACKAGE "Generate RPM, Debian and tarball packages." OFF)
 option (CDMATH_WITH_TESTS "Compile unit testing." OFF)
 set (PETSC_DIR            OFF CACHE STRING "PETSc library path" )
-set (HDF5_ROOT        OFF CACHE STRING "HDF5 library path" )#For the compilation of MED with a specific version
+set (SLEPC_DIR            OFF CACHE STRING "SLEPc library path" )
+set (HDF5_ROOT            OFF CACHE STRING "HDF5 library path" )#For the compilation of MED with a specific version of HDF5
 set (MEDFILE_ROOT_DIR     OFF CACHE STRING "MED library path" )
 set (MEDCOUPLING_ROOT_DIR OFF CACHE STRING "MEDCoupling library path" )
+set (DOWNLOAD_PETSC       ${CDMATH_SOURCE_DIR}/pre_requis/PETSc/petsc-lite-3.13.1.tar.gz CACHE STRING "PETSc tarball path/url" )
+set (DOWNLOAD_SLEPC       ${CDMATH_SOURCE_DIR}/pre_requis/PETSc/slepc-3.13.1.tar.gz      CACHE STRING "SLEPC tarball path/url" )
+set (DOWNLOAD_HDF5        ${CDMATH_SOURCE_DIR}/pre_requis/PETSc/hdf5-1.10.3.tar.gz       CACHE STRING "HDF5 tarball path/url" )
 set (DOWNLOAD_MED         ${CDMATH_SOURCE_DIR}/pre_requis/med-4.0.0.tar.gz               CACHE STRING "MED tarball path/url")
 set (DOWNLOAD_MEDCOUPLING ${CDMATH_SOURCE_DIR}/pre_requis/medCoupling-9.4.0.tar.gz       CACHE STRING "MEDCoupling tarball path/url" )
-set (DOWNLOAD_PETSC       ${CDMATH_SOURCE_DIR}/pre_requis/PETSc/petsc-lite-3.13.1.tar.gz CACHE STRING "PETSc tarball path/url" )
-set (DOWNLOAD_HDF5        ${CDMATH_SOURCE_DIR}/pre_requis/PETSc/hdf5-1.10.3.tar.gz       CACHE STRING "HDF5 tarball path/url" )
-set (DOWNLOAD_SLEPC       ${CDMATH_SOURCE_DIR}/pre_requis/PETSc/slepc-3.13.1.tar.gz      CACHE STRING "SLEPC tarball path/url" )
 
 
 # Base directories
@@ -33,7 +34,6 @@ set (MESH_DIR ${CDMATH_SOURCE_DIR}/mesh)
 set (LINEARSOLVER_DIR ${CDMATH_SOURCE_DIR}/linearsolver)
 set (CDMATH_SWIG_DIR ${CDMATH_SOURCE_DIR}/swig)
 set (CDMATH_POSTPRO_DIR ${CDMATH_SOURCE_DIR}/postprocessing)
-set (PRE_REQUIS_DIR ${CDMATH_SOURCE_DIR}/pre_requis)
 
 set (TESTS_DIR ${CDMATH_SOURCE_DIR}/tests)
 list (APPEND CMAKE_MODULE_PATH "${CDMATH_SOURCE_DIR}/cmake_files")
@@ -50,28 +50,30 @@ if (CDMATH_WITH_PETSC OR PETSC_DIR OR DOWNLOAD_PETSC OR DEFINED ENV{PETSC_DIR} )
     find_package (PETSc 3.4 REQUIRED)
     petsc_get_version ()
     string(REPLACE ";" ":"  PETSC_INCLUDES_PATH "${PETSC_INCLUDES}")# use colon instead of semicolon in environment file env_CDMATH.sh
-    message ( STATUS "PETSC found. Version is ${PETSC_VERSION_MAJOR}.${PETSC_VERSION_MINOR}.${PETSC_VERSION_SUBMINOR}" )
+    message ( STATUS "PETSc found. Version is ${PETSC_VERSION_MAJOR}.${PETSC_VERSION_MINOR}.${PETSC_VERSION_SUBMINOR}" )
 
     #Define and search slepc variables
-    set(SLEPC_DIR ${PETSC_DIR}/${PETSC_ARCH})
+    if   ( NOT SLEPC_DIR )
+      if   ( DEFINED ENV{SLEPC_DIR} )
+        set(SLEPC_DIR $ENV{SLEPC_DIR})
+      else ( DEFINED ENV{SLEPC_DIR} )
+        set(SLEPC_DIR ${PETSC_DIR}/${PETSC_ARCH})
+      endif( DEFINED ENV{SLEPC_DIR} )
+    endif( NOT SLEPC_DIR)
+
     message ( STATUS "Checking variable SLEPC_DIR" )
     if ( IS_DIRECTORY ${SLEPC_DIR}/include AND EXISTS ${SLEPC_DIR}/lib/libslepc.so)
       set(SLEPC_INCLUDES ${SLEPC_DIR}/include)
       set(SLEPC_LIBRARIES ${SLEPC_DIR}/lib/libslepc.so)
-      message( STATUS "SLEPC found at ${SLEPC_DIR}" )
+      message( STATUS "SLEPc found at ${SLEPC_DIR}" )
     else()
-      message( FATAL_ERROR "SLEPC not found at ${SLEPC_DIR}" )
+      message( FATAL_ERROR "SLEPc not found at ${SLEPC_DIR}" )
     endif()
 
-    #HDF5 to be found in petsc external packages
-    if( NOT HDF5_ROOT AND NOT DEFINED ENV{HDF5_ROOT} )#hdf5 is not defined in the environment
-      set(HDF5_ROOT $ENV{PETSC_DIR}/$ENV{PETSC_ARCH})# define hint for hdf5/med installation in petsc external packages
-    endif( NOT HDF5_ROOT AND NOT DEFINED ENV{HDF5_ROOT} )
-
   else ( DEFINED ENV{PETSC_DIR} OR PETSC_DIR )
-    message ( STATUS "PETSC_DIR not set, searching petsc in the system" )
+    message ( STATUS "PETSC_DIR not set, searching petsc and SLEPC in the system" )
 
-    if ( IS_DIRECTORY "/usr/include/petsc/" AND EXISTS "/usr/lib64/libpetsc.so" AND IS_DIRECTORY "/usr/include/slepc/" AND EXISTS "/usr/lib64/libslepc.so" )  #Case fedora/redhat system install
+    if ( IS_DIRECTORY "/usr/include/petsc/" AND EXISTS "/usr/lib64/libpetsc.so" )  #Case fedora/redhat system install
       message ( STATUS "PETSC includes found in /usr/include/petsc/" )
       message ( STATUS "PETSC library found in /usr/lib64" )
       set(PETSC_DIR /usr/)
@@ -82,34 +84,52 @@ if (CDMATH_WITH_PETSC OR PETSC_DIR OR DOWNLOAD_PETSC OR DEFINED ENV{PETSC_DIR} )
       petsc_get_version ()
       set (CPACK_RPM_PACKAGE_REQUIRES   "${CPACK_RPM_PACKAGE_REQUIRES}, petsc-devel (>= 3.4)") # This is not fully working yet. 
 
-      message( STATUS "SLEPC includes found in /usr/include/slepc/" )
-      message( STATUS "SLEPC library found in /usr/lib64/slepc/" )
-      set(SLEPC_DIR /usr/)
-      set(SLEPC_INCLUDES ${SLEPC_DIR}/include)
-      set(SLEPC_LIBRARIES ${SLEPC_DIR}/lib/libslepc.so)
+      #Define and search slepc variables
+      if   ( IS_DIRECTORY "/usr/include/slepc/" AND EXISTS "/usr/lib64/libslepc.so" )
+        message( STATUS "SLEPc includes found in /usr/include/slepc/" )
+        message( STATUS "SLEPc library found in /usr/lib64/slepc/" )
+        set(SLEPC_DIR /usr/)
+        set(SLEPC_INCLUDES ${SLEPC_DIR}/include)
+        set(SLEPC_LIBRARIES ${SLEPC_DIR}/lib/libslepc.so)
+        set (CPACK_RPM_PACKAGE_REQUIRES   "${CPACK_RPM_PACKAGE_REQUIRES}, slepc-devel (>= 3.4)") # This is not fully working yet. 
+      else ( IS_DIRECTORY "/usr/include/slepc/" AND EXISTS "/usr/lib64/libslepc.so" )
+        message( FATAL_ERROR "SLEPc not found in the system" )
+      endif( IS_DIRECTORY "/usr/include/slepc/" AND EXISTS "/usr/lib64/libslepc.so" )
 
       #HDF5 to be found in the system
-      set (CPACK_DEBIAN_PACKAGE_DEPENDS "libhdf5-dev")
-      set (CPACK_RPM_PACKAGE_REQUIRES "hdf5-devel")
+      if   ( NOT HDF5_ROOT AND NOT DEFINED ENV{HDF5_ROOT} )#hdf5 is not defined in the environment
+        set(HDF5_ROOT "/")
+        set(CPACK_DEBIAN_PACKAGE_DEPENDS "libhdf5-dev")
+        set(CPACK_RPM_PACKAGE_REQUIRES "hdf5-devel")
+      endif( NOT HDF5_ROOT AND NOT DEFINED ENV{HDF5_ROOT} )
 
-    #elseif ( IS_DIRECTORY "/usr/lib/petsc/" AND EXISTS "/usr/lib/petsc/lib/libpetsc_real.so" AND IS_DIRECTORY "/usr/lib/slepc/" AND EXISTS "/usr/lib/slepc/lib/libslepc_real.so") #Case ubuntu/debian system install
-    #  message ( STATUS "PETSC found in /usr/lib/petsc/ and exists /usr/lib/petsc/lib/libpetsc_real.so")
+
+    #elseif ( IS_DIRECTORY "/usr/lib/petsc/include" AND EXISTS "/usr/lib/petsc/lib/libpetsc_real.so" ) #Case ubuntu/debian system install
+    #  message ( STATUS "PETSc includes found in /usr/lib/petsc/include")
+    #  message ( STATUS "PETSc library  found in /usr/lib/petsc/lib/libpetsc_real.so")
     #  set(PETSC_DIR /usr/lib/petsc/)
     #  set(PETSC_INCLUDES  ${PETSC_DIR}/include ${PETSC_DIR}/include/petsc/mpiuni)
-    #  set(PETSC_LIBRARIES ${PETSC_DIR}/libpetsc_real.so)
+    #  set(PETSC_LIBRARIES ${PETSC_DIR}/lib/libpetsc_real.so)
 
     #  find_package (PETSc 3.4 REQUIRED)
     #  petsc_get_version ()
     #  set (CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, petsc-dev   (>= 3.4)") # This is not fully working yet. 
 
-    #  message ( STATUS "SLEPC found in /usr/lib/slepc/ and exists /usr/lib/slepc/lib/libslepc_real.so")
-    #  set(SLEPC_DIR /usr/lib/slepc/)
-    #  set(SLEPC_INCLUDES  ${SLEPC_DIR}/include )
-    #  set(SLEPC_LIBRARIES ${SLEPC_DIR}/libslepc_real.so)
+    #  Define and search slepc variables
+    #  if   ( IS_DIRECTORY "/usr/lib/slepc/include" AND EXISTS "/usr/lib/slepc/lib/libslepc_real.so" )
+    #    message( STATUS "SLEPc includes found in /usr/lib/slepc/include" )
+    #    message( STATUS "SLEPc library  found in /usr/lib/slepc/lib/libslepc_real.so" )
+    #    set(SLEPC_DIR /usr/lib/slepc/)
+    #    set(SLEPC_INCLUDES ${SLEPC_DIR}/include)
+    #    set(SLEPC_LIBRARIES ${SLEPC_DIR}/lib/libslepc_real.so)
+    #    set (CPACK_DEBIAN_PACKAGE_REQUIRES   "${CPACK_DEBIAN_PACKAGE_REQUIRES}, slepc-devel (>= 3.4)") # This is not fully working yet. 
+    #  else ( IS_DIRECTORY "/usr/lib/slepc/include" AND EXISTS "/usr/lib/slepc/lib/libslepc_real.so" )
+    #    message( FATAL_ERROR "SLEPc not found in the system" )
+    #  endif( IS_DIRECTORY "/usr/lib/slepc/include" AND EXISTS "/usr/lib/slepc/lib/libslepc_real.so" )
 
     #elseif ( IS_DIRECTORY "/usr/local/lib/python2.7/dist-packages/petsc") #Case ubuntu/debian system pip install
 
-    else ( IS_DIRECTORY "/usr/include/petsc/" AND EXISTS "/usr/lib64/libpetsc.so" AND IS_DIRECTORY "/usr/include/slepc/" AND EXISTS "/usr/lib64/libslepc.so" )  # No petsc in system, do compile petsc along with slepc as an external package
+    else ( IS_DIRECTORY "/usr/include/petsc/" AND EXISTS "/usr/lib64/libpetsc.so" )  # No petsc in system, do compile petsc along with slepc as an external package
       message (STATUS "PETSC not found in the system, PETSC (with SLEPC and HDF5) will be downloaded and compiled" )
       set(PETSC_SRC ${CDMATH_SOURCE_DIR}/pre_requis/PETSc)
       set(PETSC_DIR ${CMAKE_INSTALL_PREFIX}/share/petsc_install) # Location of the final install 
@@ -136,19 +156,16 @@ if (CDMATH_WITH_PETSC OR PETSC_DIR OR DOWNLOAD_PETSC OR DEFINED ENV{PETSC_DIR} )
 
       petsc_get_version ()
       string(REPLACE ";" ":"  PETSC_INCLUDES_PATH "${PETSC_INCLUDES}")# use colon instead of semicolon in environment file env_CDMATH.sh
-      message ( STATUS "PETSC found. Version is ${PETSC_VERSION_MAJOR}.${PETSC_VERSION_MINOR}.${PETSC_VERSION_SUBMINOR}" )
+      message( STATUS "PETSc installed at ${PETSC_DIR}/${PETSC_ARCH}")
+      message( STATUS "PETSc version is ${PETSC_VERSION_MAJOR}.${PETSC_VERSION_MINOR}.${PETSC_VERSION_SUBMINOR}" )
 
       #define slepc variables
       set(SLEPC_DIR ${PETSC_DIR}/${PETSC_ARCH})
       set(SLEPC_INCLUDES ${SLEPC_DIR}/include)
       set(SLEPC_LIBRARIES ${SLEPC_DIR}/lib/libslepc.so)
+      message ( STATUS "SLEPc installed at ${PETSC_DIR}/${PETSC_ARCH}" )
 
-      #HDF5 to be found in petsc external packages
-      if   ( NOT HDF5_ROOT AND NOT DEFINED ENV{HDF5_ROOT} )#hdf5 is not defined in the environment
-        set(HDF5_ROOT $ENV{PETSC_DIR}/$ENV{PETSC_ARCH})# define hint for hdf5/med installation in petsc external packages
-      endif( NOT HDF5_ROOT AND NOT DEFINED ENV{HDF5_ROOT} )
-
-    endif ( IS_DIRECTORY "/usr/include/petsc/" AND EXISTS "/usr/lib64/libpetsc.so" AND IS_DIRECTORY "/usr/include/slepc/" AND EXISTS "/usr/lib64/libslepc.so"  )
+    endif ( IS_DIRECTORY "/usr/include/petsc/" AND EXISTS "/usr/lib64/libpetsc.so" )
   endif ( DEFINED ENV{PETSC_DIR} OR PETSC_DIR )
 
   if   ( ${PETSC_VERSION} VERSION_GREATER 3.5 )
@@ -157,10 +174,15 @@ if (CDMATH_WITH_PETSC OR PETSC_DIR OR DOWNLOAD_PETSC OR DEFINED ENV{PETSC_DIR} )
 
 endif( CDMATH_WITH_PETSC OR PETSC_DIR  OR DOWNLOAD_PETSC OR DEFINED ENV{PETSC_DIR} )
 
-#HDF5
-if   ( NOT HDF5_ROOT AND DEFINED ENV{HDF5_ROOT} )#hdf5 is defined in the environment
-  set(HDF5_ROOT $ENV{HDF5_ROOT})
-endif( NOT HDF5_ROOT AND DEFINED ENV{HDF5_ROOT} )
+#HDF5, in case MED and/or MEDCouplin are compiled
+if   ( NOT HDF5_ROOT )#hdf5 is defined in cmake arguments
+  if  ( DEFINED ENV{HDF5_ROOT} )#hdf5 is defined in the environment
+    set(HDF5_ROOT $ENV{HDF5_ROOT})
+  else( DEFINED ENV{HDF5_ROOT} )#hdf5 is not defined in the environment
+    #HDF5 to be found in petsc external packages
+    set(HDF5_ROOT ${PETSC_DIR}/${PETSC_ARCH})# define hint for hdf5/med installation in petsc external packages
+  endif( DEFINED ENV{HDF5_ROOT} )
+endif( NOT HDF5_ROOT )
 
 #MED
 if( MEDFILE_ROOT_DIR OR DEFINED ENV{MEDFILE_ROOT_DIR})
@@ -240,8 +262,12 @@ if( MEDCOUPLING_ROOT_DIR OR DEFINED ENV{MEDCOUPLING_ROOT_DIR})
   endif( NOT EXISTS ${MEDCOUPLING_ROOT_DIR}/lib/libmedloader.so OR NOT EXISTS ${MEDCOUPLING_ROOT_DIR}/lib/libmedcoupling.so OR NOT EXISTS ${MEDCOUPLING_ROOT_DIR}/include/MEDCoupling.hxx)
 
 else( MEDCOUPLING_ROOT_DIR OR DEFINED ENV{MEDCOUPLING_ROOT_DIR})
+  find_package (HDF5 REQUIRED)
+  add_library(hdf5   SHARED IMPORTED)
+  set_property(TARGET hdf5 PROPERTY IMPORTED_LOCATION ${HDF5_ROOT}/lib/libhdf5.so)
 
   set(MEDCOUPLING_ROOT_DIR ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/medCoupling_install) # Location of the final install
+  SET(ENV{HDF5_ROOT} ${HDF5_ROOT})#MEDCoupling install process seems to require an environment variable
 
   #extraction of the tarball archive name
   string(LENGTH ${DOWNLOAD_MEDCOUPLING} tarball_url_length)#length of the tarball
@@ -254,14 +280,12 @@ else( MEDCOUPLING_ROOT_DIR OR DEFINED ENV{MEDCOUPLING_ROOT_DIR})
   message(STATUS "MEDCOUPLING tarball name is ${MEDCOUPLING_TARBALL_NAME}")
   message(STATUS "MEDCOUPLING version is ${MEDCOUPLING_VERSION_NAME}")
 
-  SET(ENV{HDF5_ROOT} ${HDF5_ROOT})#MEDCoupling install process seems to require an environment variable
-
   ExternalProject_Add (MEDCoupling
         URL               ${DOWNLOAD_MEDCOUPLING}  #location of medcoupling tarball
         SOURCE_DIR        ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/${MEDCOUPLING_TARBALL_NAME}
 #        BUILD_IN_SOURCE   FALSE
         CONFIGURE_COMMAND cmake <SOURCE_DIR>/${MEDCOUPLING_TARBALL_NAME} -DCMAKE_INSTALL_PREFIX=${MEDCOUPLING_ROOT_DIR} -DCONFIGURATION_ROOT_DIR=<SOURCE_DIR>/configuration-${MEDCOUPLING_VERSION_NAME} -DMEDFILE_ROOT_DIR=${MEDFILE_ROOT_DIR} -DMEDCOUPLING_ENABLE_PARTITIONER=OFF -DMEDCOUPLING_PARTITIONER_METIS=OFF -DMEDCOUPLING_PARTITIONER_SCOTCH=OFF -DMEDCOUPLING_ENABLE_RENUMBER=OFF -DMEDCOUPLING_BUILD_DOC=OFF -DHDF5_ROOT_DIR=${HDF5_ROOT}
-        DEPENDS           med
+        DEPENDS           med hdf5
         BUILD_COMMAND     make
         INSTALL_COMMAND   make install
         INSTALL_DIR       ${MEDCOUPLING_ROOT_DIR}
