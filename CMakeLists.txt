@@ -18,14 +18,16 @@ option (CDMATH_WITH_PACKAGE "Generate RPM, Debian and tarball packages." OFF)
 option (CDMATH_WITH_TESTS "Compile unit testing." OFF)
 set (PETSC_DIR            OFF CACHE STRING "PETSc library path" )
 set (SLEPC_DIR            OFF CACHE STRING "SLEPc library path" )
+set (F2CBLASLAPACK_DIR    OFF CACHE STRING "F2CBLASLAPACK library path" )
 set (HDF5_ROOT            OFF CACHE STRING "HDF5 library path" )#For the compilation of MED with a specific version of HDF5
 set (MEDFILE_ROOT_DIR     OFF CACHE STRING "MED library path" )
 set (MEDCOUPLING_ROOT_DIR OFF CACHE STRING "MEDCoupling library path" )
-set (DOWNLOAD_PETSC       ${CDMATH_SOURCE_DIR}/pre_requis/PETSc/petsc-lite-3.13.1.tar.gz CACHE STRING "PETSc tarball path/url" )
-set (DOWNLOAD_SLEPC       ${CDMATH_SOURCE_DIR}/pre_requis/PETSc/slepc-3.13.1.tar.gz      CACHE STRING "SLEPC tarball path/url" )
-set (DOWNLOAD_HDF5        ${CDMATH_SOURCE_DIR}/pre_requis/PETSc/hdf5-1.10.3.tar.gz       CACHE STRING "HDF5 tarball path/url" )
-set (DOWNLOAD_MED         ${CDMATH_SOURCE_DIR}/pre_requis/med-4.0.0.tar.gz               CACHE STRING "MED tarball path/url")
-set (DOWNLOAD_MEDCOUPLING ${CDMATH_SOURCE_DIR}/pre_requis/medCoupling-9.4.0.tar.gz       CACHE STRING "MEDCoupling tarball path/url" )
+set (DOWNLOAD_PETSC         OFF       CACHE STRING "PETSc tarball path/url" )
+set (DOWNLOAD_SLEPC         OFF            CACHE STRING "SLEPC tarball path/url" )
+set (DOWNLOAD_F2CBLASLAPACK ${CDMATH_SOURCE_DIR}/pre_requis/PETSc/f2cblaslapack-3.4.2.q4.tar.gz  CACHE STRING "SLEPC tarball path/url" )
+set (DOWNLOAD_HDF5          ${CDMATH_SOURCE_DIR}/pre_requis/PETSc/hdf5-1.10.3.tar.gz             CACHE STRING "HDF5 tarball path/url" )
+set (DOWNLOAD_MED           OFF             CACHE STRING "MED tarball path/url")
+set (DOWNLOAD_MEDCOUPLING   OFF             CACHE STRING "MEDCoupling tarball path/url" )
 
 
 # Base directories
@@ -71,7 +73,7 @@ if (CDMATH_WITH_PETSC OR PETSC_DIR OR DOWNLOAD_PETSC OR DEFINED ENV{PETSC_DIR} )
     endif()
 
   else ( DEFINED ENV{PETSC_DIR} OR PETSC_DIR )
-    message ( STATUS "PETSC_DIR not set, searching petsc and SLEPC in the system" )
+    message ( STATUS "PETSC_DIR not set, searching PETSc and SLEPc in the system" )
 
     if ( IS_DIRECTORY "/usr/include/petsc/" AND EXISTS "/usr/lib64/libpetsc.so" )  #Case fedora/redhat system install
       message ( STATUS "PETSC includes found in /usr/include/petsc/" )
@@ -130,9 +132,13 @@ if (CDMATH_WITH_PETSC OR PETSC_DIR OR DOWNLOAD_PETSC OR DEFINED ENV{PETSC_DIR} )
     #elseif ( IS_DIRECTORY "/usr/local/lib/python2.7/dist-packages/petsc") #Case ubuntu/debian system pip install
 
     else ( IS_DIRECTORY "/usr/include/petsc/" AND EXISTS "/usr/lib64/libpetsc.so" )  # No petsc in system, do compile petsc along with slepc as an external package
-      message (STATUS "PETSC not found in the system, PETSC (with SLEPC and HDF5) will be downloaded and compiled" )
+      message (STATUS "PETSC not found in the system")
+      message (STATUS "PETSC will be downloaded and compiled from ${DOWNLOAD_PETSC}" )
+      message (STATUS "SLEPC will be downloaded and compiled from ${DOWNLOAD_SLEPC}" )
+      message (STATUS "HDF5  will be downloaded and compiled from ${DOWNLOAD_HDF5}" )
       set(PETSC_SRC ${CDMATH_SOURCE_DIR}/pre_requis/PETSc)
       set(PETSC_DIR ${CMAKE_INSTALL_PREFIX}/share/petsc_install) # Location of the final install 
+      set(PETSC_ARCH arch-linux2-c-opt)#Correct value on linux with c optimised compilation
       set(PETSC_INCLUDES  ${PETSC_DIR}/include/  ${PETSC_DIR}/include/petsc/mpiuni)
       set(PETSC_LIBRARIES ${PETSC_DIR}/lib/libpetsc.so) 
 
@@ -140,7 +146,7 @@ if (CDMATH_WITH_PETSC OR PETSC_DIR OR DOWNLOAD_PETSC OR DEFINED ENV{PETSC_DIR} )
       URL               ${DOWNLOAD_PETSC}   
       SOURCE_DIR        ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/PETSc
       BUILD_IN_SOURCE   TRUE
-      CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=${PETSC_DIR} --with-debugging=0 --with-mpi=0 --download-f2cblaslapack=${PETSC_SRC}/f2cblaslapack-3.4.2.q4.tar.gz --with-fc=0 --download-slepc=${DOWNLOAD_SLEPC} --download-hdf5=${DOWNLOAD_HDF5}
+      CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=${PETSC_DIR} --with-debugging=0 --with-mpi=0 --download-f2cblaslapack=${DOWNLOAD_F2CBLASLAPACK} --with-fc=0 --download-slepc=${DOWNLOAD_SLEPC} --download-hdf5=${DOWNLOAD_HDF5}
       BUILD_COMMAND     make all
       TEST_COMMAND      make check
       INSTALL_COMMAND   make install
@@ -154,16 +160,23 @@ if (CDMATH_WITH_PETSC OR PETSC_DIR OR DOWNLOAD_PETSC OR DEFINED ENV{PETSC_DIR} )
       LOG_INSTALL       TRUE           # Wrap install in script to log output
        )
 
-      petsc_get_version ()
+      #file (STRINGS "${PETSC_DIR}/${PETSC_ARCH}/include/petscversion.h" vstrings REGEX "#define PETSC_VERSION_(RELEASE|MAJOR|MINOR|SUBMINOR|PATCH) ")
+      #message( STATUS "PETSc version is ${PETSC_VERSION_MAJOR}.${PETSC_VERSION_MINOR}.${PETSC_VERSION_SUBMINOR}" )
       string(REPLACE ";" ":"  PETSC_INCLUDES_PATH "${PETSC_INCLUDES}")# use colon instead of semicolon in environment file env_CDMATH.sh
-      message( STATUS "PETSc installed at ${PETSC_DIR}/${PETSC_ARCH}")
-      message( STATUS "PETSc version is ${PETSC_VERSION_MAJOR}.${PETSC_VERSION_MINOR}.${PETSC_VERSION_SUBMINOR}" )
+      message( STATUS "PETSc, SLEPc and HDF5 will be installed at ${PETSC_DIR}/${PETSC_ARCH}")
+
+      #get petsc version
+      string(LENGTH ${DOWNLOAD_PETSC} tarball_url_length)#length of the tarball
+      string(FIND   ${DOWNLOAD_PETSC} "/" start_tarball_name REVERSE )# last occurence of "/"
+      MATH(EXPR start_tarball_name "${start_tarball_name}+1")#start after the occurence of "/"
+      MATH(EXPR tarball_name_length "${tarball_url_length}-${start_tarball_name}-7")#name ends before .tar.gz that counts for 7 characters
+      string(SUBSTRING ${DOWNLOAD_PETSC} ${start_tarball_name} ${tarball_name_length} PETSC_TARBALL_NAME)
+      string(SUBSTRING ${PETSC_TARBALL_NAME} 6 ${tarball_name_length} PETSC_VERSION)
 
       #define slepc variables
       set(SLEPC_DIR ${PETSC_DIR}/${PETSC_ARCH})
       set(SLEPC_INCLUDES ${SLEPC_DIR}/include)
       set(SLEPC_LIBRARIES ${SLEPC_DIR}/lib/libslepc.so)
-      message ( STATUS "SLEPc installed at ${PETSC_DIR}/${PETSC_ARCH}" )
 
     endif ( IS_DIRECTORY "/usr/include/petsc/" AND EXISTS "/usr/lib64/libpetsc.so" )
   endif ( DEFINED ENV{PETSC_DIR} OR PETSC_DIR )
@@ -174,15 +187,19 @@ if (CDMATH_WITH_PETSC OR PETSC_DIR OR DOWNLOAD_PETSC OR DEFINED ENV{PETSC_DIR} )
 
 endif( CDMATH_WITH_PETSC OR PETSC_DIR  OR DOWNLOAD_PETSC OR DEFINED ENV{PETSC_DIR} )
 
-#HDF5, in case MED and/or MEDCouplin are compiled
-if   ( NOT HDF5_ROOT )#hdf5 is defined in cmake arguments
-  if  ( DEFINED ENV{HDF5_ROOT} )#hdf5 is defined in the environment
-    set(HDF5_ROOT $ENV{HDF5_ROOT})
-  else( DEFINED ENV{HDF5_ROOT} )#hdf5 is not defined in the environment
-    #HDF5 to be found in petsc external packages
-    set(HDF5_ROOT ${PETSC_DIR}/${PETSC_ARCH})# define hint for hdf5/med installation in petsc external packages
-  endif( DEFINED ENV{HDF5_ROOT} )
-endif( NOT HDF5_ROOT )
+#HDF5, in case MED and/or MEDCoupling should be compiled
+if( (NOT MEDFILE_ROOT_DIR AND NOT DEFINED ENV{MEDFILE_ROOT_DIR}) OR (NOT MEDCOUPLING_ROOT_DIR AND NOT DEFINED ENV{MEDCOUPLING_ROOT_DIR}) )
+  if   ( NOT HDF5_ROOT )#hdf5 is not defined in cmake arguments
+    if  ( DEFINED ENV{HDF5_ROOT} )#hdf5 is defined in the environment
+      set(HDF5_ROOT $ENV{HDF5_ROOT})
+    else( DEFINED ENV{HDF5_ROOT} )#hdf5 is not defined in the environment
+      #HDF5 to be found in petsc external packages
+      set(HDF5_ROOT ${PETSC_DIR}/${PETSC_ARCH})# define hint for hdf5/med installation in petsc external packages
+    endif( DEFINED ENV{HDF5_ROOT} )
+  endif( NOT HDF5_ROOT )
+  #find_package(HDF5 REQUIRED)
+  set(HDF5_LIBRARY_DIR ${HDF5_ROOT}/lib)
+endif( (NOT MEDFILE_ROOT_DIR AND NOT DEFINED ENV{MEDFILE_ROOT_DIR}) OR (NOT MEDCOUPLING_ROOT_DIR AND NOT DEFINED ENV{MEDCOUPLING_ROOT_DIR}) )
 
 #MED
 if( MEDFILE_ROOT_DIR OR DEFINED ENV{MEDFILE_ROOT_DIR})
@@ -195,13 +212,10 @@ if( MEDFILE_ROOT_DIR OR DEFINED ENV{MEDFILE_ROOT_DIR})
   find_package (MEDFile REQUIRED)
 
 else( MEDFILE_ROOT_DIR OR DEFINED ENV{MEDFILE_ROOT_DIR})
-  find_package (HDF5 REQUIRED)
-  add_library(hdf5   SHARED IMPORTED)
-  set_property(TARGET hdf5 PROPERTY IMPORTED_LOCATION ${HDF5_ROOT}/lib/libhdf5.so)
-
-  string(FIND "${HDF5_LIBRARIES}" "libhdf5.so" pos)
-  string(SUBSTRING "${HDF5_LIBRARIES}" 0 ${pos} HDF5_LIBRARY_DIR)
+  #string(FIND "${HDF5_LIBRARIES}" "libhdf5.so" pos)
+  #string(SUBSTRING "${HDF5_LIBRARIES}" 0 ${pos} HDF5_LIBRARY_DIR)
   
+  message(STATUS "MED will be downloaded and installed from ${DOWNLOAD_MED}")
   set(MACHINE PCLINUX)
   set(MEDFILE_DEFINITIONS "-D${MACHINE} -DMEDFILE_INSTALL_DOC=OFF")#Comment ne pas compiler la doc ?
   set(MEDFILE_ROOT_DIR ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/med_install) # Location of the final install
@@ -213,14 +227,11 @@ else( MEDFILE_ROOT_DIR OR DEFINED ENV{MEDFILE_ROOT_DIR})
   MATH(EXPR tarball_name_length "${tarball_url_length}-${start_tarball_name}-7")#name ends before .tar.gz that counts for 7 characters
   string(SUBSTRING ${DOWNLOAD_MED} ${start_tarball_name} ${tarball_name_length} MED_TARBALL_NAME)
 
-  message(STATUS "MED tarball name is ${MED_TARBALL_NAME}")
-
   ExternalProject_Add (MED
         URL               ${DOWNLOAD_MED}  #location of med tarball
         SOURCE_DIR        ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/${MED_TARBALL_NAME}
         BUILD_IN_SOURCE   TRUE
         CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=${MEDFILE_ROOT_DIR}  --with-hdf5=${HDF5_ROOT} --with-hdf5-include=${HDF5_ROOT}/include --with-hdf5-lib=${HDF5_LIBRARY_DIR} --with-hdf5-bin=${HDF5_ROOT}/bin  --with-swig=yes 
-        DEPENDS           hdf5
         BUILD_COMMAND     make
         INSTALL_COMMAND   make install
         INSTALL_DIR       ${MEDFILE_ROOT_DIR}
@@ -262,10 +273,7 @@ if( MEDCOUPLING_ROOT_DIR OR DEFINED ENV{MEDCOUPLING_ROOT_DIR})
   endif( NOT EXISTS ${MEDCOUPLING_ROOT_DIR}/lib/libmedloader.so OR NOT EXISTS ${MEDCOUPLING_ROOT_DIR}/lib/libmedcoupling.so OR NOT EXISTS ${MEDCOUPLING_ROOT_DIR}/include/MEDCoupling.hxx)
 
 else( MEDCOUPLING_ROOT_DIR OR DEFINED ENV{MEDCOUPLING_ROOT_DIR})
-  find_package (HDF5 REQUIRED)
-  add_library(hdf5   SHARED IMPORTED)
-  set_property(TARGET hdf5 PROPERTY IMPORTED_LOCATION ${HDF5_ROOT}/lib/libhdf5.so)
-
+  message(STATUS "MEDCoupling will be downloaded and installed from ${DOWNLOAD_MEDCOUPLING}")
   set(MEDCOUPLING_ROOT_DIR ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/medCoupling_install) # Location of the final install
   SET(ENV{HDF5_ROOT} ${HDF5_ROOT})#MEDCoupling install process seems to require an environment variable
 
@@ -277,15 +285,13 @@ else( MEDCOUPLING_ROOT_DIR OR DEFINED ENV{MEDCOUPLING_ROOT_DIR})
   string(SUBSTRING ${DOWNLOAD_MEDCOUPLING} ${start_tarball_name} ${tarball_name_length} MEDCOUPLING_TARBALL_NAME)
   string(SUBSTRING ${MEDCOUPLING_TARBALL_NAME} 12 ${tarball_name_length} MEDCOUPLING_VERSION_NAME)
 
-  message(STATUS "MEDCOUPLING tarball name is ${MEDCOUPLING_TARBALL_NAME}")
-  message(STATUS "MEDCOUPLING version is ${MEDCOUPLING_VERSION_NAME}")
+  message(STATUS "MEDCoupling version is ${MEDCOUPLING_VERSION_NAME}")
 
   ExternalProject_Add (MEDCoupling
         URL               ${DOWNLOAD_MEDCOUPLING}  #location of medcoupling tarball
         SOURCE_DIR        ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/${MEDCOUPLING_TARBALL_NAME}
 #        BUILD_IN_SOURCE   FALSE
         CONFIGURE_COMMAND cmake <SOURCE_DIR>/${MEDCOUPLING_TARBALL_NAME} -DCMAKE_INSTALL_PREFIX=${MEDCOUPLING_ROOT_DIR} -DCONFIGURATION_ROOT_DIR=<SOURCE_DIR>/configuration-${MEDCOUPLING_VERSION_NAME} -DMEDFILE_ROOT_DIR=${MEDFILE_ROOT_DIR} -DMEDCOUPLING_ENABLE_PARTITIONER=OFF -DMEDCOUPLING_PARTITIONER_METIS=OFF -DMEDCOUPLING_PARTITIONER_SCOTCH=OFF -DMEDCOUPLING_ENABLE_RENUMBER=OFF -DMEDCOUPLING_BUILD_DOC=OFF -DHDF5_ROOT_DIR=${HDF5_ROOT}
-        DEPENDS           med hdf5
         BUILD_COMMAND     make
         INSTALL_COMMAND   make install
         INSTALL_DIR       ${MEDCOUPLING_ROOT_DIR}
@@ -310,13 +316,13 @@ set_property(TARGET medloader   PROPERTY IMPORTED_LOCATION ${MEDCOUPLING_ROOT_DI
 add_library(medcoupling SHARED IMPORTED )
 set_property(TARGET medcoupling PROPERTY IMPORTED_LOCATION ${MEDCOUPLING_ROOT_DIR}/lib/libmedcoupling.so)
 
-if(DEFINED MED AND DEFINED PETSc)
+if(TARGET MED AND TARGET PETSc)
   ExternalProject_Add_StepDependencies( MED build PETSc )#PETSc doit être compilé avant MED car c'est PETSc qui compile HDF5
-endif(DEFINED MED AND DEFINED PETSc)
+endif(TARGET MED AND TARGET PETSc)
 
-if(DEFINED MED AND DEFINED MEDCoupling)
+if(TARGET MED AND TARGET MEDCoupling)
   ExternalProject_Add_StepDependencies( MEDCoupling build MED )#MED doit être compilé avant MEDCoupling
-endif(DEFINED MED AND DEFINED MEDCoupling)
+endif(TARGET MED AND TARGET MEDCoupling)
  
 # Paraview variables for env_CDMATH.sh
 if (CDMATH_WITH_PYTHON AND CDMATH_WITH_POSTPRO)
