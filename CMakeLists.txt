@@ -210,8 +210,8 @@ if( MEDFILE_ROOT_DIR OR DEFINED ENV{MEDFILE_ROOT_DIR})
     set(MEDFILE_ROOT_DIR $ENV{MEDFILE_ROOT_DIR} )
   endif( NOT MEDFILE_ROOT_DIR )
 
-  message (STATUS "Seeking MEDFile library in ${MEDFILE_ROOT_DIR}")
   find_package (MEDFile REQUIRED)
+  message (STATUS "MEDFile found in ${MEDFILE_ROOT_DIR}")
 
 else( MEDFILE_ROOT_DIR OR DEFINED ENV{MEDFILE_ROOT_DIR})
   #string(FIND "${HDF5_LIBRARIES}" "libhdf5.so" pos)
