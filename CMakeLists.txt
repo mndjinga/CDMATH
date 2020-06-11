@@ -136,7 +136,7 @@ if (CDMATH_WITH_PETSC OR PETSC_DIR OR DOWNLOAD_PETSC OR DEFINED ENV{PETSC_DIR} )
       message (STATUS "PETSC will be downloaded and compiled from ${DOWNLOAD_PETSC}" )
       message (STATUS "SLEPC will be downloaded and compiled from ${DOWNLOAD_SLEPC}" )
       message (STATUS "HDF5  will be downloaded and compiled from ${DOWNLOAD_HDF5}" )
-      set(PETSC_SRC ${CDMATH_SOURCE_DIR}/pre_requis/PETSc)
+
       set(PETSC_DIR ${CMAKE_INSTALL_PREFIX}/share/petsc_install) # Location of the final install 
       set(PETSC_ARCH arch-linux2-c-opt)#Correct value on linux with c optimised compilation
       set(PETSC_INCLUDES  ${PETSC_DIR}/include/  ${PETSC_DIR}/include/petsc/mpiuni)
