@@ -14,8 +14,9 @@
 #include "MEDCouplingUMesh.hxx"
 #include "Vector.hxx"
 #include <petsc.h>
-#include <slepceps.h>
-#include <slepcsvd.h>
+
+class EPSWhich;
+class SVDWhich;
 
 class SparseMatrixPetsc: public GenericMatrix {
 
