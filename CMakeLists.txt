@@ -16,18 +16,28 @@ option (CDMATH_WITH_PYTHON "Compile Python interface for CDMATH." OFF)
 option (CDMATH_WITH_POSTPRO "Install postprocessing Python modules." OFF)
 option (CDMATH_WITH_PACKAGE "Generate RPM, Debian and tarball packages." OFF)
 option (CDMATH_WITH_TESTS "Compile unit testing." OFF)
+
+#Path to installed libraries
 set (PETSC_DIR            OFF CACHE STRING "PETSc library path" )
 set (SLEPC_DIR            OFF CACHE STRING "SLEPc library path" )
 set (F2CBLASLAPACK_DIR    OFF CACHE STRING "F2CBLASLAPACK library path" )
 set (HDF5_ROOT            OFF CACHE STRING "HDF5 library path" )#For the compilation of MED with a specific version of HDF5
 set (MEDFILE_ROOT_DIR     OFF CACHE STRING "MED library path" )
 set (MEDCOUPLING_ROOT_DIR OFF CACHE STRING "MEDCoupling library path" )
-set (DOWNLOAD_PETSC         OFF       CACHE STRING "PETSc tarball path/url" )
-set (DOWNLOAD_SLEPC         OFF            CACHE STRING "SLEPC tarball path/url" )
-set (DOWNLOAD_F2CBLASLAPACK ${CDMATH_SOURCE_DIR}/pre_requis/PETSc/f2cblaslapack-3.4.2.q4.tar.gz  CACHE STRING "SLEPC tarball path/url" )
-set (DOWNLOAD_HDF5          ${CDMATH_SOURCE_DIR}/pre_requis/PETSc/hdf5-1.10.3.tar.gz             CACHE STRING "HDF5 tarball path/url" )
-set (DOWNLOAD_MED           OFF             CACHE STRING "MED tarball path/url")
-set (DOWNLOAD_MEDCOUPLING   OFF             CACHE STRING "MEDCoupling tarball path/url" )
+
+#url of tarball librairies
+set (DOWNLOAD_PETSC         http://ftp.mcs.anl.gov/pub/petsc/release-snapshots/petsc-3.13.2.tar.gz
+     CACHE STRING           "PETSc tarball path/url" )
+set (DOWNLOAD_SLEPC         https://slepc.upv.es/download/distrib/slepc-3.13.2.tar.gz
+     CACHE STRING           "SLEPC tarball path/url" )
+set (DOWNLOAD_F2CBLASLAPACK ${CDMATH_SOURCE_DIR}/pre_requis/PETSc/f2cblaslapack-3.4.2.q4.tar.gz
+     CACHE STRING           "F2CBLASLAPACK tarball path/url" )
+set (DOWNLOAD_HDF5          ${CDMATH_SOURCE_DIR}/pre_requis/PETSc/hdf5-1.10.3.tar.gz  
+     CACHE STRING           "HDF5 tarball path/url" )
+set (DOWNLOAD_MED           http://files.salome-platform.org/Salome/other/med-4.0.0.tar.gz
+     CACHE STRING           "MED tarball path/url")
+set (DOWNLOAD_MEDCOUPLING   http://files.salome-platform.org/Salome/other/medCoupling-9.4.0.tar.gz
+     CACHE STRING           "MEDCoupling tarball path/url" )
 
 
 # Base directories
@@ -41,7 +51,7 @@ set (TESTS_DIR ${CDMATH_SOURCE_DIR}/tests)
 list (APPEND CMAKE_MODULE_PATH "${CDMATH_SOURCE_DIR}/cmake_files")
 
 # PETSc and HDF5
-if (CDMATH_WITH_PETSC OR PETSC_DIR OR DOWNLOAD_PETSC OR DEFINED ENV{PETSC_DIR} )
+if (CDMATH_WITH_PETSC OR PETSC_DIR OR DEFINED ENV{PETSC_DIR} )
     message ( STATUS "Checking variable PETSC_DIR : " $ENV{PETSC_DIR} )
 
   if ( DEFINED ENV{PETSC_DIR} OR PETSC_DIR)
@@ -186,7 +196,7 @@ if (CDMATH_WITH_PETSC OR PETSC_DIR OR DOWNLOAD_PETSC OR DEFINED ENV{PETSC_DIR} )
     add_definitions(-DPETSC_VERSION_GREATER_3_5)
   endif( ${PETSC_VERSION} VERSION_GREATER 3.5 )
 
-endif( CDMATH_WITH_PETSC OR PETSC_DIR  OR DOWNLOAD_PETSC OR DEFINED ENV{PETSC_DIR} )
+endif( CDMATH_WITH_PETSC OR PETSC_DIR  OR DEFINED ENV{PETSC_DIR} )
 
 #HDF5, in case MED and/or MEDCoupling should be compiled
 if( (NOT MEDFILE_ROOT_DIR AND NOT DEFINED ENV{MEDFILE_ROOT_DIR}) OR (NOT MEDCOUPLING_ROOT_DIR AND NOT DEFINED ENV{MEDCOUPLING_ROOT_DIR}) )
