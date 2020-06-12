@@ -138,7 +138,6 @@ if (CDMATH_WITH_PETSC OR PETSC_DIR OR DOWNLOAD_PETSC OR DEFINED ENV{PETSC_DIR} )
       message (STATUS "HDF5  will be downloaded and compiled from ${DOWNLOAD_HDF5}" )
 
       set(PETSC_DIR ${CMAKE_INSTALL_PREFIX}/share/petsc_install) # Location of the final install 
-      set(PETSC_ARCH arch-linux2-c-opt)#Correct value on linux with c optimised compilation
       set(PETSC_INCLUDES  ${PETSC_DIR}/include/  ${PETSC_DIR}/include/petsc/mpiuni)
       set(PETSC_LIBRARIES ${PETSC_DIR}/lib/libpetsc.so) 
 
@@ -170,13 +169,13 @@ if (CDMATH_WITH_PETSC OR PETSC_DIR OR DOWNLOAD_PETSC OR DEFINED ENV{PETSC_DIR} )
       #file (STRINGS "${PETSC_DIR}/${PETSC_ARCH}/include/petscversion.h" vstrings REGEX "#define PETSC_VERSION_(RELEASE|MAJOR|MINOR|SUBMINOR|PATCH) ")
       #message( STATUS "PETSc version is ${PETSC_VERSION_MAJOR}.${PETSC_VERSION_MINOR}.${PETSC_VERSION_SUBMINOR}" )
       string(REPLACE ";" ":"  PETSC_INCLUDES_PATH "${PETSC_INCLUDES}")# use colon instead of semicolon in environment file env_CDMATH.sh
-      message( STATUS "PETSc, SLEPc and HDF5 will be installed at ${PETSC_DIR}/${PETSC_ARCH}")
+      message( STATUS "PETSc, SLEPc and HDF5 will be installed at ${PETSC_DIR}")
 
       #get petsc version
       string(SUBSTRING ${PETSC_TARBALL_NAME} 6 ${tarball_name_length} PETSC_VERSION)
 
       #define slepc variables
-      set(SLEPC_DIR ${PETSC_DIR}/${PETSC_ARCH})
+      set(SLEPC_DIR ${PETSC_DIR})
       set(SLEPC_INCLUDES ${SLEPC_DIR}/include)
       set(SLEPC_LIBRARIES ${SLEPC_DIR}/lib/libslepc.so)
 
@@ -196,7 +195,7 @@ if( (NOT MEDFILE_ROOT_DIR AND NOT DEFINED ENV{MEDFILE_ROOT_DIR}) OR (NOT MEDCOUP
       set(HDF5_ROOT $ENV{HDF5_ROOT})
     else( DEFINED ENV{HDF5_ROOT} )#hdf5 is not defined in the environment
       #HDF5 to be found in petsc external packages
-      set(HDF5_ROOT ${PETSC_DIR}/${PETSC_ARCH})# define hint for hdf5/med installation in petsc external packages
+      set(HDF5_ROOT ${PETSC_DIR})# define hint for hdf5/med installation in petsc external packages
     endif( DEFINED ENV{HDF5_ROOT} )
   endif( NOT HDF5_ROOT )
   #find_package(HDF5 REQUIRED)
