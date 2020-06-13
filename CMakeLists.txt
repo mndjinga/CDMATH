@@ -353,52 +353,56 @@ set_property(TARGET medloader   PROPERTY IMPORTED_LOCATION ${MEDCOUPLING_ROOT_DI
 add_library(medcoupling SHARED IMPORTED )
 set_property(TARGET medcoupling PROPERTY IMPORTED_LOCATION ${MEDCOUPLING_ROOT_DIR}/lib/libmedcoupling.so)
 
-if(TARGET MED AND TARGET PETSc)
+if   (TARGET MED AND TARGET PETSc)
   ExternalProject_Add_StepDependencies( MED build PETSc )#PETSc doit être compilé avant MED car c'est PETSc qui compile HDF5
 endif(TARGET MED AND TARGET PETSc)
 
-if(TARGET MED AND TARGET MEDCoupling)
+if   (TARGET MED AND TARGET MEDCoupling)
   ExternalProject_Add_StepDependencies( MEDCoupling build MED )#MED doit être compilé avant MEDCoupling
 endif(TARGET MED AND TARGET MEDCoupling)
  
+if   (TARGET PETSc AND TARGET MEDCoupling)
+  ExternalProject_Add_StepDependencies( MEDCoupling build PETSc )#PETcS doit être compilé avant MEDCoupling (car il contient hdf5)
+endif(TARGET PETSc AND TARGET MEDCoupling)
+ 
 # Paraview variables for env_CDMATH.sh
-if (CDMATH_WITH_PYTHON AND CDMATH_WITH_POSTPRO)
+if   (CDMATH_WITH_PYTHON AND CDMATH_WITH_POSTPRO)
   set (PV_LIB_DIR /usr/lib/python2.7/dist-packages/:/usr/lib64/paraview/)
   set (PV_PYTHON_DIR /usr/lib/python2.7/dist-packages:/usr/lib64/paraview/site-packages/:/usr/lib64/paraview/site-packages/paraview/:/usr/lib64/paraview/site-packages/vtk/:/usr/lib64/paraview/python2.7/site-packages/:/usr/lib64/paraview/python2.7/site-packages/paraview/:/usr/lib64/paraview/python2.7/site-packages/vtkmodules:/usr/lib64/paraview/python3.7/site-packages/:/usr/lib64/paraview/python3.7/site-packages/paraview/:/usr/lib64/paraview/python3.7/site-packages/vtkmodules)
-endif ()
+endif(CDMATH_WITH_PYTHON AND CDMATH_WITH_POSTPRO)
 
 # Swig interface
-if (CDMATH_WITH_PYTHON)
+if   (CDMATH_WITH_PYTHON)
    find_package (PYTHON REQUIRED)
    find_package (SWIG 3.0 REQUIRED)
    set (CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, python-dev, python-numpy, swig")
    set (CPACK_RPM_PACKAGE_REQUIRES "${CPACK_RPM_PACKAGE_REQUIRES}, python-devel, numpy, swig")
    add_subdirectory (${CDMATH_SWIG_DIR})
-endif ()
+endif(CDMATH_WITH_PYTHON)
 
 find_package (XDR REQUIRED)
 add_subdirectory (${BASE_DIR})
 add_subdirectory (${MESH_DIR})
 
-if (CDMATH_WITH_PETSC)
+if   (CDMATH_WITH_PETSC)
     add_subdirectory (${LINEARSOLVER_DIR})
-endif ()
+endif(CDMATH_WITH_PETSC)
 
 # Documentation
 if (CDMATH_WITH_DOCUMENTATION)
   find_package (Doxygen)
   set (CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, doxygen, graphviz, mscgen")
   set (CPACK_RPM_PACKAGE_REQUIRES "${CPACK_RPM_PACKAGE_REQUIRES}, doxygen, graphviz, mscgen")
-  if (NOT DOXYGEN_FOUND)
+  if   (NOT DOXYGEN_FOUND)
     message (FATAL_ERROR "Doxygen is needed to build the documentation. Please install it correctly.")
-  endif (NOT DOXYGEN_FOUND)
+  endif(NOT DOXYGEN_FOUND)
   configure_file (Doxyfile.in ${PROJECT_BINARY_DIR}/Doxyfile  @ONLY IMMEDIATE)
   add_custom_target (doc COMMAND ${DOXYGEN_EXECUTABLE} ${PROJECT_BINARY_DIR}/Doxyfile
   							  SOURCES ${PROJECT_BINARY_DIR}/Doxyfile)
-  if ( IS_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/doc/html)
-    install (DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/doc/html DESTINATION doc/cdmath-dev-doc)
-  endif()
-endif ()
+  if   ( IS_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/doc/html)
+    install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/doc/html DESTINATION doc/cdmath-dev-doc)
+  endif( IS_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/doc/html)
+endif(CDMATH_WITH_DOCUMENTATION)
 
 #Debug option : todo = sort flags
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -pg -fprofile-arcs -ftest-coverage -lgcov")
@@ -417,7 +421,7 @@ endif(CDMATH_WITH_TESTS)
 # Packaging
 if (CDMATH_WITH_PACKAGE)
   include (CPackLists.txt)
-endif ()
+endif(CDMATH_WITH_PACKAGE)
 
 # Postprocessing
 if (CDMATH_WITH_PYTHON AND CDMATH_WITH_POSTPRO)
