@@ -209,7 +209,7 @@ if( (NOT MEDFILE_ROOT_DIR AND NOT DEFINED ENV{MEDFILE_ROOT_DIR}) OR (NOT MEDCOUP
       set(HDF5_ROOT $ENV{HDF5_ROOT})
     else( DEFINED ENV{HDF5_ROOT} )#hdf5 is not defined in the environment
       #HDF5 to be found in petsc external packages
-      set(HDF5_ROOT ${PETSC_DIR})# define hint for hdf5/med installation in petsc external packages
+      set(HDF5_ROOT ${PETSC_DIR}/${PETSC_ARCH})# define hint for hdf5/med installation in petsc external packages
     endif( DEFINED ENV{HDF5_ROOT} )
   endif( NOT HDF5_ROOT )
   #find_package(HDF5 REQUIRED)
