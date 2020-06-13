@@ -385,16 +385,19 @@ if (CDMATH_WITH_DOCUMENTATION)
   endif()
 endif ()
 
+#Debug option : todo = sort flags
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -pg -fprofile-arcs -ftest-coverage -lgcov")
+if   (CMAKE_BUILD_TYPE STREQUAL Debug)
+  SET(CMAKE_EXE_LINKER_FLAGS "-pg -fprofile-arcs -ftest-coverage -lgcov")
+  SET(CMAKE_CXX_FLAGS "-fprofile-arcs -ftest-coverage")
+endif(CMAKE_BUILD_TYPE STREQUAL Debug)
+
 # Tests
-if (CDMATH_WITH_TESTS)
-  set (CMAKE_EXE_LINKER_FLAGS "-pg -fprofile-arcs -ftest-coverage -lgcov")
-  enable_testing ()
+if   (CDMATH_WITH_TESTS)
   find_package (CPPUNIT REQUIRED)
-endif ()
-if (CDMATH_WITH_TESTS AND CDMATH_WITH_PYTHON)
   enable_testing ()
   add_subdirectory (${TESTS_DIR})#contains c++ and python tests
-endif()
+endif(CDMATH_WITH_TESTS)
 
 # Packaging
 if (CDMATH_WITH_PACKAGE)
