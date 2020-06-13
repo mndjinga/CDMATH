@@ -15,8 +15,8 @@
 #include "Vector.hxx"
 #include <petsc.h>
 
-class EPSWhich;
-class SVDWhich;
+#include <slepceps.h>
+#include <slepcsvd.h>
 
 class SparseMatrixPetsc: public GenericMatrix {
 
