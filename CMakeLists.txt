@@ -156,7 +156,7 @@ if (CDMATH_WITH_PETSC OR PETSC_DIR OR DEFINED ENV{PETSC_DIR} )
 
       set(PETSC_DIR ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/${PETSC_TARBALL_NAME}) # Location of the final install 
       set(PETSC_ARCH arch-linux-c-opt)
-      set(PETSC_INCLUDES  ${PETSC_DIR}/include/  ${PETSC_DIR}/include/petsc/mpiuni)
+      set(PETSC_INCLUDES  ${PETSC_DIR}/include/ ${PETSC_DIR}/${PETSC_ARCH}/include ${PETSC_DIR}/include/petsc/mpiuni)
       set(PETSC_LIBRARIES ${PETSC_DIR}/${PETSC_ARCH}/lib/libpetsc.so) 
 
       ExternalProject_Add (PETSc
@@ -212,10 +212,11 @@ if( (NOT MEDFILE_ROOT_DIR AND NOT DEFINED ENV{MEDFILE_ROOT_DIR}) OR (NOT MEDCOUP
       set(HDF5_ROOT ${PETSC_DIR}/${PETSC_ARCH})# define hint for hdf5/med installation in petsc external packages
     endif( DEFINED ENV{HDF5_ROOT} )
   endif( NOT HDF5_ROOT )
-  #find_package(HDF5 REQUIRED)
   set(HDF5_LIBRARY_DIR ${HDF5_ROOT}/lib)
+  set(HDF5_INCLUDE_DIRS ${HDF5_ROOT}/include)
+else ( (NOT MEDFILE_ROOT_DIR AND NOT DEFINED ENV{MEDFILE_ROOT_DIR}) OR (NOT MEDCOUPLING_ROOT_DIR AND NOT DEFINED ENV{MEDCOUPLING_ROOT_DIR}) )
+  find_package(HDF5 REQUIRED)
 endif( (NOT MEDFILE_ROOT_DIR AND NOT DEFINED ENV{MEDFILE_ROOT_DIR}) OR (NOT MEDCOUPLING_ROOT_DIR AND NOT DEFINED ENV{MEDCOUPLING_ROOT_DIR}) )
-
 #MED
 if( MEDFILE_ROOT_DIR OR DEFINED ENV{MEDFILE_ROOT_DIR})
 
