@@ -156,7 +156,7 @@ if (CDMATH_WITH_PETSC OR PETSC_DIR OR DEFINED ENV{PETSC_DIR} )
 
       set(PETSC_DIR ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/${PETSC_TARBALL_NAME}) # Location of the final install 
       set(PETSC_ARCH arch-linux-c-opt)
-      set(PETSC_INCLUDES  ${PETSC_DIR}/${PETSC_ARCH}/include/  ${PETSC_DIR}/${PETSC_ARCH}/include/petsc/mpiuni)
+      set(PETSC_INCLUDES  ${PETSC_DIR}/include/  ${PETSC_DIR}/include/petsc/mpiuni)
       set(PETSC_LIBRARIES ${PETSC_DIR}/${PETSC_ARCH}/lib/libpetsc.so) 
 
       ExternalProject_Add (PETSc
