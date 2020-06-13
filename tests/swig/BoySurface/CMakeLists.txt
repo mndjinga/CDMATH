@@ -5,5 +5,5 @@ if (CDMATH_WITH_PYTHON AND CDMATH_WITH_POSTPRO)#The environment is probably too 
   SET_PROPERTY(TEST Test_Boys_Surface APPEND PROPERTY ENVIRONMENT "PYTHONPATH=${CMAKE_INSTALL_PREFIX}/lib/cdmath:${CMAKE_INSTALL_PREFIX}/bin/cdmath:${CMAKE_INSTALL_PREFIX}/bin/cdmath/postprocessing:${CMAKE_INSTALL_PREFIX}/${MEDCOUPLING_INSTALL_PYTHON}:${PV_PYTHON_DIR}")
 endif ()
 
-INSTALL(FILES BoysSurfaceVTK.py VTKnewReader.py DESTINATION bin/tests/BoysSurface)
+INSTALL(FILES BoysSurfaceVTK.py VTKnewReader.py DESTINATION bin/BoysSurface)
 

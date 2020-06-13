@@ -262,6 +262,9 @@ else( MEDFILE_ROOT_DIR OR DEFINED ENV{MEDFILE_ROOT_DIR})
   
   set(MEDFILE_INCLUDE_DIRS ${MEDFILE_ROOT_DIR}/include)# Nécessaire pour le medloader et les sous-dossiers mesh, et IJKMesh
   set(MEDFILE_C_LIBRARIES med medC)# Nécessaire pour le medloader
+
+  INSTALL(DIRECTORY ${MEDFILE_ROOT_DIR}/include DESTINATION share/med) 
+  INSTALL(DIRECTORY ${MEDFILE_ROOT_DIR}/lib     DESTINATION share/med) 
 endif( MEDFILE_ROOT_DIR OR DEFINED ENV{MEDFILE_ROOT_DIR})
 
 #For the environment file
@@ -319,6 +322,9 @@ else( MEDCOUPLING_ROOT_DIR OR DEFINED ENV{MEDCOUPLING_ROOT_DIR})
         LOG_TEST          TRUE           # Wrap test in script to log output
         LOG_INSTALL       TRUE           # Wrap install in script to log output
   )
+
+  INSTALL(DIRECTORY ${MEDCOUPLING_ROOT_DIR}/include DESTINATION share/medcoupling) 
+  INSTALL(DIRECTORY ${MEDCOUPLING_ROOT_DIR}/lib     DESTINATION share/medcoupling) 
 endif( MEDCOUPLING_ROOT_DIR OR DEFINED ENV{MEDCOUPLING_ROOT_DIR} )
 
 set(MEDCOUPLING_INCLUDE_DIR  ${MEDCOUPLING_ROOT_DIR}/include)
@@ -375,7 +381,7 @@ if (CDMATH_WITH_DOCUMENTATION)
   add_custom_target (doc COMMAND ${DOXYGEN_EXECUTABLE} ${PROJECT_BINARY_DIR}/Doxyfile
   							  SOURCES ${PROJECT_BINARY_DIR}/Doxyfile)
   if ( IS_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/doc/html)
-    install (DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/doc/html DESTINATION share/doc/cdmath)
+    install (DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/doc/html DESTINATION doc/cdmath-dev-doc)
   endif()
 endif ()
 
