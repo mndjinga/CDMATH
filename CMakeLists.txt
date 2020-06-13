@@ -48,7 +48,7 @@ set (CDMATH_SWIG_DIR ${CDMATH_SOURCE_DIR}/swig)
 set (CDMATH_POSTPRO_DIR ${CDMATH_SOURCE_DIR}/postprocessing)
 
 set (TESTS_DIR ${CDMATH_SOURCE_DIR}/tests)
-list (APPEND CMAKE_MODULE_PATH "${CDMATH_SOURCE_DIR}/cmake_files")
+list (APPEND CMAKE_MODULE_INSTALL "${CDMATH_SOURCE_DIR}/cmake_files")
 
 # PETSc and HDF5
 if (CDMATH_WITH_PETSC OR PETSC_DIR OR DEFINED ENV{PETSC_DIR} )
@@ -61,7 +61,10 @@ if (CDMATH_WITH_PETSC OR PETSC_DIR OR DEFINED ENV{PETSC_DIR} )
 
     find_package (PETSc 3.4 REQUIRED)
     petsc_get_version ()
-    string(REPLACE ";" ":"  PETSC_INCLUDES_PATH "${PETSC_INCLUDES}")# use colon instead of semicolon in environment file env_CDMATH.sh
+    string(REPLACE ";" ":"  PETSC_INCLUDES_INSTALL "${PETSC_INCLUDES}")# use colon instead of semicolon in environment file env_CDMATH.sh
+    set(PETSC_INSTALL ${PETSC_DIR})#for environment file env_CDMATH.sh
+    set(PETSC_LIBRARIES_INSTALL ${PETSC_LIBRARIES})#for environment file env_CDMATH.sh (a single library libpetsc.so)
+
     message ( STATUS "PETSc found. Version is ${PETSC_VERSION_MAJOR}.${PETSC_VERSION_MINOR}.${PETSC_VERSION_SUBMINOR}" )
 
     #Define and search slepc variables
@@ -95,6 +98,10 @@ if (CDMATH_WITH_PETSC OR PETSC_DIR OR DEFINED ENV{PETSC_DIR} )
       set(PETSC_VERSION "3.8") #3.8 for fedora 26 , 3.9 for fedora 29 , 3.10 for fedora 30, , 3.12 for fedora 32
       
       set (CPACK_RPM_PACKAGE_REQUIRES   "${CPACK_RPM_PACKAGE_REQUIRES}, petsc-devel (>= 3.4)") # This is not fully working yet. 
+
+      set(PETSC_INSTALL ${PETSC_DIR})#for environment file env_CDMATH.sh
+      set(PETSC_INCLUDES_INSTALL  ${PETSC_INSTALL}/include)#for environment file env_CDMATH.sh
+      set(PETSC_LIBRARIES_INSTALL /usr/lib64    )#for environment file env_CDMATH.sh 
 
       #Define and search slepc variables
       if   ( IS_DIRECTORY "/usr/include/slepc/" AND EXISTS "/usr/lib64/libslepc.so" )
@@ -179,7 +186,6 @@ if (CDMATH_WITH_PETSC OR PETSC_DIR OR DEFINED ENV{PETSC_DIR} )
 
       #file (STRINGS "${PETSC_DIR}/${PETSC_ARCH}/include/petscversion.h" vstrings REGEX "#define PETSC_VERSION_(RELEASE|MAJOR|MINOR|SUBMINOR|PATCH) ")
       #message( STATUS "PETSc version is ${PETSC_VERSION_MAJOR}.${PETSC_VERSION_MINOR}.${PETSC_VERSION_SUBMINOR}" )
-      string(REPLACE ";" ":"  PETSC_INCLUDES_PATH "${PETSC_INCLUDES}")# use colon instead of semicolon in environment file env_CDMATH.sh
       message( STATUS "PETSc, SLEPc and HDF5 will be installed at ${PETSC_DIR}")
 
       #get petsc version
@@ -190,9 +196,15 @@ if (CDMATH_WITH_PETSC OR PETSC_DIR OR DEFINED ENV{PETSC_DIR} )
       set(SLEPC_INCLUDES ${SLEPC_DIR}/include)
       set(SLEPC_LIBRARIES ${SLEPC_DIR}/lib/libslepc.so)
 
-      INSTALL(DIRECTORY ${PETSC_DIR}/${PETSC_ARCH}/include DESTINATION share/petsc) 
-      INSTALL(DIRECTORY ${PETSC_DIR}/${PETSC_ARCH}/lib     DESTINATION share/petsc) 
+      INSTALL(DIRECTORY ${PETSC_DIR}/${PETSC_ARCH}/include DESTINATION share/petsc/include) 
+      INSTALL(DIRECTORY ${PETSC_DIR}/include               DESTINATION share/petsc/include) 
+      INSTALL(DIRECTORY ${PETSC_DIR}/include/petsc/mpiuni  DESTINATION share/petsc/include) 
+      INSTALL(DIRECTORY ${PETSC_DIR}/${PETSC_ARCH}/lib     DESTINATION share/petsc/lib) 
    
+      set(PETSC_INSTALL ${CMAKE_INSTALL_PREFIX}/share/petsc)#for environment file env_CDMATH.sh
+      set(PETSC_INCLUDES_INSTALL  ${PETSC_INSTALL}/include)#for environment file env_CDMATH.sh
+      set(PETSC_LIBRARIES_INSTALL ${PETSC_INSTALL}/lib    )#for environment file env_CDMATH.sh 
+
     endif ( IS_DIRECTORY "/usr/include/petsc/" AND EXISTS "/usr/lib64/libpetsc.so" )
   endif ( DEFINED ENV{PETSC_DIR} OR PETSC_DIR )
 
@@ -227,6 +239,7 @@ if( MEDFILE_ROOT_DIR OR DEFINED ENV{MEDFILE_ROOT_DIR})
   find_package (MEDFile REQUIRED)
   message (STATUS "MEDFile found in ${MEDFILE_ROOT_DIR}")
 
+  set(MEDFILE_INSTALL ${MEDFILE_ROOT_DIR})#for environment file env_CDMATH.sh
 else( MEDFILE_ROOT_DIR OR DEFINED ENV{MEDFILE_ROOT_DIR})
   #string(FIND "${HDF5_LIBRARIES}" "libhdf5.so" pos)
   #string(SUBSTRING "${HDF5_LIBRARIES}" 0 ${pos} HDF5_LIBRARY_DIR)
@@ -263,13 +276,14 @@ else( MEDFILE_ROOT_DIR OR DEFINED ENV{MEDFILE_ROOT_DIR})
   set(MEDFILE_INCLUDE_DIRS ${MEDFILE_ROOT_DIR}/include)# Nécessaire pour le medloader et les sous-dossiers mesh, et IJKMesh
   set(MEDFILE_C_LIBRARIES med medC)# Nécessaire pour le medloader
 
-  INSTALL(DIRECTORY ${MEDFILE_ROOT_DIR}/include DESTINATION share/med) 
-  INSTALL(DIRECTORY ${MEDFILE_ROOT_DIR}/lib     DESTINATION share/med) 
+  INSTALL(DIRECTORY ${MEDFILE_ROOT_DIR}/include DESTINATION share/med/include) 
+  INSTALL(DIRECTORY ${MEDFILE_ROOT_DIR}/lib     DESTINATION share/med/lib) 
+
+  set(MEDFILE_INSTALL ${CMAKE_INSTALL_PREFIX}/share/med)#for environment file env_CDMATH.sh
 endif( MEDFILE_ROOT_DIR OR DEFINED ENV{MEDFILE_ROOT_DIR})
 
-#For the environment file
-set(MEDFILE_C_LIBRARIES_PATH ${MEDFILE_ROOT_DIR}/lib/libmed.so ${MEDFILE_ROOT_DIR}/lib/libmedC.so)
-string(REPLACE ";" ":"  MEDFILE_C_LIBRARIES_PATH "${MEDFILE_C_LIBRARIES_PATH}")# use colon instead of semicolon in environment file env_CDMATH.sh
+set(MEDFILE_INCLUDES_INSTALL  ${MEDFILE_INSTALL}/include)#for environment file env_CDMATH.sh
+set(MEDFILE_LIBRARIES_INSTALL ${MEDFILE_INSTALL}/lib    )#for environment file env_CDMATH.sh 
 
 add_library(med   SHARED IMPORTED)
 set_property(TARGET med  PROPERTY IMPORTED_LOCATION ${MEDFILE_ROOT_DIR}/lib/libmed.so)
@@ -291,6 +305,7 @@ if( MEDCOUPLING_ROOT_DIR OR DEFINED ENV{MEDCOUPLING_ROOT_DIR})
     message (STATUS "MEDCoupling library found in ${MEDCOUPLING_ROOT_DIR}")
   endif( NOT EXISTS ${MEDCOUPLING_ROOT_DIR}/lib/libmedloader.so OR NOT EXISTS ${MEDCOUPLING_ROOT_DIR}/lib/libmedcoupling.so OR NOT EXISTS ${MEDCOUPLING_ROOT_DIR}/include/MEDCoupling.hxx)
 
+  set(MEDMEDCOUPLING_INSTALL ${MEDCOUPLING_ROOT_DIR})#for environment file env_CDMATH.sh
 else( MEDCOUPLING_ROOT_DIR OR DEFINED ENV{MEDCOUPLING_ROOT_DIR})
   message(STATUS "MEDCoupling will be downloaded and installed from ${DOWNLOAD_MEDCOUPLING}")
   set(MEDCOUPLING_ROOT_DIR ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/medCoupling_install) # Location of the final install
@@ -323,15 +338,15 @@ else( MEDCOUPLING_ROOT_DIR OR DEFINED ENV{MEDCOUPLING_ROOT_DIR})
         LOG_INSTALL       TRUE           # Wrap install in script to log output
   )
 
-  INSTALL(DIRECTORY ${MEDCOUPLING_ROOT_DIR}/include DESTINATION share/medcoupling) 
-  INSTALL(DIRECTORY ${MEDCOUPLING_ROOT_DIR}/lib     DESTINATION share/medcoupling) 
+  INSTALL(DIRECTORY ${MEDCOUPLING_ROOT_DIR}/include DESTINATION share/medcoupling/include) 
+  INSTALL(DIRECTORY ${MEDCOUPLING_ROOT_DIR}/lib     DESTINATION share/medcoupling/lib) 
+
+  set(MEDCOUPLING_INSTALL ${CMAKE_INSTALL_PREFIX}/share/medcoupling)#for environment file env_CDMATH.sh
 endif( MEDCOUPLING_ROOT_DIR OR DEFINED ENV{MEDCOUPLING_ROOT_DIR} )
 
 set(MEDCOUPLING_INCLUDE_DIR  ${MEDCOUPLING_ROOT_DIR}/include)
-
-#For the environment file
-set(MEDCOUPLING_LIBRARIES_PATH    ${MEDCOUPLING_ROOT_DIR}/lib/libmedloader.so ${MEDCOUPLING_ROOT_DIR}/lib/libmedcoupling.so)
-string(REPLACE ";" ":"  MEDCOUPLING_LIBRARIES_PATH "${MEDCOUPLING_LIBRARIES_PATH}")# use colon instead of semicolon in environment file env_CDMATH.sh
+set(MEDCOUPLING_INCLUDES_INSTALL  ${MEDCOUPLING_INSTALL}/include)#for environment file env_CDMATH.sh
+set(MEDCOUPLING_LIBRARIES_INSTALL ${MEDCOUPLING_INSTALL}/lib    )#for environment file env_CDMATH.sh 
 
 add_library(medloader   SHARED IMPORTED )
 set_property(TARGET medloader   PROPERTY IMPORTED_LOCATION ${MEDCOUPLING_ROOT_DIR}/lib/libmedloader.so)
@@ -387,10 +402,10 @@ endif ()
 
 #Debug option : todo = sort flags
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -pg -fprofile-arcs -ftest-coverage -lgcov")
-if   (CMAKE_BUILD_TYPE STREQUAL Debug)
+if   (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
   SET(CMAKE_EXE_LINKER_FLAGS "-pg -fprofile-arcs -ftest-coverage -lgcov")
   SET(CMAKE_CXX_FLAGS "-fprofile-arcs -ftest-coverage")
-endif(CMAKE_BUILD_TYPE STREQUAL Debug)
+endif(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
 
 # Tests
 if   (CDMATH_WITH_TESTS)
