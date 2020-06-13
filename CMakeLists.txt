@@ -147,10 +147,6 @@ if (CDMATH_WITH_PETSC OR PETSC_DIR OR DEFINED ENV{PETSC_DIR} )
       message (STATUS "SLEPC will be downloaded and compiled from ${DOWNLOAD_SLEPC}" )
       message (STATUS "HDF5  will be downloaded and compiled from ${DOWNLOAD_HDF5}" )
 
-      set(PETSC_DIR ${CMAKE_INSTALL_PREFIX}/share/petsc_install) # Location of the final install 
-      set(PETSC_INCLUDES  ${PETSC_DIR}/include/  ${PETSC_DIR}/include/petsc/mpiuni)
-      set(PETSC_LIBRARIES ${PETSC_DIR}/lib/libpetsc.so) 
-
       #extract tarball name
       string(LENGTH ${DOWNLOAD_PETSC} tarball_url_length)#length of the tarball
       string(FIND   ${DOWNLOAD_PETSC} "/" start_tarball_name REVERSE )# last occurence of "/"
@@ -158,12 +154,17 @@ if (CDMATH_WITH_PETSC OR PETSC_DIR OR DEFINED ENV{PETSC_DIR} )
       MATH(EXPR tarball_name_length "${tarball_url_length}-${start_tarball_name}-7")#name ends before .tar.gz that counts for 7 characters
       string(SUBSTRING ${DOWNLOAD_PETSC} ${start_tarball_name} ${tarball_name_length} PETSC_TARBALL_NAME)
 
+      set(PETSC_DIR ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/${PETSC_TARBALL_NAME}) # Location of the final install 
+      set(PETSC_ARCH arch-linux-c-opt)
+      set(PETSC_INCLUDES  ${PETSC_DIR}/${PETSC_ARCH}/include/  ${PETSC_DIR}/${PETSC_ARCH}/include/petsc/mpiuni)
+      set(PETSC_LIBRARIES ${PETSC_DIR}/${PETSC_ARCH}/lib/libpetsc.so) 
+
       ExternalProject_Add (PETSc
       URL               ${DOWNLOAD_PETSC}   
-      SOURCE_DIR        ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/${PETSC_TARBALL_NAME}
+      SOURCE_DIR        ${PETSC_DIR}
       BUILD_IN_SOURCE   TRUE
-      CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=${PETSC_DIR} --with-debugging=0 --with-mpi=0 --download-f2cblaslapack=${DOWNLOAD_F2CBLASLAPACK} --with-fc=0 --download-slepc=${DOWNLOAD_SLEPC} --download-hdf5=${DOWNLOAD_HDF5}
-      BUILD_COMMAND     make 
+      CONFIGURE_COMMAND <SOURCE_DIR>/configure --with-debugging=0 --with-mpi=0 --download-f2cblaslapack=${DOWNLOAD_F2CBLASLAPACK} --with-fc=0 --download-slepc=${DOWNLOAD_SLEPC} --download-hdf5=${DOWNLOAD_HDF5}
+      BUILD_COMMAND     make
       TEST_COMMAND      make check
       INSTALL_COMMAND   make all
       INSTALL_DIR       ${PETSC_DIR}
@@ -185,10 +186,13 @@ if (CDMATH_WITH_PETSC OR PETSC_DIR OR DEFINED ENV{PETSC_DIR} )
       string(SUBSTRING ${PETSC_TARBALL_NAME} 6 ${tarball_name_length} PETSC_VERSION)
 
       #define slepc variables
-      set(SLEPC_DIR ${PETSC_DIR})
+      set(SLEPC_DIR ${PETSC_DIR}/${PETSC_ARCH})
       set(SLEPC_INCLUDES ${SLEPC_DIR}/include)
       set(SLEPC_LIBRARIES ${SLEPC_DIR}/lib/libslepc.so)
 
+      INSTALL(DIRECTORY ${PETSC_DIR}/${PETSC_ARCH}/include DESTINATION share/petsc) 
+      INSTALL(DIRECTORY ${PETSC_DIR}/${PETSC_ARCH}/lib     DESTINATION share/petsc) 
+   
     endif ( IS_DIRECTORY "/usr/include/petsc/" AND EXISTS "/usr/lib64/libpetsc.so" )
   endif ( DEFINED ENV{PETSC_DIR} OR PETSC_DIR )
 
