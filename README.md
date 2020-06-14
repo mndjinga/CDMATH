@@ -30,8 +30,8 @@ Create your source directory. For instance:
 * `cd ~/workspace/cdmath`
 
 Download from GitHub
-* click on the following link : `https://github.com/ndjinga/CDMATH/archive/master.zip` then unzip the file in a directory cdmath-master
-* or type the following in a terminal : `wget https://github.com/ndjinga/CDMATH/archive/master.zip` then unzip the file in a directory cdmath-master
+* click on the following link : `https://github.com/ndjinga/CDMATH/archive/master.zip`, then unzip the file in a directory cdmath-master
+* or type the following in a terminal : `wget https://github.com/ndjinga/CDMATH/archive/master.zip`, then unzip the file in a directory cdmath-master
 * or clone the git repository to a folder cdmath-master:  `git clone https://github.com/ndjinga/CDMATH.git cdmath-master`
 
 
@@ -58,8 +58,8 @@ Directories. Create the suggested build and installation folders:
 Compile and install CDMATH
 --------------------------
 Simpler build for a minimum version:
-* `cmake ../cdmath-master/ -DCMAKE_INSTALL_PREFIX=../cdmath_install -DCMAKE_BUILD_TYPE=Release -DCDMATH_WITH_PETSC=ON -DCDMATH_WITH_PYTHON=ON `
-This will download and build the following dependencies
+* `cmake ../cdmath-master/ -DCMAKE_INSTALL_PREFIX=../cdmath_install -DCMAKE_BUILD_TYPE=Release -DCDMATH_WITH_PETSC=ON -DCDMATH_WITH_PYTHON=ON `  
+> This will download and build the following dependencies
 - PETSc from http://ftp.mcs.anl.gov/pub/petsc/release-snapshots/petsc-3.13.2.tar.gz
 - SLEPc from https://slepc.upv.es/download/distrib/slepc-3.13.2.tar.gz
 - HDF5 http://files.salome-platform.org/Salome/other/med-4.0.0.tar.gz
@@ -67,10 +67,10 @@ This will download and build the following dependencies
 - MEDCOUPLING from http://files.salome-platform.org/Salome/other/medCoupling-9.4.0.tar.gz
 
 Advanced build for an all-options version:
-* `cmake ../cdmath-master -DCMAKE_INSTALL_PREFIX=../cdmath_install -DCMAKE_BUILD_TYPE=Release -G"Eclipse CDT4 - Unix Makefiles" -D_ECLIPSE_VERSION=4.3 -DCDMATH_WITH_PETSC=ON -DCDMATH_WITH_PYTHON=ON  -DCDMATH_WITH_POSTPRO=ON -DCDMATH_WITH_TESTS=ON -DCDMATH_WITH_DOCUMENTATION=ON -DPETSC_DIR=${PETSC_DIR} -DMEDFILE_ROOT_DIR=${MEDFILE_ROOT_DIR} -DMEDCOUPLING_ROOT_DIR=${MEDCOUPLING_ROOT_DIR}`
-This assumes that you have an existing 
+* `cmake ../cdmath-master -DCMAKE_INSTALL_PREFIX=../cdmath_install -DCMAKE_BUILD_TYPE=Release -G"Eclipse CDT4 - Unix Makefiles" -D_ECLIPSE_VERSION=4.3 -DCDMATH_WITH_PETSC=ON -DCDMATH_WITH_PYTHON=ON  -DCDMATH_WITH_POSTPRO=ON -DCDMATH_WITH_TESTS=ON -DCDMATH_WITH_DOCUMENTATION=ON -DPETSC_DIR=${PETSC_DIR} -DMEDFILE_ROOT_DIR=${MEDFILE_ROOT_DIR} -DMEDCOUPLING_ROOT_DIR=${MEDCOUPLING_ROOT_DIR}`  
+> This assumes that you have an existing 
 - install of PETSc (with submodules SLEPC and HDF5) at the location given by the environment variable PETSC_DIR  
-see the instructions given in [the official documentation](http://www.mcs.anl.gov/petsc/documentation/installation.html)
+See the instructions given in [the official documentation](http://www.mcs.anl.gov/petsc/documentation/installation.html)
 - install of MED                                    at the location given by the environment variable MEDFILE_ROOT_DIR
 - install of MEDCOUPLING                            at the location given by the environment variable MEDCOUPLING_ROOT_DIR
 
