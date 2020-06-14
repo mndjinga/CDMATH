@@ -85,6 +85,17 @@ if (CDMATH_WITH_PETSC OR PETSC_DIR OR DEFINED ENV{PETSC_DIR} )
       message( FATAL_ERROR "SLEPc not found at ${SLEPC_DIR}" )
     endif()
 
+    #define hdf5 variables
+    if   ( NOT HDF5_ROOT )#hdf5 is not defined in cmake arguments
+      if  ( DEFINED ENV{HDF5_ROOT} )#hdf5 is defined in the environment
+        set(HDF5_ROOT $ENV{HDF5_ROOT})
+      else( DEFINED ENV{HDF5_ROOT} )#hdf5 is not defined in the environment
+        #HDF5 to be found in petsc external packages
+        set(HDF5_ROOT ${PETSC_DIR}/${PETSC_ARCH})# define hint for hdf5/med installation in petsc external packages
+      endif( DEFINED ENV{HDF5_ROOT} )
+    endif( NOT HDF5_ROOT )
+    set(HDF5_LIBRARY_DIR ${HDF5_ROOT}/lib)
+    set(HDF5_INCLUDE_DIRS ${HDF5_ROOT}/include)
   else ( DEFINED ENV{PETSC_DIR} OR PETSC_DIR )
     message ( STATUS "PETSC_DIR not set, searching PETSc and SLEPc in the system" )
 
@@ -117,7 +128,7 @@ if (CDMATH_WITH_PETSC OR PETSC_DIR OR DEFINED ENV{PETSC_DIR} )
 
       #HDF5 to be found in the system
       if   ( NOT HDF5_ROOT AND NOT DEFINED ENV{HDF5_ROOT} )#hdf5 is not defined in the environment
-        set(HDF5_ROOT "/")
+        find_package(HDF5 REQUIRED)
         set(CPACK_DEBIAN_PACKAGE_DEPENDS "libhdf5-dev")
         set(CPACK_RPM_PACKAGE_REQUIRES "hdf5-devel")
       endif( NOT HDF5_ROOT AND NOT DEFINED ENV{HDF5_ROOT} )
@@ -196,6 +207,18 @@ if (CDMATH_WITH_PETSC OR PETSC_DIR OR DEFINED ENV{PETSC_DIR} )
       set(SLEPC_INCLUDES ${SLEPC_DIR}/include)
       set(SLEPC_LIBRARIES ${SLEPC_DIR}/lib/libslepc.so)
 
+      #define hdf5 variables
+      if   ( NOT HDF5_ROOT )#hdf5 is not defined in cmake arguments
+        if  ( DEFINED ENV{HDF5_ROOT} )#hdf5 is defined in the environment
+          set(HDF5_ROOT $ENV{HDF5_ROOT})
+        else( DEFINED ENV{HDF5_ROOT} )#hdf5 is not defined in the environment
+          #HDF5 to be found in petsc external packages
+          set(HDF5_ROOT ${PETSC_DIR}/${PETSC_ARCH})# define hint for hdf5/med installation in petsc external packages
+        endif( DEFINED ENV{HDF5_ROOT} )
+      endif( NOT HDF5_ROOT )
+      set(HDF5_LIBRARY_DIR ${HDF5_ROOT}/lib)
+      set(HDF5_INCLUDE_DIRS ${HDF5_ROOT}/include)
+
       INSTALL(DIRECTORY ${PETSC_DIR}/${PETSC_ARCH}/include DESTINATION share/petsc/include) 
       INSTALL(DIRECTORY ${PETSC_DIR}/include               DESTINATION share/petsc/include) 
       INSTALL(DIRECTORY ${PETSC_DIR}/include/petsc/mpiuni  DESTINATION share/petsc/include) 
@@ -214,21 +237,6 @@ if (CDMATH_WITH_PETSC OR PETSC_DIR OR DEFINED ENV{PETSC_DIR} )
 
 endif( CDMATH_WITH_PETSC OR PETSC_DIR  OR DEFINED ENV{PETSC_DIR} )
 
-#HDF5, in case MED and/or MEDCoupling should be compiled
-if( (NOT MEDFILE_ROOT_DIR AND NOT DEFINED ENV{MEDFILE_ROOT_DIR}) OR (NOT MEDCOUPLING_ROOT_DIR AND NOT DEFINED ENV{MEDCOUPLING_ROOT_DIR}) )
-  if   ( NOT HDF5_ROOT )#hdf5 is not defined in cmake arguments
-    if  ( DEFINED ENV{HDF5_ROOT} )#hdf5 is defined in the environment
-      set(HDF5_ROOT $ENV{HDF5_ROOT})
-    else( DEFINED ENV{HDF5_ROOT} )#hdf5 is not defined in the environment
-      #HDF5 to be found in petsc external packages
-      set(HDF5_ROOT ${PETSC_DIR}/${PETSC_ARCH})# define hint for hdf5/med installation in petsc external packages
-    endif( DEFINED ENV{HDF5_ROOT} )
-  endif( NOT HDF5_ROOT )
-  set(HDF5_LIBRARY_DIR ${HDF5_ROOT}/lib)
-  set(HDF5_INCLUDE_DIRS ${HDF5_ROOT}/include)
-else ( (NOT MEDFILE_ROOT_DIR AND NOT DEFINED ENV{MEDFILE_ROOT_DIR}) OR (NOT MEDCOUPLING_ROOT_DIR AND NOT DEFINED ENV{MEDCOUPLING_ROOT_DIR}) )
-  find_package(HDF5 REQUIRED)
-endif( (NOT MEDFILE_ROOT_DIR AND NOT DEFINED ENV{MEDFILE_ROOT_DIR}) OR (NOT MEDCOUPLING_ROOT_DIR AND NOT DEFINED ENV{MEDCOUPLING_ROOT_DIR}) )
 #MED
 if( MEDFILE_ROOT_DIR OR DEFINED ENV{MEDFILE_ROOT_DIR})
 
