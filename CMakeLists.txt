@@ -220,11 +220,6 @@ if (CDMATH_WITH_PETSC OR PETSC_DIR OR DEFINED ENV{PETSC_DIR} )
       set(HDF5_LIBRARY_DIR ${HDF5_ROOT}/lib)
       set(HDF5_INCLUDE_DIRS ${HDF5_ROOT}/include)
 
-      INSTALL(DIRECTORY ${PETSC_DIR}/${PETSC_ARCH}/include DESTINATION share/petsc/include) 
-      INSTALL(DIRECTORY ${PETSC_DIR}/include               DESTINATION share/petsc/include) 
-      INSTALL(DIRECTORY ${PETSC_DIR}/include/petsc/mpiuni  DESTINATION share/petsc/include) 
-      INSTALL(DIRECTORY ${PETSC_DIR}/${PETSC_ARCH}/lib     DESTINATION share/petsc/lib) 
-   
       set(PETSC_INSTALL ${CMAKE_INSTALL_PREFIX}/share/petsc)#for environment file env_CDMATH.sh
       set(PETSC_INCLUDES_INSTALL  ${PETSC_INSTALL}/include)#for environment file env_CDMATH.sh
       set(PETSC_LIBRARIES_INSTALL ${PETSC_INSTALL}/lib    )#for environment file env_CDMATH.sh 
@@ -238,6 +233,11 @@ if (CDMATH_WITH_PETSC OR PETSC_DIR OR DEFINED ENV{PETSC_DIR} )
 
 endif( CDMATH_WITH_PETSC OR PETSC_DIR  OR DEFINED ENV{PETSC_DIR} )
 
+INSTALL(DIRECTORY ${PETSC_DIR}/${PETSC_ARCH}/include DESTINATION share/petsc/) 
+INSTALL(DIRECTORY ${PETSC_DIR}/include               DESTINATION share/petsc/) 
+INSTALL(DIRECTORY ${PETSC_DIR}/include/petsc/mpiuni  DESTINATION share/petsc/include) 
+INSTALL(DIRECTORY ${PETSC_DIR}/${PETSC_ARCH}/lib     DESTINATION share/petsc/) 
+   
 #MED
 if( MEDFILE_ROOT_DIR OR DEFINED ENV{MEDFILE_ROOT_DIR})
 
@@ -285,11 +285,11 @@ else( MEDFILE_ROOT_DIR OR DEFINED ENV{MEDFILE_ROOT_DIR})
   set(MEDFILE_INCLUDE_DIRS ${MEDFILE_ROOT_DIR}/include)# Nécessaire pour le medloader et les sous-dossiers mesh, et IJKMesh
   set(MEDFILE_C_LIBRARIES med medC)# Nécessaire pour le medloader
 
-  INSTALL(DIRECTORY ${MEDFILE_ROOT_DIR}/include DESTINATION share/med/include) 
-  INSTALL(DIRECTORY ${MEDFILE_ROOT_DIR}/lib     DESTINATION share/med/lib) 
-
   set(MEDFILE_INSTALL ${CMAKE_INSTALL_PREFIX}/share/med)#for environment file env_CDMATH.sh
 endif( MEDFILE_ROOT_DIR OR DEFINED ENV{MEDFILE_ROOT_DIR})
+
+INSTALL(DIRECTORY ${MEDFILE_ROOT_DIR}/include DESTINATION share/med/) 
+INSTALL(DIRECTORY ${MEDFILE_ROOT_DIR}/lib     DESTINATION share/med/) 
 
 set(MEDFILE_INCLUDES_INSTALL  ${MEDFILE_INSTALL}/include)#for environment file env_CDMATH.sh
 set(MEDFILE_LIBRARIES_INSTALL ${MEDFILE_INSTALL}/lib    )#for environment file env_CDMATH.sh 
@@ -347,11 +347,11 @@ else( MEDCOUPLING_ROOT_DIR OR DEFINED ENV{MEDCOUPLING_ROOT_DIR})
         LOG_INSTALL       TRUE           # Wrap install in script to log output
   )
 
-  INSTALL(DIRECTORY ${MEDCOUPLING_ROOT_DIR}/include DESTINATION share/medcoupling/include) 
-  INSTALL(DIRECTORY ${MEDCOUPLING_ROOT_DIR}/lib     DESTINATION share/medcoupling/lib) 
-
   set(MEDCOUPLING_INSTALL ${CMAKE_INSTALL_PREFIX}/share/medcoupling)#for environment file env_CDMATH.sh
 endif( MEDCOUPLING_ROOT_DIR OR DEFINED ENV{MEDCOUPLING_ROOT_DIR} )
+
+INSTALL(DIRECTORY ${MEDCOUPLING_ROOT_DIR}/include DESTINATION share/medcoupling/) 
+INSTALL(DIRECTORY ${MEDCOUPLING_ROOT_DIR}/lib     DESTINATION share/medcoupling/) 
 
 set(MEDCOUPLING_INCLUDE_DIR  ${MEDCOUPLING_ROOT_DIR}/include)
 set(MEDCOUPLING_INCLUDES_INSTALL  ${MEDCOUPLING_INSTALL}/include)#for environment file env_CDMATH.sh
