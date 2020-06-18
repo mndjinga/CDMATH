@@ -19,6 +19,7 @@ option (CDMATH_WITH_TESTS "Compile unit testing." OFF)
 
 #Path to installed libraries
 set (PETSC_DIR            OFF CACHE STRING "PETSc library path" )
+set (PETSC_ARCH           OFF CACHE STRING "PETSc library build architecture" )
 set (SLEPC_DIR            OFF CACHE STRING "SLEPc library path" )
 set (F2CBLASLAPACK_DIR    OFF CACHE STRING "F2CBLASLAPACK library path" )
 set (HDF5_ROOT            OFF CACHE STRING "HDF5 library path" )#For the compilation of MED with a specific version of HDF5
