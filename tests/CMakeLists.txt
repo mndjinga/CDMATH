@@ -62,7 +62,7 @@ if (CDMATH_WITH_PYTHON AND CDMATH_WITH_PETSC AND CDMATH_WITH_POSTPRO)
   add_custom_target (examples COMMAND ctest -R Example)# may be replace ctest -R with ctest -L
   add_custom_target (validation COMMAND ctest -R validation)# may be replace ctest -R with ctest -L
 
-  add_custom_target (spectrum COMMAND ctest -R spectrum)# may be replace ctest -R with ctest -L
+  add_custom_target (spectrum COMMAND ctest -R Spectrum)# may be replace ctest -R with ctest -L
   add_custom_target (beltrami COMMAND ctest -R Beltrami)# may be replace ctest -R with ctest -L
   add_custom_target (poisson COMMAND ctest -R Poisson)# may be replace ctest -R with ctest -L
   add_custom_target (diffusion COMMAND ctest -R Diffusion)# may be replace ctest -R with ctest -L
