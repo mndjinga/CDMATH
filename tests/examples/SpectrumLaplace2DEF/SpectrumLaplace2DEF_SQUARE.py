@@ -133,7 +133,13 @@ Rigidite.leftDiagonalScale(nodal_volumes)
 nev=10
 d=Rigidite.getEigenvectorsDataArrayDouble(nev)
 my_eigenfield = cdmath.Field("Eigenvectors field", cdmath.NODES, my_mesh, nev)
-my_eigenfield.setFieldByDataArrayDouble(d)
+for j in range(nbInteriorNodes):
+    for k in range(nev):
+      my_eigenfield[interiorNodes[j],k]=d[j,k];#remplissage des valeurs pour les noeuds intérieurs
+for j in range(nbBoundaryNodes):
+    for k in range(nev):
+      my_eigenfield[boundaryNodes[j],k]=0;#remplissage des valeurs pour les noeuds frontière (condition limite)
+#my_eigenfield.setFieldByDataArrayDouble(d)
 
 # Sauvegarde du champ résultat
 #===========================
