@@ -62,6 +62,8 @@ if (CDMATH_WITH_PYTHON AND CDMATH_WITH_PETSC AND CDMATH_WITH_POSTPRO)
   add_custom_target (examples COMMAND ctest -R Example)# may be replace ctest -R with ctest -L
   add_custom_target (validation COMMAND ctest -R validation)# may be replace ctest -R with ctest -L
 
+  add_custom_target (spectrum COMMAND ctest -R spectrum)# may be replace ctest -R with ctest -L
+  add_custom_target (beltrami COMMAND ctest -R Beltrami)# may be replace ctest -R with ctest -L
   add_custom_target (poisson COMMAND ctest -R Poisson)# may be replace ctest -R with ctest -L
   add_custom_target (diffusion COMMAND ctest -R Diffusion)# may be replace ctest -R with ctest -L
   add_custom_target (transport COMMAND ctest -R Transport)# may be replace ctest -R with ctest -L
@@ -77,6 +79,8 @@ if (CDMATH_WITH_PYTHON AND CDMATH_WITH_PETSC AND CDMATH_WITH_POSTPRO)
   add_custom_target (noscaling COMMAND ctest -R no_scaling)# may be replace ctest -R with ctest -L
   add_custom_target (2D COMMAND ctest -R 2D)# may be replace ctest -R with ctest -L
   add_custom_target (3D COMMAND ctest -R 3D)# may be replace ctest -R with ctest -L
+  add_custom_target (FE COMMAND ctest -R FE)# may be replace ctest -R with ctest -L
+  add_custom_target (FV COMMAND ctest -R FV)# may be replace ctest -R with ctest -L
   add_custom_target (shock COMMAND ctest -R Shock)# may be replace ctest -R with ctest -L
   add_custom_target (vortex COMMAND ctest -R Vortex)# may be replace ctest -R with ctest -L
   add_custom_target (riemann COMMAND ctest -R RiemannProblem)# may be replace ctest -R with ctest -L
