@@ -139,8 +139,9 @@ for j in range(nbInteriorNodes):
 for j in range(nbBoundaryNodes):
     for k in range(nev):
       my_eigenfield[boundaryNodes[j],k]=0;#remplissage des valeurs pour les noeuds frontière (condition limite)
-#my_eigenfield.setFieldByDataArrayDouble(d)
-
+for k in range(nev):
+    my_eigenfield.setInfoOnComponent(k,d.getInfoOnComponent(k))
+    
 # Sauvegarde du champ résultat
 #===========================
 my_eigenfield.writeVTK("spectrumFiniteElementsOn"+mesh_name+"Laplace")
