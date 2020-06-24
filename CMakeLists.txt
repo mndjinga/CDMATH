@@ -243,7 +243,6 @@ if( MEDFILE_ROOT_DIR OR DEFINED ENV{MEDFILE_ROOT_DIR})
   find_package (MEDFile REQUIRED)
   message (STATUS "MEDFile found in ${MEDFILE_ROOT_DIR}")
 
-  set(MEDFILE_INSTALL ${MEDFILE_ROOT_DIR})#for environment file env_CDMATH.sh
 else( MEDFILE_ROOT_DIR OR DEFINED ENV{MEDFILE_ROOT_DIR})
   #string(FIND "${HDF5_LIBRARIES}" "libhdf5.so" pos)
   #string(SUBSTRING "${HDF5_LIBRARIES}" 0 ${pos} HDF5_LIBRARY_DIR)
@@ -251,7 +250,7 @@ else( MEDFILE_ROOT_DIR OR DEFINED ENV{MEDFILE_ROOT_DIR})
   message(STATUS "MED will be downloaded and installed from ${DOWNLOAD_MED}")
   set(MACHINE PCLINUX)
   set(MEDFILE_DEFINITIONS "-D${MACHINE} -DMEDFILE_INSTALL_DOC=OFF")#Comment ne pas compiler la doc ?
-  set(MEDFILE_ROOT_DIR ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/med_install) # Location of the final install
+  set(MEDFILE_ROOT_DIR ${CMAKE_INSTALL_PREFIX}/share/med) # Location of the final install
   
   #extraction of the tarball archive name
   string(LENGTH "${DOWNLOAD_MED}" tarball_url_length)#length of the name of the tarball
@@ -280,14 +279,7 @@ else( MEDFILE_ROOT_DIR OR DEFINED ENV{MEDFILE_ROOT_DIR})
   set(MEDFILE_INCLUDE_DIRS ${MEDFILE_ROOT_DIR}/include)# Nécessaire pour le medloader et les sous-dossiers mesh, et IJKMesh
   set(MEDFILE_C_LIBRARIES med medC)# Nécessaire pour le medloader
 
-  set(MEDFILE_INSTALL ${CMAKE_INSTALL_PREFIX}/share/med)#for environment file env_CDMATH.sh
 endif( MEDFILE_ROOT_DIR OR DEFINED ENV{MEDFILE_ROOT_DIR})
-
-INSTALL(DIRECTORY ${MEDFILE_ROOT_DIR}/include DESTINATION share/med/) 
-INSTALL(DIRECTORY ${MEDFILE_ROOT_DIR}/lib     DESTINATION share/med/) 
-
-set(MEDFILE_INCLUDES_INSTALL  ${MEDFILE_INSTALL}/include)#for environment file env_CDMATH.sh
-set(MEDFILE_LIBRARIES_INSTALL ${MEDFILE_INSTALL}/lib    )#for environment file env_CDMATH.sh 
 
 add_library(med   SHARED IMPORTED)
 set_property(TARGET med  PROPERTY IMPORTED_LOCATION ${MEDFILE_ROOT_DIR}/lib/libmed.so)
@@ -309,10 +301,9 @@ if( MEDCOUPLING_ROOT_DIR OR DEFINED ENV{MEDCOUPLING_ROOT_DIR})
     message (STATUS "MEDCoupling library found in ${MEDCOUPLING_ROOT_DIR}")
   endif( NOT EXISTS ${MEDCOUPLING_ROOT_DIR}/lib/libmedloader.so OR NOT EXISTS ${MEDCOUPLING_ROOT_DIR}/lib/libmedcoupling.so OR NOT EXISTS ${MEDCOUPLING_ROOT_DIR}/include/MEDCoupling.hxx)
 
-  set(MEDMEDCOUPLING_INSTALL ${MEDCOUPLING_ROOT_DIR})#for environment file env_CDMATH.sh
 else( MEDCOUPLING_ROOT_DIR OR DEFINED ENV{MEDCOUPLING_ROOT_DIR})
   message(STATUS "MEDCoupling will be downloaded and installed from ${DOWNLOAD_MEDCOUPLING}")
-  set(MEDCOUPLING_ROOT_DIR ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/medCoupling_install) # Location of the final install
+  set(MEDCOUPLING_ROOT_DIR ${CMAKE_INSTALL_PREFIX}/share/medcoupling) # Location of the final install
   SET(ENV{HDF5_ROOT} ${HDF5_ROOT})#MEDCoupling install process seems to require an environment variable
 
   #extraction of the tarball archive name
@@ -342,15 +333,10 @@ else( MEDCOUPLING_ROOT_DIR OR DEFINED ENV{MEDCOUPLING_ROOT_DIR})
         LOG_INSTALL       TRUE           # Wrap install in script to log output
   )
 
-  set(MEDCOUPLING_INSTALL ${CMAKE_INSTALL_PREFIX}/share/medcoupling)#for environment file env_CDMATH.sh
 endif( MEDCOUPLING_ROOT_DIR OR DEFINED ENV{MEDCOUPLING_ROOT_DIR} )
 
-INSTALL(DIRECTORY ${MEDCOUPLING_ROOT_DIR}/include DESTINATION share/medcoupling/) 
-INSTALL(DIRECTORY ${MEDCOUPLING_ROOT_DIR}/lib     DESTINATION share/medcoupling/) 
-
-set(MEDCOUPLING_INCLUDE_DIR  ${MEDCOUPLING_ROOT_DIR}/include)
-set(MEDCOUPLING_INCLUDES_INSTALL  ${MEDCOUPLING_INSTALL}/include)#for environment file env_CDMATH.sh
-set(MEDCOUPLING_LIBRARIES_INSTALL ${MEDCOUPLING_INSTALL}/lib    )#for environment file env_CDMATH.sh 
+set(MEDCOUPLING_INCLUDE_DIR ${MEDCOUPLING_ROOT_DIR}/include)
+set(MEDCOUPLING_LIBRARIES   ${MEDCOUPLING_ROOT_DIR}/lib    )#for environment file env_CDMATH.sh 
 
 add_library(medloader   SHARED IMPORTED )
 set_property(TARGET medloader   PROPERTY IMPORTED_LOCATION ${MEDCOUPLING_ROOT_DIR}/lib/libmedloader.so)
