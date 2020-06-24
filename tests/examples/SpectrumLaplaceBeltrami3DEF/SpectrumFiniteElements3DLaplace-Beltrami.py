@@ -8,11 +8,6 @@
 #================================================================================================================================
 
 import cdmath
-from math import pow
-import numpy as np
-import PV_routines
-import VTK_routines
-import paraview.simple as pvs
 import sys
 
 #Chargement du maillage triangulaire de la surface
