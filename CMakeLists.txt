@@ -53,11 +53,13 @@ list (APPEND CMAKE_MODULE_PATH "${CDMATH_SOURCE_DIR}/cmake_files")
 
 # PETSc and HDF5
 if (CDMATH_WITH_PETSC OR PETSC_DIR OR DEFINED ENV{PETSC_DIR} )
-    message ( STATUS "Checking variable PETSC_DIR : " $ENV{PETSC_DIR} )
 
   if ( DEFINED ENV{PETSC_DIR} OR PETSC_DIR)
-    if(NOT PETSC_DIR)
+    if   (NOT PETSC_DIR)
       set(PETSC_DIR $ENV{PETSC_DIR})
+      message ( STATUS "Checking variable PETSC_DIR : " $ENV{PETSC_DIR} )
+    else (NOT PETSC_DIR)
+      message ( STATUS "Checking variable PETSC_DIR : " ${PETSC_DIR} )
     endif(NOT PETSC_DIR)
 
     find_package (PETSc 3.4 REQUIRED)
