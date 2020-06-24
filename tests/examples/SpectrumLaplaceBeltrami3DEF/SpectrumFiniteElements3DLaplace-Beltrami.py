@@ -123,7 +123,7 @@ print("Condition number is ",cond)
 
 # Spectre de la matrice de rigidité
 #==================================
-#Symétrisation de la matrice de rigidité
+#Homogénéisation de la matrice de rigidité (sinon elle tend vers zero de meme que ses valeurs propres)
 for i in range(nbNodes):
 	nodal_volumes[i]=1/nodal_volumes[i]
 Rigidite.leftDiagonalScale(nodal_volumes)
@@ -135,4 +135,4 @@ my_eigenfield.setFieldByDataArrayDouble(d)
 
 # Sauvegarde du champ résultat
 #===========================
-my_eigenfield.writeVTK("spectrumFiniteElementsOn"+mesh_name+"Poisson")
+my_eigenfield.writeVTK("spectrumFiniteElementsOn"+mesh_name+"LaplaceBeltrami")
