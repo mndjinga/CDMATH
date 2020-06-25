@@ -207,9 +207,8 @@ if (CDMATH_WITH_PETSC OR PETSC_DIR OR DEFINED ENV{PETSC_DIR} )
       if   ( NOT HDF5_ROOT )#hdf5 is not defined in cmake arguments
         if  ( DEFINED ENV{HDF5_ROOT} )#hdf5 is defined in the environment
           set(HDF5_ROOT $ENV{HDF5_ROOT})
-        else( DEFINED ENV{HDF5_ROOT} )#hdf5 is not defined in the environment
-          #HDF5 to be found in petsc external packages
-          set(HDF5_ROOT ${PETSC_DIR}/${PETSC_ARCH})# define hint for hdf5/med installation in petsc external packages
+        else( DEFINED ENV{HDF5_ROOT} )#hdf5 is not defined in the environment          
+          set(HDF5_ROOT ${PETSC_INSTALL})#HDF5 to be found in petsc installation
         endif( DEFINED ENV{HDF5_ROOT} )
       endif( NOT HDF5_ROOT )
       set(HDF5_LIBRARY_DIR ${HDF5_ROOT}/lib)
