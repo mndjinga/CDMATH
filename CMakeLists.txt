@@ -94,7 +94,6 @@ if (CDMATH_WITH_PETSC OR PETSC_DIR OR DEFINED ENV{PETSC_DIR} )
       endif( DEFINED ENV{HDF5_ROOT} )
     endif( NOT HDF5_ROOT )
     set(HDF5_LIBRARY_DIR ${HDF5_ROOT}/lib)
-    set(HDF5_INCLUDE_DIRS ${HDF5_ROOT}/include)
   else ( DEFINED ENV{PETSC_DIR} OR PETSC_DIR )
     message ( STATUS "PETSC_DIR not set, searching PETSc and SLEPc in the system" )
 
@@ -168,8 +167,6 @@ if (CDMATH_WITH_PETSC OR PETSC_DIR OR DEFINED ENV{PETSC_DIR} )
       string(SUBSTRING ${DOWNLOAD_PETSC} ${start_tarball_name} ${tarball_name_length} PETSC_TARBALL_NAME)
 
       set(PETSC_DIR ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/${PETSC_TARBALL_NAME}) # Location of the final install 
-      set(PETSC_INCLUDES  ${PETSC_DIR}/include/ ${PETSC_DIR}/${PETSC_ARCH}/include ${PETSC_DIR}/include/petsc/mpiuni)
-      set(PETSC_LIBRARIES ${PETSC_DIR}/${PETSC_ARCH}/lib/libpetsc.so) 
       set(PETSC_INSTALL ${CMAKE_INSTALL_PREFIX}/share/petsc)#folder to copy petsc libraries and include files
 
       ExternalProject_Add (PETSc
@@ -197,8 +194,9 @@ if (CDMATH_WITH_PETSC OR PETSC_DIR OR DEFINED ENV{PETSC_DIR} )
       #get petsc version
       string(SUBSTRING ${PETSC_TARBALL_NAME} 6 ${tarball_name_length} PETSC_VERSION)
       set(PETSC_ARCH )
+      set(PETSC_INCLUDES  ${PETSC_DIR}/include/ ${PETSC_DIR}/${PETSC_ARCH}/include ${PETSC_DIR}/include/petsc/mpiuni)
+      set(PETSC_LIBRARIES ${PETSC_DIR}/${PETSC_ARCH}/lib/libpetsc.so) 
       set(PETSC_INCLUDES   ${PETSC_INSTALL}/include)#for environment file env_CDMATH.sh
-      set(PETSC_LIBRARIES  ${PETSC_INSTALL}/lib    )#for environment file env_CDMATH.sh 
 
       #define slepc variables
       set(SLEPC_DIR ${PETSC_DIR}/${PETSC_ARCH})
@@ -214,7 +212,6 @@ if (CDMATH_WITH_PETSC OR PETSC_DIR OR DEFINED ENV{PETSC_DIR} )
         endif( DEFINED ENV{HDF5_ROOT} )
       endif( NOT HDF5_ROOT )
       set(HDF5_LIBRARY_DIR ${HDF5_ROOT}/lib)
-      set(HDF5_INCLUDE_DIRS ${HDF5_ROOT}/include)
 
     endif ( IS_DIRECTORY "/usr/include/petsc/" AND EXISTS "/usr/lib64/libpetsc.so" )
   endif ( DEFINED ENV{PETSC_DIR} OR PETSC_DIR )
