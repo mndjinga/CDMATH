@@ -65,6 +65,7 @@ if (CDMATH_WITH_PETSC OR PETSC_DIR OR DEFINED ENV{PETSC_DIR} )
     petsc_get_version ()
 
     message ( STATUS "PETSc found. Version is ${PETSC_VERSION_MAJOR}.${PETSC_VERSION_MINOR}.${PETSC_VERSION_SUBMINOR}" )
+    set(PETSC_INSTALL ${PETSC_DIR})
 
     #Define and search slepc variables
     if   ( NOT SLEPC_DIR )
@@ -106,7 +107,8 @@ if (CDMATH_WITH_PETSC OR PETSC_DIR OR DEFINED ENV{PETSC_DIR} )
 
       set(PETSC_VERSION "3.8") #3.8 for fedora 26 , 3.9 for fedora 29 , 3.10 for fedora 30, , 3.12 for fedora 32
       
-      set (CPACK_RPM_PACKAGE_REQUIRES   "${CPACK_RPM_PACKAGE_REQUIRES}, petsc-devel (>= 3.4)") # This is not fully working yet. 
+      set(CPACK_RPM_PACKAGE_REQUIRES   "${CPACK_RPM_PACKAGE_REQUIRES}, petsc-devel (>= 3.4)") # This is not fully working yet. 
+      set(PETSC_INSTALL ${PETSC_DIR})
 
       #Define and search slepc variables
       if   ( IS_DIRECTORY "/usr/include/slepc/" AND EXISTS "/usr/lib64/libslepc.so" )
@@ -191,15 +193,9 @@ if (CDMATH_WITH_PETSC OR PETSC_DIR OR DEFINED ENV{PETSC_DIR} )
       #message( STATUS "PETSc version is ${PETSC_VERSION_MAJOR}.${PETSC_VERSION_MINOR}.${PETSC_VERSION_SUBMINOR}" )
       message( STATUS "PETSc, SLEPc and HDF5 will be installed at ${PETSC_INSTALL}")
 
-      #get petsc version
       string(SUBSTRING ${PETSC_TARBALL_NAME} 6 ${tarball_name_length} PETSC_VERSION)
-      set(PETSC_ARCH )
-      set(PETSC_INCLUDES  ${PETSC_DIR}/include/ ${PETSC_DIR}/${PETSC_ARCH}/include ${PETSC_DIR}/include/petsc/mpiuni)
-      set(PETSC_LIBRARIES ${PETSC_DIR}/${PETSC_ARCH}/lib/libpetsc.so) 
-      set(PETSC_INCLUDES   ${PETSC_INSTALL}/include)#for environment file env_CDMATH.sh
-
       #define slepc variables
-      set(SLEPC_DIR ${PETSC_DIR}/${PETSC_ARCH})
+      set(SLEPC_DIR ${PETSC_INSTALL})
       set(SLEPC_INCLUDES ${SLEPC_DIR}/include)
       set(SLEPC_LIBRARIES ${SLEPC_DIR}/lib/libslepc.so)
 
