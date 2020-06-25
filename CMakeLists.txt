@@ -197,6 +197,8 @@ if (CDMATH_WITH_PETSC OR PETSC_DIR OR DEFINED ENV{PETSC_DIR} )
       #get petsc version
       string(SUBSTRING ${PETSC_TARBALL_NAME} 6 ${tarball_name_length} PETSC_VERSION)
       set(PETSC_ARCH )
+      set(PETSC_INCLUDES   ${PETSC_INSTALL}/include)#for environment file env_CDMATH.sh
+      set(PETSC_LIBRARIES  ${PETSC_INSTALL}/lib    )#for environment file env_CDMATH.sh 
 
       #define slepc variables
       set(SLEPC_DIR ${PETSC_DIR}/${PETSC_ARCH})
@@ -223,14 +225,6 @@ if (CDMATH_WITH_PETSC OR PETSC_DIR OR DEFINED ENV{PETSC_DIR} )
 
 endif( CDMATH_WITH_PETSC OR PETSC_DIR  OR DEFINED ENV{PETSC_DIR} )
 
-set(PETSC_INCLUDES_INSTALL   ${PETSC_INSTALL}/include)#for environment file env_CDMATH.sh
-set(PETSC_LIBRARIES_INSTALL  ${PETSC_INSTALL}/lib    )#for environment file env_CDMATH.sh 
-
-INSTALL(DIRECTORY ${PETSC_DIR}/${PETSC_ARCH}/include DESTINATION share/petsc/) 
-INSTALL(DIRECTORY ${PETSC_DIR}/include               DESTINATION share/petsc/) 
-INSTALL(DIRECTORY ${PETSC_DIR}/include/petsc/mpiuni  DESTINATION share/petsc/include) 
-INSTALL(DIRECTORY ${PETSC_DIR}/${PETSC_ARCH}/lib     DESTINATION share/petsc/) 
-   
 #MED
 if( MEDFILE_ROOT_DIR OR DEFINED ENV{MEDFILE_ROOT_DIR})
 
