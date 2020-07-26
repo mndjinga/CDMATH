@@ -295,10 +295,17 @@ class Field
 
     /**
      * Computes the maximum of each component of the field
-     * The field may be multicomponent so the result of the function
+     * The field may be multicomponent so the result of the function is a vector
      * return the vector of numerical value of the Linfinity norm of each component of the field
      */
     Vector normMax() const;
+
+    /**
+     * Computes the maximum of each component of the field as well as the index where the maximum was found
+     * The field may be multicomponent so the result of the function is a vector of values and a vector of indices
+     * return the vector of numerical value of the Linfinity norm of each component of the field AND the corresponding vector of indices
+     */
+    Vector componentMax(Vector & Indices) const;
 
     const Field& operator= ( const Field& f ) ;
 

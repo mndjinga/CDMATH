@@ -557,6 +557,24 @@ Field::normMax ( ) const
 	return result;
 }
 
+Vector 
+Field::componentMax(Vector & Indices) const
+{
+	int nbComp=_field->getNumberOfComponents();
+   	int nbElems=getNumberOfElements();
+
+	Vector result(nbComp);//Vector containing the Linfinity norm of each component
+
+	for(int i=0; i<nbElems ; i++)
+        for(int j=0; j<nbComp ; j++)
+            if(fabs((*this)(i,j))>result(j))
+            {
+                result(j)=fabs((*this)(i,j));
+                Indices(j)=i;
+            }
+	return result;    
+}
+
 //----------------------------------------------------------------------
 double&
 Field::operator() ( int ielem )
