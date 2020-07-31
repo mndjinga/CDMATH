@@ -245,9 +245,9 @@ class Field
 
     DoubleTab getNormEuclidean( void ) const ;
 
-    double max( void ) const ;
+    double max( int component=0 ) const ;
 
-    double min( void ) const ;
+    double min( int component=0 ) const ;
 
     void setTime ( double time, int iter );
 
