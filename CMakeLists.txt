@@ -350,7 +350,10 @@ endif(CDMATH_WITH_PYTHON AND CDMATH_WITH_POSTPRO)
 
 # Swig interface
 if   (CDMATH_WITH_PYTHON)
-   find_package (PYTHON REQUIRED)
+    set(PYTHON_EXECUTABLE python3)
+    find_package(PythonInterp REQUIRED)
+    find_package(PythonLibs REQUIRED)
+
    find_package (SWIG 3.0 REQUIRED)
    set (CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, python-dev, python-numpy, swig")
    set (CPACK_RPM_PACKAGE_REQUIRES "${CPACK_RPM_PACKAGE_REQUIRES}, python-devel, numpy, swig")
