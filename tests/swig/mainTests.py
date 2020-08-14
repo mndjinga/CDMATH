@@ -543,7 +543,7 @@ class TestsCDMATHSwig(unittest.TestCase):
 
         M23 = Mesh("meshSquare.med")
         self.assertTrue(len(M23.getNameOfFaceGroups()) == 5)
-        print M23.getNameOfFaceGroups()
+        print( M23.getNameOfFaceGroups() )
         self.assertTrue(M23.getNameOfFaceGroups()[3] == "Bottom")
         self.assertTrue(M23.getNameOfFaceGroups()[2] == "Left")
         self.assertTrue(M23.getNameOfFaceGroups()[1] == "Right")
