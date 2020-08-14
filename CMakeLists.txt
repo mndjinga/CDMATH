@@ -350,9 +350,12 @@ endif(CDMATH_WITH_PYTHON AND CDMATH_WITH_POSTPRO)
 
 # Swig interface
 if   (CDMATH_WITH_PYTHON)
-    set(PYTHON_EXECUTABLE python3)
-    find_package(PythonInterp REQUIRED)
-    find_package(PythonLibs REQUIRED)
+  IF   (${CMAKE_VERSION} VERSION_GREATER "3.12.0")
+    find_package(Python COMPONENTS Interpreter Development)
+  ELSE (${CMAKE_VERSION} VERSION_GREATER "3.12.0")
+    find_package(PythonInterp 3 REQUIRED)
+    find_package(PythonLibs 3 REQUIRED)
+  ENDIF(${CMAKE_VERSION} VERSION_GREATER "3.12.0")
 
    find_package (SWIG 3.0 REQUIRED)
    set (CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, python-dev, python-numpy, swig")
