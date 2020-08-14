@@ -351,10 +351,13 @@ if   (CDMATH_WITH_PYTHON)
     find_package(PythonLibs 3 REQUIRED)
   ENDIF(${CMAKE_VERSION} VERSION_GREATER "3.12.0")
 
-   find_package (SWIG 3.0 REQUIRED)
-   set (CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, python-dev, python-numpy, swig")
-   set (CPACK_RPM_PACKAGE_REQUIRES   "${CPACK_RPM_PACKAGE_REQUIRES},   python-devel,      numpy, swig")
-   add_subdirectory (${CDMATH_SWIG_DIR})
+  SET(PYTHON_EXECUTABLE ${Python_EXECUTABLE})#Legacy
+  message(STATUS "Python version is ${Python_VERSION}")
+
+  find_package (SWIG 3.0 REQUIRED)
+  set (CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, python-dev, python-numpy, swig")
+  set (CPACK_RPM_PACKAGE_REQUIRES   "${CPACK_RPM_PACKAGE_REQUIRES},   python-devel,      numpy, swig")
+  add_subdirectory (${CDMATH_SWIG_DIR})
 endif(CDMATH_WITH_PYTHON)
 
 # Paraview variables for env_CDMATH.sh
