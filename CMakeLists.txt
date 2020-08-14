@@ -342,16 +342,6 @@ if   (TARGET PETSc AND TARGET MEDCoupling)
   ExternalProject_Add_StepDependencies( MEDCoupling build PETSc )#PETcS doit être compilé avant MEDCoupling (car il contient hdf5)
 endif(TARGET PETSc AND TARGET MEDCoupling)
  
-# Paraview variables for env_CDMATH.sh
-if   (CDMATH_WITH_PYTHON AND CDMATH_WITH_POSTPRO)
-find_package(VTK) 
-#find_package(ParaView)  
-  set (PV_LIB_DIR    /usr/lib/python2.7/dist-packages/:/usr/lib/python3.7/dist-packages/:/usr/lib64/paraview/)
-  set (PV_PYTHON_DIR /usr/lib/python2.7/dist-packages/:/usr/lib/python3.7/dist-packages/:/usr/lib64/paraview/site-packages/:/usr/lib64/paraview/site-packages/paraview/:/usr/lib64/paraview/site-packages/vtk/:
-                     /usr/lib64/paraview/python2.7/site-packages/:/usr/lib64/paraview/python2.7/site-packages/paraview/:/usr/lib64/paraview/python2.7/site-packages/vtkmodules:
-                     /usr/lib64/paraview/python3.7/site-packages/:/usr/lib64/paraview/python3.7/site-packages/paraview/:/usr/lib64/paraview/python3.7/site-packages/vtkmodules)
-endif(CDMATH_WITH_PYTHON AND CDMATH_WITH_POSTPRO)
-
 # Swig interface
 if   (CDMATH_WITH_PYTHON)
   IF   (${CMAKE_VERSION} VERSION_GREATER "3.12.0")
@@ -366,6 +356,19 @@ if   (CDMATH_WITH_PYTHON)
    set (CPACK_RPM_PACKAGE_REQUIRES   "${CPACK_RPM_PACKAGE_REQUIRES},   python-devel,      numpy, swig")
    add_subdirectory (${CDMATH_SWIG_DIR})
 endif(CDMATH_WITH_PYTHON)
+
+# Paraview variables for env_CDMATH.sh
+if   (CDMATH_WITH_PYTHON AND CDMATH_WITH_POSTPRO)
+#find_package(VTK) 
+#find_package(ParaView)  
+  IF   ( ${Python_VERSION} VERSION_GREATER "3.0.0")
+    set (PV_LIB_DIR    /usr/lib/python3.7/dist-packages/:/usr/lib64/paraview/)
+    set (PV_PYTHON_DIR /usr/lib/python3.7/dist-packages/:/usr/lib64/paraview/site-packages/:/usr/lib64/paraview/site-packages/paraview/:/usr/lib64/paraview/site-packages/vtk/:/usr/lib64/paraview/python3.7/site-packages/:/usr/lib64/paraview/python3.7/site-packages/paraview/:/usr/lib64/paraview/python3.7/site-packages/vtkmodules)
+  ELSE ( ${Python_VERSION} VERSION_GREATER "3.0.0")
+    set (PV_LIB_DIR    /usr/lib/python2.7/dist-packages/:/usr/lib64/paraview/)
+    set (PV_PYTHON_DIR /usr/lib/python2.7/dist-packages/::/usr/lib64/paraview/site-packages/:/usr/lib64/paraview/site-packages/paraview/:/usr/lib64/paraview/site-packages/vtk/:/usr/lib64/paraview/python2.7/site-packages/:/usr/lib64/paraview/python2.7/site-packages/paraview/:/usr/lib64/paraview/python2.7/site-packages/vtkmodules)
+  ENDIF( ${Python_VERSION} VERSION_GREATER "3.0.0")
+endif(CDMATH_WITH_PYTHON AND CDMATH_WITH_POSTPRO)
 
 find_package (XDR REQUIRED)
 add_subdirectory (${BASE_DIR})
