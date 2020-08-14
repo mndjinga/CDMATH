@@ -40,7 +40,7 @@ ELSE (${CMAKE_VERSION} VERSION_LESS "3.8.0")
   SWIG_ADD_LIBRARY(cdmath TYPE SHARED LANGUAGE python SOURCES ${CMAKE_BINARY_DIR}/swig/cdmath.i)
 ENDIF(${CMAKE_VERSION} VERSION_LESS "3.8.0")
  
-SWIG_LINK_LIBRARIES(cdmath ${PYTHON_LIBS} base mesh ${medloader} ${medcoupling} ${_extra_lib_SWIG})
+SWIG_LINK_LIBRARIES(cdmath ${Python_LIBRARIES} base mesh ${medloader} ${medcoupling} ${_extra_lib_SWIG})
 
 INSTALL(TARGETS _cdmath DESTINATION lib/cdmath)
 INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/cdmath.py DESTINATION bin/cdmath)
