@@ -25,11 +25,21 @@ INCLUDE_DIRECTORIES(
   ${BASE_DIR}/inc
   ${MESH_DIR}/inc
 )
-IF(${CMAKE_VERSION} VERSION_LESS "3.8.0") 
+
+#Trying to remove warnings due to cmake policies cmp0078 and cmp0086
+IF   (${CMAKE_VERSION} VERSION_GREATER "3.13.0")
+  cmake_policy(SET CMP0078 NEW)
+  IF   (${CMAKE_VERSION} VERSION_GREATER "3.14.0")
+    cmake_policy(SET CMP0086 NEW)
+  ENDIF(${CMAKE_VERSION} VERSION_GREATER "3.14.0")
+ENDIF(${CMAKE_VERSION} VERSION_GREATER "3.13.0")
+
+IF   (${CMAKE_VERSION} VERSION_LESS "3.8.0") 
   SWIG_ADD_MODULE(cdmath python ${CMAKE_BINARY_DIR}/swig/cdmath.i)
-ELSE()
+ELSE (${CMAKE_VERSION} VERSION_LESS "3.8.0") 
   SWIG_ADD_LIBRARY(cdmath TYPE SHARED LANGUAGE python SOURCES ${CMAKE_BINARY_DIR}/swig/cdmath.i)
-ENDIF()
+ENDIF(${CMAKE_VERSION} VERSION_LESS "3.8.0")
+ 
 SWIG_LINK_LIBRARIES(cdmath ${PYTHON_LIBS} base mesh ${medloader} ${medcoupling} ${_extra_lib_SWIG})
 
 INSTALL(TARGETS _cdmath DESTINATION lib/cdmath)
