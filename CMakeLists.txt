@@ -163,8 +163,8 @@ if (CDMATH_WITH_PETSC OR PETSC_DIR OR DEFINED ENV{PETSC_DIR} )
       message (STATUS "HDF5  will be downloaded and compiled from ${DOWNLOAD_HDF5}" )
 
       #extract tarball name
-      string(LENGTH ${DOWNLOAD_PETSC} tarball_url_length)#length of the tarball
-      string(FIND   ${DOWNLOAD_PETSC} "/" start_tarball_name REVERSE )# last occurence of "/"
+      string(LENGTH "${DOWNLOAD_PETSC}" tarball_url_length)#length of the tarball
+      string(FIND   "${DOWNLOAD_PETSC}" "/" start_tarball_name REVERSE )# last occurence of "/"
       MATH(EXPR start_tarball_name "${start_tarball_name}+1")#start after the occurence of "/"
       MATH(EXPR tarball_name_length "${tarball_url_length}-${start_tarball_name}-7")#name ends before .tar.gz that counts for 7 characters
       string(SUBSTRING ${DOWNLOAD_PETSC} ${start_tarball_name} ${tarball_name_length} PETSC_TARBALL_NAME)
@@ -294,8 +294,8 @@ else( MEDCOUPLING_ROOT_DIR OR DEFINED ENV{MEDCOUPLING_ROOT_DIR})
   SET(ENV{HDF5_ROOT} ${HDF5_ROOT})#MEDCoupling install process seems to require an environment variable
 
   #extraction of the tarball archive name
-  string(LENGTH ${DOWNLOAD_MEDCOUPLING} tarball_url_length)#length of the tarball
-  string(FIND   ${DOWNLOAD_MEDCOUPLING} "/" start_tarball_name REVERSE )# last occurence of "/"
+  string(LENGTH "${DOWNLOAD_MEDCOUPLING}" tarball_url_length)#length of the tarball
+  string(FIND   "${DOWNLOAD_MEDCOUPLING}" "/" start_tarball_name REVERSE )# last occurence of "/"
   MATH(EXPR start_tarball_name "${start_tarball_name}+1")#start after the occurence of "/"
   MATH(EXPR tarball_name_length "${tarball_url_length}-${start_tarball_name}-7")#name ends before .tar.gz that counts for 7 characters
   string(SUBSTRING ${DOWNLOAD_MEDCOUPLING} ${start_tarball_name} ${tarball_name_length} MEDCOUPLING_TARBALL_NAME)
@@ -339,18 +339,63 @@ if   (TARGET MED AND TARGET MEDCoupling)
 endif(TARGET MED AND TARGET MEDCoupling)
  
 if   (TARGET PETSc AND TARGET MEDCoupling)
-  ExternalProject_Add_StepDependencies( MEDCoupling build PETSc )#PETcS doit être compilé avant MEDCoupling (car il contient hdf5)
+  ExternalProject_Add_StepDependencies( MEDCoupling build PETSc )#PETSc doit être compilé avant MEDCoupling (car il contient hdf5)
 endif(TARGET PETSc AND TARGET MEDCoupling)
  
+# Paraview variables for env_CDMATH.sh
+if   (CDMATH_WITH_PYTHON AND CDMATH_WITH_POSTPRO)
+#find_package(VTK) 
+#find_package(ParaView)  
+  
+  #extraction of the paraview version"
+  IF   ( EXISTS "/usr/include/paraview/vtkPVConfig.h" )
+    file(STRINGS /usr/include/paraview/vtkPVConfig.h vtkConfig)
+  ELSE ( EXISTS "/usr/include/paraview/vtkPVConfig.h" )
+    message(WARNING "Could not find ParaView configuration file vtkPVConfig.h. Postprocessing won't work")
+  ENDIF( EXISTS "/usr/include/paraview/vtkPVConfig.h" )
+
+  FOREACH(line ${vtkConfig})
+    string(FIND "${line}" "#define PARAVIEW_VERSION_FULL " pos)
+    IF(NOT ${pos} EQUAL -1)
+      string(LENGTH ${line} line_length)#length of the tarball
+      MATH(EXPR start_pv_version "${line_length}-7")#line ends with "x.y.z", that counts for 7 characters
+      string(SUBSTRING ${line} ${start_pv_version} ${line_length} PV_VERSION)
+      break()
+    ENDIF(NOT ${pos} EQUAL -1)
+  ENDFOREACH(line vtkConfig)
+  
+  message(STATUS "ParaView version is ${PV_VERSION}" )
+  IF   ( ${PV_VERSION} STRGREATER "5.6.0" )#Use python 3
+    IF   (${CMAKE_VERSION} VERSION_GREATER "3.12.0")
+      find_package(Python 3 REQUIRED COMPONENTS Interpreter Development)
+    ELSE (${CMAKE_VERSION} VERSION_GREATER "3.12.0")
+      find_package(PythonInterp 3 REQUIRED)
+      find_package(PythonLibs 3 REQUIRED)
+    ENDIF(${CMAKE_VERSION} VERSION_GREATER "3.12.0")
+    set (PV_LIB_DIR    /usr/lib/python3.7/dist-packages/paraview/:/usr/lib64/paraview/:/usr/lib/paraview/)
+    set (PV_PYTHON_DIR /usr/lib/python3.7/dist-packages/paraview/:/usr/lib64/paraview/site-packages/:/usr/lib64/paraview/site-packages/paraview/:/usr/lib64/paraview/site-packages/vtk/:/usr/lib64/paraview/python3.7/site-packages/:/usr/lib64/paraview/python3.7/site-packages/paraview/:/usr/lib64/paraview/python3.7/site-packages/vtkmodules:/usr/lib/paraview/site-packages/paraview:/usr/lib/paraview/site-packages/paraview/vtk)
+  ELSE ( ${PV_VERSION} STRGREATER "5.6.0" )#Use python 2
+    IF   (${CMAKE_VERSION} VERSION_GREATER "3.12.0")
+      find_package(Python 2 REQUIRED COMPONENTS Interpreter Development)
+    ELSE (${CMAKE_VERSION} VERSION_GREATER "3.12.0")
+      find_package(PythonInterp 2 REQUIRED)
+      find_package(PythonLibs 2 REQUIRED)
+    ENDIF(${CMAKE_VERSION} VERSION_GREATER "3.12.0")
+    set (PV_LIB_DIR    /usr/lib/python2.7/dist-packages/paraview/:/usr/lib64/paraview/:/usr/lib/paraview/)
+    set (PV_PYTHON_DIR /usr/lib/python2.7/dist-packages/paraview/:/usr/lib64/paraview/site-packages/:/usr/lib64/paraview/site-packages/paraview/:/usr/lib64/paraview/site-packages/vtk/:/usr/lib64/paraview/python2.7/site-packages/:/usr/lib64/paraview/python2.7/site-packages/paraview/:/usr/lib64/paraview/python2.7/site-packages/vtkmodules:/usr/lib/paraview/site-packages/paraview:/usr/lib/paraview/site-packages/paraview/vtk)
+  ENDIF( ${PV_VERSION} STRGREATER "5.6.0" )
+
+elseif(CDMATH_WITH_PYTHON AND CDMATH_WITH_POSTPRO)
+  IF   (CDMATH_WITH_PYTHON AND ${CMAKE_VERSION} VERSION_GREATER "3.12.0")
+    find_package(Python COMPONENTS Interpreter Development)
+  ELSE (CDMATH_WITH_PYTHON AND ${CMAKE_VERSION} VERSION_GREATER "3.12.0")
+    find_package(PythonInterp REQUIRED)
+    find_package(PythonLibs REQUIRED)
+  ENDIF(CDMATH_WITH_PYTHON AND ${CMAKE_VERSION} VERSION_GREATER "3.12.0")
+endif(CDMATH_WITH_PYTHON AND CDMATH_WITH_POSTPRO)
+
 # Swig interface
 if   (CDMATH_WITH_PYTHON)
-  IF   (${CMAKE_VERSION} VERSION_GREATER "3.12.0")
-    find_package(Python COMPONENTS Interpreter Development)
-  ELSE (${CMAKE_VERSION} VERSION_GREATER "3.12.0")
-    find_package(PythonInterp 3 REQUIRED)
-    find_package(PythonLibs 3 REQUIRED)
-  ENDIF(${CMAKE_VERSION} VERSION_GREATER "3.12.0")
-
   SET(PYTHON_EXECUTABLE ${Python_EXECUTABLE})#Legacy
   message(STATUS "Python version is ${Python_VERSION}")
 
@@ -359,19 +404,6 @@ if   (CDMATH_WITH_PYTHON)
   set (CPACK_RPM_PACKAGE_REQUIRES   "${CPACK_RPM_PACKAGE_REQUIRES},   python-devel,      numpy, swig")
   add_subdirectory (${CDMATH_SWIG_DIR})
 endif(CDMATH_WITH_PYTHON)
-
-# Paraview variables for env_CDMATH.sh
-if   (CDMATH_WITH_PYTHON AND CDMATH_WITH_POSTPRO)
-#find_package(VTK) 
-#find_package(ParaView)  
-  IF   ( ${Python_VERSION} VERSION_GREATER "3.0.0")
-    set (PV_LIB_DIR    /usr/lib/python3.7/dist-packages/:/usr/lib64/paraview/)
-    set (PV_PYTHON_DIR /usr/lib/python3.7/dist-packages/:/usr/lib64/paraview/site-packages/:/usr/lib64/paraview/site-packages/paraview/:/usr/lib64/paraview/site-packages/vtk/:/usr/lib64/paraview/python3.7/site-packages/:/usr/lib64/paraview/python3.7/site-packages/paraview/:/usr/lib64/paraview/python3.7/site-packages/vtkmodules)
-  ELSE ( ${Python_VERSION} VERSION_GREATER "3.0.0")
-    set (PV_LIB_DIR    /usr/lib/python2.7/dist-packages/:/usr/lib64/paraview/)
-    set (PV_PYTHON_DIR /usr/lib/python2.7/dist-packages/::/usr/lib64/paraview/site-packages/:/usr/lib64/paraview/site-packages/paraview/:/usr/lib64/paraview/site-packages/vtk/:/usr/lib64/paraview/python2.7/site-packages/:/usr/lib64/paraview/python2.7/site-packages/paraview/:/usr/lib64/paraview/python2.7/site-packages/vtkmodules)
-  ENDIF( ${Python_VERSION} VERSION_GREATER "3.0.0")
-endif(CDMATH_WITH_PYTHON AND CDMATH_WITH_POSTPRO)
 
 find_package (XDR REQUIRED)
 add_subdirectory (${BASE_DIR})
