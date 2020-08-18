@@ -358,18 +358,18 @@ if   (CDMATH_WITH_PYTHON AND CDMATH_WITH_POSTPRO)
     string(FIND "${line}" "#define PARAVIEW_VERSION_FULL " pos)
     IF(NOT ${pos} EQUAL -1)
       string(LENGTH ${line} line_length)#length of the tarball
-      MATH(EXPR start_pv_version "${line_length}-7")#line ends with "x.y.z", that counts for 7 characters
-      string(SUBSTRING ${line} ${start_pv_version} ${line_length} PV_VERSION)
+      MATH(EXPR start_pv_version "${line_length}-6")#line ends with "x.y.z", that counts for 7 characters
+      string(SUBSTRING ${line} ${start_pv_version} 5 PV_VERSION)
       break()
     ENDIF(NOT ${pos} EQUAL -1)
   ENDFOREACH(line vtkConfig)
   
   message(STATUS "ParaView version is ${PV_VERSION}" )
-  IF   ( ${PV_VERSION} VERSION_LESS "5.6.0" )#Use python 3
+  IF   ( ${PV_VERSION} VERSION_GREATER_EQUAL 5.6.0 )#Use python 3
+    SET(PYTHON2OR3 "3")
+  ELSE ( ${PV_VERSION} VERSION_GREATER_EQUAL 5.6.0 )#Use python 2
     SET(PYTHON2OR3 "2")
-  ELSE ( ${PV_VERSION} VERSION_LESS "5.6.0" )#Use python 2
-    SET(PYTHON_EXTENSION "3")
-  ENDIF( ${PV_VERSION} VERSION_LESS "5.6.0" )
+  ENDIF( ${PV_VERSION} VERSION_GREATER_EQUAL 5.6.0 )
 
     set (PV_LIB_DIR    /usr/lib/python${PYTHON2OR3}.7/dist-packages/paraview/:/usr/lib64/paraview/:/usr/lib/paraview/)
     set (PV_PYTHON_DIR /usr/lib/python${PYTHON2OR3}.7/dist-packages/paraview/:/usr/lib64/paraview/site-packages/:/usr/lib64/paraview/site-packages/paraview/:/usr/lib64/paraview/site-packages/vtk/:/usr/lib64/paraview/python${PYTHON2OR3}.7/site-packages/:/usr/lib64/paraview/python${PYTHON2OR3}.7/site-packages/paraview/:/usr/lib64/paraview/python${PYTHON2OR3}.7/site-packages/vtkmodules:/usr/lib/paraview/site-packages/paraview:/usr/lib/paraview/site-packages/paraview/vtk)
