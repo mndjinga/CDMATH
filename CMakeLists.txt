@@ -365,11 +365,11 @@ if   (CDMATH_WITH_PYTHON AND CDMATH_WITH_POSTPRO)
   ENDFOREACH(line vtkConfig)
   
   message(STATUS "ParaView version is ${PV_VERSION}" )
-  IF   ( ${PV_VERSION} VERSION_GREATER_EQUAL 5.6.0 )#Use python 3
+  IF   ( ${PV_VERSION} VERSION_GREATER 5.6.0 OR ${PV_VERSION} VERSION_EQUAL 5.6.0 )#Use python 3, use VERSION_GREATER_EQUAL if cmake >=3.7
     SET(PYTHON2OR3 "3")
-  ELSE ( ${PV_VERSION} VERSION_GREATER_EQUAL 5.6.0 )#Use python 2
+  ELSE ( ${PV_VERSION} VERSION_GREATER 5.6.0 OR ${PV_VERSION} VERSION_EQUAL 5.6.0 )#Use python 2
     SET(PYTHON2OR3 "2")
-  ENDIF( ${PV_VERSION} VERSION_GREATER_EQUAL 5.6.0 )
+  ENDIF( ${PV_VERSION} VERSION_GREATER 5.6.0 OR ${PV_VERSION} VERSION_EQUAL 5.6.0 )
 
     set (PV_LIB_DIR    /usr/lib/python${PYTHON2OR3}.7/dist-packages/paraview/:/usr/lib64/paraview/:/usr/lib/paraview/)
     set (PV_PYTHON_DIR /usr/lib/python${PYTHON2OR3}.7/dist-packages/paraview/:/usr/lib64/paraview/site-packages/:/usr/lib64/paraview/site-packages/paraview/:/usr/lib64/paraview/site-packages/vtk/:/usr/lib64/paraview/python${PYTHON2OR3}.7/site-packages/:/usr/lib64/paraview/python${PYTHON2OR3}.7/site-packages/paraview/:/usr/lib64/paraview/python${PYTHON2OR3}.7/site-packages/vtkmodules:/usr/lib/paraview/site-packages/paraview:/usr/lib/paraview/site-packages/paraview/vtk)
