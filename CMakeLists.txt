@@ -10,12 +10,12 @@ set (CDMATH_VERSION_MINOR 0)
 include(ExternalProject)#For PETSc, MED and MEDCoupling
 
 # Project options
-option (CDMATH_WITH_PETSC "Compile CDMATH with PETSc linking." OFF)
-option (CDMATH_WITH_DOCUMENTATION "Generate documentation with doxygen." OFF)
-option (CDMATH_WITH_PYTHON "Compile Python interface for CDMATH." OFF)
-option (CDMATH_WITH_POSTPRO "Install postprocessing Python modules." OFF)
+option (CDMATH_WITH_PETSC "Compile CDMATH with PETSc linking." ON)
+option (CDMATH_WITH_DOCUMENTATION "Generate documentation with doxygen." ON)
+option (CDMATH_WITH_PYTHON "Compile Python interface for CDMATH." ON)
+option (CDMATH_WITH_POSTPRO "Install postprocessing Python modules." ON)
 option (CDMATH_WITH_PACKAGE "Generate RPM, Debian and tarball packages." OFF)
-option (CDMATH_WITH_TESTS "Compile unit testing." OFF)
+option (CDMATH_WITH_TESTS "Compile unit testing." ON)
 
 #Path to installed libraries
 set (PETSC_DIR            OFF CACHE STRING "PETSc library path" )
@@ -26,15 +26,15 @@ set (MEDFILE_ROOT_DIR     OFF CACHE STRING "MED library path" )
 set (MEDCOUPLING_ROOT_DIR OFF CACHE STRING "MEDCoupling library path" )
 
 #url of tarball librairies
-set (DOWNLOAD_PETSC         http://ftp.mcs.anl.gov/pub/petsc/release-snapshots/petsc-3.13.2.tar.gz
+set (DOWNLOAD_PETSC         http://ftp.mcs.anl.gov/pub/petsc/release-snapshots/petsc-lite-3.13.tar.gz
      CACHE STRING           "PETSc tarball path/url" )
-set (DOWNLOAD_SLEPC         https://slepc.upv.es/download/distrib/slepc-3.13.2.tar.gz
+set (DOWNLOAD_SLEPC         https://slepc.upv.es/download/distrib/slepc-3.13.4.tar.gz
      CACHE STRING           "SLEPC tarball path/url" )
 set (DOWNLOAD_F2CBLASLAPACK ${CDMATH_SOURCE_DIR}/pre_requis/PETSc/f2cblaslapack-3.4.2.q4.tar.gz
      CACHE STRING           "F2CBLASLAPACK tarball path/url" )
 set (DOWNLOAD_HDF5          ${CDMATH_SOURCE_DIR}/pre_requis/PETSc/hdf5-1.10.3.tar.gz  
      CACHE STRING           "HDF5 tarball path/url" )
-set (DOWNLOAD_MED           http://files.salome-platform.org/Salome/other/med-4.0.0.tar.gz
+set (DOWNLOAD_MED           http://files.salome-platform.org/Salome/other/med-4.1.0.tar.gz
      CACHE STRING           "MED tarball path/url")
 set (DOWNLOAD_MEDCOUPLING   http://files.salome-platform.org/Salome/other/medCoupling-9.4.0.tar.gz
      CACHE STRING           "MEDCoupling tarball path/url" )
@@ -344,14 +344,12 @@ endif(TARGET PETSc AND TARGET MEDCoupling)
  
 # Paraview variables for env_CDMATH.sh
 if   (CDMATH_WITH_PYTHON AND CDMATH_WITH_POSTPRO)
-#find_package(VTK) 
-#find_package(ParaView)  
   
   #extraction of the paraview version"
   IF   ( EXISTS "/usr/include/paraview/vtkPVConfig.h" )
     file(STRINGS /usr/include/paraview/vtkPVConfig.h vtkConfig)
   ELSE ( EXISTS "/usr/include/paraview/vtkPVConfig.h" )
-    message(WARNING "Could not find ParaView configuration file vtkPVConfig.h. Postprocessing won't work")
+    message(WARNING "Could not find ParaView configuration file vtkPVConfig.h. Postprocessing may not work")
   ENDIF( EXISTS "/usr/include/paraview/vtkPVConfig.h" )
 
   FOREACH(line ${vtkConfig})
