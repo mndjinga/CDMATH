@@ -356,32 +356,42 @@ set (CDMATH_LIBRARIES
 # Paraview variables for env_CDMATH.sh
 if   (CDMATH_WITH_PYTHON AND CDMATH_WITH_POSTPRO)
   
-  #extraction of the paraview version"
-  IF   ( EXISTS "/usr/include/paraview/vtkPVConfig.h" )
-    file(STRINGS /usr/include/paraview/vtkPVConfig.h vtkConfig)
-  ELSE ( EXISTS "/usr/include/paraview/vtkPVConfig.h" )
-    message(WARNING "Could not find ParaView configuration file vtkPVConfig.h. Postprocessing may not work")
-  ENDIF( EXISTS "/usr/include/paraview/vtkPVConfig.h" )
+  if( NOT DEFINED PARAVIEW_VERSION )
+    if( DEFINED PARAVIEW_ROOT_DIR)
+      set( PARAVIEW_INCLUDE_DIR   ${PARAVIEW_ROOT_DIR}/include)
+      set( PARAVIEW_LIBRARIES_DIR ${PARAVIEW_ROOT_DIR}/lib)
+    else( DEFINED PARAVIEW_ROOT_DIR)
+      set( PARAVIEW_INCLUDE_DIR /usr/include/paraview/)
+      set( PARAVIEW_LIBRARIES_DIR /usr/lib/paraview/:/usr/lib64/paraview/)
+    endif( DEFINED PARAVIEW_ROOT_DIR)
 
-  FOREACH(line ${vtkConfig})
-    string(FIND "${line}" "#define PARAVIEW_VERSION_FULL " pos)
-    IF(NOT ${pos} EQUAL -1)
-      string(LENGTH ${line} line_length)#length of the tarball
-      MATH(EXPR start_pv_version "${line_length}-6")#line ends with "x.y.z", that counts for 7 characters
-      string(SUBSTRING ${line} ${start_pv_version} 5 PV_VERSION)
-      break()
-    ENDIF(NOT ${pos} EQUAL -1)
-  ENDFOREACH(line vtkConfig)
+    #extraction of the paraview version"
+    IF   ( EXISTS ${PARAVIEW_INCLUDE_DIR}/vtkPVConfig.h )
+      file(STRINGS ${PARAVIEW_INCLUDE_DIR}/vtkPVConfig.h vtkConfig)
+    ELSE ( EXISTS ${PARAVIEW_INCLUDE_DIR}/vtkPVConfig.h )
+      message(WARNING "Could not find ParaView configuration file vtkPVConfig.h in folder ${PARAVIEW_INCLUDE_DIR}. Postprocessing may not work")
+    ENDIF( EXISTS ${PARAVIEW_INCLUDE_DIR}/vtkPVConfig.h )
+
+    FOREACH(line ${vtkConfig})
+      string(FIND "${line}" "#define PARAVIEW_VERSION_FULL " pos)
+      IF(NOT ${pos} EQUAL -1)
+        string(LENGTH ${line} line_length)#length of the tarball
+        MATH(EXPR start_pv_version "${line_length}-6")#line ends with "x.y.z", that counts for 7 characters
+        string(SUBSTRING ${line} ${start_pv_version} 5 PARAVIEW_VERSION)
+        break()
+      ENDIF(NOT ${pos} EQUAL -1)
+    ENDFOREACH(line vtkConfig)
+  endif(NOT DEFINED PARAVIEW_VERSION)
   
-  message(STATUS "ParaView version is ${PV_VERSION}" )
-  IF   ( ${PV_VERSION} VERSION_GREATER 5.6.0 OR ${PV_VERSION} VERSION_EQUAL 5.6.0 )#Use python 3, use VERSION_GREATER_EQUAL if cmake >=3.7
+  message(STATUS "ParaView version is ${PARAVIEW_VERSION}" )
+  IF   ( ${PARAVIEW_VERSION} STRGREATER "5.6" OR ${PARAVIEW_VERSION} STREQUAL "5.6" )#Use python 3, use VERSION_GREATER_EQUAL if cmake >=3.7
     SET(PYTHON2OR3 "3")
-  ELSE ( ${PV_VERSION} VERSION_GREATER 5.6.0 OR ${PV_VERSION} VERSION_EQUAL 5.6.0 )#Use python 2
+  ELSE ( ${PARAVIEW_VERSION} STRGREATER "5.6" OR ${PARAVIEW_VERSION} STREQUAL "5.6" )#Use python 2
     SET(PYTHON2OR3 "2")
-  ENDIF( ${PV_VERSION} VERSION_GREATER 5.6.0 OR ${PV_VERSION} VERSION_EQUAL 5.6.0 )
+  ENDIF( ${PARAVIEW_VERSION} STRGREATER "5.6" OR ${PARAVIEW_VERSION} STREQUAL "5.6" )
 
-    set (PV_LIB_DIR    /usr/lib/python${PYTHON2OR3}.7/dist-packages/paraview/:/usr/lib64/paraview/:/usr/lib/paraview/)
-    set (PV_PYTHON_DIR /usr/lib/python${PYTHON2OR3}.7/dist-packages/paraview/:/usr/lib64/paraview/site-packages/:/usr/lib64/paraview/site-packages/paraview/:/usr/lib64/paraview/site-packages/vtk/:/usr/lib64/paraview/python${PYTHON2OR3}.7/site-packages/:/usr/lib64/paraview/python${PYTHON2OR3}.7/site-packages/paraview/:/usr/lib64/paraview/python${PYTHON2OR3}.7/site-packages/vtkmodules:/usr/lib/paraview/site-packages/paraview:/usr/lib/paraview/site-packages/paraview/vtk)
+  set (PV_LIB_DIR    /usr/lib/python${PYTHON2OR3}.7/dist-packages/paraview/:/usr/lib64/paraview/:/usr/lib/paraview/)
+  set (PV_PYTHON_DIR /usr/lib/python${PYTHON2OR3}.7/dist-packages/paraview/:/usr/lib64/paraview/site-packages/:/usr/lib64/paraview/site-packages/paraview/:/usr/lib64/paraview/site-packages/vtk/:/usr/lib64/paraview/python${PYTHON2OR3}.7/site-packages/:/usr/lib64/paraview/python${PYTHON2OR3}.7/site-packages/paraview/:/usr/lib64/paraview/python${PYTHON2OR3}.7/site-packages/vtkmodules:/usr/lib/paraview/site-packages/paraview:/usr/lib/paraview/site-packages/paraview/vtk)
 
 endif(CDMATH_WITH_PYTHON AND CDMATH_WITH_POSTPRO)
 
