@@ -264,6 +264,7 @@ else( MEDFILE_ROOT_DIR OR DEFINED ENV{MEDFILE_ROOT_DIR})
   )
   
   set(MEDFILE_INCLUDE_DIRS ${MEDFILE_ROOT_DIR}/include)# Nécessaire pour le medloader et les sous-dossiers mesh, et IJKMesh
+  set(MEDFILE_LIBRARIES    ${MEDFILE_ROOT_DIR}/lib)# Nécessaire pour le env_CDMATH.sh
   set(MEDFILE_C_LIBRARIES med medC)# Nécessaire pour le medloader
 
 endif( MEDFILE_ROOT_DIR OR DEFINED ENV{MEDFILE_ROOT_DIR})
@@ -341,6 +342,16 @@ endif(TARGET MED AND TARGET MEDCoupling)
 if   (TARGET PETSc AND TARGET MEDCoupling)
   ExternalProject_Add_StepDependencies( MEDCoupling build PETSc )#PETSc doit être compilé avant MEDCoupling (car il contient hdf5)
 endif(TARGET PETSc AND TARGET MEDCoupling)
+
+###Define CDMATH_INCLUDES and CDMATH_LIBRARIES for the compilation of CoreFlows
+set(CDMATH_INCLUDES 
+	${MEDFILE_INCLUDE_DIRS} ${MEDCOUPLING_INCLUDE_DIR}
+	${BASE_DIR}/inc ${MESH_DIR}/inc ${LINEARSOLVER_DIR}/inc )
+
+set (CDMATH_LIBRARIES
+	medC medloader	medcoupling
+	base mesh 	linearsolver
+    )
  
 # Paraview variables for env_CDMATH.sh
 if   (CDMATH_WITH_PYTHON AND CDMATH_WITH_POSTPRO)
