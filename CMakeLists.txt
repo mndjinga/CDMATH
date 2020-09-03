@@ -274,6 +274,8 @@ set_property(TARGET med  PROPERTY IMPORTED_LOCATION ${MEDFILE_ROOT_DIR}/lib/libm
 add_library(medC   SHARED IMPORTED)
 set_property(TARGET medC PROPERTY IMPORTED_LOCATION ${MEDFILE_ROOT_DIR}/lib/libmedC.so)
 
+string(REPLACE ";" ":"  MEDFILE_LIBRARIES_INSTALL "${MEDFILE_LIBRARIES}")# use colon instead of semicolon in environment file env_CDMATH.sh
+
 #MEDCoupling
 if( MEDCOUPLING_ROOT_DIR OR DEFINED ENV{MEDCOUPLING_ROOT_DIR})
 
