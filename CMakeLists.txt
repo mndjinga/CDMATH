@@ -26,9 +26,9 @@ set (MEDFILE_ROOT_DIR     OFF CACHE STRING "MED library path" )
 set (MEDCOUPLING_ROOT_DIR OFF CACHE STRING "MEDCoupling library path" )
 
 #url of tarball librairies
-set (DOWNLOAD_PETSC         http://ftp.mcs.anl.gov/pub/petsc/release-snapshots/petsc-lite-3.13.tar.gz
+set (DOWNLOAD_PETSC         http://ftp.mcs.anl.gov/pub/petsc/release-snapshots/petsc-lite-3.13.5.tar.gz
      CACHE STRING           "PETSc tarball path/url" )
-set (DOWNLOAD_SLEPC         https://slepc.upv.es/download/distrib/slepc-3.13.3.tar.gz
+set (DOWNLOAD_SLEPC         https://slepc.upv.es/download/distrib/slepc-3.13.2.tar.gz
      CACHE STRING           "SLEPC tarball path/url" )
 set (DOWNLOAD_F2CBLASLAPACK https://www.mcs.anl.gov/petsc/mirror/externalpackages/f2cblaslapack-3.4.2.q4.tar.gz
      CACHE STRING           "F2CBLASLAPACK tarball path/url" )
@@ -200,7 +200,7 @@ if (CDMATH_WITH_PETSC OR PETSC_DIR OR DEFINED ENV{PETSC_DIR} )
 
       #define slepc variables
       set(SLEPC_DIR ${PETSC_DIR})
-      set(SLEPC_INCLUDES ${SLEPC_DIR}/include ${PETSC_DIR}/${PETSC_ARCH}/externalpackages/slepc-3.13.4/include)
+      set(SLEPC_INCLUDES ${SLEPC_DIR}/include ${PETSC_DIR}/${PETSC_ARCH}/externalpackages/slepc-3.13.2/include)
       message(STATUS "SLEPC_INCLUDES is ${SLEPC_INCLUDES}")
       set(SLEPC_LIBRARIES ${SLEPC_DIR}/lib/libslepc.so)
 
