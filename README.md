@@ -1,7 +1,7 @@
 CDMATH
 ======
 
-CDMATH is a geometrical and numerical toolbox designed for numerical analysts who work on the discretisation of partial differential equations on general shapes and meshes and would rather focus on high-level scripting. The library originates from [CDMATH](http://cdmath.jimdo.com), a collaborative workgroup with the same name. It is based on the [MEDcoupling](https://docs.salome-platform.org/latest/dev/MEDCoupling/tutorial/index.html) C++/python library of the [SALOME](http://www.salome-platform.org/) project for the handling of meshes and fields, and on the C++ library [PETSC](https://www.mcs.anl.gov/petsc/) for the handling of matrices and linear solvers. The library is currently developed for linux distributions and is maintained on Ubuntu 14.04 LTS, 16.04 LTS and 18.04 LTS, as well as on Fedora 24, 26, 28 and 29.
+CDMATH is a geometrical and numerical toolbox designed for numerical analysts who work on the discretisation of partial differential equations on general shapes and meshes and would rather focus on high-level scripting. The goal is to provide simple MATLAB style functions for the generation and manipulation of meshes, fields and matrices. The library originates from [CDMATH](http://cdmath.jimdo.com), a collaborative workgroup with the same name. It is based on the [MEDcoupling](https://docs.salome-platform.org/latest/dev/MEDCoupling/tutorial/index.html) C++/python library of the [SALOME](http://www.salome-platform.org/) project for the handling of meshes and fields, and on the C++ library [PETSC](https://www.mcs.anl.gov/petsc/) for the handling of matrices and linear solvers. The library is currently developed for linux distributions and is maintained on Ubuntu 16.04 LTS and 18.04 LTS, as well as on Fedora 24, 26, 28, 29 and 30.
 
 Examples of use
 ---------------
@@ -35,13 +35,13 @@ Download from GitHub
 * or clone the git repository to a folder cdmath-master:  `git clone https://github.com/ndjinga/CDMATH.git cdmath-master`
 
 
-Set environment for the compilation of CDMATH
+Set the environment for the compilation of CDMATH
 ---------------------------------------------
 Dependencies. The following package list is sufficient on Ubuntu 14.04, Ubuntu 16.04, Ubuntu 18.04 :
 
  - `cmake3` (mandatory)
  - `g++` or another C++ compiler (mandatory)
- - `python-dev`, `python-numpy` and `swig`, if you want to use CDMATH commands in Python scripts. Use the compilation option `-DCDMATH_WITH_PYTHON=ON`. (highly recommended)
+ - `python-dev`, `python-numpy` and `swig3`, if you want to use CDMATH commands in Python scripts. Use the compilation option `-DCDMATH_WITH_PYTHON=ON`. (highly recommended)
  - `python-matplotlib` and `paraview` for postprocessing tools such as plotting curves (matplotlib) or generating 3D view images (paraview). Use the compilation option `-DCDMATH_WITH_POSTPRO=ON` (recommended).
  - `jupyter`, in order to generate and visualise nice reports from test case simulations (optional)
  - `doxygen`, `graphviz` and `mscgen`, if you want to generate a nice source code documentation in `~/workspace/cdmath/cdmath_install/doc/`. Use the compilation option `-DCDMATH_WITH_DOCUMENTATION=ON` (optional).
@@ -60,14 +60,14 @@ Compile and install CDMATH
 Simpler build for a minimum version:
 * `cmake ../cdmath-master/ -DCMAKE_INSTALL_PREFIX=../cdmath_install -DCMAKE_BUILD_TYPE=Release -DCDMATH_WITH_PETSC=ON -DCDMATH_WITH_PYTHON=ON `  
 > This will download and build the following dependencies
-> - PETSc from http://ftp.mcs.anl.gov/pub/petsc/release-snapshots/petsc-3.13.2.tar.gz
-> - SLEPc from https://slepc.upv.es/download/distrib/slepc-3.13.2.tar.gz
-> - HDF5 http://files.salome-platform.org/Salome/other/med-4.0.0.tar.gz
-> - MEDFILE from http://files.salome-platform.org/Salome/other/med-4.0.0.tar.gz
+> - PETSc from http://ftp.mcs.anl.gov/pub/petsc/release-snapshots/petsc-3.13.tar.gz
+> - SLEPc from https://slepc.upv.es/download/distrib/slepc-3.13.4.tar.gz
+> - HDF5 http://files.salome-platform.org/Salome/other/med-4.1.0.tar.gz
+> - MEDFILE from http://files.salome-platform.org/Salome/other/med-4.1.0.tar.gz
 > - MEDCOUPLING from http://files.salome-platform.org/Salome/other/medCoupling-9.4.0.tar.gz
 
 Advanced build for an all-options version:
-* `cmake ../cdmath-master -DCMAKE_INSTALL_PREFIX=../cdmath_install -DCMAKE_BUILD_TYPE=Release -G"Eclipse CDT4 - Unix Makefiles" -D_ECLIPSE_VERSION=4.3 -DCDMATH_WITH_PETSC=ON -DCDMATH_WITH_PYTHON=ON  -DCDMATH_WITH_POSTPRO=ON -DCDMATH_WITH_TESTS=ON -DCDMATH_WITH_DOCUMENTATION=ON -DPETSC_DIR=${PETSC_DIR} -DMEDFILE_ROOT_DIR=${MEDFILE_ROOT_DIR} -DMEDCOUPLING_ROOT_DIR=${MEDCOUPLING_ROOT_DIR}`  
+* `cmake ../cdmath-master -DCMAKE_INSTALL_PREFIX=../cdmath_install -DCMAKE_BUILD_TYPE=Release -G"Eclipse CDT4 - Unix Makefiles" -D_ECLIPSE_VERSION=4.3 -DCDMATH_WITH_PETSC=ON -DCDMATH_WITH_PYTHON=ON  -DCDMATH_WITH_POSTPRO=ON -DCDMATH_WITH_TESTS=ON -DCDMATH_WITH_DOCUMENTATION=ON -DPETSC_DIR=${PETSC_DIR} -DPETSC_ARCH=${PETSC_ARCH} -DMEDFILE_ROOT_DIR=${MEDFILE_ROOT_DIR} -DMEDCOUPLING_ROOT_DIR=${MEDCOUPLING_ROOT_DIR}`  
 > This assumes that you have an existing 
 > - install of PETSc (with submodules SLEPC and HDF5) at the location given by the environment variable PETSC_DIR and the architecture variable PETSC_ARCH  
 > See the instructions given in [the official documentation](http://www.mcs.anl.gov/petsc/documentation/installation.html)
@@ -75,7 +75,7 @@ Advanced build for an all-options version:
 > - install of MEDCOUPLING                            at the location given by the environment variable MEDCOUPLING_ROOT_DIR
 
 The 3 dependencies PETSC, MED and MEDCOUPLING should have been compiled with the same version of HDF5  
-Warning : the linux package libhdf5-dev is generally not compatible with the libraries MED and MEDCoupling
+Warning : the linux package libhdf5-dev is generally not compatible with the libraries MED and MEDCoupling  
 Compile and install:
 * `make`
 * `make doc install`
