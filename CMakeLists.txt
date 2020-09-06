@@ -178,9 +178,9 @@ if (CDMATH_WITH_PETSC OR PETSC_DIR OR DEFINED ENV{PETSC_DIR} )
       SOURCE_DIR        ${PETSC_DIR}
       BUILD_IN_SOURCE   TRUE
       CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=${PETSC_INSTALL} --with-debugging=0 --with-mpi=0 --download-f2cblaslapack=${DOWNLOAD_F2CBLASLAPACK} --with-fc=0 --download-slepc=${DOWNLOAD_SLEPC} --download-hdf5=${DOWNLOAD_HDF5}
-      BUILD_COMMAND     make PETSC_DIR=${PETSC_DIR} PETSC_ARCH=${PETSC_ARCH} all
+      BUILD_COMMAND     make all
       TEST_COMMAND      make check
-      INSTALL_COMMAND   make all
+      INSTALL_COMMAND   make install
       INSTALL_DIR       ${PETSC_DIR}
       STAMP_DIR         ${CMAKE_CURRENT_BINARY_DIR}/pre_requis
       LOG_DOWNLOAD      TRUE           # Wrap download in script to log output
@@ -196,13 +196,13 @@ if (CDMATH_WITH_PETSC OR PETSC_DIR OR DEFINED ENV{PETSC_DIR} )
       message( STATUS "PETSc, SLEPc and HDF5 will be installed at ${PETSC_INSTALL}")
 
       string(SUBSTRING ${PETSC_TARBALL_NAME} 6 ${tarball_name_length} PETSC_VERSION)
-      set(PETSC_INCLUDES ${PETSC_DIR}/${PETSC_ARCH}/include ${PETSC_DIR}/include)
+      set(PETSC_INCLUDES  ${PETSC_DIR}/${PETSC_ARCH}/include ${PETSC_DIR}/include)
+      set(PETSC_LIBRARIES ${PETSC_DIR}/${PETSC_ARCH}/lib/libpetsc.so)
 
       #define slepc variables
       set(SLEPC_DIR ${PETSC_DIR})
-      set(SLEPC_INCLUDES ${SLEPC_DIR}/include ${PETSC_DIR}/${PETSC_ARCH}/externalpackages/slepc-3.13.4/include)
-      message(STATUS "SLEPC_INCLUDES is ${SLEPC_INCLUDES}")
-      set(SLEPC_LIBRARIES ${SLEPC_DIR}/lib/libslepc.so)
+      set(SLEPC_INCLUDES ${SLEPC_DIR}/include  ${PETSC_DIR}/${PETSC_ARCH}/externalpackages/slepc-3.13.4/include ${PETSC_DIR}/${PETSC_ARCH}/externalpackages/slepc-3.13.4/installed-arch-linux2-c-opt/include)
+      set(SLEPC_LIBRARIES ${PETSC_DIR}/${PETSC_ARCH}/externalpackages/slepc-3.13.4/installed-arch-linux2-c-opt/lib/libslepc.so)
 
       #define hdf5 variables
       if   ( NOT HDF5_ROOT )#hdf5 is not defined in cmake arguments
@@ -221,7 +221,14 @@ if (CDMATH_WITH_PETSC OR PETSC_DIR OR DEFINED ENV{PETSC_DIR} )
   if   ( ${PETSC_VERSION} VERSION_GREATER 3.5 )
     add_definitions(-DPETSC_VERSION_GREATER_3_5)
   endif( ${PETSC_VERSION} VERSION_GREATER 3.5 )
+
 string(REPLACE ";" ":"  PETSC_INCLUDES_INSTALL "${PETSC_INCLUDES}")# use colon instead of semicolon in environment file env_CDMATH.sh
+
+add_library(petsc   SHARED IMPORTED)
+set_property(TARGET petsc  PROPERTY IMPORTED_LOCATION ${PETSC_LIBRARIES})
+add_library(slepc   SHARED IMPORTED)
+set_property(TARGET slepc  PROPERTY IMPORTED_LOCATION ${PETSC_LIBRARIES})
+
 endif( CDMATH_WITH_PETSC OR PETSC_DIR  OR DEFINED ENV{PETSC_DIR} )
 
 #MED
