@@ -10,12 +10,12 @@ set (CDMATH_VERSION_MINOR 0)
 include(ExternalProject)#For PETSc, MED and MEDCoupling
 
 # Project options
-option (CDMATH_WITH_PETSC "Compile CDMATH with PETSc linking." ON)
+option (CDMATH_WITH_PETSC         "Compile CDMATH with PETSc linking." ON)
 option (CDMATH_WITH_DOCUMENTATION "Generate documentation with doxygen." ON)
-option (CDMATH_WITH_PYTHON "Compile Python interface for CDMATH." ON)
-option (CDMATH_WITH_POSTPRO "Install postprocessing Python modules." ON)
-option (CDMATH_WITH_PACKAGE "Generate RPM, Debian and tarball packages." OFF)
-option (CDMATH_WITH_TESTS "Compile unit testing." ON)
+option (CDMATH_WITH_PYTHON        "Compile Python interface for CDMATH." ON)
+option (CDMATH_WITH_POSTPRO       "Install postprocessing Python modules." ON)
+option (CDMATH_WITH_PACKAGE       "Generate RPM, Debian and tarball packages." OFF)
+option (CDMATH_WITH_TESTS         "Compile unit testing." ON)
 
 #Path to installed libraries
 set (PETSC_DIR            OFF CACHE STRING "PETSc library path" )
@@ -26,7 +26,7 @@ set (MEDFILE_ROOT_DIR     OFF CACHE STRING "MED library path" )
 set (MEDCOUPLING_ROOT_DIR OFF CACHE STRING "MEDCoupling library path" )
 
 #url of tarball librairies
-set (DOWNLOAD_PETSC         http://ftp.mcs.anl.gov/pub/petsc/release-snapshots/petsc-lite-3.13.5.tar.gz
+set (DOWNLOAD_PETSC         http://ftp.mcs.anl.gov/pub/petsc/release-snapshots/petsc-lite-3.13.5.tar.gz 
      CACHE STRING           "PETSc tarball path/url" )
 set (DOWNLOAD_SLEPC         https://slepc.upv.es/download/distrib/slepc-3.13.4.tar.gz
      CACHE STRING           "SLEPC tarball path/url" )
@@ -41,10 +41,10 @@ set (DOWNLOAD_MEDCOUPLING   http://files.salome-platform.org/Salome/other/medCou
 
 
 # Base directories
-set (BASE_DIR ${CDMATH_SOURCE_DIR}/base)
-set (MESH_DIR ${CDMATH_SOURCE_DIR}/mesh)
-set (LINEARSOLVER_DIR ${CDMATH_SOURCE_DIR}/linearsolver)
-set (CDMATH_SWIG_DIR ${CDMATH_SOURCE_DIR}/swig)
+set (BASE_DIR           ${CDMATH_SOURCE_DIR}/base)
+set (MESH_DIR           ${CDMATH_SOURCE_DIR}/mesh)
+set (LINEARSOLVER_DIR   ${CDMATH_SOURCE_DIR}/linearsolver)
+set (CDMATH_SWIG_DIR    ${CDMATH_SOURCE_DIR}/swig)
 set (CDMATH_POSTPRO_DIR ${CDMATH_SOURCE_DIR}/postprocessing)
 
 set (TESTS_DIR ${CDMATH_SOURCE_DIR}/tests)
@@ -78,7 +78,7 @@ if (CDMATH_WITH_PETSC OR PETSC_DIR OR DEFINED ENV{PETSC_DIR} )
 
     message ( STATUS "Checking variable SLEPC_DIR" )
     if ( IS_DIRECTORY ${SLEPC_DIR}/include AND EXISTS ${SLEPC_DIR}/lib/libslepc.so)
-      set(SLEPC_INCLUDES ${SLEPC_DIR}/include)
+      set(SLEPC_INCLUDES  ${SLEPC_DIR}/include)
       set(SLEPC_LIBRARIES ${SLEPC_DIR}/lib/libslepc.so)
       message( STATUS "SLEPc found at ${SLEPC_DIR}" )
     else()
@@ -94,14 +94,14 @@ if (CDMATH_WITH_PETSC OR PETSC_DIR OR DEFINED ENV{PETSC_DIR} )
         set(HDF5_ROOT ${PETSC_DIR}/${PETSC_ARCH})# define hint for hdf5/med installation in petsc external packages
       endif( DEFINED ENV{HDF5_ROOT} )
     endif( NOT HDF5_ROOT )
-    set(HDF5_LIBRARY_DIR ${HDF5_ROOT}/lib)
+    set(HDF5_LIBRARY_DIR  ${HDF5_ROOT}/lib)
     set(HDF5_INCLUDE_DIRS ${HDF5_ROOT}/include)
   else ( DEFINED ENV{PETSC_DIR} OR PETSC_DIR )
     message ( STATUS "PETSC_DIR not set, searching PETSc and SLEPc in the system" )
 
     if ( IS_DIRECTORY "/usr/include/petsc/" AND EXISTS "/usr/lib64/libpetsc.so" )  #Case fedora/redhat system install
       message ( STATUS "PETSC includes found in /usr/include/petsc/" )
-      message ( STATUS "PETSC library found in /usr/lib64" )
+      message ( STATUS "PETSC library  found in /usr/lib64" )
       set(PETSC_DIR /usr/)
       set(PETSC_INCLUDES  /usr/include/petsc /usr/include/petsc/petsc/mpiuni)
       set(PETSC_LIBRARIES /usr/lib64/libpetsc.so)
@@ -118,7 +118,7 @@ if (CDMATH_WITH_PETSC OR PETSC_DIR OR DEFINED ENV{PETSC_DIR} )
         set(SLEPC_DIR /usr/)
         set(SLEPC_INCLUDES ${SLEPC_DIR}/include)
         set(SLEPC_LIBRARIES ${SLEPC_DIR}/lib/libslepc.so)
-        set (CPACK_RPM_PACKAGE_REQUIRES   "${CPACK_RPM_PACKAGE_REQUIRES}, slepc-devel (>= 3.4)") # This is not fully working yet. 
+        set(CPACK_RPM_PACKAGE_REQUIRES   "${CPACK_RPM_PACKAGE_REQUIRES}, slepc-devel (>= 3.4)") # This is not fully working yet. 
       else ( IS_DIRECTORY "/usr/include/slepc/" AND EXISTS "/usr/lib64/libslepc.so" )
         message( FATAL_ERROR "SLEPc not found in the system" )
       endif( IS_DIRECTORY "/usr/include/slepc/" AND EXISTS "/usr/lib64/libslepc.so" )
@@ -127,7 +127,7 @@ if (CDMATH_WITH_PETSC OR PETSC_DIR OR DEFINED ENV{PETSC_DIR} )
       if   ( NOT HDF5_ROOT AND NOT DEFINED ENV{HDF5_ROOT} )#hdf5 is not defined in the environment
         find_package(HDF5 REQUIRED)
         set(CPACK_DEBIAN_PACKAGE_DEPENDS "libhdf5-dev")
-        set(CPACK_RPM_PACKAGE_REQUIRES "hdf5-devel")
+        set(CPACK_RPM_PACKAGE_REQUIRES   "hdf5-devel")
       endif( NOT HDF5_ROOT AND NOT DEFINED ENV{HDF5_ROOT} )
 
 
@@ -165,7 +165,7 @@ if (CDMATH_WITH_PETSC OR PETSC_DIR OR DEFINED ENV{PETSC_DIR} )
       #extract tarball name
       string(LENGTH "${DOWNLOAD_PETSC}" tarball_url_length)#length of the tarball
       string(FIND   "${DOWNLOAD_PETSC}" "/" start_tarball_name REVERSE )# last occurence of "/"
-      MATH(EXPR start_tarball_name "${start_tarball_name}+1")#start after the occurence of "/"
+      MATH(EXPR start_tarball_name  "${start_tarball_name}+1")#start after the occurence of "/"
       MATH(EXPR tarball_name_length "${tarball_url_length}-${start_tarball_name}-7")#name ends before .tar.gz that counts for 7 characters
       string(SUBSTRING ${DOWNLOAD_PETSC} ${start_tarball_name} ${tarball_name_length} PETSC_TARBALL_NAME)
 
@@ -191,11 +191,14 @@ if (CDMATH_WITH_PETSC OR PETSC_DIR OR DEFINED ENV{PETSC_DIR} )
       LOG_INSTALL       TRUE           # Wrap install in script to log output
        )
 
-      #file (STRINGS "${PETSC_DIR}/${PETSC_ARCH}/include/petscversion.h" vstrings REGEX "#define PETSC_VERSION_(RELEASE|MAJOR|MINOR|SUBMINOR|PATCH) ")
-      #message( STATUS "PETSc version is ${PETSC_VERSION_MAJOR}.${PETSC_VERSION_MINOR}.${PETSC_VERSION_SUBMINOR}" )
       message( STATUS "PETSc, SLEPc and HDF5 will be installed at ${PETSC_INSTALL}")
 
-      string(SUBSTRING ${PETSC_TARBALL_NAME} 6 ${tarball_name_length} PETSC_VERSION)
+      string(LENGTH "${PETSC_TARBALL_NAME}" tarball_name_length)#length of the tarball
+      string(FIND   "${PETSC_TARBALL_NAME}" "-" start_version_name REVERSE )# last occurence of "-"
+      MATH(EXPR start_version_name  "${start_version_name}+1")#start after the occurence of "/"
+      string(SUBSTRING ${PETSC_TARBALL_NAME} ${start_version_name} ${tarball_name_length} PETSC_VERSION)
+      message( STATUS "PETSc version ${PETSC_VERSION} will be installed" )
+
       set(PETSC_INCLUDES  ${PETSC_DIR}/${PETSC_ARCH}/include ${PETSC_DIR}/include)
       set(PETSC_LIBRARIES ${PETSC_DIR}/${PETSC_ARCH}/lib/libpetsc.so)
 
@@ -252,8 +255,8 @@ else( MEDFILE_ROOT_DIR OR DEFINED ENV{MEDFILE_ROOT_DIR})
   
   #extraction of the tarball archive name
   string(LENGTH "${DOWNLOAD_MED}" tarball_url_length)#length of the name of the tarball
-  string(FIND "${DOWNLOAD_MED}" "/" start_tarball_name REVERSE )# last occurence of "/"
-  MATH(EXPR start_tarball_name "${start_tarball_name}+1")#start after the occurence of "/"
+  string(FIND   "${DOWNLOAD_MED}" "/" start_tarball_name REVERSE )# last occurence of "/"
+  MATH(EXPR start_tarball_name  "${start_tarball_name}+1")#start after the occurence of "/"
   MATH(EXPR tarball_name_length "${tarball_url_length}-${start_tarball_name}-7")#name ends before .tar.gz that counts for 7 characters
   string(SUBSTRING ${DOWNLOAD_MED} ${start_tarball_name} ${tarball_name_length} MED_TARBALL_NAME)
 
@@ -310,7 +313,7 @@ else( MEDCOUPLING_ROOT_DIR OR DEFINED ENV{MEDCOUPLING_ROOT_DIR})
   #extraction of the tarball archive name
   string(LENGTH "${DOWNLOAD_MEDCOUPLING}" tarball_url_length)#length of the tarball
   string(FIND   "${DOWNLOAD_MEDCOUPLING}" "/" start_tarball_name REVERSE )# last occurence of "/"
-  MATH(EXPR start_tarball_name "${start_tarball_name}+1")#start after the occurence of "/"
+  MATH(EXPR start_tarball_name  "${start_tarball_name}+1")#start after the occurence of "/"
   MATH(EXPR tarball_name_length "${tarball_url_length}-${start_tarball_name}-7")#name ends before .tar.gz that counts for 7 characters
   string(SUBSTRING ${DOWNLOAD_MEDCOUPLING} ${start_tarball_name} ${tarball_name_length} MEDCOUPLING_TARBALL_NAME)
   string(SUBSTRING ${MEDCOUPLING_TARBALL_NAME} 12 ${tarball_name_length} MEDCOUPLING_VERSION_NAME)
@@ -320,7 +323,7 @@ else( MEDCOUPLING_ROOT_DIR OR DEFINED ENV{MEDCOUPLING_ROOT_DIR})
   ExternalProject_Add (MEDCoupling
         URL               ${DOWNLOAD_MEDCOUPLING}  #location of medcoupling tarball
         SOURCE_DIR        ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/${MEDCOUPLING_TARBALL_NAME}
-#        BUILD_IN_SOURCE   FALSE
+        BUILD_IN_SOURCE   TRUE
         CONFIGURE_COMMAND cmake <SOURCE_DIR>/${MEDCOUPLING_TARBALL_NAME} -DCMAKE_INSTALL_PREFIX=${MEDCOUPLING_ROOT_DIR} -DCONFIGURATION_ROOT_DIR=<SOURCE_DIR>/configuration-${MEDCOUPLING_VERSION_NAME} -DMEDFILE_ROOT_DIR=${MEDFILE_ROOT_DIR} -DMEDCOUPLING_ENABLE_PARTITIONER=OFF -DMEDCOUPLING_PARTITIONER_METIS=OFF -DMEDCOUPLING_PARTITIONER_SCOTCH=OFF -DMEDCOUPLING_ENABLE_RENUMBER=OFF -DMEDCOUPLING_BUILD_DOC=OFF -DHDF5_ROOT_DIR=${HDF5_ROOT}
         BUILD_COMMAND     make
         INSTALL_COMMAND   make install
